@@ -5,16 +5,21 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@vite(['resources/css/dashboard.css?v=12124.1933'])
+
 <div class="container">
-    <div class="progress-bar bg-black" role="progressbar" aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100" style="position:absolute;height:5px;width: {{ $progress }}%;">
-    </div>
-        <div class="progress" style="height: 20px;">
-            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-            </div>
-        <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" style="width: 55%;">
+    <div class="goal-thermometer">
+        <div class="progress-bar">
+            <div class="progress {{ $progressClass}}" style="width: {{ $progress }}%;color:{{$progressTextColor}}!important;">{{ $progress }}%</div>
         </div>
-        <div class="progress-bar bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+        <div class="goal-markers">
+            <div class="marker" style="left: 15%;"></div> <!-- Marker for 15% -->
+            <div class="marker" style="left: 45%;"></div> <!-- Marker for 45% -->
         </div>
     </div>
 </div>
+@vite(['resources/js/dashboard.js'])
+
 @endsection
+
+
