@@ -16,11 +16,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- App CSS (if needed) -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
-    <!-- Custom CSS (if needed) -->
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <!-- App CSS/Custom CSS (if needed) -->
+    @vite(['resources/css/app.css', 'resources/css/custom.css'])
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -40,10 +37,8 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- App JS Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- App & Custom JS Scripts -->
+    @vite(['resources/js/app.js', 'resources/js/custom.js'])
 
-    <!-- Custom JS Scripts -->
-    <script src="{{ asset('js/custom.js') }}"></script>
 </body>
 </html>
