@@ -73,24 +73,39 @@ class User extends Authenticatable
     {
         Log::info('refreshAccessToken check');
           
-        $response = Http::post('https://accounts.zoho.com/oauth/v2/token', [
-                'refresh_token' => $this->getDecryptedRefreshToken(),
-                'grant_type' => 'refresh_token',
-                'client_id' => env('ZOHO_CLIENT_ID'),
-                'client_secret' => env('ZOHO_CLIENT_SECRET'),
-                'access_type' => 'offline',
-        ]);
+        $curl = curl_init();
 
-        if ($response->successful()) {
-            $responseBody = $response->json();
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://accounts.zoho.com/oauth/v2/token',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array(
+            'refresh_token' => $this->getDecryptedRefreshToken(),
+            'client_id' => env('ZOHO_CLIENT_ID'),
+            'client_secret' => env('ZOHO_CLIENT_SECRET'),
+            'grant_type' => 'refresh_token')
+        ));
+
+        $response = curl_exec($curl);
+        Log::info("Response: ". print_r($response, true));
+        curl_close($curl);
+        $responseBody = json_decode($response);
+        Log::info("Response body: ". print_r($responseBody, true));
+
+        if ($responseBody->access_token) {
             Log::info("Response body: ". print_r($responseBody, true));
-            $this->access_token = Crypt::encryptString($responseBody['access_token']);
-            $this->token_expires_at = now()->addSeconds($responseBody['expires_in']);
+            $this->access_token = Crypt::encryptString($responseBody->access_token);
+              $this->token_expires_at = now()->addSeconds($responseBody->expires_in);
             $this->save();
             Log::info("Access token: ". $this->access_token);
-            return $responseBody['access_token'];
+            return $responseBody->access_token;
         } else {
-            Log::error("Error refreshing access token: ". $response->body());
+            Log::error("Error refreshing access token: ". $response);
             // redirect back to oauth process
             redirect('/auth/callback');
         }
@@ -101,6 +116,8 @@ class User extends Authenticatable
     public function getDecryptedRefreshToken()
     {
         Log::info('getDecryptedRefreshToken check');
-        return Crypt::decryptString($this->refresh_token);
+        $refreshToken = Crypt::decryptString($this->refresh_token);
+        Log::info("Decrypted refresh token: ". $refreshToken);
+        return $refreshToken;
     }
 }

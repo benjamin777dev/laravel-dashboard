@@ -89,12 +89,36 @@ class RegisterController extends Controller
                     return redirect('/login')->withErrors(['oauth' => 'Failed to retrieve user data from Zoho.']);
                 }
 
+                Log::Info("User Data Response: " . print_r($userDataResponse->json(), true));
+
+
+                $criteria = "(Email:equals:{$userDataResponse->json()['users'][0]['email']})";
+                $fields = "Id,Email,First_Name,Last_Name";
+                $contactDataResponse = Http::withHeaders([
+                    'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
+                ])->get('https://www.zohoapis.com/crm/v6/Contacts/search', [
+                    'criteria' => $criteria,
+                    'fields' => $fields
+                ]);
+                $cdrData = $contactDataResponse->json();
+                Log::Info("Contact Data Response: " . print_r($cdrData, true));
+
+                if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
+                    $contactId = $cdrData['data'][0]['id'];    
+                    Log::info("Set from contact data!");
+                } else {
+                    $contactId = $userDataResponse->json()['users'][0]['id'];
+                    Log::info("Set from user data, as no contact record found!");
+                }
+                Log::Info("Contact ID: " . $contactId);
+
                 $userData = $userDataResponse->json()['users'][0];
                 Log::info("User data: ". print_r($userData, true));
 
                 // Store user data in the session
                 session(['user_data' => $userData]);
                 session(['token_data' => $tokenData]);
+                session(['contact_id' => $contactId]);
 
                 // Redirect to registration form
                 return redirect()->route('register');
@@ -124,16 +148,22 @@ class RegisterController extends Controller
 
         $tokenData = session('token_data');
         Log::info("Token data: ". print_r($tokenData, true));
+        
+        $contactId = session('contact_id');
+        Log::info("Contact id: ". print_r($contactId, true));
 
         // Encrypt the email, access token, and refresh token
-        $encryptedEmail = Crypt::encryptString($userData['email']);
+        // Hash the email instead of encrypting
+        $hashedEmail = Hash::make($userData['email']);
+
         $encryptedAccessToken = Crypt::encryptString($tokenData['access_token']);
         $encryptedRefreshToken = Crypt::encryptString($tokenData['refresh_token']);
 
         // Create or update the user in the database
-        $constraint = ['zoho_id' => $userData['id']];
+        // Create or update the user in the database
+        $constraint = ['zoho_id' => $contactId];
         $userDBData = [
-            'email' => Crypt::encryptString($userData['email']),
+            'email' => $hashedEmail, // Store hashed email
             'name' => $userData['first_name'] . ' ' . $userData['last_name'],
             'password' => Hash::make($request->password),
             'access_token' => Crypt::encryptString($tokenData['access_token']),
