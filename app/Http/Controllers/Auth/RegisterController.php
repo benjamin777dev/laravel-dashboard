@@ -106,10 +106,10 @@ class RegisterController extends Controller
                 if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
                     $contactId = $cdrData['data'][0]['id'];    
                     Log::info("Set from contact data!");
-                } else {
-                    $contactId = $userDataResponse->json()['users'][0]['id'];
-                    Log::info("Set from user data, as no contact record found!");
-                }
+                } 
+                $rootUserId = $userDataResponse->json()['users'][0]['id'];
+                Log::info("Root User ID: " + $rootUserId);
+                
                 Log::Info("Contact ID: " . $contactId);
 
                 $userData = $userDataResponse->json()['users'][0];
@@ -119,6 +119,7 @@ class RegisterController extends Controller
                 session(['user_data' => $userData]);
                 session(['token_data' => $tokenData]);
                 session(['contact_id' => $contactId]);
+                session(['root_user_id' => $rootUserId]);
 
                 // Redirect to registration form
                 return redirect()->route('register');
@@ -152,6 +153,9 @@ class RegisterController extends Controller
         $contactId = session('contact_id');
         Log::info("Contact id: ". print_r($contactId, true));
 
+        $rootUserId = session('root_user_id');
+        Log::info("Root user id: ". print_r($rootUserId, true));
+
         // Encrypt the email, access token, and refresh token
         // Hash the email instead of encrypting
         $hashedEmail = Hash::make($userData['email']);
@@ -169,6 +173,7 @@ class RegisterController extends Controller
             'access_token' => Crypt::encryptString($tokenData['access_token']),
             'refresh_token' => Crypt::encryptString($tokenData['refresh_token']),
             'token_expires_at' => now()->addSeconds($tokenData['expires_in']),
+            'root_user_id' => $rootUserId,
         ];
 
         Log::info("Constraint: ". print_r($constraint, true));
