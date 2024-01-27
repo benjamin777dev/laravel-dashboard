@@ -37,8 +37,39 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
     <!-- App & Custom JS Scripts -->
     @vite(['resources/js/app.js', 'resources/js/custom.js'])
 
+    
+<script>
+        $(document).ready(function() {
+            var ctx = document.getElementById('monthlyGciChart').getContext('2d');
+            if (!ctx) return;
+            var monthlyGciChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($allMonths->keys()) !!},
+                    datasets: [{
+                        label: 'Monthly GCI',
+                        data: {!! json_encode($allMonths->values()) !!},
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

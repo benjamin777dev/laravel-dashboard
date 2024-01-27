@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+
 
 class LoginController extends Controller
 {
@@ -25,10 +27,15 @@ class LoginController extends Controller
     // Overriding the credentials method
     protected function credentials(Request $request)
     {
-        $user = User::whereRaw('BINARY email = ?', [Crypt::encryptString($request->get('email'))])->first();
+        $hashedInputEmail = $request->get('email');
+        $user = User::all()->filter(function ($user) use ($hashedInputEmail) {
+            return Hash::check($hashedInputEmail, $user->email);
+        })->first();
+
         if ($user) {
             return ['email' => $user->email, 'password' => $request->get('password')];
         }
+
         return $request->only($this->username(), 'password');
     }
 
@@ -40,5 +47,10 @@ class LoginController extends Controller
         return $this->guard()->attempt(
             $credentials, $request->filled('remember')
         );
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        return redirect('/dashboard');
     }
 }
