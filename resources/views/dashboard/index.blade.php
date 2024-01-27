@@ -59,7 +59,7 @@
     </div>
 
     <div class="row mt-4">
-        <div class="col-4">
+        <div class="col-6">
             <canvas id="monthlyGciChart"></canvas>
         </div>
     </div>
