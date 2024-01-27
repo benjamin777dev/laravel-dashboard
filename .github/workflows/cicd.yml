@@ -1,0 +1,51 @@
+name: Laravel CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # Trigger the workflow on push events to the main branch
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        path: '/opt/bitnami/apache2/htdocs'
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2.13' 
+
+    - name: Install PHP Dependencies
+      run: |
+        cd /home/bitnami/htdocs
+        composer install --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18' 
+    
+    - name: Install JavaScript Dependencies
+      run: |
+        cd /home/bitnami/htdocs
+        npm install
+
+    - name: Laravel Specific Commands
+      run: |
+        cd /home/bitnami/htdocs
+        php artisan migrate --force # Run migrations
+        php artisan cache:clear # Clear cache
+        php artisan config:cache # Cache configuration
+        # Add any other necessary Laravel commands
+
+    - name: Set Permissions
+      run: |
+        sudo chown -R bitnami:daemon /home/bitnami/htdocs
+        sudo find /home/bitnami/htdocs -type f -exec chmod 644 {} \;
+        sudo find /home/bitnami/htdocs -type d -exec chmod 755 {} \;
+        # Adjust permissions as needed for your setup
