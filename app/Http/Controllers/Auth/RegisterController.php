@@ -108,7 +108,7 @@ class RegisterController extends Controller
                     Log::info("Set from contact data!");
                 } 
                 $rootUserId = $userDataResponse->json()['users'][0]['id'];
-                Log::info("Root User ID: " + $rootUserId);
+                Log::info("Root User ID: " . $rootUserId);
                 
                 Log::Info("Contact ID: " . $contactId);
 
