@@ -32,17 +32,17 @@ jobs:
         npm install
 
     # Add any additional steps for building/testing your application here
-
-    - name: Laravel Specific Commands
-      run: |
-        php artisan migrate --force # Run migrations
-        php artisan cache:clear # Clear cache
-        php artisan config:cache # Cache configuration
-
     - name: Copy Files to Web Directory
       run: |
         sudo rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/bitnami/htdocs/
 
+    - name: Laravel Specific Commands
+      run: |
+        cd /home/bitnami/htdocs
+        php artisan migrate --force # Run migrations
+        php artisan cache:clear # Clear cache
+        php artisan config:cache # Cache configuration
+    
     - name: Set Permissions
       run: |
         sudo chown -R bitnami:daemon /home/bitnami/htdocs
