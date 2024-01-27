@@ -67,4 +67,34 @@
 
 @vite(['resources/js/dashboard.js'])
 
+@section('dashboardScript')
+    <script>
+        $(document).ready(function() {
+            
+            var ctx = document.getElementById('monthlyGciChart').getContext('2d');
+            if (!ctx) return;
+            var monthlyGciChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($allMonths->keys()) !!},
+                    datasets: [{
+                        label: 'Monthly GCI',
+                        data: {!! json_encode($allMonths->values()) !!},
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+@endsection
+
 @endsection

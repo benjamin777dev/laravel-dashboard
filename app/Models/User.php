@@ -28,6 +28,7 @@ class User extends Authenticatable
         'refresh_token',
         'token_expires_at',
         'zoho_id', 
+        'root_user_id',
         'goal'
     ];
 
