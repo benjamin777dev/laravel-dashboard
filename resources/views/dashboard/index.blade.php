@@ -89,9 +89,11 @@
     </div>
     <div class="row mt-3">
     <div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">Action to Take</div>
+    {{-- Task Section --}}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Action to Take</div>
                 <div class="card-body">
                     <table class="table">
                         <thead>
@@ -107,10 +109,10 @@
                             @foreach ($tasks as $task)
                                 <tr>
                                     <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
-                                    <td>{{ $task['Subject'] }}</td>
-                                    <td>{{ $task['Due_Date'] }}</td>
-                                    <td>{{ $task['Who_Id']['name'] }}</td>
-                                    <td>{{ $task['Owner']['name'] }}</td>
+                                    <td>{{ $task['Subject'] ?? 'N/A' }}</td>
+                                    <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}</td>
+                                    <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
+                                    <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
