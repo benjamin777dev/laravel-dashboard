@@ -69,11 +69,11 @@
             <div class="card">
                 <div class="card-header">Database Maintenance</div>
                 <div class="card-body">
-                    <p>ABC Contacts: {{ $contactData['abcContactsCount'] }}</p>
-                    <p>Needs Email: {{ $contactData['needsEmailCount'] }}</p>
-                    <p>Needs Address: {{ $contactData['needsAddressCount'] }}</p>
-                    <p>Needs Phone: {{ $contactData['needsPhoneCount'] }}</p>
-                    <p>Missing ABCD: {{ $contactData['missingAbcdCount'] }}</p>
+                    <p>ABC Contacts: {{ $contactData['abcContacts'] }}</p>
+                    <p>Needs Email: {{ $contactData['needsEmail'] }}</p>
+                    <p>Needs Address: {{ $contactData['needsAddress'] }}</p>
+                    <p>Needs Phone: {{ $contactData['needsPhone'] }}</p>
+                    <p>Missing ABCD: {{ $contactData['missingAbcd'] }}</p>
                 </div>
             </div>
         </div>
