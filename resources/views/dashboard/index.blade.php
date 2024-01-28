@@ -88,11 +88,36 @@
         </div>
     </div>
     <div class="row mt-3">
-    <div class="card">
-                <div class="card-header">Task Management</div>
+    <div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Action to Take</div>
                 <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th> <!-- For checkbox -->
+                                <th>Subject</th>
+                                <th>Due Date</th>
+                                <th>Related To</th>
+                                <th>Assigned To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($tasks as $task)
+                                <tr>
+                                    <td><input type="checkbox" name="taskCompleted[]" value="{{ $task->id }}"></td>
+                                    <td>{{ $task->Subject }}</td>
+                                    <td>{{ $task->Due_Date->format('m/d/Y') }}</td>
+                                    <td>{{ $task->Who_Id->name }}</td>
+                                    <td>{{ $task->Owner->name }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
     </div>
 </div>
 

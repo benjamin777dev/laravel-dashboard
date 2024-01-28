@@ -98,7 +98,7 @@ class DashboardController extends Controller
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
 
-        $taskDetails = $this->retreiveAndCheckTasks($user, $accessToken);
+        $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
 
         Log::info("Task Details: ". print_r($taskDetails, true));
 
@@ -110,7 +110,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'taskDetails'));
+                'averagePipelineProbability', 'tasks'));
 
     }
 
