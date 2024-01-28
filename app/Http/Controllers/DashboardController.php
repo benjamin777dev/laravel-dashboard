@@ -119,8 +119,8 @@ class DashboardController extends Controller
         $page = 1;
         $hasMorePages = true;
 
-        $criteria = "(Owner:equals:$user->zoho_id)";
-        Log::info("Retrieving deals for criteria: $criteria");
+        $criteria = "(Owner:equals:$user->root_user_id)";
+        Log::info("Retrieving tasks for criteria: $criteria");
 
         while ($hasMorePages) {
             $response = Http::withHeaders([
