@@ -41,19 +41,19 @@ This Laravel project integrates with Zoho CRM to provide a dashboard for managin
    composer install
    ```
 
-2b. **Install NodeJS Dependencies**
+3. **Install NodeJS Dependencies**
 
    ```bash
    npm install
    ```
 
-2c. **Compile SaSS Components via Vite/Mix**
+4. **Compile SaSS Components via Vite/Mix**
 
    ```bash
    npm run build
    ```
 
-3. **Environment Setup**
+5. **Environment Setup**
    
    Copy `.env.example` to `.env` and configure your database and Zoho credentials.
 
@@ -61,25 +61,25 @@ This Laravel project integrates with Zoho CRM to provide a dashboard for managin
    cp .env.example .env
    ```
 
-4. **Generate Application Key**
+6. **Generate Application Key**
    
    ```bash
    php artisan key:generate
    ```
 
-5. **Run Migrations**
+7. **Run Migrations**
    
    ```bash
    php artisan migrate
    ```
 
-6. **Start the Server**
+8. **Start the Server**
    
    ```bash
    php artisan serve (if on local host)
    ```
 
-6b. **On Server: Ensure .htaccess setup properly**
+9. **On Server: Ensure .htaccess setup properly**
 
 ```bash
    <IfModule mod_rewrite.c>
@@ -121,6 +121,18 @@ Contributions to this project are welcome. Please fork the repository and submit
 
 This project is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT), however, approval to push back to the repo from your fork is required.
 
+## CI/CD Process
+
+By default this is meant to run in a container or a LAMP stack - for simplicity, we built it against the bitnami LAMP stack that can run on most servers, including lightsail. The CI/CD process is located in the .github/workflows folder, and should be updated to your desired handling of publishing of your application. By default it will: 
+
+- Checkout
+- Run necessary commands for composer and npm
+- Send data over to your web host directory (configure rsync for your use case)
+- Set proper end commands (we have included several .sh scripts for you)
+- Clear and Update Laravel Caches and Config Caches
+
+You should take the chance after checkout to update to your needs, so that when you are checking in code, you can quickly deploy it to the server of your choice.
+
 ## Author
 
 Phillip Rumple, Colorado Home Realty
@@ -128,21 +140,21 @@ Phillip Rumple, Colorado Home Realty
 
 # Changelog
 - initial: Initial release on GitHub
-- 0.0.1: Login/Register Process
-- 0.0.2: Login/Register Updates
-- 0.0.3: Login/Register OAUTH Updates
-- 0.0.4: OAUTH Issues resolved for refresh token
-- 0.0.5: Zoho OAUTH nuanances resolved
-- 0.0.6: Register with password external set
-- 0.0.7: Middelware set
-- 0.0.8: Dashboard Controller created
-- 0.0.9: Dashboard updated with initial deal information
-- 0.1.0: Deal Management Controller created
-- 0.1.1: Deal Chart Updated/Created
-- 0.1.2: Contact Management Controller created
-- 0.1.3: Contact Management component updated on dashboard blade
-- 0.1.4: Contact Management for base stats updated on blade
-- 0.1.5: Updated overall layout for use by designer
+- *0.0.1.0*: Login/Register Process
+- *0.0.1.1*: Login/Register Updates
+- *0.0.1.2*: Login/Register OAUTH Updates
+- *0.0.1.3*: OAUTH Issues resolved for refresh token
+- *0.0.1.4*: Zoho OAUTH nuanances resolved
+- *0.0.1.5*: Register with password external set
+- *0.0.1.6*: Middelware set
+- *0.0.2.0*: Dashboard Controller created
+- *0.0.2.1*: Dashboard updated with initial deal information
+- *0.0.3.0*: Deal Management Controller created
+- *0.0.3.1*: Deal Chart Updated/Created
+- *0.0.4.0*: Contact Management Controller created
+- *0.0.4.1*: Contact Management component updated on dashboard blade
+- *0.0.4.2*: Contact Management for base stats updated on blade
+- *0.0.4.3*: Updated overall layout for use by designer
 
 # Future Updates
 - Contact Management: Add/Edit/Delete Contacts
