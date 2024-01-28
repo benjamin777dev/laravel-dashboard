@@ -158,22 +158,27 @@ class DashboardController extends Controller
         $abcContacts = $allContacts->filter(function ($contact) {
             return !empty($contact['ABCD']);
         })->count();
+        Log::info("ABC Contacts: $abcContacts");
 
         $needsEmail = $allContacts->filter(function ($contact) {
             return empty($contact['Email']);
         })->count();
+        Log::info("Needs Email: $needsEmail");
 
         $needsAddress = $allContacts->filter(function ($contact) {
             return empty($contact['Mailing_Address']) || empty($contact['Mailing_City']) || empty($contact['Mailing_State']) || empty($contact['Mailing_Zip']);
         })->count();
+        Log::info("Needs Address: $needsAddress");
 
         $needsPhone = $allContacts->filter(function ($contact) {
             return empty($contact['Phone']);
         })->count();
+        Log::info("Needs Phone: $needsPhone");
 
         $missingAbcd = $allContacts->filter(function ($contact) {
             return empty($contact['ABCD']);
         })->count();
+        Log::info("Missing ABCD: $missingAbcd");
 
         return [
             'abcContacts'=>$abcContacts, 
@@ -191,7 +196,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(Owner:equals:$rootUserId)";
-
+        Log::info("Retrieving contacts for criteria: $criteria");
         while ($hasMorePages) {
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
@@ -205,6 +210,8 @@ class DashboardController extends Controller
                 Log::error("Error retrieving contacts: " . $response->body());
                 $hasMorePages = false;
                 break;
+            } else {
+                Log::info("Successful contact fetch... Page: " . $page);
             }
 
             $responseData = $response->json();
@@ -214,6 +221,7 @@ class DashboardController extends Controller
             $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'];
             $page++;
         }
+        Log::info("Retrieved contacts: ". $allContacts->count());
 
         return $allContacts;
     }
