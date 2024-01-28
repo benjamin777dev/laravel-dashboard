@@ -75,6 +75,14 @@ class User extends Authenticatable
         Log::info('refreshAccessToken check');
           
         $curl = curl_init();
+        $curlParams = [
+            'refresh_token' => $this->getDecryptedRefreshToken(),
+            'client_id' => env('ZOHO_CLIENT_ID'),
+            'client_secret' => env('ZOHO_CLIENT_SECRET'),
+            'grant_type' => 'refresh_token'
+        ];
+
+        Log::info("Params: " . print_r($curlParams, true));
 
         curl_setopt_array($curl, array(
         CURLOPT_URL => 'https://accounts.zoho.com/oauth/v2/token',
@@ -85,12 +93,7 @@ class User extends Authenticatable
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array(
-            'refresh_token' => $this->getDecryptedRefreshToken(),
-            'client_id' => env('ZOHO_CLIENT_ID'),
-            'client_secret' => env('ZOHO_CLIENT_SECRET'),
-            'grant_type' => 'refresh_token')
-        ));
+        CURLOPT_POSTFIELDS => $curlParams));
 
         $response = curl_exec($curl);
         Log::info("Response: ". print_r($response, true));
