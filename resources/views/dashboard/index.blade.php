@@ -91,7 +91,15 @@
     <div class="row mt-4">
     {{-- Task Section --}}
     <div class="row mt-4">
-        <div class="col-12">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Cap data</div>
+                <div class="card-body">
+                    <p>This is where cap data would be</p>
+                </div>
+            </div> 
+        </div>
+        <div class="col-8">
             <div class="card">
                 <div class="card-header">Action to Take</div>
                 <div class="card-body">
@@ -121,6 +129,17 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Performance Metrics</div>
+                <div class="card-body">
+                <p><a href="https://analytics.zoho.com/open-view/2487682000008614470/3c546af6361400d5afd39fa034e3f1b9">CHR Rankings Report</a></p>
+                <p><a href="https://analytics.zoho.com/open-view/2487682000008657377/8b86fc2667f41985c4de6ebf80d00ba7">CHR Company Production</a></p>
+                <p><a href="#">Strategy Group Production (Coming Soon)</a></p>
+                <p><a href="https://analytics.zoho.com/open-view/2487682000008655113/74f218cdf16cc52f2a54e19c1f5fdc83">Co-Op Agent Analysis</a></p>
+
 </div>
 
 @vite(['resources/js/dashboard.js'])
