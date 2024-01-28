@@ -106,7 +106,7 @@ This Laravel project integrates with Zoho CRM to provide a dashboard for managin
 
 Update your clearCache.sh file to point to the proper directories where your files are located - this will allow you to properly set your cache levels once cleared on the webhost. Most webhosts won't have an issue, and this file isn't needed, and can be commented out within the CI/CD infrastructure; however, some LAMP stacks, most notably Litespeed Servers, LAMP Stacks and some Docker Stacks, reset permissions on a regular basis, and can cause issues w/ your deployments. So running this as part of your deployment process will ensure those permissions don't get changed. 
 
-- **Check Group** Make sure the group and user that is running the command makese sense - on bitnami LAMP for example, it is `bitnami:daemon``, but on most, it may be www-data:www-data; you can always check that by looking at your `ps aux` command.
+- **Check Group** Make sure the group and user that is running the command makese sense - on bitnami LAMP for example, it is `bitnami:daemon`, but on most, it may be www-data:www-data; you can always check that by looking at your `ps aux` command.
 
 ## Configuration
 
