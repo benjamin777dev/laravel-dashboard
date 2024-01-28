@@ -79,8 +79,8 @@ class DashboardController extends Controller
         $averagePipelineProbability = $deals->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $deals->filter(function ($deal) {
-            return (now()->diffInDays($deal['Created_Time']) < 30)->count();
-        });
+            return now()->diffInDays($deal['Created_Time']) < 30;
+        })->count();
 
 
         // Ensure all months of the year are represented, fill missing months with 0
@@ -191,8 +191,8 @@ class DashboardController extends Controller
         Log::info("Missing ABCD: $missingAbcd");
 
         $contactsLast30Days = $allContacts->filter(function ($contact) {
-            return (now()->diffInDays($contact['Created_Time']) < 30)->count();
-        });
+            return now()->diffInDays($contact['Created_Time']) < 30;
+        })->count();
 
         return [
             'abcContacts'=>$abcContacts, 
