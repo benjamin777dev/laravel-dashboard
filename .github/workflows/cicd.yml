@@ -41,11 +41,13 @@ jobs:
         cd /home/bitnami/htdocs
         php artisan migrate --force # Run migrations
         php artisan cache:clear # Clear cache
+        php artisan config:clear # Clear Configuration Cache
         php artisan config:cache # Cache configuration
+        sudo sh /home/bitnami/htdocs/clearCache.sh
     
     - name: Set Permissions
       run: |
         sudo chown -R bitnami:daemon /home/bitnami/htdocs
         sudo find /home/bitnami/htdocs -type f -exec chmod 644 {} \;
         sudo find /home/bitnami/htdocs -type d -exec chmod 755 {} \;
-        # Adjust permissions as needed for your setup
+        
