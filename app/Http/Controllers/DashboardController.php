@@ -175,7 +175,13 @@ class DashboardController extends Controller
             return empty($contact['ABCD']);
         })->count();
 
-        return compact('abcContacts', 'needsEmail', 'needsAddress', 'needsPhone', 'missingAbcd');
+        return [
+            'abcContacts'=>$abcContacts, 
+            'needsEmail'=>$needsEmail, 
+            'needsAddress'=>$needsAddress, 
+            'needsPhone'=>$needsPhone, 
+            'missingAbcd'=>$missingAbcd
+        ];
     }
 
     private function retrieveContactsFromZoho($rootUserId, $accessToken)
