@@ -17,7 +17,6 @@ This Laravel project integrates with Zoho CRM to provide a dashboard for managin
 - **Marketing Management**: Manage marketing efforts and their attachments.
 - **Token Refresh**: Automatically refresh expired tokens.
 
-
 ## Prerequisites
 
 - PHP >= 8.2
@@ -106,7 +105,7 @@ This Laravel project integrates with Zoho CRM to provide a dashboard for managin
 
 Update your clearCache.sh file to point to the proper directories where your files are located - this will allow you to properly set your cache levels once cleared on the webhost. Most webhosts won't have an issue, and this file isn't needed, and can be commented out within the CI/CD infrastructure; however, some LAMP stacks, most notably Litespeed Servers, LAMP Stacks and some Docker Stacks, reset permissions on a regular basis, and can cause issues w/ your deployments. So running this as part of your deployment process will ensure those permissions don't get changed. 
 
-- **Check Group** Make sure the group and user that is running the command makese sense - on bitnami LAMP for example, it is `bitnami:daemon`, but on most, it may be www-data:www-data; you can always check that by looking at your `ps aux` command.
+- **Check Group** Make sure the group and user that is running the command makese sense - on bitnami LAMP for example, it is `bitnami:daemon`, but on most, it may be `www-data:www-data``; you can always check that by looking at your `ps aux` command to find the user who is running apache; you can also check your `php.ini` configuration as well.
 
 ## Configuration
 
@@ -142,11 +141,18 @@ You should take the chance after checkout to update to your needs, so that when 
 
 ## Author
 
+1. **Lead Developer**
 Phillip Rumple, Colorado Home Realty
-- zackrspv on GitHub
+*zackrspv on GitHub*
+
+2. **Designer/UI/UX**
+Not decided yet. 
+
+3. **Product Owner**
+Geneva Morre, Colorado Home Realty
 
 # Changelog
-- initial: Initial release on GitHub
+- *initial*: Initial release on GitHub
 - *0.0.1.0*: Login/Register Process
 - *0.0.1.1*: Login/Register Updates
 - *0.0.1.2*: Login/Register OAUTH Updates
