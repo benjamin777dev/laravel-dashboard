@@ -106,11 +106,11 @@
                         <tbody>
                             @foreach ($tasks as $task)
                                 <tr>
-                                    <td><input type="checkbox" name="taskCompleted[]" value="{{ $task->id }}"></td>
-                                    <td>{{ $task->Subject }}</td>
-                                    <td>{{ $task->Due_Date->format('m/d/Y') }}</td>
-                                    <td>{{ $task->Who_Id->name }}</td>
-                                    <td>{{ $task->Owner->name }}</td>
+                                    <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
+                                    <td>{{ $task['Subject'] }}</td>
+                                    <td>{{ $task['Due_Date']->format('m/d/Y') }}</td>
+                                    <td>{{ $task'[Who_Id']['name'] }}</td>
+                                    <td>{{ $task'[Owner']['name'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
