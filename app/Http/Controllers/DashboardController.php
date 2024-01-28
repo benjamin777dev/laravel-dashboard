@@ -76,6 +76,13 @@ class DashboardController extends Controller
             return $deals->sum('Pipeline1');
         });
 
+        $averagePipelineProbability = $deals->avg('Pipeline_Probability');
+
+        $newDealsLast30Days = $deals->filter(function ($deal) {
+            return now()->diffInDays($deal['Created_Time']) < 30;
+        });
+
+
         // Ensure all months of the year are represented, fill missing months with 0
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
@@ -89,13 +96,16 @@ class DashboardController extends Controller
         $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
+        $newContactsLast30Days = $contactData['contactsLast30Days'];
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',
                 'projectedIncome', 'beyond12MonthsData',
-                'needsNewDateData', 'allMonths', 'contactData'));
+                'needsNewDateData', 'allMonths', 'contactData', 
+                'newContactsLast30Days', 'newDealsLast30Days', 
+                'averagePipelineProbability'));
 
     }
 
@@ -180,12 +190,17 @@ class DashboardController extends Controller
         })->count();
         Log::info("Missing ABCD: $missingAbcd");
 
+        $contactsLast30Days = $allContacts->filter(function ($contact) {
+            return now()->diffInDays($contact['Created_Time']) < 30;
+        });
+
         return [
             'abcContacts'=>$abcContacts, 
             'needsEmail'=>$needsEmail, 
             'needsAddress'=>$needsAddress, 
             'needsPhone'=>$needsPhone, 
-            'missingAbcd'=>$missingAbcd
+            'missingAbcd'=>$missingAbcd, 
+            'contactsLast30Days'=>$contactsLast30Days
         ];
     }
 
