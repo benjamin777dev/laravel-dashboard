@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -37,7 +36,7 @@ class RegisterController extends Controller
         Log::info('Redirecting to Zoho for authentication');
 
         $query = http_build_query([
-            'client_id' => env('ZOHO_CLIENT_ID'),
+            'client_id' => config('services.zoho.client_id'),
             'redirect_uri' => route('auth.callback'),
             'response_type' => 'code',
             'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.coql.READ',
@@ -55,8 +54,8 @@ class RegisterController extends Controller
         Log::info('Handling Zoho callback');
         $headers = [
             'grant_type' => 'authorization_code',
-            'client_id' => env('ZOHO_CLIENT_ID'),
-            'client_secret' => env('ZOHO_CLIENT_SECRET'),
+            'client_id' => config('services.zoho.client_id'),
+            'client_secret' => config('services.zoho.client_secret'),
             'redirect_uri' => route('auth.callback'),
             'code' => $request->code,
             'access_type' => 'offline',
@@ -91,29 +90,28 @@ class RegisterController extends Controller
 
                 Log::Info("User Data Response: " . print_r($userDataResponse->json(), true));
 
-
                 $criteria = "(Email:equals:{$userDataResponse->json()['users'][0]['email']})";
                 $fields = "Id,Email,First_Name,Last_Name";
                 $contactDataResponse = Http::withHeaders([
                     'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
                 ])->get('https://www.zohoapis.com/crm/v6/Contacts/search', [
                     'criteria' => $criteria,
-                    'fields' => $fields
+                    'fields' => $fields,
                 ]);
                 $cdrData = $contactDataResponse->json();
                 Log::Info("Contact Data Response: " . print_r($cdrData, true));
 
                 if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
-                    $contactId = $cdrData['data'][0]['id'];    
+                    $contactId = $cdrData['data'][0]['id'];
                     Log::info("Set from contact data!");
-                } 
+                }
                 $rootUserId = $userDataResponse->json()['users'][0]['id'];
                 Log::info("Root User ID: " . $rootUserId);
-                
+
                 Log::Info("Contact ID: " . $contactId);
 
                 $userData = $userDataResponse->json()['users'][0];
-                Log::info("User data: ". print_r($userData, true));
+                Log::info("User data: " . print_r($userData, true));
 
                 // Store user data in the session
                 session(['user_data' => $userData]);
@@ -145,16 +143,16 @@ class RegisterController extends Controller
 
         // Retrieve user data from the session
         $userData = session('user_data');
-        Log::info("User data: ". print_r($userData, true));
+        Log::info("User data: " . print_r($userData, true));
 
         $tokenData = session('token_data');
-        Log::info("Token data: ". print_r($tokenData, true));
-        
+        Log::info("Token data: " . print_r($tokenData, true));
+
         $contactId = session('contact_id');
-        Log::info("Contact id: ". print_r($contactId, true));
+        Log::info("Contact id: " . print_r($contactId, true));
 
         $rootUserId = session('root_user_id');
-        Log::info("Root user id: ". print_r($rootUserId, true));
+        Log::info("Root user id: " . print_r($rootUserId, true));
 
         // Encrypt the email, access token, and refresh token
         // Hash the email instead of encrypting
@@ -176,9 +174,8 @@ class RegisterController extends Controller
             'root_user_id' => $rootUserId,
         ];
 
-        Log::info("Constraint: ". print_r($constraint, true));
-        Log::info("User DB data: ". print_r($userDBData, true));
-        
+        Log::info("Constraint: " . print_r($constraint, true));
+        Log::info("User DB data: " . print_r($userDBData, true));
 
         $user = User::updateOrCreate(
             $constraint,

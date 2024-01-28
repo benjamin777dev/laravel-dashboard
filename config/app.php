@@ -17,6 +17,9 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+    'ZOHO_CLIENT_ID' => env('ZOHO_CLIENT_ID'),
+    'ZOHO_CLIENT_SECRET' => env('ZOHO_CLIENT_SECRET'),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -184,5 +187,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
+
 
 ];
