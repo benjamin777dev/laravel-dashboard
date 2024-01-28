@@ -100,7 +100,7 @@ class DashboardController extends Controller
 
         $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
 
-        Log::info("Task Details: ". print_r($taskDetails, true));
+        Log::info("Task Details: ". print_r($tasks, true));
 
         // Pass data to the view
         return view('dashboard.index',
