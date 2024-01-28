@@ -12,6 +12,9 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
         Log::info("Got Access Token: $accessToken");
 
