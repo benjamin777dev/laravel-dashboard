@@ -97,6 +97,11 @@ class DashboardController extends Controller
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
+
+        $taskDetails = $this->retreiveAndCheckTasks($user, $accessToken);
+
+        Log::info("Task Details: ". print_r($taskDetails, true));
+
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -105,8 +110,46 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability'));
+                'averagePipelineProbability', 'taskDetails'));
 
+    }
+
+    private function retreiveAndCheckTasks(User $user, $accessToken) {
+        $allTasks = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(Owner:equals:$user->zoho_id)";
+        Log::info("Retrieving deals for criteria: $criteria");
+
+        while ($hasMorePages) {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get('https://www.zohoapis.com/crm/v6/Tasks/search', [
+                'page' => $page,
+                'per_page' => 200,
+                'criteria' => $criteria,
+            ]);
+
+            if (!$response->successful()) {
+                Log::error("Error retrieving deals: " . $response->body());
+                // Handle unsuccessful response
+                $hasMorePages = false;
+                break;
+            }
+
+            Log::info("Successful task fetch... Page: " . $page);
+            $responseData = $response->json();
+            //Log::info("Response data: ". print_r($responseData, true));
+            $tasks = collect($responseData['data'] ?? []);
+            $allTasks = $allTasks->concat($tasks);
+
+            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+            $page++;
+
+        }
+
+        return $allTasks;
     }
 
     private function retrieveDealsFromZoho(User $user, $accessToken)

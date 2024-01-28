@@ -87,6 +87,13 @@
             <div class="alert alert-secondary">Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</div>
         </div>
     </div>
+    <div class="row mt-3">
+    <div class="card">
+                <div class="card-header">Task Management</div>
+                <div class="card-body">
+                </div>
+            </div>
+    </div>
 </div>
 
 @vite(['resources/js/dashboard.js'])

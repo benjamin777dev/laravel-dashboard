@@ -152,6 +152,7 @@ Not decided yet.
 Geneva Morre, Colorado Home Realty
 
 # Changelog
+- *0.0.4.5*: Updated Task management in Dashboard Controller
 - *0.0.4.4*: Updated several dependencies and Laravel Version (tests passed)
 - *0.0.4.3*: Updated overall layout for use by designer
 - *0.0.4.2*: Contact Management for base stats updated on blade
