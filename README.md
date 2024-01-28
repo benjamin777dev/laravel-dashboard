@@ -152,23 +152,23 @@ Not decided yet.
 Geneva Morre, Colorado Home Realty
 
 # Changelog
-- *initial*: Initial release on GitHub
-- *0.0.1.0*: Login/Register Process
-- *0.0.1.1*: Login/Register Updates
-- *0.0.1.2*: Login/Register OAUTH Updates
-- *0.0.1.3*: OAUTH Issues resolved for refresh token
-- *0.0.1.4*: Zoho OAUTH nuanances resolved
-- *0.0.1.5*: Register with password external set
-- *0.0.1.6*: Middelware set
-- *0.0.2.0*: Dashboard Controller created
-- *0.0.2.1*: Dashboard updated with initial deal information
-- *0.0.3.0*: Deal Management Controller created
-- *0.0.3.1*: Deal Chart Updated/Created
-- *0.0.4.0*: Contact Management Controller created
-- *0.0.4.1*: Contact Management component updated on dashboard blade
-- *0.0.4.2*: Contact Management for base stats updated on blade
-- *0.0.4.3*: Updated overall layout for use by designer
 - *0.0.4.4*: Updated several dependencies and Laravel Version (tests passed)
+- *0.0.4.3*: Updated overall layout for use by designer
+- *0.0.4.2*: Contact Management for base stats updated on blade
+- *0.0.4.1*: Contact Management component updated on dashboard blade
+- *0.0.4.0*: Contact Management Controller created
+- *0.0.3.1*: Deal Chart Updated/Created
+- *0.0.3.0*: Deal Management Controller created
+- *0.0.2.1*: Dashboard updated with initial deal information
+- *0.0.2.0*: Dashboard Controller created
+- *0.0.1.6*: Middelware set
+- *0.0.1.5*: Register with password external set
+- *0.0.1.4*: Zoho OAUTH nuanances resolved
+- *0.0.1.3*: OAUTH Issues resolved for refresh token
+- *0.0.1.2*: Login/Register OAUTH Updates
+- *0.0.1.1*: Login/Register Updates
+- *0.0.1.0*: Login/Register Process
+- *initial*: Initial release on GitHub
 
 # Future Updates
 - Contact Management: Add/Edit/Delete Contacts
