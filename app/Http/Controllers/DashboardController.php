@@ -95,7 +95,7 @@ class DashboardController extends Controller
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',
                 'projectedIncome', 'beyond12MonthsData',
-                'needsNewDateData', 'allMonths'));
+                'needsNewDateData', 'allMonths', 'contactData'));
 
     }
 

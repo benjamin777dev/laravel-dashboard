@@ -63,6 +63,21 @@
             <canvas id="monthlyGciChart"></canvas>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Database Maintenance</div>
+                <div class="card-body">
+                    <p>ABC Contacts: {{ $contactData['abcContactsCount'] }}</p>
+                    <p>Needs Email: {{ $contactData['needsEmailCount'] }}</p>
+                    <p>Needs Address: {{ $contactData['needsAddressCount'] }}</p>
+                    <p>Needs Phone: {{ $contactData['needsPhoneCount'] }}</p>
+                    <p>Missing ABCD: {{ $contactData['missingAbcdCount'] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @vite(['resources/js/dashboard.js'])
@@ -70,7 +85,7 @@
 @section('dashboardScript')
     <script>
         $(document).ready(function() {
-            
+
             var ctx = document.getElementById('monthlyGciChart').getContext('2d');
             if (!ctx) return;
             var monthlyGciChart = new Chart(ctx, {
