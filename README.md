@@ -168,6 +168,7 @@ Geneva Morre, Colorado Home Realty
 - *0.0.4.1*: Contact Management component updated on dashboard blade
 - *0.0.4.2*: Contact Management for base stats updated on blade
 - *0.0.4.3*: Updated overall layout for use by designer
+- *0.0.4.4*: Updated several dependencies and Laravel Version (tests passed)
 
 # Future Updates
 - Contact Management: Add/Edit/Delete Contacts
