@@ -83,10 +83,8 @@ class DashboardController extends Controller
             $startOfYear->addMonth();
         }
 
-
-
-
-
+        $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
+        $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
         // Pass data to the view
         return view('dashboard.index',
@@ -97,7 +95,6 @@ class DashboardController extends Controller
                 'needsNewDateData', 'allMonths'));
 
     }
-
 
     private function retrieveDealsFromZoho(User $user, $accessToken)
     {
@@ -150,4 +147,66 @@ class DashboardController extends Controller
         Log::info("Progress: $progress");
         return min($progress, 100);
     }
+
+    private function retrieveAndCheckContacts($rootUserId, $accessToken)
+    {
+        $allContacts = $this->retrieveContactsFromZoho($rootUserId, $accessToken);
+
+        $abcContacts = $allContacts->filter(function ($contact) {
+            return !empty($contact['ABCD']);
+        })->count();
+
+        $needsEmail = $allContacts->filter(function ($contact) {
+            return empty($contact['Email']);
+        })->count();
+
+        $needsAddress = $allContacts->filter(function ($contact) {
+            return empty($contact['Mailing_Address']) || empty($contact['Mailing_City']) || empty($contact['Mailing_State']) || empty($contact['Mailing_Zip']);
+        })->count();
+
+        $needsPhone = $allContacts->filter(function ($contact) {
+            return empty($contact['Phone']);
+        })->count();
+
+        $missingAbcd = $allContacts->filter(function ($contact) {
+            return empty($contact['ABCD']);
+        })->count();
+
+        return compact('abcContacts', 'needsEmail', 'needsAddress', 'needsPhone', 'missingAbcd');
+    }
+
+    private function retrieveContactsFromZoho($rootUserId, $accessToken)
+    {
+        $allContacts = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(Owner:equals:$rootUserId)";
+
+        while ($hasMorePages) {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get('https://www.zohoapis.com/crm/v2/Contacts/search', [
+                'page' => $page,
+                'per_page' => 200,
+                'criteria' => $criteria,
+            ]);
+
+            if (!$response->successful()) {
+                Log::error("Error retrieving contacts: " . $response->body());
+                $hasMorePages = false;
+                break;
+            }
+
+            $responseData = $response->json();
+            $contacts = collect($responseData['data'] ?? []);
+            $allContacts = $allContacts->concat($contacts);
+
+            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'];
+            $page++;
+        }
+
+        return $allContacts;
+    }
+
 }

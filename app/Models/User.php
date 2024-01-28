@@ -98,7 +98,7 @@ class User extends Authenticatable
         $responseBody = json_decode($response);
         Log::info("Response body: ". print_r($responseBody, true));
 
-        if ($responseBody->access_token) {
+        if (isset($responseBody->access_token)) {
             Log::info("Response body: ". print_r($responseBody, true));
             $this->access_token = Crypt::encryptString($responseBody->access_token);
               $this->token_expires_at = now()->addSeconds($responseBody->expires_in);
