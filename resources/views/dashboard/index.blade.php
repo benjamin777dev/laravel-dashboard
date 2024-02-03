@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Resize the canvas and draw the gauge accordingly
     function resizeCanvas() {
         var container = document.querySelector('.widget-thermometer');
-        canvas.width = container.offsetWidth /1.2; // Set the canvas width to the width of the container
+        canvas.width = container.offsetWidth /1.1; // Set the canvas width to the width of the container
         canvas.height = container.offsetWidth / 2; // Keep the canvas height half of the width
         drawGauge();
     }
