@@ -11,30 +11,31 @@
 <div class="container">
     <div class="row mt-4">
         <div class="card">
-        <div class="card-header">
-            My Pipeline - Next 12 Months
-        </div>
-        <div class="card-body">
-            <div class="chart-container" style="position: relative; height:40vh;">
-                <canvas id="customGaugeChart"></canvas>
+            <div class="card-header">
+                My Pipeline - Next 12 Months
             </div>
-            <div class="thermometer-table mt-3">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            @foreach ($stageData as $stage => $data)
-                                <th scope="col">{{ $stage }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach ($stageData as $data)
-                                <td>${{ number_format($data['sum'], 2) }}<br>{{ $data['count'] }} Deals</td>
-                            @endforeach
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:40vh;">
+                    <canvas id="customGaugeChart"></canvas>
+                </div>
+                <div class="thermometer-table mt-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                @foreach ($stageData as $stage => $data)
+                                    <th scope="col">{{ $stage }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                @foreach ($stageData as $data)
+                                    <td>${{ number_format($data['sum'], 2) }}<br>{{ $data['count'] }} Deals</td>
+                                @endforeach
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
