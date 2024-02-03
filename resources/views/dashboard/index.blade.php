@@ -15,7 +15,9 @@
             My Pipeline - Next 12 Months
         </div>
         <div class="card-body">
-            <canvas id="thermometerChart"></canvas>
+            <div class="chart-container" style="position: relative; height:40vh;">
+                <canvas id="thermometerChart"></canvas>
+            </div>
             <div class="thermometer-table mt-3">
                 <table class="table">
                     <thead>
@@ -164,32 +166,31 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Make sure to have only one initialization for the thermometerChart
     var ctx = document.getElementById('thermometerChart').getContext('2d');
-    var progress = @json($progress); // Use the Blade directive to output the progress variable as JSON
-    var data = [progress, 100 - progress];
+    var progress = @json($progress);
     var backgroundColor = progress > 50 ? ['green', '#ddd'] : progress > 25 ? ['yellow', '#ddd'] : ['red', '#ddd'];
 
-    // Check if the chart instance already exists
+    // Destroy any previous instance of the chart to avoid memory leaks
     if (window.thermometerChartInstance) {
-        window.thermometerChartInstance.destroy(); // Destroy the previous instance if it exists
+        window.thermometerChartInstance.destroy();
     }
 
-    // Create a new chart instance
+    // Create the chart
     window.thermometerChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
             datasets: [{
-                data: data,
-                backgroundColor: backgroundColor
+                data: [progress, 100 - progress],
+                backgroundColor: backgroundColor,
+                borderWidth: 0
             }]
         },
         options: {
+            responsive: true, // Ensure the chart is responsive
+            maintainAspectRatio: false, // Disable aspect ratio maintenance to fill container
             rotation: Math.PI,
             circumference: Math.PI,
             cutout: '90%',
-            responsive: true,
-            maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
                 tooltip: { enabled: false },
