@@ -161,68 +161,55 @@
 document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
+    
+    function draw() {
+        var width = canvas.offsetWidth;
+        var height = Math.round(width / 2);
+        canvas.width = width;
+        canvas.height = height;
 
-    // Dynamically adjust the canvas size to the parent container
-    function resizeCanvas() {
-        var container = canvas.parentElement;
-        // Set canvas dimensions proportionally to the container size
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
-        drawGauge(@json($progress));
-    }
+        var centerX = width / 2;
+        var centerY = height * 0.8;
+        var radius = width * 0.35;
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Set initial size
+        ctx.clearRect(0, 0, width, height); // Clear the canvas
+        
+        // Draw gauge segments
+        drawSegment(ctx, centerX, centerY - radius, radius, Math.PI, 1.25 * Math.PI, 'red');
+        drawSegment(ctx, centerX, centerY - radius, radius, 1.25 * Math.PI, 1.5 * Math.PI, 'yellow');
+        drawSegment(ctx, centerX, centerY - radius, radius, 1.5 * Math.PI, 2 * Math.PI, 'green');
 
-    function drawGauge(progress) {
-        // Clear the entire canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        var centerX = canvas.width / 2;
-        var centerY = canvas.height * 0.8; // Position the center slightly higher
-        var radius = canvas.width / 3; // Gauge radius
-
-        // Draw the segments
-        drawSegment(centerX, centerY, radius, 0.75 * Math.PI, 1 * Math.PI, '#FF0000'); // Red segment
-        drawSegment(centerX, centerY, radius, 0.5 * Math.PI, 0.75 * Math.PI, '#FFFF00'); // Yellow segment
-        drawSegment(centerX, centerY, radius, 0.25 * Math.PI, 0.5 * Math.PI, '#00FF00'); // Green segment
-
-        // Draw the needle
-        drawNeedle(centerX, centerY, radius, progress);
-
-        // Draw the percentage text below the gauge
-        ctx.font = 'bold ' + (canvas.width / 15) + 'px Arial'; // Font size is responsive to the canvas width
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY + radius / 2);
-    }
-
-    function drawSegment(cx, cy, r, startAngle, endAngle, color) {
+        // Draw needle
+        var progress = @json($progress);
+        var needleAngle = Math.PI + (Math.PI * progress / 100);
         ctx.beginPath();
-        ctx.arc(cx, cy, r, startAngle, endAngle, false);
-        ctx.lineWidth = r * 0.2; // Thickness of the gauge
+        ctx.moveTo(centerX, centerY - radius); // Start at the center of the circle
+        ctx.lineTo(centerX + radius * Math.cos(needleAngle), centerY - radius - radius * Math.sin(needleAngle));
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+
+        // Draw text
+        ctx.fillStyle = 'black';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(progress + '%', centerX, centerY - radius / 2);
+    }
+
+    function drawSegment(ctx, x, y, radius, startAngle, endAngle, color) {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, startAngle, endAngle);
+        ctx.lineWidth = radius * 0.1; // Thickness of the segment
         ctx.strokeStyle = color;
         ctx.stroke();
     }
 
-    function drawNeedle(cx, cy, r, value) {
-        ctx.save();
-        ctx.translate(cx, cy);
-        var angle = Math.PI + (Math.PI * value / 100); // Convert percentage to angle
-        ctx.rotate(angle); // Rotate the canvas by the calculated angle
-
-        // Draw the needle triangle
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.05, 0);
-        ctx.lineTo(r * 0.9, 0); // Adjust needle length
-        ctx.lineTo(-r * 0.05, -r * 0.05); // Adjust needle width
-        ctx.fillStyle = '#000';
-        ctx.fill();
-
-        ctx.restore(); // Restore canvas rotation to its original state
-    }
+    // Resize the canvas and draw the gauge
+    window.addEventListener('resize', draw);
+    draw(); // Initial draw
 });
 </script>
+
 
 
 
