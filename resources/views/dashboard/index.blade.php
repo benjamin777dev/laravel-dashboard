@@ -158,6 +158,19 @@
 @section('dashboardScript')
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    var canvas = document.getElementById('customGaugeChart');
+    var ctx = canvas.getContext('2d');
+    var progress = @json($progress); // Your progress value from the server
+
+    // Resize the canvas and draw the gauge accordingly
+    function resizeCanvas() {
+        var container = document.querySelector('.widget-thermometer');
+        canvas.width = container.offsetWidth /1.1; // Set the canvas width to the width of the container
+        canvas.height = container.offsetWidth / 2; // Keep the canvas height half of the width
+        drawGauge();
+    }
+
     function drawGauge() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before redrawing
 
@@ -208,9 +221,33 @@
     ctx.fillText(progress + '%', centerX, centerY - radius / 2);
 }
 
-resizeCanvas(); // Call this function to initially draw the gauge
-window.addEventListener('resize', resizeCanvas); // Adjust the gauge on window resize
+    function drawSegment(x, y, r, startAngle, endAngle, color, lineWidth) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, startAngle, endAngle, false);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+    }
 
+    function drawNeedle(x, y, angle, length) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + length * Math.cos(angle), y + length * Math.sin(angle));
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 5;
+        ctx.stroke();
+    }
+
+    function drawProgressText(x, y, text) {
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, x, y);
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas); // Redraw the gauge on window resize
+});
 </script>
 
 
