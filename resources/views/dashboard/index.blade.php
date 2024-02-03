@@ -182,15 +182,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Draw the red segment
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1.5, false);
-        
+        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1, false);
         ctx.strokeStyle = 'red';
         ctx.lineWidth = radius * 0.2;
         ctx.stroke();
 
          // Draw the yellow segment
          ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 1.75, false);
+        ctx.arc(centerX, centerY, radius, Math.PI * 1, Math.PI * 1.5, false);
         ctx.strokeStyle = 'yellow';
         ctx.lineWidth = radius * 0.2;
         ctx.stroke();
@@ -198,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Draw the green segment
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.75, Math.PI * 2, false);
+        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 2, false);
         ctx.strokeStyle = 'green';
         ctx.lineWidth = radius * 0.2;
         ctx.stroke();
