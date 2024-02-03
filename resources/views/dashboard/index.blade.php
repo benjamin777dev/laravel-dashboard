@@ -16,7 +16,7 @@
         </div>
         <div class="card-body">
             <div class="chart-container" style="position: relative; height:40vh;">
-                <canvas id="thermometerChart"></canvas>
+                <canvas id="customGaugeChart"></canvas>
             </div>
             <div class="thermometer-table mt-3">
                 <table class="table">
@@ -166,38 +166,64 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('thermometerChart').getContext('2d');
-    var progress = @json($progress);
-    var backgroundColor = progress > 50 ? ['green', '#ddd'] : progress > 25 ? ['yellow', '#ddd'] : ['red', '#ddd'];
+    var canvas = document.getElementById('customGaugeChart');
+    var ctx = canvas.getContext('2d');
 
-    // Destroy any previous instance of the chart to avoid memory leaks
-    if (window.thermometerChartInstance) {
-        window.thermometerChartInstance.destroy();
+    // Set the size of the canvas
+    var container = canvas.parentElement;
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+
+    var progress = @json($progress); // Your progress value
+
+    // Function to draw the gauge
+    function drawGauge(progress) {
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height * 0.9; // Adjust to position the gauge higher in the canvas
+        var radius = Math.min(centerX, centerY) * 0.8; // Radius of the gauge
+        var startAngle = Math.PI;
+        var endAngle = 2 * Math.PI;
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw segments
+        var segments = [
+            { color: 'red', end: startAngle + (0.25 * Math.PI) },
+            { color: 'yellow', end: startAngle + (0.5 * Math.PI) },
+            { color: 'green', end: endAngle }
+        ];
+
+        segments.forEach(function(segment) {
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, startAngle, segment.end, false);
+            ctx.lineWidth = 30; // Width of the gauge segments
+            ctx.strokeStyle = segment.color;
+            ctx.stroke();
+            startAngle = segment.end;
+        });
+
+        // Draw needle
+        var needleAngle = (Math.PI * progress) / 100 + Math.PI;
+        ctx.translate(centerX, centerY);
+        ctx.rotate(needleAngle);
+        ctx.beginPath();
+        ctx.moveTo(0, -10); // Start 10px above the center
+        ctx.lineTo(radius * 0.8, 0); // Draw to 80% of the radius
+        ctx.lineTo(0, 10); // Draw back down 10px below the center
+        ctx.fillStyle = 'grey';
+        ctx.fill();
+        ctx.rotate(-needleAngle);
+        ctx.translate(-centerX, -centerY); // Reset translation
+
+        // Draw percentage text
+        ctx.fillStyle = 'black';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(progress + '%', centerX, centerY + radius * 0.2); // Position below the gauge
     }
 
-    // Create the chart
-    window.thermometerChartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-                data: [progress, 100 - progress],
-                backgroundColor: backgroundColor,
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true, // Ensure the chart is responsive
-            maintainAspectRatio: false, // Disable aspect ratio maintenance to fill container
-            rotation: Math.PI,
-            circumference: Math.PI,
-            cutout: '90%',
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false },
-                datalabels: { display: false }
-            }
-        }
-    });
+    drawGauge(progress);
 });
 </script>
 
