@@ -34,7 +34,7 @@ class DashboardController extends Controller
         Log::info("Progress: $progress");
 
         // Group deals by stage and calculate counts and sums
-        $stages = ['Potential', 'Pre-Active', 'Active'];
+        $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
             $filteredDeals = $deals->where('Stage', $stage);
             return [
