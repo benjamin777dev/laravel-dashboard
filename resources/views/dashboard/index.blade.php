@@ -47,13 +47,13 @@
                         <tbody>
                             <tr>
                                 <td>Beyond 12 Months</td>
-                                <td>${{ number_format($stageData['beyond12MonthsData']['sum'], 2) }}</td>
-                                <td>{{ $stageData['beyond12MonthsData']['count'] }} Deals</td>
+                                <td>${{ number_format($beyond12MonthsData['sum'], 2) }}</td>
+                                <td>{{ $beyond12MonthsData['count'] }} Deals</td>
                             </tr>
                             <tr>
                                 <td>Needs New Date</td>
-                                <td>${{ number_format($stageData['needsNewDateData']['sum'], 2) }}</td>
-                                <td>{{ $stageData['needsNewDateData']['count'] }} Deals</td>
+                                <td>${{ number_format($needsNewDateData['sum'], 2) }}</td>
+                                <td>{{ $needsNewDateData['count'] }} Deals</td>
                             </tr>
                         </tbody>
                     </table>
