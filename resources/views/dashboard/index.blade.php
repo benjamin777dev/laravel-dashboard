@@ -180,6 +180,21 @@ document.addEventListener('DOMContentLoaded', function() {
         var radius = canvas.width * 0.4;
         var endAngle = Math.PI * (1 + (progress / 100));
 
+        // Draw the red segment
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI * 1.75, Math.PI * 2, false);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = radius * 0.2;
+        ctx.stroke();
+
+         // Draw the yellow segment
+         ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 1.75, false);
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = radius * 0.2;
+        ctx.stroke();
+
+        
         // Draw the green segment
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1.5, false);
@@ -187,19 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.lineWidth = radius * 0.2;
         ctx.stroke();
 
-        // Draw the yellow segment
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 1.75, false);
-        ctx.strokeStyle = 'yellow';
-        ctx.lineWidth = radius * 0.2;
-        ctx.stroke();
-
-        // Draw the red segment
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.75, Math.PI * 2, false);
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = radius * 0.2;
-        ctx.stroke();
+       
+        
 
         // Draw the needle
         ctx.beginPath();
