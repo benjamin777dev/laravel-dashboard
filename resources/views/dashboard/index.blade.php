@@ -162,57 +162,68 @@ document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
     
-    function draw() {
-        var width = canvas.offsetWidth;
-        var height = Math.round(width / 2);
-        canvas.width = width;
-        canvas.height = height;
-
-        var centerX = width / 2;
-        var centerY = height * 0.8;
-        var radius = width * 0.35;
-
-        ctx.clearRect(0, 0, width, height); // Clear the canvas
-        
-        // Draw gauge segments
-        drawSegment(ctx, centerX, centerY - radius, radius, Math.PI, 1.25 * Math.PI, 'red');
-        drawSegment(ctx, centerX, centerY - radius, radius, 1.25 * Math.PI, 1.5 * Math.PI, 'yellow');
-        drawSegment(ctx, centerX, centerY - radius, radius, 1.5 * Math.PI, 2 * Math.PI, 'green');
-
-        // Draw needle
-        var progress = @json($progress);
-        var needleAngle = Math.PI + (Math.PI * progress / 100);
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY - radius); // Start at the center of the circle
-        ctx.lineTo(centerX + radius * Math.cos(needleAngle), centerY - radius - radius * Math.sin(needleAngle));
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-
-        // Draw text
-        ctx.fillStyle = 'black';
-        ctx.font = '16px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY - radius / 2);
+    function setCanvasDimensions() {
+        var container = document.querySelector('.widget-thermometer .card-body');
+        // Set the canvas size relative to its container
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetWidth * 0.6; // Maintain aspect ratio for height
     }
 
-    function drawSegment(ctx, x, y, radius, startAngle, endAngle, color) {
+    setCanvasDimensions(); // Initial canvas size setup
+
+    function drawGauge(progress) {
+        var width = canvas.width;
+        var height = canvas.height;
+        var centerX = width / 2;
+        var centerY = height * 0.7; // Adjust to fit the gauge arc within the canvas
+        var radius = width * 0.35; // Radius of the gauge
+
+        ctx.clearRect(0, 0, width, height); // Clear the canvas
+
+        // Draw the gauge segments
+        drawSegment(ctx, centerX, centerY, radius, 0.75 * Math.PI, 1 * Math.PI, '#FF0000'); // Red segment
+        drawSegment(ctx, centerX, centerY, radius, 0.5 * Math.PI, 0.75 * Math.PI, '#FFFF00'); // Yellow segment
+        drawSegment(ctx, centerX, centerY, radius, 0.25 * Math.PI, 0.5 * Math.PI, '#00FF00'); // Green segment
+
+        // Draw the needle
+        drawNeedle(ctx, centerX, centerY, radius, progress);
+
+        // Draw the percentage text
+        ctx.font = 'bold ' + (width / 15) + 'px Arial';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.fillText(progress + '%', centerX, centerY + radius * 0.5); // Position the text below the gauge
+    }
+
+    function drawSegment(ctx, x, y, r, startAngle, endAngle, color) {
         ctx.beginPath();
-        ctx.arc(x, y, radius, startAngle, endAngle);
-        ctx.lineWidth = radius * 0.1; // Thickness of the segment
+        ctx.arc(x, y, r, startAngle, endAngle, false);
+        ctx.lineWidth = r * 0.1; // Thickness of the gauge segment
         ctx.strokeStyle = color;
         ctx.stroke();
     }
 
-    // Resize the canvas and draw the gauge
-    window.addEventListener('resize', draw);
-    draw(); // Initial draw
+    function drawNeedle(ctx, x, y, r, value) {
+        var needleAngle = Math.PI + (Math.PI * value / 100); // Convert percentage to radians
+        ctx.beginPath();
+        ctx.moveTo(x, y); // Needle base at the center
+        ctx.lineTo(x + r * Math.cos(needleAngle), y + r * Math.sin(needleAngle)); // Needle tip
+        ctx.stroke();
+
+        // Draw base of needle
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    // Redraw the gauge when the window is resized
+    window.addEventListener('resize', function() {
+        setCanvasDimensions();
+        drawGauge(@json($progress)); // Redraw gauge with the new dimensions
+    });
+
+    drawGauge(@json($progress)); // Draw gauge initially
 });
 </script>
-
-
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
