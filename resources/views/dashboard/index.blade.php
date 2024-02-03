@@ -10,12 +10,12 @@
 
 <div class="container">
     <div class="row mt-4">
-        <div class="card widget-thermometer">
+        <div class="card widget-thermometer col-4">
             <div class="card-header">
                 My Pipeline - Next 12 Months
             </div>
             <div class="card-body">
-                <div class="chart-container" style="position: relative; height:40vh;">
+                <div class="chart-container">
                     <canvas id="customGaugeChart"></canvas>
                 </div>
                 <div class="thermometer-table mt-3">
@@ -36,23 +36,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-
-        <!-- Goal Thermometer -->
-        <div class="card widget-thermometer col-4">
-            <div class="card-header">
-                My Pipeline - Next 12 Months
-            </div>
-            <div class="card-body">
-                <div class="thermometer-chart-container">
-                    <canvas id="thermometerChart"></canvas>
-                </div>
-                <div class="thermometer-table mt-3">
-                    <!-- Table of values -->
-            </div>
-            <h4>Not in Pipeline</h4>
+                <h4>Not in Pipeline</h4>
                 <table class="table">
                     <thead>
                         <th scope="col"></th>
@@ -75,8 +59,6 @@
             </div>
         </div>
     </div>
-
-
     <div class="col-md-8">
         <div class="card widget-monthly-comparison">
             <div class="card-header">
