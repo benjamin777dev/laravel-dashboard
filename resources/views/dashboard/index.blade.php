@@ -6,6 +6,7 @@
 
 @section('content')
 @vite(['resources/css/dashboard.css'])
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
 <div class="container">
     <div class="row mt-4">
@@ -33,6 +34,26 @@
                                 <td>${{ number_format($stageData['Potential']['sum'], 2) }}<br>{{ $stageData['Potential']['count'] }} Deals</td>
                                 <td>${{ number_format($stageData['Active']['sum'], 2) }}<br>{{ $stageData['Active']['count'] }} Deals</td>
                                 <td>${{ number_format($stageData['Pre-Active']['sum'], 2) }}<br>{{ $stageData['Pre-Active']['count'] }} Deals</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h4>Not in Pipeline</h4>
+                    <table>
+                        <thead>
+                            <th scope="col"></th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Count</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Beyond 12 Months</td>
+                                <td>${{ number_format($stageData['beyond12MonthsData']['sum'], 2) }}</td>
+                                <td>{{ $stageData['beyond12MonthsData']['count'] }} Deals</td>
+                            </tr>
+                            <tr>
+                                <td>Needs New Date</td>
+                                <td>${{ number_format($stageData['needsNewDateData']['sum'], 2) }}</td>
+                                <td>{{ $stageData['needsNewDateData']['count'] }} Deals</td>
                             </tr>
                         </tbody>
                     </table>
