@@ -38,7 +38,7 @@
                         </tbody>
                     </table>
                     <h4>Not in Pipeline</h4>
-                    <table>
+                    <table class="table">
                         <thead>
                             <th scope="col"></th>
                             <th scope="col">Amount</th>
