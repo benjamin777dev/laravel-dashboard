@@ -10,6 +10,37 @@
 
 <div class="container">
     <div class="row mt-4">
+        <div class="card widget-thermometer">
+        <div class="card-header">
+            My Pipeline - Next 12 Months
+        </div>
+        <div class="card-body">
+            <canvas id="thermometerChart"></canvas>
+            <div class="thermometer-table mt-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            @foreach ($stageData as $stage => $data)
+                                <th scope="col">{{ $stage }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @foreach ($stageData as $data)
+                                <td>${{ number_format($data['sum'], 2) }}<br>{{ $data['count'] }} Deals</td>
+                            @endforeach
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
         <!-- Goal Thermometer -->
         <div class="card widget-thermometer col-4">
             <div class="card-header">
@@ -21,59 +52,27 @@
                 </div>
                 <div class="thermometer-table mt-3">
                     <!-- Table of values -->
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Potential</th>
-                                <th scope="col">Active</th>
-                                <th scope="col">Pre-Active</th>
-                                <th scope="col">Under Contract</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>${{ number_format($stageData['Potential']['sum'], 2) }}<br>{{ $stageData['Potential']['count'] }} Deals</td>
-                                <td>${{ number_format($stageData['Active']['sum'], 2) }}<br>{{ $stageData['Active']['count'] }} Deals</td>
-                                <td>${{ number_format($stageData['Pre-Active']['sum'], 2) }}<br>{{ $stageData['Pre-Active']['count'] }} Deals</td>
-                                <td>${{ number_format($stageData['Under Contract']['sum'], 2) }}<br>{{ $stageData['Under Contract']['count'] }} Deals</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                    <h4>Not in Pipeline</h4>
-                    <table class="table">
-                        <thead>
-                            <th scope="col"></th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Count</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Beyond 12 Months</td>
-                                <td>${{ number_format($beyond12MonthsData['sum'], 2) }}</td>
-                                <td>{{ $beyond12MonthsData['count'] }} Deals</td>
-                            </tr>
-                            <tr>
-                                <td>Needs New Date</td>
-                                <td>${{ number_format($needsNewDateData['sum'], 2) }}</td>
-                                <td>{{ $needsNewDateData['count'] }} Deals</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
-        </div>
-    </div>
-
-   
-
-    <div class="row mt-4">
-        <div class="card widget-monthly-comparison col-4">
-            <div class="card-header">
-                My Pipeline - Monthly Comparison
-            </div>
-            <div class="card-body">
-                <canvas id="monthlyComparisonChart"></canvas>
+            <h4>Not in Pipeline</h4>
+                <table class="table">
+                    <thead>
+                        <th scope="col"></th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Count</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Beyond 12 Months</td>
+                            <td>${{ number_format($beyond12MonthsData['sum'], 2) }}</td>
+                            <td>{{ $beyond12MonthsData['count'] }} Deals</td>
+                        </tr>
+                        <tr>
+                            <td>Needs New Date</td>
+                            <td>${{ number_format($needsNewDateData['sum'], 2) }}</td>
+                            <td>{{ $needsNewDateData['count'] }} Deals</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -114,7 +113,7 @@
                 <div class="card-body">
                     <p>This is where cap data would be</p>
                 </div>
-            </div> 
+            </div>
         </div>
         <div class="col-8">
             <div class="card">
@@ -164,28 +163,28 @@
 @section('dashboardScript')
 
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         var ctx = document.getElementById('thermometerChart').getContext('2d');
-        var progress = {{ $progress }};
-        var data = [25, 25, 50 - progress, progress]; // Data for doughnut chart
+        var progress = @json($progress); // Laravel Blade directive to output the progress variable as JSON
         var thermometerChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    data: data,
-                    backgroundColor: ['#dc3545', '#ffc107', '#28a745', '#fff'],
-                    borderColor: '#fff'
+                    data: [progress, 100 - progress],
+                    backgroundColor: [progress > 50 ? 'green' : progress > 25 ? 'yellow' : 'red', '#eee'],
+                    borderWidth: 0
                 }]
             },
             options: {
-                rotation: -90 * Math.PI / 180,
-                circumference: 180 * Math.PI / 180,
+                rotation: Math.PI,
+                circumference: Math.PI,
                 cutout: '90%',
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { enabled: false },
+                    datalabels: { display: false }
                 }
             }
         });
@@ -194,15 +193,15 @@
 
 
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
         var monthlyComparisonChart = new Chart(monthlyCtx, {
             type: 'bar',
             data: {
-                labels: {!! json_encode($allMonths->keys()) !!},
+                labels: @json($allMonths->keys()), // Laravel Blade directive
                 datasets: [{
                     label: 'Monthly GCI',
-                    data: {!! json_encode($allMonths->values()) !!},
+                    data: @json($allMonths->values()), // Laravel Blade directive
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
@@ -215,8 +214,14 @@
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false },
+                    datalabels: {
+                        color: '#444',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: function(value, context) {
+                            return '$' + value.toLocaleString();
+                        }
                     }
                 }
             }

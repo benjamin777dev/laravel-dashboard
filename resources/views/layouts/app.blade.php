@@ -40,6 +40,8 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Include the datalabels plugin from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <!-- App & Custom JS Scripts -->
     @vite(['resources/js/app.js', 'resources/js/custom.js'])
