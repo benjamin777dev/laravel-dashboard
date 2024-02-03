@@ -161,7 +161,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
-
+    let radius, centerX, centerY, startAngle, endAngle;
     // Adjust the canvas size to the parent container
     function resizeCanvas() {
         var container = document.querySelector('.widget-thermometer');
@@ -172,11 +172,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Draw the gauge with segments and needle pointing to progress
     function drawGauge(progress) {
-        var centerX = canvas.width / 2;
-        var centerY = canvas.height / 2;
-        var radius = canvas.width / 3;
-        var startAngle = Math.PI;
-        var endAngle = 2 * Math.PI;
+         centerX = canvas.width / 2;
+         centerY = canvas.height / 2;
+         radius = canvas.width / 3;
+         startAngle = Math.PI;
+         endAngle = 2 * Math.PI;
         
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
