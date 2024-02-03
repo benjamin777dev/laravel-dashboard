@@ -177,53 +177,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var centerX = canvas.width / 2;
         var centerY = canvas.height * 0.8;
-        var radius = canvas.width * 0.4;
+        var radius = canvas.width * 0.35; // Adjusted radius to fit within canvas
         var endAngle = Math.PI * (1 + (progress / 100));
 
-        // Draw the red segment
+        // Draw the segments with a slightly reduced radius and linewidth
+        drawSegment('red', Math.PI, Math.PI * 1.25, radius * 0.2);
+        drawSegment('yellow', Math.PI * 1.25, Math.PI * 1.5, radius * 0.2);
+        drawSegment('green', Math.PI * 1.5, 2 * Math.PI, radius * 0.2);
+
+        // Draw the needle with adjusted length
+        drawNeedle(endAngle, radius * 0.8);
+
+        // Draw the progress text above the gauge
+        drawProgressText(progress);
+    }
+
+    // Function to draw each segment of the gauge
+    function drawSegment(color, startAngle, endAngle, lineWidth) {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1.25, false);
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = radius * 0.2;
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
         ctx.stroke();
+    }
 
-         // Draw the yellow segment
-         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.25, Math.PI * 1.5, false);
-        ctx.strokeStyle = 'yellow';
-        ctx.lineWidth = radius * 0.2;
-        ctx.stroke();
-
-
-        // Draw the green segment
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 2, false);
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = radius * 0.2;
-        ctx.stroke();
-
-       
-        
-
-        // Draw the needle
+    // Function to draw the needle in the correct position
+    function drawNeedle(angle, length) {
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + radius * Math.cos(endAngle), centerY + radius * Math.sin(endAngle));
+        ctx.lineTo(centerX + length * Math.cos(angle), centerY - length * Math.sin(angle));
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 5;
         ctx.stroke();
+    }
 
-        // Draw the center circle for the needle
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius * 0.05, 0, Math.PI * 2, false);
-        ctx.fillStyle = '#333';
-        ctx.fill();
-
-        // Draw the progress text
+    // Function to draw the progress text
+    function drawProgressText(progress) {
         ctx.fillStyle = '#000';
         ctx.font = 'bold 20px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY - radius * 0.6);
+        ctx.fillText(progress + '%', centerX, centerY - radius * 0.5);
     }
 
     // Set up the initial canvas size and draw the gauge
@@ -233,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', resizeCanvas);
 });
 </script>
-
 
 
 
