@@ -8,60 +8,53 @@
 @vite(['resources/css/dashboard.css'])
 
 <div class="container">
-    <!-- Goal Thermometer -->
-    <div class="goal-thermometer">
-        <div class="progress-bar">
-            <div class="progress {{ $progressClass }}" style="width: {{ $progress }}%; color: {{ $progressTextColor }} !important;">
-                {{ $progress }}%
-            </div>
-        </div>
-        <div class="goal-markers">
-            <div class="marker" style="left: 15%;"></div> <!-- Marker for 15% -->
-            <div class="marker" style="left: 45%;"></div> <!-- Marker for 45% -->
-        </div>
-    </div>
-
-    <!-- Dashboard Data -->
     <div class="row mt-4">
-        @foreach ($stageData as $stage => $data)
-            <div class="col-md-3">
-                <div class="card text-center">
-                    <div class="card-header">{{ $stage }}</div>
-                    <div class="card-body">
-                        <h5 class="card-title">${{ number_format($data['sum'], 2) }}</h5>
-                        <p class="card-text">{{ $data['count'] }} Deals</p>
-                    </div>
+        <!-- Goal Thermometer -->
+        <div class="card widget-thermometer col-4">
+            <div class="card-header">
+                My Pipeline - Next 12 Months
+            </div>
+            <div class="card-body">
+                <div class="thermometer-chart-container">
+                    <canvas id="thermometerChart"></canvas>
+                </div>
+                <div class="thermometer-table mt-3">
+                    <!-- Table of values -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Potential</th>
+                                <th scope="col">Active</th>
+                                <th scope="col">Pre-Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${{ number_format($stageData['Potential']['sum'], 2) }}<br>{{ $stageData['Potential']['count'] }} Deals</td>
+                                <td>${{ number_format($stageData['Active']['sum'], 2) }}<br>{{ $stageData['Active']['count'] }} Deals</td>
+                                <td>${{ number_format($stageData['Pre-Active']['sum'], 2) }}<br>{{ $stageData['Pre-Active']['count'] }} Deals</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        @endforeach
-    </div>
-
-    <!-- Additional Information -->
-    <div class="row mt-3">
-        <div class="col-md-4">
-            <div class="alert alert-info">Current Pipeline Value: ${{ number_format($currentPipelineValue, 2) }}</div>
-        </div>
-        <div class="col-md-4">
-            <div class="alert alert-success">Projected Income: ${{ number_format($projectedIncome, 2) }}</div>
-        </div>
-        <div class="col-md-4">
-            <div class="alert alert-secondary">My Income Goal: ${{ number_format($goal, 2) }}</div>
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-md-6">
-            <div class="alert alert-warning">Beyond 12 Months: ${{ number_format($beyond12MonthsData['sum'], 2) }} ({{ $beyond12MonthsData['count'] }} Deals)</div>
-        </div>
-        <div class="col-md-6">
-            <div class="alert alert-danger">Needs New Date: ${{ number_format($needsNewDateData['sum'], 2) }} ({{ $needsNewDateData['count'] }} Deals)</div>
+   
+
+    <div class="row mt-4">
+        <div class="card widget-monthly-comparison col-4">
+            <div class="card-header">
+                My Pipeline - Monthly Comparison
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyComparisonChart"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-8">
-            <canvas id="monthlyGciChart"></canvas>
-        </div>
         <div class="col-4">
             <div class="card">
                 <div class="card-header">Database Maintenance</div>
@@ -145,33 +138,67 @@
 @vite(['resources/js/dashboard.js'])
 
 @section('dashboardScript')
-    <script>
-        $(document).ready(function() {
 
-            var ctx = document.getElementById('monthlyGciChart').getContext('2d');
-            if (!ctx) return;
-            var monthlyGciChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($allMonths->keys()) !!},
-                    datasets: [{
-                        label: 'Monthly GCI',
-                        data: {!! json_encode($allMonths->values()) !!},
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
+<script>
+    $(document).ready(function() {
+        var ctx = document.getElementById('thermometerChart').getContext('2d');
+        var progress = {{ $progress }};
+        var data = [25, 25, 50 - progress, progress]; // Data for doughnut chart
+        var thermometerChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#dc3545', '#ffc107', '#28a745', '#fff'],
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                rotation: -90 * Math.PI / 180,
+                circumference: 180 * Math.PI / 180,
+                cutout: '90%',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
+        var monthlyComparisonChart = new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($allMonths->keys()) !!},
+                datasets: [{
+                    label: 'Monthly GCI',
+                    data: {!! json_encode($allMonths->values()) !!},
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
 @endsection
 
 @endsection
