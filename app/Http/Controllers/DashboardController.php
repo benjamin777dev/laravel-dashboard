@@ -6,6 +6,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class DashboardController extends Controller
 {
@@ -32,7 +34,7 @@ class DashboardController extends Controller
         Log::info("Progress: $progress");
 
         // Group deals by stage and calculate counts and sums
-        $stages = ['Potential', 'Pre-Active', 'Active', 'Sold'];
+        $stages = ['Potential', 'Pre-Active', 'Active'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
             $filteredDeals = $deals->where('Stage', $stage);
             return [
@@ -197,10 +199,20 @@ class DashboardController extends Controller
 
     private function calculateProgress($deals, $goal)
     {
-        $totalGCI = $deals->sum('Pipeline1');
-        Log::info("Total GCI: $totalGCI");
+        // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
+        $filteredDeals = $deals->filter(function ($deal) {
+            return !Str::startsWith($deal['Stage'], 'Dead') && $deal['Stage'] !== 'Sold';
+        });
+
+        // Sum the 'Pipeline1' values of the filtered deals.
+        $totalGCI = $filteredDeals->sum('Pipeline1');
+        Log::info("Total GCI from open stages: $totalGCI");
+
+        // Calculate the progress as a percentage of the goal.
         $progress = ($totalGCI / $goal) * 100;
-        Log::info("Progress: $progress");
+        Log::info("Progress towards goal: $progress");
+
+        // Ensure progress does not exceed 100%.
         return min($progress, 100);
     }
 
@@ -209,7 +221,7 @@ class DashboardController extends Controller
         $allContacts = $this->retrieveContactsFromZoho($rootUserId, $accessToken);
 
         $abcContacts = $allContacts->filter(function ($contact) {
-            return !empty($contact['ABCD']);
+            return (!empty($contact['ABCD']) && $contact['ABCD'] !== 'D');
         })->count();
         Log::info("ABC Contacts: $abcContacts");
 
