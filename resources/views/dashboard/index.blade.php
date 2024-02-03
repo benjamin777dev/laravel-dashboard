@@ -225,6 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
