@@ -160,76 +160,60 @@ document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
 
-    // Set the canvas size based on its container
-    function resizeCanvas() {
-        var container = canvas.parentElement;
+    // Set the initial canvas dimensions
+    function setCanvasDimensions() {
+        var container = document.querySelector('.widget-thermometer .card-body');
         canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight * 0.75; // Height is 75% of width to maintain aspect ratio
-        drawGauge(@json($progress)); // Your progress value from the server
+        canvas.height = Math.round(container.offsetWidth / 2);
     }
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    setCanvasDimensions(); // Set the initial size based on the container
+
+    // Redraw the gauge when the window is resized to maintain responsiveness
+    window.addEventListener('resize', function() {
+        setCanvasDimensions();
+        drawGauge(@json($progress));
+    });
 
     function drawGauge(progress) {
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Variables for gauge drawing
         var centerX = canvas.width / 2;
-        var centerY = canvas.height * 0.7;
-        var radius = canvas.width * 0.3;
+        var centerY = canvas.height * 0.8; // Adjust centerY to lift the arc up
+        var radius = canvas.width / 3; // Adjust radius to fit the canvas width
 
-        // Gauge colors
-        var colors = {
-            red: '#FF0000',
-            yellow: '#FFFF00',
-            green: '#008000'
-        };
-
-        // Draw the background arc
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI, 0, false);
-        ctx.lineWidth = 30;
-        ctx.strokeStyle = '#ddd';
-        ctx.stroke();
-
-        // Draw the colored segments
-        ctx.lineWidth = 28;
-        ctx.strokeStyle = colors.red;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + (0.25 * Math.PI), false);
-        ctx.stroke();
-
-        ctx.strokeStyle = colors.yellow;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI + (0.25 * Math.PI), Math.PI + (0.5 * Math.PI), false);
-        ctx.stroke();
-
-        ctx.strokeStyle = colors.green;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, Math.PI + (0.5 * Math.PI), 0, false);
-        ctx.stroke();
+        // Draw the segments
+        drawSegment(centerX, centerY, radius, Math.PI, 1.25 * Math.PI, 'red'); // Red segment
+        drawSegment(centerX, centerY, radius, 1.25 * Math.PI, 1.5 * Math.PI, 'yellow'); // Yellow segment
+        drawSegment(centerX, centerY, radius, 1.5 * Math.PI, 2 * Math.PI, 'green'); // Green segment
 
         // Draw the needle
-        var needleAngle = Math.PI + (progress / 100) * Math.PI;
-        ctx.translate(centerX, centerY);
-        ctx.rotate(needleAngle);
+        var needleAngle = Math.PI + (progress / 100) * Math.PI; // Convert progress to radians
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(radius * 0.8, 0); // Needle length
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#000000';
+        ctx.moveTo(centerX, centerY); // Needle base at gauge center
+        ctx.lineTo(centerX + radius * Math.cos(needleAngle), centerY + radius * Math.sin(needleAngle)); // Needle tip
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
         ctx.stroke();
-        ctx.rotate(-needleAngle);
-        ctx.translate(-centerX, -centerY);
 
         // Draw the progress text
-        ctx.fillStyle = '#000000';
-        ctx.font = 'bold ' + (canvas.width / 20) + 'px Arial'; // Font size is relative to canvas width
+        ctx.fillStyle = 'black';
+        ctx.font = 'bold ' + (canvas.width / 20) + 'px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY + radius);
+        ctx.fillText(progress + '%', centerX, centerY + radius / 2); // Text below the gauge
     }
+
+    function drawSegment(centerX, centerY, radius, startAngle, endAngle, color) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+        ctx.lineWidth = radius / 8; // Segment thickness
+        ctx.strokeStyle = color;
+        ctx.stroke();
+    }
+
+    // Initial draw
+    drawGauge(@json($progress));
 });
 </script>
 
