@@ -10,7 +10,7 @@
 
 <div class="container">
     <div class="row mt-4">
-        <div class="card widget-thermometer">
+        <div class="card">
         <div class="card-header">
             My Pipeline - Next 12 Months
         </div>
@@ -163,33 +163,43 @@
 @section('dashboardScript')
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('thermometerChart').getContext('2d');
-        var progress = @json($progress); // Laravel Blade directive to output the progress variable as JSON
-        var thermometerChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [progress, 100 - progress],
-                    backgroundColor: [progress > 50 ? 'green' : progress > 25 ? 'yellow' : 'red', '#eee'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                rotation: Math.PI,
-                circumference: Math.PI,
-                cutout: '90%',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false },
-                    datalabels: { display: false }
-                }
+document.addEventListener('DOMContentLoaded', function() {
+    // Make sure to have only one initialization for the thermometerChart
+    var ctx = document.getElementById('thermometerChart').getContext('2d');
+    var progress = @json($progress); // Use the Blade directive to output the progress variable as JSON
+    var data = [progress, 100 - progress];
+    var backgroundColor = progress > 50 ? ['green', '#ddd'] : progress > 25 ? ['yellow', '#ddd'] : ['red', '#ddd'];
+
+    // Check if the chart instance already exists
+    if (window.thermometerChartInstance) {
+        window.thermometerChartInstance.destroy(); // Destroy the previous instance if it exists
+    }
+
+    // Create a new chart instance
+    window.thermometerChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColor
+            }]
+        },
+        options: {
+            rotation: Math.PI,
+            circumference: Math.PI,
+            cutout: '90%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false },
+                datalabels: { display: false }
             }
-        });
+        }
     });
+});
 </script>
+
 
 
 <script>
