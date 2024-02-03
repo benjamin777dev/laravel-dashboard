@@ -161,62 +161,71 @@
 document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
-    let radius, centerX, centerY, startAngle, endAngle;
-    // Adjust the canvas size to the parent container
+    var progress = @json($progress); // Your progress value from the server
+
+    // Resize the canvas and draw the gauge accordingly
     function resizeCanvas() {
         var container = document.querySelector('.widget-thermometer');
         canvas.width = container.offsetWidth;
-        canvas.height = canvas.width / 2; // Maintain aspect ratio
-        drawGauge(@json($progress));
+        canvas.height = container.offsetWidth / 2; // Set a fixed height-to-width ratio
+        drawGauge();
     }
 
-    // Draw the gauge with segments and needle pointing to progress
-    function drawGauge(progress) {
-         centerX = canvas.width / 2;
-         centerY = canvas.height / 2;
-         radius = canvas.width / 3;
-         startAngle = Math.PI;
-         endAngle = 2 * Math.PI;
-        
-        // Clear canvas
+    function drawGauge() {
+        // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw segments
-        drawSegment(centerX, centerY, radius, startAngle, endAngle * 0.25, '#FF0000'); // Red segment (0-25%)
-        drawSegment(centerX, centerY, radius, endAngle * 0.25, endAngle * 0.5, '#FFFF00'); // Yellow segment (25-50%)
-        drawSegment(centerX, centerY, radius, endAngle * 0.5, endAngle, '#00FF00'); // Green segment (50-100%)
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height * 0.8;
+        var radius = canvas.width * 0.4;
+        var endAngle = Math.PI * (1 + (progress / 100));
 
-        // Draw needle
-        var needleLength = radius * 0.8;
-        var needleAngle = startAngle + (progress / 100) * Math.PI; // Calculate needle angle based on progress
+        // Draw the green segment
         ctx.beginPath();
-        ctx.moveTo(centerX, centerY); // Needle base
-        ctx.lineTo(centerX + needleLength * Math.cos(needleAngle), centerY + needleLength * Math.sin(needleAngle)); // Needle tip
-        ctx.strokeStyle = 'black';
+        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1.5, false);
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = radius * 0.2;
+        ctx.stroke();
+
+        // Draw the yellow segment
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI * 1.5, Math.PI * 1.75, false);
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = radius * 0.2;
+        ctx.stroke();
+
+        // Draw the red segment
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI * 1.75, Math.PI * 2, false);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = radius * 0.2;
+        ctx.stroke();
+
+        // Draw the needle
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + radius * Math.cos(endAngle), centerY + radius * Math.sin(endAngle));
+        ctx.strokeStyle = '#333';
         ctx.lineWidth = 5;
         ctx.stroke();
 
-        // Draw progress text
-        ctx.fillStyle = 'black';
-        ctx.font = 'bold 24px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY - radius - 20);
-    }
-
-    // Draw a segment at the specific portion of the gauge
-    function drawSegment(cx, cy, r, startAngle, endAngle, color) {
+        // Draw the center circle for the needle
         ctx.beginPath();
-        ctx.arc(cx, cy, r, startAngle, endAngle, false);
-        ctx.lineWidth = radius * 0.1; // Thickness of the gauge
-        ctx.strokeStyle = color;
-        ctx.stroke();
+        ctx.arc(centerX, centerY, radius * 0.05, 0, Math.PI * 2, false);
+        ctx.fillStyle = '#333';
+        ctx.fill();
+
+        // Draw the progress text
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(progress + '%', centerX, centerY - radius * 0.6);
     }
 
-    // Initial draw
+    // Set up the initial canvas size and draw the gauge
     resizeCanvas();
-    drawGauge(@json($progress));
 
-    // Redraw gauge on window resize
+    // Add a resize event listener to redraw the gauge on window resize
     window.addEventListener('resize', resizeCanvas);
 });
 </script>
