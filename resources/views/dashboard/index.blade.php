@@ -10,7 +10,7 @@
 
 <div class="container">
     <div class="row mt-4">
-        <div class="card">
+        <div class="card widget-thermometer">
             <div class="card-header">
                 My Pipeline - Next 12 Months
             </div>
@@ -39,10 +39,6 @@
             </div>
         </div>
     </div>
-
-
-
-
 
         <!-- Goal Thermometer -->
         <div class="card widget-thermometer col-4">
@@ -76,6 +72,18 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-8">
+        <div class="card widget-monthly-comparison">
+            <div class="card-header">
+                My Pipeline - Monthly Comparison
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyComparisonChart"></canvas>
             </div>
         </div>
     </div>
@@ -170,61 +178,76 @@ document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('customGaugeChart');
     var ctx = canvas.getContext('2d');
 
-    // Set the size of the canvas
-    var container = canvas.parentElement;
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
+    // Set the canvas size based on its container
+    function resizeCanvas() {
+        var container = canvas.parentElement;
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight * 0.75; // Height is 75% of width to maintain aspect ratio
+        drawGauge(@json($progress)); // Your progress value from the server
+    }
 
-    var progress = @json($progress); // Your progress value
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    // Function to draw the gauge
     function drawGauge(progress) {
-        var centerX = canvas.width / 2;
-        var centerY = canvas.height * 0.9; // Adjust to position the gauge higher in the canvas
-        var radius = Math.min(centerX, centerY) * 0.8; // Radius of the gauge
-        var startAngle = Math.PI;
-        var endAngle = 2 * Math.PI;
-
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw segments
-        var segments = [
-            { color: 'red', end: startAngle + (0.25 * Math.PI) },
-            { color: 'yellow', end: startAngle + (0.5 * Math.PI) },
-            { color: 'green', end: endAngle }
-        ];
+        // Variables for gauge drawing
+        var centerX = canvas.width / 2;
+        var centerY = canvas.height * 0.7;
+        var radius = canvas.width * 0.3;
 
-        segments.forEach(function(segment) {
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, startAngle, segment.end, false);
-            ctx.lineWidth = 30; // Width of the gauge segments
-            ctx.strokeStyle = segment.color;
-            ctx.stroke();
-            startAngle = segment.end;
-        });
+        // Gauge colors
+        var colors = {
+            red: '#FF0000',
+            yellow: '#FFFF00',
+            green: '#008000'
+        };
 
-        // Draw needle
-        var needleAngle = (Math.PI * progress) / 100 + Math.PI;
+        // Draw the background arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, 0, false);
+        ctx.lineWidth = 30;
+        ctx.strokeStyle = '#ddd';
+        ctx.stroke();
+
+        // Draw the colored segments
+        ctx.lineWidth = 28;
+        ctx.strokeStyle = colors.red;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + (0.25 * Math.PI), false);
+        ctx.stroke();
+
+        ctx.strokeStyle = colors.yellow;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI + (0.25 * Math.PI), Math.PI + (0.5 * Math.PI), false);
+        ctx.stroke();
+
+        ctx.strokeStyle = colors.green;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI + (0.5 * Math.PI), 0, false);
+        ctx.stroke();
+
+        // Draw the needle
+        var needleAngle = Math.PI + (progress / 100) * Math.PI;
         ctx.translate(centerX, centerY);
         ctx.rotate(needleAngle);
         ctx.beginPath();
-        ctx.moveTo(0, -10); // Start 10px above the center
-        ctx.lineTo(radius * 0.8, 0); // Draw to 80% of the radius
-        ctx.lineTo(0, 10); // Draw back down 10px below the center
-        ctx.fillStyle = 'grey';
-        ctx.fill();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radius * 0.8, 0); // Needle length
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
         ctx.rotate(-needleAngle);
-        ctx.translate(-centerX, -centerY); // Reset translation
+        ctx.translate(-centerX, -centerY);
 
-        // Draw percentage text
-        ctx.fillStyle = 'black';
-        ctx.font = '16px Arial';
+        // Draw the progress text
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold ' + (canvas.width / 20) + 'px Arial'; // Font size is relative to canvas width
         ctx.textAlign = 'center';
-        ctx.fillText(progress + '%', centerX, centerY + radius * 0.2); // Position below the gauge
+        ctx.fillText(progress + '%', centerX, centerY + radius);
     }
-
-    drawGauge(progress);
 });
 </script>
 
