@@ -35,7 +35,7 @@
                                 <td>${{ number_format($stageData['Potential']['sum'], 2) }}<br>{{ $stageData['Potential']['count'] }} Deals</td>
                                 <td>${{ number_format($stageData['Active']['sum'], 2) }}<br>{{ $stageData['Active']['count'] }} Deals</td>
                                 <td>${{ number_format($stageData['Pre-Active']['sum'], 2) }}<br>{{ $stageData['Pre-Active']['count'] }} Deals</td>
-                                <td>${{ number_format($stageData['Under-Contract']['sum'], 2) }}<br>{{ $stageData['Under-Contract']['count'] }} Deals</td>
+                                <td>${{ number_format($stageData['Under Contract']['sum'], 2) }}<br>{{ $stageData['Under Contract']['count'] }} Deals</td>
                             </tr>
 
                         </tbody>
