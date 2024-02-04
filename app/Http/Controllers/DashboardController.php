@@ -40,25 +40,30 @@ class DashboardController extends Controller
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
                     'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
+                    'asum' => sum($filteredDeals->sum('Pipeline1'))
                 ],
             ];
         });
 
-        // Calculate Current Pipeline Value
-        $currentPipelineValue = $stageData->sum(function ($stage) {
-            return $stage['sum'];
+        $cpv = $this->$stageData->sum(function ($stage) {
+            return $stage['asum'];
         });
 
+        // Calculate Current Pipeline Value
+        $currentPipelineValue = $this->formatNumber($cpv);
+        
         // Calculate Projected Income
-        $projectedIncome = $currentPipelineValue * 2;
+        $projectedIncome = $cpv * 2;
 
         // Beyond 12 Months
         $beyond12Months = $deals->filter(function ($deal) {
             return now()->diffInMonths($deal['Closing_Date']) > 12;
         });
+
         $beyond12MonthsData = [
-            'sum' => $beyond12Months->sum('Pipeline1'),
+            'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
             'count' => $beyond12Months->count(),
+            'asum' => $beyond12Months->sum('Pipeline1')
         ];
 
         // Needs New Date
@@ -66,7 +71,8 @@ class DashboardController extends Controller
             return $deal['Closing_Date'] < now();
         });
         $needsNewDateData = [
-            'sum' => $needsNewDate->sum('Pipeline1'),
+            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')), 
+            'asum' => $needsNewDate->sum('Pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
