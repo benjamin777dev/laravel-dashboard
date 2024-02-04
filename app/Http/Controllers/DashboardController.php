@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
                     'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
-                    'asum' => sum($filteredDeals->sum('Pipeline1'))
+                    'asum' => $filteredDeals->sum('Pipeline1')
                 ],
             ];
         });
