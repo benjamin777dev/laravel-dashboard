@@ -31,16 +31,15 @@ class DashboardController extends Controller
         $progress = $this->calculateProgress($deals, $goal);
         $progressClass = $progress <= 15 ? "bg-danger" : ($progress <= 45 ? "bg-warning" : "bg-success");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
-        Log::info("Progress: $progress");
-
-        // Group deals by stage and calculate counts and sums
+        Log::info("Progress: $progress");        
+        
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
             $filteredDeals = $deals->where('Stage', $stage);
             return [
                 $stage => [
-                    'count' => $filteredDeals->count(),
-                    'sum' => $filteredDeals->sum('Pipeline1'),
+                    'count' => $this->formatNumber($filteredDeals->count()),
+                    'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
                 ],
             ];
         });
@@ -114,6 +113,19 @@ class DashboardController extends Controller
                 'newContactsLast30Days', 'newDealsLast30Days', 
                 'averagePipelineProbability', 'tasks'));
 
+    }
+
+
+    private function formatNumber($number) {
+        if ($number < 1000) {
+            return (string)$number; // Less than 1,000
+        } elseif ($number < 1000000) {
+            return round($number / 1000, 2) . 'k'; // Less than 1 million
+        } elseif ($number < 1000000000) {
+            return round($number / 1000000, 2) . 'm'; // Less than 1 billion
+        } else {
+            return round($number / 1000000000, 2) . 'b'; // 1 billion or more
+        }
     }
 
     private function retreiveAndCheckTasks(User $user, $accessToken) {
