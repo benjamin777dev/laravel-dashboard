@@ -11,7 +11,7 @@
 
 <div class="container-fluid">
     <div class="row mt-4">
-        <div class="col-12">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
                     My Pipeline - Next 12 Months
@@ -81,10 +81,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-8">
+        <div class="col-md-4">
             <div class="card widget-monthly-comparison">
                 <div class="card-header">
                     My Pipeline - Monthly Comparison
@@ -94,10 +91,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-4">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">Database Maintenance</div>
                 <div class="card-body">
@@ -110,7 +104,7 @@
             </div>
         </div>
     </div>
-
+   
     <div class="row mt-3">
         <div class="col-md-4">
             <div class="alert alert-info">Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</div>
@@ -126,7 +120,7 @@
     <div class="row mt-4">
     {{-- Task Section --}}
     <div class="row mt-4">
-        <div class="col-4">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">Cap data</div>
                 <div class="card-body">
@@ -134,7 +128,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-8">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Action to Take</div>
                 <div class="card-body">
@@ -166,7 +160,7 @@
     </div>
 
     <div class="row mt-4">
-        <div class="col-4">
+        <div class="col-md-4">
             <div class="card">
                 <div class="card-header">Performance Metrics</div>
                 <div class="card-body">
