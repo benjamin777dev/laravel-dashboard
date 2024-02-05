@@ -46,7 +46,7 @@
                     <tbody>
                         <tr>
                             <td>Beyond 12 Months</td>
-                            <td>${{ number_format($beyond12MonthsData['sum'], 2) }}</td>
+                            <td>${{ $beyond12MonthsData['sum'] }}</td>
                             <td>{{ $beyond12MonthsData['count'] }} Deals</td>
                         </tr>
                         <tr>
