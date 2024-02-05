@@ -82,9 +82,107 @@
             </div>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card widget-monthly-comparison">
+                <div class="card-header">
+                    My Pipeline - Monthly Comparison
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyComparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Database Maintenance</div>
+                <div class="card-body">
+                    <p>ABC Contacts: {{ $contactData['abcContacts'] }}</p>
+                    <p>Needs Email: {{ $contactData['needsEmail'] }}</p>
+                    <p>Needs Address: {{ $contactData['needsAddress'] }}</p>
+                    <p>Needs Phone: {{ $contactData['needsPhone'] }}</p>
+                    <p>Missing ABCD: {{ $contactData['missingAbcd'] }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="alert alert-info">Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-success">Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-secondary">Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</div>
+        </div>
+    </div>
+    <div class="row mt-3">
+    <div class="row mt-4">
+    {{-- Task Section --}}
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Cap data</div>
+                <div class="card-body">
+                    <p>This is where cap data would be</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">Action to Take</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th> <!-- For checkbox -->
+                                <th>Subject</th>
+                                <th>Due Date</th>
+                                <th>Related To</th>
+                                <th>Assigned To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($tasks as $task)
+                                <tr>
+                                    <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
+                                    <td>{{ $task['Subject'] ?? 'N/A' }}</td>
+                                    <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}</td>
+                                    <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
+                                    <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">Performance Metrics</div>
+                <div class="card-body">
+                    <p><a href="https://analytics.zoho.com/open-view/2487682000008614470/3c546af6361400d5afd39fa034e3f1b9">CHR Rankings Report</a></p>
+                    <p><a href="https://analytics.zoho.com/open-view/2487682000008657377/8b86fc2667f41985c4de6ebf80d00ba7">CHR Company Production</a></p>
+                    <p><a href="#">Strategy Group Production (Coming Soon)</a></p>
+                    <p><a href="https://analytics.zoho.com/open-view/2487682000008655113/74f218cdf16cc52f2a54e19c1f5fdc83">Co-Op Agent Analysis</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-
+  
+    
 
 @vite(['resources/js/dashboard.js'])
 
