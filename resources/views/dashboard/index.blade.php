@@ -51,7 +51,7 @@
                         </tr>
                         <tr>
                             <td>Needs New Date</td>
-                            <td>${{ number_format($needsNewDateData['sum'], 2) }}</td>
+                            <td>${{ $needsNewDateData['sum'] }}</td>
                             <td>{{ $needsNewDateData['count'] }} Deals</td>
                         </tr>
                     </tbody>
