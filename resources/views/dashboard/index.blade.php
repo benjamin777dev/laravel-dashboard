@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var centerX = canvas.width / 2;
     var centerY = canvas.height * 0.7; // Lower the center to give more space at the top
-    var radius = canvas.width * 0.3; // Reduce the radius to ensure it fits in the canvas
+    var radius = canvas.width * 0.15; // Reduce the radius to ensure it fits in the canvas
 
     // Draw the red segment
     ctx.beginPath();
