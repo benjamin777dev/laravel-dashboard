@@ -30,7 +30,7 @@
                         <tbody>
                             <tr>
                                 @foreach ($stageData as $data)
-                                    <td>${{ number_format($data['sum'], 2) }}<br>{{ $data['count'] }} Deals</td>
+                                    <td>${{ $data['sum'] }}<br>{{ $data['count'] }} Deals</td>
                                 @endforeach
                             </tr>
                         </tbody>
