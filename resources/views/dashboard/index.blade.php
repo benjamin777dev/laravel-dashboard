@@ -21,18 +21,18 @@
                 <div class="thermometer-table mt-3">
                     <table class="table">
                         <thead>
+                            @foreach ($stageData as $stage => $data)
                             <tr>
-                                @foreach ($stageData as $stage => $data)
-                                    <th scope="col">{{ $stage }}</th>
-                                @endforeach
+                                <th scope="col">{{ $stage }}</th>
                             </tr>
+                            @endforeach
                         </thead>
                         <tbody>
+                            @foreach ($stageData as $data)
                             <tr>
-                                @foreach ($stageData as $data)
-                                    <td>${{ $data['sum'] }}<br>{{ $data['count'] }} Deals</td>
-                                @endforeach
+                                <td>${{ $data['sum'] }}<br>{{ $data['count'] }} Deals</td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
