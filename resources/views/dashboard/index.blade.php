@@ -272,47 +272,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas); // Redraw the gauge on window resize
+
+    // for drawing the monthly chart
+    var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
+    var monthlyComparisonChart = new Chart(monthlyCtx, {
+        type: 'bar', // This specifies a vertical bar chart
+        data: {
+            labels: @json($allMonths->keys()), // Laravel Blade directive
+            datasets: [{
+                label: 'Monthly GCI',
+                data: @json($allMonths->values()), // Laravel Blade directive
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // 'x' for vertical chart and 'y' for horizontal
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true // Ensure this is set to have the bars start at the base
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    color: '#444',
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: function(value, context) {
+                        return '$' + value.toLocaleString();
+                    }
+                }
+            },
+            maintainAspectRatio: false // Add this to prevent the chart from taking the default aspect ratio
+        }
+    });
+
 });
 </script>
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
-        var monthlyComparisonChart = new Chart(monthlyCtx, {
-            type: 'bar',
-            data: {
-                labels: @json($allMonths->keys()), // Laravel Blade directive
-                datasets: [{
-                    label: 'Monthly GCI',
-                    data: @json($allMonths->values()), // Laravel Blade directive
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    datalabels: {
-                        color: '#444',
-                        anchor: 'end',
-                        align: 'top',
-                        formatter: function(value, context) {
-                            return '$' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        });
-    });
-</script>
+
 @endsection
 
 @endsection
