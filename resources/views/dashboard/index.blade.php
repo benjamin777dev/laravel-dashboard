@@ -101,9 +101,9 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="alert alert-info">Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</div>
-                <div class="alert alert-success">Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</div>
-                <div class="alert alert-secondary">Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</div>
+                <div class="alert alert-info"><h3>Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</h3></div>
+                <div class="alert alert-success"><h3>Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</h3></div>
+                <div class="alert alert-secondary"><h3>Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</h3></div>
                 <div class="card">
                     <div class="card-header">Performance Metrics</div>
                     <div class="card-body">
