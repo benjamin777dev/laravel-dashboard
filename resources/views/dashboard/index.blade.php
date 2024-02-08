@@ -285,8 +285,9 @@
                         mode: 'index',
                         intersect: false,
                         callbacks: {
-                        label: function(tooltipItem, data) {
-                            return 'GCI: $' + tooltipItem.yLabel.toLocaleString();
+                            label: function(tooltipItem, data) {
+                                return 'GCI: $' + tooltipItem.yLabel.toLocaleString();
+                            }
                         }
                     },
                     indexAxis: 'y', // 'x' for vertical chart and 'y' for horizontal
