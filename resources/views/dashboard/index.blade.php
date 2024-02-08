@@ -283,12 +283,13 @@
                     indexAxis: 'y', // 'x' for vertical chart and 'y' for horizontal
                     scales: {
                         y: {
-                            beginAtZero: true
-                        },
-                        x: {
-                            beginAtZero: true, // Ensure this is set to have the bars start at the base
+                            beginAtZero: true,
                             barPercentage: 0.75, // Adjust this value to make bars thicker
                             categoryPercentage: 0.5
+                        },
+                        x: {
+                            beginAtZero: true // Ensure this is set to have the bars start at the base
+                            
                         }
                     },
                     plugins: {
