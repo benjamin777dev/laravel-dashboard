@@ -227,7 +227,7 @@ class DashboardController extends Controller
         while ($hasMorePages) {
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get('https://www.zohoapis.com/crm/v6/CustomModule10/search', [
+            ])->get('https://www.zohoapis.com/crm/v6/Agent_Commission_Incomes/search', [
                 'page' => $page,
                 'per_page' => 200,
                 'criteria' => $criteria,
