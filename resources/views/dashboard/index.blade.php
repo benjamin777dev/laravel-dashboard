@@ -107,7 +107,11 @@
                 <div class="card">
                     <div class="card-header">Cap data</div>
                     <div class="card-body">
-                        <p>This is where cap data would be</p>
+                        <p>Cap Paid YTD: {{ $aciData['totalaci'] }}</p>
+                        <p>My Initial Cap</p>
+                        <p>My Residual Cap</p>
+                        <p>Checks Received YTD: {{ $aciData['totalAgentCheck'] }}</p>
+                        <p>1099 Amount YTD: {{ $aciData['totalIRS1099'] }}</p>
                     </div>
                 </div>
                 <div class="card">
@@ -122,15 +126,11 @@
             </div>
         </div>
     
-        
         <div class="row mt-3">
         <div class="row mt-4">
         {{-- Task Section --}}
         <div class="row mt-4">
-            <div class="col-md-4">
-                
-            </div>
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">Action to Take</div>
                     <div class="card-body">
@@ -160,13 +160,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="row mt-4">
-            <div class="col-md-4">
-                
-            </div>
-        </div>
-
     </div>
 
     @vite(['resources/js/dashboard.js'])

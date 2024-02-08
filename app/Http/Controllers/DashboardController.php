@@ -109,6 +109,48 @@ class DashboardController extends Controller
 
         Log::info("Task Details: ". print_r($tasks, true));
 
+        // get cap information
+        // initial cap comes from agent profile
+        // residual cap comes from agent profile
+        // cap paid ytd, comes from aci table
+        // -- pull all aci records for current year and current agent
+        // -- that are sold
+        // -- and sum up the TOTAL column
+        // total checks, like above, this comes from aci for the current year
+        // -- pull all aci records for current year and current agent
+        // -- that are sold
+        // -- then sum up the agent check amount column
+        // 1099 like above, this comes from aci for current year
+        // -- pull all aci records for current year and current agent
+        // -- that are sold
+        // -- then sum up the IRS reported 1099 Income For This Transaction
+
+        // so game plan is as follows
+        // single API request for aci
+        // single api request for contact information
+        // then query the aci data for the necessary totals
+        // then add necessary contact information to the array
+        // include the array information in the frontend
+
+        $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
+        $totalaci = $aciInfo->filter(function ($aci) {
+            return $aci['Total'] > 0 && $aci['Stage'] == 'Sold';
+        })->sum();
+
+        $totalAgentCheck =  $aciInfo->filter(function ($aci) {
+            return $aci['Agent_Check_Amount'] > 0 && $aci['Stage'] == 'Sold';
+        })->sum();
+
+        $totalIRS1099 =  $aciInfo->filter(function ($aci) {
+            return $aci['IRS_1099_Income_For_This_Transaction'] > 0 && $aci['Stage'] == 'Sold';
+        })->sum();
+
+        $aciData = [
+            'totalaci' => $this->formatNumber($totalaci),
+            'totalAgentCheck' => $this->formatNumber($totalAgentCheck),
+            'totalIRS1099' => $this->formatNumber($totalIRS1099),
+        ];
+
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -117,7 +159,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks'));
+                'averagePipelineProbability', 'tasks', 'aciData'));
 
     }
 
@@ -170,6 +212,47 @@ class DashboardController extends Controller
         }
 
         return $allTasks;
+    }
+
+    private function retrieveACIFromZoho(User $user, $accessToken)
+    {
+        $allACI = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        $fields = "Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving aci for criteria: $criteria");
+
+        while ($hasMorePages) {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get('https://www.zohoapis.com/crm/v6/CustomModule10/search', [
+                'page' => $page,
+                'per_page' => 200,
+                'criteria' => $criteria,
+                'fields' => $fields,
+            ]);
+
+            if (!$response->successful()) {
+                Log::error("Error retrieving aci: " . $response->body());
+                // Handle unsuccessful response
+                $hasMorePages = false;
+                break;
+            }
+
+            Log::info("Successful aci fetch... Page: " . $page);
+            $responseData = $response->json();
+            //Log::info("Response data: ". print_r($responseData, true));
+            $aciData = collect($responseData['data'] ?? []);
+            $allACI = $allACI->concat($aciData);
+
+            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+            $page++;
+
+        }
+
+        return $allACI;
     }
 
     private function retrieveDealsFromZoho(User $user, $accessToken)
