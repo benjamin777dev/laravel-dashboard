@@ -220,7 +220,7 @@ class DashboardController extends Controller
         $page = 1;
         $hasMorePages = true;
 
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        $criteria = "(CHR_Agent:equals:$user->root_user_id)";
         $fields = "Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
         Log::info("Retrieving aci for criteria: $criteria");
 
