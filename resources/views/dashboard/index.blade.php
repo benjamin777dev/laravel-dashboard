@@ -277,8 +277,7 @@
                         data: @json($allMonths->values()), // Laravel Blade directive
                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1,
-                        barWidth: 20
+                        borderWidth: 
                     }]
                 },
                 options: {
@@ -288,7 +287,9 @@
                             beginAtZero: true
                         },
                         x: {
-                            beginAtZero: true // Ensure this is set to have the bars start at the base
+                            beginAtZero: true, // Ensure this is set to have the bars start at the base
+                            barPercentage: 0.75, // Adjust this value to make bars thicker
+                            categoryPercentage: 0.5 /
                         }
                     },
                     plugins: {
