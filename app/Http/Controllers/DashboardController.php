@@ -285,6 +285,8 @@ class DashboardController extends Controller
                 break;
             }
 
+            Log::info("Response: ". $response->body());
+
             Log::info("Successful deal fetch... Page: " . $page);
             $responseData = $response->json();
             //Log::info("Response data: ". print_r($responseData, true));
