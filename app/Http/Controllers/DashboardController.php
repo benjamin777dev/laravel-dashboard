@@ -295,7 +295,6 @@ class DashboardController extends Controller
             $page++;
 
         }
-        dd($allDeals);
         
         return $allDeals;
     }
