@@ -105,6 +105,12 @@
                 <div class="alert alert-success"><h3>Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</h3></div>
                 <div class="alert alert-secondary"><h3>Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</h3></div>
                 <div class="card">
+                    <div class="card-header">Cap data</div>
+                    <div class="card-body">
+                        <p>This is where cap data would be</p>
+                    </div>
+                </div>
+                <div class="card">
                     <div class="card-header">Performance Metrics</div>
                     <div class="card-body">
                         <p><a href="https://analytics.zoho.com/open-view/2487682000008614470/3c546af6361400d5afd39fa034e3f1b9">CHR Rankings Report</a></p>
@@ -122,12 +128,7 @@
         {{-- Task Section --}}
         <div class="row mt-4">
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">Cap data</div>
-                    <div class="card-body">
-                        <p>This is where cap data would be</p>
-                    </div>
-                </div>
+                
             </div>
             <div class="col-md-8">
                 <div class="card">
