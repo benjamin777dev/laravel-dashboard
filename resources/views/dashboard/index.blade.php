@@ -280,16 +280,30 @@
                     }]
                 },
                 options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                        label: function(tooltipItem, data) {
+                            return 'GCI: $' + tooltipItem.yLabel.toLocaleString();
+                        }
+                    },
                     indexAxis: 'y', // 'x' for vertical chart and 'y' for horizontal
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            barPercentage: 0.75, // Adjust this value to make bars thicker
-                            categoryPercentage: 0.5
+                            beginAtZero: true
                         },
                         x: {
-                            beginAtZero: true // Ensure this is set to have the bars start at the base
-                            
+                            beginAtZero: true, // Ensure this is set to have the bars start at the base
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 12 // Adjust as needed for the number of months
+                                // Include the following if the labels are still overlapping:
+                                // callback: function(value, index, values) {
+                                //   return index % 2 === 0 ? value : '';
+                                // },
+                            }
                         }
                     },
                     plugins: {
