@@ -251,6 +251,9 @@ class DashboardController extends Controller
 
         }
 
+        Log::info("Total aci records: ". $allACI->count());
+        Log::info("Aci Records: ", $allACI->toArray());
+
         dd($allACI);
 
         return $allACI;
