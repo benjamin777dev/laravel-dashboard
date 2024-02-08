@@ -81,7 +81,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card widget-monthly-comparison">
+                <div class="card widget-monthly-comparison" style="height: 400px;width=100%;">
                     <div class="card-header">
                         My Pipeline - Monthly Comparison
                     </div>
