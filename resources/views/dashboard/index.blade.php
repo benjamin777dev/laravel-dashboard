@@ -89,8 +89,6 @@
                         <canvas id="monthlyComparisonChart"></canvas>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">Database Maintenance</div>
                     <div class="card-body">
@@ -102,19 +100,13 @@
                     </div>
                 </div>
             </div>
+            <div class="alert alert-info">Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</div>
+            <div class="alert alert-success">Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</div>
+            <div class="alert alert-secondary">Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</div>
+
         </div>
     
-        <div class="row mt-3">
-            <div class="col-md-4">
-                <div class="alert alert-info">Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-success">Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-secondary">Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</div>
-            </div>
-        </div>
+        
         <div class="row mt-3">
         <div class="row mt-4">
         {{-- Task Section --}}
