@@ -90,7 +90,7 @@ class RegisterController extends Controller
 
                 Log::Info("User Data Response: " . print_r($userDataResponse->json(), true));
 
-                $criteria = "(Email:equals:{$userDataResponse->json()['users'][0]['email']})";
+                $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userDataResponse->json()['users'][0]['email']}))";
                 $fields = "Id,Email,First_Name,Last_Name";
                 $contactDataResponse = Http::withHeaders([
                     'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
