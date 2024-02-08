@@ -246,11 +246,12 @@ class DashboardController extends Controller
             //Log::info("Response data: ". print_r($responseData, true));
             $aciData = collect($responseData['data'] ?? []);
             $allACI = $allACI->concat($aciData);
-
             $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
             $page++;
 
         }
+
+        dd($allACI);
 
         return $allACI;
     }
