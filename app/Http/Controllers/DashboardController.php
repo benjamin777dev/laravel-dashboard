@@ -163,20 +163,23 @@ class DashboardController extends Controller
        
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total']) 
-                   && $aci['Total'] > 0 
-                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && $this->masterFilter($aci)
+                && $aci['Total'] > 0 
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('Total');
         
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
             return isset($aci['Agent_Check_Amount']) 
-                   && $aci['Agent_Check_Amount'] > 0 
-                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && $this->masterFilter($aci)
+                && $aci['Agent_Check_Amount'] > 0 
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('Agent_Check_Amount');
         
         $totalIRS1099 = $aciInfo->filter(function ($aci) {
             return isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) 
-                   && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
-                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && $this->masterFilter($aci)
+                && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('IRS_Reported_1099_Income_For_This_Transaction');
         Log::info("ACI Info: ". print_r($aciInfo, true));
 
@@ -263,7 +266,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        $fields = "Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
         Log::info("Retrieving aci for criteria: $criteria");
 
         while ($hasMorePages) {
