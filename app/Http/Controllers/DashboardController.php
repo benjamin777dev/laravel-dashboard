@@ -161,17 +161,19 @@ class DashboardController extends Controller
         // include the array information in the frontend
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
+       
         $totalaci = $aciInfo->filter(function ($aci) {
             return $aci['Total'] > 0 && $aci['Stage'] == 'Sold';
-        })->sum();
+        })->sum('Total');
+
 
         $totalAgentCheck =  $aciInfo->filter(function ($aci) {
             return $aci['Agent_Check_Amount'] > 0 && $aci['Stage'] == 'Sold';
-        })->sum();
+        })->sum('Agent_Check_Amount');
 
         $totalIRS1099 =  $aciInfo->filter(function ($aci) {
             return $aci['IRS_1099_Income_For_This_Transaction'] > 0 && $aci['Stage'] == 'Sold';
-        })->sum();
+        })->sum('IRS_1099_Income_For_This_Transaction');
 
         $aciData = [
             'totalaci' => $this->formatNumber($totalaci),
@@ -188,9 +190,7 @@ class DashboardController extends Controller
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
                 'averagePipelineProbability', 'tasks', 'aciData'));
-
     }
-
 
     private function formatNumber($number) {
         if ($number < 1000) {
