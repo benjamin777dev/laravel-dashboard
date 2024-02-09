@@ -180,9 +180,9 @@ class DashboardController extends Controller
         })->sum('IRS_1099_Income_For_This_Transaction');
                  
         $aciData = [
-            'totalaci' => $this->formatNumber($totalaci) || 0,
-            'totalAgentCheck' => $this->formatNumber($totalAgentCheck) || 0,
-            'totalIRS1099' => $this->formatNumber($totalIRS1099) || 0,
+            'totalaci' => $this->formatNumber($totalaci ?? 0),
+            'totalAgentCheck' => $this->formatNumber($totalAgentCheck ?? 0),
+            'totalIRS1099' => $this->formatNumber($totalIRS1099 ?? 0),
         ];
 
         // Pass data to the view
