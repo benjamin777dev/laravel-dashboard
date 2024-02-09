@@ -11,6 +11,12 @@ use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
+    private function masterFilter($deal) {
+        $date = Carbon::parse($deal['Closing_Date']);
+        $now = Carbon::now();
+        return $date->diffInMonths($now) <= 12 && $date->gte($now);
+    }
+    
     public function index()
     {
         $user = auth()->user();
@@ -33,9 +39,14 @@ class DashboardController extends Controller
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
         Log::info("Progress: $progress");        
         
+        // master filter will exclude anything that is beyond 12 months
+        // anything that is a bad date (less than today)
+
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
-            $filteredDeals = $deals->where('Stage', $stage);
+            $filteredDeals = $deals->filter(function ($deal) use ($stage) {
+                return $deal['Stage'] === $stage && $this->masterFilter($deal);
+            });
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
@@ -57,8 +68,12 @@ class DashboardController extends Controller
 
         // Beyond 12 Months
         $beyond12Months = $deals->filter(function ($deal) {
-            return now()->diffInMonths($deal['Closing_Date']) > 12;
-        });
+            return now()->diffInMonths($deal['Closing_Date']) > 12 
+                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold';
+            }
+        );
+
 
         $beyond12MonthsData = [
             'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
@@ -68,27 +83,37 @@ class DashboardController extends Controller
 
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) {
-            return $deal['Closing_Date'] < now();
+            return $deal['Closing_Date'] < now() 
+            && !Str::startsWith($deal['Stage'], 'Dead') 
+            && $deal['Stage'] !== 'Sold';
         });
+
         $needsNewDateData = [
             'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')), 
             'asum' => $needsNewDate->sum('Pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
-        // Prepare monthly GCI data
-        $monthlyGCI = $deals->groupBy(function ($deal) {
+
+     
+        $filteredDeals = $deals->filter(function ($deal) {
+            return $this->masterFilter($deal);
+        });
+        
+        $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
             return Carbon::parse($deal['Closing_Date'])->format('Y-m');
-        })->map(function ($deals) {
-            return $deals->sum('Pipeline1');
+        })->map(function ($dealsGroup) {
+            return $dealsGroup->sum('Pipeline1');
         });
 
-        $averagePipelineProbability = $deals->avg('Pipeline_Probability');
+        $averagePipelineProbability = $deals->filter(function ($deal) {
+            return $this->masterFilter($deal);
+        })->avg('Pipeline_Probability');
 
-        $newDealsLast30Days = $deals->filter(function ($deal) {
-            return now()->diffInDays($deal['Created_Time']) < 30;
+        $newDealsLast30Days = $filteredDeals->filter(function ($deal) {
+            return now()->diffInDays($deal['Created_Time']) < 30 
+            && $this->masterFilter($deal);
         })->count();
-
 
         // Ensure all months of the year are represented, fill missing months with 0
         $startOfYear = Carbon::now()->startOfYear();
@@ -304,8 +329,12 @@ class DashboardController extends Controller
     private function calculateProgress($deals, $goal)
     {
         // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
+        // don't count anything beyond 12 months
+        // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['Stage'], 'Dead') && $deal['Stage'] !== 'Sold';
+            return !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold' 
+                   && $this->masterFilter($deal); // Correct usage within the method
         });
 
         // Sum the 'Pipeline1' values of the filtered deals.
