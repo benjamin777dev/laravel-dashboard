@@ -162,24 +162,24 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
        
         $totalaci = $aciInfo->filter(function ($aci) {
-            return isset($aci['Total']) 
-                && $this->masterFilter($aci)
+            return isset($aci['Total'], $aci['Closing_Date']) 
                 && $aci['Total'] > 0 
-                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
+                && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]); // Assuming masterFilter is adapted to handle this
         })->sum('Total');
         
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
-            return isset($aci['Agent_Check_Amount']) 
-                && $this->masterFilter($aci)
+            return isset($aci['Agent_Check_Amount'], $aci['Closing_Date']) 
                 && $aci['Agent_Check_Amount'] > 0 
-                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
+                && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Agent_Check_Amount');
         
         $totalIRS1099 = $aciInfo->filter(function ($aci) {
-            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) 
-                && $this->masterFilter($aci)
+            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction'], $aci['Closing_Date']) 
                 && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
-                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
+                && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('IRS_Reported_1099_Income_For_This_Transaction');
         
         $aciData = [
