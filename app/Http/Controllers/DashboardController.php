@@ -12,9 +12,11 @@ use Illuminate\Support\Str;
 class DashboardController extends Controller
 {
     private function masterFilter($deal) {
-        $date = Carbon::parse($deal['Closing_Date']);
-        $now = Carbon::now();
-        return $date->diffInMonths($now) <= 12 && $date->gte($now);
+        $closingDate = Carbon::parse($deal['Closing_Date']);
+        $startOfYear = Carbon::now()->startOfYear();
+        $endOfYear = Carbon::now()->endOfYear();
+    
+        return $closingDate->gte($startOfYear) && $closingDate->lte($endOfYear);
     }
     
     public function index()
@@ -41,7 +43,6 @@ class DashboardController extends Controller
         
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
-
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
@@ -67,12 +68,14 @@ class DashboardController extends Controller
         $projectedIncome = $cpv * 2;
 
         // Beyond 12 Months
+
         $beyond12Months = $deals->filter(function ($deal) {
-            return now()->diffInMonths($deal['Closing_Date']) > 12 
-                   && !Str::startsWith($deal['Stage'], 'Dead') 
-                   && $deal['Stage'] !== 'Sold';
-            }
-        );
+            $closingDate = Carbon::parse($deal['Closing_Date']);
+            $endOfYear = Carbon::now()->endOfYear();
+            return $closingDate->gt($endOfYear) 
+                && !Str::startsWith($deal['Stage'], 'Dead') 
+                && $deal['Stage'] !== 'Sold';
+        });
 
         $beyond12MonthsData = [
             'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
@@ -82,9 +85,9 @@ class DashboardController extends Controller
 
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) {
-            return $deal['Closing_Date'] < now() 
-                && !Str::startsWith($deal['Stage'], 'Dead') 
-                && $deal['Stage'] !== 'Sold';
+            return Carbon::parse($deal['Closing_Date'])->lt(now()) 
+                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
@@ -95,8 +98,8 @@ class DashboardController extends Controller
 
         $filteredDeals = $deals->filter(function ($deal) {
             return $this->masterFilter($deal) 
-                && !Str::startsWith($deal['Stage'], 'Dead') 
-                && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold';
         });
         
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
@@ -107,15 +110,15 @@ class DashboardController extends Controller
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                && !Str::startsWith($deal['Stage'], 'Dead') 
-                && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
-        $newDealsLast30Days = $filteredDeals->filter(function ($deal) {
-            return now()->diffInDays($deal['Created_Time']) < 30 
-            && $this->masterFilter($deal)
-            && !Str::startsWith($deal['Stage'], 'Dead') 
-            && $deal['Stage'] !== 'Sold';
+        $newDealsLast30Days = $deals->filter(function ($deal) {
+            return now()->diffInDays(Carbon::parse($deal['Created_Time'])) <= 30 
+                   && $this->masterFilter($deal)
+                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && $deal['Stage'] !== 'Sold';
         })->count();
 
         // Ensure all months of the year are represented, fill missing months with 0
@@ -163,9 +166,9 @@ class DashboardController extends Controller
        
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date']) 
-                && $aci['Total'] > 0 
-                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
-                && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]); // Assuming masterFilter is adapted to handle this
+                   && $aci['Total'] > 0 
+                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
+                   && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Total');
         
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
