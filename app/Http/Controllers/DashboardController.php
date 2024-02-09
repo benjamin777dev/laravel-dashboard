@@ -163,22 +163,27 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
        
         $totalaci = $aciInfo->filter(function ($aci) {
-            return $aci['Total'] > 0 && $aci['Stage'] == 'Sold';
+            return isset($aci['Total'], $aci['Stage']) 
+            && $aci['Total'] > 0 
+            && $aci['Stage'] == 'Sold';
         })->sum('Total');
 
-
-        $totalAgentCheck =  $aciInfo->filter(function ($aci) {
-            return $aci['Agent_Check_Amount'] > 0 && $aci['Stage'] == 'Sold';
+        $totalAgentCheck = $aciInfo->filter(function ($aci) {
+            return isset($aci['Agent_Check_Amount'], $aci['Stage']) 
+            && $aci['Agent_Check_Amount'] > 0 
+            && $aci['Stage'] == 'Sold';
         })->sum('Agent_Check_Amount');
 
-        $totalIRS1099 =  $aciInfo->filter(function ($aci) {
-            return $aci['IRS_1099_Income_For_This_Transaction'] > 0 && $aci['Stage'] == 'Sold';
+        $totalIRS1099 = $aciInfo->filter(function ($aci) {
+            return isset($aci['IRS_1099_Income_For_This_Transaction'], $aci['Stage']) 
+            && $aci['IRS_1099_Income_For_This_Transaction'] > 0 
+            && $aci['Stage'] == 'Sold';
         })->sum('IRS_1099_Income_For_This_Transaction');
-
+                 
         $aciData = [
-            'totalaci' => $this->formatNumber($totalaci),
-            'totalAgentCheck' => $this->formatNumber($totalAgentCheck),
-            'totalIRS1099' => $this->formatNumber($totalIRS1099),
+            'totalaci' => $this->formatNumber($totalaci) || 0,
+            'totalAgentCheck' => $this->formatNumber($totalAgentCheck) || 0,
+            'totalIRS1099' => $this->formatNumber($totalIRS1099) || 0,
         ];
 
         // Pass data to the view
