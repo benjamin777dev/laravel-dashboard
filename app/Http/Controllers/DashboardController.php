@@ -74,7 +74,6 @@ class DashboardController extends Controller
             }
         );
 
-
         $beyond12MonthsData = [
             'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
             'count' => $beyond12Months->count(),
@@ -84,8 +83,8 @@ class DashboardController extends Controller
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) {
             return $deal['Closing_Date'] < now() 
-            && !Str::startsWith($deal['Stage'], 'Dead') 
-            && $deal['Stage'] !== 'Sold';
+                && !Str::startsWith($deal['Stage'], 'Dead') 
+                && $deal['Stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
@@ -94,10 +93,10 @@ class DashboardController extends Controller
             'count' => $needsNewDate->count(),
         ];
 
-
-     
         $filteredDeals = $deals->filter(function ($deal) {
-            return $this->masterFilter($deal);
+            return $this->masterFilter($deal) 
+                && !Str::startsWith($deal['Stage'], 'Dead') 
+                && $deal['Stage'] !== 'Sold';
         });
         
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
@@ -107,12 +106,16 @@ class DashboardController extends Controller
         });
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
-            return $this->masterFilter($deal);
+            return $this->masterFilter($deal)
+                && !Str::startsWith($deal['Stage'], 'Dead') 
+                && $deal['Stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $filteredDeals->filter(function ($deal) {
             return now()->diffInDays($deal['Created_Time']) < 30 
-            && $this->masterFilter($deal);
+            && $this->masterFilter($deal)
+            && !Str::startsWith($deal['Stage'], 'Dead') 
+            && $deal['Stage'] !== 'Sold';
         })->count();
 
         // Ensure all months of the year are represented, fill missing months with 0
