@@ -213,38 +213,46 @@ class DashboardController extends Controller
         $allTasks = collect();
         $page = 1;
         $hasMorePages = true;
+        $error = '';
 
         $criteria = "(Owner:equals:$user->root_user_id)and(Status:not_equal:Completed)";
         Log::info("Retrieving tasks for criteria: $criteria");
 
-        while ($hasMorePages) {
-            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get('https://www.zohoapis.com/crm/v6/Tasks/search', [
-                'page' => $page,
-                'per_page' => 200,
-                'criteria' => $criteria,
-            ]);
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+        ])->get('https://www.zohoapis.com/crm/v6/Tasks/search', [
+            'page' => $page,
+            'per_page' => 200,
+            'criteria' => $criteria,
+        ]);
 
-            if (!$response->successful()) {
-                Log::error("Error retrieving deals: " . $response->body());
-                // Handle unsuccessful response
-                $hasMorePages = false;
-                break;
-            }
-
+        if (!$response->successful()) {
+            Log::error("Error retrieving deals: " . $response->body());
+            // Handle unsuccessful response
+            $hasMorePages = false;
+            $error = $response->json();
+        } else {
             Log::info("Successful task fetch... Page: " . $page);
             $responseData = $response->json();
             //Log::info("Response data: ". print_r($responseData, true));
             $tasks = collect($responseData['data'] ?? []);
             $allTasks = $allTasks->concat($tasks);
-
-            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+        }
+        $currentPage = $page;
+        $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+        if ($hasMorePages) {
             $page++;
-
         }
 
-        return $allTasks;
+        return [
+            'error' => $error?? '',
+            'tasks' => $allTasks, 
+            'pagination' => [
+                'hasMorePages' => $hasMorePages,
+                'nextPage' => $page,
+                'currentPage' => $currentPage,
+            ]
+        ];
     }
 
     private function retrieveACIFromZoho(User $user, $accessToken)
