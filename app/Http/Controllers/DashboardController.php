@@ -162,25 +162,24 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
        
         $totalaci = $aciInfo->filter(function ($aci) {
-            return isset($aci['Total'], $aci['Stage']) 
-            && $aci['Total'] > 0 
-            && $aci['Stage'] == 'Sold';
+            return isset($aci['Total']) 
+                   && $aci['Total'] > 0 
+                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('Total');
-
+        
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
-            return isset($aci['Agent_Check_Amount'], $aci['Stage']) 
-            && $aci['Agent_Check_Amount'] > 0 
-            && $aci['Stage'] == 'Sold';
+            return isset($aci['Agent_Check_Amount']) 
+                   && $aci['Agent_Check_Amount'] > 0 
+                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('Agent_Check_Amount');
-
+        
         $totalIRS1099 = $aciInfo->filter(function ($aci) {
-            return isset($aci['IRS_1099_Income_For_This_Transaction'], $aci['Stage']) 
-            && $aci['IRS_1099_Income_For_This_Transaction'] > 0 
-            && $aci['Stage'] == 'Sold';
-        })->sum('IRS_1099_Income_For_This_Transaction');
-        
+            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) 
+                   && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
+                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
+        })->sum('IRS_Reported_1099_Income_For_This_Transaction');
         Log::info("ACI Info: ". print_r($aciInfo, true));
-        
+
 
         $aciData = [
             'totalaci' => $this->formatNumber($totalaci ?? 0),
