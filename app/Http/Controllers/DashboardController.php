@@ -134,7 +134,6 @@ class DashboardController extends Controller
         $newContactsLast30Days = $contactData['contactsLast30Days'];
 
         $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
-        dd($tasks);
         Log::info("Task Details: ". print_r($tasks, true));
 
         // get cap information

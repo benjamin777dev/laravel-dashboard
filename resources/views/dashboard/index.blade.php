@@ -145,7 +145,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($tasks.tasks as $task)
+                                @foreach ($tasks['tasks'] as $task)
                                     <tr>
                                         <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
                                         <td>{{ $task['Subject'] ?? 'N/A' }}</td>
