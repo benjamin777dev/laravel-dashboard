@@ -181,14 +181,14 @@ class DashboardController extends Controller
                 && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
                 && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold');
         })->sum('IRS_Reported_1099_Income_For_This_Transaction');
-        Log::info("ACI Info: ". print_r($aciInfo, true));
-
-
+        
         $aciData = [
             'totalaci' => $this->formatNumber($totalaci ?? 0),
             'totalAgentCheck' => $this->formatNumber($totalAgentCheck ?? 0),
             'totalIRS1099' => $this->formatNumber($totalIRS1099 ?? 0),
         ];
+
+        Log::Info("ACI Data: ". print_r($aciData, true));
 
         // Pass data to the view
         return view('dashboard.index',
