@@ -19,7 +19,16 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $deals = $this->retrieveDealsFromZoho($user->zoho_id, $accessToken);
 
-        return view('pipeline.index', compact('deals'));
+        // Calculate summary fields
+        $summary = [
+            'salesPriceTotal' => $deals->sum('Sale_Price'),
+            'commissionAverage' => $deals->avg('Commission'),
+            'pipelineProbabilityAverage' => $deals->avg('Pipeline_Probability'),
+            'potentialGCITotal' => $deals->sum('Potential_GCI'),
+            'probableGCITotal' => $deals->sum('Pipeline1'),
+        ];
+
+        return view('pipeline.index', compact('deals', 'summary'));
     }
 
     public function getClosedDeals(Request $request)
@@ -87,13 +96,13 @@ class PipelineController extends Controller
                 'criteria' => $criteria,
                 'fields' => $fields,
             ]);
-            Log::info("Response: ". print_r($response, true));
+            Log::info("Response: " . print_r($response, true));
 
             if ($response->successful()) {
                 $responseData = $response->json();
-                Log::info("Response data: ". print_r($responseData, true));
+                Log::info("Response data: " . print_r($responseData, true));
                 $deals = collect($responseData['data'] ?? []);
-                Log::info("Deals: ". print_r($deals, true));
+                Log::info("Deals: " . print_r($deals, true));
                 // You might want to transform or enrich the deals data here
                 return $deals;
             } else {
