@@ -20,8 +20,8 @@ use App\Http\Controllers\ContactController;
 
 // Home Route (welcome page or dashboard)
 Route::get('/', function () {
-    return view('dashboard'); // Assuming 'welcome' is your home or dashboard view
-})->middleware('auth'); // Protect this route to require authentication
+    return redirect()->route('dashboard.index'); 
+})->middleware('auth');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -48,4 +48,3 @@ Route::resource('/pipeline', PipelineController::class);
 
 Auth::routes();
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');

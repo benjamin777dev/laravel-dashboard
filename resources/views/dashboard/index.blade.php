@@ -2,7 +2,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Agent Commander | Dashboard')
 
 @section('content')
     @vite(['resources/css/dashboard.css'])
