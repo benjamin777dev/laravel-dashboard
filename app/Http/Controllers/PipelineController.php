@@ -82,7 +82,7 @@ class PipelineController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
             ])->get($url, [
-                'page' => $page,
+                'page' => 1,
                 'per_page' => 200,
                 'criteria' => $criteria,
                 'fields' => $fields,
