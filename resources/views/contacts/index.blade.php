@@ -20,7 +20,7 @@
             @foreach ($contacts as $contact)
             <tr>
                 <td>{{ $contact['Full_Name'] ?? '' }}</td>
-                <td class="{{ $contact['abcdBackColor'] ?? '' }}" style="color:{{ $contact['abcdForeColor'] ?? '' }}">{{ $contact['ABCD'] ?? ''}}</td>
+                <td class="{{ $contact['abcdBackgroundClass'] ?? '' }}">{{ $contact['ABCD'] ?? ''}}</td>
                 <td>{{ $contact['Email'] ?? '' }}</td>
                 <td>{{ $contact['Phone'] ?? '' }}</td>
                 <td>{{ $contact['Mobile'] ?? '' }}</td>
