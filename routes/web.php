@@ -20,7 +20,7 @@ use App\Http\Controllers\ContactController;
 
 // Home Route (welcome page or dashboard)
 Route::get('/', function () {
-    return view('welcome'); // Assuming 'welcome' is your home or dashboard view
+    return view('dashboard'); // Assuming 'welcome' is your home or dashboard view
 })->middleware('auth'); // Protect this route to require authentication
 
 // Authentication Routes
