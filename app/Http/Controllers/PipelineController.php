@@ -72,6 +72,7 @@ class PipelineController extends Controller
             'per_page' => 200,
             // Adjust criteria as needed to fetch the relevant deals
             'criteria' => "((Owner:equals:$rootUserId)and((Stage:equals:Potential)or(Stage:equals:Pre-Active)or(Stage:equals:Active)or(Stage:equals:Under Contract)))",
+
         ];
 
         try {
@@ -81,10 +82,12 @@ class PipelineController extends Controller
 
             if ($response->successful()) {
                 $responseData = $response->json();
+                dd($responseData);
                 $deals = collect($responseData['data'] ?? []);
                 // You might want to transform or enrich the deals data here
                 return $deals;
             } else {
+                dd(print_r($response, true));
                 Log::error("Error fetching deals: {$response->body()}");
                 return collect();
             }
