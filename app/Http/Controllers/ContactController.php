@@ -49,6 +49,37 @@ class ContactController extends Controller
 
                 // Mark as perfect if all conditions are met
                 $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
+                $abcdBackColor = 'black';
+                $abcdForeColor = 'white';
+                if (isset($contact['ABCD'])) {
+                    if ($contact['ABCD'] == "A+") {
+                        $abcdBackColor = 'text-success';
+                        $abcdForeColor = 'white';
+                    }
+                    else if ($contact['ABCD'] == "A") {
+                        $abcdBackColor = 'text-success';
+                        $abcdForeColor = 'black';
+                    }
+                    else if ($contact['ABCD'] == "B") {
+                        $abcdBackColor = 'text-warning';
+                        $abcdForeColor = 'black';
+                    }
+                    else if ($contact['ABCD'] == "C") {
+                        $abcdBackColor ='text-danger';
+                        $abcdForeColor = 'white';
+                    }
+                    else if ($contact['ABCD'] == "D") {
+                        $abcdBackColor = 'text-secondary';
+                        $abcdForeColor = 'white';
+                    }
+                    else {
+                        $abcdBackColor = 'text-black';
+                        $abcdForeColor = 'white';
+                    }
+                }
+
+                $contact['abcdBackColor'] = $abcdBackColor;
+                $contact['abcdForeColor'] = $abcdForeColor;
 
                 return $contact;
             });

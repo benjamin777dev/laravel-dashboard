@@ -19,11 +19,11 @@
         <tbody>
             @foreach ($contacts as $contact)
             <tr>
-                <td>{{ $contact['Full_Name'] ?? 'N/A' }}</td>
-                <td>{{ $contact['ABCD'] ?? ''}}</td>
-                <td>{{ $contact['Email'] ?? 'N/A' }}</td>
-                <td>{{ $contact['Phone'] ?? 'N/A' }}</td>
-                <td>{{ $contact['Mobile'] ?? 'N/A' }}</td>
+                <td>{{ $contact['Full_Name'] ?? '' }}</td>
+                <td class="{{ $contact['abcdBackColor'] ?? '' }}" style="color:{{ $contact['abcdForeColor'] ?? '' }}">{{ $contact['ABCD'] ?? ''}}</td>
+                <td>{{ $contact['Email'] ?? '' }}</td>
+                <td>{{ $contact['Phone'] ?? '' }}</td>
+                <td>{{ $contact['Mobile'] ?? '' }}</td>
                 <td>{{ $contact['Mailing_Street'] ?? '' }} {{ $contact['Mailing_City'] ?? '' }} {{ $contact['Mailing_State'] ?? '' }} {{ $contact['Mailing_Zip'] ?? '' }}</td>
                 <td>
                     <input type="checkbox" disabled {{ $contact['HasMissingImportantDate'] ?? false ? '' : 'checked' }}>
