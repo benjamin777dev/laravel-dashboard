@@ -87,4 +87,40 @@ class ContactController extends Controller
             return collect();
         }
     }
+
+    public function show($contactId)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactDetails = $this->retrieveContactDetailsFromZoho($contactId, $accessToken);
+
+        return view('contacts.detail', compact('contactDetails'));
+    }
+
+    private function retrieveContactDetailsFromZoho($contactId, $accessToken)
+    {
+        $url = "https://www.zohoapis.com/crm/v2/Contacts/{$contactId}";
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get($url);
+
+            if ($response->successful()) {
+                $contactDetails = $response->json()['data'] ?? [];
+                // Additional logic here to process and format the contact details as needed
+                return $contactDetails[0]; // Assuming the response is an array with a single contact
+            } else {
+                Log::error("Error fetching contact details: {$response->body()}");
+                return null;
+            }
+        } catch (\Exception $e) {
+            Log::error("Exception when fetching contact details: {$e->getMessage()}");
+            return null;
+        }
+    }
+
 }

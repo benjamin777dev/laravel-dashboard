@@ -20,7 +20,7 @@
         <tbody>
             @foreach ($contacts as $contact)
             <tr>
-                <td>{{ $contact['Full_Name'] ?? '' }}</td>
+                <td><a href="{{ route('contacts.show', ['contact' => $contact['id']]) }}">{{ $contact['Full_Name'] ?? 'N/A' }}</a></td>
                 <td class="{{ $contact['abcdBackgroundClass'] ?? '' }}">{{ $contact['ABCD'] ?? ''}}</td>
                 <td>{{ $contact['Email'] ?? '' }}</td>
                 <td>{{ $contact['Phone'] ?? '' }}</td>
