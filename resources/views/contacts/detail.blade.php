@@ -11,7 +11,6 @@
         <p>Mobile: {{ $contactDetails['Mobile'] ?? 'N/A' }}</p>
         <p>Secondary Email: {{ $contactDetails['Secondary_Email'] ?? 'N/A' }}</p>
         <p>Envelope Salutation: {{ $contactDetails['Salutation_s'] ?? 'N/A' }}</p>
-        <p>Groups: {{ implode(', ', $contactDetails['Groups'] ?? []) }}</p>
         <p>Relationship Type: {{ $contactDetails['Relationship_Type'] ?? 'N/A' }}</p>
         <p>Referred By: {{ $contactDetails['Referred_By'] ?? 'N/A' }}</p>
         <p>Lead Source: {{ $contactDetails['Lead_Source'] ?? 'N/A' }}</p>
