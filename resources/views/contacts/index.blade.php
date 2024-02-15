@@ -7,22 +7,26 @@
         <thead>
             <tr>
                 <th>Contact Name</th>
+                <th>ABCD</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Mobile</th>
                 <th>Address</th>
-                <!-- Add other headers as per your requirement -->
+                <th>Imp Date</th>
+                <th>Perfect</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($contacts as $contact)
             <tr>
                 <td>{{ $contact['Full_Name'] ?? 'N/A' }}</td>
+                <td>{{ $contact['ABCD'] ?? ''}}</td>
                 <td>{{ $contact['Email'] ?? 'N/A' }}</td>
                 <td>{{ $contact['Phone'] ?? 'N/A' }}</td>
                 <td>{{ $contact['Mobile'] ?? 'N/A' }}</td>
                 <td>{{ $contact['Mailing_Street'] ?? '' }} {{ $contact['Mailing_City'] ?? '' }} {{ $contact['Mailing_State'] ?? '' }} {{ $contact['Mailing_Zip'] ?? '' }}</td>
-                <!-- Add other columns as per your requirement -->
+                <td>{{ !$contact['HasMissingImportantDate'] ?? true }}</td>
+                <td>{{ $contact['perfect'] ?? false }}</td>
             </tr>
             @endforeach
         </tbody>
