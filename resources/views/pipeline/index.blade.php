@@ -5,7 +5,7 @@
 @section('content')
 @vite(['resources/css/pipeline.css'])
 
-<div class="container">
+<div class="container-fluid">
     <h1>Pipeline</h1>
     <div class="scrollable-table">
         <table class="table">
