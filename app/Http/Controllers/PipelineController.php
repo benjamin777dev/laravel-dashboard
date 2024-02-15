@@ -29,7 +29,7 @@ class PipelineController extends Controller
             'page' => 1,
             'per_page' => 200,
             // Adjust criteria as needed to fetch the relevant deals
-            'criteria' => "(Owner:equals:$rootUserId)",
+            'criteria' => "((Owner:equals:$rootUserId)and((Stage:equals:Potential)or(Stage:equals:Pre-Active)or(Stage:equals:Active)or(Stage:equals:Under Contract)))"
         ];
 
         try {
