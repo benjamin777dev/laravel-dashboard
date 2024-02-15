@@ -12,10 +12,12 @@
         <p>Secondary Email: {{ $contactDetails['Secondary_Email'] ?? 'N/A' }}</p>
         <p>Envelope Salutation: {{ $contactDetails['Salutation_s'] ?? 'N/A' }}</p>
         <p>Relationship Type: {{ $contactDetails['Relationship_Type'] ?? 'N/A' }}</p>
-        <p>Lead Source: {{ $contactDetails['Lead_Source'] ?? 'N/A' }}</p>
+        <p>Referred By: {{ print_r($contactDetails['Referred_By'], true) ?? 'N/A' }}</p>
+        <p>Lead Source: {{ print_r($contactDetails['Lead_Source'], true) ?? 'N/A' }}</p>
         <p>Lead Source Detail: {{ $contactDetails['Lead_Source_Detail'] ?? 'N/A' }}</p>
         <p>Market Area: {{ $contactDetails['Market_Area'] ?? 'N/A' }}</p>
         <p>Business Info: {{ $contactDetails['Business_Info'] ?? 'N/A' }}</p>
+        <p>Spouse/Partner: {{ print_r($contactDetails['Spouse_Partner'], true) ?? 'N/A' }}</p>
         <p>Address: {{ $contactDetails['Mailing_Street'] ?? '' }}, {{ $contactDetails['Mailing_City'] ?? '' }}, {{ $contactDetails['Mailing_State'] ?? '' }}, {{ $contactDetails['Mailing_Zip'] ?? '' }}</p>
     </div>
 </div>
