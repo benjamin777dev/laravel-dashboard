@@ -50,12 +50,11 @@ class ContactController extends Controller
                     $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
 
                     // Update for background color
-                    $abcdBackgroundClass = 'bg-black'; // Default case
+                    $abcdBackgroundClass = ''; // Default to nothing
+
                     if (isset($contact['ABCD'])) {
                         switch ($contact['ABCD']) {
                             case "A+":
-                                $abcdBackgroundClass = 'bg-success text-white';
-                                break;
                             case "A":
                                 $abcdBackgroundClass = 'bg-success text-white';
                                 break;
@@ -69,11 +68,11 @@ class ContactController extends Controller
                                 $abcdBackgroundClass = 'bg-secondary text-white';
                                 break;
                             default:
-                                $abcdBackgroundClass = 'bg-light text-dark';
+                                $abcdBackgroundClass = '';
                         }
                     }
 
-                    $contact['abcdBackgroundClass'] = $abcdBackgroundClass;
+                    $contact['abcdBackgroundClass'] = $abcdBackgroundClass . ' text-center';
 
                     return $contact;
                 });
