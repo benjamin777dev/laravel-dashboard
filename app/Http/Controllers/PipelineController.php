@@ -37,8 +37,9 @@ class PipelineController extends Controller
 
     private function retrieveClosedDealsFromZoho($rootUserId, $accessToken)
     {
-        $url = 'https://www.zohoapis.com/crm/v2/Deals';
-        $criteria = "(Owner:equals:$rootUserId)and(Stage:in:Potential,Pre-Active,Active,Under Contract)";
+        $url = 'https://www.zohoapis.com/crm/v6/Deals/search';
+        $criteria = "(Owner:equals:$rootUserId)and((Stage:starts_with:Dead)or(Stage:equals:Sold))";
+        $fields = "Address,Amount,City,Primary_Contact,Client_Name_Primary,Client_Name_Only,Closing_Date,Created_By,Created_Time,Commission,Contact_Name,Contract,Create_Date,Created_By,Double_Ended,Lender_Company,Lender_Company_Name,Lender_Name,Loan_Amount,Loan_Type,MLS_No,Needs_New_Date,Needs_New_Date1,Needs_New_Date2,Ownership_Type,Personal_Transaction,Pipeline_Probability,Potential_GCI,Primary_Contact_Email,Probability,Pipeline1,Probable_Volume,Property_Type,Representing,Sale_Price,Stage,State,TM_Name,TM_Preference,Deal_Name,Owner,Transaction_Type,Type,Under_Contract,Using_TM,Z_Project_Id,Zip";
 
         $params = [
             'page' => 1,
@@ -67,19 +68,20 @@ class PipelineController extends Controller
 
     private function retrieveDealsFromZoho($rootUserId, $accessToken)
     {
-        $url = 'https://www.zohoapis.com/crm/v2/Deals';
-        $params = [
-            'page' => 1,
-            'per_page' => 200,
-            // Adjust criteria as needed to fetch the relevant deals
-            'criteria' => "((Owner:equals:$rootUserId)and((Stage:equals:Potential)or(Stage:equals:Pre-Active)or(Stage:equals:Active)or(Stage:equals:Under Contract)))",
-
-        ];
+        $url = 'https://www.zohoapis.com/crm/v6/Deals/search';
+        $criteria = "(Owner:equals:$rootUserId)and(Stage:in:Potential,Pre-Active,Active,Under Contract)";
+        $fields = "Address,Amount,City,Primary_Contact,Client_Name_Primary,Client_Name_Only,Closing_Date,Created_By,Created_Time,Commission,Contact_Name,Contract,Create_Date,Created_By,Double_Ended,Lender_Company,Lender_Company_Name,Lender_Name,Loan_Amount,Loan_Type,MLS_No,Needs_New_Date,Needs_New_Date1,Needs_New_Date2,Ownership_Type,Personal_Transaction,Pipeline_Probability,Potential_GCI,Primary_Contact_Email,Probability,Pipeline1,Probable_Volume,Property_Type,Representing,Sale_Price,Stage,State,TM_Name,TM_Preference,Deal_Name,Owner,Transaction_Type,Type,Under_Contract,Using_TM,Z_Project_Id,Zip";
 
         try {
+
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get($url, $params);
+            ])->get($url, [
+                'page' => $page,
+                'per_page' => 200,
+                'criteria' => $criteria,
+                'fields' => $fields,
+            ]);
 
             if ($response->successful()) {
                 $responseData = $response->json();
