@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController; // Make sure to import t
 use App\Http\Controllers\Auth\RegisterController; // Make sure to import the LoginController
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PipelineController;
 
 /*
 |--------------------------------------------------------------------------
