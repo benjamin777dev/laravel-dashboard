@@ -25,8 +25,12 @@
                 <td>{{ $contact['Phone'] ?? 'N/A' }}</td>
                 <td>{{ $contact['Mobile'] ?? 'N/A' }}</td>
                 <td>{{ $contact['Mailing_Street'] ?? '' }} {{ $contact['Mailing_City'] ?? '' }} {{ $contact['Mailing_State'] ?? '' }} {{ $contact['Mailing_Zip'] ?? '' }}</td>
-                <td>{{ !$contact['HasMissingImportantDate'] ?? true }}</td>
-                <td>{{ $contact['perfect'] ?? false }}</td>
+                <td>
+                    <input type="checkbox" disabled {{ $contact['HasMissingImportantDate'] ?? false ? '' : 'checked' }}>
+                </td>
+                <td>
+                    <input type="checkbox" disabled {{ $contact['perfect'] ?? false ? 'checked' : '' }}>
+                </td>
             </tr>
             @endforeach
         </tbody>

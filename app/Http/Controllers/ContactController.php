@@ -23,30 +23,44 @@ class ContactController extends Controller
     }
 
     private function retrieveContactsFromZoho($rootUserId, $accessToken)
-    {
-        $url = 'https://www.zohoapis.com/crm/v2/Contacts/search';
-        $params = [
-            'page' => 1,
-            'per_page' => 200,
-            'criteria' => "(Owner:equals:$rootUserId)",
-        ];
+{
+    $url = 'https://www.zohoapis.com/crm/v2/Contacts/search';
+    $params = [
+        'page' => 1,
+        'per_page' => 200,
+        'criteria' => "(Owner:equals:$rootUserId)",
+    ];
 
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get($url, $params);
+    try {
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+        ])->get($url, $params);
 
-            if ($response->successful()) {
-                $responseData = $response->json();
-                $contacts = collect($responseData['data'] ?? []);
-                return $contacts;
-            } else {
-                Log::error("Error fetching contacts: {$response->body()}");
-                return collect();
-            }
-        } catch (\Exception $e) {
-            Log::error("Exception when fetching contacts: {$e->getMessage()}");
+        if ($response->successful()) {
+            $responseData = $response->json();
+            $contacts = collect($responseData['data'] ?? []);
+
+            // Calculate if a contact is perfect
+            $contacts->transform(function ($contact) {
+                $hasEmail = !empty($contact['Email']);
+                $hasPhone = !empty($contact['Phone']) || !empty($contact['Mobile']);
+                $hasAddress = !empty($contact['Mailing_Street']) && !empty($contact['Mailing_City']) && !empty($contact['Mailing_State']) && !empty($contact['Mailing_Zip']);
+                $hasImpDate = isset($contact['HasMissingImportantDate']) && !$contact['HasMissingImportantDate']; // Assuming 'HasMissingImportantDate' is true when an important date is missing
+
+                // Mark as perfect if all conditions are met
+                $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
+
+                return $contact;
+            });
+
+            return $contacts;
+        } else {
+            Log::error("Error fetching contacts: {$response->body()}");
             return collect();
         }
+    } catch (\Exception $e) {
+        Log::error("Exception when fetching contacts: {$e->getMessage()}");
+        return collect();
     }
+}
 }
