@@ -12,7 +12,6 @@
         <p>Secondary Email: {{ $contactDetails['Secondary_Email'] ?? 'N/A' }}</p>
         <p>Envelope Salutation: {{ $contactDetails['Salutation_s'] ?? 'N/A' }}</p>
         <p>Relationship Type: {{ $contactDetails['Relationship_Type'] ?? 'N/A' }}</p>
-        <p>Referred By: {{ $contactDetails['Referred_By'] ?? 'N/A' }}</p>
         <p>Lead Source: {{ $contactDetails['Lead_Source'] ?? 'N/A' }}</p>
         <p>Lead Source Detail: {{ $contactDetails['Lead_Source_Detail'] ?? 'N/A' }}</p>
         <p>Market Area: {{ $contactDetails['Market_Area'] ?? 'N/A' }}</p>
