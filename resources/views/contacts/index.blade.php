@@ -1,4 +1,5 @@
 @extends('layouts.app')
+<title>{{ config('app.name', 'Agent Commander | Contacts') }}</title>
 
 @section('content')
 <div class="container">
