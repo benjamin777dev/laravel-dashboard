@@ -38,7 +38,8 @@ class PipelineController extends Controller
     private function retrieveClosedDealsFromZoho($rootUserId, $accessToken)
     {
         $url = 'https://www.zohoapis.com/crm/v2/Deals';
-        $criteria = "((Owner:equals:$rootUserId)and((Stage:equals:Sold)or(Stage:starts_with:Dead)))";
+        $criteria = "(Owner:equals:$rootUserId)and(Stage:in:Potential,Pre-Active,Active,Under Contract)";
+
         $params = [
             'page' => 1,
             'per_page' => 200,
