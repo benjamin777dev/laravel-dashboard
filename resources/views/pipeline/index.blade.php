@@ -32,7 +32,7 @@
                 <td>{{ $deal['Commission'] ?? 'N/A' }}%</td>
                 <td>{{ $deal['Potential_GCI'] ?? 'N/A' }}</td>
                 <td>{{ $deal['Pipeline_Probability'] ?? 'N/A' }}%</td>
-                <td>{{ $deal['Probable_GCI'] ?? 'N/A' }}</td>
+                <td>{{ $deal['Pipeline1'] ?? 'N/A' }}</td>
             </tr>
             @endforeach
         </tbody>
