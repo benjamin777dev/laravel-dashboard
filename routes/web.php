@@ -8,17 +8,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 // Home Route (welcome page or dashboard)
 Route::get('/', function () {
     return redirect()->route('dashboard.index'); 
@@ -42,9 +31,13 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
+// Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');
+
+// Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index');
+Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show');
 
 
 Auth::routes();
