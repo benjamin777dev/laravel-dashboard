@@ -1,6 +1,6 @@
 .scrollable-table {
     display: block;
-    max-height: 400px;
+    max-height: 80vh;
     /* Adjust based on your needs */
     overflow-y: scroll;
     -ms-overflow-style: -ms-autohiding-scrollbar;
