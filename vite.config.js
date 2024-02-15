@@ -11,7 +11,13 @@ export default defineConfig({
                 'resources/js/custom.js',
                 'resources/js/dashboard.js',
                 'resources/css/dashboard.css',
+                'resources/js/pipeline.js',
+                'resources/css/pipeline.css',
+                'resources/js/contacts.js',
+                'resources/css/contacts.css',
                 'resources/css/app.css'
+
+
             ],
             refresh: true,
         }),

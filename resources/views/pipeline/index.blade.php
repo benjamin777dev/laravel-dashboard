@@ -48,6 +48,14 @@
                     <th><strong>{{ number_format($summary['pipelineProbabilityAverage'], 2) }}%</strong></th>
                     <th><strong>${{ number_format($summary['probableGCITotal'], 2) }}</strong></th>
                 </tr>
+                <tr>
+                    <th colspan="5">Summary</th>
+                    <th><strong>${{ number_format($summary['salesPriceAverage'], 2) }}</strong></th>
+                    <th><strong></strong></th>
+                    <th><strong>${{ number_format($summary['potentialGCIAverage'], 2) }}</strong></th>
+                    <th><strong></strong></th>
+                    <th><strong>${{ number_format($summary['probableGCIAverage'], 2) }}</strong></th>
+                </tr> 
             </tfoot>
         </table>
     </div>

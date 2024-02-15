@@ -26,6 +26,9 @@ class PipelineController extends Controller
             'pipelineProbabilityAverage' => $deals->avg('Pipeline_Probability'),
             'potentialGCITotal' => $deals->sum('Potential_GCI'),
             'probableGCITotal' => $deals->sum('Pipeline1'),
+            'salesPriceAverage' => $deals->avg('Sale_Price'),
+            'potentialGCIAverage' => $deals->avg('Potential_GCI'),
+            'probableGCIAverage' => $deals->avg('Pipeline1'),
         ];
 
         return view('pipeline.index', compact('deals', 'summary'));
