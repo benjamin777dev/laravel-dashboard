@@ -17,7 +17,6 @@
         <p>Lead Source Detail: {{ $contactDetails['Lead_Source_Detail'] ?? 'N/A' }}</p>
         <p>Market Area: {{ $contactDetails['Market_Area'] ?? 'N/A' }}</p>
         <p>Business Info: {{ $contactDetails['Business_Info'] ?? 'N/A' }}</p>
-        <p>Spouse/Partner: {{ $contactDetails['Spouse_Partner'] ?? 'N/A' }}</p>
         <p>Address: {{ $contactDetails['Mailing_Street'] ?? '' }}, {{ $contactDetails['Mailing_City'] ?? '' }}, {{ $contactDetails['Mailing_State'] ?? '' }}, {{ $contactDetails['Mailing_Zip'] ?? '' }}</p>
     </div>
 </div>
