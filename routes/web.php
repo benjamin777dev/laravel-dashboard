@@ -43,7 +43,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');
-Route::resource('/pipeline', PipelineController::class);
+Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index');
 
 
 Auth::routes();
