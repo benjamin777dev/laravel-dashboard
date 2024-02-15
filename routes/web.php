@@ -40,6 +40,11 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
+Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');
+Route::resource('/pipeline', PipelineController::class);
+
+
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
