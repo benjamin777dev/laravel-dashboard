@@ -22,6 +22,48 @@ class PipelineController extends Controller
         return view('pipeline.index', compact('deals'));
     }
 
+    public function getClosedDeals(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $closedDeals = $this->retrieveClosedDealsFromZoho($user->root_user_id, $accessToken);
+
+        return view('pipeline.closed', compact('closedDeals')); // Assume you'll create a view for closed deals
+    }
+
+    private function retrieveClosedDealsFromZoho($rootUserId, $accessToken)
+    {
+        $url = 'https://www.zohoapis.com/crm/v2/Deals';
+        $criteria = "((Owner:equals:$rootUserId)and((Stage:equals:Sold)or(Stage:starts_with:Dead)))";
+        $params = [
+            'page' => 1,
+            'per_page' => 200,
+            'criteria' => $criteria,
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get($url, $params);
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                $closedDeals = collect($responseData['data'] ?? []);
+                return $closedDeals;
+            } else {
+                Log::error("Error fetching closed deals: {$response->body()}");
+                return collect();
+            }
+        } catch (\Exception $e) {
+            Log::error("Exception when fetching closed deals: {$e->getMessage()}");
+            return collect();
+        }
+    }
+
     private function retrieveDealsFromZoho($rootUserId, $accessToken)
     {
         $url = 'https://www.zohoapis.com/crm/v2/Deals';
@@ -29,7 +71,7 @@ class PipelineController extends Controller
             'page' => 1,
             'per_page' => 200,
             // Adjust criteria as needed to fetch the relevant deals
-            'criteria' => "((Owner:equals:$rootUserId)and((Stage:equals:Potential)or(Stage:equals:Pre-Active)or(Stage:equals:Active)or(Stage:equals:Under Contract)))"
+            'criteria' => "((Owner:equals:$rootUserId)and((Stage:equals:Potential)or(Stage:equals:Pre-Active)or(Stage:equals:Active)or(Stage:equals:Under Contract)))",
         ];
 
         try {
