@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +15,7 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        
+
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $this->retrieveContactsFromZoho($user->root_user_id, $accessToken);
 
@@ -23,75 +23,69 @@ class ContactController extends Controller
     }
 
     private function retrieveContactsFromZoho($rootUserId, $accessToken)
-{
-    $url = 'https://www.zohoapis.com/crm/v2/Contacts/search';
-    $params = [
-        'page' => 1,
-        'per_page' => 200,
-        'criteria' => "(Owner:equals:$rootUserId)",
-    ];
+    {
+        $url = 'https://www.zohoapis.com/crm/v2/Contacts/search';
+        $params = [
+            'page' => 1,
+            'per_page' => 200,
+            'criteria' => "(Owner:equals:$rootUserId)",
+        ];
 
-    try {
-        $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-        ])->get($url, $params);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
+            ])->get($url, $params);
 
-        if ($response->successful()) {
-            $responseData = $response->json();
-            $contacts = collect($responseData['data'] ?? []);
+            if ($response->successful()) {
+                $responseData = $response->json();
+                $contacts = collect($responseData['data'] ?? []);
 
-            // Calculate if a contact is perfect
-            $contacts->transform(function ($contact) {
-                $hasEmail = !empty($contact['Email']);
-                $hasPhone = !empty($contact['Phone']) || !empty($contact['Mobile']);
-                $hasAddress = !empty($contact['Mailing_Street']) && !empty($contact['Mailing_City']) && !empty($contact['Mailing_State']) && !empty($contact['Mailing_Zip']);
-                $hasImpDate = isset($contact['HasMissingImportantDate']) && !$contact['HasMissingImportantDate']; // Assuming 'HasMissingImportantDate' is true when an important date is missing
+                // Adjust here for Bootstrap background colors
+                $contacts->transform(function ($contact) {
+                    $hasEmail = !empty($contact['Email']);
+                    $hasPhone = !empty($contact['Phone']) || !empty($contact['Mobile']);
+                    $hasAddress = !empty($contact['Mailing_Street']) && !empty($contact['Mailing_City']) && !empty($contact['Mailing_State']) && !empty($contact['Mailing_Zip']);
+                    $hasImpDate = isset($contact['HasMissingImportantDate']) && !$contact['HasMissingImportantDate'];
 
-                // Mark as perfect if all conditions are met
-                $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
-                $abcdBackColor = 'black';
-                $abcdForeColor = 'white';
-                if (isset($contact['ABCD'])) {
-                    if ($contact['ABCD'] == "A+") {
-                        $abcdBackColor = 'text-success';
-                        $abcdForeColor = 'white';
+                    $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
+
+                    // Update for background color
+                    $abcdBackgroundClass = 'bg-black'; // Default case
+                    if (isset($contact['ABCD'])) {
+                        switch ($contact['ABCD']) {
+                            case "A+":
+                                $abcdBackgroundClass = 'bg-success text-white';
+                                break;
+                            case "A":
+                                $abcdBackgroundClass = 'bg-success text-white';
+                                break;
+                            case "B":
+                                $abcdBackgroundClass = 'bg-warning text-dark';
+                                break;
+                            case "C":
+                                $abcdBackgroundClass = 'bg-danger text-white';
+                                break;
+                            case "D":
+                                $abcdBackgroundClass = 'bg-secondary text-white';
+                                break;
+                            default:
+                                $abcdBackgroundClass = 'bg-light text-dark';
+                        }
                     }
-                    else if ($contact['ABCD'] == "A") {
-                        $abcdBackColor = 'text-success';
-                        $abcdForeColor = 'black';
-                    }
-                    else if ($contact['ABCD'] == "B") {
-                        $abcdBackColor = 'text-warning';
-                        $abcdForeColor = 'black';
-                    }
-                    else if ($contact['ABCD'] == "C") {
-                        $abcdBackColor ='text-danger';
-                        $abcdForeColor = 'white';
-                    }
-                    else if ($contact['ABCD'] == "D") {
-                        $abcdBackColor = 'text-secondary';
-                        $abcdForeColor = 'white';
-                    }
-                    else {
-                        $abcdBackColor = 'text-black';
-                        $abcdForeColor = 'white';
-                    }
-                }
 
-                $contact['abcdBackColor'] = $abcdBackColor;
-                $contact['abcdForeColor'] = $abcdForeColor;
+                    $contact['abcdBackgroundClass'] = $abcdBackgroundClass;
 
-                return $contact;
-            });
+                    return $contact;
+                });
 
-            return $contacts;
-        } else {
-            Log::error("Error fetching contacts: {$response->body()}");
+                return $contacts;
+            } else {
+                Log::error("Error fetching contacts: {$response->body()}");
+                return collect();
+            }
+        } catch (\Exception $e) {
+            Log::error("Exception when fetching contacts: {$e->getMessage()}");
             return collect();
         }
-    } catch (\Exception $e) {
-        Log::error("Exception when fetching contacts: {$e->getMessage()}");
-        return collect();
     }
-}
 }
