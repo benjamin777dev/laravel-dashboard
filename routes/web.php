@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController; // Make sure to import the Log
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\HomeController;
 
 // Home Route (welcome page or dashboard)
 Route::get('/', function () {
