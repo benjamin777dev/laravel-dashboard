@@ -1,25 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController; // Make sure to import the LoginController
-use App\Http\Controllers\Auth\ForgotPasswordController; // Make sure to import the LoginController
-use App\Http\Controllers\Auth\RegisterController; // Make sure to import the LoginController
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResetPasswordController; // Make sure to import the ResetPasswordController if you're using it
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 
-// Home Route (welcome page or dashboard)
-Route::get('/', function () {
-    return redirect()->route('dashboard.index'); 
-})->middleware('auth');
-
-Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+// Assuming you want to redirect authenticated users to the dashboard,
+// and non-authenticated users to a home or login page:
+Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
+Route::get('/home', [HomeController::class, 'root'])->middleware('auth')->name('home');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
-Route::get('logout', [LoginController::class, 'logout'])->name('logout'); // Add if you have a logout method
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Zoho OAuth Routes
 Route::get('/auth/redirect', [RegisterController::class, 'redirectToZoho'])->name('auth.redirect');
@@ -32,31 +32,28 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 // Dashboard Route
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 
 // Contacts Route
-Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
-Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show');
+Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 
 // Pipeline Route
-Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index');
-Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show');
+Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
+Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show')->middleware('auth');
 
-
-// FROM ADMIN
+// From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
-// customers route
-Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('customers.list');
 
-//Update User Details
-Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
-Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
+// Customers Route
+Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
 
-Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+// Update User Details
+Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile')->middleware('auth');
+Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 
-//Language Translation
-Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
+// Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
+Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
 
-// back to routes
-Auth::routes();
-
+// Language Translation
+Route::get('index/{locale}', [HomeController::class, 'lang']);
