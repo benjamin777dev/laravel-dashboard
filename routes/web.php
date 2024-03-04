@@ -13,6 +13,8 @@ Route::get('/', function () {
     return redirect()->route('dashboard.index'); 
 })->middleware('auth');
 
+Route::get('/', [App\Http\Controllers\HomeController::class, 'root'])->name('root');
+
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
@@ -39,6 +41,8 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index');
 Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show');
 
+
+// FROM ADMIN
 Auth::routes(['verify' => true]);
 // customers route
 Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('customers.list');
@@ -52,5 +56,6 @@ Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name
 //Language Translation
 Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
+// back to routes
 Auth::routes();
 
