@@ -120,17 +120,17 @@
     "src": "resources/images/crypto/bg-ico-hero.jpg"
   },
   "resources/scss/app.scss": {
-    "file": "css/app.min.css",
+    "file": "css/app.css",
     "src": "resources/scss/app.scss",
     "isEntry": true
   },
   "resources/scss/bootstrap.scss": {
-    "file": "css/bootstrap.min.css",
+    "file": "css/bootstrap.css",
     "src": "resources/scss/bootstrap.scss",
     "isEntry": true
   },
   "resources/scss/icons.scss": {
-    "file": "css/icons.min.css",
+    "file": "css/icons.css",
     "src": "resources/scss/icons.scss",
     "isEntry": true
   }

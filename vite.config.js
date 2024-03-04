@@ -17,7 +17,7 @@ export default defineConfig({
       output: {
         assetFileNames: (chunk) => {
           if(chunk.name && chunk.name.split('.').pop() === 'css') {
-            return 'css/[name].min.css';
+            return 'css/[name].css';
           } else {
             return 'icons/[name]';
           }
