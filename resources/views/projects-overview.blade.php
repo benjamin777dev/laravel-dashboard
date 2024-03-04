@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="flex-grow-1 overflow-hidden">
-                            <h5 class="text-truncate font-size-15">Skote Dashboard UI</h5>
+                            <h5 class="text-truncate font-size-15">zPortal Dashboard UI</h5>
                             <p class="text-muted">Separate existence is a myth. For science, music, sport, etc.</p>
                         </div>
                     </div>
@@ -194,7 +194,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5 class="font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote
+                                        <h5 class="font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">zPortal
                                                 Landing.Zip</a></h5>
                                         <small>Size : 3.25 MB</small>
                                     </td>
@@ -216,7 +216,7 @@
                                     </td>
                                     <td>
                                         <h5 class="font-size-14 mb-1"><a href="javascript: void(0);"
-                                                class="text-dark">Skote Admin.Zip</a></h5>
+                                                class="text-dark">zPortal Admin.Zip</a></h5>
                                         <small>Size : 3.15 MB</small>
                                     </td>
                                     <td>
@@ -237,7 +237,7 @@
                                     </td>
                                     <td>
                                         <h5 class="font-size-14 mb-1"><a href="javascript: void(0);"
-                                                class="text-dark">Skote Logo.Zip</a></h5>
+                                                class="text-dark">zPortal Logo.Zip</a></h5>
                                         <small>Size : 2.02 MB</small>
                                     </td>
                                     <td>

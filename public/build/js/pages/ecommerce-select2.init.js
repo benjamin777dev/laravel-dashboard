@@ -1,5 +1,5 @@
 /*
-Template Name: Skote - Admin & Dashboard Template
+Template Name: zPortal - Admin & Dashboard Template
 Author: Themesbrand
 Version: 3.0
 Website: https://themesbrand.com/

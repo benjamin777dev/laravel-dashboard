@@ -47,7 +47,7 @@
 
                                                                 <div>
                                                                     <h4 class="font-size-16 text-primary">Abs1981</h4>
-                                                                    <p class="font-size-14 mb-0">- Skote User</p>
+                                                                    <p class="font-size-14 mb-0">- zPortal User</p>
                                                                 </div>
                                                             </div>
 
@@ -62,7 +62,7 @@
 
                                                                 <div>
                                                                     <h4 class="font-size-16 text-primary">nezerious</h4>
-                                                                    <p class="font-size-14 mb-0">- Skote User</p>
+                                                                    <p class="font-size-14 mb-0">- zPortal User</p>
                                                                 </div>
                                                             </div>
 
@@ -94,7 +94,7 @@
 
                                     <div>
                                         <h5 class="text-primary">Welcome Back !</h5>
-                                        <p class="text-muted">Sign in to continue to Skote.</p>
+                                        <p class="text-muted">Sign in to continue to zPortal.</p>
                                     </div>
 
                                     <div class="mt-4">
@@ -102,7 +102,7 @@
                                             @csrf
                                             <div class="mb-3">
                                                 <label for="username" class="form-label">Email <span class="text-danger">*</span></label>
-                                                <input name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', 'admin@themesbrand.com') }}" id="username" placeholder="Enter Email" autocomplete="email" autofocus>
+                                                <input name="email" type="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', '') }}" id="username" placeholder="Enter Username/Email" autocomplete="email" autofocus>
                                                 @error('email')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -171,8 +171,7 @@
                                 <div class="mt-4 mt-md-5 text-center">
                                     <p class="mb-0">© <script>
                                             document.write(new Date().getFullYear())
-                                        </script> Skote. Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                                        Themesbrand</p>
+                                        </script> zPortal, 2024 Colorado Home Realty</p>
                                 </div>
                             </div>
 

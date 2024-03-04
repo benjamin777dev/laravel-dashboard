@@ -141,7 +141,7 @@
             <div class="card-body">
                 <div class="d-flex">
                     <div>
-                        <h4 class="card-title mb-3">Invite your friends to Skote</h4>
+                        <h4 class="card-title mb-3">Invite your friends to zPortal</h4>
                         <p class="text-muted">Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally.</p>
                         <div>
                             <a href="javascript:void(0);" class="btn btn-primary btn-sm"><i class='bx bx-user-plus align-middle'></i> Invite Friends</a>
@@ -604,7 +604,7 @@
                             <img src="{{URL::asset('build/images/companies/airbnb.svg')}}" alt="" height="40" class="rounded">
                             <div class="ms-2 flex-grow-1">
                                 <h6 class="mb-1 font-size-15"><a href="job-details" class="text-body">NodeJs Developer</a></h6>
-                                <p class="text-muted mb-0">Skote Themes, Louisiana - <b>2</b> hrs ago</p>
+                                <p class="text-muted mb-0">zPortal Themes, Louisiana - <b>2</b> hrs ago</p>
                             </div>
                             <div class="dropdown">
                                 <button class="btn btn-light" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
@@ -636,7 +636,7 @@
                             <img src="{{URL::asset('build/images/companies/mailchimp.svg')}}" alt="" height="40" class="rounded">
                             <div class="ms-2 flex-grow-1">
                                 <h6 class="mb-1 font-size-15"><a href="job-details" class="text-body">Marketing Director</a></h6>
-                                <p class="text-muted mb-0">Skote Technology, Dominica - <b>1</b> days ago</p>
+                                <p class="text-muted mb-0">zPortal Technology, Dominica - <b>1</b> days ago</p>
                             </div>
                             <div class="dropdown">
                                 <button class="btn btn-light" type="button" id="dropdownMenuButton6" data-bs-toggle="dropdown" aria-expanded="false">

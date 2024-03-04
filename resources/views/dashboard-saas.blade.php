@@ -21,7 +21,7 @@
                             </div>
                             <div class="flex-grow-1 align-self-center">
                                 <div class="text-muted">
-                                    <p class="mb-2">Welcome to Skote Dashboard</p>
+                                    <p class="mb-2">Welcome to zPortal Dashboard</p>
                                     <h5 class="mb-1">Henry wells</h5>
                                     <p class="mb-0">UI / UX Designer</p>
                                 </div>
@@ -85,7 +85,7 @@
                     <div class="col-7">
                         <div class="text-primary p-3">
                             <h5 class="text-primary">Welcome Back !</h5>
-                            <p>Skote Saas Dashboard</p>
+                            <p>zPortal Saas Dashboard</p>
 
                             <ul class="ps-3 mb-0">
                                 <li class="py-1">7 + Layouts</li>
@@ -360,7 +360,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Saas Dashboard</a></h5>
+                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">zPortal Saas Dashboard</a></h5>
                                             <p class="text-muted mb-0">Assigned to Mark</p>
                                         </td>
                                         <td style="width: 90px;">
@@ -508,7 +508,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">Skote Crypto Dashboard</a></h5>
+                                            <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">zPortal Crypto Dashboard</a></h5>
                                             <p class="text-muted mb-0">Assigned to Eric</p>
                                         </td>
                                         <td>

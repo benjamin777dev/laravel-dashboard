@@ -26,7 +26,7 @@
                                     </td>
                                     <td>
                                         <h5 class="text-truncate font-size-14 m-0"><a href="#" class="text-dark">Create a
-                                                Skote Dashboard UI</a></h5>
+                                                zPortal Dashboard UI</a></h5>
                                     </td>
                                     <td>
                                         <div class="avatar-group">
@@ -111,7 +111,7 @@
                                     </td>
                                     <td>
                                         <h5 class="text-truncate font-size-14 m-0"><a href="#" class="text-dark">Create a
-                                                Skote Logo</a></h5>
+                                                zPortal Logo</a></h5>
                                     </td>
                                     <td>
                                         <div class="avatar-group">

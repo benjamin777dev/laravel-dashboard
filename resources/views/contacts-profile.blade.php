@@ -241,7 +241,7 @@
                         <tbody>
                             <tr>
                                 <th scope="row">1</th>
-                                <td>Skote admin UI</td>
+                                <td>zPortal admin UI</td>
                                 <td>2 Sep, 2019</td>
                                 <td>20 Oct, 2019</td>
                                 <td>$506</td>
@@ -249,7 +249,7 @@
 
                             <tr>
                                 <th scope="row">2</th>
-                                <td>Skote admin Logo</td>
+                                <td>zPortal admin Logo</td>
                                 <td>1 Sep, 2019</td>
                                 <td>2 Sep, 2019</td>
                                 <td>$94</td>

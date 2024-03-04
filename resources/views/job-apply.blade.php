@@ -97,7 +97,7 @@
                             <tr>
                                 <th scope="row">4</th>
                                 <td>HTML Developer</td>
-                                <td>Skote Technology pvt.Ltd</td>
+                                <td>Colorado Home Realty</td>
                                 <td><span class="badge badge-soft-success">Full Time</span></td>
                                 <td>02 June 2021</td>
                                 <td><span class="badge bg-success">Active</span></td>

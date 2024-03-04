@@ -157,7 +157,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -191,7 +191,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -225,7 +225,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -259,7 +259,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -293,7 +293,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -327,7 +327,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -361,7 +361,7 @@
                         <small class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -395,7 +395,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -429,7 +429,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -463,7 +463,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -497,7 +497,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>
@@ -531,7 +531,7 @@
                             class="text-muted fw-normal">(0-2 Yrs Exp.)</small></h5>
                     <ul class="list-inline mb-0">
                         <li class="list-inline-item">
-                            <p class="text-muted fs-14 mb-1">Skote Technology Pvt.Ltd</p>
+                            <p class="text-muted fs-14 mb-1">zPortal Technology Pvt.Ltd</p>
                         </li>
                         <li class="list-inline-item">
                             <p class="text-muted fs-14 mb-0"><i class="mdi mdi-map-marker"></i> California</p>

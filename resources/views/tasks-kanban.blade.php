@@ -181,7 +181,7 @@
                                     </div>
                                     <div>
                                         <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark"
-                                                id="task-name">Create a Skote Logo</a></h5>
+                                                id="task-name">Create a zPortal Logo</a></h5>
                                         <p class="text-muted mb-4">15 Oct, 2019</p>
                                     </div>
 
@@ -417,7 +417,7 @@
                                     </div>
                                     <div>
                                         <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark"
-                                                id="task-name">Skote Dashboard UI</a></h5>
+                                                id="task-name">zPortal Dashboard UI</a></h5>
                                         <p class="text-muted mb-4">13 Oct, 2019</p>
                                     </div>
 
@@ -652,7 +652,7 @@
                                     </div>
                                     <div>
                                         <h5 class="font-size-15"><a href="javascript: void(0);" class="text-dark"
-                                                id="task-name">Skote landing Psd</a></h5>
+                                                id="task-name">zPortal landing Psd</a></h5>
                                         <p class="text-muted mb-4">15 Oct, 2019</p>
                                     </div>
 

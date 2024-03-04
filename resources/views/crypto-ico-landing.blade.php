@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>@lang('translation.ICO_Landing') | Skote - Admin & Dashboard Template</title>
+    <title>@lang('translation.ICO_Landing') | zPortal - Admin & Dashboard Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -75,7 +75,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-5">
                     <div class="text-white-50">
-                        <h1 class="text-white fw-semibold mb-3 hero-title">Skote - Ico Landing for a
+                        <h1 class="text-white fw-semibold mb-3 hero-title">zPortal - Ico Landing for a
                             cryptocurrency business</h1>
                         <p class="font-size-14">It will be as simple as occidental in fact to an English person, it will
                             seem like simplified as a skeptical Cambridge</p>
@@ -1257,7 +1257,7 @@
                     <p class="mb-2">
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> © Skote. Design & Develop by Themesbrand
+                        </script> © zPortal. Design & Develop by Themesbrand
                     </p>
                     <p>It will be as simple as occidental in fact, it will be to an english person, it will seem like
                         simplified English, as a skeptical</p>

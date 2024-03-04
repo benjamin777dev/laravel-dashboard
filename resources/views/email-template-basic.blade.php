@@ -67,7 +67,7 @@
                                                 <td class="content-block"
                                                     style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;"
                                                     valign="top">
-                                                    <b>Skote</b>
+                                                    <b>zPortal</b>
                                                     <p>Support Team</p>
                                                 </td>
                                             </tr>
@@ -77,7 +77,7 @@
                                                 <td class="content-block"
                                                     style="text-align: center;font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0;"
                                                     valign="top">
-                                                    © 2021 Skote
+                                                    © 2024 zPortal
                                                 </td>
                                             </tr>
                                         </table>

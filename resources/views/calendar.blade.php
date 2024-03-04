@@ -13,7 +13,7 @@
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1')
-            Skote
+            zPortal
         @endslot
         @slot('title')
             Calendar

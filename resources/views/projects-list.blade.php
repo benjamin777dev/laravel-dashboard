@@ -222,7 +222,7 @@
                                 <td><img src="{{ URL::asset('build/images/companies/img-5.png') }}" alt="" class="avatar-sm"></td>
                                 <td>
                                     <h5 class="text-truncate font-size-14"><a href="javascript: void(0);"
-                                            class="text-dark">Skote Dashboard UI</a></h5>
+                                            class="text-dark">zPortal Dashboard UI</a></h5>
                                     <p class="text-muted mb-0">Separate existence is a myth</p>
                                 </td>
                                 <td>22 Oct, 19</td>

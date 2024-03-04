@@ -5,7 +5,7 @@
 @section('content')
 
 @component('components.breadcrumb')
-@slot('li_1') Skote @endslot
+@slot('li_1') zPortal @endslot
 @slot('title') Chat @endslot
 @endcomponent
 
