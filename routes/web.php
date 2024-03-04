@@ -39,6 +39,18 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index');
 Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show');
 
+Auth::routes(['verify' => true]);
+// customers route
+Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('customers.list');
+
+//Update User Details
+Route::post('/update-profile/{id}', [App\Http\Controllers\HomeController::class, 'updateProfile'])->name('updateProfile');
+Route::post('/update-password/{id}', [App\Http\Controllers\HomeController::class, 'updatePassword'])->name('updatePassword');
+
+Route::get('{any}', [App\Http\Controllers\HomeController::class, 'index'])->name('index');
+
+//Language Translation
+Route::get('index/{locale}', [App\Http\Controllers\HomeController::class, 'lang']);
 
 Auth::routes();
 

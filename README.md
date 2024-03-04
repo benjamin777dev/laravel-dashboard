@@ -1,6 +1,6 @@
 ---
 
-# Agent Commander // CRM Integration Project
+# zPortal // CRM Integration Project
 
 ## Project Overview
 
@@ -180,6 +180,6 @@ Geneva Morre, Colorado Home Realty
 - Email Management: Add/Edit/Delete Emails and Templates
 - Marketing Management: Add/Edit/Delete Marketing Efforts and Templates
 - Profile Management: Update/Integrate 3rd party apps
-- Integration: 3rd party application link with Agent Commander
+- Integration: 3rd party application link with zPortal
 
 ---
