@@ -1,0 +1,137 @@
+{
+  "resources/fonts/boxicons.eot": {
+    "file": "icons/boxicons",
+    "src": "resources/fonts/boxicons.eot"
+  },
+  "resources/fonts/boxicons.svg": {
+    "file": "icons/boxicons5",
+    "src": "resources/fonts/boxicons.svg"
+  },
+  "resources/fonts/boxicons.ttf": {
+    "file": "icons/boxicons4",
+    "src": "resources/fonts/boxicons.ttf"
+  },
+  "resources/fonts/boxicons.woff": {
+    "file": "icons/boxicons3",
+    "src": "resources/fonts/boxicons.woff"
+  },
+  "resources/fonts/boxicons.woff2": {
+    "file": "icons/boxicons2",
+    "src": "resources/fonts/boxicons.woff2"
+  },
+  "resources/fonts/dripicons-v2.eot": {
+    "file": "icons/dripicons-v2",
+    "src": "resources/fonts/dripicons-v2.eot"
+  },
+  "resources/fonts/dripicons-v2.svg": {
+    "file": "icons/dripicons-v24",
+    "src": "resources/fonts/dripicons-v2.svg"
+  },
+  "resources/fonts/dripicons-v2.ttf": {
+    "file": "icons/dripicons-v23",
+    "src": "resources/fonts/dripicons-v2.ttf"
+  },
+  "resources/fonts/dripicons-v2.woff": {
+    "file": "icons/dripicons-v22",
+    "src": "resources/fonts/dripicons-v2.woff"
+  },
+  "resources/fonts/fa-brands-400.eot": {
+    "file": "icons/fa-brands-400",
+    "src": "resources/fonts/fa-brands-400.eot"
+  },
+  "resources/fonts/fa-brands-400.svg": {
+    "file": "icons/fa-brands-4005",
+    "src": "resources/fonts/fa-brands-400.svg"
+  },
+  "resources/fonts/fa-brands-400.ttf": {
+    "file": "icons/fa-brands-4004",
+    "src": "resources/fonts/fa-brands-400.ttf"
+  },
+  "resources/fonts/fa-brands-400.woff": {
+    "file": "icons/fa-brands-4003",
+    "src": "resources/fonts/fa-brands-400.woff"
+  },
+  "resources/fonts/fa-brands-400.woff2": {
+    "file": "icons/fa-brands-4002",
+    "src": "resources/fonts/fa-brands-400.woff2"
+  },
+  "resources/fonts/fa-regular-400.eot": {
+    "file": "icons/fa-regular-400",
+    "src": "resources/fonts/fa-regular-400.eot"
+  },
+  "resources/fonts/fa-regular-400.svg": {
+    "file": "icons/fa-regular-4005",
+    "src": "resources/fonts/fa-regular-400.svg"
+  },
+  "resources/fonts/fa-regular-400.ttf": {
+    "file": "icons/fa-regular-4004",
+    "src": "resources/fonts/fa-regular-400.ttf"
+  },
+  "resources/fonts/fa-regular-400.woff": {
+    "file": "icons/fa-regular-4003",
+    "src": "resources/fonts/fa-regular-400.woff"
+  },
+  "resources/fonts/fa-regular-400.woff2": {
+    "file": "icons/fa-regular-4002",
+    "src": "resources/fonts/fa-regular-400.woff2"
+  },
+  "resources/fonts/fa-solid-900.eot": {
+    "file": "icons/fa-solid-900",
+    "src": "resources/fonts/fa-solid-900.eot"
+  },
+  "resources/fonts/fa-solid-900.svg": {
+    "file": "icons/fa-solid-9005",
+    "src": "resources/fonts/fa-solid-900.svg"
+  },
+  "resources/fonts/fa-solid-900.ttf": {
+    "file": "icons/fa-solid-9004",
+    "src": "resources/fonts/fa-solid-900.ttf"
+  },
+  "resources/fonts/fa-solid-900.woff": {
+    "file": "icons/fa-solid-9003",
+    "src": "resources/fonts/fa-solid-900.woff"
+  },
+  "resources/fonts/fa-solid-900.woff2": {
+    "file": "icons/fa-solid-9002",
+    "src": "resources/fonts/fa-solid-900.woff2"
+  },
+  "resources/fonts/materialdesignicons-webfont.eot": {
+    "file": "icons/materialdesignicons-webfont",
+    "src": "resources/fonts/materialdesignicons-webfont.eot"
+  },
+  "resources/fonts/materialdesignicons-webfont.ttf": {
+    "file": "icons/materialdesignicons-webfont4",
+    "src": "resources/fonts/materialdesignicons-webfont.ttf"
+  },
+  "resources/fonts/materialdesignicons-webfont.woff": {
+    "file": "icons/materialdesignicons-webfont3",
+    "src": "resources/fonts/materialdesignicons-webfont.woff"
+  },
+  "resources/fonts/materialdesignicons-webfont.woff2": {
+    "file": "icons/materialdesignicons-webfont2",
+    "src": "resources/fonts/materialdesignicons-webfont.woff2"
+  },
+  "resources/images/bg-auth-overlay.png": {
+    "file": "icons/bg-auth-overlay",
+    "src": "resources/images/bg-auth-overlay.png"
+  },
+  "resources/images/crypto/bg-ico-hero.jpg": {
+    "file": "icons/bg-ico-hero",
+    "src": "resources/images/crypto/bg-ico-hero.jpg"
+  },
+  "resources/scss/app.scss": {
+    "file": "css/app.min.css",
+    "src": "resources/scss/app.scss",
+    "isEntry": true
+  },
+  "resources/scss/bootstrap.scss": {
+    "file": "css/bootstrap.min.css",
+    "src": "resources/scss/bootstrap.scss",
+    "isEntry": true
+  },
+  "resources/scss/icons.scss": {
+    "file": "css/icons.min.css",
+    "src": "resources/scss/icons.scss",
+    "isEntry": true
+  }
+}
