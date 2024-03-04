@@ -152,6 +152,7 @@ Not decided yet.
 Geneva Morre, Colorado Home Realty
 
 # Changelog
+- *0.0.4.7*: Added components and templates from Admin Backend
 - *0.0.4.6*: Added Performance Metric Links to dashboard, and updated controller
 - *0.0.4.5*: Updated Task management in Dashboard Controller and fixed tasks format
 - *0.0.4.4*: Updated several dependencies and Laravel Version (tests passed)
