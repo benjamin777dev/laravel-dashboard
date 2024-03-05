@@ -1,6 +1,9 @@
 {
     "private": true,
-    "type": "module",
+    "name": "skote",
+    "version": "4.2.1",
+    "description": "",
+    "author": "Themesbrand",
     "browserslist": [
         "last 2 version",
         "> 2%"
@@ -11,21 +14,19 @@
         "build-rtl": "rtlcss public/build/css/app.min.css & rtlcss public/build/css/bootstrap.min.css"
     },
     "devDependencies": {
-        "@popperjs/core": "^2.11.8",
-        "@vitejs/plugin-vue": "^5.0.4",
-        "axios": "^1.6.7",
-        "laravel-vite-plugin": "^1.0.2",
-        "lodash": "^4.17.21",
-        "postcss": "^8.4.35",
+        "axios": "^0.21",
+        "laravel-vite-plugin": "^0.7.4",
+        "lodash": "^4.17.19",
+        "popper.js": "^1.12",
+        "postcss": "^8.3.5",
         "resolve-url-loader": "^5.0.0",
-        "rtlcss": "^4.1.1",
-        "sass": "^1.71.1",
-        "sass-loader": "^14.1.0",
-        "vite": "^5.1.4"
+        "rtlcss": "^3.0.0",
+        "sass": "^1.15.2",
+        "sass-loader": "^8.0.0",
+        "vite": "^4.1.4"
     },
     "dependencies": {
-        "bootstrap": "5.3.3",
-        "vite-aliases": "^0.11.5",
-        "vite-plugin-static-copy": "^1.0.1"
+        "bootstrap": "5.3.2",
+        "vite-plugin-static-copy": "^0.13.1"
     }
 }
