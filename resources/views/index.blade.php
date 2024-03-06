@@ -24,7 +24,7 @@
                     <h5 class="font-size-14 mb-0">Average Pipeline Probability</h5>
                 </div>
                 <div class="text-muted mt-4">
-                    <h4>{{$averagePipelineProbability}}% <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                    <h4>{{$averagePipelineProbability}}%</h4>
                 </div>
             </div>
         </div>
@@ -35,11 +35,6 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-xs me-3">
-                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
-                            <i class="material-symbols-outlined font-size-18">add_business</i>
-                        </span>
-                    </div>
                     <h5 class="font-size-14 mb-0">New Transactions - Past 30 days
                     </h5>
                 </div>
@@ -54,11 +49,6 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-xs me-3">
-                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
-                            <i class="material-symbols-outlined font-size-18">assignment_add</i>
-                        </span>
-                    </div>
                     <h5 class="font-size-14 mb-0">New Contacts - Past 30 days
                     </h5>
                 </div>
@@ -84,19 +74,19 @@
                     <div class="row">
                         <div class="col-4">
                             <div class="mt-4">
-                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-primary me-1 font-size-18 ">preliminary</i> Potential</p>
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center">Potential</p>
                                 <h5>$ 12,320</h5>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-blue me-1 font-size-18">strategy</i> Pre-active</p>
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"> Pre-active</p>
                                 <h5>$ 9,985</h5>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="mt-4">
-                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-success me-1 font-size-18">flash_on</i> Active</p>
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"> Active</p>
                                 <h5>$ 2,380</h5>
                             </div>
                         </div>
