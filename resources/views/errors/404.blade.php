@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Error_404')
+    @lang('Error_404')
 @endsection
 
 @section('body')

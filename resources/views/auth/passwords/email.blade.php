@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Recover_Password') 2
+    @lang('Recover_Password') 2
 @endsection
 
 @section('css')

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Typography') @endsection
+@section('title') @lang('Typography') @endsection
 
 @section('content')
 
