@@ -1,4 +1,29 @@
 {
+  "resources/css/app.css": {
+    "file": "css/contacts.min.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/contacts.css": {
+    "file": "css/contacts.min.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/css/custom.css": {
+    "file": "css/custom.min.css",
+    "isEntry": true,
+    "src": "resources/css/custom.css"
+  },
+  "resources/css/dashboard.css": {
+    "file": "css/dashboard.min.css",
+    "isEntry": true,
+    "src": "resources/css/dashboard.css"
+  },
+  "resources/css/pipeline.css": {
+    "file": "css/pipeline.min.css",
+    "isEntry": true,
+    "src": "resources/css/pipeline.css"
+  },
   "resources/fonts/boxicons.eot": {
     "file": "icons/boxicons.eot",
     "src": "resources/fonts/boxicons.eot"
@@ -118,6 +143,36 @@
   "resources/images/crypto/bg-ico-hero.jpg": {
     "file": "icons/bg-ico-hero.jpg",
     "src": "resources/images/crypto/bg-ico-hero.jpg"
+  },
+  "resources/js/app.js": {
+    "file": "js/app3.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  },
+  "resources/js/contacts.js": {
+    "file": "js/contacts2.js",
+    "isEntry": true,
+    "src": "resources/js/contacts.js"
+  },
+  "resources/js/custom.js": {
+    "file": "js/custom.js",
+    "isEntry": true,
+    "src": "resources/js/custom.js"
+  },
+  "resources/js/dashboard.js": {
+    "file": "js/dashboard.js",
+    "isEntry": true,
+    "src": "resources/js/dashboard.js"
+  },
+  "resources/js/pipeline.js": {
+    "file": "js/pipeline2.js",
+    "isEntry": true,
+    "src": "resources/js/pipeline.js"
+  },
+  "resources/sass/app.scss": {
+    "file": "css/app.min2.css",
+    "isEntry": true,
+    "src": "resources/sass/app.scss"
   },
   "resources/scss/app.scss": {
     "file": "css/app.min.css",
