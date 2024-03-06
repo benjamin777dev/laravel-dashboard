@@ -34,7 +34,7 @@
                     </h5>
                 </div>
                 <div class="text-muted mt-4">
-                    <h4>{{$newDealsLast30Days}} <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                    <h4>{{$newDealsLast30Days}} </h4>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                     </h5>
                 </div>
                 <div class="text-muted mt-4">
-                    <h4>{{$newContactsLast30Days}} <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                    <h4>{{$newContactsLast30Days}} </h4>
                 </div>
             </div>
         </div>
