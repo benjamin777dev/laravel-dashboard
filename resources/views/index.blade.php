@@ -8,519 +8,389 @@
 @slot('li_1') Dashboards @endslot
 @slot('title') Dashboard @endslot
 @endcomponent
-
+<!--
+    <div id="stacked-column-chart" data-colors='["--bs-primary", "--bs-warning", "--bs-success"]' class="apex-charts" dir="ltr"></div>
+-->
 <div class="row">
-    <div class="col-xl-4">
+    <div class="col-sm-4">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-4">Pipeline Value</h4>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <p class="text-muted">Next 12 months</p>
-                        <h3>${{$progress}}</h3>
-                        <p class="text-muted"><span class="text-success me-2"> {{$goal}}
-                            </span> goal</p>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="mt-4 mt-sm-0">
-                            <div id="radialBar-chart" data-colors='["--bs-primary"]' class="apex-charts"></div>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-muted mb-0">*Progress contains only Potential -> UC, no Sold or Dead transactions.</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-8">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card mini-stats-wid">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <div class="flex-grow-1">
-                                <p class="text-muted fw-medium">Orders</p>
-                                <h4 class="mb-0">1,235</h4>
-                            </div>
-
-                            <div class="flex-shrink-0 align-self-center">
-                                <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
-                                    <span class="avatar-title">
-                                        <i class="bx bx-copy-alt font-size-24"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mini-stats-wid">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <div class="flex-grow-1">
-                                <p class="text-muted fw-medium">Revenue</p>
-                                <h4 class="mb-0">$35, 723</h4>
-                            </div>
-
-                            <div class="flex-shrink-0 align-self-center ">
-                                <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                                    <span class="avatar-title rounded-circle bg-primary">
-                                        <i class="bx bx-archive-in font-size-24"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card mini-stats-wid">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <div class="flex-grow-1">
-                                <p class="text-muted fw-medium">Average Price</p>
-                                <h4 class="mb-0">$16.2</h4>
-                            </div>
-
-                            <div class="flex-shrink-0 align-self-center">
-                                <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
-                                    <span class="avatar-title rounded-circle bg-primary">
-                                        <i class="bx bx-purchase-tag-alt font-size-24"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end row -->
-
-        <div class="card">
-            <div class="card-body">
-                <div class="d-sm-flex flex-wrap">
-                    <h4 class="card-title mb-4">Email Sent</h4>
-                    <div class="ms-auto">
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Week</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Month</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#">Year</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div id="stacked-column-chart" data-colors='["--bs-primary", "--bs-warning", "--bs-success"]' class="apex-charts" dir="ltr"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end row -->
-
-<div class="row">
-    <div class="col-xl-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Social Source</h4>
-                <div class="text-center">
-                    <div class="avatar-sm mx-auto mb-4">
-                        <span class="avatar-title rounded-circle bg-primary-subtle font-size-24">
-                            <i class="mdi mdi-facebook text-primary"></i>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-xs me-3">
+                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                            <i class="material-symbols-outlined font-size-18">legend_toggle</i>
                         </span>
                     </div>
-                    <p class="font-16 text-muted mb-2"></p>
-                    <h5><a href="#" class="text-dark">Facebook - <span class="text-muted font-16">125 sales</span> </a>
-                    </h5>
-                    <p class="text-muted">Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero
-                        venenatis faucibus tincidunt.</p>
-                    <a href="#" class="text-primary font-16">Learn more <i class="mdi mdi-chevron-right"></i></a>
+                    <h5 class="font-size-14 mb-0">Average Pipeline Probability</h5>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-primary font-size-16">
-                                    <i class="mdi mdi-facebook text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Facebook</h5>
-                            <p class="text-muted mb-0">125 sales</p>
-                        </div>
+                <div class="text-muted mt-4">
+                    <h4>{{$averagePipelineProbability}}% <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                            
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-xs me-3">
+                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                            <i class="material-symbols-outlined font-size-18">add_business</i>
+                        </span>
                     </div>
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-info font-size-16">
-                                    <i class="mdi mdi-twitter text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Twitter</h5>
-                            <p class="text-muted mb-0">112 sales</p>
-                        </div>
+                    <h5 class="font-size-14 mb-0">New Transactions - Past 30 days
+                    </h5>
+                </div>
+                <div class="text-muted mt-4">
+                    <h4>{{$newDealsLast30Days}} <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar-xs me-3">
+                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
+                            <i class="material-symbols-outlined font-size-18">assignment_add</i>
+                        </span>
                     </div>
-                    <div class="col-4">
-                        <div class="social-source text-center mt-3">
-                            <div class="avatar-xs mx-auto mb-3">
-                                <span class="avatar-title rounded-circle bg-pink font-size-16">
-                                    <i class="mdi mdi-instagram text-white"></i>
-                                </span>
-                            </div>
-                            <h5 class="font-size-15">Instagram</h5>
-                            <p class="text-muted mb-0">104 sales</p>
-                        </div>
-                    </div>
+                    <h5 class="font-size-14 mb-0">New Contacts - Past 30 days
+                    </h5>
+                </div>
+                <div class="text-muted mt-4">
+                    <h4>{{$newContactsLast30Days}} <i class="material-symbols-outlined text-success">keyboard_arrow_up</i></h4>
+                </div>
+            </div>
+        </div>
+    </div>              
+</div>
+                    
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Pipelines</h4>
+
+                <div>
+                    <div id="pipelines-chart" data-colors='["--bs-primary", "--bs-success", "--bs-danger"]' class="apex-charts"></div>
                 </div>
 
+                <div class="text-center text-muted">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mt-4">
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-primary me-1 font-size-18 ">preliminary</i> Potential</p>
+                                <h5>$ 12,320</h5>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mt-4">
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-blue me-1 font-size-18">strategy</i> Pre-active</p>
+                                <h5>$ 9,985</h5>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mt-4">
+                                <p class="mb-2 text-truncate d-flex align-items-center justify-content-center"><i class="material-symbols-outlined text-success me-1 font-size-18">flash_on</i> Active</p>
+                                <h5>$ 2,380</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="border-top px-3 pt-3">
+                            <div class="row">
+                                <div class="col current-pipeline align-self-center">
+                                    <div class="position-relative">
+                                        <p class="mb-1 text-left">Current Pipeline</p>
+                                        <h4>${{$progress}}</h4>
+                                    </div>
+                                </div>
+                                <div class="col-auto align-self-center">
+                                    <button class="btn btn-primary w-md waves-effect waves-light"><span class="d-none d-sm-inline-block">Manage Pipelines</span> </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-xl-4">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-5">Activity</h4>
-                <ul class="verti-timeline list-unstyled">
-                    <li class="event-list">
-                        <div class="event-timeline-dot">
-                            <i class="bx bx-right-arrow-circle font-size-18"></i>
+                <h4 class="card-title mb-4">My Pipeline - Monthly Comparison</h4>
+                <div class="row">
+                    
+                    <div class="col">
+                        <div id="pipelines_chart" class="apex-charts" dir="ltr"></div> 
+
+                    </div>
+                </div>
+            </div>
+        </div><!--end card-->
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Recent Added Leads</h4>
+                <div data-simplebar style="max-height: 376px;">
+                    <div class="vstack gap-4">
+                        <div class="d-flex">
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="d-flex">
+                            
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="ms-2 flex-grow-1">
+                                <h6 class="mb-1 font-size-15"><a href="job-details.html" class="text-body">lead Title</a></h6>
+                                <p class="text-muted mb-0">Tampa, FL, USA - <b>53</b> sec ago</p>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="material-symbols-outlined">menu</i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                    <li><a class="dropdown-item" href="job-details.html">View Details</a></li>
+                                    <li><a class="dropdown-item" href="#">Apply Now</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top">
+                    <div class="text-center">
+                        <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light"> Manage Leads</a>
+                    </div>
+                </div>
+            </div>
+        </div><!--end card-->
+    </div>
+</div> 
+                                                
+<div class="row">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Notifications</h4>
+
+                <ul class="list-group" data-simplebar style="max-height: 390px;">
+                    <li class="list-group-item border-0">
+                        <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
-                                <h5 class="font-size-14">22 Nov <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
+                                <div class="avatar-xs">
+                                    <span class="avatar-title rounded-circle bg-light">
+                                        <img src="assets/images/companies/img-1.png" alt="" height="18">
+                                    </span>
+                                </div>
                             </div>
                             <div class="flex-grow-1">
-                                <div>
-                                    Responded to need “Volunteer Activities
-                                </div>
+                                <h5 class="font-size-14">Donec vitae sapien ut</h5>
+                                <p class="text-muted">If several languages coalesce, the grammar of the resulting language</p>
+
+                                <div class="float-end">
+                                    <p class="text-muted mb-0 d-flex align-items-center"><i class="material-symbols-outlined me-1 person-icon font-size-18">person</i> Jerry</p>                                                        </div>
+                                <p class="text-muted mb-0">12 Mar, 2020</p>
                             </div>
                         </div>
                     </li>
-                    <li class="event-list">
-                        <div class="event-timeline-dot">
-                            <i class="bx bx-right-arrow-circle font-size-18"></i>
-                        </div>
+                    <li class="list-group-item border-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
-                                <h5 class="font-size-14">17 Nov <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div>
-                                    Everyone realizes why a new common language would be desirable... <a href="javascript: void(0);">Read more</a>
+                                <div class="avatar-xs">
+                                    <span class="avatar-title rounded-circle bg-light">
+                                        <img src="assets/images/companies/img-2.png" alt="" height="18">
+                                    </span>
                                 </div>
+                            </div>
+                            
+                            <div class="flex-grow-1">
+                                <h5 class="font-size-14">Cras ultricies mi eu turpis</h5>
+                                <p class="text-muted">To an English person, it will seem like simplified English, as a skeptical cambridge</p>
+
+                                <div class="float-end">
+                                    <p class="text-muted mb-0 d-flex align-items-center"><i class="material-symbols-outlined me-1 person-icon font-size-18">person</i> Jerry</p>
+                                </div>
+                                <p class="text-muted mb-0">13 Mar, 2020</p>
                             </div>
                         </div>
                     </li>
-                    <li class="event-list active">
-                        <div class="event-timeline-dot">
-                            <i class="bx bxs-right-arrow-circle font-size-18 bx-fade-right"></i>
-                        </div>
+                    <li class="list-group-item border-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
-                                <h5 class="font-size-14">15 Nov <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div>
-                                    Joined the group “Boardsmanship Forum”
+                                <div class="avatar-xs">
+                                    <span class="avatar-title rounded-circle bg-light">
+                                        <img src="assets/images/companies/img-3.png" alt="" height="18">
+                                    </span>
                                 </div>
+                            </div>
+                            
+                            <div class="flex-grow-1">
+                                <h5 class="font-size-14">Duis arcu tortor suscipit</h5>
+                                <p class="text-muted">It va esser tam simplic quam occidental in fact, it va esser occidental.</p>
+
+                                <div class="float-end">
+                                    <p class="text-muted mb-0 d-flex align-items-center"><i class="material-symbols-outlined me-1 person-icon font-size-18">person</i> Calvin</p>
+                                </div>
+                                <p class="text-muted mb-0">14 Mar, 2020</p>
                             </div>
                         </div>
                     </li>
-                    <li class="event-list">
-                        <div class="event-timeline-dot">
-                            <i class="bx bx-right-arrow-circle font-size-18"></i>
-                        </div>
+                    <li class="list-group-item border-0">
                         <div class="d-flex">
                             <div class="flex-shrink-0 me-3">
-                                <h5 class="font-size-14">12 Nov <i class="bx bx-right-arrow-alt font-size-16 text-primary align-middle ms-2"></i></h5>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div>
-                                    Responded to need “In-Kind Opportunity”
+                                <div class="avatar-xs">
+                                    <span class="avatar-title rounded-circle bg-light">
+                                        <img src="assets/images/companies/img-1.png" alt="" height="18">
+                                    </span>
                                 </div>
+                            </div>
+                            
+                            <div class="flex-grow-1">
+                                <h5 class="font-size-14">Donec vitae sapien ut</h5>
+                                <p class="text-muted">If several languages coalesce, the grammar of the resulting language</p>
+
+                                <div class="float-end">
+                                    <p class="text-muted mb-0 d-flex align-items-center"><i class="material-symbols-outlined me-1 person-icon font-size-18">person</i> Joseph</p>
+                                </div>
+                                <p class="text-muted mb-0">12 Mar, 2020</p>
                             </div>
                         </div>
                     </li>
                 </ul>
-                <div class="text-center mt-4"><a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light btn-sm">View More <i class="mdi mdi-arrow-right ms-1"></i></a></div>
             </div>
         </div>
     </div>
-
-    <div class="col-xl-4">
+    <div class="col-xl-8">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-4">Top Cities Selling Product</h4>
+                <h4 class="card-title mb-4">Tasks</h4>
 
-                <div class="text-center">
-                    <div class="mb-4">
-                        <i class="bx bx-map-pin text-primary display-4"></i>
+                <ul class="nav nav-pills bg-light rounded">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">In Process</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Upcoming</a>
+                    </li>
+                </ul>
+
+                <div class="mt-4">
+                    <div data-simplebar style="max-height: 250px;">
+                    
+                        <div class="table-responsive">
+                            <table class="table table-nowrap align-middle table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th></th> <!-- For checkbox -->
+                                        <th>Subject</th>
+                                        <th>Due Date</th>
+                                        <th>Related To</th>
+                                        <th>Assigned To</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($tasks['tasks'] as $task)
+                                        <tr>
+                                            <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
+                                            <td>{{ $task['Subject'] ?? 'N/A' }}</td>
+                                            <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}</td>
+                                            <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
+                                            <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <h3>1,456</h3>
-                    <p>San Francisco</p>
                 </div>
-
-                <div class="table-responsive mt-4">
-                    <table class="table align-middle table-nowrap">
-                        <tbody>
-                            <tr>
-                                <td style="width: 30%">
-                                    <p class="mb-0">San Francisco</p>
-                                </td>
-                                <td style="width: 25%">
-                                    <h5 class="mb-0">1,456</h5>
-                                </td>
-                                <td>
-                                    <div class="progress bg-transparent progress-sm">
-                                        <div class="progress-bar bg-primary rounded" role="progressbar" style="width: 94%" aria-valuenow="94" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p class="mb-0">Los Angeles</p>
-                                </td>
-                                <td>
-                                    <h5 class="mb-0">1,123</h5>
-                                </td>
-                                <td>
-                                    <div class="progress bg-transparent progress-sm">
-                                        <div class="progress-bar bg-success rounded" role="progressbar" style="width: 82%" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p class="mb-0">San Diego</p>
-                                </td>
-                                <td>
-                                    <h5 class="mb-0">1,026</h5>
-                                </td>
-                                <td>
-                                    <div class="progress bg-transparent progress-sm">
-                                        <div class="progress-bar bg-warning rounded" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="card-footer bg-transparent border-top">
+                    <div class="text-center">
+                        <a href="javascript: void(0);" class="btn btn-primary waves-effect waves-light"> Add new Task</a>
+                        <a href="javascript: void(0);" class="btn btn-secondary waves-effect waves-light"> Manage Tasks</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- end row -->
-
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Latest Transaction</h4>
-                <div class="table-responsive">
-                    <table class="table align-middle table-nowrap mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width: 20px;">
-                                    <div class="form-check font-size-16 align-middle">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck01">
-                                        <label class="form-check-label" for="transactionCheck01"></label>
-                                    </div>
-                                </th>
-                                <th class="align-middle">Order ID</th>
-                                <th class="align-middle">Billing Name</th>
-                                <th class="align-middle">Date</th>
-                                <th class="align-middle">Total</th>
-                                <th class="align-middle">Payment Status</th>
-                                <th class="align-middle">Payment Method</th>
-                                <th class="align-middle">View Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck02">
-                                        <label class="form-check-label" for="transactionCheck02"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2540</a> </td>
-                                <td>Neal Matthews</td>
-                                <td>
-                                    07 Oct, 2019
-                                </td>
-                                <td>
-                                    $400
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-mastercard me-1"></i> Mastercard
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck03">
-                                        <label class="form-check-label" for="transactionCheck03"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2541</a> </td>
-                                <td>Jamal Burnett</td>
-                                <td>
-                                    07 Oct, 2019
-                                </td>
-                                <td>
-                                    $380
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-danger font-size-11">Chargeback</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-visa me-1"></i> Visa
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck04">
-                                        <label class="form-check-label" for="transactionCheck04"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2542</a> </td>
-                                <td>Juan Mitchell</td>
-                                <td>
-                                    06 Oct, 2019
-                                </td>
-                                <td>
-                                    $384
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-paypal me-1"></i> Paypal
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck05">
-                                        <label class="form-check-label" for="transactionCheck05"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2543</a> </td>
-                                <td>Barry Dick</td>
-                                <td>
-                                    05 Oct, 2019
-                                </td>
-                                <td>
-                                    $412
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-mastercard me-1"></i> Mastercard
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck06">
-                                        <label class="form-check-label" for="transactionCheck06"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2544</a> </td>
-                                <td>Ronald Taylor</td>
-                                <td>
-                                    04 Oct, 2019
-                                </td>
-                                <td>
-                                    $404
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-warning font-size-11">Refund</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-visa me-1"></i> Visa
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="form-check font-size-16">
-                                        <input class="form-check-input" type="checkbox" id="transactionCheck07">
-                                        <label class="form-check-label" for="transactionCheck07"></label>
-                                    </div>
-                                </td>
-                                <td><a href="javascript: void(0);" class="text-body fw-bold">#SK2545</a> </td>
-                                <td>Jacob Hunter</td>
-                                <td>
-                                    04 Oct, 2019
-                                </td>
-                                <td>
-                                    $392
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-soft-success font-size-11">Paid</span>
-                                </td>
-                                <td>
-                                    <i class="fab fa-cc-paypal me-1"></i> Paypal
-                                </td>
-                                <td>
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary btn-sm btn-rounded waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".transaction-detailModal">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- end table-responsive -->
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end row -->
 
 <!-- Transaction Modal -->
 <div class="modal fade transaction-detailModal" tabindex="-1" role="dialog" aria-labelledby="transaction-detailModalLabel" aria-hidden="true">
