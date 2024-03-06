@@ -1,11 +1,3 @@
-/*
-Template Name: zPortal - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Dashboard Init Js File
-*/
-
 // get colors array from the string
 function getChartColorsArray(chartId) {
     if (document.getElementById(chartId) !== null) {
