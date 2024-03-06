@@ -26,7 +26,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
-        Log::info("Got Access Token: $accessToken");
+        Log::info("Got Access Token: $accessToken"); 
 
         // Set default goal or use user-defined goal
         $goal = $user->goal ?? 250000;
