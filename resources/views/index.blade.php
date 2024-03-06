@@ -16,11 +16,6 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="avatar-xs me-3">
-                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-18">
-                            <i class="material-symbols-outlined font-size-18">legend_toggle</i>
-                        </span>
-                    </div>
                     <h5 class="font-size-14 mb-0">Average Pipeline Probability</h5>
                 </div>
                 <div class="text-muted mt-4">
