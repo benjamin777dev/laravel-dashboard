@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Video') @endsection
+@section('title') @lang('Video') @endsection
 
 @section('content')
 

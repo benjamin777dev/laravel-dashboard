@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Saas') @endsection
+@section('title') @lang('Saas') @endsection
 
 @section('content')
 
