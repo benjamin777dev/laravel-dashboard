@@ -1,6 +1,6 @@
 @extends('layouts.master-layouts')
 
-@section('title') @lang('translation.Boxed_Width') @endsection
+@section('title') @lang('Boxed_Width') @endsection
 
 @section('body')
     <body data-topbar="dark" data-layout="horizontal" data-layout-size="boxed">

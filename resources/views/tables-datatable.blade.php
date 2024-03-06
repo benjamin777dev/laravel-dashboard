@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Data_Tables')
+    @lang('Data_Tables')
 @endsection
 
 @section('css')

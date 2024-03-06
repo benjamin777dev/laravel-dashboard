@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Google_Maps') @endsection
+@section('title') @lang('Google_Maps') @endsection
 
 @section('content')
 

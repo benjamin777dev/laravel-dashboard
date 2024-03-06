@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Two_step_verification') 2
+    @lang('Two_step_verification') 2
 @endsection
 
 @section('css')

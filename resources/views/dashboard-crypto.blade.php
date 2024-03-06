@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Crypto') @endsection
+@section('title') @lang('Crypto') @endsection
 
 @section('content')
 

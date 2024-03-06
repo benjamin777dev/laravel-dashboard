@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Kanban_Board')
+    @lang('Kanban_Board')
 @endsection
 
 @section('css')

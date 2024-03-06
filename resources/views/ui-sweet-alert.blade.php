@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Sweet_Alert') @endsection
+@section('title') @lang('Sweet_Alert') @endsection
 
 @section('css')
 <!-- Sweet Alert-->

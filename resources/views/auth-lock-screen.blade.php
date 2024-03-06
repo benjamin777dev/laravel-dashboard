@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Lock_Screen')
+    @lang('Lock_Screen')
 @endsection
 
 @section('body')

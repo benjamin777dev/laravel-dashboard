@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Scrollable') @endsection
+@section('title') @lang('Scrollable') @endsection
 
 @section('body')
     <body data-sidebar="dark" data-layout-scrollable="true">

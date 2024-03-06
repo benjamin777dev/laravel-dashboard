@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Placeholders') @endsection
+@section('title') @lang('Placeholders') @endsection
 
 @section('content')
 

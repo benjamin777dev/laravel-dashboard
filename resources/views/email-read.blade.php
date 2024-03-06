@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Read_Email') @endsection
+@section('title') @lang('Read_Email') @endsection
 @section('css')
     <!-- Summernote css -->
         {{-- <link href="{{ URL::asset('build/libs/summernote/summernote-bs4.min.css') }}" rel="stylesheet" type="text/css" /> --}}

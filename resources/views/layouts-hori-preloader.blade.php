@@ -1,6 +1,6 @@
 @extends('layouts.master-layouts')
 
-@section('title') @lang('translation.Preloader') @endsection
+@section('title') @lang('Preloader') @endsection
 
 @section('body')
 

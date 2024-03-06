@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Icon_Sidebar') @endsection
+@section('title') @lang('Icon_Sidebar') @endsection
 
 @section('body')
 

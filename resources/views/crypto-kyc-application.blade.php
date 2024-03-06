@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.KYC_Application')
+    @lang('KYC_Application')
 @endsection
 
 @section('css')

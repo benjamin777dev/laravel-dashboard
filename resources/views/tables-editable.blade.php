@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Editable_Table') @endsection
+@section('title') @lang('Editable_Table') @endsection
 
 @section('content')
 

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Responsive_Table') @endsection
+@section('title') @lang('Responsive_Table') @endsection
 
 @section('css')
     <!-- Responsive Table css -->

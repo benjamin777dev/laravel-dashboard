@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.User_List')
+    @lang('User_List')
 @endsection
 @section('css')
     <!-- select2 css -->

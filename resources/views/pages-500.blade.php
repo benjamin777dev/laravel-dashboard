@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Error_500')
+    @lang('Error_500')
 @endsection
 
 @section('body')

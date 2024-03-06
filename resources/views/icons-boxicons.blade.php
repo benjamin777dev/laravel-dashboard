@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Boxicons') @endsection
+@section('title') @lang('Boxicons') @endsection
 
 @section('content')
 

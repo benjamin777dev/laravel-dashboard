@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Offcanvas') @endsection
+@section('title') @lang('Offcanvas') @endsection
 
 @section('content')
 

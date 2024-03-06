@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Chartjs_Charts') @endsection
+@section('title') @lang('Chartjs_Charts') @endsection
 
 @section('content')
 

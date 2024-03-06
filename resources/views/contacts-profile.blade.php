@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Profile') @endsection
+@section('title') @lang('Profile') @endsection
 @section('content')
 
 @component('components.breadcrumb')

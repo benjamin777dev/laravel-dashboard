@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    @lang('translation.Confirm_Mail')
+    @lang('Confirm_Mail')
 @endsection
 
 @section('body')

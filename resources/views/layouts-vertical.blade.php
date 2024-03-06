@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Vertical') @endsection
+@section('title') @lang('Vertical') @endsection
 
 @section('body')
     <body data-sidebar="dark">

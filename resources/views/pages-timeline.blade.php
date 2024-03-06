@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Timeline') @endsection
+@section('title') @lang('Timeline') @endsection
 
 @section('css')
 <!-- owl.carousel css -->

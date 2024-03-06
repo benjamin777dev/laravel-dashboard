@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Notifications') @endsection
+@section('title') @lang('Notifications') @endsection
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{ URL::asset('build/libs/toastrbuild/toastr.min.css') }}">

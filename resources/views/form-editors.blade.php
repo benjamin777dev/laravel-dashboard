@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Form_Editors') @endsection
+@section('title') @lang('Form_Editors') @endsection
 
 @section('content')
 

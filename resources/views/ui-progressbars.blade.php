@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Progress_Bars') @endsection
+@section('title') @lang('Progress_Bars') @endsection
 
 @section('content')
 

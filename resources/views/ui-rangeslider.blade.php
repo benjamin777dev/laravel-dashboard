@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Range_Slider') @endsection
+@section('title') @lang('Range_Slider') @endsection
 
 @section('css')
 <!-- ION Slider -->

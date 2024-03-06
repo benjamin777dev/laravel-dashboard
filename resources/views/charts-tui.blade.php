@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Toast_UI_Charts')
+    @lang('Toast_UI_Charts')
 @endsection
 
 @section('css')

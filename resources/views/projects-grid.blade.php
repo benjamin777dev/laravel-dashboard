@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Projects_Grid') @endsection
+@section('title') @lang('Projects_Grid') @endsection
 
 @section('content')
 

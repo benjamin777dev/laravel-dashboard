@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Lightbox') @endsection
+@section('title') @lang('Lightbox') @endsection
 
 @section('css')
 <!-- Lightbox css -->

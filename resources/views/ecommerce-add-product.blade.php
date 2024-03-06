@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Add_Product')
+    @lang('Add_Product')
 @endsection
 
 @section('css')

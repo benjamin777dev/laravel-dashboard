@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Apex_Charts')
+    @lang('Apex_Charts')
 @endsection
 
 @section('content')

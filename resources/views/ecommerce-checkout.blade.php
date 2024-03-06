@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Checkout') @endsection
+@section('title') @lang('Checkout') @endsection
 
 @section('css')
     <!-- select2 css -->

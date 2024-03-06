@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Projects_List')
+    @lang('Projects_List')
 @endsection
 @section('content')
     @component('components.breadcrumb')

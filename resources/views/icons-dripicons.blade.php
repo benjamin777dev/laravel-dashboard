@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Dripicons') @endsection
+@section('title') @lang('Dripicons') @endsection
 
 @section('content')
 

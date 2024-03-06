@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Rating') @endsection
+@section('title') @lang('Rating') @endsection
 
 @section('css')
 <!-- Bootstrap Rating css -->

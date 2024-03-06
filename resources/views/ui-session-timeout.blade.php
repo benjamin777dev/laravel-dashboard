@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Session_Timeout') @endsection
+@section('title') @lang('Session_Timeout') @endsection
 
 @section('content')
 

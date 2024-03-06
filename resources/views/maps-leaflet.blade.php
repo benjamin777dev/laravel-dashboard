@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Leaflet_Maps') @endsection
+@section('title') @lang('Leaflet_Maps') @endsection
 
 @section('css')
     <!-- leaflet Css -->

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Jquery_Knob_Charts') @endsection
+@section('title') @lang('Jquery_Knob_Charts') @endsection
 
 @section('content')
 

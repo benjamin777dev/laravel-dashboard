@@ -1,6 +1,6 @@
 @extends('layouts.master-layouts')
 
-@section('title') @lang('translation.Topbar_Light') @endsection
+@section('title') @lang('Topbar_Light') @endsection
 
 @section('body')
     <body data-topbar="light" data-layout="horizontal">

@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Flot_Charts')
+    @lang('Flot_Charts')
 @endsection
 
 @section('content')

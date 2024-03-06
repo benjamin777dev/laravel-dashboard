@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Colored_Sidebar') @endsection
+@section('title') @lang('Colored_Sidebar') @endsection
 
 @section('body')
     <body data-sidebar="colored">

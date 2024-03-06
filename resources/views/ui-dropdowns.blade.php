@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Dropdowns')
+    @lang('Dropdowns')
 @endsection
 
 @section('content')

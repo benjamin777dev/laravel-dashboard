@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Customers')
+    @lang('Customers')
 @endsection
 @section('css')
     <!-- bootstrap-datepicker css -->

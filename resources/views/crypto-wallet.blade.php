@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Wallet')
+    @lang('Wallet')
 @endsection
 
 @section('css')

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Buy_Sell') @endsection
+@section('title') @lang('Buy_Sell') @endsection
 
 @section('content')
 

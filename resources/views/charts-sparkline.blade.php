@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Sparkline_Charts') @endsection
+@section('title') @lang('Sparkline_Charts') @endsection
 
 @section('content')
 

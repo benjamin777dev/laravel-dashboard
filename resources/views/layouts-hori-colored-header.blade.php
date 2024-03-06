@@ -1,6 +1,6 @@
 @extends('layouts.master-layouts')
 
-@section('title') @lang('translation.Colored_Header') @endsection
+@section('title') @lang('Colored_Header') @endsection
 
 @section('body')
     <body data-topbar="colored" data-layout="horizontal">

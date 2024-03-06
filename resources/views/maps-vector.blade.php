@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    @lang('translation.Vector_Maps')
+    @lang('Vector_Maps')
 @endsection
 
 @section('css')

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') @lang('translation.Alerts') @endsection
+@section('title') @lang('Alerts') @endsection
 
 @section('content')
 
