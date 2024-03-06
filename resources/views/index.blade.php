@@ -652,6 +652,10 @@
 <!-- apexcharts -->
 <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 
+<!-- dashboard init -->
+<script src="{{ URL::asset('build/js/pages/dashboard.init.js') }}"></script>
+
+<!-- One Off Scripts -->
 <script>
     var radialbarColors = getChartColorsArray("radialBar-chart");
 if (radialbarColors) {
@@ -711,6 +715,4 @@ if (radialbarColors) {
 }
 </script>
 
-<!-- dashboard init -->
-<script src="{{ URL::asset('build/js/pages/dashboard.init.js') }}"></script>
 @endsection
