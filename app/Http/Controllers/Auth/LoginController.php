@@ -17,7 +17,7 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     // Where to redirect users after login.
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/dashboard';
 
     public function __construct()
     {
@@ -51,6 +51,6 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        return redirect('/home');
+        return redirect('/dashboard');
     }
 }

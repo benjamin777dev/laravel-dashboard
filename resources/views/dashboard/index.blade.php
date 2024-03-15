@@ -1,6 +1,6 @@
 {{-- resources/views/dashboard.blade.php --}}
 
-@extends('layouts.app')
+@extends('layouts.master')
 
 @section('title', 'Agent Commander | Dashboard')
 
@@ -125,7 +125,7 @@
                 </div>
             </div>
         </div>
-    
+
         <div class="row mt-3">
         <div class="row mt-4">
         {{-- Task Section --}}

@@ -7,23 +7,49 @@
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
-                <li class="menu-title" key="t-menu">@lang('Menu')</li>
+                <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                    <a href="dashboard" class="waves-effect">
                         <i class="bx bx-home-circle"></i>
-                        <span key="t-dashboards">@lang('Dashboards')</span>
+                        <span key="t-dashboard">@lang('Dashboard')</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index" key="t-default">@lang('Default')</a></li>
-                        <li><a href="dashboard-saas" key="t-saas">@lang('Saas')</a></li>
-                        <li><a href="dashboard-crypto" key="t-crypto">@lang('Crypto')</a></li>
-                        <li><a href="dashboard-blog" key="t-blog">@lang('Blog')</a></li>
-                        <li><a href="dashboard-job">@lang('Jobs')</a></li>
+                </li>
+                <li>
+                    <a href="pipeline" class="waves-effect">
+                        <i class="bx bx-home-circle"></i>
+                        <span key="t-pipeline">@lang('Pipeline')</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="contacts" class="waves-effect">
+                        <i class="bx bx-user-circle"></i>
+                        <span key="t-database">@lang('Database')</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="bx bx-user-circle"></i>
+                        <span key="t-marketing">@lang('Marketing')</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
                     </ul>
                 </li>
 
+                <li class="menu-title" key="t-backend">@lang('Activities')</li>
                 <li>
+                    <a href="#" class="waves-effect">
+                        <i class="bx bx-list-ul"></i>
+                        <span key="t-tasks">@lang('Tasks')</span>
+                    </a>
+                </li>
+
+                <!-- <li>
                     <a href="javascript: void(0);" class="waves-effect">
                     <span class="badge rounded-pill bg-danger float-end" key="t-hot">@lang('hot')</span>
                         <i class="bx bx-layout"></i>
@@ -431,7 +457,7 @@
                             </ul>
                         </li>
                     </ul>
-                </li>
+                </li> -->
 
             </ul>
         </div>

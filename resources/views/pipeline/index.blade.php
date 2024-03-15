@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.master')
 
 @section('title', 'Agent Commander | Pipeline')
 
@@ -57,7 +57,7 @@
                         <strong>${{ number_format($summary['probableGCIAverage'], 2) }}</strong>
                     </th>
                 </tr>
-                
+
             </tfoot>
         </table>
     </div>

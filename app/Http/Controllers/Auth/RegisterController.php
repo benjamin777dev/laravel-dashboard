@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
-    protected $redirectTo = "/home";
+    protected $redirectTo = "/dashboard";
 
     public function __construct()
     {
