@@ -20,7 +20,7 @@
         "popper.js": "^1.12",
         "postcss": "^8.4.35",
         "resolve-url-loader": "^5.0.0",
-        "rtlcss": "^3.0.0",
+        "rtlcss": "^4.1.1",
         "sass": "^1.15.2",
         "sass-loader": "^8.0.0",
         "vite": "^5.1.6"
