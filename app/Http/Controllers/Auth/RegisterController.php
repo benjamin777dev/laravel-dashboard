@@ -139,7 +139,13 @@ class RegisterController extends Controller
         // Validate the request
         $validatedData = $request->validate([
             'password' => 'required|string|confirmed',
+            'name' => 'required|string',
         ]);
+
+        if (!session('user_data') || !session('token_data') || !session('contact_id') || !session('root_user_id')) {
+            Log::error('User data not found in session');
+            return redirect('/login')->withErrors(['oauth' => 'User data not found in session.']);
+        }
 
         // Retrieve user data from the session
         $userData = session('user_data');
@@ -166,8 +172,8 @@ class RegisterController extends Controller
         $constraint = ['zoho_id' => $contactId];
         $userDBData = [
             'email' => $hashedEmail, // Store hashed email
-            'name' => $userData['first_name'] . ' ' . $userData['last_name'],
-            'password' => Hash::make($request->password),
+            'name' => $validatedData['name'],
+            'password' => Hash::make($validatedData['password']),
             'access_token' => Crypt::encryptString($tokenData['access_token']),
             'refresh_token' => Crypt::encryptString($tokenData['refresh_token']),
             'token_expires_at' => now()->addSeconds($tokenData['expires_in']),
