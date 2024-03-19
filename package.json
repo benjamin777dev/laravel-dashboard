@@ -22,7 +22,7 @@
         "resolve-url-loader": "^5.0.0",
         "rtlcss": "^4.1.1",
         "sass": "^1.15.2",
-        "sass-loader": "^8.0.0",
+        "sass-loader": "^14.1.1",
         "vite": "^5.1.6"
     },
     "dependencies": {
