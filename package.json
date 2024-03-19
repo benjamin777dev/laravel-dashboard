@@ -14,7 +14,7 @@
         "build-rtl": "rtlcss public/build/css/app.min.css & rtlcss public/build/css/bootstrap.min.css"
     },
     "devDependencies": {
-        "axios": "^0.28",
+        "axios": "^1.6",
         "laravel-vite-plugin": "^1.0.2",
         "lodash": "^4.17.19",
         "popper.js": "^1.12",
