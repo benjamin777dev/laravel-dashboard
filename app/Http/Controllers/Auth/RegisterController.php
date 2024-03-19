@@ -22,7 +22,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm(Request $request)
     {
-        Log::info('Showing registration form');
+        Log::info('Showing registration form' . $request->email);
 
         // Retrieve user data from the session
         $userData = session('user_data');
@@ -95,13 +95,13 @@ class RegisterController extends Controller
                 $contactDataResponse = Http::withHeaders([
                     'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
                 ])->get('https://www.zohoapis.com/crm/v6/Contacts/search', [
-                    'criteria' => $criteria,
-                    'fields' => $fields,
-                ]);
+                            'criteria' => $criteria,
+                            'fields' => $fields,
+                        ]);
                 $cdrData = $contactDataResponse->json();
                 Log::Info("Contact Data Response: " . print_r($cdrData, true));
 
-                if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
+                if (isset ($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
                     $contactId = $cdrData['data'][0]['id'];
                     Log::info("Set from contact data!");
                 }
@@ -123,7 +123,7 @@ class RegisterController extends Controller
                 return redirect()->route('register');
             } catch (\Exception $ex) {
                 Log::error("Zoho oauth user process failed: " . $ex->getMessage());
-                return redirect('/login')->withErrors(['oauth' => 'Error during OAuth user process: ' . $e->getMessage()]);
+                return redirect('/login')->withErrors(['oauth' => 'Error during OAuth user process: ' . $ex->getMessage()]);
             }
         } catch (\Exception $e) {
             Log::error("Zoho oauth token process failed: " . $e->getMessage());
