@@ -139,10 +139,6 @@
                                                 <button class="btn btn-primary waves-effect waves-light" type="submit">Log
                                                     In</button>
                                             </div>
-
-                                            <div class="mt-4 text-center">
-                                                <a href="{{ route('auth.redirect') }}" class="btn btn-primary waves-effect waves-light">Sign In with Zoho</a>
-                                            </div>
                                         </form>
                                         <div class="mt-5 text-center">
                                             <p>Don't have an account ? <a href="{{ url('register') }}" class="fw-medium text-primary"> Signup now </a> </p>
