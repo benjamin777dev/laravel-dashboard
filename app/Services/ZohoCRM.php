@@ -148,7 +148,6 @@ class ZohoCRM
         ]);
 
         Log::info('Zoho contact data response: ' . print_r($response, true));
-
         return $response;
     }
 }

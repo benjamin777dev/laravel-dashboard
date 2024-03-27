@@ -154,7 +154,7 @@ class HomeController extends Controller
 
         $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
-
+        
         $newContactsLast30Days = $contactData['contactsLast30Days'];
 
         $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
@@ -486,7 +486,6 @@ class HomeController extends Controller
     private function retrieveAndCheckContacts($rootUserId, $accessToken)
     {
         $allContacts = $this->retrieveContactsFromZoho($rootUserId, $accessToken);
-
         $abcContacts = $allContacts->filter(function ($contact) {
             return (!empty($contact['ABCD']) && $contact['ABCD'] !== 'D');
         })->count();

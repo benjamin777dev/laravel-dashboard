@@ -135,8 +135,8 @@ class DashboardController extends Controller
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
-
-        $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $this->retreiveAndCheckTasks($user, $accessToken,$tab);
         Log::info("Task Details: ". print_r($tasks, true));
 
         // get cap information
@@ -192,7 +192,9 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-
+        // print("<pre>");
+        // print_r($tasks);
+        // die;
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -201,7 +203,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab'));
     }
 
     private function formatNumber($number) {
@@ -216,13 +218,18 @@ class DashboardController extends Controller
         }
     }
 
-    private function retreiveAndCheckTasks(User $user, $accessToken) {
+    private function retreiveAndCheckTasks(User $user, $accessToken,$tab) {
         $allTasks = collect();
         $page = 1;
         $hasMorePages = true;
         $error = '';
 
-        $criteria = "(Owner:equals:$user->root_user_id)and(Status:not_equal:Completed)";
+        $criteria = "(Owner:equals:$user->root_user_id)and(Status:equals:$tab)";
+        if(!$criteria){
+            [
+                'error' => $error?? '',
+            ];
+        }
         Log::info("Retrieving tasks for criteria: $criteria");
 
         $response = Http::withHeaders([
