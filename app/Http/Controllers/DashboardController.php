@@ -136,8 +136,8 @@ class DashboardController extends Controller
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
-
-        $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $this->retreiveAndCheckTasks($user, $accessToken,$tab);
         Log::info("Task Details: ". print_r($tasks, true));
 
         // get cap information
@@ -164,7 +164,10 @@ class DashboardController extends Controller
         // include the array information in the frontend
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
-
+         $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
+        //  print("<pre/>");
+        //  print($notesInfo);
+        //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
                    && $aci['Total'] > 0
@@ -193,16 +196,18 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-
+        // print("<pre>");
+        // print_r($tasks);
+        // die;
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',
                 'projectedIncome', 'beyond12MonthsData',
-                'needsNewDateData', 'allMonths', 'contactData',
-                'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData'));
+                'needsNewDateData', 'allMonths', 'contactData', 
+                'newContactsLast30Days', 'newDealsLast30Days', 
+                'averagePipelineProbability', 'tasks', 'aciData','tab'));
     }
 
     private function formatNumber($number) {
@@ -217,13 +222,13 @@ class DashboardController extends Controller
         }
     }
 
-    private function retreiveAndCheckTasks(User $user, $accessToken) {
+    private function retreiveAndCheckTasks(User $user, $accessToken,$tab) {
         $allTasks = collect();
         $page = 1;
         $hasMorePages = true;
         $error = '';
 
-        $criteria = "(Owner:equals:$user->root_user_id)and(Status:not_equal:Completed)";
+        $criteria = "(Owner:equals:$user->root_user_id)and(Status:equals:$tab)";
         Log::info("Retrieving tasks for criteria: $criteria");
 
         $zoho = new ZohoCRM();
@@ -313,6 +318,49 @@ class DashboardController extends Controller
         Log::info("Total aci records: ". $allACI->count());
         Log::info("Aci Records: ", $allACI->toArray());
         return $allACI;
+    }
+
+    //get notes data function
+    private function retrieveNOTESFromZoho(User $user, $accessToken)
+    {
+        $allNotes = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getNotesData($criteria, $page, 200);
+                if (!$response->successful()) {
+                    Log::error("Error retrieving notes: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful notes fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $allNotes = collect($responseData['data'] ?? []);
+                $allNotes = $allNotes->concat($allNotes);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            return $allNotes;
+        }
+
+        Log::info("Total notes records: ". $allNotes->count());
+        Log::info("notes Records: ", $allNotes->toArray());
+        return $allNotes;
     }
 
     private function retrieveDealsFromZoho(User $user, $accessToken)

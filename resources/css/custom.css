@@ -1,3 +1,214 @@
 .bg-black {
     background-color: #000000 !important;
 }
+
+.taskbtn {
+    background-color: rgb(37, 60, 91);
+    padding: 6px 11px 6px 11px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.plusicon {
+    margin-right: 4px;
+}
+
+.dash-card {
+    min-height: 109px;
+    max-height: 109px;
+    min-width: 170px;
+}
+
+.dash-front-cards {
+    padding-block: 8px;
+    padding-inline: 15.5px;
+}
+
+.dTitle {
+    padding-bottom: 12px;
+}
+
+.dCenterText {
+    padding-bottom: 12px;
+}
+
+.dimgdiv {
+    margin-left: 9px;
+}
+
+.dpercentage {
+    padding: 2px 5px 2px 5px;
+    border-radius: 4px;
+    background: rgba(52, 195, 143, 0.18);
+    margin-left: 9px;
+}
+
+.dtasksection {
+    background: rgba(255, 255, 255, 1);
+    padding: 20px;
+}
+
+
+.savebtn {
+    background: rgba(52, 195, 143, 1);
+    margin-right: 12px;
+    border-radius: 3.2px;
+    padding: 5px, 9px, 5px, 9px;
+    min-width: 70px;
+    cursor: pointer;
+}
+
+.deletebtn {
+    background: rgba(244, 106, 106, 1);
+    border-radius: 3.2px;
+    padding: 5px, 9px, 5px, 9px;
+    min-width: 70px;
+    cursor: pointer;
+}
+
+.dashboard-notes-list {
+    background: rgba(253, 234, 174, 1);
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.dtranstiontable {
+    background: rgba(255, 255, 255, 1);
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.dtabletranstion th {
+    background: rgba(240, 230, 220, 1) !important;
+    padding: 12px
+}
+
+.dtabs {
+    background: rgba(240, 230, 220, 1) !important;
+    margin-top: 12px;
+    padding-left: 0px;
+    border-radius: 4px;
+}
+
+.dtabsbtn {
+    padding: 8px 16px 8px 16px;
+    color: #000
+}
+
+.dresponsivetable {
+    margin-top: 12px;
+    padding-inline: 0px;
+}
+
+.dtableresp {
+    padding: 8px 12px 8px 12px;
+}
+
+.dtableresp th {
+    background: rgba(249, 249, 249, 1);
+}
+
+.dresponsivetableTr {
+    vertical-align: middle;
+    padding: 16px, 12px, 16px, 12px;
+}
+
+.pencilIcon {
+    width: 11.25px;
+    height: 11.25px;
+    filter: invert(1);
+}
+
+/* margins */
+.dMb5 {
+    margin-bottom: 5px;
+}
+
+.dMb10 {
+    margin-bottom: 10px;
+}
+
+.dMt16 {
+    margin-top: 16px;
+}
+
+/* Font sizes */
+.dFont10 {
+    font-size: 10px;
+}
+
+.dFont11 {
+    font-size: 11.4px;
+}
+
+.dFont13 {
+    font-size: 13px;
+}
+
+.dFont14 {
+    font-size: 14px;
+}
+
+.dFont15 {
+    font-size: 15px;
+}
+
+.dFont18 {
+    font-size: 18px;
+}
+
+/* font-weights */
+.dFont400 {
+    font-weight: 400;
+}
+
+.dFont600 {
+    font-weight: 600;
+}
+
+.dFont700 {
+    font-weight: 700;
+}
+
+.dFont800 {
+    font-weight: 800;
+}
+
+.dFont900 {
+    font-weight: 900;
+}
+
+.dCalander {
+    background: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .calendarInput {
+        width: 206px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .dCalander {
+        margin-bottom: 24px;
+    }
+}
+
+@media (max-width: 1278px) {
+    .savebtn {
+        margin-bottom: 5px;
+    }
+}
+
+@media (min-width: 768px) and (max-width:1265px) {
+
+    .dashboard-cards {
+        gap: 24px;
+        /* display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between; */
+    }
+}
