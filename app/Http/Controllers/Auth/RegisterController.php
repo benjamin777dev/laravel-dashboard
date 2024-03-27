@@ -93,9 +93,12 @@ class RegisterController extends Controller
                 $cdrData = $contactDataResponse->json();
                 Log::Info("Contact Data Response: " . print_r($cdrData, true));
 
-                if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
-                    $contactId = $cdrData['data'][0]['id'];
-                    Log::info("Set from contact data!");
+                if (!isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
+                    Log::error('Contact data not found in response');
+                    return redirect('/register')->withErrors(['oauth' => 'Contact data not found in response.']);
+                } else {
+                    Log::info("Contact data found in response!");
+                    $cdrData = $cdrData['data'][0];
                 }
 
                 $rootUserId = $userData['id'];
@@ -113,7 +116,7 @@ class RegisterController extends Controller
                 return redirect()->route('register');
             } catch (\Exception $ex) {
                 Log::error("Zoho oauth user process failed: " . $ex->getMessage());
-                return redirect('/login')->withErrors(['oauth' => 'Error during OAuth user process: ' . $e->getMessage()]);
+                return redirect('/register')->withErrors(['oauth' => 'Error during OAuth user process: ' . $ex->getMessage()]);
             }
 
         } catch (\Exception $e) {
