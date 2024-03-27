@@ -127,35 +127,69 @@
         </div>
 
         <div class="row mt-3">
-        <div class="row mt-4">
-        {{-- Task Section --}}
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">Action to Take</div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th></th> <!-- For checkbox -->
-                                    <th>Subject</th>
-                                    <th>Due Date</th>
-                                    <th>Related To</th>
-                                    <th>Assigned To</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($tasks['tasks'] as $task)
-                                    <tr>
-                                        <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
-                                        <td>{{ $task['Subject'] ?? 'N/A' }}</td>
-                                        <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}</td>
-                                        <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
-                                        <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+            <div class="row mt-4">
+                {{-- Task Section --}}
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                               <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="margin: 0;">Tasks</h4>
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </div>
+                                <div class="table-responsive">
+                                    <div class="table-wrapper">
+                                        <div class="btn-toolbar" style= "padding:15px 0px 15px 0px">
+                                            <div style="border: 1px;width: 100%;background-color: #f6f6f6;border-radius: 5px;">
+                                                <div class="btn-group focus-btn-group">
+                                                    <button type="button" class="btn btn-default btn-primary">
+                                                        In Process
+                                                    </button>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default">
+                                                        Upcoming
+                                                    </button>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default">
+                                                        Overdue 
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive mb-0 fixed-solution" data-pattern="priority-columns">
+                                            <table class="table table-hover mb-0 table-borderless">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th><input type="checkbox"></th> <!-- For checkbox -->
+                                                        <th>Description</th>
+                                                        <th>Project Related</th>
+                                                        <th>Due Date</th>
+                                                        <th>Options</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($tasks['tasks'] as $task)
+                                                    <tr>
+                                                        <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}"></td>
+                                                        <td>{{ $task['Subject'] ?? 'N/A' }}</td>
+                                                        <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
+                                                        <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }} <i class="mdi mdi-calendar-month-outline" style="margin-left: 20px;"></i></td>
+                                                        <td colspan="3" style="cursor: pointer;">
+                                                            <i class="bx bx-pencil" style="margin-right: 5px;"></i>
+                                                            <i class="far fa-check-square" style="margin-right: 5px;"></i>
+                                                            <i class="far fa-trash-alt"></i>
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -226,7 +260,7 @@
             ctx.font = 'bold 20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(progress + '%', centerX, centerY - radius / 2);
-        }
+            }
             function drawSegment(x, y, r, startAngle, endAngle, color, lineWidth) {
                 ctx.beginPath();
                 ctx.arc(x, y, r, startAngle, endAngle, false);
