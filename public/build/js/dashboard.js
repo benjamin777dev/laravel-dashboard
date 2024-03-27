@@ -17,3 +17,26 @@ $(function() {
     });
   });
 }
+
+    // $(document).ready(function() {
+        $('.dtabsbtn').on('click', function() {
+          console.log('dtabsbtn-click')
+            var tab = $(this).attr('data-tab');
+            console.log('tab++++', tab)
+            // $.ajax({
+            //     url: '/records/' + tab,
+            //     type: 'GET',
+            //     success: function(data) {
+            //         // Handle the data returned from the server, populate the appropriate tab content
+            //         console.log(data);
+            //     },
+            //     error: function(xhr, status, error) {
+            //         // Handle errors
+            //         console.error(xhr.responseText);
+            //     }
+            // });
+        });
+
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab,'dafaulttab')
+    // });

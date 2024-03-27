@@ -3,9 +3,10 @@
 }
 
 .taskbtn {
-    background-color: rgba(0, 113, 206, 1);
+    background-color: rgb(37, 60, 91);
     padding: 6px 11px 6px 11px;
     border-radius: 4px;
+    cursor: pointer;
 }
 
 .plusicon {
@@ -54,6 +55,7 @@
     border-radius: 3.2px;
     padding: 5px, 9px, 5px, 9px;
     min-width: 70px;
+    cursor: pointer;
 }
 
 .deletebtn {
@@ -61,10 +63,11 @@
     border-radius: 3.2px;
     padding: 5px, 9px, 5px, 9px;
     min-width: 70px;
+    cursor: pointer;
 }
 
 .dashboard-notes-list {
-    background: rgba(255, 253, 130, 1);
+    background: rgba(253, 234, 174, 1);
     padding: 20px;
     border-radius: 4px;
 }

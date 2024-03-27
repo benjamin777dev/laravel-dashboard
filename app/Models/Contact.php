@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Contact extends Model
 {
     protected $fillable = [
-        'name', 
-        'email', 
-        'phone', 
-        'address', 
-        'zoho_id', 
-        'ABCD', 
-        'user_id'];
+        'name',
+        'email',
+        'phone',
+        'address',
+        'zoho_id',
+        'ABCD',
+        'user_id',
+    ];
 }

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Services\ZohoCRM;
 
 
 class DashboardController extends Controller
@@ -15,10 +16,10 @@ class DashboardController extends Controller
         $closingDate = Carbon::parse($deal['Closing_Date']);
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
-    
+
         return $closingDate->gte($startOfYear) && $closingDate->lte($endOfYear);
     }
-    
+
     public function index()
     {
         $user = auth()->user();
@@ -26,7 +27,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
-        Log::info("Got Access Token: $accessToken"); 
+        Log::info("Got Access Token: $accessToken");
 
         // Set default goal or use user-defined goal
         $goal = $user->goal ?? 250000;
@@ -39,8 +40,8 @@ class DashboardController extends Controller
         $progress = $this->calculateProgress($deals, $goal);
         $progressClass = $progress <= 15 ? "bg-danger" : ($progress <= 45 ? "bg-warning" : "bg-success");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
-        Log::info("Progress: $progress");        
-        
+        Log::info("Progress: $progress");
+
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
@@ -63,7 +64,7 @@ class DashboardController extends Controller
 
         // Calculate Current Pipeline Value
         $currentPipelineValue = $this->formatNumber($cpv);
-        
+
         // Calculate Projected Income
         $projectedIncome = $cpv * 2;
 
@@ -72,8 +73,8 @@ class DashboardController extends Controller
         $beyond12Months = $deals->filter(function ($deal) {
             $closingDate = Carbon::parse($deal['Closing_Date']);
             $endOfYear = Carbon::now()->endOfYear();
-            return $closingDate->gt($endOfYear) 
-                && !Str::startsWith($deal['Stage'], 'Dead') 
+            return $closingDate->gt($endOfYear)
+                && !Str::startsWith($deal['Stage'], 'Dead')
                 && $deal['Stage'] !== 'Sold';
         });
 
@@ -85,23 +86,23 @@ class DashboardController extends Controller
 
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) {
-            return Carbon::parse($deal['Closing_Date'])->lt(now()) 
-                   && !Str::startsWith($deal['Stage'], 'Dead') 
+            return Carbon::parse($deal['Closing_Date'])->lt(now())
+                   && !Str::startsWith($deal['Stage'], 'Dead')
                    && $deal['Stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
-            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')), 
+            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')),
             'asum' => $needsNewDate->sum('Pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
         $filteredDeals = $deals->filter(function ($deal) {
-            return $this->masterFilter($deal) 
-                   && !Str::startsWith($deal['Stage'], 'Dead') 
+            return $this->masterFilter($deal)
+                   && !Str::startsWith($deal['Stage'], 'Dead')
                    && $deal['Stage'] !== 'Sold';
         });
-        
+
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
             return Carbon::parse($deal['Closing_Date'])->format('Y-m');
         })->map(function ($dealsGroup) {
@@ -110,14 +111,14 @@ class DashboardController extends Controller
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && !Str::startsWith($deal['Stage'], 'Dead')
                    && $deal['Stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $deals->filter(function ($deal) {
-            return now()->diffInDays(Carbon::parse($deal['Created_Time'])) <= 30 
+            return now()->diffInDays(Carbon::parse($deal['Created_Time'])) <= 30
                    && $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead') 
+                   && !Str::startsWith($deal['Stage'], 'Dead')
                    && $deal['Stage'] !== 'Sold';
         })->count();
 
@@ -163,28 +164,31 @@ class DashboardController extends Controller
         // include the array information in the frontend
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
-       
+         $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
+        //  print("<pre/>");
+        //  print($notesInfo);
+        //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
-            return isset($aci['Total'], $aci['Closing_Date']) 
-                   && $aci['Total'] > 0 
+            return isset($aci['Total'], $aci['Closing_Date'])
+                   && $aci['Total'] > 0
                    && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
                    && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Total');
-        
+
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
-            return isset($aci['Agent_Check_Amount'], $aci['Closing_Date']) 
-                && $aci['Agent_Check_Amount'] > 0 
+            return isset($aci['Agent_Check_Amount'], $aci['Closing_Date'])
+                && $aci['Agent_Check_Amount'] > 0
                 && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
                 && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Agent_Check_Amount');
-        
+
         $totalIRS1099 = $aciInfo->filter(function ($aci) {
-            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction'], $aci['Closing_Date']) 
-                && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0 
+            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction'], $aci['Closing_Date'])
+                && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0
                 && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
                 && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('IRS_Reported_1099_Income_For_This_Transaction');
-        
+
         $aciData = [
             'totalaci' => $this->formatNumber($totalaci ?? 0),
             'totalAgentCheck' => $this->formatNumber($totalAgentCheck ?? 0),
@@ -225,48 +229,53 @@ class DashboardController extends Controller
         $error = '';
 
         $criteria = "(Owner:equals:$user->root_user_id)and(Status:equals:$tab)";
-        if(!$criteria){
-            [
-                'error' => $error?? '',
-            ];
-        }
         Log::info("Retrieving tasks for criteria: $criteria");
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-        ])->get('https://www.zohoapis.com/crm/v6/Tasks/search', [
-            'page' => $page,
-            'per_page' => 200,
-            'criteria' => $criteria,
-        ]);
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
 
-        if (!$response->successful()) {
-            Log::error("Error retrieving deals: " . $response->body());
-            // Handle unsuccessful response
-            $hasMorePages = false;
-            $error = $response->json();
-        } else {
-            Log::info("Successful task fetch... Page: " . $page);
-            $responseData = $response->json();
-            //Log::info("Response data: ". print_r($responseData, true));
-            $tasks = collect($responseData['data'] ?? []);
-            $allTasks = $allTasks->concat($tasks);
-        }
-        $currentPage = $page;
-        $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-        if ($hasMorePages) {
-            $page++;
-        }
+        try {
+            $response = $zoho->getTasksData($criteria, 'Subject,Task Owner,Status,Due_Date,id,Who_Id', $page, 200);
+            if (!$response->successful()) {
+                Log::error("Error retrieving tasks: " . $response->body());
+                // Handle unsuccessful response
+                $hasMorePages = false;
+                $error = $response->json();
+            } else {
+                Log::info("Successful task fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $tasks = collect($responseData['data'] ?? []);
+                $allTasks = $allTasks->concat($tasks);
+            }
 
-        return [
-            'error' => $error?? '',
-            'tasks' => $allTasks, 
-            'pagination' => [
-                'hasMorePages' => $hasMorePages,
-                'nextPage' => $page,
-                'currentPage' => $currentPage,
-            ]
-        ];
+            $currentPage = $page;
+            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+            if ($hasMorePages) {
+                $page++;
+            }
+
+            return [
+                'error' => $error?? '',
+                'tasks' => $allTasks,
+                'pagination' => [
+                    'hasMorePages' => $hasMorePages,
+                    'nextPage' => $page,
+                    'currentPage' => $currentPage,
+                ]
+            ];
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            return [
+                'error' => $e->getMessage(),
+                'tasks' => $allTasks,
+                'pagination' => [
+                    'hasMorePages' => false,
+                    'nextPage' => 1,
+                    'currentPage' => 1,
+                ]
+            ];
+        }
     }
 
     private function retrieveACIFromZoho(User $user, $accessToken)
@@ -279,36 +288,79 @@ class DashboardController extends Controller
         $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
         Log::info("Retrieving aci for criteria: $criteria");
 
-        while ($hasMorePages) {
-            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get('https://www.zohoapis.com/crm/v6/Agent_Commission_Incomes/search', [
-                'page' => $page,
-                'per_page' => 200,
-                'criteria' => $criteria,
-                'fields' => $fields,
-            ]);
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
 
-            if (!$response->successful()) {
-                Log::error("Error retrieving aci: " . $response->body());
-                // Handle unsuccessful response
-                $hasMorePages = false;
-                break;
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getACIData($criteria, $fields, $page, 200);
+                if (!$response->successful()) {
+                    Log::error("Error retrieving aci: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful aci fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $aciData = collect($responseData['data'] ?? []);
+                $allACI = $allACI->concat($aciData);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
             }
-
-            Log::info("Successful aci fetch... Page: " . $page);
-            $responseData = $response->json();
-            //Log::info("Response data: ". print_r($responseData, true));
-            $aciData = collect($responseData['data'] ?? []);
-            $allACI = $allACI->concat($aciData);
-            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-            $page++;
-
+        } catch (\Exception $e) {
+            Log::error("Error retrieving aci: " . $e->getMessage());
+            return $allACI;
         }
 
         Log::info("Total aci records: ". $allACI->count());
         Log::info("Aci Records: ", $allACI->toArray());
         return $allACI;
+    }
+
+    //get notes data function
+    private function retrieveNOTESFromZoho(User $user, $accessToken)
+    {
+        $allNotes = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getNotesData($criteria, $page, 200);
+                if (!$response->successful()) {
+                    Log::error("Error retrieving notes: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful notes fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $allNotes = collect($responseData['data'] ?? []);
+                $allNotes = $allNotes->concat($allNotes);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            return $allNotes;
+        }
+
+        Log::info("Total notes records: ". $allNotes->count());
+        Log::info("notes Records: ", $allNotes->toArray());
+        return $allNotes;
     }
 
     private function retrieveDealsFromZoho(User $user, $accessToken)
@@ -323,36 +375,34 @@ class DashboardController extends Controller
         $fields = "Address,Amount,City,Primary_Contact,Client_Name_Primary,Client_Name_Only,Closing_Date,Created_By,Created_Time,Commission,Contact_Name,Contract,Create_Date,Created_By,Double_Ended,Lender_Company,Lender_Company_Name,Lender_Name,Loan_Amount,Loan_Type,MLS_No,Needs_New_Date,Needs_New_Date1,Needs_New_Date2,Ownership_Type,Personal_Transaction,Pipeline_Probability,Potential_GCI,Primary_Contact_Email,Probability,Pipeline1,Probable_Volume,Property_Type,Representing,Sale_Price,Stage,State,TM_Name,TM_Preference,Deal_Name,Owner,Transaction_Type,Type,Under_Contract,Using_TM,Z_Project_Id,Zip";
         Log::info("Retrieving deals for criteria: $criteria");
 
-        while ($hasMorePages) {
-            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get('https://www.zohoapis.com/crm/v6/Deals/search', [
-                'page' => $page,
-                'per_page' => 200,
-                'criteria' => $criteria,
-                'fields' => $fields,
-            ]);
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
 
-            if (!$response->successful()) {
-                Log::error("Error retrieving deals: " . $response->body());
-                // Handle unsuccessful response
-                $hasMorePages = false;
-                break;
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getDealsData($criteria, $fields, $page, 200);
+
+                if (!$response->successful()) {
+                    Log::error("Error retrieving deals: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful deal fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $deals = collect($responseData['data'] ?? []);
+                $allDeals = $allDeals->concat($deals);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
             }
-
-            Log::info("Response: ". $response->body());
-
-            Log::info("Successful deal fetch... Page: " . $page);
-            $responseData = $response->json();
-            //Log::info("Response data: ". print_r($responseData, true));
-            $deals = collect($responseData['data'] ?? []);
-            $allDeals = $allDeals->concat($deals);
-
-            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-            $page++;
-
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            return $allDeals;
         }
-        
+
         return $allDeals;
     }
 
@@ -362,8 +412,8 @@ class DashboardController extends Controller
         // don't count anything beyond 12 months
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['Stage'], 'Dead') 
-                   && $deal['Stage'] !== 'Sold' 
+            return !Str::startsWith($deal['Stage'], 'Dead')
+                   && $deal['Stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
 
@@ -413,11 +463,11 @@ class DashboardController extends Controller
         })->count();
 
         return [
-            'abcContacts'=>$abcContacts, 
-            'needsEmail'=>$needsEmail, 
-            'needsAddress'=>$needsAddress, 
-            'needsPhone'=>$needsPhone, 
-            'missingAbcd'=>$missingAbcd, 
+            'abcContacts'=>$abcContacts,
+            'needsEmail'=>$needsEmail,
+            'needsAddress'=>$needsAddress,
+            'needsPhone'=>$needsPhone,
+            'missingAbcd'=>$missingAbcd,
             'contactsLast30Days'=>$contactsLast30Days
         ];
     }
@@ -429,30 +479,36 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(Owner:equals:$rootUserId)";
+        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
         Log::info("Retrieving contacts for criteria: $criteria");
-        while ($hasMorePages) {
-            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
-            ])->get('https://www.zohoapis.com/crm/v2/Contacts/search', [
-                'page' => $page,
-                'per_page' => 200,
-                'criteria' => $criteria,
-            ]);
 
-            if (!$response->successful()) {
-                Log::error("Error retrieving contacts: " . $response->body());
-                $hasMorePages = false;
-                break;
-            } else {
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getContactData($criteria, $fields, $page, 200);
+
+                if (!$response->successful()) {
+                    Log::error("Error retrieving contacts: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
                 Log::info("Successful contact fetch... Page: " . $page);
+                $responseData = $response->json();
+                //Log::info("Response data: ". print_r($responseData, true));
+                $contacts = collect($responseData['data'] ?? []);
+                $allContacts = $allContacts->concat($contacts);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
             }
 
-            $responseData = $response->json();
-            $contacts = collect($responseData['data'] ?? []);
-            $allContacts = $allContacts->concat($contacts);
-
-            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'];
-            $page++;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            return $allContacts;
         }
         Log::info("Retrieved contacts: ". $allContacts->count());
 

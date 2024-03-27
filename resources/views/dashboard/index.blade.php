@@ -61,7 +61,8 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon"><i class="fas fa-plus plusicon">
+                        id="btnGroupAddon" data-bs-toggle="modal"
+                        data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
                         </i>
                         New Task
                     </div>
@@ -95,51 +96,43 @@
                                 </tr>
                             </thead>
                             <tbody>
+                              
                                 @if (count($tasks['tasks']) > 0)
                                 @foreach ($tasks['tasks'] as $task)
-                                <tr class="dresponsivetableTr">
-                                    {{-- {{dd($task)}} --}}
-                                    <td><input type="checkbox" /></td>
-                                    <td>
-                                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16">{{$task['Subject'] ??"N/A"}}  <i
-                                                class="fas fa-pencil-alt pencilIcon "></i></p>
+                <tr class="dresponsivetableTr">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <select class="form-select" aria-label="Transaction test" id="dropdownMenuButton">
+                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task['Who_Id']['name'] ?? '' }}</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="datetime-local" value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
+                    </td>
+                    <td>
+                        <div class="row ">
+                            <div class="input-group-text dFont800 dFont11 text-white col-md-5 col-sm-5 justify-content-center align-items-baseline savebtn"
+                                id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId">
+                                <i class="fas fa-hdd plusicon"></i>
+                                Save
+                            </div>
+                            <div class="input-group-text dFont800 dFont11 text-white col-md- col-sm-5 justify-content-center align-items-baseline deletebtn"
+                                id="btnGroupAddon" data-bs-toggle="modal"
+                                data-bs-target="#deleteModalId">
+                                <i class="fas fa-trash-alt plusicon"></i>
 
-                                    </td>
-                                    <td>
-                                        {{-- {{dd($task)}} --}}
-                                        <div class="btn-group">
-                                            <select class="form-select" aria-label="Transaction test" id="dropdownMenuButton">
-                                                @foreach ($task['$approval'] as $key => $value)
-                                                    <option value="{{ $key }}" {{ $value ? 'selected' : '' }}>
-                                                        {{ $key }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        
-                                    </td>
+                                Delete
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
 
-  
-                                    <td>
-                                        <input type="datetime-local" value="{{ \Carbon\Carbon::parse($task['Modified_Time'])->format('Y-m-d\TH:i') }}" />
-                                    </td>
-                                    <td>
-                                        <div class="row ">
-                                            <div class="input-group-text dFont800 dFont11 text-white col-md-5 col-sm-5 justify-content-center align-items-baseline savebtn"
-                                                id="btnGroupAddon">
-                                                <i class="fas fa-hdd plusicon"></i>
-                                                Save
-                                            </div>
-                                            <div class="input-group-text dFont800 dFont11 text-white col-md- col-sm-5 justify-content-center align-items-baseline deletebtn"
-                                                id="btnGroupAddon">
-                                                <i class="fas fa-trash-alt plusicon"></i>
-
-                                                Delete
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
                                 @else
                                 <tr>
                                     <td class="text-center" colspan="12">No records found</td>
@@ -247,6 +240,86 @@
             </div>
         </div>
     </div>
+        {{-- Modals --}}
+        {{-- new task modal --}}
+        <div class="modal fade" id="newTaskModalId" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered deleteModal">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        {{-- <h5 class="modal-title">Modal title</h5> --}}
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="deleteModalBodyText">In progress</p>
+                    </div>
+                    <div class="modal-footer justify-content-evenly border-0">
+                        <div class="d-grid gap-2 col-5">
+                            {{-- <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                            </button> --}}
+                        </div>
+                        <div class="d-grid gap-2 col-5">
+                            {{-- <button type="button" class="btn btn-primary goBackModalBtn">
+                                <i class="fas fa-arrow-left goBackIcon"></i> No, go back
+                            </button> --}}
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>`
+    {{-- save Modal --}}
+    <div class="modal fade" id="saveModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    {{-- <h5 class="modal-title">Modal title</h5> --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="saveModalBodyText">Changes have been saved</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid col-12">
+                        <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
+                            <i class="fas fa-check trashIcon"></i>
+                            Understood
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>`
+    {{-- delete Modal --}}
+    <div class="modal fade" id="deleteModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    {{-- <h5 class="modal-title">Modal title</h5> --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="deleteModalBodyText">Please confirm you’d like to<br />
+                        delete this item.</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                            <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                        </button>
+                    </div>
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" class="btn btn-primary goBackModalBtn">
+                            <i class="fas fa-arrow-left goBackIcon"></i> No, go back
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>`
     {{-- <div class="row mt-4">
             <div class="col-md-4 widget-thermometer">
                 <div class="card">

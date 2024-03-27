@@ -34,7 +34,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.Notes.ALL,ZohoCRM.Notes.UPDATE,ZohoCRM.Notes.DELETE,ZohoCRM.coql.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -117,7 +117,6 @@ class ZohoCRM
                 $this->refresh_token = $tokenData['refresh_token'];
             }
         }
-
         return $this->access_token;
     }
 
@@ -136,13 +135,15 @@ class ZohoCRM
     }
 
     // get contact data from search
-    public function getContactData($search, $fields = 'Contact Owner,Email,First Name,Last Name,Phone')
+    public function getContactData($search, $fields = 'Contact Owner,Email,First Name,Last Name,Phone', $page = 1, $per_page = 1)
     {
         Log::info('Getting Zoho contact data');
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'Contacts/search', [
+            'page' => $page,
+            'per_page' => $per_page,
             'criteria' => $search,
             'fields' => $fields,
         ]);
@@ -150,4 +151,79 @@ class ZohoCRM
         Log::info('Zoho contact data response: ' . print_r($response, true));
         return $response;
     }
+
+    // get deals data from search
+    public function getDealsData($search, $fields = 'Deal Name,Deal Owner,Amount,Stage', $page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho deals data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'Deals/search', [
+            'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            'fields' => $fields,
+        ]);
+
+        Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    // get tasks data from search
+    public function getTasksData($search, $fields = 'Subject,Task Owner,Status,Due Date', $page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho tasks data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'Tasks/search', [
+            'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            'fields' => $fields,
+        ]);
+
+        Log::info('Zoho tasks data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    // get Agent_Commission_Incomes data from Search
+    public function getACIData($search, $fields = 'Deal Name,Deal Owner,Amount,Stage', $page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho Agent_Commission_Incomes data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'Agent_Commission_Incomes/search', [
+            'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            'fields' => $fields,
+        ]);
+
+        Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function getNotesData($search,$page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho notes data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'Notes', [
+            'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            // 'fields' => $fields,
+        ]);
+
+        Log::info('Zoho notes data response: ' . print_r($response, true));
+        return $response;
+    }
+
 }

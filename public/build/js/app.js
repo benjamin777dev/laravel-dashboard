@@ -321,7 +321,6 @@ File: Main Js File
         });
     }
 
-
     function init() {
         initMetisMenu();
         initLeftMenuCollapse();
@@ -340,30 +339,5 @@ File: Main Js File
     }
 
     init();
-// Dashboard Js  
-// console.log('app.js')
-
-// $('.dtabsbtn').on('click', function() {
-
-//     $('.dtabsbtn').removeClass('active');
-            
-//     // Add "active" class to the clicked tab
-//     $(this).addClass('active');
-//     console.log('dtabsbtn-click-app')
-//     var tab = $(this).attr('data-tab');
-//     console.log('tab++++----apppp', tab)
-    // $.ajax({
-    //     url: '/records/' + tab,
-    //     type: 'GET',
-    //     success: function(data) {
-    //         // Handle the data returned from the server, populate the appropriate tab content
-    //         console.log(data);
-    //     },
-    //     error: function(xhr, status, error) {
-    //         // Handle errors
-    //         console.error(xhr.responseText);
-    //     }
-    // });
-// });
 
 })(jQuery)
