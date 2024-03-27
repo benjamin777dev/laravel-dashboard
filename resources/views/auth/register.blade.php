@@ -97,7 +97,6 @@
                                         </a>
                                     </div>
                                     <div class="my-auto">
-                                        {{$userData}}
                                         <div>
                                             <h5 class="text-primary">Register account</h5>
                                             <!-- <p class="text-muted">Get your free zPortal account now.</p> -->
@@ -184,10 +183,6 @@
                                                     <div class="mt-4 d-grid">
                                                         <button class="btn btn-primary waves-effect waves-light"
                                                             type="submit">Register</button>
-                                                    </div>
-
-                                                    <div class="mt-4 text-center">
-                                                        <a href="{{ route('auth.redirect') }}" class="btn btn-primary waves-effect waves-light">Sign In with Zoho</a>
                                                     </div>
 
                                                     <div class="mt-4 text-center">

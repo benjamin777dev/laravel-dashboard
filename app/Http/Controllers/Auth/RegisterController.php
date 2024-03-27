@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\ZohoCRM;
 
 class RegisterController extends Controller
 {
@@ -35,41 +36,19 @@ class RegisterController extends Controller
     {
         Log::info('Redirecting to Zoho for authentication');
 
-        $query = http_build_query([
-            'client_id' => config('services.zoho.client_id'),
-            'redirect_uri' => route('auth.callback'),
-            'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.coql.READ',
-            'prompt' => 'consent',
-            'access_type' => 'offline',
-        ]);
-        Log::info(print_r($query, true));
-        Log::info('Zoho authentication URL: https://accounts.zoho.com/oauth/v2/auth?' . $query);
-
-        return redirect('https://accounts.zoho.com/oauth/v2/auth?' . $query);
+        $zoho = new ZohoCRM();
+        return $zoho->redirectToZoho();
     }
 
     public function handleZohoCallback(Request $request)
     {
-        Log::info('Handling Zoho callback');
-        $headers = [
-            'grant_type' => 'authorization_code',
-            'client_id' => config('services.zoho.client_id'),
-            'client_secret' => config('services.zoho.client_secret'),
-            'redirect_uri' => route('auth.callback'),
-            'code' => $request->code,
-            'access_type' => 'offline',
-        ];
-
-        Log::info('Zoho token URL: https://accounts.zoho.com/oauth/v2/token');
-        Log::info(print_r($headers, true));
-
         try {
-            $response = Http::asForm()->post('https://accounts.zoho.com/oauth/v2/token', $headers);
+            $zoho = new ZohoCRM();
+            $response = $zoho->handleZohoCallback($request);
 
             if (!$response->successful()) {
                 Log::error('OAuth authentication failed', ['response' => $response->body()]);
-                return redirect('/login')->withErrors(['oauth' => 'OAuth authentication failed.']);
+                return redirect('/register')->withErrors(['oauth' => 'OAuth authentication failed.']);
             }
             Log::info('OAuth authentication successful');
             $tokenData = $response->json();
@@ -78,40 +57,51 @@ class RegisterController extends Controller
             Log::info(print_r($tokenData, true));
             Log::info("---------------[/Token Data]----------------------------------");
 
+            $zoho->access_token = $tokenData['access_token'];
+            $zoho->refresh_token = $tokenData['refresh_token'];
+
             try {
-                $userDataResponse = Http::withHeaders([
-                    'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
-                ])->get('https://www.zohoapis.com/crm/v2/users?type=CurrentUser');
+                $userDataResponse = $zoho->getUserData();
 
                 if (!$userDataResponse->successful()) {
                     Log::error('OAuth authentication failed', ['response' => $userDataResponse->body()]);
-                    return redirect('/login')->withErrors(['oauth' => 'Failed to retrieve user data from Zoho.']);
+                    return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve user data from Zoho.']);
+                }
+
+                $userData = $userDataResponse->json();
+                Log::info("User data: " . print_r($userData, true));
+
+                if (!isset($userData['users'], $userData['users'][0], $userData['users'][0]['id'])) {
+                    Log::error('User data not found in response');
+                    return redirect('/register')->withErrors(['oauth' => 'User data not found in response.']);
+                } else {
+                    Log::info("User data found in response!");
+                    $userData = $userData['users'][0];
                 }
 
                 Log::Info("User Data Response: " . print_r($userDataResponse->json(), true));
 
-                $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userDataResponse->json()['users'][0]['email']}))";
+                $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userData['email']}))";
                 $fields = "Id,Email,First_Name,Last_Name";
-                $contactDataResponse = Http::withHeaders([
-                    'Authorization' => 'Zoho-oauthtoken ' . $tokenData['access_token'],
-                ])->get('https://www.zohoapis.com/crm/v6/Contacts/search', [
-                            'criteria' => $criteria,
-                            'fields' => $fields,
-                        ]);
+                $contactDataResponse = $zoho->getContactData($criteria, $fields);
+
+                if (!$contactDataResponse->successful()) {
+                    Log::error('OAuth authentication failed', ['response' => $contactDataResponse->body()]);
+                    return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve contact data from Zoho.']);
+                }
+
                 $cdrData = $contactDataResponse->json();
                 Log::Info("Contact Data Response: " . print_r($cdrData, true));
 
-                if (isset ($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
+                if (isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
                     $contactId = $cdrData['data'][0]['id'];
                     Log::info("Set from contact data!");
                 }
-                $rootUserId = $userDataResponse->json()['users'][0]['id'];
+
+                $rootUserId = $userData['id'];
+                $contactId = $cdrData['id'];
                 Log::info("Root User ID: " . $rootUserId);
-
                 Log::Info("Contact ID: " . $contactId);
-
-                $userData = $userDataResponse->json()['users'][0];
-                Log::info("User data: " . print_r($userData, true));
 
                 // Store user data in the session
                 session(['user_data' => $userData]);
@@ -123,11 +113,12 @@ class RegisterController extends Controller
                 return redirect()->route('register');
             } catch (\Exception $ex) {
                 Log::error("Zoho oauth user process failed: " . $ex->getMessage());
-                return redirect('/login')->withErrors(['oauth' => 'Error during OAuth user process: ' . $ex->getMessage()]);
+                return redirect('/login')->withErrors(['oauth' => 'Error during OAuth user process: ' . $e->getMessage()]);
             }
+
         } catch (\Exception $e) {
             Log::error("Zoho oauth token process failed: " . $e->getMessage());
-            return redirect('/login')->withErrors(['oauth' => 'Error during OAuth token process: ' . $e->getMessage()]);
+            return redirect('/register')->withErrors(['oauth' => 'Error during OAuth token process: ' . $e->getMessage()]);
         }
     }
 
@@ -168,14 +159,13 @@ class RegisterController extends Controller
         $encryptedRefreshToken = Crypt::encryptString($tokenData['refresh_token']);
 
         // Create or update the user in the database
-        // Create or update the user in the database
         $constraint = ['zoho_id' => $contactId];
         $userDBData = [
             'email' => $hashedEmail, // Store hashed email
             'name' => $validatedData['name'],
             'password' => Hash::make($validatedData['password']),
-            'access_token' => Crypt::encryptString($tokenData['access_token']),
-            'refresh_token' => Crypt::encryptString($tokenData['refresh_token']),
+            'access_token' =>  $encryptedAccessToken,
+            'refresh_token' => $encryptedRefreshToken,
             'token_expires_at' => now()->addSeconds($tokenData['expires_in']),
             'root_user_id' => $rootUserId,
         ];
