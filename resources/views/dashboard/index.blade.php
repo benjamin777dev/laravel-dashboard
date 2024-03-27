@@ -34,7 +34,7 @@
 
                                     <div class="d-flex justify-content-center align-items-center dCenterText">
                                         {{-- <div class="col"> --}}
-                                        <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
+                                        <span class="dFont800 dFont18">${{ $data['asum'] }}</span>
                                         {{-- </div> --}}
                                         <div class="dimgdiv">
                                             <img src="{{ url('/images/customImages/arrow_outward.svg') }}" alt=""
@@ -194,7 +194,7 @@
 
             </div>
             <div class="table-responsive dtranstiontable mt-3">
-                <p class="fw-bold">Transations comming soon</p>
+                <p class="fw-bold">Transactions closing soon</p>
                 <table class="table dtabletranstion">
                     <thead>
                         <tr>

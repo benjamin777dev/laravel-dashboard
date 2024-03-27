@@ -49,6 +49,7 @@ class DashboardController extends Controller
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
                 return $deal['Stage'] === $stage && $this->masterFilter($deal);
             });
+            Log::info("filteredDeals: " . print_r($filteredDeals, true));
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
