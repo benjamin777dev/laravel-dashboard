@@ -23,7 +23,7 @@ class RegisterController extends Controller
 
     public function showRegistrationForm(Request $request)
     {
-        Log::info('Showing registration form');
+        Log::info('Showing registration form' . $request->email);
 
         // Retrieve user data from the session
         $userData = session('user_data');

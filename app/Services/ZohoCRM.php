@@ -34,7 +34,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.Notes.ALL,ZohoCRM.Notes.UPDATE,ZohoCRM.Notes.DELETE,ZohoCRM.coql.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -117,7 +117,6 @@ class ZohoCRM
                 $this->refresh_token = $tokenData['refresh_token'];
             }
         }
-
         return $this->access_token;
     }
 
@@ -150,7 +149,6 @@ class ZohoCRM
         ]);
 
         Log::info('Zoho contact data response: ' . print_r($response, true));
-
         return $response;
     }
 
@@ -208,6 +206,23 @@ class ZohoCRM
 
         Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));
 
+        return $response;
+    }
+
+    public function getNotesData($search,$page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho notes data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'Notes', [
+            'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            // 'fields' => $fields,
+        ]);
+
+        Log::info('Zoho notes data response: ' . print_r($response, true));
         return $response;
     }
 
