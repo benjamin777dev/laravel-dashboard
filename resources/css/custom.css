@@ -50,7 +50,7 @@
 
 
 .savebtn {
-    background: rgba(52, 195, 143, 1);
+    background: #253c5b;
     margin-right: 12px;
     border-radius: 3.2px;
     padding: 5px, 9px, 5px, 9px;
@@ -59,7 +59,7 @@
 }
 
 .deletebtn {
-    background: rgba(244, 106, 106, 1);
+    background: #222;
     border-radius: 3.2px;
     padding: 5px, 9px, 5px, 9px;
     min-width: 70px;
@@ -67,7 +67,7 @@
 }
 
 .dashboard-notes-list {
-    background: rgba(253, 234, 174, 1);
+    background: #e8ddd4 !important;
     padding: 20px;
     border-radius: 4px;
 }
@@ -78,13 +78,23 @@
     border-radius: 4px;
 }
 
+.dselect {
+    width: 161px;
+}
+
+.dSubjectText {
+    width: 200px;
+}
+
 .dtabletranstion th {
-    background: rgba(240, 230, 220, 1) !important;
+    background: #222 !important;
+    color: #fff;
     padding: 12px
 }
 
 .dtabs {
-    background: rgba(240, 230, 220, 1) !important;
+    background: #222 !important;
+    color: #fff;
     margin-top: 12px;
     padding-left: 0px;
     border-radius: 4px;
@@ -92,7 +102,11 @@
 
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
-    color: #000
+    color: #fff;
+}
+
+.dtabsbtn:hover {
+    color: #fff;
 }
 
 .dresponsivetable {
@@ -185,9 +199,195 @@
     gap: 24px;
 }
 
+/* / create task modal  / */
+.dtaskmodalContent {
+    padding: 4px;
+}
+
+.dHeaderText {
+    color: #343a40;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+}
+
+.dtaskbody {
+    padding-top: 8px;
+    padding-bottom: 12px;
+}
+
+.ddetailsText {
+    color: #000;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px;
+    margin-bottom: 8px;
+}
+
+.dtextarea {
+    width: 100%;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+    padding: 12px;
+    resize: none;
+}
+
+.dRelatedText {
+    color: #000;
+    padding-top: 12px;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+    margin-bottom: 8px;
+}
+
+.dtextarea:focus-visible {
+    outline: none;
+}
+
+.dmodaltaskSelect,
+.dmodalTaskDiv {
+    width: 100%;
+}
+
+.dDueText {
+    color: #000;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+.dmodalInput {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+}
+
+.dmodalInput:focus-visible {
+    outline: none;
+}
+
+.taskModalSaveBtn {
+    width: 100%;
+    border-radius: 4px;
+    background: #253c5b;
+    padding: 6px 11px;
+}
+
+.dnotesBottomIcon {
+    position: absolute;
+    bottom: 63px;
+    right: 26px;
+    padding: 19px;
+    background: #253c5b;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* / Note Modal / */
+.noteModal {
+    border-radius: 4px;
+    background: #c1b7ae;
+    box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
+    border-color: #c1b7ae;
+}
+
+.dnoteBodyText {
+    flex: 1 0 0;
+    color: #222;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    margin-bottom: 24px;
+}
+
+.dRelatedNoteText {
+    color: #685b50;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+    margin-top: 8px;
+}
+
+.dNoteStepText {
+    color: #000;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 18px;
+    margin-bottom: 0px;
+}
+
+.dNoteText {
+    margin-bottom: 24px;
+}
+
+.dNoteStepDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dNoteIcon {
+    padding: 14px;
+    border-radius: 4px 0px 0px 4px;
+    border: 1px solid #7a8681;
+    background: transparent;
+    color: #7a8681;
+}
+
+.dNoteModalmarkBtn {
+    border-radius: 4px;
+    background: #253c5b;
+    padding: 6px 35px;
+}
+
+.dNoteFooter {
+    margin-inline: auto;
+}
+
+.deleteModal {
+    width: 340px;
+    margin-inline: auto;
+}
+
 @media (min-width: 768px) {
     .calendarInput {
         width: 206px !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1345px) {
+    .dashboard-cards-resp {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 8px;
+    }
+
+    .dCardsCols {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1346px) {
+    .dashboard-cards-resp {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        gap: 8px;
+    }
+
+    .dCardsCols {
+        width: 100%;
     }
 }
 
@@ -197,18 +397,22 @@
     }
 }
 
-@media (max-width: 1278px) {
-    .savebtn {
-        margin-bottom: 5px;
+@media (min-width: 320px) and (max-width: 355px) {
+    .dtabsbtn {
+        padding: 8px 10px 8px 10px;
+        color: #fff;
     }
 }
 
-@media (min-width: 768px) and (max-width:1265px) {
+@media (min-width: 768px) and (max-width: 1143px) {
+    .dCalander {
+        margin-bottom: 24px;
+    }
+}
 
-    .dashboard-cards {
-        gap: 24px;
-        /* display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between; */
+@media (min-width: 320px) and (max-width: 375px) {
+    .deleteModal {
+        width: 305px;
+        margin-inline: auto;
     }
 }

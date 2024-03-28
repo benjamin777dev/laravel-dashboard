@@ -23,10 +23,10 @@
             </div>
 
             <div class="col-ld-9 col-md-9 col-sm-12">
-                <div class="row dashboard-cards">
+                <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
                         {{-- {{ dd($data) }} --}}
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-6 text-center">
+                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
                                     <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
@@ -102,11 +102,11 @@
                 <tr class="dresponsivetableTr">
                     <td><input type="checkbox" /></td>
                     <td>
-                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
+                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
                     </td>
                     <td>
                         <div class="btn-group">
-                            <select class="form-select" aria-label="Transaction test" id="dropdownMenuButton">
+                            <select class="form-select dselect" aria-label="Transaction test" id="dropdownMenuButton">
                                 <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task['Who_Id']['name'] ?? '' }}</option>
                             </select>
                         </div>
@@ -115,13 +115,13 @@
                         <input type="datetime-local" value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
                     </td>
                     <td>
-                        <div class="row ">
-                            <div class="input-group-text dFont800 dFont11 text-white col-md-5 col-sm-5 justify-content-center align-items-baseline savebtn"
+                        <div class="d-flex ">
+                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                 id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId">
                                 <i class="fas fa-hdd plusicon"></i>
                                 Save
                             </div>
-                            <div class="input-group-text dFont800 dFont11 text-white col-md- col-sm-5 justify-content-center align-items-baseline deletebtn"
+                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                 id="btnGroupAddon" data-bs-toggle="modal"
                                 data-bs-target="#deleteModalId">
                                 <i class="fas fa-trash-alt plusicon"></i>
@@ -206,68 +206,109 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-
+                        @if (count($getdealsTransaction) === 0)
+                            <tr>
+                                <td class="text-center" colspan="5">No records found</td>
+                            </tr>
+                        @else
+                            @foreach ($getdealsTransaction as $item)
+                                <tr>
+                                    <td>{{ $item['Deal_Name'] }}</td>
+                                    <td>{{ $item['Contact_Name']['name'] }}</td>
+                                    <td>---</td>
+                                    <td>{{ $item['Owner']['email'] }}</td>
+                                    <td>{{ $item['Closing_Date'] }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-        {{-- Modals --}}
-        {{-- new task modal --}}
-        <div class="modal fade" id="newTaskModalId" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered deleteModal">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        {{-- <h5 class="modal-title">Modal title</h5> --}}
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="deleteModalBodyText">In progress</p>
-                    </div>
-                    <div class="modal-footer justify-content-evenly border-0">
-                        <div class="d-grid gap-2 col-5">
-                            {{-- <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
-                                <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
-                            </button> --}}
-                        </div>
-                        <div class="d-grid gap-2 col-5">
-                            {{-- <button type="button" class="btn btn-primary goBackModalBtn">
-                                <i class="fas fa-arrow-left goBackIcon"></i> No, go back
-                            </button> --}}
-                        </div>
-                    </div>
-    
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#notesModalId">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    </div>
+       {{-- Modals --}}
+    {{-- Create New Task Modal --}}
+    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content dtaskmodalContent">
+                <div class="modal-header border-0">
+                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body dtaskbody">
+                    <p class="ddetailsText">Details</p>
+                    <textarea name="darea" rows="4" class="dtextarea">
+Call Bob Abbott regarding the Little St. Development.
+                    </textarea>
+                    <p class="dRelatedText">Related to...</p>
+                    <div class="btn-group dmodalTaskDiv">
+                        <select class="form-select dmodaltaskSelect" aria-label="Select Transaction">
+                            <option selected>Smith Columbine Hills Buyer</option>
+                            <option>First Option</option>
+                            <option>Second Option</option>
+
+                        </select>
+                    </div>
+                    <p class="dDueText">Date due</p>
+                    <input type="date" class="dmodalInput" />
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-secondary taskModalSaveBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-save saveIcon"></i> Save Changes
+                    </button>
+
+                </div>
+
             </div>
-        </div>`
+        </div>
+    </div>
+
+    {{-- Note Modal --}}
+    <div class="modal fade" id="notesModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content noteModal">
+                <div class="modal-header border-0">
+                    <p class="modal-title dHeaderText">Note</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body dtaskbody">
+                    <p class="dnoteBodyText">Remember to consolidate the terms of sale of the restitution of contract
+                        assessments.</p>
+
+                    <p class="dRelatedNoteText">Related to...</p>
+
+                    <p class="dNoteText">Smith Columbine Hills Buyer</p>
+
+
+
+
+                    <div class="dNoteStepDiv">
+                        <p class="dNoteStepText">1 of 3 Notes related to this</p>
+                        <div>
+                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer dNoteFooter border-0">
+                    <button type="button" class="btn btn-secondary dNoteModalmarkBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-save saveIcon"></i> Mark as Done
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     {{-- save Modal --}}
     <div class="modal fade" id="saveModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -319,175 +360,7 @@
 
             </div>
         </div>
-    </div>`
-    {{-- <div class="row mt-4">
-            <div class="col-md-4 widget-thermometer">
-                <div class="card">
-                    <div class="card-header">
-                        My Pipeline - Next 12 Months
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="customGaugeChart"></canvas>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Stage</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Deals</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($stageData as $stage => $data)
-                                        <tr>
-                                            <td>{{ $stage }}</td>
-                                            <td>${{ $data['sum'] }}</td>
-                                            <td>{{ $data['count'] }} Deals</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th scope="row">Current Pipeline Value</th>
-                                        <td colspan="2">${{ $currentPipelineValue }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">My Projected Income</th>
-                                        <td colspan="2">${{ $projectedIncome }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">My Income Goal</th>
-                                        <td colspan="2">${{ $goal }}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="table-responsive mt-3">
-                            <table class="table table-bordered align-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Not in Pipeline</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Beyond 12 Months</td>
-                                        <td>${{ $beyond12MonthsData['sum'] }}</td>
-                                        <td>{{ $beyond12MonthsData['count'] }} Deals</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Needs New Date</td>
-                                        <td>${{ $needsNewDateData['sum'] }}</td>
-                                        <td>{{ $needsNewDateData['count'] }} Deals</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <a href="{{ url('/manage-pipeline') }}" class="btn btn-primary">Manage Pipeline</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card widget-monthly-comparison" style="height: 400px;width=100%;">
-                    <div class="card-header">
-                        My Pipeline - Monthly Comparison
-                    </div>
-                    <div class="card-body">
-                        <canvas id="monthlyComparisonChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">Database Maintenance</div>
-                    <div class="card-body">
-                        <p>ABC Contacts: {{ $contactData['abcContacts'] }}</p>
-                        <p>Needs Email: {{ $contactData['needsEmail'] }}</p>
-                        <p>Needs Address: {{ $contactData['needsAddress'] }}</p>
-                        <p>Needs Phone: {{ $contactData['needsPhone'] }}</p>
-                        <p>Missing ABCD: {{ $contactData['missingAbcd'] }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-info">
-                    <h3>Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</h3>
-                </div>
-                <div class="alert alert-success">
-                    <h3>Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</h3>
-                </div>
-                <div class="alert alert-secondary">
-                    <h3>Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</h3>
-                </div>
-                <div class="card">
-                    <div class="card-header">Cap data</div>
-                    <div class="card-body">
-                        <p>Cap Paid YTD: {{ $aciData['totalaci'] }}</p>
-                        <p>My Initial Cap</p>
-                        <p>My Residual Cap</p>
-                        <p>Checks Received YTD: {{ $aciData['totalAgentCheck'] }}</p>
-                        <p>1099 Amount YTD: {{ $aciData['totalIRS1099'] }}</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">Performance Metrics</div>
-                    <div class="card-body">
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008614470/3c546af6361400d5afd39fa034e3f1b9">CHR
-                                Rankings Report</a></p>
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008657377/8b86fc2667f41985c4de6ebf80d00ba7">CHR
-                                Company Production</a></p>
-                        <p><a href="#">Strategy Group Production (Coming Soon)</a></p>
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008655113/74f218cdf16cc52f2a54e19c1f5fdc83">Co-Op
-                                Agent Analysis</a></p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-
-    {{-- <div class="row mt-3"> --}}
-    {{-- <div class="row mt-4">
-            {{-- Task Section --}}
-    {{-- <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">Action to Take</div>
-                        <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th></th> <!-- For checkbox -->
-                                        <th>Subject</th>
-                                        <th>Due Date</th>
-                                        <th>Related To</th>
-                                        <th>Assigned To</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($tasks['tasks'] as $task)
-                                        <tr>
-                                            <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}">
-                                            </td>
-                                            <td>{{ $task['Subject'] ?? 'N/A' }}</td>
-                                            <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}
-                                            </td>
-                                            <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
-                                            <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
+    </div>
 
     @vite(['resources/js/dashboard.js'])
     <!-- Include Date Range Picker -->
