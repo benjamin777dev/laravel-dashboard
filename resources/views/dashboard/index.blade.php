@@ -9,15 +9,14 @@
     <div class="container-fluid">
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 col-sm-6 text-start">
-                <p class="dFont900 dFont15 dMb10">Welcome Back, Mark <br />
-                    <span class="dFont400 dFont13">Thursday, March 22, 2024</span>
+                <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
+                    <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
-                    {{-- <p class="dFont400 dFont13 mb-0">19.12.2020 - 25.12.2020</p> --}}
-                    {{-- <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i> --}}
-                    <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="19.12.2020 - 25.12.2020"
-                        name="daterange">
+                     <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
+                        <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
+                        <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
                 </div>
 
             </div>
@@ -33,17 +32,11 @@
 
 
                                     <div class="d-flex justify-content-center align-items-center dCenterText">
-                                        {{-- <div class="col"> --}}
-                                        <span class="dFont800 dFont18">${{ $data['asum'] }}</span>
-                                        {{-- </div> --}}
-                                        <div class="dimgdiv">
-                                            <img src="{{ url('/images/customImages/arrow_outward.svg') }}" alt=""
-                                                height="13" class="auth-logo-dark" />
-                                        </div>
-                                        {{-- </div> --}}
-                                        {{-- <div class="col"> --}}
-                                        <p class="mb-0 dpercentage">+0.2%</p>
-                                        {{-- </div> --}}
+                                        
+                                        <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
+                                        <i class = "{{$data['stageProgressIcon']}}" style = "font-size:25px"></i>
+                                        <p class="mb-0 dpercentage {{$data['stageProgressClass']}}">{{$data['stageProgressExpr']}}{{$data['stageProgress']}}%</p>
+                                       
                                     </div>
                                     <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
                                     </p>
@@ -147,48 +140,18 @@
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
                 <ul class="list-group">
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="dFont800 dFont13">Related to:</span> Global<br />
-                            <p class="dFont400 fs-4 mb-0">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-
-
+                     @foreach ($notesInfo as $noteInfo)
+                        <li
+                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="dFont800 dFont13">Related to:</span> Global<br />
+                                <p class="dFont400 fs-4 mb-0">
+                                    Add items to contract
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
+                    @endforeach
                 </ul>
 
 
@@ -240,253 +203,8 @@
             </div>
         </div>
     </div>
-        {{-- Modals --}}
-        {{-- new task modal --}}
-        <div class="modal fade" id="newTaskModalId" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered deleteModal">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        {{-- <h5 class="modal-title">Modal title</h5> --}}
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="deleteModalBodyText">In progress</p>
-                    </div>
-                    <div class="modal-footer justify-content-evenly border-0">
-                        <div class="d-grid gap-2 col-5">
-                            {{-- <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
-                                <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
-                            </button> --}}
-                        </div>
-                        <div class="d-grid gap-2 col-5">
-                            {{-- <button type="button" class="btn btn-primary goBackModalBtn">
-                                <i class="fas fa-arrow-left goBackIcon"></i> No, go back
-                            </button> --}}
-                        </div>
-                    </div>
-    
-                </div>
-            </div>
-        </div>`
-    {{-- save Modal --}}
-    <div class="modal fade" id="saveModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    {{-- <h5 class="modal-title">Modal title</h5> --}}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="saveModalBodyText">Changes have been saved</p>
-                </div>
-                <div class="modal-footer justify-content-evenly border-0">
-                    <div class="d-grid col-12">
-                        <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
-                            <i class="fas fa-check trashIcon"></i>
-                            Understood
-                        </button>
-                    </div>
+        
 
-                </div>
-
-            </div>
-        </div>
-    </div>`
-    {{-- delete Modal --}}
-    <div class="modal fade" id="deleteModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    {{-- <h5 class="modal-title">Modal title</h5> --}}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="deleteModalBodyText">Please confirm you’d like to<br />
-                        delete this item.</p>
-                </div>
-                <div class="modal-footer justify-content-evenly border-0">
-                    <div class="d-grid gap-2 col-5">
-                        <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
-                            <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
-                        </button>
-                    </div>
-                    <div class="d-grid gap-2 col-5">
-                        <button type="button" class="btn btn-primary goBackModalBtn">
-                            <i class="fas fa-arrow-left goBackIcon"></i> No, go back
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>`
-    {{-- <div class="row mt-4">
-            <div class="col-md-4 widget-thermometer">
-                <div class="card">
-                    <div class="card-header">
-                        My Pipeline - Next 12 Months
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="customGaugeChart"></canvas>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Stage</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Deals</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($stageData as $stage => $data)
-                                        <tr>
-                                            <td>{{ $stage }}</td>
-                                            <td>${{ $data['sum'] }}</td>
-                                            <td>{{ $data['count'] }} Deals</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th scope="row">Current Pipeline Value</th>
-                                        <td colspan="2">${{ $currentPipelineValue }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">My Projected Income</th>
-                                        <td colspan="2">${{ $projectedIncome }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">My Income Goal</th>
-                                        <td colspan="2">${{ $goal }}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="table-responsive mt-3">
-                            <table class="table table-bordered align-middle">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Not in Pipeline</th>
-                                        <th scope="col">Amount</th>
-                                        <th scope="col">Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Beyond 12 Months</td>
-                                        <td>${{ $beyond12MonthsData['sum'] }}</td>
-                                        <td>{{ $beyond12MonthsData['count'] }} Deals</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Needs New Date</td>
-                                        <td>${{ $needsNewDateData['sum'] }}</td>
-                                        <td>{{ $needsNewDateData['count'] }} Deals</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <a href="{{ url('/manage-pipeline') }}" class="btn btn-primary">Manage Pipeline</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card widget-monthly-comparison" style="height: 400px;width=100%;">
-                    <div class="card-header">
-                        My Pipeline - Monthly Comparison
-                    </div>
-                    <div class="card-body">
-                        <canvas id="monthlyComparisonChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">Database Maintenance</div>
-                    <div class="card-body">
-                        <p>ABC Contacts: {{ $contactData['abcContacts'] }}</p>
-                        <p>Needs Email: {{ $contactData['needsEmail'] }}</p>
-                        <p>Needs Address: {{ $contactData['needsAddress'] }}</p>
-                        <p>Needs Phone: {{ $contactData['needsPhone'] }}</p>
-                        <p>Missing ABCD: {{ $contactData['missingAbcd'] }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-info">
-                    <h3>Average Pipeline Probability: {{ number_format($averagePipelineProbability, 0) }}%</h3>
-                </div>
-                <div class="alert alert-success">
-                    <h3>Transactions Last 30 Days: {{ number_format($newContactsLast30Days, 0) }}</h3>
-                </div>
-                <div class="alert alert-secondary">
-                    <h3>Contacts Last 30 Days: {{ number_format($newDealsLast30Days, 0) }}</h3>
-                </div>
-                <div class="card">
-                    <div class="card-header">Cap data</div>
-                    <div class="card-body">
-                        <p>Cap Paid YTD: {{ $aciData['totalaci'] }}</p>
-                        <p>My Initial Cap</p>
-                        <p>My Residual Cap</p>
-                        <p>Checks Received YTD: {{ $aciData['totalAgentCheck'] }}</p>
-                        <p>1099 Amount YTD: {{ $aciData['totalIRS1099'] }}</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">Performance Metrics</div>
-                    <div class="card-body">
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008614470/3c546af6361400d5afd39fa034e3f1b9">CHR
-                                Rankings Report</a></p>
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008657377/8b86fc2667f41985c4de6ebf80d00ba7">CHR
-                                Company Production</a></p>
-                        <p><a href="#">Strategy Group Production (Coming Soon)</a></p>
-                        <p><a
-                                href="https://analytics.zoho.com/open-view/2487682000008655113/74f218cdf16cc52f2a54e19c1f5fdc83">Co-Op
-                                Agent Analysis</a></p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-
-    {{-- <div class="row mt-3"> --}}
-    {{-- <div class="row mt-4">
-            {{-- Task Section --}}
-    {{-- <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">Action to Take</div>
-                        <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th></th> <!-- For checkbox -->
-                                        <th>Subject</th>
-                                        <th>Due Date</th>
-                                        <th>Related To</th>
-                                        <th>Assigned To</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($tasks['tasks'] as $task)
-                                        <tr>
-                                            <td><input type="checkbox" name="taskCompleted[]" value="{{ $task['id'] }}">
-                                            </td>
-                                            <td>{{ $task['Subject'] ?? 'N/A' }}</td>
-                                            <td>{{ $task['Due_Date'] ? Carbon\Carbon::parse($task['Due_Date'])->format('m/d/Y') : 'N/A' }}
-                                            </td>
-                                            <td>{{ $task['Who_Id']['name'] ?? 'N/A' }}</td>
-                                            <td>{{ $task['Owner']['name'] ?? 'N/A' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
 
 
     @vite(['resources/js/dashboard.js'])
@@ -497,7 +215,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             var canvas = document.getElementById('customGaugeChart');
             var ctx = canvas.getContext('2d');
-            var progress = @json($progress); // Your progress value from the server
 
             // Resize the canvas and draw the gauge accordingly
             function resizeCanvas() {

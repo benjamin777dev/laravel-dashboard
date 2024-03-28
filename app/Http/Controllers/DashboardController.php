@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Services\ZohoCRM;
+use App\Models\Deal;
 
 
 class DashboardController extends Controller
@@ -29,6 +30,10 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
         Log::info("Got Access Token: $accessToken");
 
+        //Get Date Range
+        $startDate = Carbon::now()->subDays(7)->format('d.m.Y'); // 7 days ago
+        $endDate = Carbon::now()->format('d.m.Y'); // Current date
+
         // Set default goal or use user-defined goal
         $goal = $user->goal ?? 250000;
         Log::info("Goal: $goal");
@@ -45,19 +50,29 @@ class DashboardController extends Controller
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
                 return $deal['Stage'] === $stage && $this->masterFilter($deal);
             });
-            Log::info("filteredDeals: " . print_r($filteredDeals, true));
+            $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+            $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+            $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
+            $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
+            Log::info("stageProgress: $stageProgress");
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
                     'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
-                    'asum' => $filteredDeals->sum('Pipeline1')
+                    'asum' => $filteredDeals->sum('Pipeline1'),
+                    'stageProgress' => $stageProgress,
+                    "stageProgressClass"=>$stageProgressClass,
+                    'stageProgressIcon'=>$stageProgressIcon,
+                    'stageProgressExpr'=>$stageProgressExpr
                 ],
             ];
         });
+
+        
 
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
@@ -208,7 +223,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData','tab'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','startDate','endDate','user','notesInfo'));
     }
 
     private function formatNumber($number) {
@@ -329,7 +344,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        $fields = "Note_Title,Created_Time,Owner";
         Log::info("Retrieving notes for criteria: $criteria");
 
         $zoho = new ZohoCRM();
@@ -337,7 +352,7 @@ class DashboardController extends Controller
 
         try {
             while ($hasMorePages) {
-                $response = $zoho->getNotesData($criteria, $page, 200);
+                $response = $zoho->getNotesData($criteria,$fields, $page, 200);
                 if (!$response->successful()) {
                     Log::error("Error retrieving notes: " . $response->body());
                     // Handle unsuccessful response
@@ -403,7 +418,7 @@ class DashboardController extends Controller
             Log::error("Error retrieving deals: " . $e->getMessage());
             return $allDeals;
         }
-
+        // $this->storeDealsIntoDB($allDeals);
         return $allDeals;
     }
 
@@ -428,6 +443,42 @@ class DashboardController extends Controller
 
         // Ensure progress does not exceed 100%.
         return min($progress, 100);
+    }
+
+    
+
+    private function storeDealsIntoDB($dealsData) {
+        foreach ($dealsData as $deal) {
+            // Check if the deal already exists
+            $existingDeal = Deal::where('deal_id', $deal['deal_id'])->first();
+            
+            if (!$existingDeal) {
+                // Deal doesn't exist, so insert it
+                Deal::create([
+                    'deal_id' => $deal['deal_id'],
+                    'address' => $deal['Address'],
+                    'amount' => $deal['Amount'],
+                    // Map other fields accordingly
+                ]);
+            } else {
+                // Deal already exists, handle accordingly (log, skip, update, etc.)
+                Log::info("Deal with ID {$deal['deal_id']} already exists in the database.");
+            }
+        }
+    }
+
+    private function calculateStageProgress($deals, $goal)
+    {
+        // Sum the 'Pipeline1' values of the filtered deals.
+        $totalGCI = $deals->sum('Pipeline1');
+        Log::info("Total GCI from open stages: $totalGCI");
+
+        // Calculate the progress as a percentage of the goal.
+        $progress = ($totalGCI / $goal) * 100;
+        Log::info("Progress towards goal: $progress");
+
+        // Ensure progress does not exceed 100%.
+        return round(min($progress, 100));
     }
 
     private function retrieveAndCheckContacts($rootUserId, $accessToken)
