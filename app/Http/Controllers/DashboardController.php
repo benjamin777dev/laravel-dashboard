@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Services\ZohoCRM;
+use App\Models\Note;
 
 
 class DashboardController extends Controller
@@ -167,8 +168,10 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
+         //fetch notes
+         $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print($notesInfo);
+        //  print($notes);
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
@@ -209,7 +212,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes'));
     }
 
     private function formatNumber($number) {
@@ -566,5 +569,48 @@ class DashboardController extends Controller
         Log::info("notes Records: ", $allDeals->toArray());
         return $allDeals;
     }
+    
+    public function saveNote(Request $request)
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'related_to' => 'required|string|max:255',
+            'note_text' => 'required|string',
+        ], [
+            'related_to.required' => 'The Related to field is required.',
+            'note_text.required' => 'The Note field is required.',
+        ]);
+    
+        // Create a new Note instance
+        $note = new Note();
+        // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
+        $note->deal_id = $validatedData['deal_id'] ?? Str::random(10);
+        $note->related_to = $validatedData['related_to'];
+        $note->note_text = $validatedData['note_text'];
+        
+        // Save the Note to the database
+        $note->save();
+    
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Note saved successfully!');
+    }
 
+    public function fetchNotes()
+    {
+        // Fetch notes from the database
+        $notes = Note::all(); // Or you can use any query based on your requirement
+        
+        // Pass notes data to the Blade file
+        return $notes;
+    }
+    
+    public function deleteNotes(Request $request)
+    {
+        $noteIds = $request->input('noteIds');
+    
+            // Perform deletion operation based on $noteIds
+            Note::whereIn('id', $noteIds)->delete();
+            
+            return response()->json(['success' => true]);
+    }
 }

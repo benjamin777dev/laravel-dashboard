@@ -16,8 +16,7 @@
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">19.12.2020 - 25.12.2020</p> --}}
                     {{-- <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i> --}}
-                    <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="19.12.2020 - 25.12.2020"
-                        name="daterange">
+                    <input type="text" value="19.12.2020 - 25.12.2020" name="daterange">
                 </div>
 
             </div>
@@ -61,8 +60,8 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal"
-                        data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                            class="fas fa-plus plusicon">
                         </i>
                         New Task
                     </div>
@@ -71,16 +70,16 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab" aria-controls="nav-home"
-                                aria-selected="true">In
-                                Progress</button></a>
-                           <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab" 
-                                data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
-                                aria-selected="false">Upcoming</button></a>
-                            <a href="/dashboard?tab=Overdue"><button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false">Overdue</button></a>
+                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
+                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
+                                    role="tab" aria-controls="nav-home" aria-selected="true">In
+                                    Progress</button></a>
+                            <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
+                                    id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
+                                    role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
+                            <a href="/dashboard?tab=Overdue"><button class="nav-link dtabsbtn" data-tab='Overdue'
+                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
+                                    role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
 
@@ -96,102 +95,105 @@
                                 </tr>
                             </thead>
                             <tbody>
-                              
+
                                 @if (count($tasks['tasks']) > 0)
-                                @foreach ($tasks['tasks'] as $task)
-                <tr class="dresponsivetableTr">
-                    <td><input type="checkbox" /></td>
-                    <td>
-                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <select class="form-select dselect" aria-label="Transaction test" id="dropdownMenuButton">
-                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task['Who_Id']['name'] ?? '' }}</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <input type="datetime-local" value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
-                    </td>
-                    <td>
-                        <div class="d-flex ">
-                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId">
-                                <i class="fas fa-hdd plusicon"></i>
-                                Save
-                            </div>
-                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                id="btnGroupAddon" data-bs-toggle="modal"
-                                data-bs-target="#deleteModalId">
-                                <i class="fas fa-trash-alt plusicon"></i>
+                                    @foreach ($tasks['tasks'] as $task)
+                                        <tr class="dresponsivetableTr">
+                                            <td><input type="checkbox" /></td>
+                                            <td>
+                                                <p
+                                                    class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText">
+                                                    {{ $task['Subject'] ?? 'N/A' }} <i
+                                                        class="fas fa-pencil-alt pencilIcon "></i></p>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <select class="form-select dselect" aria-label="Transaction test"
+                                                        id="dropdownMenuButton">
+                                                        <option value="{{ $task['Who_Id']['id'] ?? '' }}">
+                                                            {{ $task['Who_Id']['name'] ?? '' }}</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="datetime-local"
+                                                    value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex ">
+                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
+                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        data-bs-target="#saveModalId">
+                                                        <i class="fas fa-hdd plusicon"></i>
+                                                        Save
+                                                    </div>
+                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
+                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModalId">
+                                                        <i class="fas fa-trash-alt plusicon"></i>
 
-                                Delete
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-
+                                                        Delete
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @else
-                                <tr>
-                                    <td class="text-center" colspan="12">No records found</td>
-                                </tr>
-                            @endif
+                                    <tr>
+                                        <td class="text-center" colspan="12">No records found</td>
+                                    </tr>
+                                @endif
+
                             </tbody>
+
                         </table>
+                        <div class="dpagination">
+                            <div class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"> <i
+                                    class="fas fa-trash-alt plusicon"></i>
+                                Remove Selected
+                            </div>
+                            <nav aria-label="...">
+                                <ul class="pagination">
+                                    <li class="page-item disabled">
+                                        <a class="page-link">Previous</a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" href="#">2</a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
+
                 </div>
 
             </div>
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
+                @if ($notes->isEmpty())
+                <p class="text-center">No notes found.</p>
+            @else
                 <ul class="list-group">
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="dFont800 dFont13">Related to:</span> Global<br />
-                            <p class="dFont400 fs-4 mb-0">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-
-
+                    @foreach ($notes as $note)
+                        <li class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="dFont800 dFont13">Related to:</span> {{ $note['related_to'] }}<br />
+                                <p class="dFont400 fs-4 mb-0">
+                                    {{ $note['note_text'] }}
+                                </p>
+                            </div>
+                            <button id="editButton{{ $loop->index + 1 }}" onclick="editNote()" class="btn btn-primary" style="display: none;">Edit</button>
+                            <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')" class="form-check-input checkbox{{ $note['id'] }}" id="checkbox{{ $loop->index + 1 }}">
+                        </li>
+                    @endforeach
                 </ul>
-
-
+            @endif
+                <button id="deleteButton" onclick="deleteNote()" class="btn btn-danger" style="display: none;">Delete</button>
             </div>
             <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
@@ -226,10 +228,10 @@
             </div>
         </div>
     </div>
-    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#notesModalId">
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
-       {{-- Modals --}}
+    {{-- Modals --}}
     {{-- Create New Task Modal --}}
     <div class="modal fade" id="newTaskModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -267,47 +269,47 @@ Call Bob Abbott regarding the Little St. Development.
     </div>
 
     {{-- Note Modal --}}
-    <div class="modal fade" id="notesModalId" tabindex="-1">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body dtaskbody">
-                    <p class="dnoteBodyText">Remember to consolidate the terms of sale of the restitution of contract
-                        assessments.</p>
-
-                    <p class="dRelatedNoteText">Related to...</p>
-
-                    <p class="dNoteText">Smith Columbine Hills Buyer</p>
-
-
-
-
-                    <div class="dNoteStepDiv">
-                        <p class="dNoteStepText">1 of 3 Notes related to this</p>
-                        <div>
-                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                <form action="{{ route('save.note') }}" method="post">
+                    @csrf
+                    <div class="modal-body dtaskbody">
+                        <p class="ddetailsText">Details</p>
+                        <textarea name="note_text" rows="4" class="dtextarea"></textarea>
+                        @error('note_text')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                        <p class="dRelatedText">Related to...</p>
+                        <div class="btn-group dmodalTaskDiv">
+                            <select class="form-select dmodaltaskSelect" name="related_to"
+                                aria-label="Select Transaction">
+                                <option value="">Please select one</option>
+                                @foreach ($getdealsTransaction as $item)
+                                    <option value="{{ $item['Deal_Name'] }}"
+                                        @if (old('related_to') == $item['Deal_Name']) selected @endif>{{ $item['Deal_Name'] }}</option>
+                                @endforeach
+                            </select>
                         </div>
-
+                        @error('related_to')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
-                <div class="modal-footer dNoteFooter border-0">
-                    <button type="button" class="btn btn-secondary dNoteModalmarkBtn" data-bs-dismiss="modal">
-                        <i class="fas fa-save saveIcon"></i> Mark as Done
-                    </button>
-
-                </div>
-
+                    <div class="modal-footer dNoteFooter border-0">
+                        <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                            <i class="fas fa-save saveIcon"></i> Mark as Done
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+
 
     {{-- save Modal --}}
     <div class="modal fade" id="saveModalId" tabindex="-1">
@@ -521,52 +523,103 @@ Call Bob Abbott regarding the Little St. Development.
 @endsection
 @endsection
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-     var defaultTab = "{{ $tab }}";
-     console.log(defaultTab,'tab is here')
-    localStorage.setItem('status', defaultTab);
-    // Retrieve the status from local storage
-    var status = localStorage.getItem('status');
+    document.addEventListener('DOMContentLoaded', function() {
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
 
-    // Object to store status information
-    var statusInfo = {
-        'In Progress': false,
-        'Overdue': false,
-        'Not Started': false,
-    };
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
 
-    // Update the status information based on the current status
-    statusInfo[status] = true;
+        // Update the status information based on the current status
+        statusInfo[status] = true;
 
-    // Loop through statusInfo to set other statuses to false
-    for (var key in statusInfo) {
-        if (key !== status) {
-            statusInfo[key] = false;
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
         }
-    }
 
-    // Example of accessing status information
-    console.log(statusInfo);
+        // Example of accessing status information
+        console.log(statusInfo);
 
-    // Remove active class from all tabs
-    var tabs = document.querySelectorAll('.nav-link');
-    console.log(tabs,'tabssss')
-    tabs.forEach(function(tab) {
-        tab.classList.remove('active');
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.color = "#fff";
+            activeTab.style.borderRadius = "4px";
+        }
     });
+    var selectedNoteIds= [];
+   function handleDeleteCheckbox(id){
+     //checkobox notes showing delete btn functionlity
+    //  console.log(id,'id is hereeeee'
+    // Get all checkboxes
+    const checkboxes = document.querySelectorAll('.checkbox'+id);
+    // Get delete button
+    const deleteButton = document.getElementById('deleteButton');
+    const editButton = document.getElementById('editButton');
+      console.log(checkboxes,'checkboxes')
+    // Add event listener to checkboxes
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // Check if any checkbox is checked
+            const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+            console.log(anyChecked,'checkoeddd')
+            // Toggle delete button visibility
+            deleteButton.style.display = anyChecked ? 'block' : 'none';
+            editButton.style.display = anyChecked ? 'block' : 'none';
+            if(deleteButton.style.display==='block'){
+                selectedNoteIds.push(id)
+            }
+        });
+    });
+    
+   }
 
-    // Set active class to the tab corresponding to the status
-    console.log(status, 'status');
-    var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
-    if (activeTab) {
-        activeTab.classList.add('active');
-        activeTab.style.backgroundColor = "#253C5B"
-        activeTab.style.color = "#fff";
-        activeTab.style.borderRadius = "4px";
+
+   function deleteNote() {
+    if (confirm("Are you sure you want to delete this note?")) {
+        // Send a POST request to delete the note
+        $.ajax({
+            url: '{{ route("delete.note") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}', // Assuming you're using CSRF protection
+                noteIds: selectedNoteIds // Send an array with a single noteId
+            },
+            success: function(response) {
+                // Handle success response
+                // console.log('Note deleted successfully');
+                alert("Note Deleted Sucessfully")
+                window.location.reload();
+                // Optionally, you can remove the deleted note from the DOM
+                // $('#note'+noteId).remove();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error('Error deleting note:', error);
+            }
+        });
     }
-});
+}
 
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
-
-
