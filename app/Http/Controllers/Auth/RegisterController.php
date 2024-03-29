@@ -180,6 +180,7 @@ class RegisterController extends Controller
             $constraint,
             $userDBData
         );
+        
 
         Auth::login($user);
 
