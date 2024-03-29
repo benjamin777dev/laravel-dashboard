@@ -181,6 +181,7 @@ class DashboardController extends Controller
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
+         $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
         //  print("<pre/>");
         //  print($notesInfo);
         //  die;
@@ -592,6 +593,56 @@ class DashboardController extends Controller
         Log::info("Retrieved contacts: ". $allContacts->count());
 
         return $allContacts;
+    }
+
+    private function retrieveDealTransactionData(User $user, $accessToken)
+    {
+        $allDeals = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getDealTransactionData($page, 200);
+
+          
+                if (!$response->successful()) {
+                    Log::error("Error retrieving notes: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+                
+                Log::info("Successful notes fetch... Page: " . $page);
+                $responseData = $response->json();
+
+                //Log::info("Response data: ". print_r($responseData, true));
+                $allDealsdata = collect($responseData['data'] ?? []);
+                $allDeals = $allDeals->concat($allDealsdata);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            return $allDeals;
+        }
+        return $allDeals;
+        echo "<pre>";
+        // print_r($responseData);
+        print_r($allDeals);
+        die;
+
+        Log::info("Total notes records: ". $allDeals->count());
+        Log::info("notes Records: ", $allDeals->toArray());
+        return $allDeals;
     }
 
 }

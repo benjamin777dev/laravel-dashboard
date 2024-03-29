@@ -9,6 +9,7 @@ class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
+    private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
     private $client_secret;
     public $redirect_uri;
@@ -34,7 +35,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.Notes.ALL,ZohoCRM.Notes.UPDATE,ZohoCRM.Notes.DELETE,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.notes.ALL,ZohoCRM.notes.UPDATE,ZohoCRM.notes.DELETE,ZohoCRM.coql.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -220,6 +221,17 @@ class ZohoCRM
         ]);
 
         Log::info('Zoho notes data response: ' . print_r($response, true));
+        return $response;
+    }
+
+    public function getDealTransactionData($page = 1, $per_page = 200)
+    {
+        Log::info('Getting Zoho TransactionData data');
+        $fields = "approval,Contact_Name,Deal_Name,Address,Owner,TM_Name,Closing_Date";
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->post($this->apidealsurl . "Deals/bulk?fields=$fields");
+        Log::info('Zoho getDealTransactionData data response: ' . print_r($response, true));
         return $response;
     }
 

@@ -22,10 +22,10 @@
             </div>
 
             <div class="col-ld-9 col-md-9 col-sm-12">
-                <div class="row dashboard-cards">
+                <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
                         {{-- {{ dd($data) }} --}}
-                        <div class="col-lg-3 col-md-3 col-sm-6 col-6 text-center">
+                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
                                     <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
@@ -95,11 +95,11 @@
                 <tr class="dresponsivetableTr">
                     <td><input type="checkbox" /></td>
                     <td>
-                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
+                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText">{{ $task['Subject'] ?? "N/A" }}  <i class="fas fa-pencil-alt pencilIcon "></i></p>
                     </td>
                     <td>
                         <div class="btn-group">
-                            <select class="form-select" aria-label="Transaction test" id="dropdownMenuButton">
+                            <select class="form-select dselect" aria-label="Transaction test" id="dropdownMenuButton">
                                 <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task['Who_Id']['name'] ?? '' }}</option>
                             </select>
                         </div>
@@ -108,13 +108,13 @@
                         <input type="datetime-local" value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
                     </td>
                     <td>
-                        <div class="row ">
-                            <div class="input-group-text dFont800 dFont11 text-white col-md-5 col-sm-5 justify-content-center align-items-baseline savebtn"
+                        <div class="d-flex ">
+                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                 id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId">
                                 <i class="fas fa-hdd plusicon"></i>
                                 Save
                             </div>
-                            <div class="input-group-text dFont800 dFont11 text-white col-md- col-sm-5 justify-content-center align-items-baseline deletebtn"
+                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                 id="btnGroupAddon" data-bs-toggle="modal"
                                 data-bs-target="#deleteModalId">
                                 <i class="fas fa-trash-alt plusicon"></i>
@@ -169,43 +169,161 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-                        <tr>
-                            <td>debit</td>
-                            <td>Mark</td>
-                            <td>45455454</td>
-                            <td>mark@gmail.com</td>
-                            <td>24/4/2024</td>
-                        </tr>
-
+                        @if (count($getdealsTransaction) === 0)
+                            <tr>
+                                <td class="text-center" colspan="5">No records found</td>
+                            </tr>
+                        @else
+                            @foreach ($getdealsTransaction as $item)
+                                <tr>
+                                    <td>{{ $item['Deal_Name'] }}</td>
+                                    <td>{{ $item['Contact_Name']['name'] }}</td>
+                                    <td>---</td>
+                                    <td>{{ $item['Owner']['email'] }}</td>
+                                    <td>{{ $item['Closing_Date'] }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-        
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#notesModalId">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    </div>
+       {{-- Modals --}}
+    {{-- Create New Task Modal --}}
+    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content dtaskmodalContent">
+                <div class="modal-header border-0">
+                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body dtaskbody">
+                    <p class="ddetailsText">Details</p>
+                    <textarea name="darea" rows="4" class="dtextarea">
+Call Bob Abbott regarding the Little St. Development.
+                    </textarea>
+                    <p class="dRelatedText">Related to...</p>
+                    <div class="btn-group dmodalTaskDiv">
+                        <select class="form-select dmodaltaskSelect" aria-label="Select Transaction">
+                            <option selected>Smith Columbine Hills Buyer</option>
+                            <option>First Option</option>
+                            <option>Second Option</option>
+
+                        </select>
+                    </div>
+                    <p class="dDueText">Date due</p>
+                    <input type="date" class="dmodalInput" />
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" class="btn btn-secondary taskModalSaveBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-save saveIcon"></i> Save Changes
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- Note Modal --}}
+    <div class="modal fade" id="notesModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content noteModal">
+                <div class="modal-header border-0">
+                    <p class="modal-title dHeaderText">Note</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body dtaskbody">
+                    <p class="dnoteBodyText">Remember to consolidate the terms of sale of the restitution of contract
+                        assessments.</p>
+
+                    <p class="dRelatedNoteText">Related to...</p>
+
+                    <p class="dNoteText">Smith Columbine Hills Buyer</p>
 
 
+
+
+                    <div class="dNoteStepDiv">
+                        <p class="dNoteStepText">1 of 3 Notes related to this</p>
+                        <div>
+                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary dNoteIcon" data-bs-dismiss="modal">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer dNoteFooter border-0">
+                    <button type="button" class="btn btn-secondary dNoteModalmarkBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-save saveIcon"></i> Mark as Done
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- save Modal --}}
+    <div class="modal fade" id="saveModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    {{-- <h5 class="modal-title">Modal title</h5> --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="saveModalBodyText">Changes have been saved</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid col-12">
+                        <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
+                            <i class="fas fa-check trashIcon"></i>
+                            Understood
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>`
+    {{-- delete Modal --}}
+    <div class="modal fade" id="deleteModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    {{-- <h5 class="modal-title">Modal title</h5> --}}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="deleteModalBodyText">Please confirm you’d like to<br />
+                        delete this item.</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                            <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                        </button>
+                    </div>
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" class="btn btn-primary goBackModalBtn">
+                            <i class="fas fa-arrow-left goBackIcon"></i> No, go back
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     @vite(['resources/js/dashboard.js'])
     <!-- Include Date Range Picker -->
