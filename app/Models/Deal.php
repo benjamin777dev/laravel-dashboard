@@ -12,7 +12,7 @@ class Deal extends Model
     protected $fillable = [
         'personal_transaction',
         'double_ended',
-        'userID',
+        'contactId',
         'address',
         'representing',
         'client_name_only',
@@ -39,19 +39,19 @@ class Deal extends Model
         'potential_gci',
         'created_by',
         'contractId',
-        'contactId'
+        'userID'
     ];
 
     public function primaryContact()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(User::class, 'contactId');
     }
 
-    public function contactName()
+  /*   public function contactName()
     {
         return $this->belongsTo(Contact::class, 'contactId');
     }
-
+ */
     /*  public function contract()
      {
          return $this->belongsTo(Contract::class);

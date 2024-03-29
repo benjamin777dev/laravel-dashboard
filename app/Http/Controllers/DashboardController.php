@@ -418,7 +418,7 @@ class DashboardController extends Controller
             Log::error("Error retrieving deals: " . $e->getMessage());
             return $allDeals;
         }
-        // $this->storeDealsIntoDB($allDeals);
+        $this->storeDealsIntoDB($allDeals);
         return $allDeals;
     }
 
@@ -448,22 +448,49 @@ class DashboardController extends Controller
     
 
     private function storeDealsIntoDB($dealsData) {
+        Log::info("Deal Data For DB " . $dealsData);
         foreach ($dealsData as $deal) {
             // Check if the deal already exists
-            $existingDeal = Deal::where('deal_id', $deal['deal_id'])->first();
+            // $existingDeal = Deal::where('zoho_deal_id', $deal['id'])->first();
             
-            if (!$existingDeal) {
+            // if (!$existingDeal) {
+                $user = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
                 // Deal doesn't exist, so insert it
-                Deal::create([
-                    'deal_id' => $deal['deal_id'],
-                    'address' => $deal['Address'],
-                    'amount' => $deal['Amount'],
-                    // Map other fields accordingly
+                Deal::updateOrCreate(['zoho_deal_id' => $deal['id']],[
+                    'personal_transaction'=> $deal['Personal_Transaction'],
+                    'double_ended'=> $deal['Double_Ended'],
+                    'userID'=> $user['id'],//In zoho Owner Details
+                    'address'=> $deal['Address'],
+                    'representing'=> $deal['Representing'],
+                    'client_name_only'=> $deal['Client_Name_Only'],
+                    'commission'=> $deal['Commission'],
+                    'probable_volume'=> $deal['Probable_Volume'],
+                    'lender_company'=> $deal['Lender_Company'],
+                    'closing_date'=> $deal['Closing_Date'],
+                    'ownership_type'=> $deal['Ownership_Type'],
+                    'needs_new_date2'=> $deal['Needs_New_Date2'],
+                    'deal_name'=> $deal['Deal_Name'],
+                    'tm_preference'=> $deal['TM_Preference'],
+                    'stage'=> $deal['Stage'],
+                    'sale_price'=> $deal['Sale_Price'],
+                    'zoho_deal_id'=> $deal['id'],
+                    'pipeline1'=> $deal['Pipeline1'],
+                    'pipeline_probability'=> $deal['Pipeline_Probability'],
+                    'zoho_deal_createdTime'=> $deal['Created_Time'],
+                    'property_type'=> $deal['Property_Type'],
+                    'city'=> $deal['City'],
+                    'state'=> $deal['State'],
+                    'lender_company_name'=> $deal['Lender_Company_Name'],
+                    'client_name_primary'=> $deal['Client_Name_Primary'],
+                    'lender_name'=> $deal['Lender_Name'],
+                    'potential_gci'=> $deal['Potential_GCI'],
+                    'contractId'=> null,
+                    'contactId'=>null
                 ]);
-            } else {
-                // Deal already exists, handle accordingly (log, skip, update, etc.)
-                Log::info("Deal with ID {$deal['deal_id']} already exists in the database.");
-            }
+            // } else {
+            //     // Deal already exists, handle accordingly (log, skip, update, etc.)
+            //     Log::info("Deal with ID {$deal['deal_id']} already exists in the database.");
+            // }
         }
     }
 
@@ -531,7 +558,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(Owner:equals:$rootUserId)";
-        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
+        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_ZipContact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
         Log::info("Retrieving contacts for criteria: $criteria");
 
         $zoho = new ZohoCRM();
