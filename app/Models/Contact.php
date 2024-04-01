@@ -7,12 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'name', 
-        'email', 
-        'phone', 
-        'address', 
-        'zoho_id', 
-        'ABCD', 
-        'user_id'];
+        'zoho_contact_id',
+        "contact_owner",
+        "email",
+        "first_name",
+        "last_name",
+        "phone",
+        "created_time",
+        "abcd",
+        "mailing_address",
+        "mailing_city",
+        "mailing_state",
+        "mailing_zip"
+    ];
 }

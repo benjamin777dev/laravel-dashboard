@@ -5,14 +5,21 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+    \App\Console\Commands\SaveDealsToDB::class,
+    ];
     /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Schedule the task to run every minute
+        $schedule->command('app:save-deals-to-d-b')->everyMinute();
+        $schedule->command('app:save-contacts-to-d-b')->everyMinute();
+        $schedule->command('app:save-tasks-to-d-b')->everyMinute();
     }
 
     /**

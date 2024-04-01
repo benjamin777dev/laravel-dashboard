@@ -1,5 +1,4 @@
 <?php
-// app/Models/Deal.php
 
 namespace App\Models;
 
@@ -9,37 +8,62 @@ use Illuminate\Database\Eloquent\Model;
 class Deal extends Model
 {
     use HasFactory;
-
+    
     protected $fillable = [
-        'deal_name',
-        'owner_id',
-        'amount',
-        'stage',
+        'personal_transaction',
+        'double_ended',
+        'contactId',
+        'address',
+        'representing',
+        'client_name_only',
+        'commission',
+        'probable_volume',
+        'lender_company',
         'closing_date',
-        'description',
-        'lead_source',
-        'contact_name_id',
-        'account_name',
-        'probability',
-        'next_step',
-        'expected_revenue',
-        'type'
+        'ownership_type',
+        'needs_new_date2',
+        'deal_name',
+        'tm_preference',
+        'stage',
+        'sale_price',
+        'zoho_deal_id',
+        'pipeline1',
+        'pipeline_probability',
+        'zoho_deal_createdTime',
+        'property_type',
+        'city',
+        'state',
+        'lender_company_name',
+        'client_name_primary',
+        'lender_name',
+        'potential_gci',
+        'created_by',
+        'contractId',
+        'userID'
     ];
 
-    /**
-     * Relationship with User model.
-     */
-    public function owner()
+    public function userData()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(User::class, 'userID');
     }
 
-    /**
-     * Relationship with Contact model.
-     * Assumes a Contact model exists and has an id field.
-     */
-    public function contact()
+    public function contactName()
     {
-        return $this->belongsTo(Contact::class, 'contact_name_id');
+        return $this->belongsTo(Contact::class, 'contactId');
     }
+
+    /*  public function contract()
+     {
+         return $this->belongsTo(Contract::class);
+     } */
+
+    /* public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contractId');
+    } */
+
+    /* public function tmName()
+    {
+        return $this->belongsTo(User::class, 'tm_name');
+    } */
 }

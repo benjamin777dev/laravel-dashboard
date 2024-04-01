@@ -1,10 +1,9 @@
 
-// import { defineConfig } from 'vite';
-const vite = require('vite');
-import laravel from 'laravel-vite-plugin';
+import { defineConfig } from 'vite';
+// import laravel from 'laravel-vite-plugin';
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
-export default vite.defineConfig({
+export default defineConfig({
     build: {
         manifest: true,
         rtl: true,
@@ -24,7 +23,7 @@ export default vite.defineConfig({
         },
       },
     plugins: [
-        laravel(
+       import("laravel-vite-plugin").then(({default:laravel})=> laravel(
             {
                 input: [
                     'resources/scss/bootstrap.scss',
@@ -43,7 +42,7 @@ export default vite.defineConfig({
                     'resources/css/app.css'
                 ],
                 refresh: true,                
-            }
+            })
         ),
          viteStaticCopy({
             targets: [
@@ -53,6 +52,10 @@ export default vite.defineConfig({
                 },
                 {
                     src: 'resources/images',
+                    dest: ''
+                },
+                {
+                    src: 'resources/customImages',
                     dest: ''
                 },
                 {
