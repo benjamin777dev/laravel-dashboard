@@ -13,6 +13,17 @@
     margin-right: 4px;
 }
 
+.removebtn {
+    background-color: rgb(37, 60, 91);
+    cursor: pointer;
+    padding: 14px 11px;
+    border-radius: 4px;
+}
+
+.page-item.active {
+    background-color: #253c5b;
+}
+
 .dash-card {
     min-height: 109px;
     max-height: 109px;
@@ -361,13 +372,23 @@
     margin-inline: auto;
 }
 
+/* pagination */
+.dpagination {
+    display: flex;
+    width: 100vw;
+    justify-content: space-between;
+}
+
+
 @media (min-width: 768px) {
     .calendarInput {
         width: 206px !important;
     }
+
+
 }
 
-@media (min-width: 768px) and (max-width: 1345px) {
+@media (min-width: 425px) and (max-width: 1345px) {
     .dashboard-cards-resp {
         display: grid;
         grid-template-columns: auto auto;
@@ -395,12 +416,24 @@
     .dCalander {
         margin-bottom: 24px;
     }
+
+    .dpagination {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-inline: auto;
+    }
+    .removebtn{
+        margin-bottom: 24px;
+    }
 }
 
 @media (min-width: 320px) and (max-width: 355px) {
     .dtabsbtn {
         padding: 8px 10px 8px 10px;
         color: #fff;
+        font-size: 12px;
     }
 }
 

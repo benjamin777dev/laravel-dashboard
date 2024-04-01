@@ -13,11 +13,15 @@
                 </a>
 
                 <a href="index" class="logo logo-light">
-                    <span class="logo-sm">
-                        <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="22">
+                    <span class="logo-sm" style="padding-inline:8px !important;">
+                        {{-- <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="22"> --}}
+                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="" height="22">
+
                     </span>
-                    <span class="logo-lg">
-                        <img src="{{ URL::asset('build/images/logo-light.png') }}" alt="">
+                    <span class="logo-lg"  style='padding-inline:8px !important;'>
+                        {{-- <img src="{{ URL::asset('build/images/logo-light.png') }}" alt=""> --}}
+                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="">
+
                     </span>
                 </a>
             </div>

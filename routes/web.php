@@ -36,6 +36,11 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+//create note
+Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
+Route::post('/delete-notes', [DashboardController::class, 'deleteNotes'])->name('delete.note')->middleware('auth');
+Route::post('/update-notes', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
+
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
