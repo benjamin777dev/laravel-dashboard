@@ -14,9 +14,9 @@
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
-                     <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
-                        <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
-                        <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
+                    <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
+                    <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
+                    <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
                 </div>
 
             </div>
@@ -32,11 +32,12 @@
 
 
                                     <div class="d-flex justify-content-center align-items-center dCenterText">
-                                        
+
                                         <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
-                                        <i class = "{{$data['stageProgressIcon']}}" style = "font-size:25px"></i>
-                                        <p class="mb-0 dpercentage {{$data['stageProgressClass']}}">{{$data['stageProgressExpr']}}{{$data['stageProgress']}}%</p>
-                                       
+                                        <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
+                                        <p class="mb-0 dpercentage {{ $data['stageProgressClass'] }}">
+                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p>
+
                                     </div>
                                     <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
                                     </p>
@@ -146,8 +147,8 @@
                                     class="fas fa-trash-alt plusicon"></i>
                                 Remove Selected
                             </div>
-                            <nav aria-label="...">
-                                <ul class="pagination">
+                            <nav aria-label="..." class="dpaginationNav">
+                                <ul class="pagination d-flex justify-content-end">
                                     <li class="page-item disabled">
                                         <a class="page-link">Previous</a>
                                     </li>
@@ -170,54 +171,55 @@
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
                 @if ($notes->isEmpty())
-                <p class="text-center">No notes found.</p>
-            @else
-                <ul class="list-group">
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="dFont800 dFont13">Related to:</span> Global<br />
-                            <p class="dFont400 fs-4 mb-0">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
+                    <p class="text-center">No notes found.</p>
+                @else
+                    <ul class="list-group">
+                        <li
+                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="dFont800 dFont13">Related to:</span> Global<br />
+                                <p class="dFont400 fs-4 mb-0">
+                                    Add items to contract
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
+                        <li
+                            class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="fw-bold">Related to:</span> Global<br />
+                                <p class="fs-4">
+                                    Add items to contract
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
+                        <li
+                            class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="fw-bold">Related to:</span> Global<br />
+                                <p class="fs-4">
+                                    Add items to contract
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
+                        <li
+                            class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="fw-bold">Related to:</span> Global<br />
+                                <p class="fs-4">
+                                    Add items to contract
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
 
 
-                </ul>
-            @endif
-                <button id="deleteButton" onclick="deleteNote()" class="btn btn-danger" style="display: none;">Delete</button>
+                    </ul>
+                @endif
+                <button id="deleteButton" onclick="deleteNote()" class="btn btn-danger"
+                    style="display: none;">Delete</button>
             </div>
             <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
@@ -590,63 +592,63 @@ Call Bob Abbott regarding the Little St. Development.
             activeTab.style.borderRadius = "4px";
         }
     });
-    var selectedNoteIds= [];
-   function handleDeleteCheckbox(id){
-     //checkobox notes showing delete btn functionlity
-    //  console.log(id,'id is hereeeee'
-    // Get all checkboxes
-    const checkboxes = document.querySelectorAll('.checkbox'+id);
-    // Get delete button
-    const deleteButton = document.getElementById('deleteButton');
-    const editButton = document.getElementById('editButton'+id);
-      console.log(checkboxes,'checkboxes')
-    // Add event listener to checkboxes
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            // Check if any checkbox is checked
-            const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-            console.log(anyChecked,'checkoeddd')
-            // Toggle delete button visibility
-            deleteButton.style.display = anyChecked ? 'block' : 'none';
-            editButton.style.display = anyChecked ? 'block' : 'none';
-            if(deleteButton.style.display==='block'){
-                selectedNoteIds.push(id)
-            }
-        });
-    });
-    
-   }
+    var selectedNoteIds = [];
 
-   //edit note
-   function editNote(id){
-         console.log(id);
-   }
-
-   function deleteNote() {
-    if (confirm("Are you sure you want to delete this note?")) {
-        // Send a POST request to delete the note
-        $.ajax({
-            url: '{{ route("delete.note") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}', // Assuming you're using CSRF protection
-                noteIds: selectedNoteIds // Send an array with a single noteId
-            },
-            success: function(response) {
-                // Handle success response
-                // console.log('Note deleted successfully');
-                alert("Note Deleted Sucessfully")
-                window.location.reload();
-                // Optionally, you can remove the deleted note from the DOM
-                // $('#note'+noteId).remove();
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error('Error deleting note:', error);
-            }
+    function handleDeleteCheckbox(id) {
+        //checkobox notes showing delete btn functionlity
+        //  console.log(id,'id is hereeeee'
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton');
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                console.log(anyChecked, 'checkoeddd')
+                // Toggle delete button visibility
+                deleteButton.style.display = anyChecked ? 'block' : 'none';
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                if (deleteButton.style.display === 'block') {
+                    selectedNoteIds.push(id)
+                }
+            });
         });
+
     }
-}
 
+    //edit note
+    function editNote(id) {
+        console.log(id);
+    }
+
+    function deleteNote() {
+        if (confirm("Are you sure you want to delete this note?")) {
+            // Send a POST request to delete the note
+            $.ajax({
+                url: '{{ route('delete.note') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}', // Assuming you're using CSRF protection
+                    noteIds: selectedNoteIds // Send an array with a single noteId
+                },
+                success: function(response) {
+                    // Handle success response
+                    // console.log('Note deleted successfully');
+                    alert("Note Deleted Sucessfully")
+                    window.location.reload();
+                    // Optionally, you can remove the deleted note from the DOM
+                    // $('#note'+noteId).remove();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error('Error deleting note:', error);
+                }
+            });
+        }
+    }
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
