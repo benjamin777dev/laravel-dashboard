@@ -613,4 +613,30 @@ class DashboardController extends Controller
             
             return response()->json(['success' => true]);
     }
+
+    public function updateNote(Request $request, $id)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'related_to' => 'required|string|max:255',
+        'note_text' => 'required|string',
+    ], [
+        'related_to.required' => 'The Related to field is required.',
+        'note_text.required' => 'The Note field is required.',
+    ]);
+
+    // Find the Note instance by its ID
+    $note = Note::findOrFail($id);
+
+    // Update the Note attributes
+    $note->related_to = $validatedData['related_to'];
+    $note->note_text = $validatedData['note_text'];
+
+    // Save the updated Note to the database
+    $note->save();
+
+    // Redirect back with a success message
+    return redirect()->back()->with('success', 'Note updated successfully!');
+}
+
 }

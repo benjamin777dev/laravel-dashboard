@@ -39,6 +39,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 //create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::post('/delete-notes', [DashboardController::class, 'deleteNotes'])->name('delete.note')->middleware('auth');
+Route::post('/update-notes', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
 
 
 // Contacts Route

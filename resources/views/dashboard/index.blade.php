@@ -187,7 +187,7 @@
                                     {{ $note['note_text'] }}
                                 </p>
                             </div>
-                            <button id="editButton{{ $loop->index + 1 }}" onclick="editNote()" class="btn btn-primary" style="display: none;">Edit</button>
+                            <button id="editButton{{  $note['id']  }}" onclick="editNote('{{$note['id']}}')" class="btn btn-primary dnotesBottomIcon"  type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display: none;">Edit</button>
                             <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')" class="form-check-input checkbox{{ $note['id'] }}" id="checkbox{{ $loop->index + 1 }}">
                         </li>
                     @endforeach
@@ -575,7 +575,7 @@ Call Bob Abbott regarding the Little St. Development.
     const checkboxes = document.querySelectorAll('.checkbox'+id);
     // Get delete button
     const deleteButton = document.getElementById('deleteButton');
-    const editButton = document.getElementById('editButton');
+    const editButton = document.getElementById('editButton'+id);
       console.log(checkboxes,'checkboxes')
     // Add event listener to checkboxes
     checkboxes.forEach(checkbox => {
@@ -594,6 +594,10 @@ Call Bob Abbott regarding the Little St. Development.
     
    }
 
+   //edit note
+   function editNote(id){
+         console.log(id);
+   }
 
    function deleteNote() {
     if (confirm("Are you sure you want to delete this note?")) {
