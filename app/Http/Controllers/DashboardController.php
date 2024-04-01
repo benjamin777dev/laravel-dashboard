@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Services\ZohoCRM;
+use App\Services\DB;
 use App\Models\Note;
 use App\Models\Deal;
 
@@ -15,7 +16,7 @@ use App\Models\Deal;
 class DashboardController extends Controller
 {
     private function masterFilter($deal) {
-        $closingDate = Carbon::parse($deal['Closing_Date']);
+        $closingDate = Carbon::parse($deal['closing_date']);
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
 
@@ -28,6 +29,8 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        
+        $db = new DB();
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
         Log::info("Got Access Token: $accessToken");
 
@@ -40,7 +43,7 @@ class DashboardController extends Controller
         Log::info("Goal: $goal");
 
         // Retrieve deals from Zoho CRM
-        $deals = $this->retrieveDealsFromZoho($user, $accessToken);
+        $deals = $db->retrieveDeals($user, $accessToken);
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
@@ -53,7 +56,7 @@ class DashboardController extends Controller
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
-                return $deal['Stage'] === $stage && $this->masterFilter($deal);
+                return $deal['stage'] === $stage && $this->masterFilter($deal);
             });
             $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
             $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
@@ -63,8 +66,8 @@ class DashboardController extends Controller
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
-                    'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
-                    'asum' => $filteredDeals->sum('Pipeline1'),
+                    'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
+                    'asum' => $filteredDeals->sum('pipeline1'),
                     'stageProgress' => $stageProgress,
                     "stageProgressClass"=>$stageProgressClass,
                     'stageProgressIcon'=>$stageProgressIcon,
@@ -154,31 +157,8 @@ class DashboardController extends Controller
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
         $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $this->retreiveAndCheckTasks($user, $accessToken,$tab);
+        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
         Log::info("Task Details: ". print_r($tasks, true));
-
-        // get cap information
-        // initial cap comes from agent profile
-        // residual cap comes from agent profile
-        // cap paid ytd, comes from aci table
-        // -- pull all aci records for current year and current agent
-        // -- that are sold
-        // -- and sum up the TOTAL column
-        // total checks, like above, this comes from aci for the current year
-        // -- pull all aci records for current year and current agent
-        // -- that are sold
-        // -- then sum up the agent check amount column
-        // 1099 like above, this comes from aci for current year
-        // -- pull all aci records for current year and current agent
-        // -- that are sold
-        // -- then sum up the IRS reported 1099 Income For This Transaction
-
-        // so game plan is as follows
-        // single API request for aci
-        // single api request for contact information
-        // then query the aci data for the necessary totals
-        // then add necessary contact information to the array
-        // include the array information in the frontend
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
@@ -227,7 +207,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user'));
     }
 
     private function formatNumber($number) {
@@ -242,61 +222,7 @@ class DashboardController extends Controller
         }
     }
 
-    private function retreiveAndCheckTasks(User $user, $accessToken,$tab) {
-        $allTasks = collect();
-        $page = 1;
-        $hasMorePages = true;
-        $error = '';
-
-        $criteria = "(Owner:equals:$user->root_user_id)and(Status:equals:$tab)";
-        Log::info("Retrieving tasks for criteria: $criteria");
-
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        try {
-            $response = $zoho->getTasksData($criteria, 'Subject,Task Owner,Status,Due_Date,id,Who_Id', $page, 200);
-            if (!$response->successful()) {
-                Log::error("Error retrieving tasks: " . $response->body());
-                // Handle unsuccessful response
-                $hasMorePages = false;
-                $error = $response->json();
-            } else {
-                Log::info("Successful task fetch... Page: " . $page);
-                $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
-                $tasks = collect($responseData['data'] ?? []);
-                $allTasks = $allTasks->concat($tasks);
-            }
-
-            $currentPage = $page;
-            $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-            if ($hasMorePages) {
-                $page++;
-            }
-
-            return [
-                'error' => $error?? '',
-                'tasks' => $allTasks,
-                'pagination' => [
-                    'hasMorePages' => $hasMorePages,
-                    'nextPage' => $page,
-                    'currentPage' => $currentPage,
-                ]
-            ];
-        } catch (\Exception $e) {
-            Log::error("Error retrieving tasks: " . $e->getMessage());
-            return [
-                'error' => $e->getMessage(),
-                'tasks' => $allTasks,
-                'pagination' => [
-                    'hasMorePages' => false,
-                    'nextPage' => 1,
-                    'currentPage' => 1,
-                ]
-            ];
-        }
-    }
+    
 
     private function retrieveACIFromZoho(User $user, $accessToken)
     {
@@ -383,49 +309,6 @@ class DashboardController extends Controller
         return $allNotes;
     }
 
-    private function retrieveDealsFromZoho(User $user, $accessToken)
-    {
-        $allDeals = collect();
-        $page = 1;
-        $hasMorePages = true;
-
-        //((Created_By:equals:5141697000052483001)and(Stage:in:Potential,Pre-Active,Active,Under%20Contract,Sold))
-        //and ((Stage:in:Potential,Pre-Active,Active,Under%20Contract,Sold)
-        $criteria = "(Contact_Name:equals:$user->zoho_id)";
-        $fields = "Address,Amount,City,Primary_Contact,Client_Name_Primary,Client_Name_Only,Closing_Date,Created_By,Created_Time,Commission,Contact_Name,Contract,Create_Date,Created_By,Double_Ended,Lender_Company,Lender_Company_Name,Lender_Name,Loan_Amount,Loan_Type,MLS_No,Needs_New_Date,Needs_New_Date1,Needs_New_Date2,Ownership_Type,Personal_Transaction,Pipeline_Probability,Potential_GCI,Primary_Contact_Email,Probability,Pipeline1,Probable_Volume,Property_Type,Representing,Sale_Price,Stage,State,TM_Name,TM_Preference,Deal_Name,Owner,Transaction_Type,Type,Under_Contract,Using_TM,Z_Project_Id,Zip";
-        Log::info("Retrieving deals for criteria: $criteria");
-
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        try {
-            while ($hasMorePages) {
-                $response = $zoho->getDealsData($criteria, $fields, $page, 200);
-
-                if (!$response->successful()) {
-                    Log::error("Error retrieving deals: " . $response->body());
-                    // Handle unsuccessful response
-                    $hasMorePages = false;
-                    break;
-                }
-
-                Log::info("Successful deal fetch... Page: " . $page);
-                $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
-                $deals = collect($responseData['data'] ?? []);
-                $allDeals = $allDeals->concat($deals);
-
-                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-                $page++;
-            }
-        } catch (\Exception $e) {
-            Log::error("Error retrieving deals: " . $e->getMessage());
-            return $allDeals;
-        }
-        $this->storeDealsIntoDB($allDeals);
-        return $allDeals;
-    }
-
     private function calculateProgress($deals, $goal)
     {
         // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
@@ -449,59 +332,10 @@ class DashboardController extends Controller
         return min($progress, 100);
     }
 
-    
-
-    private function storeDealsIntoDB($dealsData) {
-        Log::info("Deal Data For DB " . $dealsData);
-        foreach ($dealsData as $deal) {
-            // Check if the deal already exists
-            // $existingDeal = Deal::where('zoho_deal_id', $deal['id'])->first();
-            
-            // if (!$existingDeal) {
-                $user = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
-                // Deal doesn't exist, so insert it
-                Deal::updateOrCreate(['zoho_deal_id' => $deal['id']],[
-                    'personal_transaction'=> $deal['Personal_Transaction'],
-                    'double_ended'=> $deal['Double_Ended'],
-                    'userID'=> $user['id'],//In zoho Owner Details
-                    'address'=> $deal['Address'],
-                    'representing'=> $deal['Representing'],
-                    'client_name_only'=> $deal['Client_Name_Only'],
-                    'commission'=> $deal['Commission'],
-                    'probable_volume'=> $deal['Probable_Volume'],
-                    'lender_company'=> $deal['Lender_Company'],
-                    'closing_date'=> $deal['Closing_Date'],
-                    'ownership_type'=> $deal['Ownership_Type'],
-                    'needs_new_date2'=> $deal['Needs_New_Date2'],
-                    'deal_name'=> $deal['Deal_Name'],
-                    'tm_preference'=> $deal['TM_Preference'],
-                    'stage'=> $deal['Stage'],
-                    'sale_price'=> $deal['Sale_Price'],
-                    'zoho_deal_id'=> $deal['id'],
-                    'pipeline1'=> $deal['Pipeline1'],
-                    'pipeline_probability'=> $deal['Pipeline_Probability'],
-                    'zoho_deal_createdTime'=> $deal['Created_Time'],
-                    'property_type'=> $deal['Property_Type'],
-                    'city'=> $deal['City'],
-                    'state'=> $deal['State'],
-                    'lender_company_name'=> $deal['Lender_Company_Name'],
-                    'client_name_primary'=> $deal['Client_Name_Primary'],
-                    'lender_name'=> $deal['Lender_Name'],
-                    'potential_gci'=> $deal['Potential_GCI'],
-                    'contractId'=> null,
-                    'contactId'=>null
-                ]);
-            // } else {
-            //     // Deal already exists, handle accordingly (log, skip, update, etc.)
-            //     Log::info("Deal with ID {$deal['deal_id']} already exists in the database.");
-            // }
-        }
-    }
-
     private function calculateStageProgress($deals, $goal)
     {
         // Sum the 'Pipeline1' values of the filtered deals.
-        $totalGCI = $deals->sum('Pipeline1');
+        $totalGCI = $deals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
 
         // Calculate the progress as a percentage of the goal.

@@ -16,10 +16,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-
         // Schedule the task to run every minute
         $schedule->command('app:save-deals-to-d-b')->everyMinute();
         $schedule->command('app:save-contacts-to-d-b')->everyMinute();
+        $schedule->command('app:save-tasks-to-d-b')->everyMinute();
     }
 
     /**
