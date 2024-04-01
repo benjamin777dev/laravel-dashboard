@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Services\ZohoCRM;
 use App\Models\Note;
+use App\Models\Deal;
 
 
 class DashboardController extends Controller
@@ -30,6 +31,10 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
         Log::info("Got Access Token: $accessToken");
 
+        //Get Date Range
+        $startDate = Carbon::now()->subDays(7)->format('d.m.Y'); // 7 days ago
+        $endDate = Carbon::now()->format('d.m.Y'); // Current date
+
         // Set default goal or use user-defined goal
         $goal = $user->goal ?? 250000;
         Log::info("Goal: $goal");
@@ -46,19 +51,29 @@ class DashboardController extends Controller
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals) {
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
                 return $deal['Stage'] === $stage && $this->masterFilter($deal);
             });
-            Log::info("filteredDeals: " . print_r($filteredDeals, true));
+            $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+            $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+            $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
+            $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
+            Log::info("stageProgress: $stageProgress");
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
                     'sum' => $this->formatNumber($filteredDeals->sum('Pipeline1')),
-                    'asum' => $filteredDeals->sum('Pipeline1')
+                    'asum' => $filteredDeals->sum('Pipeline1'),
+                    'stageProgress' => $stageProgress,
+                    "stageProgressClass"=>$stageProgressClass,
+                    'stageProgressIcon'=>$stageProgressIcon,
+                    'stageProgressExpr'=>$stageProgressExpr
                 ],
             ];
         });
+
+        
 
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
@@ -333,7 +348,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        $fields = "Note_Title,Created_Time,Owner";
         Log::info("Retrieving notes for criteria: $criteria");
 
         $zoho = new ZohoCRM();
@@ -341,7 +356,7 @@ class DashboardController extends Controller
 
         try {
             while ($hasMorePages) {
-                $response = $zoho->getNotesData($criteria, $page, 200);
+                $response = $zoho->getNotesData($criteria,$fields, $page, 200);
                 if (!$response->successful()) {
                     Log::error("Error retrieving notes: " . $response->body());
                     // Handle unsuccessful response
@@ -407,7 +422,7 @@ class DashboardController extends Controller
             Log::error("Error retrieving deals: " . $e->getMessage());
             return $allDeals;
         }
-
+        $this->storeDealsIntoDB($allDeals);
         return $allDeals;
     }
 
@@ -432,6 +447,69 @@ class DashboardController extends Controller
 
         // Ensure progress does not exceed 100%.
         return min($progress, 100);
+    }
+
+    
+
+    private function storeDealsIntoDB($dealsData) {
+        Log::info("Deal Data For DB " . $dealsData);
+        foreach ($dealsData as $deal) {
+            // Check if the deal already exists
+            // $existingDeal = Deal::where('zoho_deal_id', $deal['id'])->first();
+            
+            // if (!$existingDeal) {
+                $user = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
+                // Deal doesn't exist, so insert it
+                Deal::updateOrCreate(['zoho_deal_id' => $deal['id']],[
+                    'personal_transaction'=> $deal['Personal_Transaction'],
+                    'double_ended'=> $deal['Double_Ended'],
+                    'userID'=> $user['id'],//In zoho Owner Details
+                    'address'=> $deal['Address'],
+                    'representing'=> $deal['Representing'],
+                    'client_name_only'=> $deal['Client_Name_Only'],
+                    'commission'=> $deal['Commission'],
+                    'probable_volume'=> $deal['Probable_Volume'],
+                    'lender_company'=> $deal['Lender_Company'],
+                    'closing_date'=> $deal['Closing_Date'],
+                    'ownership_type'=> $deal['Ownership_Type'],
+                    'needs_new_date2'=> $deal['Needs_New_Date2'],
+                    'deal_name'=> $deal['Deal_Name'],
+                    'tm_preference'=> $deal['TM_Preference'],
+                    'stage'=> $deal['Stage'],
+                    'sale_price'=> $deal['Sale_Price'],
+                    'zoho_deal_id'=> $deal['id'],
+                    'pipeline1'=> $deal['Pipeline1'],
+                    'pipeline_probability'=> $deal['Pipeline_Probability'],
+                    'zoho_deal_createdTime'=> $deal['Created_Time'],
+                    'property_type'=> $deal['Property_Type'],
+                    'city'=> $deal['City'],
+                    'state'=> $deal['State'],
+                    'lender_company_name'=> $deal['Lender_Company_Name'],
+                    'client_name_primary'=> $deal['Client_Name_Primary'],
+                    'lender_name'=> $deal['Lender_Name'],
+                    'potential_gci'=> $deal['Potential_GCI'],
+                    'contractId'=> null,
+                    'contactId'=>null
+                ]);
+            // } else {
+            //     // Deal already exists, handle accordingly (log, skip, update, etc.)
+            //     Log::info("Deal with ID {$deal['deal_id']} already exists in the database.");
+            // }
+        }
+    }
+
+    private function calculateStageProgress($deals, $goal)
+    {
+        // Sum the 'Pipeline1' values of the filtered deals.
+        $totalGCI = $deals->sum('Pipeline1');
+        Log::info("Total GCI from open stages: $totalGCI");
+
+        // Calculate the progress as a percentage of the goal.
+        $progress = ($totalGCI / $goal) * 100;
+        Log::info("Progress towards goal: $progress");
+
+        // Ensure progress does not exceed 100%.
+        return round(min($progress, 100));
     }
 
     private function retrieveAndCheckContacts($rootUserId, $accessToken)
@@ -484,7 +562,7 @@ class DashboardController extends Controller
         $hasMorePages = true;
 
         $criteria = "(Owner:equals:$rootUserId)";
-        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
+        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_ZipContact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
         Log::info("Retrieving contacts for criteria: $criteria");
 
         $zoho = new ZohoCRM();

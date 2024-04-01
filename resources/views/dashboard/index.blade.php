@@ -9,14 +9,14 @@
     <div class="container-fluid">
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 col-sm-6 text-start">
-                <p class="dFont900 dFont15 dMb10">Welcome Back, Mark <br />
-                    <span class="dFont400 dFont13">Thursday, March 22, 2024</span>
+                <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
+                    <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
-                    {{-- <p class="dFont400 dFont13 mb-0">19.12.2020 - 25.12.2020</p> --}}
-                    {{-- <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i> --}}
-                    <input type="text" value="19.12.2020 - 25.12.2020" name="daterange">
+                     <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
+                        <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
+                        <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
                 </div>
 
             </div>
@@ -32,17 +32,11 @@
 
 
                                     <div class="d-flex justify-content-center align-items-center dCenterText">
-                                        {{-- <div class="col"> --}}
-                                        <span class="dFont800 dFont18">${{ $data['asum'] }}</span>
-                                        {{-- </div> --}}
-                                        <div class="dimgdiv">
-                                            <img src="{{ url('/images/customImages/arrow_outward.svg') }}" alt=""
-                                                height="13" class="auth-logo-dark" />
-                                        </div>
-                                        {{-- </div> --}}
-                                        {{-- <div class="col"> --}}
-                                        <p class="mb-0 dpercentage">+0.2%</p>
-                                        {{-- </div> --}}
+                                        
+                                        <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
+                                        <i class = "{{$data['stageProgressIcon']}}" style = "font-size:25px"></i>
+                                        <p class="mb-0 dpercentage {{$data['stageProgressClass']}}">{{$data['stageProgressExpr']}}{{$data['stageProgress']}}%</p>
+                                       
                                     </div>
                                     <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
                                     </p>
@@ -179,18 +173,48 @@
                 <p class="text-center">No notes found.</p>
             @else
                 <ul class="list-group">
-                    @foreach ($notes as $note)
-                        <li class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                            <div class="text-start">
-                                <span class="dFont800 dFont13">Related to:</span> {{ $note['related_to'] }}<br />
-                                <p class="dFont400 fs-4 mb-0">
-                                    {{ $note['note_text'] }}
-                                </p>
-                            </div>
-                            <button id="editButton{{  $note['id']  }}" onclick="editNote('{{$note['id']}}')" class="btn btn-primary dnotesBottomIcon"  type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display: none;">Edit</button>
-                            <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')" class="form-check-input checkbox{{ $note['id'] }}" id="checkbox{{ $loop->index + 1 }}">
-                        </li>
-                    @endforeach
+                    <li
+                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                        <div class="text-start">
+                            <span class="dFont800 dFont13">Related to:</span> Global<br />
+                            <p class="dFont400 fs-4 mb-0">
+                                Add items to contract
+                            </p>
+                        </div>
+                        <input type="checkbox" class="form-check-input" id="checkbox1">
+                    </li>
+                    <li
+                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                        <div class="text-start">
+                            <span class="fw-bold">Related to:</span> Global<br />
+                            <p class="fs-4">
+                                Add items to contract
+                            </p>
+                        </div>
+                        <input type="checkbox" class="form-check-input" id="checkbox1">
+                    </li>
+                    <li
+                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                        <div class="text-start">
+                            <span class="fw-bold">Related to:</span> Global<br />
+                            <p class="fs-4">
+                                Add items to contract
+                            </p>
+                        </div>
+                        <input type="checkbox" class="form-check-input" id="checkbox1">
+                    </li>
+                    <li
+                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                        <div class="text-start">
+                            <span class="fw-bold">Related to:</span> Global<br />
+                            <p class="fs-4">
+                                Add items to contract
+                            </p>
+                        </div>
+                        <input type="checkbox" class="form-check-input" id="checkbox1">
+                    </li>
+
+
                 </ul>
             @endif
                 <button id="deleteButton" onclick="deleteNote()" class="btn btn-danger" style="display: none;">Delete</button>
@@ -372,7 +396,6 @@ Call Bob Abbott regarding the Little St. Development.
         document.addEventListener('DOMContentLoaded', function() {
             var canvas = document.getElementById('customGaugeChart');
             var ctx = canvas.getContext('2d');
-            var progress = @json($progress); // Your progress value from the server
 
             // Resize the canvas and draw the gauge accordingly
             function resizeCanvas() {

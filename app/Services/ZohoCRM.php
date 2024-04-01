@@ -210,17 +210,14 @@ class ZohoCRM
         return $response;
     }
 
-    public function getNotesData($search,$page = 1, $per_page = 200)
+    public function getNotesData($search,$fields,$page = 1, $per_page = 200)
     {
         Log::info('Getting Zoho notes data');
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-        ])->get($this->apiUrl . 'Notes', [
-            'page' => $page,
-            'per_page' => $per_page,
-            'criteria' => $search,
-            // 'fields' => $fields,
+        ])->get($this->apiUrl . 'settings'.'/modules'.'/Notes', [
+            
         ]);
 
         Log::info('Zoho notes data response: ' . print_r($response, true));
