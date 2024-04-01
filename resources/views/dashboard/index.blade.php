@@ -91,14 +91,14 @@
                             </thead>
                             <tbody>
 
-                                @if (count($tasks['tasks']) > 0)
-                                    @foreach ($tasks['tasks'] as $task)
+                                @if (count($tasks) > 0)
+                                    @foreach ($tasks as $task)
                                         <tr class="dresponsivetableTr">
                                             <td><input type="checkbox" /></td>
                                             <td>
                                                 <p
                                                     class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText">
-                                                    {{ $task['Subject'] ?? 'N/A' }} <i
+                                                    {{ $task['subject'] ?? 'N/A' }} <i
                                                         class="fas fa-pencil-alt pencilIcon "></i></p>
                                             </td>
                                             <td>
@@ -106,13 +106,12 @@
                                                     <select class="form-select dselect" aria-label="Transaction test"
                                                         id="dropdownMenuButton">
                                                         <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                                            {{ $task['Who_Id']['name'] ?? '' }}</option>
                                                     </select>
                                                 </div>
                                             </td>
                                             <td>
                                                 <input type="datetime-local"
-                                                    value="{{ \Carbon\Carbon::parse($task['Due_Date'])->format('Y-m-d\TH:i') }}" />
+                                                    value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
                                             </td>
                                             <td>
                                                 <div class="d-flex ">
@@ -234,18 +233,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (count($getdealsTransaction) === 0)
+                        @if (count($deals) === 0)
                             <tr>
                                 <td class="text-center" colspan="5">No records found</td>
                             </tr>
                         @else
-                            @foreach ($getdealsTransaction as $item)
+                            @foreach ($deals as $deal)
                                 <tr>
-                                    <td>{{ $item['Deal_Name'] }}</td>
-                                    <td>{{ $item['Contact_Name']['name'] }}</td>
+                                    <td>{{ $deal['deal_name'] }}</td>
+                                    <td>{{ $deal->userData->name }}</td>
                                     <td>---</td>
-                                    <td>{{ $item['Owner']['email'] }}</td>
-                                    <td>{{ $item['Closing_Date'] }}</td>
+                                    <td>{{ $deal->userData->email }}</td>
+                                    <td>{{ $deal['closing_date'] }}</td>
                                 </tr>
                             @endforeach
                         @endif

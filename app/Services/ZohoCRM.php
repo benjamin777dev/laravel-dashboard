@@ -104,7 +104,7 @@ class ZohoCRM
             $this->access_token = $tokenData['access_token'];
             $this->refresh_token = $tokenData['refresh_token'];
         } else {
-            Log::info('Access token is not empty');
+            Log::info('Access token is not empty'.$this->access_token);
             // check if the token is expired
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,

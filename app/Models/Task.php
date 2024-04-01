@@ -21,16 +21,17 @@ class Task extends Model
         'modified_by',
         'priority',
         'what_id',
-        'recurring_activity',
         'status',
         'subject',
-        'tag',
         'owner',
+        'zoho_task_id',
+        'created_time'
     ];
 
     protected $casts = [
         'closed_time' => 'datetime',
         'due_date' => 'date',
+        'created_time' => 'date',
     ];
 
     public function who()

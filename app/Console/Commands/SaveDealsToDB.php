@@ -95,7 +95,7 @@ class SaveDealsToDB extends Command
                 $saveInDB->storeDealsIntoDB($allDeals);
 
                 // Log success
-                Log::info("Deals saved to database successfully.");
+                Log::info("Deals saved to database successfully.".$allDeals);
             }
         }
 }
