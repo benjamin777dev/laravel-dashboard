@@ -59,7 +59,6 @@
     padding: 20px;
 }
 
-
 .savebtn {
     background: #253c5b;
     margin-right: 12px;
@@ -100,7 +99,7 @@
 .dtabletranstion th {
     background: #222 !important;
     color: #fff;
-    padding: 12px
+    padding: 12px;
 }
 
 .dtabs {
@@ -373,19 +372,20 @@
 }
 
 /* pagination */
+.dpaginationNav {
+    position: sticky;
+    width: 100%;
+}
 .dpagination {
     display: flex;
-    width: 100vw;
+    width: 100%;
     justify-content: space-between;
 }
-
 
 @media (min-width: 768px) {
     .calendarInput {
         width: 206px !important;
     }
-
-
 }
 
 @media (min-width: 425px) and (max-width: 1345px) {
@@ -424,7 +424,7 @@
         align-items: center;
         margin-inline: auto;
     }
-    .removebtn{
+    .removebtn {
         margin-bottom: 24px;
     }
 }
@@ -447,5 +447,199 @@
     .deleteModal {
         width: 305px;
         margin-inline: auto;
+    }
+}
+
+/* Pipeline component */
+
+.commonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ppipeDiv {
+    margin-bottom: 24px;
+}
+.pText {
+    color: #222;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 19.2px;
+    text-transform: uppercase;
+}
+.ppipeBtn {
+    padding: 6px 11px;
+    border-radius: 4px;
+    border: 1px solid #0071ce;
+    background: #253c5b;
+}
+/* .pfilterDiv {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+.pcommonFilterDiv {
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+}
+.psearchInput {
+    border: none;
+    outline: 0;
+}
+.porText {
+    color: #222;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0px;
+}
+.pfilterBtn {
+    display: flex;
+    padding: 8.52px 12px;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+}
+@media (max-width: 767px) {
+    .pfilterDiv {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+    }
+} */
+
+.pfilterDiv {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap; /* Added to allow wrapping on smaller screens */
+    padding: 16px;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
+    margin-bottom: 24px;
+}
+
+.pcommonFilterDiv {
+    flex: 1; /* Added to make both filter divs take equal space */
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+}
+
+.psearchInput {
+    flex: 1; /* Added to make the input take remaining space */
+    border: none;
+    outline: 0;
+}
+
+.porText {
+    color: #222;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0px;
+}
+
+.pfilterBtn {
+    flex: 1; /* Added to make the button take equal space */
+    display: flex;
+    padding: 8.52px 12px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.ptransactionTable th {
+    background: #222;
+    padding: 12px;
+    color: #fff;
+}
+.ppipelineTable th {
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
+}
+.ppipelineTableBody td {
+    padding: 16px 12px !important;
+}
+.ppipelineTableBody tr {
+    border-bottom: 1px solid #f0e6dc;
+}
+.ppiplineSwapIcon {
+    cursor: pointer;
+}
+.ppipelinesorticon {
+    filter: invert();
+}
+.ppiplinecommonIcon {
+    cursor: pointer;
+}
+
+.pstatusText {
+    color: #fff !important;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 11px;
+    letter-spacing: -0.65px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 0;
+}
+.pipelinestatusdiv {
+    cursor: pointer;
+}
+.ppipelineselect {
+    width: 161px;
+    border: none;
+}
+.ppipelineselect:focus {
+    box-shadow: none;
+}
+.custom-option[data-stage="Potential"] {
+    background-color: #85a69c;
+}
+@media (max-width: 767px) {
+    .pcommonFilterDiv {
+        flex: 100%;
+    }
+    .pfilterDiv {
+        justify-content: center;
+    }
+
+    .psearchInput,
+    .pfilterBtn {
+        width: 100%; /* Added to make input and button take full width on smaller screens */
     }
 }
