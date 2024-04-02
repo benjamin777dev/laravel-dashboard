@@ -60,7 +60,7 @@ class ZohoCRM
         Log::info('Zoho callback headers: ' . print_r($headers, true));
 
         $response = Http::asForm()->post($this->authUrl . 'token', $headers);
-        Log::info('Zoho callback response: ' . print_r($response, true));
+        //Log::info('Zoho callback response: ' . print_r($response, true));
 
         return $response;
     }
@@ -132,7 +132,7 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'users?type=CurrentUser');
 
-        Log::info('Zoho user data response: ' . print_r($response, true));
+        //Log::info('Zoho user data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -151,7 +151,7 @@ class ZohoCRM
             'fields' => $fields,
         ]);
 
-        Log::info('Zoho contact data response: ' . print_r($response, true));
+        //Log::info('Zoho contact data response: ' . print_r($response, true));
         return $response;
     }
 
@@ -169,7 +169,7 @@ class ZohoCRM
             'fields' => $fields,
         ]);
 
-        Log::info('Zoho deals data response: ' . print_r($response, true));
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -188,7 +188,7 @@ class ZohoCRM
             'fields' => $fields,
         ]);
 
-        Log::info('Zoho tasks data response: ' . print_r($response, true));
+        //Log::info('Zoho tasks data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -207,7 +207,7 @@ class ZohoCRM
             'fields' => $fields,
         ]);
 
-        Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));
+        //Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -225,7 +225,7 @@ class ZohoCRM
             'fields' => $fields,
         ]);
 
-        Log::info('Zoho notes data response: ' . print_r($response, true));
+        //Log::info('Zoho notes data response: ' . print_r($response, true));
         return $response;
     }
 
@@ -236,7 +236,7 @@ class ZohoCRM
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->post($this->apidealsurl . "Deals/bulk?fields=$fields");
-        Log::info('Zoho getDealTransactionData data response: ' . print_r($response, true));
+        //Log::info('Zoho getDealTransactionData data response: ' . print_r($response, true));
         return $response;
     }
 
@@ -250,7 +250,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . "Tasks", $inputJson);
         
-        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
     
         return $response;
     }
@@ -265,7 +265,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
         
-        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         print_r($response->json());
         die;
         return $response;
@@ -281,7 +281,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Tasks/" . $id);
         
-        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
     }
     

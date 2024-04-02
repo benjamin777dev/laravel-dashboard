@@ -41,89 +41,81 @@ class RegisterController extends Controller
     }
 
     public function handleZohoCallback(Request $request)
-    {
-        try {
-            $zoho = new ZohoCRM();
-            $response = $zoho->handleZohoCallback($request);
+{
+    try {
+        $zoho = new ZohoCRM();
+        $response = $zoho->handleZohoCallback($request);
 
-            if (!$response->successful()) {
-                Log::error('OAuth authentication failed', ['response' => $response->body()]);
-                return redirect('/register')->withErrors(['oauth' => 'OAuth authentication failed.']);
-            }
-            Log::info('OAuth authentication successful');
-            $tokenData = $response->json();
-            Log::info("---------------[Token Data]----------------------------------");
-            Log::info("Token Data: ");
-            Log::info(print_r($tokenData, true));
-            Log::info("---------------[/Token Data]----------------------------------");
-
-            $zoho->access_token = $tokenData['access_token'];
-            $zoho->refresh_token = $tokenData['refresh_token'];
-
-            try {
-                $userDataResponse = $zoho->getUserData();
-
-                if (!$userDataResponse->successful()) {
-                    Log::error('OAuth authentication failed', ['response' => $userDataResponse->body()]);
-                    return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve user data from Zoho.']);
-                }
-
-                $userData = $userDataResponse->json();
-                Log::info("User data: " . print_r($userData, true));
-
-                if (!isset($userData['users'], $userData['users'][0], $userData['users'][0]['id'])) {
-                    Log::error('User data not found in response');
-                    return redirect('/register')->withErrors(['oauth' => 'User data not found in response.']);
-                } else {
-                    Log::info("User data found in response!");
-                    $userData = $userData['users'][0];
-                }
-
-                Log::Info("User Data Response: " . print_r($userDataResponse->json(), true));
-
-                $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userData['email']}))";
-                $fields = "Id,Email,First_Name,Last_Name";
-                $contactDataResponse = $zoho->getContactData($criteria, $fields);
-
-                if (!$contactDataResponse->successful()) {
-                    Log::error('OAuth authentication failed', ['response' => $contactDataResponse->body()]);
-                    return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve contact data from Zoho.']);
-                }
-
-                $cdrData = $contactDataResponse->json();
-                Log::Info("Contact Data Response: " . print_r($cdrData['data'], true));
-
-                if (!isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
-                    Log::error('Contact data not found in response');
-                    return redirect('/register')->withErrors(['oauth' => 'Contact data not found in response.']);
-                } else {
-                    Log::info("Contact data found in response!");
-                    $cdrData = $cdrData['data'][0];
-                }
-
-                $rootUserId = $userData['id'];
-                $contactId = $cdrData['id'];
-                Log::info("Root User ID: " . $rootUserId);
-                Log::Info("Contact ID: " . $contactId);
-
-                // Store user data in the session
-                session(['user_data' => $userData]);
-                session(['token_data' => $tokenData]);
-                session(['contact_id' => $contactId]);
-                session(['root_user_id' => $rootUserId]);
-
-                // Redirect to registration form
-                return redirect()->route('register');
-            } catch (\Exception $ex) {
-                Log::error("Zoho oauth user process failed: " . $ex->getMessage());
-                return redirect('/register')->withErrors(['oauth' => 'Error during OAuth user process: ' . $ex->getMessage()]);
-            }
-
-        } catch (\Exception $e) {
-            Log::error("Zoho oauth token process failed: " . $e->getMessage());
-            return redirect('/register')->withErrors(['oauth' => 'Error during OAuth token process: ' . $e->getMessage()]);
+        // Check the response status code directly
+        if (!($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299)) {
+            Log::error('OAuth authentication failed', ['response' => (string) $response->getBody()]);
+            return redirect('/register')->withErrors(['oauth' => 'OAuth authentication failed.']);
         }
+        Log::info('OAuth authentication successful');
+        $tokenData = json_decode((string) $response->getBody(), true);
+        Log::info("---------------[Token Data]----------------------------------");
+        Log::info("Token Data: ", [$tokenData]);
+        Log::info("---------------[/Token Data]----------------------------------");
+
+        $zoho->access_token = $tokenData['access_token'];
+        $zoho->refresh_token = $tokenData['refresh_token'];
+
+        $userDataResponse = $zoho->getUserData();
+        if (!($userDataResponse->getStatusCode() >= 200 && $userDataResponse->getStatusCode() <= 299)) {
+            Log::error('Failed to retrieve user data from Zoho', ['response' => (string) $userDataResponse->getBody()]);
+            return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve user data from Zoho.']);
+        }
+
+        $userData = json_decode((string) $userDataResponse->getBody(), true);
+        Log::info("User data: ", [$userData]);
+
+        if (!isset($userData['users'], $userData['users'][0], $userData['users'][0]['id'])) {
+            Log::error('User data not found in response');
+            return redirect('/register')->withErrors(['oauth' => 'User data not found in response.']);
+        } else {
+            Log::info("User data found in response!");
+            $userData = $userData['users'][0];
+        }
+
+        $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userData['email']}))";
+        $fields = "Id,Email,First_Name,Last_Name";
+        $contactDataResponse = $zoho->getContactData($criteria, $fields);
+        if (!($contactDataResponse->getStatusCode() >= 200 && $contactDataResponse->getStatusCode() <= 299)) {
+            Log::error('Failed to retrieve contact data from Zoho', ['response' => (string) $contactDataResponse->getBody()]);
+            return redirect('/register')->withErrors(['oauth' => 'Failed to retrieve contact data from Zoho.']);
+        }
+
+        $cdrData = json_decode((string) $contactDataResponse->getBody(), true);
+        Log::Info("Contact Data Response: ", [$cdrData]);
+
+        if (!isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
+            Log::error('Contact data not found in response');
+            return redirect('/register')->withErrors(['oauth' => 'Contact data not found in response.']);
+        } else {
+            Log::info("Contact data found in response!");
+            $cdrData = $cdrData['data'][0];
+        }
+
+        $rootUserId = $userData['id'];
+        $contactId = $cdrData['id'];
+        Log::info("Root User ID: " . $rootUserId);
+        Log::Info("Contact ID: " . $contactId);
+
+        // Store user data in the session
+        session([
+            'user_data' => $userData,
+            'token_data' => $tokenData,
+            'contact_id' => $contactId,
+            'root_user_id' => $rootUserId
+        ]);
+
+        // Redirect to registration form
+        return redirect()->route('register');
+    } catch (\Exception $ex) {
+        Log::error("Zoho OAuth process failed: " . $ex->getMessage(), ['exception' => $ex]);
+        return redirect('/register')->withErrors(['oauth' => 'Error during OAuth user process: ' . $ex->getMessage()]);
     }
+}
 
     // Override the register method (can be empty if all logic is handled in handleZohoCallback)
     public function register(Request $request)
