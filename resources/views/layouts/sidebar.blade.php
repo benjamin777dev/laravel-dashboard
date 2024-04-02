@@ -8,8 +8,6 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
-                <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
-
                 <li>
                     <a href="dashboard" class="waves-effect">
                         {{-- <i class="bx bx-home-circle"></i> --}}

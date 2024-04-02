@@ -331,61 +331,59 @@
                                 </p>
                             </div>
                             <input type="checkbox" class="form-check-input" id="checkbox1">
-                        </li>
-                        @endforeach
 
-                                {{-- dynamic edit modal --}}
-                                {{-- note update modal --}}
-                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
-                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content noteModal">
-                                            <div class="modal-header border-0">
-                                                <p class="modal-title dHeaderText">Note</p>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('POST')
-                                                <div class="modal-body dtaskbody">
-                                                    <p class="ddetailsText">Details</p>
-                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
-                                                    @error('note_text')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                    <p class="dRelatedText">Related to...</p>
-                                                    <div class="btn-group dmodalTaskDiv">
-                                                        <select class="form-select dmodaltaskSelect" name="related_to"
-                                                            aria-label="Select Transaction">
-                                                            <option value="">Please select one</option>
-                                                            @foreach ($getdealsTransaction as $item)
-                                                                <option value="{{ $item['Deal_Name'] }}"
-                                                                    {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
-                                                                    {{ $item['Deal_Name'] }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    @error('related_to')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="modal-footer dNoteFooter border-0">
-                                                    <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                        <i class="fas fa-save saveIcon"></i> Mark as Done
-                                                    </button>
-                                                </div>
-                                            </form>
+                            {{-- dynamic edit modal --}}
+                            {{-- note update modal --}}
+                            <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content noteModal">
+                                        <div class="modal-header border-0">
+                                            <p class="modal-title dHeaderText">Note</p>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
+                                        <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                            method="post">
+                                            @csrf
+                                            @method('POST')
+                                            <div class="modal-body dtaskbody">
+                                                <p class="ddetailsText">Details</p>
+                                                <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
+                                                @error('note_text')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                                <p class="dRelatedText">Related to...</p>
+                                                <div class="btn-group dmodalTaskDiv">
+                                                    <select class="form-select dmodaltaskSelect" name="related_to"
+                                                        aria-label="Select Transaction">
+                                                        <option value="">Please select one</option>
+                                                        @foreach ($getdealsTransaction as $item)
+                                                            <option value="{{ $item['Deal_Name'] }}"
+                                                                {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
+                                                                {{ $item['Deal_Name'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('related_to')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="modal-footer dNoteFooter border-0">
+                                                <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                                                    <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                    class="form-check-input checkbox{{ $note['id'] }}"
-                                    id="checkbox{{ $loop->index + 1 }}">
-                            </li>
+                            </div>
+                            <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                class="form-check-input checkbox{{ $note['id'] }}"
+                                id="checkbox{{ $loop->index + 1 }}">
+                        </li>
                         @endforeach
                         {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
                             class="btn btn-danger" style="display: none;">Delete</button> --}}
