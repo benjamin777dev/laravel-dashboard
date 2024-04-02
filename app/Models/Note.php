@@ -10,8 +10,20 @@ class Note extends Model
     use HasFactory;
 
     protected $fillable = [
-        'deal_id',
+        'owner',
         'related_to',
-        'note_text'
+        'note_content',
+        'created_time',
+        'zoho_note_id'
     ];
+
+     public function userData()
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
+
+    public function dealData()
+    {
+        return $this->belongsTo(Deal::class, 'related_to');
+    }
 }
