@@ -166,4 +166,33 @@ class DB
         }
     }
 
+    public function storeNotesIntoDB($notes)
+    {
+         Log::info("Storing Notes Into Database");
+
+        foreach ($notes as $note) {
+            if(isset($note['Owner'])){
+                $user = User::where('root_user_id', $note['Owner']['id'])->first();
+                $deal = Deal::where('zoho_deal_id', $note['Parent_Id']['id'])->first();
+            }
+            // if (!$user) {
+            //     // Log an error if the user is not found
+            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
+            //     continue; // Skip to the next deal
+            // }
+
+            // Update or create the deal
+           Note::updateOrCreate(['zoho_note_id' => $note['id']], [
+                'owner'=> isset($user['id']) ? $user['id'] : null,
+        'related_to'=> isset($deal['id']) ? $deal['id'] : null,
+        'note_content'=> isset($note['Note_Content']) ? $note['Note_Content'] : null,
+        'created_time'=> isset($note['Created_Time']) ? $note['Created_Time'] : null,
+        'zoho_note_id'=> isset($note['id']) ? $note['id'] : null,
+            ]);
+
+        }
+
+        Log::info("Tasks stored into database successfully.");
+    }
+
 }

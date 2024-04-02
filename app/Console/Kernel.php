@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:save-deals-to-d-b')->everyMinute();
         $schedule->command('app:save-contacts-to-d-b')->everyMinute();
         $schedule->command('app:save-tasks-to-d-b')->everyMinute();
+        $schedule->command('app:save-notes-to-d-b')->everyMinute();
     }
 
     /**

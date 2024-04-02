@@ -216,8 +216,11 @@ class ZohoCRM
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-        ])->get($this->apiUrl . 'settings'.'/modules'.'/Notes', [
-            
+        ])->get($this->apiUrl . 'Notes/search', [
+             'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            'fields' => $fields,
         ]);
 
         Log::info('Zoho notes data response: ' . print_r($response, true));

@@ -207,7 +207,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo'));
     }
 
     private function formatNumber($number) {
@@ -273,8 +273,10 @@ class DashboardController extends Controller
         $page = 1;
         $hasMorePages = true;
 
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        $fields = "Note_Title,Created_Time,Owner";
+        $startDateTime = now()->subDays(7)->toIso8601String(); // Get start date/time (7 days ago) in ISO 8601 format
+        $endDateTime = now()->toIso8601String(); // Get current date/time in ISO 8601 format
+        $criteria = "(Owner:equals:$user->root_user_id)";
+        $fields = "Note_Content,Created_Time,Owner,Parent_Id";
         Log::info("Retrieving notes for criteria: $criteria");
 
         $zoho = new ZohoCRM();
