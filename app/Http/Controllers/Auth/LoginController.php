@@ -28,10 +28,7 @@ class LoginController extends Controller
     protected function credentials(Request $request)
     {
         $hashedInputEmail = $request->get('email');
-        $user = User::all()->filter(function ($user) use ($hashedInputEmail) {
-            return Hash::check($hashedInputEmail, $user->email);
-        })->first();
-
+        $user = User::where('email', $hashedInputEmail)->first(); 
         if ($user) {
             return ['email' => $user->email, 'password' => $request->get('password')];
         }

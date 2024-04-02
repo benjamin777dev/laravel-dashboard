@@ -91,7 +91,7 @@ class RegisterController extends Controller
                 }
 
                 $cdrData = $contactDataResponse->json();
-                Log::Info("Contact Data Response: " . print_r($cdrData, true));
+                Log::Info("Contact Data Response: " . print_r($cdrData['data'], true));
 
                 if (!isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
                     Log::error('Contact data not found in response');
@@ -156,7 +156,7 @@ class RegisterController extends Controller
 
         // Encrypt the email, access token, and refresh token
         // Hash the email instead of encrypting
-        $hashedEmail = Hash::make($userData['email']);
+        $hashedEmail = $userData['email'];
 
         $encryptedAccessToken = Crypt::encryptString($tokenData['access_token']);
         $encryptedRefreshToken = Crypt::encryptString($tokenData['refresh_token']);

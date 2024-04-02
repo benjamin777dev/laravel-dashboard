@@ -8,8 +8,61 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
-
                 <li>
+                    <a href="dashboard" class="waves-effect">
+                        {{-- <i class="bx bx-home-circle"></i> --}}
+                        <img src="{{ URL::asset('/images/dashboard.svg') }}" class="sidebarIcons" alt="D">
+
+                        <span key="t-dashboard">@lang('Dashboard')</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pipeline" class="waves-effect">
+                        {{-- <i class="bx bx-home-circle"></i> --}}
+                        <img src="{{ URL::asset('/images/polyline.svg') }}" class="sidebarIcons" alt="P">
+
+                        <span key="t-pipeline">@lang('Pipeline')</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="contacts" class="has-arrow waves-effect">
+                        {{-- <i class="bx bx-user-circle"></i> --}}
+                        <img src="{{ URL::asset('/images/contacts.svg') }}" class="sidebarIcons" alt="C">
+
+                        <span key="t-database">@lang('Database')</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="ContactsDatabase" key="t-Contacts">@lang('Contacts Database')</a></li>
+                        <li><a href="Groups" key="t-Groups">@lang('Groups')</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        {{-- <i class="bx bx-user-circle"></i> --}}
+                        <img src="{{ URL::asset('/images/campaign.svg') }}" class="sidebarIcons" alt="Ca">
+
+                        <span key="t-marketing">@lang('Marketing')</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="true">
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                    </ul>
+                </li>
+
+                <li class="menu-title" key="t-backend">@lang('Activities')</li>
+                <li>
+                    <a href="#" class="waves-effect">
+                        <img src="{{ URL::asset('/images/sidebarSplit.svg') }}" class="sidebarIcons" alt="Sp">
+
+                        {{-- <i class="bx bx-list-ul"></i> --}}
+                        <span key="t-tasks">@lang('Tasks')</span>
+                    </a>
+                </li>
+                {{-- <li>
                     <a href="dashboard" class="waves-effect">
                         <i class="bx bx-home-circle"></i>
                         <span key="t-dashboard">@lang('Dashboard')</span>
@@ -47,7 +100,7 @@
                         <i class="bx bx-list-ul"></i>
                         <span key="t-tasks">@lang('Tasks')</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <!-- <li>
                     <a href="javascript: void(0);" class="waves-effect">

@@ -118,6 +118,8 @@ class ZohoCRM
                 $this->refresh_token = $tokenData['refresh_token'];
             }
         }
+        // print_r($this->access_token);
+        // die;
         return $this->access_token;
     }
 
@@ -216,8 +218,11 @@ class ZohoCRM
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-        ])->get($this->apiUrl . 'settings'.'/modules'.'/Notes', [
-            
+        ])->get($this->apiUrl . 'Notes/search', [
+             'page' => $page,
+            'per_page' => $per_page,
+            'criteria' => $search,
+            'fields' => $fields,
         ]);
 
         Log::info('Zoho notes data response: ' . print_r($response, true));
@@ -234,5 +239,51 @@ class ZohoCRM
         Log::info('Zoho getDealTransactionData data response: ' . print_r($response, true));
         return $response;
     }
+
+    public function createTask($inputJson)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . "Tasks", $inputJson);
+        
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+    
+        return $response;
+    }
+
+    public function updateTask($inputJson,$id)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
+        
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        print_r($response->json());
+        die;
+        return $response;
+    }
+
+    public function deleteTask($inputJson,$id)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->delete($this->apiUrl . "Tasks/" . $id);
+        
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+    
 
 }

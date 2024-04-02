@@ -207,7 +207,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData', 
                 'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo'));
     }
 
     private function formatNumber($number) {
@@ -273,8 +273,10 @@ class DashboardController extends Controller
         $page = 1;
         $hasMorePages = true;
 
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        $fields = "Note_Title,Created_Time,Owner";
+        $startDateTime = now()->subDays(7)->toIso8601String(); // Get start date/time (7 days ago) in ISO 8601 format
+        $endDateTime = now()->toIso8601String(); // Get current date/time in ISO 8601 format
+        $criteria = "(Owner:equals:$user->root_user_id)";
+        $fields = "Note_Content,Created_Time,Owner,Parent_Id";
         Log::info("Retrieving notes for criteria: $criteria");
 
         $zoho = new ZohoCRM();
@@ -432,7 +434,125 @@ class DashboardController extends Controller
         return $allContacts;
     }
 
-    private function retrieveDealTransactionData(User $user, $accessToken)
+
+    public function createTaskaction(Request $request,User $user)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $jsonData = $request->json()->all();
+        
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+        // $response;
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+                $response = $zoho->createTask($jsonData);
+
+          
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                
+                Log::info("Successful notes create... ".$response);
+
+            
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong";
+        }
+        return $response;
+        echo "<pre>";
+        // print_r($responseData);
+        // print_r($allDeals);
+        die;
+    }
+
+    public function updateTaskaction(Request $request,User $user){
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $jsonData = $request->json()->all();
+        
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+        // $response;
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        // $task = Task::findOrFail($id);
+
+        try {
+                $response = $zoho->updateTask($jsonData,$id);
+
+          
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                
+                Log::info("Successful notes update... ".$response);
+
+            
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong";
+        }
+        return $response;
+        echo "<pre>";
+        // print_r($responseData);
+        // print_r($allDeals);
+        die;
+    }
+
+    public function deleteTaskaction(Request $request,User $user)  {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $jsonData = $request->json()->all();
+        
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving notes for criteria: $criteria");
+        // $response;
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        // $task = Task::findOrFail($id);
+
+        try {
+                $response = $zoho->deleteTask($jsonData,$id);
+
+          
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                
+                Log::info("Successful notes delete... ".$response);
+
+            
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong";
+        }
+        return $response;
+        echo "<pre>";
+        // print_r($responseData);
+        // print_r($allDeals);
+        die;
+    }
+    
+
+    public function retrieveDealTransactionData(User $user, $accessToken)
     {
         $allDeals = collect();
         $page = 1;
@@ -515,15 +635,32 @@ class DashboardController extends Controller
         // Pass notes data to the Blade file
         return $notes;
     }
-    
-    public function deleteNotes(Request $request)
+  //fetch specific note
+    public function fetchNote(Request $request, $id)
     {
-        $noteIds = $request->input('noteIds');
+
+    $note = Note::find($id);
+
+    // Check if the note exists
+    if (!$note) {
+        // If the note is not found, return a 404 response
+        return response()->json(['error' => 'Note not found'], 404);
+    }
+
+    // Return the note details as a JSON response
+    return response()->json($note);
+    }
     
-            // Perform deletion operation based on $noteIds
-            Note::whereIn('id', $noteIds)->delete();
-            
-            return response()->json(['success' => true]);
+    public function deleteNote($id)
+    {
+        echo "Hi Note Delete";
+        // $note = Note::findOrFail($id);
+
+        // // Delete the note
+        // $note->delete();
+
+        // // Redirect or respond with a success message
+        // return redirect()->back()->with('success', 'Note deleted successfully');
     }
 
     public function updateNote(Request $request, $id)
