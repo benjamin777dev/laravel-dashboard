@@ -10,6 +10,7 @@ class Note extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'deal_id',
         'related_to',
         'note_text'

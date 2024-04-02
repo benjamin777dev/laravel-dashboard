@@ -14,9 +14,9 @@
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
-                     <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
-                        <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
-                        <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
+                    <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
+                    <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
+                    <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
                 </div>
 
             </div>
@@ -32,11 +32,12 @@
 
 
                                     <div class="d-flex justify-content-center align-items-center dCenterText">
-                                        
+
                                         <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
-                                        <i class = "{{$data['stageProgressIcon']}}" style = "font-size:25px"></i>
-                                        <p class="mb-0 dpercentage {{$data['stageProgressClass']}}">{{$data['stageProgressExpr']}}{{$data['stageProgress']}}%</p>
-                                       
+                                        <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
+                                        <p class="mb-0 dpercentage {{ $data['stageProgressClass'] }}">
+                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p>
+
                                     </div>
                                     <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
                                     </p>
@@ -170,54 +171,84 @@
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
                 @if ($notes->isEmpty())
-                <p class="text-center">No notes found.</p>
-            @else
-                <ul class="list-group">
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="dFont800 dFont13">Related to:</span> Global<br />
-                            <p class="dFont400 fs-4 mb-0">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
-                    <li
-                        class="list-group-item border-0 rounded-1 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start">
-                            <span class="fw-bold">Related to:</span> Global<br />
-                            <p class="fs-4">
-                                Add items to contract
-                            </p>
-                        </div>
-                        <input type="checkbox" class="form-check-input" id="checkbox1">
-                    </li>
+                    <p class="text-center">No notes found.</p>
+                @else
+                    <ul class="list-group">
+                        @foreach ($notes as $note)
+                            <li
+                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                                <div class="text-start">
+                                    <span class="dFont800 dFont13">Related to:</span> {{ $note['related_to'] }}<br />
+                                    <p class="dFont400 fs-4 mb-0">
+                                        {{ $note['note_text'] }}
+                                    </p>
+                                </div>
+                                <button id="editButton{{ $note['id'] }}" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}"
+                                    class="btn btn-primary dnotesBottomIcon" style="display: none;">Edit</button>
+
+                                {{-- delete button --}}
+                                {{-- <i class="fa-solid fa-minus" id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
+                                    style="display: none;"></i>  --}}
 
 
-                </ul>
-            @endif
-                <button id="deleteButton" onclick="deleteNote()" class="btn btn-danger" style="display: none;">Delete</button>
+                                {{-- dynamic edit modal --}}
+                                {{-- note update modal --}}
+                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content noteModal">
+                                            <div class="modal-header border-0">
+                                                <p class="modal-title dHeaderText">Note</p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                                method="post">
+                                                @csrf
+                                                @method('POST')
+                                                <div class="modal-body dtaskbody">
+                                                    <p class="ddetailsText">Details</p>
+                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
+                                                    @error('note_text')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <p class="dRelatedText">Related to...</p>
+                                                    <div class="btn-group dmodalTaskDiv">
+                                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                                            aria-label="Select Transaction">
+                                                            <option value="">Please select one</option>
+                                                            @foreach ($getdealsTransaction as $item)
+                                                                <option value="{{ $item['Deal_Name'] }}"
+                                                                    {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
+                                                                    {{ $item['Deal_Name'] }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    @error('related_to')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="modal-footer dNoteFooter border-0">
+                                                    <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                                                        <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                    class="form-check-input checkbox{{ $note['id'] }}"
+                                    id="checkbox{{ $loop->index + 1 }}">
+                            </li>
+                        @endforeach
+                        {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
+                            class="btn btn-danger" style="display: none;">Delete</button> --}}
+                    </ul>
+                @endif
             </div>
             <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
@@ -266,23 +297,22 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="darea" rows="4" class="dtextarea">
-Call Bob Abbott regarding the Little St. Development.
+                    <textarea name="subject" id="darea" rows="4" class="dtextarea">
                     </textarea>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" aria-label="Select Transaction">
-                            <option selected>Smith Columbine Hills Buyer</option>
-                            <option>First Option</option>
-                            <option>Second Option</option>
-
+                        <select class="form-select dmodaltaskSelect" name="who_id" aria-label="Select Transaction">
+                            @foreach ($getdealsTransaction as $item)
+                                <option value="{{ $item['Deal_Name'] }}"
+                                    @if (old('related_to') == $item['Deal_Name']) selected @endif>{{ $item['Deal_Name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
-                    <input type="date" class="dmodalInput" />
+                    <input type="date" name="due_date" class="dmodalInput" />
                 </div>
                 <div class="modal-footer ">
-                    <button type="button" class="btn btn-secondary taskModalSaveBtn" data-bs-dismiss="modal">
+                    <button type="button" onclick="addTask()" class="btn btn-secondary taskModalSaveBtn">
                         <i class="fas fa-save saveIcon"></i> Save Changes
                     </button>
 
@@ -333,7 +363,6 @@ Call Bob Abbott regarding the Little St. Development.
             </div>
         </div>
     </div>
-
 
     {{-- save Modal --}}
     <div class="modal fade" id="saveModalId" tabindex="-1">
@@ -590,63 +619,73 @@ Call Bob Abbott regarding the Little St. Development.
             activeTab.style.borderRadius = "4px";
         }
     });
-    var selectedNoteIds= [];
-   function handleDeleteCheckbox(id){
-     //checkobox notes showing delete btn functionlity
-    //  console.log(id,'id is hereeeee'
-    // Get all checkboxes
-    const checkboxes = document.querySelectorAll('.checkbox'+id);
-    // Get delete button
-    const deleteButton = document.getElementById('deleteButton');
-    const editButton = document.getElementById('editButton'+id);
-      console.log(checkboxes,'checkboxes')
-    // Add event listener to checkboxes
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            // Check if any checkbox is checked
-            const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-            console.log(anyChecked,'checkoeddd')
-            // Toggle delete button visibility
-            deleteButton.style.display = anyChecked ? 'block' : 'none';
-            editButton.style.display = anyChecked ? 'block' : 'none';
-            if(deleteButton.style.display==='block'){
-                selectedNoteIds.push(id)
-            }
+    // var selectedNoteIds = [];
+
+    function handleDeleteCheckbox(id) {
+        //checkobox notes showing delete btn functionlity
+        //  console.log(id,'id is hereeeee'
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton' + id);
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                console.log(anyChecked, 'checkoeddd')
+                // Toggle delete button visibility
+                deleteButton.style.display = anyChecked ? 'block' : 'none';
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                // if (deleteButton.style.display === 'block') {
+                //     selectedNoteIds.push(id)
+                // }
+            });
         });
-    });
-    
-   }
 
-   //edit note
-   function editNote(id){
-         console.log(id);
-   }
+    }
 
-   function deleteNote() {
-    if (confirm("Are you sure you want to delete this note?")) {
-        // Send a POST request to delete the note
+    function addTask() {
+        var subject = document.getElementsByName("subject")[0].value;
+        var whoId = document.getElementsByName("who_id")[0].value;
+        var dueDate = document.getElementsByName("due_date")[0].value;
+        // console.log(subject, whoId, dueDate, 'checkot');
+        // return;
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Who_Id": {
+                    "name": document.querySelector('select[name="who_id"] option:checked').text,
+                    "id": whoId
+                },
+                "Due_Date": dueDate
+            }],
+            _token: '{{ csrf_token() }}',
+        };
+
         $.ajax({
-            url: '{{ route("delete.note") }}',
+            url: '{{ route("create.task") }}',
             type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}', // Assuming you're using CSRF protection
-                noteIds: selectedNoteIds // Send an array with a single noteId
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
             success: function(response) {
                 // Handle success response
-                // console.log('Note deleted successfully');
-                alert("Note Deleted Sucessfully")
-                window.location.reload();
-                // Optionally, you can remove the deleted note from the DOM
-                // $('#note'+noteId).remove();
+                alert("success")
+                console.log(response);
+                // Optionally, update the UI or close the modal
+                $('#newTaskModalId').modal('hide');
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                console.error('Error deleting note:', error);
+                console.error(xhr.responseText);
             }
-        });
+        })
     }
-}
-
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
