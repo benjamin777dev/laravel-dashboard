@@ -42,16 +42,16 @@ class Deal extends Model
         'userID'
     ];
 
-    public function primaryContact()
+    public function userData()
     {
-        return $this->belongsTo(User::class, 'contactId');
+        return $this->belongsTo(User::class, 'userID');
     }
 
-  /*   public function contactName()
+    public function contactName()
     {
         return $this->belongsTo(Contact::class, 'contactId');
     }
- */
+
     /*  public function contract()
      {
          return $this->belongsTo(Contract::class);

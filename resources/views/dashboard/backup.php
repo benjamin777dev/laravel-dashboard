@@ -119,7 +119,7 @@
                                                 <div class="d-flex ">
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                                         id="btnGroupAddon" data-bs-toggle="modal"
-                                                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
+                                                        {{-- onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" --}}
                                                         data-bs-target="#saveModalId">
                                                         <i class="fas fa-hdd plusicon"></i>
                                                         Save
@@ -132,44 +132,7 @@
                                                     </div>
                                                 </div>
                                                 {{-- delete Modal --}}
-                                                {{-- <div class="modal fade" id="deleteModalId{{$task['zoho_task_id']}}" tabindex="-1">
-                                                        <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header border-0">
-                                                                    {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                {{-- <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <p class="deleteModalBodyText">Please confirm you’d
-                                                                        like to<br />
-                                                                        delete this item.</p>
-                                                                </div>
-                                                                <div class="modal-footer justify-content-evenly border-0">
-                                                                    <div class="d-grid gap-2 col-5">
-                                                                        <button onclick="deleteTask('{{$task['zoho_task_id']}}')" type="button"
-                                                                            class="btn btn-secondary deleteModalBtn"
-                                                                            data-bs-dismiss="">
-                                                                            <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                            delete
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid gap-2 col-5">
-                                                                        <button type="button"
-                                                                            class="btn btn-primary goBackModalBtn">
-                                                                            <i class="fas fa-arrow-left goBackIcon"></i>
-                                                                            No, go back
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div> --}}
-                                                {{-- </div>  --}}
-                                                {{-- delete Modal --}}
-                                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
+                                                {{-- <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered deleteModal">
                                                         <div class="modal-content">
@@ -205,7 +168,35 @@
 
                                                         </div>
                                                     </div>
-                                                </div>
+                                                {{-- </div> --}}
+                                                <form action="/delete.task/{{ $task['zoho_task_id'] }}" method="POST" id="deleteTaskForm">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body deletemodalBodyDiv">
+                                                                    <p class="deleteModalBodyText">Please confirm you’d like to delete this item.</p>
+                                                                </div>
+                                                                <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                                    <div class="d-grid gap-2 col-5">
+                                                                        <button type="submit" class="btn btn-secondary deleteModalBtn">
+                                                                            <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="d-grid gap-2 col-5">
+                                                                        <button type="button" class="btn btn-primary goBackModalBtn" data-bs-dismiss="modal">
+                                                                            <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -851,54 +842,53 @@
         textElement.innerHTML = newText;
     }
 
-    function updateTask(id, indexid) {
-        console.log(id,indexid,'chekcdhfsjkdh')
-        var inputElement = document.getElementById('editableText' + indexid);
-        if (!inputElement) {
-            console.error("Input element not found for indexid:", indexid);
-            return;
-        }
-        var elementValue = inputElement.textContent;
-        // console.log("inputElementval",elementValue!==undefined,elementValue)
-        if (elementValue !== undefined) { // return;
-            console.log(textElement.value, 'valueeee')
-            var formData = {
-                "data": [{
-                    "Subject": elementValue,
-                    // "Who_Id": {
-                    //     "name": document.querySelector('select[name="who_id"] option:checked').text,
-                    //     "id": whoId
-                    // },
-                    // "Due_Date": dueDate
-                }],
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-            };
-            // console.log("ys check ot")
-            $.ajax({
-                url: '/update.task/' + id,
-                method: 'PUT',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    // Handle success response
-                    alert("updated success")
-                    // console.log(response);
-                    // Optionally, update the UI or close the modal
-                    $('#newTaskModalId').modal('hide');
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    alert(xhr.responseText)
-                }
-            })
-        }
-    }
+    // function updateTask(id, indexid) {
+    //     var inputElement = document.getElementById('editableText' + indexid);
+    //     if (!inputElement) {
+    //         console.error("Input element not found for indexid:", indexid);
+    //         return;
+    //     }
+    //     var elementValue = inputElement.textContent;
+    //     // console.log("inputElementval",elementValue!==undefined,elementValue)
+    //     if (elementValue !== undefined) { // return;
+    //         console.log(textElement.value, 'valueeee')
+    //         var formData = {
+    //             "data": [{
+    //                 "Subject": elementValue,
+    //                 // "Who_Id": {
+    //                 //     "name": document.querySelector('select[name="who_id"] option:checked').text,
+    //                 //     "id": whoId
+    //                 // },
+    //                 // "Due_Date": dueDate
+    //             }],
+    //             "_token": $('meta[name="csrf-token"]').attr('content'),
+    //         };
+    //         // console.log("ys check ot")
+    //         $.ajax({
+    //             url: '/update.task/' + id,
+    //             type: 'PUT',
+    //             headers: {
+    //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //             },
+    //             contentType: 'application/json',
+    //             dataType: 'json',
+    //             data: JSON.stringify(formData),
+    //             success: function(response) {
+    //                 // Handle success response
+    //                 alert("updated success")
+    //                 // console.log(response);
+    //                 // Optionally, update the UI or close the modal
+    //                 $('#newTaskModalId').modal('hide');
+    //                 window.location.reload();
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 // Handle error response
+    //                 console.error(xhr.responseText);
+    //                 alert(xhr.responseText)
+    //             }
+    //         })
+    //     }
+    // }
 
     function deleteTask(id) {
         console.log(id, 'checkot')

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User; // Import the User model
 use App\Models\Deal; // Import the Deal model
 use App\Models\Contact; // Import the Deal model
+use App\Models\Task; // Import the Deal model
 
 class DB
 {
@@ -70,7 +71,7 @@ class DB
        Log::info("Storing Contacts Into Database");
 
         foreach ($contacts as $contact) {
-            // $user = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
+            $user = User::where('root_user_id', $contact['Owner']['id'])->first();
 
             // if (!$user) {
             //     // Log an error if the user is not found
@@ -80,10 +81,10 @@ class DB
 
             // Update or create the deal
            Contact::updateOrCreate(['zoho_contact_id' => $contact['id']], [
-                "contact_owner" => isset($contact['Contact Owner']) ? $contact['Contact Owner'] : null,
+                "contact_owner" => isset($user['id']) ? $user['id'] : null,
                 "email" => isset($contact['Email']) ? $contact['Email'] : null,
-                "first_name" => isset($contact['First Name']) ? $contact['First Name'] : null,
-                "last_name" => isset($contact['Last Name']) ? $contact['Last Name'] : null,
+                "first_name" => isset($contact['First_Name']) ? $contact['First_Name'] : null,
+                "last_name" => isset($contact['Last_Name']) ? $contact['Last_Name'] : null,
                 "phone" => isset($contact['Phone']) ? $contact['Phone'] : null,
                 "created_time" => isset($contact['Created_Time']) ? $contact['Created_Time'] : null,
                 "abcd" => isset($contact['ABCD']) ? $contact['ABCD'] : null,
@@ -98,4 +99,71 @@ class DB
 
         Log::info("Contacts stored into database successfully.");
     }
+
+    public function storeTasksIntoDB($tasks)
+    {
+         Log::info("Storing Tasks Into Database");
+
+        foreach ($tasks as $task) {
+            if(isset($task['Owner'])&&isset($task['Who_Id'])){
+                $user = User::where('root_user_id', $task['Owner']['id'])->first();
+                $contact = Contact::where('zoho_contact_id', $task['Who_Id']['id'])->first();
+            }
+            // if (!$user) {
+            //     // Log an error if the user is not found
+            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
+            //     continue; // Skip to the next deal
+            // }
+
+            // Update or create the deal
+           Task::updateOrCreate(['zoho_task_id' => $task['id']], [
+                "closed_time" => isset($task['Closed_Time']) ? $task['Closed_Time'] : null,
+                "who_id" => isset($contact['id']) ? $contact['id'] : null,
+                "created_by" => isset($contact['id']) ? $contact['id'] : null,
+                "description" => isset($task['Description']) ? $task['Description'] : null,
+                "due_date" => isset($task['Due_Date']) ? date('Y-m-d H:i:s', strtotime($task['Due_Date'])) : null,
+                "priority" => isset($task['Priority']) ? $task['Priority'] : null,
+                "what_id" => isset($task['id']) ? $task['id'] : null,
+                "status" => isset($task['Status']) ? $task['Status'] : null,
+                "subject"=> isset($task['Subject']) ? $task['Subject'] : null,
+                "owner"=> isset($user['id']) ? $user['id'] : null,
+                "created_time"=> isset($task['Created_Time']) ? date('Y-m-d H:i:s', strtotime($task['Created_Time'])) : null,
+                "zoho_task_id"=> isset($task['id']) ? $task['id'] : null
+            ]);
+
+        }
+
+        Log::info("Tasks stored into database successfully.");
+    }
+
+    public function retrieveDeals(User $user, $accessToken)
+    {
+
+        try {
+            
+            Log::info("Retrieve Deals From Database");
+
+            $deals = Deal::with('userData')->with('contactName')->where('userId', $user->id)->get(); 
+            Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]); 
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e; 
+        }
+    }
+
+    public function retreiveTasks(User $user, $accessToken,$tab)
+    {
+
+        try {
+            Log::info("Retrieve Tasks From Database");
+            $tasks = Task::where('owner', $user->id)->where('status', $tab)->get(); 
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]); 
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e; 
+        }
+    }
+
 }

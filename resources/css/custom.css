@@ -16,7 +16,7 @@
 .removebtn {
     background-color: rgb(37, 60, 91);
     cursor: pointer;
-    padding: 14px 11px;
+    padding: 6px 11px;
     border-radius: 4px;
 }
 
@@ -59,7 +59,6 @@
     padding: 20px;
 }
 
-
 .savebtn {
     background: #253c5b;
     margin-right: 12px;
@@ -100,7 +99,7 @@
 .dtabletranstion th {
     background: #222 !important;
     color: #fff;
-    padding: 12px
+    padding: 12px;
 }
 
 .dtabs {
@@ -144,7 +143,7 @@
     filter: invert(1);
 }
 
-/* margins */
+/* / margins / */
 .dMb5 {
     margin-bottom: 5px;
 }
@@ -157,7 +156,7 @@
     margin-top: 16px;
 }
 
-/* Font sizes */
+/* / Font sizes / */
 .dFont10 {
     font-size: 10px;
 }
@@ -182,7 +181,7 @@
     font-size: 18px;
 }
 
-/* font-weights */
+/* / font-weights / */
 .dFont400 {
     font-weight: 400;
 }
@@ -210,7 +209,7 @@
     gap: 24px;
 }
 
-/* / create task modal  / */
+/* / / create task modal  / / */
 .dtaskmodalContent {
     padding: 4px;
 }
@@ -302,7 +301,7 @@
     cursor: pointer;
 }
 
-/* / Note Modal / */
+/* / / Note Modal / / */
 .noteModal {
     border-radius: 4px;
     background: #c1b7ae;
@@ -372,20 +371,112 @@
     margin-inline: auto;
 }
 
-/* pagination */
-.dpagination {
+.deleteModalBodyText {
+    align-self: stretch;
+    color: #222;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 26px;
+    margin-bottom: 0px;
+}
+.deleteModalBtn {
     display: flex;
-    width: 100vw;
-    justify-content: space-between;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+}
+.goBackModalBtn {
+    display: flex;
+    height: 37px;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 2px solid #253c5b;
+    background: #fff;
+    color: var(--Brand, #253c5b);
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
 }
 
+.deleteModalHeaderDiv,
+.saveModalHeaderDiv {
+    padding-bottom: 0px;
+}
+.deletemodalBodyDiv,
+.saveModalBodyDiv {
+    padding: 0px;
+}
+.deletemodalFooterDiv {
+    padding-block: 20px;
+}
+.saveModalBodyText {
+    align-self: stretch;
+    color: #222;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 26px;
+    margin-bottom: 0px;
+    padding-top: 20px;
+}
+.saveModalBtn {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+}
+/* / pagination / */
+.dpaginationNav {
+    position: sticky;
+    width: 100%;
+}
+.ppipelinepage {
+    margin-bottom: 0px;
+}
+.dpagination {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-block: 20px;
+    align-items: center;
+}
+.dprogressCards {
+    display: none;
+}
 
 @media (min-width: 768px) {
     .calendarInput {
         width: 206px !important;
     }
-
-
 }
 
 @media (min-width: 425px) and (max-width: 1345px) {
@@ -424,8 +515,112 @@
         align-items: center;
         margin-inline: auto;
     }
-    .removebtn{
-        margin-bottom: 24px;
+    .ppipelinepage {
+        justify-content: center !important;
+    }
+    .removebtn {
+        margin-block: 24px;
+    }
+    .dtableresp {
+        display: none;
+    }
+
+    /* / Table Cards / */
+    .dprogressCards {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        padding-block: 12px;
+        overflow-x: auto;
+    }
+
+    .dcardSubject {
+        color: #222;
+        font-family: Avenir;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 900;
+        line-height: 16.8px;
+        margin-bottom: 12px;
+    }
+    .dcardssubjectdiv {
+        padding: 16px 12px;
+    }
+    .dcardscheckbox {
+        padding: 16px 8px;
+    }
+    .dcardsTransactionText {
+        color: #685b50;
+        font-family: Avenir;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16.8px;
+        margin-bottom: 4px;
+    }
+    .dcardsselectdiv {
+        color: #222;
+        font-family: Avenir;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 800;
+        display: block;
+        padding-block: 12px;
+    }
+
+    .dcardsTaskText {
+        color: #685b50;
+        font-family: Avenir;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16.8px;
+        margin-bottom: 4px;
+    }
+    .dcardsbtnsDiv {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        justify-content: center;
+        padding: 16px 12px;
+    }
+    .dcardssavebtn {
+        display: flex;
+        height: 40px;
+        padding: 5px 9px;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        align-self: stretch;
+        border-radius: 3.2px;
+        border: 1px solid #5e7153;
+        background: #5e7153;
+        color: #fff;
+        text-align: center;
+        font-family: Avenir;
+        font-size: 11.4px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 17px;
+    }
+
+    .dcardsdeletebtn {
+        display: flex;
+        height: 40px;
+        padding: 5px 9px;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        align-self: stretch;
+        border-radius: 3.2px;
+        border: 1px solid #253c5b;
+        background: #253c5b;
+        color: #fff;
+        text-align: center;
+        font-family: Avenir;
+        font-size: 11.4px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 17px;
     }
 }
 
@@ -448,4 +643,153 @@
         width: 305px;
         margin-inline: auto;
     }
+}
+
+/* / Pipeline component / */
+
+.commonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ppipeDiv {
+    margin-bottom: 24px;
+}
+.pText {
+    color: #222;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 19.2px;
+    text-transform: uppercase;
+}
+.ppipeBtn {
+    padding: 6px 11px;
+    border-radius: 4px;
+    border: 1px solid #0071ce;
+    background: #253c5b;
+}
+
+.pfilterDiv {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 16px;
+    align-self: stretch;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
+    margin-bottom: 24px;
+}
+
+.pcommonFilterDiv {
+    flex: 1;
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+}
+
+.psearchInput {
+    flex: 1;
+    border: none;
+    outline: 0;
+}
+
+.porText {
+    color: #222;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0px;
+}
+
+.pfilterBtn {
+    flex: 1;
+    display: flex;
+    padding: 8.52px 12px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.ptransactionTable th {
+    background: #222;
+    padding: 12px;
+    color: #fff;
+}
+.ppipelineTable th {
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
+}
+.ppipelineTableBody td {
+    padding: 16px 12px !important;
+}
+.ppipelineTableBody tr {
+    border-bottom: 1px solid #f0e6dc;
+}
+.ppiplineSwapIcon {
+    cursor: pointer;
+}
+.ppipelinesorticon {
+    filter: invert();
+}
+.ppiplinecommonIcon {
+    cursor: pointer;
+}
+
+.pstatusText {
+    color: #fff !important;
+    text-align: center;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 11px;
+    letter-spacing: -0.65px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 0;
+}
+.pipelinestatusdiv {
+    cursor: pointer;
+}
+.ppipelineselect {
+    width: 161px;
+    border: none;
+}
+.ppipelineselect:focus {
+    box-shadow: none;
+}
+.custom-option[data-stage="Potential"] {
+    background-color: #85a69c;
+}
+@media (max-width: 767px) {
+    .pcommonFilterDiv {
+        flex: 100%;
+    }
+    .pfilterDiv {
+        justify-content: center;
+    }
+
+    .psearchInput,
+    .pfilterBtn {
+        width: 100%;
+    }
+}
+.sidebarIcons {
+    margin-right: 12px;
 }
