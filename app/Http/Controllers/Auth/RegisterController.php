@@ -91,7 +91,7 @@ class RegisterController extends Controller
                 }
 
                 $cdrData = $contactDataResponse->json();
-                Log::Info("Contact Data Response: " . print_r($cdrData, true));
+                Log::Info("Contact Data Response: " . print_r($cdrData['data'], true));
 
                 if (!isset($cdrData['data'], $cdrData['data'][0], $cdrData['data'][0]['id'])) {
                     Log::error('Contact data not found in response');
