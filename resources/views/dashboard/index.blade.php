@@ -321,23 +321,18 @@
                     <p class="text-center">No notes found.</p>
                 @else
                     <ul class="list-group">
-                        @foreach ($notes as $note)
-                            <li
-                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                                <div class="text-start">
-                                    <span class="dFont800 dFont13">Related to:</span> {{ $note['related_to'] }}<br />
-                                    <p class="dFont400 fs-4 mb-0">
-                                        {{ $note['note_text'] }}
-                                    </p>
-                                </div>
-                                <button id="editButton{{ $note['id'] }}" type="button" data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}"
-                                    class="btn btn-primary dnotesBottomIcon" style="display: none;">Edit</button>
-
-                                {{-- delete button --}}
-                                {{-- <i class="fa-solid fa-minus" id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
-                                    style="display: none;"></i>  --}}
-
+                        @foreach ($notesInfo as $note)
+                        <li
+                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                <span class="dFont800 dFont13">Related to:</span> {{$note['Parent_Id']['name']}}<br />
+                                <p class="dFont400 fs-4 mb-0">
+                                    {{$note['Note_Content']}}
+                                </p>
+                            </div>
+                            <input type="checkbox" class="form-check-input" id="checkbox1">
+                        </li>
+                        @endforeach
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}
