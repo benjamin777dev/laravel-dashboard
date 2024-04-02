@@ -38,8 +38,13 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 //create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
-Route::post('/delete-notes', [DashboardController::class, 'deleteNotes'])->name('delete.note')->middleware('auth');
-Route::post('/update-notes', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
+Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
+Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
+
+//task actions
+Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
+Route::get('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
+Route::delete('/delete-task/{id}', [DashboardController::class, 'delete'])->name('delete.task')->middleware('auth');
 
 
 // Contacts Route
