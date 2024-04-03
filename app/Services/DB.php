@@ -7,6 +7,9 @@ use App\Models\User; // Import the User model
 use App\Models\Deal; // Import the Deal model
 use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
+use App\Models\Note; // Import the Deal model
+use App\Services\Helper;
+
 
 class DB
 {
@@ -16,6 +19,12 @@ class DB
 
         foreach ($dealsData as $deal) {
             $user = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
+            if($deal['Client_Name_Only']){
+            $clientId = explode("||", $deal['Client_Name_Only']);
+            Log::info("clientId: " . implode(", ", $clientId));
+
+            $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
 
             if (!$user) {
                 // Log an error if the user is not found
@@ -53,7 +62,7 @@ class DB
                 'lender_name' => $deal['Lender_Name'],
                 'potential_gci' => $deal['Potential_GCI'],
                 'contractId' => null,
-                'contactId' => null
+                'contactId' => isset($contact['id']) ? $contact['id'] : null,
             ]);
         }
 
@@ -136,14 +145,26 @@ class DB
         Log::info("Tasks stored into database successfully.");
     }
 
-    public function retrieveDeals(User $user, $accessToken)
+    public function retrieveDeals(User $user, $accessToken,$search=null)
     {
 
         try {
             
             Log::info("Retrieve Deals From Database");
+           $conditions = [
+                ['userId', $user->id]
+            ];
 
-            $deals = Deal::with('userData')->with('contactName')->where('userId', $user->id)->get(); 
+            if ($search) {
+                // Add the search condition to the array
+                $conditions[] = ['deal_name', 'like', '%' . urldecode($search) . '%'];
+            }
+            Log::info("Retrieved Deals From Database", ['deals' => $conditions]); 
+            // Retrieve deals based on the conditions
+            $deals = Deal::with('userData')
+                        ->with('contactName')
+                        ->where($conditions)
+                        ->get();
             Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]); 
             return $deals;
         } catch (\Exception $e) {
@@ -168,31 +189,71 @@ class DB
 
     public function storeNotesIntoDB($notes)
     {
-         Log::info("Storing Notes Into Database");
+        try 
+        {
+            Log::info("Storing Notes Into Database");
+            $helper = new Helper();
+            foreach ($notes as $note) {
+                if(isset($note['Owner'])){
+                    $user = User::where('root_user_id', $note['Owner']['id'])->first();
+                }
+                $related_to;
+                $related_to_type;
+                $result = $helper->getValue(config('variables.zohoModules'), $note['Parent_Id']['module']['api_name']);
+                Log::info("resultHelper".$result);
+                switch ($result) {
+                    case 'Deals':
+                        $related_to = Deal::where('zoho_deal_id',$note['Parent_Id']['id'])->first();
+                        $related_to_type = 'Deal';
+                        break;
 
-        foreach ($notes as $note) {
-            if(isset($note['Owner'])){
-                $user = User::where('root_user_id', $note['Owner']['id'])->first();
-                $deal = Deal::where('zoho_deal_id', $note['Parent_Id']['id'])->first();
+                    case 'Contacts':
+                        $related_to = Contact::where('zoho_contact_id',$note['Parent_Id']['id'])->first();
+                        $related_to_type = 'Contact';
+                        break;
+                    default:
+                        Log::info("resultHelper".$result);
+                        break;
+                }
+                // if (!$user) {
+                //     // Log an error if the user is not found
+                //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
+                //     continue; // Skip to the next deal
+                // }
+
+                // Update or create the deal
+                Note::where('zoho_note_id' , $note['id'])->update    (['related_to_type' => $related_to_type]);
+                Note::updateOrCreate(['zoho_note_id' => $note['id']], [
+                        'owner'=> isset($user['id']) ? $user['id'] : null,
+                        'related_to'=> isset($related_to['id']) ? $related_to['id'] : null,
+                        'note_content'=> isset($note['Note_Content']) ? $note['Note_Content'] : null,
+                        'created_time'=> isset($note['Created_Time']) ? $note['Created_Time'] : null,
+                        'zoho_note_id'=> isset($note['id']) ? $note['id'] : null,
+                        '$related_to_type'=>isset($related_to_type) ? $related_to_type: null,
+                    ]);
+
             }
-            // if (!$user) {
-            //     // Log an error if the user is not found
-            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
-            //     continue; // Skip to the next deal
-            // }
 
-            // Update or create the deal
-           Note::updateOrCreate(['zoho_note_id' => $note['id']], [
-                'owner'=> isset($user['id']) ? $user['id'] : null,
-        'related_to'=> isset($deal['id']) ? $deal['id'] : null,
-        'note_content'=> isset($note['Note_Content']) ? $note['Note_Content'] : null,
-        'created_time'=> isset($note['Created_Time']) ? $note['Created_Time'] : null,
-        'zoho_note_id'=> isset($note['id']) ? $note['id'] : null,
-            ]);
-
+            Log::info("Notes stored into database successfully.");
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            throw $e; 
         }
 
-        Log::info("Tasks stored into database successfully.");
+    }
+
+    public function retrieveNotes(User $user, $accessToken)
+    {
+
+        try {
+            Log::info("Retrieve Notes From Database");
+            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->get(); 
+            Log::info("Retrieved Notes From Database", ['notes' => $tasks->toArray()]); 
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e; 
+        }
     }
 
 }

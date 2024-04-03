@@ -161,7 +161,7 @@ class DashboardController extends Controller
         Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
-         $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
+         $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
@@ -597,8 +597,8 @@ class DashboardController extends Controller
         print_r($allDeals);
         die;
 
-        Log::info("Total notes records: ". $allDeals->count());
-        Log::info("notes Records: ", $allDeals->toArray());
+        Log::info("Total deals records: ". $allDeals->count());
+        Log::info("deals Records: ", $allDeals->toArray());
         return $allDeals;
     }
     
