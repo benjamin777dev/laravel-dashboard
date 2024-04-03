@@ -139,6 +139,54 @@
 
                 </tfoot> --}}
             </table>
+            <div class="ptableCardDiv">
+                @foreach ($deals as $deal)
+                    <div class="pTableCard">
+                        <p class="pTableTransText">Transaction</p>
+                        <p class="pTableNameText">{{ $deal['Deal_Name'] ?? 'N/A' }}</p>
+                        <div class="d-flex justify-content-between">
+                            <div class="pTableSelect pipelinestatusdiv">
+                                <p style="background-color: {{ $deal['Stage'] === 'Potential'
+                                    ? '#85A69C'
+                                    : ($deal['Stage'] === 'Active'
+                                        ? '#70BCA5'
+                                        : ($deal['Stage'] === 'Pre-Active'
+                                            ? '#4B8170'
+                                            : ($deal['Stage'] === 'Under Contract'
+                                                ? '#477ABB'
+                                                : ($deal['Stage'] === 'Dead'
+                                                    ? '#575B58'
+                                                    : '#F18F01')))) }}"
+                                    class="pstatusText">{{ $deal['Stage'] ?? 'N/A' }} </p>
+                                <i class="fas fa-angle-down"></i>
+                            </div>
+                            {{ $deal['Closing_Date'] ?? 'N/A' }}
+                        </div>
+                        <div class="d-flex justify-content-between psellDiv">
+                            <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> Beth Anderson
+                                {{-- {{ $deal['Primary_Contact'] ?? 'N/A' }} --}}
+                            </div>
+                            <div>
+                                <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">
+                                {{ $deal['Sale_Price'] ?? 'N/A' }}
+                            </div>
+                        </div>
+                        <div class="pCardFooter">
+                            <div class="pfootericondiv">
+                                <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
+                                    class="pdiversityicon">
+                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
+                                    class="pdiversityicon">
+                            </div>
+                            <div>
+                                <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
+                                    class="pdiversityicon">
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
         </div>
     </div>
     @vite(['resources/js/pipeline.js'])
