@@ -6,32 +6,23 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\DB;
 
 class PipelineController extends Controller
 {
     public function index(Request $request)
     {
+        $db = new DB();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
 
         $accessToken = $user->getAccessToken();
-        $deals = $this->retrieveDealsFromZoho($user->zoho_id, $accessToken);
+         $search = request()->query('search');
+        $deals = $db->retrieveDeals($user, $accessToken,$search);
 
-        // Calculate summary fields
-        $summary = [
-            'salesPriceTotal' => $deals->sum('Sale_Price'),
-            'commissionAverage' => $deals->avg('Commission'),
-            'pipelineProbabilityAverage' => $deals->avg('Pipeline_Probability'),
-            'potentialGCITotal' => $deals->sum('Potential_GCI'),
-            'probableGCITotal' => $deals->sum('Pipeline1'),
-            'salesPriceAverage' => $deals->avg('Sale_Price'),
-            'potentialGCIAverage' => $deals->avg('Potential_GCI'),
-            'probableGCIAverage' => $deals->avg('Pipeline1'),
-        ];
-
-        return view('pipeline.index', compact('deals', 'summary'));
+        return view('pipeline.index', compact('deals'));
     }
 
     public function getClosedDeals(Request $request)
