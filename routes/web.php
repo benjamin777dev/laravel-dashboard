@@ -43,8 +43,8 @@ Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->na
 
 //task actions
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
-Route::get('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
-Route::delete('/delete-task/{id}', [DashboardController::class, 'delete'])->name('delete.task')->middleware('auth');
+Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
+Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 
 
 // Contacts Route
