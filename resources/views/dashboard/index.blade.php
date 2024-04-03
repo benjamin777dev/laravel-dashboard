@@ -319,18 +319,21 @@
                 @if ($notes->isEmpty())
                     <p class="text-center">No notes found.</p>
                 @else
-                    <ul class="list-group">
+                    <ul class="list-group dnotesUl">
                         @foreach ($notesInfo as $note)
-                            <li
-                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                                <div class="text-start">
-                                    <span class="dFont800 dFont13">Related to:</span>
-                                    {{ $note['Parent_Id']['name'] }}<br />
-                                    <p class="dFont400 fs-4 mb-0">
-                                        {{ $note['Note_Content'] }}
-                                    </p>
-                                </div>
-                                <input type="checkbox" class="form-check-input" id="checkbox1">
+                        <li
+                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                            <div class="text-start">
+                                @if($note['related_to_type']==='Deal')
+                                    <span class="dFont800 dFont13">Related to:</span> {{$note->dealData->deal_name}}<br />
+                                @endif
+                                @if($note['related_to_type']==='Contact')
+                                    <span class="dFont800 dFont13">Related to:</span> {{$note->contactData->first_name}} {{$note->contactData->last_name}}<br />
+                                @endif
+                                <p class="dFont400 fs-4 mb-0">
+                                    {{$note['note_content']}}
+                                </p>
+                            </div>
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}

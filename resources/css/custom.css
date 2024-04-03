@@ -81,7 +81,16 @@
     padding: 20px;
     border-radius: 4px;
 }
-
+.dnotesUl{
+    max-height: 418px;
+    overflow-y: auto;
+}
+.dnotesUl::-webkit-scrollbar{
+   width: 5px;
+}
+.dnotesUl::-webkit-scrollbar-thumb {
+  background: #e8ddd4 ;
+}
 .dtranstiontable {
     background: rgba(255, 255, 255, 1);
     padding: 20px;

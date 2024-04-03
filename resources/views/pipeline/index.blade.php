@@ -77,48 +77,28 @@
                     @foreach ($deals as $deal)
                         <tr>
                             <td><input type="checkbox" /></td>
-                            <td>{{ $deal['Deal_Name'] ?? 'N/A' }}</td>
-                            <td>{{ $deal['Primary_Contact'] ?? 'N/A' }}</td>
+                            <td>{{ $deal['deal_name'] ?? 'N/A' }}</td>
+                            <td>{{ $deal->contactName->first_name ?? 'N/A' }} {{ $deal->contactName->last_name ?? '' }}</td>
                             <td>
-                                {{-- <div class="btn-group">
-                                    <select class="form-select ppipelineselect" aria-label="Transaction test">
-                                        <option
-                                            style="background-color: {{ $deal['Stage'] === 'Potential'
-                                                ? '#85A69C'
-                                                : ($deal['Stage'] === 'Active'
-                                                    ? '#70BCA5'
-                                                    : ($deal['Stage'] === 'Pre-Active'
-                                                        ? '#4B8170'
-                                                        : ($deal['Stage'] === 'Under Contract'
-                                                            ? '#477ABB'
-                                                            : ($deal['Stage'] === 'Dead'
-                                                                ? '#575B58'
-                                                                : '#F18F01')))) }}"
-                                            class="pstatusText" value="{{ $deal['Stage'] ?? 'N/A' }}">
-                                            {{ $deal['Stage'] ?? 'N/A' }}</option>
-                                    </select>
-                                </div> --}}
                                 <div class="commonFlex pipelinestatusdiv">
-                                    <p style="background-color: {{ $deal['Stage'] === 'Potential'
+                                    <p style="background-color: {{ $deal['stage'] === 'Potential'
                                         ? '#85A69C'
-                                        : ($deal['Stage'] === 'Active'
+                                        : ($deal['stage'] === 'Active'
                                             ? '#70BCA5'
-                                            : ($deal['Stage'] === 'Pre-Active'
+                                            : ($deal['stage'] === 'Pre-Active'
                                                 ? '#4B8170'
-                                                : ($deal['Stage'] === 'Under Contract'
+                                                : ($deal['tage'] === 'Under Contract'
                                                     ? '#477ABB'
                                                     : ($deal['Stage'] === 'Dead'
                                                         ? '#575B58'
                                                         : '#F18F01')))) }}"
-                                        class="pstatusText">{{ $deal['Stage'] ?? 'N/A' }} </p>
+                                        class="pstatusText">{{ $deal['stage'] ?? 'N/A' }} </p>
                                     <i class="fas fa-angle-down"></i>
                                 </div>
-
-
                             </td>
-                            <td>{{ $deal['Representing'] ?? 'N/A' }}</td>
-                            <td>{{ $deal['Sale_Price'] ?? 'N/A' }}</td>
-                            <td>{{ $deal['Closing_Date'] ?? 'N/A' }}</td>
+                            <td>{{ $deal['representing'] ?? 'N/A' }}</td>
+                            <td>{{ $deal['sale_price'] ?? 'N/A' }}</td>
+                            <td>{{ $deal['closing_date'] ?? 'N/A' }}</td>
                             <td>
                                 <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
                                 <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon"
@@ -212,13 +192,13 @@
     @vite(['resources/js/pipeline.js'])
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        /* document.addEventListener("DOMContentLoaded", function() {
             const searchInput = document.getElementById('pipelineSearch');
             const sortSelect = document.getElementById('pipelineSort');
 
             function filterPipeline() {
                 const filterValue = searchInput.value.toUpperCase();
-                const rows = document.querySelectorAll('.ppipelineTableBody tr');
+                const rows = document.querySelectorAll('.pppipelineTableBody tr');
 
                 rows.forEach(row => {
                     const transactionCell = row.querySelector('td:nth-child(2)');
@@ -253,10 +233,33 @@
             //     tbody.innerHTML = "";
             //     sortedRows.forEach(row => tbody.appendChild(row));
             // }
-
+                
             searchInput.addEventListener('keyup', filterPipeline);
             // sortSelect.addEventListener('change', sortPipeline);
+        }); */
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById('pipelineSearch');
+            // Add an event listener to send search term as request
+            searchInput.addEventListener('input', function() {
+                const searchValue = this.value.trim();
+                if (searchValue.length > 0) {
+                    // Make an AJAX request to the server with the search term
+                    fetch(`{{ route('pipeline.index') }}?search=${encodeURIComponent(searchValue)}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            // Replace the table body with the updated data from the server
+                            ppipelineTableBody.innerHTML = data;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                } else {
+                    // Reset the table to its original state if search input is empty
+                    ppipelineTableBody.innerHTML = '';
+                }
+            });
         });
+        
     </script>
 @section('pipelineScript')
 
