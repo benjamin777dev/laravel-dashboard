@@ -23,6 +23,8 @@ Route::post('login', [LoginController::class, 'login']);
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
+Route::get('reset', [RegisterController::class, 'showResetForm'])->name('reset');
+Route::post('reset', [RegisterController::class, 'register']);
 
 // Zoho OAuth Routes
 Route::get('/auth/redirect', [RegisterController::class, 'redirectToZoho'])->name('auth.redirect');
@@ -53,6 +55,7 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
+Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show')->middleware('auth');
 
 // From ADMIN - Assuming these routes are for authenticated users
