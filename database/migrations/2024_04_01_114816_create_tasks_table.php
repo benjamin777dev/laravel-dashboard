@@ -15,7 +15,7 @@ class CreatetasksTable extends Migration
             $table->string('created_by')->nullable();
             $table->string('currency')->nullable();
             $table->text('description')->nullable();
-            $table->string('due_date')->nullable();
+            $table->timestamp('due_date')->nullable();
             $table->string('exchange_rate')->nullable();
             $table->string('import_batch')->nullable();
             $table->string('modified_by')->nullable();

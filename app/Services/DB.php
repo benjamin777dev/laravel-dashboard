@@ -15,6 +15,7 @@ class DB
 {
     public function storeDealsIntoDB($dealsData)
     {
+        $helper = new Helper();
         Log::info("Storing Deals Into Database");
 
         foreach ($dealsData as $deal) {
@@ -43,7 +44,7 @@ class DB
                 'commission' => $deal['Commission'],
                 'probable_volume' => $deal['Probable_Volume'],
                 'lender_company' => $deal['Lender_Company'],
-                'closing_date' => $deal['Closing_Date'],
+                'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
                 'ownership_type' => $deal['Ownership_Type'],
                 'needs_new_date2' => $deal['Needs_New_Date2'],
                 'deal_name' => $deal['Deal_Name'],
@@ -53,7 +54,7 @@ class DB
                 'zoho_deal_id' => $deal['id'],
                 'pipeline1' => $deal['Pipeline1'],
                 'pipeline_probability' => $deal['Pipeline_Probability'],
-                'zoho_deal_createdTime' => $deal['Created_Time'],
+                'zoho_deal_createdTime' => $helper->convertToUTC($deal['Created_Time']),
                 'property_type' => $deal['Property_Type'],
                 'city' => $deal['City'],
                 'state' => $deal['State'],
@@ -77,6 +78,7 @@ class DB
      */
     public function storeContactsIntoDB($contacts)
     {
+        $helper = new Helper();
         Log::info("Storing Contacts Into Database");
 
         foreach ($contacts as $contact) {
@@ -95,7 +97,7 @@ class DB
                 "first_name" => isset($contact['First_Name']) ? $contact['First_Name'] : null,
                 "last_name" => isset($contact['Last_Name']) ? $contact['Last_Name'] : null,
                 "phone" => isset($contact['Phone']) ? $contact['Phone'] : null,
-                "created_time" => isset($contact['Created_Time']) ? $contact['Created_Time'] : null,
+                "created_time" => isset($contact['Created_Time']) ? $helper->convertToUTC($contact['Created_Time']) : null,
                 "abcd" => isset($contact['ABCD']) ? $contact['ABCD'] : null,
                 "mailing_address" => isset($contact['Mailing_Address']) ? $contact['Mailing_Address'] : null,
                 "mailing_city" => isset($contact['Mailing_City']) ? $contact['Mailing_City'] : null,
@@ -110,6 +112,7 @@ class DB
 
     public function storeTasksIntoDB($tasks)
     {
+        $helper = new Helper();
         Log::info("Storing Tasks Into Database");
 
         foreach ($tasks as $task) {
@@ -127,17 +130,17 @@ class DB
 
             // Update or create the deal
             Task::updateOrCreate(['zoho_task_id' => $task['id']], [
-                "closed_time" => isset($task['Closed_Time']) ? $task['Closed_Time'] : null,
+                "closed_time" => isset($task['Closed_Time']) ? $helper->convertToUTC($task['Closed_Time']) : null,
                 "who_id" => isset($contact['id']) ? $contact['id'] : null,
                 "created_by" => isset($contact['id']) ? $contact['id'] : null,
                 "description" => isset($task['Description']) ? $task['Description'] : null,
-                "due_date" => isset($task['Due_Date']) ? date('Y-m-d H:i:s', strtotime($task['Due_Date'])) : null,
+                "due_date" => isset($task['Due_Date']) ? $helper->convertToUTC($task['Due_Date']) : null,
                 "priority" => isset($task['Priority']) ? $task['Priority'] : null,
                 "what_id" => isset($task['id']) ? $task['id'] : null,
                 "status" => isset($task['Status']) ? $task['Status'] : null,
                 "subject" => isset($task['Subject']) ? $task['Subject'] : null,
                 "owner" => isset($user['id']) ? $user['id'] : null,
-                "created_time" => isset($task['Created_Time']) ? date('Y-m-d H:i:s', strtotime($task['Created_Time'])) : null,
+                "created_time" => isset($task['Created_Time']) ? $helper->convertToUTC($task['Created_Time']) : null,
                 "zoho_task_id" => isset($task['id']) ? $task['id'] : null
             ]);
         }
@@ -217,8 +220,8 @@ class DB
                 if (isset($note['Owner'])) {
                     $user = User::where('root_user_id', $note['Owner']['id'])->first();
                 }
-                $related_to;
-                $related_to_type;
+                $related_to = null;
+                $related_to_type = null;
                 $result = $helper->getValue(config('variables.zohoModules'), $note['Parent_Id']['module']['api_name']);
                 Log::info("resultHelper" . $result);
                 switch ($result) {
@@ -247,7 +250,7 @@ class DB
                     'owner' => isset($user['id']) ? $user['id'] : null,
                     'related_to' => isset($related_to['id']) ? $related_to['id'] : null,
                     'note_content' => isset($note['Note_Content']) ? $note['Note_Content'] : null,
-                    'created_time' => isset($note['Created_Time']) ? $note['Created_Time'] : null,
+                    'created_time' => isset($note['Created_Time']) ? $helper->convertToUTC($note['Created_Time']) : null,
                     'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
                     '$related_to_type' => isset($related_to_type) ? $related_to_type : null,
                 ]);
