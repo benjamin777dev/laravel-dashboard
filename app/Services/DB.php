@@ -114,8 +114,11 @@ class DB
          Log::info("Storing Tasks Into Database");
 
         foreach ($tasks as $task) {
-            if(isset($task['Owner'])&&isset($task['Who_Id'])){
+            if(isset($task['Owner'])){
+
                 $user = User::where('root_user_id', $task['Owner']['id'])->first();
+            }
+            if(isset($task['Who_Id'])){
                 $contact = Contact::where('zoho_contact_id', $task['Who_Id']['id'])->first();
             }
             // if (!$user) {
@@ -175,8 +178,8 @@ class DB
 
     public function retreiveTasks(User $user, $accessToken,$tab)
     {
-
         try {
+
             Log::info("Retrieve Tasks From Database");
             $tasks = Task::where('owner', $user->id)->where('status', $tab)->get(); 
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]); 

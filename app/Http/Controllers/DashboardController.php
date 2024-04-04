@@ -474,7 +474,48 @@ class DashboardController extends Controller
         die;
     }
 
- function updateTaskaction(Request $request,User $user,$id){
+    public function deleteTaskaction(Request $request,User $user,$id)  {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $jsonData = $request->json()->all();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+        try {
+            if (strpos($id, ',') === false) {
+                $response = $zoho->deleteTask($jsonData,$id);
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                $task = Task::where('zoho_task_id', $id)->first();
+                if (!$task) {
+                    return "Task not found";
+                }
+                $task->delete();
+            } else {
+                // Multiple IDs provided
+                $response = $zoho->deleteTaskSelected($jsonData,$id);
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                $idArray = explode(',', $id);
+               $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
+                if (!$tasks) {
+                    return "Task not found";
+                }
+            }
+            Log::info("Successful notes delete... ".$response);
+
+            
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong". $e->getMessage();
+        }
+        return $response;
+    }
+    public function updateTaskaction(Request $request,User $user,$id){
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -505,42 +546,6 @@ class DashboardController extends Controller
             return $response;
        
     }
-
-    public function deleteTaskaction(Request $request,User $user,$id)  {
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $accessToken = $user->getAccessToken();
-        $jsonData = $request->json()->all();
-        // $response;
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        // $task = Task::findOrFail($id);
-
-        try {
-                $response = $zoho->deleteTask($jsonData,$id);
-                
-                if (!$response->successful()) {
-                     return "error somthing".$response;
-                }
-                $task = Task::where('zoho_task_id', $id)->first();
-                if (!$task) {
-                    return "Task not found";
-                }
-                // Delete the Task
-                $task->delete();
-                Log::info("Successful notes delete... ".$response);
-
-            
-        } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong". $e->getMessage();
-        }
-        return $response;
-    }
-    
 
     public function retrieveDealTransactionData(User $user, $accessToken)
     {

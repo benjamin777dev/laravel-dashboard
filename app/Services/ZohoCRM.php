@@ -284,6 +284,20 @@ class ZohoCRM
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
     }
+
+    public function deleteTaskSelected($inputJson,$ids)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->delete($this->apiUrl . "Tasks?ids=" . $ids);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
     
 
 }

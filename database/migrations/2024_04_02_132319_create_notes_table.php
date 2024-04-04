@@ -10,8 +10,10 @@ class CreatenotesTable extends Migration
     {
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
+            $table->string('zoho_note_id')->nullable();
             $table->unsignedBigInteger('owner')->nullable();
             $table->unsignedBigInteger('related_to')->nullable();
+            $table->string('related_to_type')->nullable();
             $table->string('note_content')->nullable();
             $table->string('created_time')->nullable();
             

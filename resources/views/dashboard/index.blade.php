@@ -82,7 +82,8 @@
                         <table class="table dtableresp">
                             <thead>
                                 <tr class="dFont700 dFont10">
-                                    <th scope="col"><input type="checkbox" /></th>
+                                    <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()"
+                                            id="checkbox_all" id="checkbox_task" /></th>
                                     <th scope="col">Subject</th>
                                     <th scope="col">Transaction Related</th>
                                     <th scope="col">Task Date</th>
@@ -94,7 +95,7 @@
                                 @if (count($tasks) > 0)
                                     @foreach ($tasks as $task)
                                         <tr class="dresponsivetableTr">
-                                            <td><input type="checkbox" /></td>
+                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')" type="checkbox" id="{{ $task['zoho_task_id'] }}" /></td>
                                             <td>
                                                 <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                                     id="editableText{{ $task['id'] }}">
@@ -264,8 +265,9 @@
                         @endif
                         @if (count($tasks) > 0)
                             <div class="dpagination">
-                                <div onclick="removeAllSelected()"
-                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
+                                <div onclick="deleteTask()"
+                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
+                                    id="removeBtn">
                                     <i class="fas fa-trash-alt plusicon"></i>
                                     Remove Selected
                                 </div>
@@ -316,24 +318,26 @@
             </div>
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
-                @if ($notes->isEmpty())
+                @if ($notesInfo->isEmpty())
                     <p class="text-center">No notes found.</p>
                 @else
                     <ul class="list-group dnotesUl">
                         @foreach ($notesInfo as $note)
-                        <li
-                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                            <div class="text-start">
-                                @if($note['related_to_type']==='Deal')
-                                    <span class="dFont800 dFont13">Related to:</span> {{$note->dealData->deal_name}}<br />
-                                @endif
-                                @if($note['related_to_type']==='Contact')
-                                    <span class="dFont800 dFont13">Related to:</span> {{$note->contactData->first_name}} {{$note->contactData->last_name}}<br />
-                                @endif
-                                <p class="dFont400 fs-4 mb-0">
-                                    {{$note['note_content']}}
-                                </p>
-                            </div>
+                            <li
+                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                                <div class="text-start">
+                                    @if ($note['related_to_type'] === 'Deal')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->dealData->deal_name }}<br />
+                                    @endif
+                                    @if ($note['related_to_type'] === 'Contact')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
+                                    @endif
+                                    <p class="dFont400 fs-4 mb-0">
+                                        {{ $note['note_content'] }}
+                                    </p>
+                                </div>
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}
@@ -848,7 +852,7 @@
     }
 
     function updateTask(id, indexid) {
-        console.log(id, indexid, 'chekcdhfsjkdh')
+        // console.log(id, indexid, 'chekcdhfsjkdh')
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -886,8 +890,8 @@
                         // Get the button element by its ID
                         var button = document.getElementById('update_changes');
                         var update_message = document.getElementById('updated_message');
-                        
-       
+
+
                         // Get the modal target element by its ID
                         var modalTarget = document.getElementById('saveModalId');
                         console.log(modalTarget, 'modalTarget')
@@ -911,16 +915,26 @@
     }
 
     function deleteTask(id) {
+        let updateids = removeAllSelected();
+        if (updateids === "" && id === undefined) {
+            return;
+        }
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        alert(ids);
+        return;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        console.log(id, 'checkot')
         try {
             if (id) {
                 $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
                     method: 'DELETE', // Change to DELETE method
                     contentType: 'application/json',
                     dataType: 'JSON',
@@ -930,10 +944,7 @@
                     },
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully",response)
-                        // console.log(response);
-                        // Optionally, update the UI or close the modal
-                        // $('#newTaskModalId').modal('hide');
+                        alert("deleted successfully", response);
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {
@@ -951,15 +962,76 @@
     function removeAllSelected() {
         // Select all checkboxes
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-
+        var ids = ""; // Initialize ids variable to store concatenated IDs
         // Iterate through each checkbox
         checkboxes.forEach(function(checkbox) {
+            // console.log(checkboxes,'checkboxes')
             // Check if the checkbox is checked
             if (checkbox.checked) {
-                // Uncheck the checkbox
-                checkbox.checked = false;
+                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
+                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
+                    "checkbox_all") {
+                    // Concatenate the checkbox ID with a comma
+                    ids += checkbox.id + ",";
+                    document.getElementById("removeBtn").style.backgroundColor = "rgb(37, 60, 91);"
+                }
             }
         });
+
+        // Remove the trailing comma
+        if (ids !== "") {
+            ids = ids.replace(/,+(?=,|$)/g, "");
+        }
+
+        return ids;
     }
+
+    function toggleAllCheckboxes() {
+        // console.log("yes it")
+        let state = false;
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            // Set the state of each checkbox based on the state of the "checkbox_all"
+            checkbox.checked = allCheckbox.checked;
+            if (checkbox.checked) {
+              
+                state = true;
+
+            } else {
+                state = false;
+            }
+        });
+        if (state) {
+            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+        } else {
+
+            updateColor.style.backgroundColor = "rgb(192 207 227)";
+        }
+    }
+
+    function triggerCheckbox(checkboxid){
+        let updateColor = document.getElementById("removeBtn");
+    var allCheckbox = document.getElementById('checkbox_all');
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var allChecked = true;
+    var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+
+    checkboxes.forEach(function(checkbox) {
+        if (!checkbox.checked) {
+            anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+        } else {
+            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+        }
+    });
+
+    allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+
+          
+    }
+
+
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
