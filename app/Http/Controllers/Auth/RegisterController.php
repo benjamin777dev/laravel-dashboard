@@ -90,11 +90,11 @@ class RegisterController extends Controller
                 Log::info("User data found in response!");
                 $userData = $userData['users'][0];
             }
-            $userAlreadyExists = User::where("email", $userData["email"])->first();
-            if ($userAlreadyExists) {
-                Log::info("User data found in response!" . $userAlreadyExists);
-                return redirect('/reset');
-            }
+            // $userAlreadyExists = User::where("email", $userData["email"])->first();
+            // if ($userAlreadyExists) {
+            //     Log::info("User data found in response!" . $userAlreadyExists);
+            //     return redirect('/reset');
+            // }
             $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userData['email']}))";
             $fields = "Id,Email,First_Name,Last_Name";
             $contactDataResponse = $zoho->getContactData($criteria, $fields);
