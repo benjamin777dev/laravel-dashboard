@@ -11,6 +11,7 @@ use App\Services\ZohoCRM;
 use App\Services\DB;
 use App\Models\Note;
 use App\Models\Deal;
+use App\Models\Task;
 
 
 class DashboardController extends Controller
@@ -161,7 +162,7 @@ class DashboardController extends Controller
         Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
-         $notesInfo = $this->retrieveNOTESFromZoho($user,$accessToken);
+         $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
@@ -473,56 +474,45 @@ class DashboardController extends Controller
         die;
     }
 
-    public function updateTaskaction(Request $request,User $user){
+ function updateTaskaction(Request $request,User $user,$id){
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
-        
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
-        Log::info("Retrieving notes for criteria: $criteria");
-        // $response;
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
-
-        // $task = Task::findOrFail($id);
-
         try {
                 $response = $zoho->updateTask($jsonData,$id);
-
-          
                 if (!$response->successful()) {
-                     return "error somthing".$response;
+                    return "error somthing".$response;
+                }
+                $task = Task::where('zoho_task_id', $id)->first();
+                $requestData = json_decode($request->getContent(), true);
+                $subject = $requestData['data'][0]['Subject'];
+                if($task){
+                    $task->subject = $subject;
+                    $task->save();
                 }
                 
                 Log::info("Successful notes update... ".$response);
-
-            
-        } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong";
-        }
-        return $response;
-        echo "<pre>";
-        // print_r($responseData);
-        // print_r($allDeals);
-        die;
+                
+            } catch (\Exception $e) {
+                Log::error("Error creating notes: " . $e->getMessage());
+                return "somthing went wrong".$e->getMessage();
+            }
+            return $response;
+       
     }
 
-    public function deleteTaskaction(Request $request,User $user)  {
+    public function deleteTaskaction(Request $request,User $user,$id)  {
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
-        
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
-        Log::info("Retrieving notes for criteria: $criteria");
         // $response;
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
@@ -531,24 +521,24 @@ class DashboardController extends Controller
 
         try {
                 $response = $zoho->deleteTask($jsonData,$id);
-
-          
+                
                 if (!$response->successful()) {
                      return "error somthing".$response;
                 }
-                
+                $task = Task::where('zoho_task_id', $id)->first();
+                if (!$task) {
+                    return "Task not found";
+                }
+                // Delete the Task
+                $task->delete();
                 Log::info("Successful notes delete... ".$response);
 
             
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong";
+            return "somthing went wrong". $e->getMessage();
         }
         return $response;
-        echo "<pre>";
-        // print_r($responseData);
-        // print_r($allDeals);
-        die;
     }
     
 
@@ -597,8 +587,8 @@ class DashboardController extends Controller
         print_r($allDeals);
         die;
 
-        Log::info("Total notes records: ". $allDeals->count());
-        Log::info("notes Records: ", $allDeals->toArray());
+        Log::info("Total deals records: ". $allDeals->count());
+        Log::info("deals Records: ", $allDeals->toArray());
         return $allDeals;
     }
     

@@ -23,6 +23,8 @@ Route::post('login', [LoginController::class, 'login']);
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
+Route::get('reset', [RegisterController::class, 'showResetForm'])->name('reset');
+Route::post('reset', [RegisterController::class, 'register']);
 
 // Zoho OAuth Routes
 Route::get('/auth/redirect', [RegisterController::class, 'redirectToZoho'])->name('auth.redirect');
@@ -43,8 +45,8 @@ Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->na
 
 //task actions
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
-Route::get('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
-Route::delete('/delete-task/{id}', [DashboardController::class, 'delete'])->name('delete.task')->middleware('auth');
+Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
+Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 
 
 // Contacts Route
@@ -53,6 +55,7 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
+Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show')->middleware('auth');
 
 // From ADMIN - Assuming these routes are for authenticated users

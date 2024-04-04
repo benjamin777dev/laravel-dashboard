@@ -25,14 +25,14 @@
                     </a>
                 </li>
                 <li>
-                    <a href="contacts" class="has-arrow waves-effect">
+                    <a  class="has-arrow waves-effect">
                         {{-- <i class="bx bx-user-circle"></i> --}}
                         <img src="{{ URL::asset('/images/contacts.svg') }}" class="sidebarIcons" alt="C">
 
                         <span key="t-database">@lang('Database')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="ContactsDatabase" key="t-Contacts">@lang('Contacts Database')</a></li>
+                        <li><a href="contacts" key="t-Contacts">@lang('Contacts Database')</a></li>
                         <li><a href="Groups" key="t-Groups">@lang('Groups')</a></li>
 
                     </ul>

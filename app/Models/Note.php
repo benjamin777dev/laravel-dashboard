@@ -14,7 +14,8 @@ class Note extends Model
         'related_to',
         'note_content',
         'created_time',
-        'zoho_note_id'
+        'zoho_note_id',
+        'related_to_type'
     ];
 
      public function userData()
@@ -25,5 +26,10 @@ class Note extends Model
     public function dealData()
     {
         return $this->belongsTo(Deal::class, 'related_to');
+    }
+
+    public function ContactData()
+    {
+        return $this->belongsTo(Contact::class, 'related_to');
     }
 }

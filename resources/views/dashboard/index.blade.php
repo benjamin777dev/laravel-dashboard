@@ -119,13 +119,12 @@
                                                 <div class="d-flex ">
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                                         id="btnGroupAddon" data-bs-toggle="modal"
-                                                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
-                                                        data-bs-target="#saveModalId">
+                                                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
                                                         <i class="fas fa-hdd plusicon"></i>
                                                         Save
                                                     </div>
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        id="btnGroupAddon" data-bs-toggle="modal" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                         data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                         <i class="fas fa-trash-alt plusicon"></i>
                                                         Delete
@@ -219,74 +218,74 @@
 
                         </table>
                         @if (count($tasks) > 0)
-                        @foreach ($tasks as $task)
-                            <div class="dprogressCards">
-                                <div class="dcardscheckbox">
-                                    <input type="checkbox" />
-                                </div>
-                                <div class="dcardssubjectdiv">
-                                    <p class="dcardSubject">
-                                        {{ $task['subject'] ?? 'N/A' }}
-                                        {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
-                                    </p>
-                                    <div class="btn-group dcardsselectdiv">
-                                        <p class="dcardsTransactionText">Transaction Related</p>
-                                        <select class="form-select dselect" aria-label="Transaction test"
-                                            id="dropdownMenuButton">
-                                            <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                        </select>
+                            @foreach ($tasks as $task)
+                                <div class="dprogressCards">
+                                    <div class="dcardscheckbox">
+                                        <input type="checkbox" />
                                     </div>
-                                    <div class="dcardsdateinput">
-                                        <p class="dcardsTaskText">Task Date</p>
-                                        <input type="datetime-local"
-                                            value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                    <div class="dcardssubjectdiv">
+                                        <p class="dcardSubject" id="editableText{{ $task['id'] }}" onclick="makeEditable('{{ $task['id'] }}')">
+                                            {{ $task['subject'] ?? 'N/A' }}
+                                            {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
+                                        </p>
+                                        <div class="btn-group dcardsselectdiv">
+                                            <p class="dcardsTransactionText">Transaction Related</p>
+                                            <select class="form-select dselect" aria-label="Transaction test"
+                                                id="dropdownMenuButton">
+                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">
+                                            </select>
+                                        </div>
+                                        <div class="dcardsdateinput">
+                                            <p class="dcardsTaskText">Task Date</p>
+                                            <input type="datetime-local"
+                                                value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="dcardsbtnsDiv">
-                                    <div class="input-group-text dcardssavebtn" id="btnGroupAddon"
-                                        data-bs-toggle="modal" data-bs-target="#saveModalId">
-                                        <i class="fas fa-hdd plusicon"></i>
-                                        Save
-                                    </div>
-                                    <div class="input-group-text dcardsdeletebtn"
-                                    onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                    id="btnGroupAddon"
-                                        data-bs-toggle="modal" data-bs-target="#deleteModalId">
-                                        <i class="fas fa-trash-alt plusicon"></i>
+                                    <div class="dcardsbtnsDiv">
+                                        <div id="update_changes" class="input-group-text dcardssavebtn"
+                                            id="btnGroupAddon" data-bs-toggle="modal"  onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
+                                            <i class="fas fa-hdd plusicon"></i>
+                                            Save
+                                        </div>
+                                        <div class="input-group-text dcardsdeletebtn"
+                                            onclick="deleteTask('{{ $task['zoho_task_id'] }}')" id="btnGroupAddon"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModalId">
+                                            <i class="fas fa-trash-alt plusicon"></i>
 
-                                        Delete
+                                            Delete
+                                        </div>
                                     </div>
                                 </div>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td class="text-center" colspan="12">No records found</td>
+                            </tr>
+                        @endif
+                        @if (count($tasks) > 0)
+                            <div class="dpagination">
+                                <div onclick="removeAllSelected()"
+                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
+                                    <i class="fas fa-trash-alt plusicon"></i>
+                                    Remove Selected
+                                </div>
+                                <nav aria-label="..." class="dpaginationNav">
+                                    <ul class="pagination ppipelinepage d-flex justify-content-end">
+                                        <li class="page-item disabled">
+                                            <a class="page-link">Previous</a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="#">2</a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td class="text-center" colspan="12">No records found</td>
-                        </tr>
-                    @endif
-                    @if (count($tasks) > 0)
-                        <div class="dpagination">
-                            <div onclick="removeAllSelected()" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
-                                <i class="fas fa-trash-alt plusicon"></i>
-                                Remove Selected
-                            </div>
-                            <nav aria-label="..." class="dpaginationNav">
-                                <ul class="pagination ppipelinepage d-flex justify-content-end">
-                                    <li class="page-item disabled">
-                                        <a class="page-link">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item active" aria-current="page">
-                                        <a class="page-link" href="#">2</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    @endif
+                        @endif
 
                         {{-- <div class="dpagination">
                             <div onclick="removeAllSelected()"
@@ -320,70 +319,74 @@
                 @if ($notes->isEmpty())
                     <p class="text-center">No notes found.</p>
                 @else
-                    <ul class="list-group">
+                    <ul class="list-group dnotesUl">
                         @foreach ($notesInfo as $note)
                         <li
                             class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
                             <div class="text-start">
-                                <span class="dFont800 dFont13">Related to:</span> {{$note['Parent_Id']['name']}}<br />
+                                @if($note['related_to_type']==='Deal')
+                                    <span class="dFont800 dFont13">Related to:</span> {{$note->dealData->deal_name}}<br />
+                                @endif
+                                @if($note['related_to_type']==='Contact')
+                                    <span class="dFont800 dFont13">Related to:</span> {{$note->contactData->first_name}} {{$note->contactData->last_name}}<br />
+                                @endif
                                 <p class="dFont400 fs-4 mb-0">
-                                    {{$note['Note_Content']}}
+                                    {{$note['note_content']}}
                                 </p>
                             </div>
-                            <input type="checkbox" class="form-check-input" id="checkbox1">
 
-                            {{-- dynamic edit modal --}}
-                            {{-- note update modal --}}
-                            <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
-                                data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                    <div class="modal-content noteModal">
-                                        <div class="modal-header border-0">
-                                            <p class="modal-title dHeaderText">Note</p>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <form action="{{ route('update.note', ['id' => $note['id']]) }}"
-                                            method="post">
-                                            @csrf
-                                            @method('POST')
-                                            <div class="modal-body dtaskbody">
-                                                <p class="ddetailsText">Details</p>
-                                                <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
-                                                @error('note_text')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                                <p class="dRelatedText">Related to...</p>
-                                                <div class="btn-group dmodalTaskDiv">
-                                                    <select class="form-select dmodaltaskSelect" name="related_to"
-                                                        aria-label="Select Transaction">
-                                                        <option value="">Please select one</option>
-                                                        @foreach ($getdealsTransaction as $item)
-                                                            <option value="{{ $item['Deal_Name'] }}"
-                                                                {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
-                                                                {{ $item['Deal_Name'] }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                {{-- dynamic edit modal --}}
+                                {{-- note update modal --}}
+                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content noteModal">
+                                            <div class="modal-header border-0">
+                                                <p class="modal-title dHeaderText">Note</p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                                method="post">
+                                                @csrf
+                                                @method('POST')
+                                                <div class="modal-body dtaskbody">
+                                                    <p class="ddetailsText">Details</p>
+                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
+                                                    @error('note_text')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <p class="dRelatedText">Related to...</p>
+                                                    <div class="btn-group dmodalTaskDiv">
+                                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                                            aria-label="Select Transaction">
+                                                            <option value="">Please select one</option>
+                                                            @foreach ($getdealsTransaction as $item)
+                                                                <option value="{{ $item['Deal_Name'] }}"
+                                                                    {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
+                                                                    {{ $item['Deal_Name'] }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    @error('related_to')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
-                                                @error('related_to')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="modal-footer dNoteFooter border-0">
-                                                <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                    <i class="fas fa-save saveIcon"></i> Mark as Done
-                                                </button>
-                                            </div>
-                                        </form>
+                                                <div class="modal-footer dNoteFooter border-0">
+                                                    <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                                                        <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                class="form-check-input checkbox{{ $note['id'] }}"
-                                id="checkbox{{ $loop->index + 1 }}">
-                        </li>
+                                <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                    class="form-check-input checkbox{{ $note['id'] }}"
+                                    id="checkbox{{ $loop->index + 1 }}">
+                            </li>
                         @endforeach
                         {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
                             class="btn btn-danger" style="display: none;">Delete</button> --}}
@@ -537,7 +540,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body saveModalBodyDiv">
-                    <p class="saveModalBodyText">Changes have been saved</p>
+                    <p class="saveModalBodyText" id="updated_message">Changes have been saved</p>
                 </div>
                 <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
                     <div class="d-grid col-12">
@@ -845,7 +848,12 @@
     }
 
     function updateTask(id, indexid) {
-        console.log(id,indexid,'chekcdhfsjkdh')
+        console.log(id, indexid, 'chekcdhfsjkdh')
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         var inputElement = document.getElementById('editableText' + indexid);
         if (!inputElement) {
             console.error("Input element not found for indexid:", indexid);
@@ -858,55 +866,71 @@
             var formData = {
                 "data": [{
                     "Subject": elementValue,
-                    // "Who_Id": {
-                    //     "name": document.querySelector('select[name="who_id"] option:checked').text,
-                    //     "id": whoId
-                    // },
-                    // "Due_Date": dueDate
-                }],
-                "_token": $('meta[name="csrf-token"]').attr('content'),
+                    "Remind_At": {
+                        "ALARM": "FREQ=NONE;ACTION=POPUP;TRIGGER=-P1D;TRIGGER_TIME=11:00"
+                    }
+                }]
             };
             // console.log("ys check ot")
             $.ajax({
-                url: '/update.task/' + id,
+                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
                 method: 'PUT',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(formData),
                 success: function(response) {
                     // Handle success response
-                    alert("updated success")
-                    // console.log(response);
-                    // Optionally, update the UI or close the modal
-                    $('#newTaskModalId').modal('hide');
-                    window.location.reload();
+
+                    if (response?.data[0]?.status == "success") {
+                        // console.log(response?.data[0], 'sdfjkshdjkfshd')
+                        // Get the button element by its ID
+                        var button = document.getElementById('update_changes');
+                        var update_message = document.getElementById('updated_message');
+                        
+       
+                        // Get the modal target element by its ID
+                        var modalTarget = document.getElementById('saveModalId');
+                        console.log(modalTarget, 'modalTarget')
+                        // Set the data-bs-target attribute of the button to the ID of the modal
+                        button.setAttribute('data-bs-target', '#' + modalTarget.id);
+                        update_message.textContent = response?.data[0]?.message;
+                        // Trigger a click event on the button to open the modal
+                        button.click();
+                        // alert("updated success", response)
+                        window.location.reload();
+                    }
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
-                    console.error(xhr.responseText);
-                    alert(xhr.responseText)
+                    console.error(xhr.responseText, 'errrorroororooro');
+
+
                 }
             })
         }
     }
 
     function deleteTask(id) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         console.log(id, 'checkot')
         try {
             if (id) {
                 $.ajax({
-                    url: '/delete.task/' + id,
-                    type: 'DELETE', // Change to DELETE method
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                    method: 'DELETE', // Change to DELETE method
                     contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully")
+                        alert("deleted successfully",response)
                         // console.log(response);
                         // Optionally, update the UI or close the modal
                         // $('#newTaskModalId').modal('hide');

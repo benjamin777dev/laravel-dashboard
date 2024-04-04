@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Services\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::middleware('auth')->get('/deals', function (Request $request) {
+    $db= new DB();
+    $user = auth()->user();
+    $accessToken = $user->getAccessToken();
+    $search = $request()->query('search');
+    $deals = $db->retrieveDeals($user, $accessToken,$search);
+    return response()->json($deals);;
 });

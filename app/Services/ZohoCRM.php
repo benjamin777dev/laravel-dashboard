@@ -258,16 +258,16 @@ class ZohoCRM
     public function updateTask($inputJson,$id)
     {
         Log::info('Creating Zoho Task');
-        
-        // Adjust the URL and HTTP method based on your Zoho API requirements
+        // return $inputJson;
+        try{        // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
         ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
-        
+        }catch(\Exception $e){
+            return "somthing went wrong".$e->getMessage();
+        }
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
-        print_r($response->json());
-        die;
         return $response;
     }
 
