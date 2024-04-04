@@ -124,7 +124,7 @@
                                                         Save
                                                     </div>
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        id="btnGroupAddon" data-bs-toggle="modal" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                         data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                         <i class="fas fa-trash-alt plusicon"></i>
                                                         Delete
@@ -224,7 +224,7 @@
                                         <input type="checkbox" />
                                     </div>
                                     <div class="dcardssubjectdiv">
-                                        <p class="dcardSubject">
+                                        <p class="dcardSubject" id="editableText{{ $task['id'] }}" onclick="makeEditable('{{ $task['id'] }}')">
                                             {{ $task['subject'] ?? 'N/A' }}
                                             {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
                                         </p>
@@ -243,7 +243,7 @@
                                     </div>
                                     <div class="dcardsbtnsDiv">
                                         <div id="update_changes" class="input-group-text dcardssavebtn"
-                                            id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId">
+                                            id="btnGroupAddon" data-bs-toggle="modal"  onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
                                             <i class="fas fa-hdd plusicon"></i>
                                             Save
                                         </div>
