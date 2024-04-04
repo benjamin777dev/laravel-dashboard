@@ -14,7 +14,7 @@ class CreatetasksTable extends Migration
             $table->string('who_id')->nullable();
             $table->string('created_by')->nullable();
             $table->string('currency')->nullable();
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('due_date')->nullable();
             $table->string('exchange_rate')->nullable();
             $table->string('import_batch')->nullable();
@@ -28,7 +28,7 @@ class CreatetasksTable extends Migration
             $table->string('owner')->nullable();
             $table->string('zoho_task_id')->nullable();
             $table->string('created_time')->nullable();
-            
+
             $table->timestamps();
         });
     }
