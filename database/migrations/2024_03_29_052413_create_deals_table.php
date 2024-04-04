@@ -19,7 +19,7 @@ class CreatedealsTable extends Migration
             $table->decimal('commission', 8, 2)->nullable(); // Adjusted decimal precision
             $table->string('probable_volume')->nullable();
             $table->string('lender_company')->nullable();
-            $table->date('closing_date')->nullable();
+            $table->timestamp('closing_date')->nullable();
             $table->string('ownership_type')->nullable();
             $table->boolean('needs_new_date2')->default(false);
             $table->string('deal_name')->nullable();
@@ -29,7 +29,7 @@ class CreatedealsTable extends Migration
             $table->string('zoho_deal_id')->nullable();
             $table->string('pipeline1')->nullable();
             $table->decimal('pipeline_probability', 5, 2)->nullable();
-            $table->date('zoho_deal_createdTime')->nullable();
+            $table->timestamp('zoho_deal_createdTime')->nullable();
             $table->string('property_type')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
