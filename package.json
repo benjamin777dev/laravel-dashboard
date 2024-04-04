@@ -27,6 +27,6 @@
     },
     "dependencies": {
         "bootstrap": "5.3.3",
-        "vite-plugin-static-copy": "^1.0.2"
+        "vite-plugin-static-copy": "^0.17.1"
     }
 }
