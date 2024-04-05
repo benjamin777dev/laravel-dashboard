@@ -19,10 +19,27 @@ class PipelineController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
-         $search = request()->query('search');
-        $deals = $db->retrieveDeals($user, $accessToken,$search);
+        $search = request()->query('search');
+        $deals = $db->retrieveDeals($user, $accessToken, $search);
 
         return view('pipeline.index', compact('deals'));
+    }
+
+    public function getDeals(Request $request)
+    {
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $search = request()->query('search');
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType);
+        return response()->json($deals);
+        // return view('pipeline.index', compact('deals'));
     }
 
     public function getClosedDeals(Request $request)

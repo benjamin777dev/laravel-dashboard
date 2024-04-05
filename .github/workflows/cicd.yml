@@ -30,6 +30,7 @@ jobs:
     - name: Install JavaScript Dependencies
       run: |
         npm install
+        npm run build
 
     # Add any additional steps for building/testing your application here
     - name: Copy Files to Web Directory

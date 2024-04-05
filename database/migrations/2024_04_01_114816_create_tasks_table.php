@@ -10,12 +10,12 @@ class CreatetasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('closed_time')->nullable();
+            $table->timestamp('closed_time')->nullable();
             $table->string('who_id')->nullable();
             $table->string('created_by')->nullable();
             $table->string('currency')->nullable();
-            $table->string('description')->nullable();
-            $table->string('due_date')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamp('due_date')->nullable();
             $table->string('exchange_rate')->nullable();
             $table->string('import_batch')->nullable();
             $table->string('modified_by')->nullable();
@@ -27,8 +27,8 @@ class CreatetasksTable extends Migration
             $table->string('tag')->nullable();
             $table->string('owner')->nullable();
             $table->string('zoho_task_id')->nullable();
-            $table->string('created_time')->nullable();
-            
+            $table->timestamp('created_time')->nullable();
+
             $table->timestamps();
         });
     }

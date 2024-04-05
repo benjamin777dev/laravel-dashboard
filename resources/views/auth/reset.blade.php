@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-@lang('Recover_Password') 2
+@lang('Reset') 2
 @endsection
 
 @section('css')
@@ -59,7 +59,7 @@
 
                             <div class="d-flex flex-column h-100">
                                 <div class="mb-4 mb-md-5">
-                                    <a href="/index" class="d-block auth-logo">
+                                    <a href="index" class="d-block auth-logo">
                                         <img src="{{ URL::asset('build/images/logo-dark.png') }}" alt="" height="18" class="auth-logo-dark">
                                         <img src="{{ URL::asset('build/images/logo-light.png') }}" alt="" height="18" class="auth-logo-light">
                                     </a>
@@ -67,47 +67,74 @@
                                 <div class="my-auto">
 
                                     <div>
-                                        <h5 class="text-primary"> Reset Password</h5>
-                                        <p class="text-muted">Re-Password with zPortal.</p>
+                                        <h5 class="text-primary">Reset account</h5>
+                                        <p class="text-muted">Get your free zPortal account now.</p>
                                     </div>
 
                                     <div class="mt-4">
-                                        <form class="form-horizontal" method="POST" action="{{ route('password.update') }}">
-                                            @csrf
-                                            <input type="hidden" name="token" value="{{ $token }}">
+                                        <form class="needs-validation" novalidate action="index">
+
                                             <div class="mb-3">
-                                                <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
-                                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="useremail" name="email" placeholder="Enter email" value="{{ $email ?? old('email') }}" id="email">
-                                                @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
+                                                <label for="useremail" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="useremail" placeholder="Enter email" required>
+                                                <div class="invalid-feedback">
+                                                    Please Enter Email
+                                                </div>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="userpassword">Password <span class="text-danger">*</span></label>
-                                                <input type="password" class="form-control @error('password') is-invalid @enderror" name="password" id="userpassword" placeholder="Enter password">
-                                                @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
+                                                <label for="username" class="form-label">Username</label>
+                                                <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                                                <div class="invalid-feedback">
+                                                    Please Enter Username
+                                                </div>
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="userpassword">Confirm Password <span class="text-danger">*</span></label>
-                                                <input id="password-confirm" type="password" name="password_confirmation" class="form-control" placeholder="Enter confirm password">
+                                                <label for="userpassword" class="form-label">Password</label>
+                                                <input type="password" class="form-control" id="userpassword" placeholder="Enter password" required>
+                                                <div class="invalid-feedback">
+                                                    Please Enter Password
+                                                </div>
                                             </div>
 
-                                            <div class="text-end">
-                                                <button class="btn btn-primary w-md waves-effect waves-light" type="submit">Reset</button>
+                                            <div>
+                                                <p class="mb-0">By reseting you agree to the zPortal <a href="#" class="text-primary">Terms of Use</a></p>
+                                            </div>
+
+                                            <div class="mt-4 d-grid">
+                                                <button class="btn btn-primary waves-effect waves-light" type="submit">Reset</button>
+                                            </div>
+
+                                            <div class="mt-4 text-center">
+                                                <h5 class="font-size-14 mb-3">Sign up using</h5>
+
+                                                <ul class="list-inline">
+                                                    <li class="list-inline-item">
+                                                        <a href="javascript::void()" class="social-list-item bg-primary text-white border-primary">
+                                                            <i class="mdi mdi-facebook"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <a href="javascript::void()" class="social-list-item bg-info text-white border-info">
+                                                            <i class="mdi mdi-twitter"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <a href="javascript::void()" class="social-list-item bg-danger text-white border-danger">
+                                                            <i class="mdi mdi-google"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
                                             </div>
 
                                         </form>
+
                                         <div class="mt-5 text-center">
-                                            <p>Remember It ? <a href="{{ url('login') }}" class="font-weight-medium text-primary"> Sign In here</a> </p>
+                                            <p>Already have an account ? <a href="auth-login-2" class="fw-medium text-primary"> Login</a> </p>
                                         </div>
+
                                     </div>
                                 </div>
 

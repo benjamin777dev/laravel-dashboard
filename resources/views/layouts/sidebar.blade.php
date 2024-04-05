@@ -33,7 +33,7 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
                         <li><a href="contacts" key="t-Contacts">@lang('Contacts Database')</a></li>
-                        <li><a href="Groups" key="t-Groups">@lang('Groups')</a></li>
+                        <!-- <li><a href="Groups" key="t-Groups">@lang('Groups')</a></li> -->
 
                     </ul>
                 </li>
@@ -45,11 +45,11 @@
                         <span key="t-marketing">@lang('Marketing')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
-                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
-                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
-                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
-                        <li><a href="marketing" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
+                        <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
                     </ul>
                 </li>
 
