@@ -35,7 +35,7 @@ class SaveTransactionToDB extends Command
             $criteria = "(CHR_Agent:equals:$user->zoho_id)";
             // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
             Log::info("Retrieving notes for criteria: $criteria");
-
+            $accessToken = $user->getAccessToken();
             $zoho = new ZohoCRM();
             $zoho->access_token = $accessToken;
 
