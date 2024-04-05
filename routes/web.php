@@ -14,8 +14,10 @@ use App\Http\Controllers\CustomerController; // Ensure you import the CustomerCo
 
 // Assuming you want to redirect authenticated users to the dashboard,
 // and non-authenticated users to a home or login page:
-Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
-Route::get('/home', [HomeController::class, 'root'])->middleware('auth')->name('home');
+// Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
+// Dashboard Route
+Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
+// Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware('auth');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -24,7 +26,6 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 Route::get('reset', [RegisterController::class, 'showResetForm'])->name('reset');
-Route::post('reset', [RegisterController::class, 'register']);
 
 // Zoho OAuth Routes
 Route::get('/auth/redirect', [RegisterController::class, 'redirectToZoho'])->name('auth.redirect');

@@ -215,7 +215,7 @@ class HomeController extends Controller
         Log::Info("ACI Data: ". print_r($aciData, true));
 
         // Pass data to the view
-        return view($request->path(),
+        return view('home.index',
             compact('deals', 'progress', 'goal',
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',

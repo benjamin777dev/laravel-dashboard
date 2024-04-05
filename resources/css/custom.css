@@ -151,7 +151,32 @@
     height: 11.25px;
     filter: invert(1);
 }
+.npcontactsTable {
+    display: grid;
+    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 1.0fr 1.5fr 1.5fr 2fr;
+    gap: 10px;
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
 
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+.npcontactsBody {
+    display: grid;
+    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 1.0fr 1.5fr 1.5fr 2fr;
+    gap: 10px;
+    color: #222;
+    padding: 16px 12px;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 16.8px;
+}
 /* / / margins / / */
 .dMb5 {
     margin-bottom: 5px;
@@ -655,7 +680,17 @@
 }
 
 /* / / Pipeline component / / */
+.commonTextEllipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 
+.pnofound {
+    display: flex;
+    justify-content: center;
+    padding: 16px 12px;
+}
 .commonFlex {
     display: flex;
     justify-content: space-between;
@@ -790,11 +825,25 @@
 .ptableCardDiv {
     display: none;
 }
-@media (max-width: 767px) {
+/* @media (max-width: 767px) {
     .ppipelineTable {
         display: none;
     }
     .ptableCardDiv {
+        display: unset;
+    }
+} */
+
+@media (max-width: 767px) {
+    .ppipelineTable,
+    .dtabletranstion,
+    .npcontactsTable,
+    .npcontactsBody {
+        display: none;
+    }
+    .ptableCardDiv,
+    .dtransactionsCardDiv,
+    .npContactCard {
         display: unset;
     }
 }
