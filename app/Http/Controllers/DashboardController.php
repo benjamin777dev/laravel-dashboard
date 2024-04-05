@@ -460,6 +460,7 @@ class DashboardController extends Controller
                      return "error somthing".$response;
                 }
                 
+                return $response;
                 Log::info("Successful notes create... ".$response);
 
             
@@ -467,11 +468,6 @@ class DashboardController extends Controller
             Log::error("Error creating notes: " . $e->getMessage());
             return "somthing went wrong";
         }
-        return $response;
-        echo "<pre>";
-        // print_r($responseData);
-        // print_r($allDeals);
-        die;
     }
 
     public function deleteTaskaction(Request $request,User $user,$id)  {

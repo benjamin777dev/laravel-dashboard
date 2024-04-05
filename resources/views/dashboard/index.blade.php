@@ -95,7 +95,9 @@
                                 @if (count($tasks) > 0)
                                     @foreach ($tasks as $task)
                                         <tr class="dresponsivetableTr">
-                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')" type="checkbox" id="{{ $task['zoho_task_id'] }}" /></td>
+                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
+                                                    type="checkbox" class="task_checkbox"
+                                                    id="{{ $task['zoho_task_id'] }}" /></td>
                                             <td>
                                                 <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                                     id="editableText{{ $task['id'] }}">
@@ -113,7 +115,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="datetime-local"
+                                                <input type="datetime-local" id="date_val{{$task['zoho_task_id']}}"
                                                     value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
                                             </td>
                                             <td>
@@ -444,8 +446,8 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" id="darea" rows="4" class="dtextarea">
-                    </textarea>
+                    <textarea name="subject" id="darea" rows="4" class="dtextarea"></textarea>
+                    
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" name="who_id" aria-label="Select Transaction">
@@ -851,6 +853,30 @@
         textElement.innerHTML = newText;
     }
 
+    function convertDateTime(inputDateTime) {
+
+    // Parse the input date string
+    let dateObj = new Date(inputDateTime);
+
+    // Format the date components
+    let year = dateObj.getFullYear();
+    let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+    let day = dateObj.getDate().toString().padStart(2, '0');
+    let hours = dateObj.getHours().toString().padStart(2, '0');
+    let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+
+    // Format the timezone offset
+    let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+    let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+    let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+
+    // Construct the formatted datetime string
+    let formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+
+    return formattedDateTime;
+}
+
     function updateTask(id, indexid) {
         // console.log(id, indexid, 'chekcdhfsjkdh')
         $.ajaxSetup({
@@ -859,20 +885,29 @@
             }
         });
         var inputElement = document.getElementById('editableText' + indexid);
+        var taskDate = document.getElementById('date_val'+id);
+        let formattedDateTime = convertDateTime(taskDate.value);
+// console.log(formattedDateTime);
+//         alert(formattedDateTime);
+//         return;
         if (!inputElement) {
             console.error("Input element not found for indexid:", indexid);
             return;
         }
         var elementValue = inputElement.textContent;
+        // return;
+         if(elementValue.trim()===""){
+            console.log("chkockdsjkfjksdh")
+            return alert("Please enter subject value first");
+         }
         // console.log("inputElementval",elementValue!==undefined,elementValue)
         if (elementValue !== undefined) { // return;
-            console.log(textElement.value, 'valueeee')
             var formData = {
                 "data": [{
                     "Subject": elementValue,
-                    "Remind_At": {
-                        "ALARM": "FREQ=NONE;ACTION=POPUP;TRIGGER=-P1D;TRIGGER_TIME=11:00"
-                    }
+                    // "Remind_At": {
+                    //     "ALARM": `FREQ=NONE;ACTION=EMAIL;TRIGGER=DATE-TIME:${taskDate.value}`
+                    // }
                 }]
             };
             // console.log("ys check ot")
@@ -924,8 +959,6 @@
         }
         //remove duplicate ids
         ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        alert(ids);
-        return;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -961,7 +994,7 @@
 
     function removeAllSelected() {
         // Select all checkboxes
-        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
         var ids = ""; // Initialize ids variable to store concatenated IDs
         // Iterate through each checkbox
         checkboxes.forEach(function(checkbox) {
@@ -991,13 +1024,13 @@
         let state = false;
         let updateColor = document.getElementById("removeBtn");
         var allCheckbox = document.getElementById('checkbox_all');
-        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
 
         checkboxes.forEach(function(checkbox) {
             // Set the state of each checkbox based on the state of the "checkbox_all"
             checkbox.checked = allCheckbox.checked;
             if (checkbox.checked) {
-              
+
                 state = true;
 
             } else {
@@ -1012,26 +1045,31 @@
         }
     }
 
-    function triggerCheckbox(checkboxid){
+    function triggerCheckbox(checkboxid) {
         let updateColor = document.getElementById("removeBtn");
-    var allCheckbox = document.getElementById('checkbox_all');
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    var allChecked = true;
-    var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var allChecked = true;
+        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+        var anyChecked = false;
+        checkboxes.forEach(function(checkbox) {
+            if (!checkbox.checked) {
+                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+                // updateColor.style.backgroundColor = "rgb(192 207 227)";
+            } else {
+                // updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+                anyChecked = true;
+            }
+        });
 
-    checkboxes.forEach(function(checkbox) {
-        if (!checkbox.checked) {
-            anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+        if (anyChecked) {
+            updateColor.style.backgroundColor = "rgb(37, 60, 91)"; // Checked color
         } else {
-            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+            updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
         }
-    });
+        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
 
-    allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
 
-          
     }
-
-
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
