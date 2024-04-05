@@ -167,8 +167,6 @@ class DashboardController extends Controller
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
          $retrieveModuleDataZoho = $this->retrieveModuleDataZoho($user,$accessToken);
-         print_r($retrieveModuleDataZoho);
-         die;
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
