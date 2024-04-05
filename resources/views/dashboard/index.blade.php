@@ -82,7 +82,8 @@
                         <table class="table dtableresp">
                             <thead>
                                 <tr class="dFont700 dFont10">
-                                    <th scope="col"><input type="checkbox" /></th>
+                                    <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()"
+                                            id="checkbox_all" id="checkbox_task" /></th>
                                     <th scope="col">Subject</th>
                                     <th scope="col">Transaction Related</th>
                                     <th scope="col">Task Date</th>
@@ -94,7 +95,9 @@
                                 @if (count($tasks) > 0)
                                     @foreach ($tasks as $task)
                                         <tr class="dresponsivetableTr">
-                                            <td><input type="checkbox" /></td>
+                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
+                                                    type="checkbox" class="task_checkbox"
+                                                    id="{{ $task['zoho_task_id'] }}" /></td>
                                             <td>
                                                 <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                                     id="editableText{{ $task['id'] }}">
@@ -112,7 +115,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="datetime-local"
+                                                <input type="datetime-local" id="date_val{{$task['zoho_task_id']}}"
                                                     value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
                                             </td>
                                             <td>
@@ -197,6 +200,7 @@
                                                                     <button type="button"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
+                                                                        data-bs-dismiss="modal"
                                                                             alt="R">No, go back
                                                                     </button>
                                                                 </div>
@@ -232,7 +236,7 @@
                                             <p class="dcardsTransactionText">Transaction Related</p>
                                             <select class="form-select dselect" aria-label="Transaction test"
                                                 id="dropdownMenuButton">
-                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">
+                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{$task}}</option>
                                             </select>
                                         </div>
                                         <div class="dcardsdateinput">
@@ -264,26 +268,45 @@
                         </div>
                         @if (count($tasks) > 0)
                             <div class="dpagination">
-                                <div onclick="removeAllSelected()"
-                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
+                                <div onclick="deleteTask()"
+                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
+                                    id="removeBtn">
                                     <i class="fas fa-trash-alt plusicon"></i>
                                     Remove Selected
                                 </div>
                                 <nav aria-label="..." class="dpaginationNav">
                                     <ul class="pagination ppipelinepage d-flex justify-content-end">
-                                        <li class="page-item disabled">
-                                            <a class="page-link">Previous</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="#">2</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">Next</a>
-                                        </li>
+                                        <!-- Previous Page Link -->
+                                        @if ($tasks->onFirstPage())
+                                            <li class="page-item disabled">
+                                                <span class="page-link">Previous</span>
+                                            </li>
+                                        @else
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $tasks->previousPageUrl() }}&tab={{ request()->query('tab') }}" rel="prev">Previous</a>
+                                            </li>
+                                        @endif
+                                
+                                        <!-- Pagination Elements -->
+                                        @foreach ($tasks->getUrlRange(1, $tasks->lastPage()) as $page => $url)
+                                            <li class="page-item {{ ($tasks->currentPage() == $page) ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ $url }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
+                                            </li>
+                                        @endforeach
+                                
+                                        <!-- Next Page Link -->
+                                        @if ($tasks->hasMorePages())
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $tasks->nextPageUrl() }}&tab={{ request()->query('tab') }}" rel="next">Next</a>
+                                            </li>
+                                        @else
+                                            <li class="page-item disabled">
+                                                <span class="page-link">Next</span>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </nav>
+                                
                             </div>
                         @endif
 
@@ -316,24 +339,26 @@
             </div>
             <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
-                @if ($notes->isEmpty())
+                @if ($notesInfo->isEmpty())
                     <p class="text-center">No notes found.</p>
                 @else
                     <ul class="list-group dnotesUl">
                         @foreach ($notesInfo as $note)
-                        <li
-                            class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                            <div class="text-start">
-                                @if($note['related_to_type']==='Deal')
-                                    <span class="dFont800 dFont13">Related to:</span> {{$note->dealData->deal_name}}<br />
-                                @endif
-                                @if($note['related_to_type']==='Contact')
-                                    <span class="dFont800 dFont13">Related to:</span> {{$note->contactData->first_name}} {{$note->contactData->last_name}}<br />
-                                @endif
-                                <p class="dFont400 fs-4 mb-0">
-                                    {{$note['note_content']}}
-                                </p>
-                            </div>
+                            <li
+                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                                <div class="text-start">
+                                    @if ($note['related_to_type'] === 'Deal')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->dealData->deal_name }}<br />
+                                    @endif
+                                    @if ($note['related_to_type'] === 'Contact')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
+                                    @endif
+                                    <p class="dFont400 fs-4 mb-0">
+                                        {{ $note['note_content'] }}
+                                    </p>
+                                </div>
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}
@@ -353,8 +378,8 @@
                                                 @method('POST')
                                                 <div class="modal-body dtaskbody">
                                                     <p class="ddetailsText">Details</p>
-                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
-                                                    @error('note_text')
+                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
+                                                    @error('note_content')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                     <p class="dRelatedText">Related to...</p>
@@ -362,12 +387,14 @@
                                                         <select class="form-select dmodaltaskSelect" name="related_to"
                                                             aria-label="Select Transaction">
                                                             <option value="">Please select one</option>
+                                                            @if ($note['related_to_type'] === 'Deal')
                                                             @foreach ($getdealsTransaction as $item)
                                                                 <option value="{{ $item['Deal_Name'] }}"
-                                                                    {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
-                                                                    {{ $item['Deal_Name'] }}
+                                                                 {{ $note->dealData->id  == $item['id'] ? 'selected' : '' }}>
+                                                                    {{ print_r($item) }}
                                                                 </option>
                                                             @endforeach
+                                                            @endif
                                                         </select>
                                                     </div>
                                                     @error('related_to')
@@ -383,10 +410,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="d-flex align-items-center gx-2">
+                                <i class="fas fa-edit" id="editButton{{  $note['id']  }}" onclick="editNote('{{$note['id']}}')" class="btn btn-primary dnotesBottomIcon"  type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropnoteupdate{{$note['id'] }}" style="display: none;">
+                                    </i>
                                 <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
                                     class="form-check-input checkbox{{ $note['id'] }}"
-                                    id="checkbox{{ $loop->index + 1 }}">
+                                    id="checkbox{{ $loop->index + 1 }}"></div>
                             </li>
+                        
                         @endforeach
                         {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
                             class="btn btn-danger" style="display: none;">Delete</button> --}}
@@ -440,15 +471,31 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" id="darea" rows="4" class="dtextarea">
-                    </textarea>
+                    <textarea name="subject" id="darea" rows="4" class="dtextarea"></textarea>
+                    
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="who_id" aria-label="Select Transaction">
-                            @foreach ($getdealsTransaction as $item)
-                                <option value="{{ $item['Owner']['id'] }}"
-                                    @if (old('related_to') == $item['Deal_Name']) selected @endif>{{ $item['Deal_Name'] }}</option>
-                            @endforeach
+                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id" name="who_id" aria-label="Select Transaction">
+                            @php
+                                $encounteredIds = []; // Array to store encountered IDs
+                            @endphp
+
+                        @foreach ($getdealsTransaction as $item)
+                            @php
+                                $contactId = $item['Contact_Name']['id'];
+                            @endphp
+
+                            {{-- Check if the current ID has been encountered before --}}
+                            @if (!in_array($contactId, $encounteredIds))
+                                {{-- Add the current ID to the encountered IDs array --}}
+                                @php
+                                    $encounteredIds[] = $contactId;
+                                @endphp
+                                
+                                <option value="{{ $contactId }}"
+                                    @if (old('related_to') == $item['Contact_Name']['name']) selected @endif>{{ $item['Contact_Name']['name']}}</option>
+                            @endif
+                        @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -488,7 +535,7 @@
                                 aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($getdealsTransaction as $item)
-                                    <option value="{{ $item['Deal_Name'] }}"
+                                    <option value="{{ $item['id'] }}"
                                         @if (old('related_to') == $item['Deal_Name']) selected @endif>{{ $item['Deal_Name'] }}</option>
                                 @endforeach
                             </select>
@@ -786,24 +833,37 @@
         });
 
     }
+  window.selectedTransation;
+  // Get the select element
 
+  function selectedElement(element){
+    var selectedValue = element.value;
+       window.selectedTransation =  selectedValue;
+    //    console.log(selectedTransation);
+   }
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
-        var whoId = document.getElementsByName("who_id")[0].value;
+        if(!subject){
+            alert("Please Enter Subject");
+        }
+        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        var whoId = window.selectedTransation
+        if(whoId===undefined){
+            whoId = whoSelectoneid
+        }
         var dueDate = document.getElementsByName("due_date")[0].value;
-        console.log(subject, whoId, dueDate, 'checkot');
-        // return;
         var formData = {
-            "data": [{
-                "Subject": subject
-                // "Who_Id": {
-                //     "name": document.querySelector('select[name="who_id"] option:checked').text,
-                //     "id": whoId
-                // },
-                // "Due_Date": dueDate
-            }],
-            _token: '{{ csrf_token() }}',
-        };
+        "data": [{
+            "Subject": subject,
+            "Who_Id": {
+                "id": whoId
+            },
+            "Status": "In Progress",
+            "Due_Date": dueDate,
+            // "Priority": "High",
+        }],
+        "_token": '{{ csrf_token() }}'
+    };
 
         $.ajax({
             url: '{{ route('create.task') }}',
@@ -815,12 +875,14 @@
             dataType: 'json',
             data: JSON.stringify(formData),
             success: function(response) {
-                // Handle success response
-                alert("success")
-                console.log(response);
-                // Optionally, update the UI or close the modal
-                $('#newTaskModalId').modal('hide');
+                if (response?.data && response.data[0]?.message) {
+            // Convert message to uppercase and then display
+                const upperCaseMessage = response.data[0].message.toUpperCase();
+                alert(upperCaseMessage);
                 window.location.reload();
+                } else {
+                    alert("Response or message not found");
+                }
             },
             error: function(xhr, status, error) {
                 // Handle error response
@@ -847,28 +909,61 @@
         textElement.innerHTML = newText;
     }
 
+    function convertDateTime(inputDateTime) {
+
+    // Parse the input date string
+    let dateObj = new Date(inputDateTime);
+
+    // Format the date components
+    let year = dateObj.getFullYear();
+    let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+    let day = dateObj.getDate().toString().padStart(2, '0');
+    let hours = dateObj.getHours().toString().padStart(2, '0');
+    let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+
+    // Format the timezone offset
+    let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+    let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+    let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+
+    // Construct the formatted datetime string
+    let formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+
+    return formattedDateTime;
+}
+
     function updateTask(id, indexid) {
-        console.log(id, indexid, 'chekcdhfsjkdh')
+        // console.log(id, indexid, 'chekcdhfsjkdh')
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         var inputElement = document.getElementById('editableText' + indexid);
+        var taskDate = document.getElementById('date_val'+id);
+        let formattedDateTime = convertDateTime(taskDate.value);
+// console.log(formattedDateTime);
+//         alert(formattedDateTime);
+//         return;
         if (!inputElement) {
             console.error("Input element not found for indexid:", indexid);
             return;
         }
         var elementValue = inputElement.textContent;
+        // return;
+         if(elementValue.trim()===""){
+            // console.log("chkockdsjkfjksdh")
+            return alert("Please enter subject value first");
+         }
         // console.log("inputElementval",elementValue!==undefined,elementValue)
         if (elementValue !== undefined) { // return;
-            console.log(textElement.value, 'valueeee')
             var formData = {
                 "data": [{
                     "Subject": elementValue,
-                    "Remind_At": {
-                        "ALARM": "FREQ=NONE;ACTION=POPUP;TRIGGER=-P1D;TRIGGER_TIME=11:00"
-                    }
+                    // "Remind_At": {
+                    //     "ALARM": `FREQ=NONE;ACTION=EMAIL;TRIGGER=DATE-TIME:${taskDate.value}`
+                    // }
                 }]
             };
             // console.log("ys check ot")
@@ -884,10 +979,9 @@
                     if (response?.data[0]?.status == "success") {
                         // console.log(response?.data[0], 'sdfjkshdjkfshd')
                         // Get the button element by its ID
+                        if (!document.getElementById('saveModalId').classList.contains('show')) {
                         var button = document.getElementById('update_changes');
                         var update_message = document.getElementById('updated_message');
-                        
-       
                         // Get the modal target element by its ID
                         var modalTarget = document.getElementById('saveModalId');
                         console.log(modalTarget, 'modalTarget')
@@ -898,6 +992,7 @@
                         button.click();
                         // alert("updated success", response)
                         window.location.reload();
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
@@ -911,16 +1006,24 @@
     }
 
     function deleteTask(id) {
+        let updateids = removeAllSelected();
+        if (updateids === "" && id === undefined) {
+            return;
+        }
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        console.log(id, 'checkot')
         try {
             if (id) {
                 $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
                     method: 'DELETE', // Change to DELETE method
                     contentType: 'application/json',
                     dataType: 'JSON',
@@ -930,10 +1033,7 @@
                     },
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully",response)
-                        // console.log(response);
-                        // Optionally, update the UI or close the modal
-                        // $('#newTaskModalId').modal('hide');
+                        alert("deleted successfully", response);
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {
@@ -950,16 +1050,84 @@
 
     function removeAllSelected() {
         // Select all checkboxes
-        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var ids = ""; // Initialize ids variable to store concatenated IDs
         // Iterate through each checkbox
         checkboxes.forEach(function(checkbox) {
+            // console.log(checkboxes,'checkboxes')
             // Check if the checkbox is checked
             if (checkbox.checked) {
-                // Uncheck the checkbox
-                checkbox.checked = false;
+                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
+                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
+                    "checkbox_all") {
+                    // Concatenate the checkbox ID with a comma
+                    ids += checkbox.id + ",";
+                    document.getElementById("removeBtn").style.backgroundColor = "rgb(37, 60, 91);"
+                }
             }
         });
+
+        // Remove the trailing comma
+        if (ids !== "") {
+            ids = ids.replace(/,+(?=,|$)/g, "");
+        }
+
+        return ids;
     }
+
+    function toggleAllCheckboxes() {
+        // console.log("yes it")
+        let state = false;
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            // Set the state of each checkbox based on the state of the "checkbox_all"
+            checkbox.checked = allCheckbox.checked;
+            if (checkbox.checked) {
+
+                state = true;
+
+            } else {
+                state = false;
+            }
+        });
+        if (state) {
+            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+        } else {
+
+            updateColor.style.backgroundColor = "rgb(192 207 227)";
+        }
+    }
+
+    function triggerCheckbox(checkboxid) {
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var allChecked = true;
+        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+        var anyChecked = false;
+        checkboxes.forEach(function(checkbox) {
+            if (!checkbox.checked) {
+                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+                // updateColor.style.backgroundColor = "rgb(192 207 227)";
+            } else {
+                // updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+                anyChecked = true;
+            }
+        });
+
+        if (anyChecked) {
+            updateColor.style.backgroundColor = "rgb(37, 60, 91)"; // Checked color
+        } else {
+            updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
+        }
+        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+    }
+
+
+ 
+
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>

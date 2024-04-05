@@ -212,10 +212,10 @@ class DB
 
     public function retreiveTasks(User $user, $accessToken, $tab)
     {
-
         try {
+
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->where('status', $tab)->get();
+            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {

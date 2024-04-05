@@ -35,7 +35,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -174,6 +174,19 @@ class ZohoCRM
         return $response;
     }
 
+    public function getModuleData(){
+        
+        Log::info('Getting Zoho tasks data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . 'settings/modules');
+
+        Log::info('Zoho tasks data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
     // get tasks data from search
     public function getTasksData($search, $fields = 'Subject,Task Owner,Status,Due Date', $page = 1, $per_page = 200)
     {
@@ -229,6 +242,21 @@ class ZohoCRM
         return $response;
     }
 
+    public function createNoteData($inputJson)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . "Notes", $inputJson);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+    
+        return $response;
+    }
+
     public function getDealTransactionData($page = 1, $per_page = 200)
     {
         Log::info('Getting Zoho TransactionData data');
@@ -280,6 +308,20 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Tasks/" . $id);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+
+    public function deleteTaskSelected($inputJson,$ids)
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->delete($this->apiUrl . "Tasks?ids=" . $ids);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
