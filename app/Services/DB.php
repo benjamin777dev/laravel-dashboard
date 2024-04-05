@@ -9,6 +9,7 @@ use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
 use App\Services\Helper;
+use Carbon\Carbon;
 
 
 class DB
@@ -148,30 +149,34 @@ class DB
         Log::info("Tasks stored into database successfully.");
     }
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null)
+    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null)
     {
 
         try {
-
             Log::info("Retrieve Deals From Database");
-            $conditions = [
-                ['userId', $user->id]
-            ];
+            
+            $conditions = [['userId', $user->id]];
+
+            // Adjust query to include contactName table using join
+            $deals = Deal::with('userData', 'contactName')
+                ->join('contacts', 'deals.contactId', '=', 'contacts.id'); // Adjust 'contactName' to the actual table name if different
 
             if ($search !== "") {
-                // Add the search condition to the array
-                $conditions[] = ['deal_name', 'like', '%' . urldecode($search) . '%'];
+                $searchTerms = urldecode($search);
+                $deals->where(function ($query) use ($searchTerms) {
+                    $query->where('deal_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('contacts.first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                       ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
+                    // Add more OR conditions as needed
+                });
             }
-            $deals = Deal::with('userData')
-                ->with(['contactName' => function ($query) use ($sortValue, $sortType) {
-                    if ($sortValue === 'contactName.first_name') {
-                        $query->orderBy('first_name', $sortType);
-                    }
-                }])
-                ->where($conditions);
-            if ($sortValue != '' && $sortType != '') {
-                $sortField = urldecode($sortValue);
 
+            if ($sortValue != '' && $sortType != '') {
+                $sortField = $sortValue;
+                if ($sortField === 'contactName.first_name') {
+                    $sortField = 'contacts.first_name';
+                }
                 // Add sorting logic based on the field and type
                 switch ($sortType) {
                     case 'asc':
@@ -185,16 +190,24 @@ class DB
                         break;
                 }
             }
-            Log::info("Retrieved Deals From Database", ['deals' => $conditions]);
-            // Retrieve deals based on the conditions
 
-            $deals = $deals->get();
+            if($dateFilter&&$dateFilter!=''){
+                $startOfWeek = Carbon::now()->startOfWeek();
+                $endOfWeek = Carbon::now()->endOfWeek();
+                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek]);
+            }
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->get();
             Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]);
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
+
+
     }
 
     public function retreiveTasks(User $user, $accessToken, $tab)

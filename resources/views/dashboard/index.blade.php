@@ -217,9 +217,9 @@
                             </tbody>
 
                         </table>
-                        @if (count($tasks) > 0)
+                        <div class="dprogressCards">
+                            @if (count($tasks) > 0)
                             @foreach ($tasks as $task)
-                                <div class="dprogressCards">
                                     <div class="dcardscheckbox">
                                         <input type="checkbox" />
                                     </div>
@@ -255,13 +255,13 @@
                                             Delete
                                         </div>
                                     </div>
-                                </div>
                             @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="12">No records found</td>
-                            </tr>
-                        @endif
+                            @else
+                            <div>
+                                <div class="text-center">No records found</div>
+                            </div>
+                            @endif
+                        </div>
                         @if (count($tasks) > 0)
                             <div class="dpagination">
                                 <div onclick="removeAllSelected()"
@@ -406,18 +406,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (count($deals) === 0)
+                        @if (count($closedDeals) === 0)
                             <tr>
                                 <td class="text-center" colspan="5">No records found</td>
                             </tr>
                         @else
-                            @foreach ($deals as $deal)
+                            @foreach ($closedDeals as $deal)
                                 <tr>
-                                    <td>{{ $deal['deal_name'] }}</td>
-                                    <td>{{ $deal->userData->name }}</td>
-                                    <td>---</td>
-                                    <td>{{ $deal->userData->email }}</td>
-                                    <td>{{ $deal['closing_date'] }}</td>
+                                    <td>{{ $deal['deal_name']??'N/A' }}</td>
+                                    <td>{{ $deal->contactName->first_name ??'N/A' }} {{ $deal->contactName->last_name??'' }}</td>
+                                    <td>{{ $deal->contactName->phone??'N/A' }}</td>
+                                    <td>{{ $deal->contactName->email??'N/A' }}</td>
+                                    <td>{{ $deal['closing_date']??'N/A' }}</td>
                                 </tr>
                             @endforeach
                         @endif
