@@ -9,7 +9,7 @@ use App\Services\ZohoCRM;
 use App\Services\DB;
 
 
-class SaveTasksToDB extends Command
+class SaveModuleToDB extends Command
 {
     /**
      * The name and signature of the console command.
