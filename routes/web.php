@@ -57,6 +57,7 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
+Route::post('/pipeline', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create')->middleware('auth');
 Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show')->middleware('auth');
 
 // From ADMIN - Assuming these routes are for authenticated users

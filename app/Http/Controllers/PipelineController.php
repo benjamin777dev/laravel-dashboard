@@ -42,6 +42,16 @@ class PipelineController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
+    public function showCreatePipelineForm(Request $request)
+    {
+        Log::info('Showing reset form' . $request->email);
+
+        // Retrieve user data from the session
+        $userData = session('user_data');
+
+        // Show the registration form with the user data
+        return view('auth.reset', compact('userData'));
+    }
     public function getClosedDeals(Request $request)
     {
         $user = auth()->user();
