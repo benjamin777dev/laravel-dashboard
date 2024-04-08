@@ -411,11 +411,12 @@
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gx-2">
-                                <i class="fas fa-edit" id="editButton{{  $note['id']  }}" onclick="editNote('{{$note['id']}}')" class="btn btn-primary dnotesBottomIcon"  type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropnoteupdate{{$note['id'] }}" style="display: none;">
-                                    </i>
-                                <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}'); editNote('{{ $note['id'] }}')"
                                     class="form-check-input checkbox{{ $note['id'] }}"
-                                    id="checkbox{{ $loop->index + 1 }}"></div>
+                                    id="checkbox{{ $loop->index + 1 }}" id="editButton{{  $note['id']  }}"
+                                    class="btn btn-primary dnotesBottomIcon" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#staticBackdropnoteupdate{{$note['id'] }}" />
+                             </div>
                             </li>
                         
                         @endforeach
@@ -531,13 +532,17 @@
                         @enderror
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" name="related_to"
+                            <select class="form-select dmodaltaskSelect" onchange="moduleSelected(this,'{{$accessToken}}')" name="related_to"
                                 aria-label="Select Transaction">
                                 <option value="">Please select one</option>
-                                @foreach ($getdealsTransaction as $item)
-                                    <option value="{{ $item['id'] }}"
-                                        @if (old('related_to') == $item['Deal_Name']) selected @endif>{{ $item['Deal_Name'] }}</option>
-                                @endforeach
+                                @foreach ($retrieveModuleData as $item)
+                                @if (in_array($item['api_name'], ['Accounts', 'Deals', 'Tasks', 'Contacts']))
+                                    <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                @endif
+                            @endforeach
+                            </select>
+                            <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent" aria-label="Select Transaction" style="display: none;">
+                                <option value="">Please Select one</option>
                             </select>
                         </div>
                         @error('related_to')
@@ -546,7 +551,7 @@
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
                         <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                            <i class="fas fa-save saveIcon"></i> Mark as Done
+                            <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
                     </div>
                 </form>
@@ -810,8 +815,16 @@
     // var selectedNoteIds = [];
 
     function handleDeleteCheckbox(id) {
-        //checkobox notes showing delete btn functionlity
-        //  console.log(id,'id is hereeeee'
+        var checkboxids = document.getElementById("checkbox" + id);
+        var modal = document.getElementById("staticBackdropnoteupdate" + id);
+        
+        // Check if the checkbox is checked
+        if (checkbox.checked) {
+            // Uncheck the checkbox
+            checkbox.checked = false;
+            // Open the modal
+            modal.style.display = "block";
+        }
         // Get all checkboxes
         const checkboxes = document.querySelectorAll('.checkbox' + id);
         // Get delete button
@@ -823,7 +836,6 @@
             checkbox.addEventListener('change', function() {
                 // Check if any checkbox is checked
                 const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-                console.log(anyChecked, 'checkoeddd')
                 // Toggle delete button visibility
                 editButton.style.display = anyChecked ? 'block' : 'none';
                 // if (deleteButton.style.display === 'block') {
@@ -1124,6 +1136,48 @@
             updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
         }
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+    }
+
+    function moduleSelected(selectedModule,accessToken){
+        console.log(accessToken,'accessToken')
+    var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+    var selectedText = selectedOption.text;
+    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    $.ajax({
+        url: '/task/get-'+selectedText,
+        method: "GET",
+        dataType: "json",
+      
+        success: function(response) {
+            // Handle successful response
+            console.log("API Response:", response);
+            var tasks = response;
+            console.log(tasks.length,'lengtj')
+            // Assuming you have another select element with id 'taskSelect'
+            var taskSelect = $('#taskSelect');
+            // Clear existing options
+            taskSelect.empty();
+            // Populate select options with tasks
+            $.each(tasks, function(index, task) {
+                taskSelect.append($('<option>', {
+                    value: task.zoho_task_id,
+                    text: task.subject
+                }));
+            });
+
+            taskSelect.show();
+            // Do whatever you want with the response data here
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+            console.error("Ajax Error:", error);
+        }
+    });
+                 
     }
 
 

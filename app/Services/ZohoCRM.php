@@ -183,7 +183,6 @@ class ZohoCRM
         ])->get($this->apiUrl . 'settings/modules');
 
         Log::info('Zoho tasks data response: ' . print_r($response, true));
-
         return $response;
     }
 
