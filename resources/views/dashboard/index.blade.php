@@ -815,16 +815,6 @@
     // var selectedNoteIds = [];
 
     function handleDeleteCheckbox(id) {
-        var checkboxids = document.getElementById("checkbox" + id);
-        var modal = document.getElementById("staticBackdropnoteupdate" + id);
-        
-        // Check if the checkbox is checked
-        if (checkbox.checked) {
-            // Uncheck the checkbox
-            checkbox.checked = false;
-            // Open the modal
-            modal.style.display = "block";
-        }
         // Get all checkboxes
         const checkboxes = document.querySelectorAll('.checkbox' + id);
         // Get delete button
@@ -1139,7 +1129,7 @@
     }
 
     function moduleSelected(selectedModule,accessToken){
-        console.log(accessToken,'accessToken')
+        // console.log(accessToken,'accessToken')
     var selectedOption = selectedModule.options[selectedModule.selectedIndex];
     var selectedText = selectedOption.text;
     $.ajaxSetup({

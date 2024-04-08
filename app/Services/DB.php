@@ -173,12 +173,12 @@ class DB
         try {
             Log::info("Retrieve Deals From Database");
             
-            $conditions = [['userId', $user->id]];
+            $conditions = [['userID', $user->id]];
 
             // Adjust query to include contactName table using join
             $deals = Deal::with('userData', 'contactName')
-                ->join('contacts', 'deals.contactId', '=', 'contacts.id'); // Adjust 'contactName' to the actual table name if different
-
+                ->join('contacts', 'deals.contactId', '=', 'contacts.id') // Adjust 'contactName' to the actual table name if different
+                ->select('deals.*'); // Select only fields from the deals table
             if ($search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
@@ -228,7 +228,33 @@ class DB
 
     }
 
-    public function retreiveTasks(User $user, $accessToken, $tab)
+    public function retrieveDealById(User $user, $accessToken,$dealId)
+    {
+
+        try {
+            Log::info("Retrieve Deals From Database");
+            
+            $conditions = [['userID', $user->id],['id', $dealId]];
+
+            // Adjust query to include contactName table using join
+            $deals = Deal::with('userData', 'contactName');
+
+            
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->first();
+            Log::info("Retrieved Deals From Database", ['deals' => $deals]);
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
+    public function retreiveTasks(User $user, $accessToken, $tab = '')
     {
         try {
 
