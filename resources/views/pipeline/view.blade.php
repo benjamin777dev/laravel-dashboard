@@ -7,7 +7,7 @@
 
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
-            <p class="pText">TBD, Highlands Ranch, CO, 80129</p>
+            <p class="pText">{{$deal['deal_name']}}</p>
             <div class="npbtnsDiv">
                 <div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#newTaskModalId">
@@ -710,9 +710,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-                /* $.ajax({
-                url: '{{ url('/pipeline/create') }}',
-                method: 'POST',
+                $.ajax({
+                url: '{{ url('/pipeline-view') }}',
+                method: 'GET',
                 data: {},
                 dataType: 'json',
                 success: function(data) {
@@ -720,7 +720,7 @@
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
-            }); */
+            });
         });
     </script>
 @section('pipelineScript')

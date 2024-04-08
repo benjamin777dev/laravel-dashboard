@@ -42,15 +42,78 @@ class PipelineController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
+    public function showViewPipelineForm(Request $request)
+    {
+        Log::info('Showing create pipeline form' . $request);
+        $db = new DB();
+        // Retrieve user data from the session
+        $pipelineData = session('pipeline_data');
+        $user = auth()->user();
+        if (!$user) {
+        return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        Log::info("accessToken: ". print_r($accessToken, true));
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
+        Log::info("Task Details: ". print_r($tasks, true));
+        $notesInfo = $db->retrieveNotes($user,$accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId );
+        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal'));
+
+    }
+
     public function showCreatePipelineForm(Request $request)
     {
-        Log::info('Showing reset form' . $request->email);
-
+        Log::info('Showing create pipeline form' . $request);
+        $db = new DB();
         // Retrieve user data from the session
-        $userData = session('user_data');
+        $pipelineData = session('pipeline_data');
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        Log::info("accessToken: ". print_r($accessToken, true));
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
+        Log::info("Task Details: ". print_r($tasks, true));
+        $notesInfo = $db->retrieveNotes($user,$accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        return view('pipeline.create', compact('tasks','notesInfo','pipelineData','getdealsTransaction'));
+       
+    }
 
-        // Show the registration form with the user data
-        return view('auth.reset', compact('userData'));
+    public function getDeal(Request $request)
+    {
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $dealId = request()->params('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId );
+        return response()->json($deal);
+        // return view('pipeline.index', compact('deals'));
+    }
+
+    public function createPipeline(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        Log::info("accessToken: ". print_r($accessToken, true));
+        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
+        Log::info("Task Details: ". print_r($tasks, true));
+        $notesInfo = $db->retrieveNotes($user,$accessToken);
+
+        return view('pipeline.create', compact('tasks','notesInfo'));
     }
     public function getClosedDeals(Request $request)
     {

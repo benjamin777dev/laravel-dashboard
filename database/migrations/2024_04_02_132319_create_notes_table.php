@@ -14,7 +14,6 @@ class CreatenotesTable extends Migration
             $table->unsignedBigInteger('owner')->nullable();
             $table->unsignedBigInteger('related_to')->nullable();
             $table->string('related_to_type')->nullable();
-            $table->string('zoho_note_id')->nullable();
             $table->text('note_content')->nullable();
             $table->timestamp('created_time')->nullable();
 
