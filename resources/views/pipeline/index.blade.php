@@ -10,7 +10,7 @@
         <p class="pText">Pipelines</p>
         <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
             </i>
-            New Pipeline
+            <a href="{{ url('pipeline-create') }}" >New Pipeline</a>
         </div>
     </div>
     <div class="pfilterDiv">
@@ -267,7 +267,7 @@
                         <div>{{ $deal['representing'] ?? 'N/A' }}</div>
                         <div class="commonTextEllipsis">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
                         <div>{{ $deal['closing_date'] ?? 'N/A' }}</div>
-                        <div> <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
+                        <div> <a href="{{ url('/pipeline-view/' . $deal['id']) }}"><img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"></a>
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
@@ -352,7 +352,7 @@
 
 
         searchInput.on('input', function() {
-        fetchData(sortInput.val(), 'asc');
+        fetchData(sortInput.val(), '');
         });
         // Add an event listener to send search term as request
         function fetchData(sortValue, sortType) {
@@ -474,6 +474,20 @@
                 }
             });
         }
+
+    /*     window.showForm= function() {
+            $.ajax({
+                url: '{{ url('/pipeline/create') }}',
+                method: 'GET',
+                data: {},
+                dataType: 'json',
+                success: function(data) {
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        } */
 
         // Initial sorting direction
         let sortDirection = 'desc';
