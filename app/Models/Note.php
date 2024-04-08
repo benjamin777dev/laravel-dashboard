@@ -12,6 +12,7 @@ class Note extends Model
     protected $fillable = [
         'owner',
         'related_to',
+        'related_to_parent',
         'note_content',
         'created_time',
         'zoho_note_id',

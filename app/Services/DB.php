@@ -8,6 +8,7 @@ use App\Models\Deal; // Import the Deal model
 use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
+use App\Models\Module; // Import the Module model
 use App\Services\Helper;
 use Carbon\Carbon;
 
@@ -149,6 +150,23 @@ class DB
         Log::info("Tasks stored into database successfully.");
     }
 
+    public function storeModuleIntoDB($modules)
+    {
+        $helper = new Helper();
+        Log::info("Storing Tasks Into Database");
+
+        foreach ($modules as $module) {
+            // Update or create the Module
+            Module::updateOrCreate(['zoho_module_id' => $module['id']], [
+                 "api_name"=> isset($module['api_name']) ? $module['api_name'] : null,
+                "modified_time"=>isset($module['modified_time']) ? $module['modified_time'] : null,
+                "zoho_module_id" => isset($module['id']) ? $module['id'] : null
+            ]);
+        }
+
+        Log::info("Tasks stored into database successfully.");
+    }
+
     public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null)
     {
 
@@ -243,6 +261,20 @@ class DB
             Log::info("Retrieve Tasks From Database");
             $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveTasksJson(User $user, $accessToken)
+    {
+        try {
+
+            Log::info("Retrieve Tasks From Database");
+            $tasks = Task::where('owner', $user->id)->get();
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
