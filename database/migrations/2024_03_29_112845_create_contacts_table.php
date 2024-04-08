@@ -10,8 +10,8 @@ class CreatecontactsTable extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('zoho_contact_id')->nullable();
             $table->string('contact_owner')->nullable();
+            $table->string('zoho_contact_id')->nullable();
             $table->string('email')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();

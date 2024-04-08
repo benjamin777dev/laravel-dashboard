@@ -12,7 +12,9 @@ use App\Services\DB;
 use App\Models\Note;
 use App\Models\Deal;
 use App\Models\Task;
+use App\Models\Module;
 use App\Services\Helper;
+
 
 
 class DashboardController extends Controller
@@ -48,6 +50,7 @@ class DashboardController extends Controller
 
         // Retrieve deals from Zoho CRM
         $deals = $db->retrieveDeals($user, $accessToken);
+        $closedDeals = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"closedDeals");
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
@@ -165,6 +168,7 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
+         $retrieveModuleData = $this->retrieveModuleDataZoho($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
@@ -209,7 +213,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken'));
     }
 
     private function formatNumber($number) {
@@ -446,6 +450,15 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
+        $data = $jsonData['data'][0];
+
+        // Access the 'Subject' field
+        $subject = $data['Subject'];
+        $whoid = $data['Who_Id']['id'];
+        $status = $data['Status'];
+        $Due_Date = $data['Due_Date'];
+        
+
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
         // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
@@ -461,22 +474,78 @@ class DashboardController extends Controller
                 if (!$response->successful()) {
                      return "error somthing".$response;
                 }
+                $responseArray = json_decode($response, true);
+                $data = $responseArray['data'][0]['details']; 
+                $zoho_id = $data['id'];
+                $modifiedTime = $data['Modified_Time'];
+                $Modified_By = $data['Modified_By']['name'];
+                $Modified_Id = $data['Modified_By']['id'];
+                // Create a new Task record using the Task model
+                $task = Task::create([
+                    'subject' => $subject,
+                    'zoho_task_id'=>$zoho_id,
+                    'owner' => "1",
+                    'status'=>$status ?? "Not Started",
+                    'who_id'=>$whoid ?? null,
+                    'due_date'=>$Due_Date ?? null,
+                ]);
+        
+                return response()->json($responseArray, 201);
 
+                // $task->modified_by_name = $modifiedByName;
+                // $task->modified_by_id = $modifiedById;
+                return $data;
                 Log::info("Successful notes create... ".$response);
 
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong";
+            return "somthing went wrong". $e->getMessage();
         }
-        return $response;
-        echo "<pre>";
-        // print_r($responseData);
-        // print_r($allDeals);
-        die;
     }
 
- function updateTaskaction(Request $request,User $user,$id){
+    public function deleteTaskaction(Request $request,User $user,$id)  {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $jsonData = $request->json()->all();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+        try {
+            if (strpos($id, ',') === false) {
+                $response = $zoho->deleteTask($jsonData,$id);
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                $task = Task::where('zoho_task_id', $id)->first();
+                if (!$task) {
+                    return "Task not found";
+                }
+                $task->delete();
+            } else {
+                // Multiple IDs provided
+                $response = $zoho->deleteTaskSelected($jsonData,$id);
+                if (!$response->successful()) {
+                     return "error somthing".$response;
+                }
+                $idArray = explode(',', $id);
+               $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
+                if (!$tasks) {
+                    return "Task not found";
+                }
+            }
+            Log::info("Successful notes delete... ".$response);
+
+            
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong". $e->getMessage();
+        }
+        return $response;
+    }
+    public function updateTaskaction(Request $request,User $user,$id){
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -499,50 +568,13 @@ class DashboardController extends Controller
                 }
 
                 Log::info("Successful notes update... ".$response);
-
+                return $response;
             } catch (\Exception $e) {
                 Log::error("Error creating notes: " . $e->getMessage());
                 return "somthing went wrong".$e->getMessage();
             }
-            return $response;
 
     }
-
-    public function deleteTaskaction(Request $request,User $user,$id)  {
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $accessToken = $user->getAccessToken();
-        $jsonData = $request->json()->all();
-        // $response;
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        // $task = Task::findOrFail($id);
-
-        try {
-                $response = $zoho->deleteTask($jsonData,$id);
-
-                if (!$response->successful()) {
-                     return "error somthing".$response;
-                }
-                $task = Task::where('zoho_task_id', $id)->first();
-                if (!$task) {
-                    return "Task not found";
-                }
-                // Delete the Task
-                $task->delete();
-                Log::info("Successful notes delete... ".$response);
-
-
-        } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong". $e->getMessage();
-        }
-        return $response;
-    }
-
 
     public function retrieveDealTransactionData(User $user, $accessToken)
     {
@@ -552,7 +584,7 @@ class DashboardController extends Controller
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
         // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
-        Log::info("Retrieving notes for criteria: $criteria");
+        Log::info("Retrieving deal for criteria: $criteria");
 
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
@@ -569,7 +601,7 @@ class DashboardController extends Controller
                     break;
                 }
 
-                Log::info("Successful notes fetch... Page: " . $page);
+                Log::info("Successful deal fetch... Page: " . $page);
                 $responseData = $response->json();
 
                 //Log::info("Response data: ". print_r($responseData, true));
@@ -580,7 +612,7 @@ class DashboardController extends Controller
                 $page++;
             }
         } catch (\Exception $e) {
-            Log::error("Error retrieving notes: " . $e->getMessage());
+            Log::error("Error retrieving deal: " . $e->getMessage());
             return $allDeals;
         }
         return $allDeals;
@@ -594,29 +626,110 @@ class DashboardController extends Controller
         return $allDeals;
     }
 
+    public function retrieveModuleDataZoho(User $user, $accessToken){
+        try {
+            // Validate user token (pseudo-code, replace it with your actual validation logic)
+            if (!$accessToken) {
+                throw new \Exception("Invalid user token");
+            }
+            
+            // Retrieve module data from MySQL
+            $allModules = Module::all(); // Assuming you want to retrieve all modules
+
+            // Log the total number of module records
+            Log::info("Total Module records: " . $allModules->count());
+            
+            // Log module records
+            Log::info("Module Records: ", $allModules->toArray());
+            
+            return $allModules; // Return the fetched module data
+        } catch (\Exception $e) {
+            Log::error("Error retrieving module data: " . $e->getMessage());
+            return []; // Return an empty array or handle the error as per your application's logic
+        }
+    }
+
+    public function getTasks(Request $request)
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $search = "";
+        // Pass the search parameters to the retrieveTasks method
+        $tasks = $db->retreiveTasksJson($user, $accessToken);
+        
+        return response()->json($tasks);
+        // return view('pipeline.index', compact('deals'));
+    }
+
     public function saveNote(Request $request)
     {
+
+        $relatedToObject = json_decode($request->related_to);
         // Validate the incoming request data
-        $validatedData = $request->validate([
-            'related_to' => 'required|string|max:255',
+        $validatedData1 = validator()->make((array) $relatedToObject, [
+            'zoho_module_id' => 'required|string|max:255',
+            'api_name' => 'required|string|max:255',
+        ])->validate();
+        
+        // Validate the second set of data
+        $validatedData2 = $request->validate([
+            'related_to_parent' => 'required|string|max:255',
             'note_text' => 'required|string',
-        ], [
-            'related_to.required' => 'The Related to field is required.',
-            'note_text.required' => 'The Note field is required.',
         ]);
+        
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        $jsonData = [
+            "data" => [
+                [
+                    "Parent_Id" => [
+                        "module" => [
+                            "api_name" => $validatedData1['api_name'],
+                            "id" => $validatedData1['zoho_module_id'],
+                        ],
+                        "id" => $validatedData2['related_to_parent'],
+                    ],
+                    "Note_Content" => $validatedData2['note_text']
+                ]
+            ]
+        ];
+
+        // print_r($jsonData);
+        // die;
+
+        try {
+         $response = $zoho->createNoteData($jsonData);
+        if (!$response->successful()) {
+            return "error somthing".$response;
+        }
 
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
         $note->deal_id = $validatedData['deal_id'] ?? Str::random(10);
-        $note->related_to = $validatedData['related_to'];
+        $note->related_to = $validatedData['zoho_module_id'];
+        $note->related_to_parent = $validatedData['related_to_parent'];
         $note->note_text = $validatedData['note_text'];
 
         // Save the Note to the database
         $note->save();
-
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Note saved successfully!');
+     } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong".$e->getMessage();
+        }
     }
 
     public function fetchNotes()

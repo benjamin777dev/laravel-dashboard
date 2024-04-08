@@ -8,7 +8,9 @@ use App\Models\Deal; // Import the Deal model
 use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
+use App\Models\Module; // Import the Module model
 use App\Services\Helper;
+use Carbon\Carbon;
 
 
 class DB
@@ -148,30 +150,51 @@ class DB
         Log::info("Tasks stored into database successfully.");
     }
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null)
+    public function storeModuleIntoDB($modules)
+    {
+        $helper = new Helper();
+        Log::info("Storing Tasks Into Database");
+
+        foreach ($modules as $module) {
+            // Update or create the Module
+            Module::updateOrCreate(['zoho_module_id' => $module['id']], [
+                 "api_name"=> isset($module['api_name']) ? $module['api_name'] : null,
+                "modified_time"=>isset($module['modified_time']) ? $module['modified_time'] : null,
+                "zoho_module_id" => isset($module['id']) ? $module['id'] : null
+            ]);
+        }
+
+        Log::info("Tasks stored into database successfully.");
+    }
+
+    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null)
     {
 
         try {
-
             Log::info("Retrieve Deals From Database");
-            $conditions = [
-                ['userId', $user->id]
-            ];
+            
+            $conditions = [['userID', $user->id]];
 
+            // Adjust query to include contactName table using join
+            $deals = Deal::with('userData', 'contactName')
+                ->join('contacts', 'deals.contactId', '=', 'contacts.id') // Adjust 'contactName' to the actual table name if different
+                ->select('deals.*'); // Select only fields from the deals table
             if ($search !== "") {
-                // Add the search condition to the array
-                $conditions[] = ['deal_name', 'like', '%' . urldecode($search) . '%'];
+                $searchTerms = urldecode($search);
+                $deals->where(function ($query) use ($searchTerms) {
+                    $query->where('deal_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('contacts.first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                       ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
+                    // Add more OR conditions as needed
+                });
             }
-            $deals = Deal::with('userData')
-                ->with(['contactName' => function ($query) use ($sortValue, $sortType) {
-                    if ($sortValue === 'contactName.first_name') {
-                        $query->orderBy('first_name', $sortType);
-                    }
-                }])
-                ->where($conditions);
-            if ($sortValue != '' && $sortType != '') {
-                $sortField = urldecode($sortValue);
 
+            if ($sortValue != '' && $sortType != '') {
+                $sortField = $sortValue;
+                if ($sortField === 'contactName.first_name') {
+                    $sortField = 'contacts.first_name';
+                }
                 // Add sorting logic based on the field and type
                 switch ($sortType) {
                     case 'asc':
@@ -185,25 +208,73 @@ class DB
                         break;
                 }
             }
-            Log::info("Retrieved Deals From Database", ['deals' => $conditions]);
-            // Retrieve deals based on the conditions
 
-            $deals = $deals->get();
+            if($dateFilter&&$dateFilter!=''){
+                $startOfWeek = Carbon::now()->startOfWeek();
+                $endOfWeek = Carbon::now()->endOfWeek();
+                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek]);
+            }
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->get();
             Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]);
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
+
+
     }
 
-    public function retreiveTasks(User $user, $accessToken, $tab)
+    public function retrieveDealById(User $user, $accessToken,$dealId)
     {
 
         try {
+            Log::info("Retrieve Deals From Database");
+            
+            $conditions = [['userID', $user->id],['id', $dealId]];
+
+            // Adjust query to include contactName table using join
+            $deals = Deal::with('userData', 'contactName');
+
+            
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->first();
+            Log::info("Retrieved Deals From Database", ['deals' => $deals]);
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
+    public function retreiveTasks(User $user, $accessToken, $tab = '')
+    {
+        try {
+
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->where('status', $tab)->get();
+            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveTasksJson(User $user, $accessToken)
+    {
+        try {
+
+            Log::info("Retrieve Tasks From Database");
+            $tasks = Task::where('owner', $user->id)->get();
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());

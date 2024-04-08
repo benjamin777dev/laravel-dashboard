@@ -14,8 +14,10 @@ use App\Http\Controllers\CustomerController; // Ensure you import the CustomerCo
 
 // Assuming you want to redirect authenticated users to the dashboard,
 // and non-authenticated users to a home or login page:
-Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
-Route::get('/home', [HomeController::class, 'root'])->middleware('auth')->name('home');
+// Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
+// Dashboard Route
+Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
+// Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware('auth');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -24,7 +26,6 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 Route::get('reset', [RegisterController::class, 'showResetForm'])->name('reset');
-Route::post('reset', [RegisterController::class, 'register']);
 
 // Zoho OAuth Routes
 Route::get('/auth/redirect', [RegisterController::class, 'redirectToZoho'])->name('auth.redirect');
@@ -45,6 +46,8 @@ Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->na
 
 //task actions
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
+// get task in json
+Route::get('/task/get-Tasks', [DashboardController::class, 'getTasks'])->middleware('auth');
 Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
 Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 
@@ -56,7 +59,9 @@ Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('con
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
-Route::get('/pipeline/{deal}', [PipelineController::class, 'show'])->name('pipeline.show')->middleware('auth');
+Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
+Route::get('/pipeline-create', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
+Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');;
 
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);

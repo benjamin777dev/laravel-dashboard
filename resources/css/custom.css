@@ -14,7 +14,7 @@
 }
 
 .removebtn {
-    background-color: rgb(37, 60, 91);
+    background-color: rgb(192 207 227);
     cursor: pointer;
     padding: 6px 11px;
     border-radius: 4px;
@@ -81,15 +81,15 @@
     padding: 20px;
     border-radius: 4px;
 }
-.dnotesUl{
+.dnotesUl {
     max-height: 418px;
     overflow-y: auto;
 }
-.dnotesUl::-webkit-scrollbar{
-   width: 5px;
+.dnotesUl::-webkit-scrollbar {
+    width: 5px;
 }
 .dnotesUl::-webkit-scrollbar-thumb {
-  background: #e8ddd4 ;
+    background: #e8ddd4;
 }
 .dtranstiontable {
     background: rgba(255, 255, 255, 1);
@@ -218,6 +218,26 @@
     gap: 24px;
 }
 
+.noNotesFound {
+    padding: 20px;
+    gap: 24px;
+    border-radius: 4px;
+    background: #e8ddd4;
+    box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notesAsignedText {
+    color: #222;
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px;
+    margin-bottom: 0px;
+}
 /* / / / create task modal  / / / */
 .dtaskmodalContent {
     padding: 4px;
@@ -478,7 +498,8 @@
     margin-block: 20px;
     align-items: center;
 }
-.dprogressCards {
+.dprogressCards,
+.dprogressCardselse {
     display: none;
 }
 
@@ -540,6 +561,11 @@
         grid-template-columns: auto auto auto;
         padding-block: 12px;
         overflow-x: auto;
+    }
+    .dprogressCardselse {
+        display: grid;
+        grid-template-columns: auto;
+        padding-block: 12px;
     }
 
     .dcardSubject {
@@ -631,6 +657,9 @@
         font-weight: 800;
         line-height: 17px;
     }
+    .dnotesBottomIcon {
+        position: fixed;
+    }
 }
 
 @media (min-width: 320px) and (max-width: 355px) {
@@ -654,6 +683,82 @@
     }
 }
 
+/* Dashboard transactions table css */
+.dtHeaderName {
+    color: #fff;
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+.dTContactName {
+    display: flex;
+    min-width: 260px;
+    /* max-width: 260px; */
+    padding: 16px 0px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    flex: 1 0 0;
+    align-self: stretch;
+    color: #000;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 16.8px;
+}
+/* Dashboard transactions Card css */
+.dtransactionsCardDiv {
+    display: none;
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+    .dtCardMainDiv {
+        padding: 0px 20px 24px 20px;
+    }
+    .dtCardDateDiv {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding-top: 12px;
+        color: #222;
+    }
+    .dTCardDate {
+        font-family: Avenir;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 11px;
+    }
+    .dTCardName {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        align-self: stretch;
+        padding-block: 5px;
+        color: #222;
+        font-family: Avenir;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 350;
+        line-height: 16.8px;
+    }
+    .dTCardmail {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        align-self: stretch;
+        color: #222;
+        font-family: Avenir;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 19.5px;
+    }
+}
 /* / / Pipeline component / / */
 
 .commonFlex {
@@ -677,6 +782,7 @@
     border-radius: 4px;
     border: 1px solid #0071ce;
     background: #253c5b;
+    cursor: pointer;
 }
 
 .pfilterDiv {
@@ -790,11 +896,129 @@
 .ptableCardDiv {
     display: none;
 }
+
+/* new pipeline common table css */
+.npcommonheaderText {
+    color: #685b50;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+}
+
+.npcommontableBodytext {
+    color: #222;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+    margin-bottom: 0px;
+}
+
+.npcommontableBodyDatetext {
+    color: #222;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 16.8px;
+    margin-bottom: 0px;
+}
+
+/* new pipe contact card */
+.npContactCard,
+.npAttachmentCard,
+.npNom-TM-Card,
+.npAgentCard {
+    display: none;
+}
+.npCardPhoneDiv {
+    padding-block: 10px;
+}
+.npAttachmentTable,
+.npNom-TM-Table,
+.npAgentTable,
+.npRoleTable {
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
+
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+
+.npcontactsTable {
+    display: grid;
+    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 1.0fr 1.5fr 1.5fr 2fr;
+    gap: 10px;
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
+
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+.npcontactsBody {
+    display: grid;
+    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 1.0fr 1.5fr 1.5fr 2fr;
+    gap: 10px;
+    color: #222;
+    padding: 16px 12px;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 16.8px;
+}
+.pnofound {
+    display: flex;
+    justify-content: center;
+    padding: 16px 12px;
+}
+
+.npAttachmentBody,
+.npAgentBody,
+.npNom-TM-Body,
+.npRoleBody {
+    color: #222;
+    padding: 16px 12px;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 16.8px;
+}
 @media (max-width: 767px) {
-    .ppipelineTable {
+    .ppipelineTable,
+    .dtabletranstion,
+    .npcontactsTable,
+    .npAttachmentTable,
+    .npAttachmentBody,
+    .npAgentTable,
+    .npAgentBody,
+    .npNom-TM-Table,
+    .npcontactsBody,
+    .npNom-TM-Body,
+    .npRoleBody,
+    .npRoleTable {
         display: none;
     }
-    .ptableCardDiv {
+    .ptableCardDiv,
+    .dtransactionsCardDiv,
+    .npContactCard,
+    .npAttachmentCard,
+    .npAgentCard,
+    .npNom-TM-Card,
+    .npRoleCard {
         display: unset;
     }
 }
@@ -849,6 +1073,9 @@
     }
 }
 @media (min-width: 320px) and (max-width: 350px) {
+    .dtCardMainDiv {
+        padding: 0px 0px 24px 0px;
+    }
     .ptableCardDiv {
         padding: 12px;
     }
@@ -915,8 +1142,123 @@
     margin-right: 12px;
 }
 
-/* / database component / */
+/* New Pipeline */
+.npbtnsDiv {
+    display: flex;
+    gap: 24px;
+}
+.npdeleteBtn {
+    cursor: pointer;
+    display: flex;
+    height: 37px;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    border-radius: 4px;
+    background: #dad6d3;
+    color: #685b50;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+}
+.npeditBtn {
+    display: flex;
+    height: 37px;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    border-radius: 4px;
+    background: #a5978b;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+}
+.npinfoText {
+    color: #222;
+    font-family: Avenir;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+}
+.nplabelText {
+    color: #685b50;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 350;
+    line-height: 19.5px;
+}
+.npinputinfo {
+    padding: 7.52px 11.993px 7.52px 12.003px;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+}
+.nproletext {
+    color: #222;
+    font-family: Avenir;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+}
 
+.npcontactbtn {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #0071ce;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    cursor: pointer;
+}
+.npcontactRoles,
+.npNom-TMRoles {
+    margin-bottom: 24px;
+}
+
+/* CSS (inside your stylesheet or style tag) */
+.commonTextEllipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* .npcontactsTable th,
+.npNom-TMRoles th {
+    background: #222;
+    padding: 14px 12px;
+    color: #fff;
+} */
+@media (min-width: 475px) and (max-width: 767px) {
+    .nproletext {
+        margin-bottom: 0px;
+    }
+}
+@media (min-width: 320px) and (max-width: 475px) {
+    .npNom-TMRoles {
+        display: block !important;
+    }
+}
+/* / database component / */
 .dataCardDiv {
     min-height: 245px;
 }
