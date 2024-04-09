@@ -1,4 +1,8 @@
 <?php
-return [
-    'zohoModules'=>['Contacts','Deals'],
-];
+
+// use App\Models\Module; 
+// $apiNames = Module::getApiName();
+
+// return [
+//     'zohoModules'=>$apiNames,
+// ];

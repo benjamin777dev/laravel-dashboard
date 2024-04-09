@@ -168,7 +168,7 @@ class DashboardController extends Controller
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
-         $retrieveModuleData = $this->retrieveModuleDataZoho($user,$accessToken);
+         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
@@ -626,28 +626,7 @@ class DashboardController extends Controller
         return $allDeals;
     }
 
-    public function retrieveModuleDataZoho(User $user, $accessToken){
-        try {
-            // Validate user token (pseudo-code, replace it with your actual validation logic)
-            if (!$accessToken) {
-                throw new \Exception("Invalid user token");
-            }
-            
-            // Retrieve module data from MySQL
-            $allModules = Module::all(); // Assuming you want to retrieve all modules
 
-            // Log the total number of module records
-            Log::info("Total Module records: " . $allModules->count());
-            
-            // Log module records
-            Log::info("Module Records: ", $allModules->toArray());
-            
-            return $allModules; // Return the fetched module data
-        } catch (\Exception $e) {
-            Log::error("Error retrieving module data: " . $e->getMessage());
-            return []; // Return an empty array or handle the error as per your application's logic
-        }
-    }
 
     public function getTasks(Request $request)
     { 
@@ -666,9 +645,40 @@ class DashboardController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
+    public function getDeals(Request $request)
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        // Pass the search parameters to the retrieveTasks method
+        $deals = $db->retreiveDealsJson($user, $accessToken);
+        
+        return response()->json($deals);
+        // return view('pipeline.index', compact('deals'));
+    }
+
+    public function getContacts(Request $request)
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        // Pass the search parameters to the retrieveTasks method
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        
+        return response()->json($contacts);
+        // return view('pipeline.index', compact('deals'));
+    }
+
     public function saveNote(Request $request)
     {
-
         $relatedToObject = json_decode($request->related_to);
         // Validate the incoming request data
         $validatedData1 = validator()->make((array) $relatedToObject, [
@@ -704,30 +714,34 @@ class DashboardController extends Controller
                 ]
             ]
         ];
-
-        // print_r($jsonData);
-        // die;
-
+        $recordId = $validatedData2['related_to_parent'];
+        $apiName = $validatedData1['api_name'];
         try {
-         $response = $zoho->createNoteData($jsonData);
+        $response = $zoho->createNoteData($jsonData,$recordId,$apiName);
+
         if (!$response->successful()) {
+            Log::error("Error creating notes:");
             return "error somthing".$response;
         }
-
+        $data = json_decode($response, true);
+        $zoho_node_id = $data['data'][0]['details']['id'];
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
-        $note->deal_id = $validatedData['deal_id'] ?? Str::random(10);
-        $note->related_to = $validatedData['zoho_module_id'];
-        $note->related_to_parent = $validatedData['related_to_parent'];
-        $note->note_text = $validatedData['note_text'];
-
+        $note->related_to_module_id = $validatedData1['zoho_module_id'];
+        $note->zoho_note_id = $zoho_node_id;
+        $note->owner = $user->id;
+        $note->related_to_type = $validatedData1['api_name'];
+        $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
+        $note->note_content = $validatedData2['note_text'];
+        
         // Save the Note to the database
         $note->save();
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Note saved successfully!');
      } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
+         Log::error("Error creating notes:new " . $e->getMessage());
+         return redirect()->back()->with('error', 'Note Not saved successfully!');
             return "somthing went wrong".$e->getMessage();
         }
     }
@@ -778,17 +792,43 @@ class DashboardController extends Controller
         'related_to.required' => 'The Related to field is required.',
         'note_text.required' => 'The Note field is required.',
     ]);
-
+    $user = auth()->user();
+    if (!$user) {
+        return redirect('/login');
+    }
+    $accessToken = $user->getAccessToken();
+    $zoho = new ZohoCRM();
+    $zoho->access_token = $accessToken;
+    try {
+      $jsonData =   [
+            "data"=>[
+               [
+                    // "Note_Title" => "Contacted",
+                    "Note_Content"=> $validatedData['note_text']
+               ]
+            ]
+               ];
+        $response = $zoho->updateNoteData($jsonData,$id);
+        if (!$response->successful()) {
+            Log::error("Error creating notes:");
+            return "error somthing".$response;
+        }
     // Find the Note instance by its ID
-    $note = Note::findOrFail($id);
+    $note = Note::where('zoho_note_id', $id)->firstOrFail();
+
 
     // Update the Note attributes
-    $note->related_to = $validatedData['related_to'];
-    $note->note_text = $validatedData['note_text'];
+    // $note->related_to = $validatedData['related_to'];
+    $note->note_content = $validatedData['note_text'];
 
     // Save the updated Note to the database
     $note->save();
-
+    return redirect()->back()->with('success', 'Note Updated successfully!');
+    }catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Note Not updated successfully!');
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong".$e->getMessage();
+        }
     // Redirect back with a success message
     return redirect()->back()->with('success', 'Note updated successfully!');
 }

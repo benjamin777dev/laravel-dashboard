@@ -199,6 +199,29 @@ class DB
         Log::info("Module stored into database successfully.");
     }
 
+    public function retrieveModuleDataDB(User $user, $accessToken){
+        try {
+            // Validate user token (pseudo-code, replace it with your actual validation logic)
+            if (!$accessToken) {
+                throw new \Exception("Invalid user token");
+            }
+            
+            // Retrieve module data from MySQL
+            $allModules = Module::all(); // Assuming you want to retrieve all modules
+
+            // Log the total number of module records
+            Log::info("Total Module records: " . $allModules->count());
+            
+            // Log module records
+            Log::info("Module Records: ", $allModules->toArray());
+            
+            return $allModules; // Return the fetched module data
+        } catch (\Exception $e) {
+            Log::error("Error retrieving module data: " . $e->getMessage());
+            return []; // Return an empty array or handle the error as per your application's logic
+        }
+    }
+
     public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null)
     {
 
@@ -291,7 +314,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
+            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(3);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -314,6 +337,33 @@ class DB
         }
     }
 
+    public function retreiveDealsJson(User $user, $accessToken)
+    {
+        try {
+
+            Log::info("Retrieve Deals From Database");
+            $Deals = Deal::where('userID', $user->id)->get();
+            Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
+            return $Deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveContactsJson(User $user,$accessToken){
+        try {
+
+            Log::info("Retrieve contacts From Database");
+            $Contacts = Contact::where('contact_owner', $user->id)->get();
+            Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
+            return $Contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+
+        }
+    }
     public function retreiveTasksFordeal(User $user, $accessToken,$tab = '',$dealId)
     {
         try {
@@ -339,17 +389,21 @@ class DB
                 }
                 $related_to = null;
                 $related_to_type = null;
-                $result = $helper->getValue(config('variables.zohoModules'), $note['Parent_Id']['module']['api_name']);
+                $apiNames = Module::getApiName();
+                $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
                 Log::info("resultHelper" . $result);
                 switch ($result) {
                     case 'Deals':
                         $related_to = Deal::where('zoho_deal_id', $note['Parent_Id']['id'])->first();
                         $related_to_type = 'Deal';
                         break;
-
                     case 'Contacts':
                         $related_to = Contact::where('zoho_contact_id', $note['Parent_Id']['id'])->first();
                         $related_to_type = 'Contact';
+                        break;
+                    case 'Tasks':
+                        $related_to = Task::where('zoho_task_id', $note['Parent_Id']['id'])->first();
+                        $related_to_type = 'Tasks';
                         break;
                     default:
                         Log::info("resultHelper" . $result);
@@ -366,6 +420,8 @@ class DB
                 Note::updateOrCreate(['zoho_note_id' => $note['id']], [
                     'owner' => isset($user['id']) ? $user['id'] : null,
                     'related_to' => isset($related_to['id']) ? $related_to['id'] : null,
+                    'related_to_module_id' => isset($note['Parent_Id']['module']['id']) ?$note['Parent_Id']['module']['id'] : null,
+                    'related_to_parent_record_id' => isset($note['Parent_Id']['id']) ?$note['Parent_Id']['id'] : null,
                     'note_content' => isset($note['Note_Content']) ? $note['Note_Content'] : null,
                     'created_time' => isset($note['Created_Time']) ? $helper->convertToUTC($note['Created_Time']) : null,
                     'zoho_note_id' => isset($note['id']) ? $note['id'] : null,

@@ -6,6 +6,16 @@
 @section('content')
     @vite(['resources/css/dashboard.css'])
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif
     <div class="container-fluid">
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 col-sm-6 text-start">
@@ -288,11 +298,30 @@
                                         @endif
                                 
                                         <!-- Pagination Elements -->
-                                        @foreach ($tasks->getUrlRange(1, $tasks->lastPage()) as $page => $url)
-                                            <li class="page-item {{ ($tasks->currentPage() == $page) ? 'active' : '' }}">
-                                                <a class="page-link" href="{{ $url }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
+                                        @php
+                                            $currentPage = $tasks->currentPage();
+                                            $lastPage = $tasks->lastPage();
+                                            $startPage = max($currentPage - 1, 1);
+                                            $endPage = min($currentPage + 1, $lastPage);
+                                        @endphp
+                                
+                                        {{-- @if ($startPage > 1)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
                                             </li>
-                                        @endforeach
+                                        @endif --}}
+                                
+                                        @for ($page = $startPage; $page <= $endPage; $page++)
+                                            <li class="page-item {{ ($tasks->currentPage() == $page) ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ $tasks->url($page) }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
+                                            </li>
+                                        @endfor
+                                
+                                        {{-- @if ($endPage < $lastPage)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif --}}
                                 
                                         <!-- Next Page Link -->
                                         @if ($tasks->hasMorePages())
@@ -306,6 +335,7 @@
                                         @endif
                                     </ul>
                                 </nav>
+                                
                                 
                             </div>
                         @endif
@@ -370,9 +400,9 @@
                                             <div class="modal-header border-0">
                                                 <p class="modal-title dHeaderText">Note</p>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                    aria-label="Close" onclick="document.getElementById('editButton{{$note['id']}}').checked=false;"></button>
                                             </div>
-                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('POST')
@@ -386,15 +416,10 @@
                                                     <div class="btn-group dmodalTaskDiv">
                                                         <select class="form-select dmodaltaskSelect" name="related_to"
                                                             aria-label="Select Transaction">
-                                                            <option value="">Please select one</option>
-                                                            @if ($note['related_to_type'] === 'Deal')
-                                                            @foreach ($getdealsTransaction as $item)
-                                                                <option value="{{ $item['Deal_Name'] }}"
-                                                                 {{ $note->dealData->id  == $item['id'] ? 'selected' : '' }}>
-                                                                    {{ print_r($item) }}
+                                                                <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                                   {{ $note['related_to_type']}}
                                                                 </option>
-                                                            @endforeach
-                                                            @endif
+                                                            
                                                         </select>
                                                     </div>
                                                     @error('related_to')
@@ -411,9 +436,9 @@
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gx-2">
-                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}'); editNote('{{ $note['id'] }}')"
+                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
                                     class="form-check-input checkbox{{ $note['id'] }}"
-                                    id="checkbox{{ $loop->index + 1 }}" id="editButton{{  $note['id']  }}"
+                                    id="editButton{{  $note['id']  }}"
                                     class="btn btn-primary dnotesBottomIcon" type="button"
                                     data-bs-toggle="modal" data-bs-target="#staticBackdropnoteupdate{{$note['id'] }}" />
                              </div>
@@ -512,7 +537,6 @@
             </div>
         </div>
     </div>
-
     {{-- Note Modal --}}
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -520,23 +544,21 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" onclick="document.getElementById('noteForm').reset(); document.getElementById('taskSelect').style.display='none';" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('save.note') }}" method="post">
+                <form id="noteForm" action="{{ route('save.note') }}" method="post">
                     @csrf
                     <div class="modal-body dtaskbody">
                         <p class="ddetailsText">Details</p>
-                        <textarea name="note_text" rows="4" class="dtextarea"></textarea>
-                        @error('note_text')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
+                        <div id="note_text_error" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" onchange="moduleSelected(this,'{{$accessToken}}')" name="related_to"
+                            <select class="form-select dmodaltaskSelect" id="related_to"  onchange="moduleSelected(this)" name="related_to"
                                 aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Accounts', 'Deals', 'Tasks', 'Contacts']))
+                                @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
                                     <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                 @endif
                             @endforeach
@@ -545,12 +567,10 @@
                                 <option value="">Please Select one</option>
                             </select>
                         </div>
-                        @error('related_to')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                        <button type="submit" onclick="validateForm()" class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
                     </div>
@@ -1128,6 +1148,33 @@
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }
 
+    // validation function onsubmit
+    function validateForm() {
+        let noteText = document.getElementById("note_text").value;
+        let relatedTo = document.getElementById("related_to").value;
+        let isValid = true;
+
+        // Reset errors
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+
+        // Validate note text
+        if (noteText.trim() === "") {
+            document.getElementById("note_text_error").innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error").innerText = "Related to is required";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+
+
     function moduleSelected(selectedModule,accessToken){
         // console.log(accessToken,'accessToken')
     var selectedOption = selectedModule.options[selectedModule.selectedIndex];
@@ -1144,20 +1191,34 @@
       
         success: function(response) {
             // Handle successful response
-            console.log("API Response:", response);
             var tasks = response;
-            console.log(tasks.length,'lengtj')
             // Assuming you have another select element with id 'taskSelect'
             var taskSelect = $('#taskSelect');
             // Clear existing options
             taskSelect.empty();
+           
             // Populate select options with tasks
             $.each(tasks, function(index, task) {
+                if(selectedText==="Tasks"){
                 taskSelect.append($('<option>', {
-                    value: task.zoho_task_id,
-                    text: task.subject
+                    value: task?.zoho_task_id,
+                    text: task?.subject
                 }));
+            }
+            if(selectedText==="Deals"){
+            taskSelect.append($('<option>', {
+                    value: task?.zoho_deal_id,
+                    text: task?.deal_name
+                }));
+          }
+          if(selectedText==="Contacts"){
+            taskSelect.append($('<option>', {
+                    value: task?.zoho_contact_id,
+                    text: task?.first_name+' '+task?.last_name
+                }));
+          }
             });
+        
 
             taskSelect.show();
             // Do whatever you want with the response data here
