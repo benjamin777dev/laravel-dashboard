@@ -48,6 +48,8 @@ Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->na
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
 // get task in json
 Route::get('/task/get-Tasks', [DashboardController::class, 'getTasks'])->middleware('auth');
+Route::get('/task/get-Deals', [DashboardController::class, 'getDeals'])->middleware('auth');
+Route::get('/task/get-Contacts', [DashboardController::class, 'getContacts'])->middleware('auth');
 Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
 Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 

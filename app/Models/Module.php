@@ -13,4 +13,9 @@ class Module extends Model
         'modified_time',
         'api_name',
     ];
+
+    public static function getApiName()
+    {
+        return self::pluck('api_name')->toArray();
+    }
 }

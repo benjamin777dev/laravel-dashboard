@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
+    private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
     private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
@@ -241,18 +242,32 @@ class ZohoCRM
         return $response;
     }
 
-    public function createNoteData($inputJson)
+    public function createNoteData($inputJson,$id,$apiName)
     {
         Log::info('Creating Zoho Task');
-        
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
-        ])->post($this->apiUrl . "Notes", $inputJson);
+        ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
-    
+        return $response;
+    }
+
+    public function updateNoteData($inputJson,$id)
+    {
+        Log::info('Creating Zoho Task');
+        // return $inputJson;
+        try{        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->put($this->apiNoteUrl . "Notes/" . $id, $inputJson);
+        }catch(\Exception $e){
+            return "somthing went wrong".$e->getMessage();
+        }
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
     }
 
