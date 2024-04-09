@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\DB;
+use Carbon\Carbon;
+use App\Services\Helper;
 
 class PipelineController extends Controller
 {
@@ -46,6 +48,7 @@ class PipelineController extends Controller
     {
         Log::info('Showing create pipeline form' . $request);
         $db = new DB();
+        $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
         $user = auth()->user();
@@ -55,13 +58,16 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         Log::info("accessToken: ". print_r($accessToken, true));
         $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
-        Log::info("Task Details: ". print_r($tasks, true));
-        $notesInfo = $db->retrieveNotes($user,$accessToken);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId );
-        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal'));
+        Log::info("deals and tab data ". $tab.$dealId);
+        $tasks = $db->retreiveTasksFordeal($user, $accessToken,$tab,$deal->zoho_deal_id);
+        Log::info("Task Details: ". print_r($tasks, true));
+        $notesInfo = $db->retrieveNotesFordeal($user,$accessToken,$dealId);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        
+        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate'));
 
     }
 

@@ -36,14 +36,14 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/pipeline-create?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
+                            <a href="/pipeline-view/{{$deal['id']}}?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
                                     data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
                                     role="tab" aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/pipeline-create?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
+                            <a href="/pipeline-view/{{$deal['id']}}?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
                                     id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
                                     role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/pipeline-create?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
+                            <a href="/pipeline-view/{{$deal['id']}}?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
                                     id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
                                     role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
                         </div>
@@ -61,7 +61,7 @@
                             </thead>
                             <tbody>
 
-                                {{-- @if (count($tasks) > 0) --}}
+                                @if (count($tasks) > 0)
                                 @foreach ($tasks as $task)
                                     <tr class="dresponsivetableTr">
                                         <td><input type="checkbox" /></td>
@@ -130,16 +130,16 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                {{-- @else
+                                @else
                                     <tr>
                                         <td class="text-center" colspan="12">No records found</td>
                                     </tr>
-                                @endif --}}
+                                @endif
 
                             </tbody>
 
                         </table>
-                        {{-- @if (count($tasks) > 0) --}}
+                        @if (count($tasks) > 0)
                         @foreach ($tasks as $task)
                             <div class="dprogressCards">
                                 <div class="dcardscheckbox">
@@ -178,11 +178,11 @@
                                 </div>
                             </div>
                         @endforeach
-                        {{-- @else
+                        @else
                             <div class="dprogressCardselse">
                                 <p class="text-center" colspan="12">No records found</p>
                             </div>
-                        @endif --}}
+                        @endif
                         {{-- @if (count($tasks) > 0) --}}
                         <div class="dpagination">
                             <div {{-- onclick="removeAllSelected()" --}}
@@ -344,40 +344,42 @@
                             id="validationDefault03" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Stage</label>
+                        <label for="validationDefault04" class="form-label nplabelText">Stage</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Potential"
-                            id="validationDefault03" required>
+                            id="validationDefault04" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Sale Price</label>
+                        <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
                         <input type="text" class="form-control npinputinfo" placeholder="$ 725,000.00"
-                            id="validationDefault03" required>
+                            id="validationDefault05" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Closing Date</label>
-                        <input type="date" class="form-control npinputinfo" id="validationDefault03" required>
+                        <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
+                        <input type="date" class="form-control npinputinfo" id="validationDefault06" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Address</label>
+                        <label for="validationDefault07" class="form-label nplabelText">Address</label>
                         <input type="text" class="form-control npinputinfo" placeholder="52 Realand Road"
-                            id="validationDefault03" required>
+                            id="validationDefault07" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">City</label>
+                        <label for="validationDefault08" class="form-label nplabelText">City</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
-                            id="validationDefault03" required>
+                            id="validationDefault08" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">State</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <label for="validationDefault09" class="form-label nplabelText">State</label>
+                        {{-- <select class="form-select npinputinfo" id="validationDefault09" required>
                             <option selected disabled value=""></option>
                             <option>...</option>
-                        </select>
+                        </select> --}}
+                        <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
+                            id="validationDefault09" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">ZIP</label>
+                        <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
                         <input type="text" class="form-control npinputinfo" placeholder="80129"
-                            id="validationDefault03" required>
+                            id="validationDefault10" required>
                     </div>
                 </form>
             </div>
@@ -387,48 +389,50 @@
                 <p class="npinfoText">Earnings Information</p>
                 <form class="row g-3">
                     <div class="col-md-6">
-                        <label for="validationDefault01" class="form-label nplabelText">Commission %</label>
-                        <input type="text" class="form-control npinputinfo" id="validationDefault01" required>
+                        <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
+                        <input type="text" class="form-control npinputinfo" id="validationDefault11" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault02" class="form-label nplabelText">Property Type</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
+                        {{-- <select class="form-select npinputinfo" id="validationDefault12" required>
                             <option selected disabled value=""></option>
                             <option>...</option>
-                        </select>
+                        </select> --}}
+                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Ownership Type</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
+                        {{-- <select class="form-select npinputinfo" id="validationDefault13" required>
                             <option selected disabled value=""></option>
                             <option>...</option>
-                        </select>
+                        </select> --}}
+                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Potential GCI</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Stage"
-                            id="validationDefault03" required>
+                        <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
+                        <input type="text" class="form-control npinputinfo" placeholder="Potential GCI"
+                            id="validationDefault14" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Pipeline Probability (%)</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault03"
+                        <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
+                        <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault15"
                             required>
                     </div>
                     <div class="col-md-6">
-                        <label for="validationDefault03" class="form-label nplabelText">Probable GCI</label>
+                        <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
                         <input type="text" class="form-control npinputinfo" placeholder="$ 3,045.00"
-                            id="validationDefault03" required>
+                            id="validationDefault16" required>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked01" checked>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked02" checked>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
                         </label>
                     </div>
@@ -722,6 +726,54 @@
                 }
             });
         });
+
+        // Function to populate client information
+        function populateClientInfo() {
+            var firstName = "{{ $deal->contactName->first_name ?? 'N/A' }}";
+            var lastName = "{{ $deal->contactName->last_name ?? '' }}";
+            document.getElementById('validationDefault01').value = firstName + " " + lastName;
+            document.getElementById('validationDefault02').value = "{{ $deal->representing ?? 'N/A'}}";
+            document.getElementById('validationDefault03').value = "{{ $deal->deal_name ?? 'N/A'}}";
+            document.getElementById('validationDefault04').value = "{{ $deal->stage ?? 'N/A'}}";
+            document.getElementById('validationDefault05').value = "$ {{ $deal->sale_price ?? 'N/A'}}";
+            var closingDateUTC = "{{ $closingDate ?? 'N/A'}}";
+            if (closingDateUTC !== 'N/A') {
+                try {
+                    console.log("closingDateUTC",closingDateUTC);
+                    var dateParts = closingDateUTC.split(" ")[0]
+                    document.getElementById('validationDefault06').value = dateParts;
+                } catch (error) {
+                    console.error("Error formatting closing date:", error);
+                }
+            } else {
+                document.getElementById('validationDefault06').value = closingDateUTC;
+            } 
+            document.getElementById('validationDefault07').value = "{{ $deal->address ?? 'N/A'}}";
+            document.getElementById('validationDefault08').value = "{{ $deal->city ?? 'N/A'}}";
+            document.getElementById('validationDefault09').value = "{{ $deal->state ?? 'N/A'}}";
+            document.getElementById('validationDefault10').value = "{{ $deal->zip ?? 'N/A'}}";
+        }
+
+        // Function to populate earnings information
+        function populateEarningsInfo() {
+            document.getElementById('validationDefault11').value = "{{ $deal->commission ?? 'N/A'}}";
+            document.getElementById('validationDefault12').value = "{{ $deal->property_type ?? 'N/A'}}";
+            document.getElementById('validationDefault13').value = "{{ $deal->ownership_type ?? 'N/A'}}";
+            document.getElementById('validationDefault14').value = "$ {{ $deal->potential_gci ?? 'N/A'}}";
+            document.getElementById('validationDefault15').value = "{{ $deal->pipeline_probability ?? 'N/A'}}";
+            document.getElementById('validationDefault16').value = "$ {{ $deal->pipeline1 ?? 'N/A'}}";
+            document.getElementById('flexCheckChecked01').checked = "{{ $deal->personal_transaction}}" === 1 ? true : false;
+            document.getElementById('flexCheckChecked02').checked = "{{ $deal->double_ended}}" === 1 ? true : false;
+        }
+
+        // Assume 'deal' is defined somewhere in your page or passed as a parameter
+
+        // Call functions to populate forms when the page loads
+        window.onload = function () {
+            populateClientInfo();
+            populateEarningsInfo();
+        };
+
     </script>
 @section('pipelineScript')
 

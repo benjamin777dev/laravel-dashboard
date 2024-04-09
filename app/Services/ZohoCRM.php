@@ -148,7 +148,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho contact data response: ' . print_r($response, true));
@@ -166,7 +165,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho deals data response: ' . print_r($response, true));
@@ -176,13 +174,13 @@ class ZohoCRM
 
     public function getModuleData(){
         
-        Log::info('Getting Zoho tasks data');
+        Log::info('Getting Zoho Module data');
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'settings/modules');
 
-        Log::info('Zoho tasks data response: ' . print_r($response, true));
+        Log::info('Zoho Module data response: ' . print_r($response, true));
         return $response;
     }
 
@@ -197,7 +195,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho tasks data response: ' . print_r($response, true));
@@ -327,4 +324,17 @@ class ZohoCRM
     }
     
 
+    public function getDealContact($dealId)
+    {
+        Log::info('Getting Zoho Deal contact data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . "Deals/$dealId/Contact_Roles", [
+            'fields' => 'Email,Department,First_Name,Last_Name'
+        ]);
+
+        Log::info('Zoho Deal contact data response: ' . print_r($response, true));
+        return $response;
+    }
 }
