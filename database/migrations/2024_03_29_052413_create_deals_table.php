@@ -10,6 +10,7 @@ class CreatedealsTable extends Migration
     {
         Schema::create('deals', function (Blueprint $table) {
             $table->id();
+            $table->string('zip')->nullable();
             $table->text('personal_transaction')->nullable();
             $table->boolean('double_ended')->default(false);
             $table->unsignedBigInteger('userID')->nullable();
