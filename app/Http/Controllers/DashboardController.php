@@ -172,7 +172,7 @@ class DashboardController extends Controller
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print($notes);
+        //  print_r($retrieveModuleData);
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])

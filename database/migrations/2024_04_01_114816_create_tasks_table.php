@@ -20,7 +20,7 @@ class CreatetasksTable extends Migration
             $table->string('import_batch')->nullable();
             $table->string('modified_by')->nullable();
             $table->string('priority')->nullable();
-            $table->string('what_id')->nullable();
+            $table->unsignedBigInteger('what_id')->nullable();
             $table->string('recurring_activity')->nullable();
             $table->string('status')->nullable();
             $table->string('subject')->nullable();

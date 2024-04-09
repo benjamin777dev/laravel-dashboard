@@ -10,6 +10,7 @@ class Deal extends Model
     use HasFactory;
     
     protected $fillable = [
+        'zip',
         'personal_transaction',
         'double_ended',
         'contactId',
