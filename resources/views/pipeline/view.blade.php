@@ -475,11 +475,11 @@
                         @endforeach
                 @endif
             @if ($dealContacts->isEmpty())
-            <div class="noNotesFound">
+            {{-- <div class="noNotesFound">
                         <p class="text-center notesAsignedText">No contacts assigned</p>
                         <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-                    </div>
+                    </div> --}}
             @else
                 @foreach ($dealContacts as $dealContact)
                     <div class="npRoleCard vprolecard">
@@ -626,11 +626,11 @@
                 @endforeach
             @endif
              @if ($dealaci->isEmpty())
-                <div class="noNotesFound">
+                {{--<div class="noNotesFound">
                     <p class="text-center notesAsignedText">No ACI assigned</p>
                     <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-                </div>
+                </div>--}}
             @else
                 @foreach ($dealaci as $aci)
                     <div class="npAgentCard">

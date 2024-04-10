@@ -61,6 +61,9 @@ class DashboardController extends Controller
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
+        // print('<pre>');
+        // print_r(json_encode($deals));
+        // die;
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage) {
                 return $deal['stage'] === $stage && $this->masterFilter($deal);
@@ -82,11 +85,10 @@ class DashboardController extends Controller
                 ],
             ];
         });
-
+   
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
         });
-
         // Calculate Current Pipeline Value
         $currentPipelineValue = $this->formatNumber($cpv);
 
@@ -172,7 +174,7 @@ class DashboardController extends Controller
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print_r($retrieveModuleData);
+        //  print_r(json_encode($stageData));
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
@@ -203,7 +205,7 @@ class DashboardController extends Controller
 
         Log::Info("ACI Data: ". print_r($aciData, true));
         // print("<pre>");
-        // print_r($tasks);
+        // print_r($stageData);
         // die;
         // Pass data to the view
         return view('dashboard.index',
@@ -675,6 +677,52 @@ class DashboardController extends Controller
         
         return response()->json($contacts);
         // return view('pipeline.index', compact('deals'));
+    }
+
+    public function getStagesData(){
+        $start_date =  request()->query('start_date') ?? ''; // Start date of the range
+        $end_date = request()->query('end_date') ?? '';   // End date of the range
+        // print_r($start_date);
+        // print_r($end_date);
+        // die;
+        $user = auth()->user();
+        $db = new DB();
+        $accessToken = $user->getAccessToken();
+        if (!$user) {
+            return redirect('/login');
+        }
+           // Set default goal or use user-defined goal
+           $goal = $user->goal ?? 250000;
+           Log::info("Goal: $goal");
+   
+           // Retrieve deals from Zoho CRM
+           $deals = $db->retrieveDeals($user, $accessToken);
+       $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
+
+       $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {
+            $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
+                return $deal['stage'] === $stage && $this->masterFilter($deal) && $deal['closing_date'] >= $start_date && $deal['closing_date'] <= $end_date;
+            });
+
+        $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+        $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+        $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
+        $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
+        return [
+        $stage => [
+            'count' => $this->formatNumber($filteredDeals->count()),
+            'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
+            'asum' => $filteredDeals->sum('pipeline1'),
+            'stageProgress' => $stageProgress,
+            "stageProgressClass" => $stageProgressClass,
+            'stageProgressIcon' => $stageProgressIcon,
+            'stageProgressExpr' => $stageProgressExpr
+        ],
+    ];
+});
+
+  return response()->json($stageData);
+
     }
 
     public function saveNote(Request $request)

@@ -916,7 +916,15 @@
     line-height: 16.8px;
     margin-bottom: 0px;
 }
-
+  .ptableCardDiv,
+    .dtransactionsCardDiv,
+    .npContactCard,
+    .npAttachmentCard,
+    .npAgentCard,
+    .npNom-TM-Card,
+    .npRoleCard {
+        display: none;
+    }
 .npcommontableBodyDatetext {
     color: #222;
     font-family: Avenir;
