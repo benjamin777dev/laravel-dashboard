@@ -101,6 +101,19 @@ class ContactController extends Controller
         return view('contacts.detail', compact('contactDetails'));
     }
 
+    public function showCreateContactForm()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactDetails = $this->retrieveContactDetailsFromZoho("5141697000013491157", $accessToken);
+
+        return view('contacts.create', compact('contactDetails'));
+    }
+
     private function retrieveContactDetailsFromZoho($contactId, $accessToken)
     {
         $url = "https://www.zohoapis.com/crm/v2/Contacts/{$contactId}";

@@ -10,6 +10,7 @@ use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
 use App\Models\Module; // Import the Module model
+use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -28,6 +29,12 @@ class DB
         for ($i = 0; $i < $dealCount; $i++) {
             $deal = $dealsData[$i];
             $userInstance = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
+            if ($deal['Client_Name_Only']) {
+                $clientId = explode("||", $deal['Client_Name_Only']);
+                Log::info("clientId: " . implode(", ", $clientId));
+
+                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
             if (!$userInstance) {
                 // Log an error if the user is not found
                 Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
@@ -88,10 +95,17 @@ class DB
         for ($i = 0; $i < $dealContactsCount; $i++) {
             $dealContact = $dealContacts[$i];
             $contact = Contact::where('zoho_contact_id', $dealContact['id'])->first();
+            $user = User::where('zoho_id', $dealContact['id'])->first();
 
-            DealContact::updateOrCreate(['zoho_deal_id' => $dealId], [
+            DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
                 'contactId' => $contact ? $contact->id : null,
+                'userId' => $user ? $user->id : null,
+                'contactRole' => $dealContact['Contact_Role']['name']
+            ],[
+                'zoho_deal_id' => $dealId,
+                'contactId' => $contact ? $contact->id : null,
+                'userId' => $user ? $user->id : null,
                 'contactRole' => $dealContact['Contact_Role']['name']
             ]);
         }
@@ -455,11 +469,73 @@ class DB
 
         try {
             Log::info("Retrieve Notes From Database");
-            $tasks = Note::with('userData')->with('dealData')->where([['owner', $user->id],['related_to_type','Deal'],['related_to',$dealId]])->get();
-            Log::info("Retrieved Notes From Database", ['notes' => $tasks->toArray()]);
-            return $tasks;
+            $notes = Note::with('userData')->with('dealData')->where([['owner', $user->id],['related_to_type','Deal'],['related_to',$dealId]])->get();
+            Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
+            return $notes;
         } catch (\Exception $e) {
-            Log::error("Error retrieving tasks: " . $e->getMessage());
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retrieveDealContactFordeal(User $user, $accessToken,$dealId)
+    {
+
+        try {
+            Log::info("Retrieve Deal Contact From Database".$dealId);
+            $dealContacts = DealContact::with('userData')->with('contactData')->where('zoho_deal_id', $dealId)->get();
+            Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
+            return $dealContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function storeACIIntoDB($acis)
+    {
+        $helper = new Helper();
+        Log::info("Storing ACI Into Database");
+
+        foreach ($acis as $aci) {
+            $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
+            $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+
+            // if (!$user) {
+            //     // Log an error if the user is not found
+            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
+            //     continue; // Skip to the next deal
+            // }
+
+            // Update or create the deal
+            Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+                "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+                "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+                "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+                "userId" => isset($user['id']) ? $user['id'] : null,
+                "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+                "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+                "total" => isset($aci['Total']) ? $aci['Total'] : null,
+                "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                'dealId' => isset($deal['id']) ? $deal['id'] : null,
+                'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+                'less_split_to_chr'=> isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+            ]);
+        }
+
+        Log::info("ACI stored into database successfully.");
+    }
+
+    public function retrieveAciFordeal(User $user, $accessToken,$dealId)
+    {
+
+        try {
+            Log::info("Retrieve Deal Contact From Database".$dealId);
+            $dealContacts = Aci::with('userData')->with('dealData')->where('dealId', $dealId)->get();
+            Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
+            return $dealContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
     }

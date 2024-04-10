@@ -214,7 +214,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));

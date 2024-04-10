@@ -9,7 +9,7 @@
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
                 <li>
-                    <a href="dashboard" class="waves-effect">
+                    <a href="{{ route('dashboard.index') }}" class="waves-effect">
                         {{-- <i class="bx bx-home-circle"></i> --}}
                         <img src="{{ URL::asset('/images/dashboard.svg') }}" class="sidebarIcons" alt="D">
 
@@ -17,7 +17,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="pipeline" class="waves-effect">
+                    <a href="{{ route('pipeline.index') }}" class="waves-effect">
                         {{-- <i class="bx bx-home-circle"></i> --}}
                         <img src="{{ URL::asset('/images/polyline.svg') }}" class="sidebarIcons" alt="P">
 
@@ -32,7 +32,7 @@
                         <span key="t-database">@lang('Database')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="contacts" key="t-Contacts">@lang('Contacts Database')</a></li>
+                        <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('Contacts Database')</a></li>
                         <!-- <li><a href="Groups" key="t-Groups">@lang('Groups')</a></li> -->
 
                     </ul>

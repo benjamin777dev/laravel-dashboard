@@ -458,34 +458,52 @@
                 <div class="col-md-3 ">Phone</div>
                 <div class="col-md-4 ">Email</div>
             </div>
+            @if ($dealContacts->isEmpty())
+                    <div class="noNotesFound">
+                        <p class="text-center notesAsignedText">No contacts assigned</p>
+                        <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-            <div class="row npRoleBody">
-                <div class="col-md-3 ">Nathan Hall</div>
-                <div class="col-md-2 ">Client</div>
-                <div class="col-md-3 ">(847) 682-8895</div>
-                <div class="col-md-4 commonTextEllipsis">breanne+nathan@coloradohomerealty.com</div>
-            </div>
+                    </div>
+                @else
+                        @foreach ($dealContacts as $dealContact)
+                             <div class="row npRoleBody">
+                                <div class="col-md-3 ">{{$dealContact->contactData?$dealContact->contactData->first_name.' '.$dealContact->contactData->last_name:($dealContact->userData?$dealContact->userData->name:'N/A')}}</div>
+                                <div class="col-md-2 ">{{$dealContact['contactRole']}}</div>
+                                <div class="col-md-3 ">{{$dealContact->contactData?($dealContact->contactData->phone?$dealContact->contactData->phone:'N/A'):'N/A'}}</div>
+                                <div class="col-md-4 commonTextEllipsis">{{$dealContact->contactData?$dealContact->contactData->email:($dealContact->userData?$dealContact->userData->email:'N/A')}}</div>
+                            </div>
+                        @endforeach
+                @endif
+            @if ($dealContacts->isEmpty())
+            <div class="noNotesFound">
+                        <p class="text-center notesAsignedText">No contacts assigned</p>
+                        <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-            <!-- <div class="npRoleCard">
-                <div>
-                    <p class="npcommonheaderText">Role</p>
-                    <p class="npcommontableBodytext">Nathan Hall</p>
-                </div>
-                <div class="d-flex justify-content-between align-items-center npCardPhoneDiv">
-                    <div>
-                        <p class="npcommonheaderText">Role Name</p>
-                        <p class="npcommontableBodyDatetext">Client</p>
                     </div>
-                    <div>
-                        <p class="npcommonheaderText">Phone</p>
-                        <p class="npcommontableBodyDatetext">(847) 682-8895</p>
+            @else
+                @foreach ($dealContacts as $dealContact)
+                    <div class="npRoleCard vprolecard">
+                        <div>
+                            <p class="npcommonheaderText">Role</p>
+                            <p class="npcommontableBodytext">{{$dealContact->contactData?$dealContact->contactData->first_name.' '.$dealContact->contactData->last_name:($dealContact->userData?$dealContact->userData->name:'N/A')}}</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center npCardPhoneDiv">
+                            <div>
+                                <p class="npcommonheaderText">Role Name</p>
+                                <p class="npcommontableBodyDatetext">{{$dealContact['contactRole']}}</p>
+                            </div>
+                            <div>
+                                <p class="npcommonheaderText">Phone</p>
+                                <p class="npcommontableBodyDatetext">{{$dealContact->contactData?($dealContact->contactData->phone?$dealContact->contactData->phone:'N/A'):'N/A'}}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Email</p>
+                            <p class="npcommontableBodyDatetext">{{$dealContact->contactData?$dealContact->contactData->email:($dealContact->userData?$dealContact->userData->email:'N/A')}}</p>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <p class="npcommonheaderText">Email</p>
-                    <p class="npcommontableBodyDatetext">breanne+nathan@coloradohomerealty.com</p>
-                </div>
-            </div> -->
+                @endforeach
+            @endif
             <div class="dpagination">
                 <div {{-- onclick="removeAllSelected()" --}}
                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
@@ -512,14 +530,14 @@
 
         </div>
 
-        {{-- Nom-TM Check request --}}
+        {{-- Non-TM Check request --}}
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
-                <p class="nproletext">Nom-TM Check request</p>
+                <p class="nproletext">Non-TM Check request</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
                     data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
                     </i>
-                    Add Nom-TM Check request
+                    Add Non-TM Check request
                 </div>
 
             </div>
@@ -591,34 +609,50 @@
                 <div class="col-md-3 ">Less Split to CHR</div>
                 <div class="col-md-3 ">Modified Time</div>
             </div>
+            @if ($dealaci->isEmpty())
+                <div class="noNotesFound">
+                    <p class="text-center notesAsignedText">No ACI assigned</p>
+                    <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-            <div class="row npAgentBody">
-                <div class="col-md-3 ">Ella DIce</div>
-                <div class="col-md-3 ">$8,638.00</div>
-                <div class="col-md-3 ">$2,0728.00</div>
-                <div class="col-md-3 commonTextEllipsis">Mar 25, 2024 08:33 AM</div>
-            </div>
+                </div>
+            @else
+                @foreach ($dealaci as $aci)
+                    <div class="row npAgentBody">
+                        <div class="col-md-3 ">{{$aci['agentName']}}</div>
+                        <div class="col-md-3 ">${{$aci['irs_reported_1099_income_for_this_transaction']}}</div>
+                        <div class="col-md-3 ">${{$aci['less_split_to_chr']}}</div>
+                        <div class="col-md-3 commonTextEllipsis">{{$aci['closing_date']}}</div>
+                    </div>
+                @endforeach
+            @endif
+             @if ($dealaci->isEmpty())
+                <div class="noNotesFound">
+                    <p class="text-center notesAsignedText">No ACI assigned</p>
+                    <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-
-            <div class="npAgentCard">
-                <div>
-                    <p class="npcommonheaderText">Agent’s Name</p>
-                    <p class="npcommontableBodytext">Ella DIce</p>
                 </div>
-                <div class="npCardPhoneDiv">
-                    <p class="npcommonheaderText">IRS 1099 Income for this Transaction</p>
-                    <p class="npcommontableBodytext">$8,638.00</p>
-                </div>
-                <div>
-                    <p class="npcommonheaderText">Less Split to CHR</p>
-                    <p class="npcommontableBodytext">$2,0728.00</p>
-                </div>
-                <div class="npCardPhoneDiv">
-                    <p class="npcommonheaderText">Modified Time</p>
-                    <p class="npcommontableBodyDatetext">Mar 25, 2024 08:33 AM</p>
-                </div>
-            </div>
-
+            @else
+                @foreach ($dealaci as $aci)
+                    <div class="npAgentCard">
+                        <div>
+                            <p class="npcommonheaderText">Agent’s Name</p>
+                            <p class="npcommontableBodytext">{{$aci['agentName']}}</p>
+                        </div>
+                        <div class="npCardPhoneDiv">
+                            <p class="npcommonheaderText">IRS 1099 Income for this Transaction</p>
+                            <p class="npcommontableBodytext">${{$aci['irs_reported_1099_income_for_this_transaction']}}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Less Split to CHR</p>
+                            <p class="npcommontableBodytext">${{$aci['less_split_to_chr']}}</p>
+                        </div>
+                        <div class="npCardPhoneDiv">
+                            <p class="npcommonheaderText">Modified Time</p>
+                            <p class="npcommontableBodyDatetext">{{$aci['closing_date']}}</p>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
 
             <div class="dpagination">
                 <nav aria-label="..." class="dpaginationNav">

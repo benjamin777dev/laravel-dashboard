@@ -64,10 +64,12 @@ class PipelineController extends Controller
         $tasks = $db->retreiveTasksFordeal($user, $accessToken,$tab,$deal->zoho_deal_id);
         Log::info("Task Details: ". print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user,$accessToken,$dealId);
+        $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$deal->zoho_deal_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        $dealaci = $db->retrieveAciFordeal($user,$accessToken,$dealId);
         
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate'));
+        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci'));
 
     }
 
