@@ -24,9 +24,9 @@
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-baseline dCalander">
-                    <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
-                    <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
-                    <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
+                    {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
+                    <input  class="dFont400 dFont13 mb-0" onchange="calculateStageData(this);" type="text" name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
+                    <i class="fa fa-calendar calendar-icon cursor-pointer"  name="daterange"></i>
                 </div>
 
             </div>
@@ -34,8 +34,7 @@
             <div class="col-ld-9 col-md-9 col-sm-12">
                 <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
-                        {{-- {{ dd($data) }} --}}
-                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
+                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
                                     <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
@@ -787,6 +786,7 @@
 
 @endsection
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -1188,7 +1188,6 @@
         url: '/task/get-'+selectedText,
         method: "GET",
         dataType: "json",
-      
         success: function(response) {
             // Handle successful response
             var tasks = response;
@@ -1196,7 +1195,6 @@
             var taskSelect = $('#taskSelect');
             // Clear existing options
             taskSelect.empty();
-           
             // Populate select options with tasks
             $.each(tasks, function(index, task) {
                 if(selectedText==="Tasks"){
@@ -1218,8 +1216,6 @@
                 }));
           }
             });
-        
-
             taskSelect.show();
             // Do whatever you want with the response data here
         },
@@ -1230,7 +1226,59 @@
     });
                  
     }
+    
 
+   
+    function calculateStageData(e){
+        var dateRangeString = e.value; // Assuming e.value contains the date range string
+        console.log(dateRangeString, 'value is here');
+        var dates = dateRangeString.split(' - ');
+    var startDate = dates[0];
+    var endDate = dates[1];
+
+    console.log('Start Date:', startDate);
+    console.log('End Date:', endDate);
+    // Convert start date to "year-month-day" format
+    var startDateComponents = startDate.split('/');
+    var endDateComponents = endDate.split('/');
+    var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
+    var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
+    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    $.ajax({
+        url: `get-stages?start_date=${formattedStartDate}&end_date=${formattedEndtDate}`,
+        method: "GET",
+        dataType: "json",
+        success: function(response) {
+            // Handle successful response
+            // console.log(response,'response is here');
+            Object.keys(response).forEach(function(stage) {
+        if (response.hasOwnProperty(stage)) {
+            // Find the corresponding card element using data-stage attribute
+            var cardElement = $('.dCardsCols[data-stage="' + stage + '"]');
+
+            // Update data in the card
+            var data = response[stage];
+            cardElement.find('.dFont800.dFont18').text('$' + data.sum);
+            cardElement.find('.dpercentage').text(data.stageProgressExpr + data.stageProgress + '%');
+            cardElement.find('.dpercentage').removeClass().addClass('dpercentage ' + data.stageProgressClass);
+            cardElement.find('.mdi').removeClass().addClass(data.stageProgressIcon);
+            cardElement.find('.dFont800.dFont13').text(data.count + ' Transactions');
+        }
+    });
+          
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+            console.error("Ajax Error:", error);
+        }
+    });
+
+
+    }
 
  
 

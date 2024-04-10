@@ -50,6 +50,7 @@ Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->n
 Route::get('/task/get-Tasks', [DashboardController::class, 'getTasks'])->middleware('auth');
 Route::get('/task/get-Deals', [DashboardController::class, 'getDeals'])->middleware('auth');
 Route::get('/task/get-Contacts', [DashboardController::class, 'getContacts'])->middleware('auth');
+Route::get('/get-stages', [DashboardController::class, 'getStagesData'])->middleware('auth');
 Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
 Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 
