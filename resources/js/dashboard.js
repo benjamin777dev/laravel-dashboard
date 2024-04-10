@@ -7,3 +7,4 @@ function updateProgress(currentValue) {
 
 // Example: update the progress bar
 updateProgress(50000); // Replace with dynamic value
+   
