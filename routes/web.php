@@ -58,6 +58,7 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
+Route::get('/contacts-create', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
