@@ -51,6 +51,8 @@ class DashboardController extends Controller
         // Retrieve deals from Zoho CRM
         $deals = $db->retrieveDeals($user, $accessToken);
         $closedDeals = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"closedDeals");
+        // print_r($deals);
+        // die;
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);

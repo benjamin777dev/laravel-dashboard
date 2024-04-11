@@ -23,11 +23,14 @@
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
-                <div class="d-flex justify-content-between align-items-baseline dCalander">
+                <div class="d-flex justify-content-between align-items-center dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
-                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" onchange="calculateStageData(this);" type="text" name="daterange"
-                        value="{{ $startDate }} - {{ $endDate }}" />
-                    <i class="fa fa-calendar calendar-icon cursor-pointer" name="daterange"></i>
+                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" onchange="calculateStageData(this);" type="text"
+                        name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
+                    {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
+                    <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
+                        onclick="triggerDateRangePicker()">
+
                 </div>
 
             </div>
@@ -462,6 +465,90 @@
             </div>
             <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
+                <div class="row dtabletranstion">
+                    <div class="col-md-3">Transaction Name</div>
+                    <div class="col-md-2 ">Contact Name</div>
+                    <div class="col-md-2 ">Phone</div>
+                    <div class="col-md-3">Email</div>
+                    <div class="col-md-2 ">Closing Date</div>
+                </div>
+                @if (count($closedDeals) === 0)
+                    <div>
+                        <p class="text-center" colspan="5">No records found</p>
+                    </div>
+                @else
+                    @foreach ($closedDeals as $deal)
+                        <div class="row npAttachmentBody">
+                            <div class="col-md-3 npcommontableBodytext">
+                                <div class="dTContactName">
+                                    {{ $deal['deal_name'] }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 npcommontableBodytext">
+                                <div class="dTContactName">
+                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                    {{ $deal->userData->name }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
+                                <div class="dTContactName">
+                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
+                                    765-4321
+                                </div>
+                            </div>
+                            <div class="col-md-3 commonTextEllipsis npcommontableBodytext ">
+                                <div class="dTContactName"> <img src="{{ URL::asset('/images/mailb.svg') }}"
+                                        alt="M">{{ $deal->userData->email }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 npcommontableBodytext ">
+                                <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
+                                        alt="E">
+                                    {{ date('M d', strtotime($deal['closing_date'])) }}
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+
+
+
+                {{-- @if (count($closedDeals) === 0)
+                    <div>
+                        <p class="text-center" colspan="5">No records found</p>
+                    </div>
+                @else --}}
+                <div class="dtransactionsCardDiv">
+                    @foreach ($closedDeals as $deal)
+                        <div class="dtCardMainDiv">
+                            <div class="dtCardDateDiv">
+                                <div class="dTCardName">
+                                    {{ $deal['deal_name'] }}
+                                </div>
+                                <div class="dTCardDate"><img src="{{ URL::asset('/images/event_busy.svg') }}"
+                                        alt="E">
+                                    {{ date('M d', strtotime($deal['closing_date'])) }}
+                                </div>
+                            </div>
+                            <div class="dTCardName">
+                                <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                {{ $deal->userData->name }}
+                            </div>
+                            <div class="dTCardName">
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
+                                765-4321
+                            </div>
+                            <div class="dTCardmail"> <img src="{{ URL::asset('/images/mailb.svg') }}"
+                                    alt="M">{{ $deal->userData->email }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                {{-- @endif --}}
+
+            </div>
+            {{-- <div class="table-responsive dtranstiontable mt-3">
+                <p class="fw-bold">Transactions closing soon</p>
                 <table class="table dtabletranstion">
                     <thead>
                         <tr>
@@ -491,7 +578,7 @@
                         @endif
                     </tbody>
                 </table>
-            </div>
+            </div> --}}
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -504,12 +591,13 @@
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" id="darea" rows="4" class="dtextarea"></textarea>
-
+                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                    <div id="subject_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
@@ -557,9 +645,8 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button"
-                        onclick="document.getElementById('noteForm').reset(); document.getElementById('taskSelect').style.display='none';"
-                        class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" onclick="resetFormAndHideSelect();" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <form id="noteForm" action="{{ route('save.note') }}" method="post">
                     @csrf
@@ -586,7 +673,8 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="submit" onclick="validateForm()" class="btn btn-secondary dNoteModalmarkBtn">
+                        <button type="button" id="validate-button" onclick="validateForm()"
+                            class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
                     </div>
@@ -848,6 +936,9 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
+
+        document.getElementById("note_text").addEventListener("keyup", validateForm);
+        document.getElementById("related_to").addEventListener("change", validateForm);
     });
     // var selectedNoteIds = [];
 
@@ -881,10 +972,27 @@
         //    console.log(selectedTransation);
     }
 
+    function resetValidation() {
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById('darea').value = "";
+    }
+
+    function validateTextarea() {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
-        if (!subject) {
-            alert("Please Enter Subject");
+        if (subject.trim() === "") {
+            document.getElementById("subject_error").innerHTML = "please enter details";
         }
         var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         var whoId = window.selectedTransation
@@ -1032,7 +1140,7 @@
                             // Trigger a click event on the button to open the modal
                             button.click();
                             // alert("updated success", response)
-                            window.location.reload();
+                            // window.location.reload();
                         }
                     }
                 },
@@ -1167,6 +1275,16 @@
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }
 
+    function clearValidationMessages() {
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+    }
+
+    function resetFormAndHideSelect() {
+        document.getElementById('noteForm').reset();
+        document.getElementById('taskSelect').style.display = 'none';
+        clearValidationMessages();
+    }
     // validation function onsubmit
     function validateForm() {
         let noteText = document.getElementById("note_text").value;
@@ -1177,6 +1295,11 @@
         document.getElementById("note_text_error").innerText = "";
         document.getElementById("related_to_error").innerText = "";
 
+        // Validate note text length
+        if (noteText.trim().length > 10) {
+            document.getElementById("note_text_error").innerText = "Note text must be 10 characters or less";
+            isValid = false;
+        }
         // Validate note text
         if (noteText.trim() === "") {
             document.getElementById("note_text_error").innerText = "Note text is required";
@@ -1186,9 +1309,13 @@
         // Validate related to
         if (relatedTo === "") {
             document.getElementById("related_to_error").innerText = "Related to is required";
+            document.getElementById("taskSelect").style.display = "none";
             isValid = false;
         }
-
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button');
+            changeButton.type = "submit";
+        }
         return isValid;
     }
 
@@ -1246,7 +1373,10 @@
 
     }
 
-
+    function triggerDateRangePicker() {
+        // Trigger click event on the input element
+        $('.ddaterangepicker').click();
+    }
 
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
