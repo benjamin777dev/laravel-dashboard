@@ -155,6 +155,21 @@ class ZohoCRM
         return $response;
     }
 
+    //create contacts to zoho 
+    public function createContactData($inputJson)
+    {
+        Log::info('Creating Zoho contacts');
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apidealsurl . "Contacts", $inputJson);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+
+
     // get deals data from search
     public function getDealsData($search, $fields = 'Deal Name,Deal Owner,Amount,Stage', $page = 1, $per_page = 200)
     {

@@ -321,25 +321,25 @@ File: Main Js File
         });
     }
 
-    // function dateRangePicker() {
-    //     $('input[name="daterange"]').daterangepicker();
-    //     $('i[name="daterange"]').daterangepicker({
-    //         opens: 'left', // or 'right' depending on your preference
-    //         autoUpdateInput: false // Prevents the input value from being automatically updated
-    //     });
+    function dateRangePicker() {
+        $('input[name="daterange"]').daterangepicker();
+        // $('i[name="daterange"]').daterangepicker({
+        //     opens: 'left', // or 'right' depending on your preference
+        //     autoUpdateInput: false // Prevents the input value from being automatically updated
+        // });
     
-    //     // Event listener for date selection
-    //     $('i[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-    //         // Update input value with selected date range
-    //         $(this).prev('input[name="daterange"]').val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
-    //     });
+        // // Event listener for date selection
+        // $('i[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+        //     // Update input value with selected date range
+        //     $(this).prev('input[name="daterange"]').val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
+        // });
 
-    //     $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-    //         // Update input value with selected date range
-    //         $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
-    //     });
-    // }
-
+        $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+            // Update input value with selected date range
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
+        });
+    }
+ 
 
     function init() {
         initMetisMenu();
@@ -350,7 +350,7 @@ File: Main Js File
         initFullScreen();
         initRightSidebar();
         initDropdownMenu();
-        // dateRangePicker();
+        dateRangePicker();
         initComponents();
         initSettings();
         initLanguage();
