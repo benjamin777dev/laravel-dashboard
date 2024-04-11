@@ -23,11 +23,13 @@
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
-                <div class="d-flex justify-content-between align-items-baseline dCalander">
+                <div class="d-flex justify-content-between align-items-center dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" onchange="calculateStageData(this);" type="text" name="daterange"
                         value="{{ $startDate }} - {{ $endDate }}" />
-                    <i class="fa fa-calendar calendar-icon cursor-pointer" name="daterange"></i>
+                        {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
+                        <img class="cursor-pointer" src="{{ URL::asset('/images/calendar.svg') }}" alt="" onclick="triggerDateRangePicker()" />
+                        
                 </div>
 
             </div>
@@ -586,7 +588,7 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="submit" onclick="validateForm()" class="btn btn-secondary dNoteModalmarkBtn">
+                        <button type="button" id="validate-button" onclick="validateForm()" class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
                     </div>
@@ -1188,7 +1190,10 @@
             document.getElementById("related_to_error").innerText = "Related to is required";
             isValid = false;
         }
-
+        if(isValid){
+             let changeButton = document.getElementById('validate-button');
+             changeButton.type = "submit";
+        }
         return isValid;
     }
 
@@ -1246,7 +1251,10 @@
 
     }
 
-
+    function triggerDateRangePicker() {
+    // Trigger click event on the input element
+    $('.ddaterangepicker').click();
+}
 
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
