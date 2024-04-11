@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('zoho_deal_id')->nullable();
             $table->unsignedBigInteger('contactId')->nullable();
+            $table->unsignedBigInteger('userId')->nullable();
             $table->string('contactRole')->nullable();
             $table->timestamps();
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deal_contact');
+        Schema::dropIfExists('deal_contacts');
     }
 };
