@@ -25,7 +25,7 @@
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-center dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
-                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" onchange="calculateStageData(this);" type="text"
+                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text"
                         name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
                     {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
@@ -141,7 +141,6 @@
                                                     </div>
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                                         id="btnGroupAddon" data-bs-toggle="modal"
-                                                        onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                         data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                         <i class="fas fa-trash-alt plusicon"></i>
                                                         Delete
@@ -212,6 +211,7 @@
                                                                 </div>
                                                                 <div class="d-grid gap-2 col-5">
                                                                     <button type="button"
+                                                                    data-bs-dismiss="modal"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
                                                                             data-bs-dismiss="modal" alt="R">No, go
@@ -605,7 +605,7 @@
                             @php
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
-
+                          
                             @foreach ($getdealsTransaction as $item)
                                 @php
                                     $contactId = $item['Contact_Name']['id'];
@@ -993,6 +993,7 @@
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
             document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
         }
         var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         var whoId = window.selectedTransation
@@ -1159,6 +1160,13 @@
         if (updateids === "" && id === undefined) {
             return;
         }
+        if(updateids!==""){
+            if (confirm("Are you sure you want to delete selected task?")) {
+                  
+            }else{
+                return;
+            }
+        }
         if (id === undefined) {
             id = updateids;
         }
@@ -1191,6 +1199,7 @@
                         alert(xhr.responseText)
                     }
                 })
+                
             }
         } catch (err) {
             console.error("error", err);
@@ -1405,7 +1414,6 @@
                     if (response.hasOwnProperty(stage)) {
                         // Find the corresponding card element using data-stage attribute
                         var cardElement = $('.dCardsCols[data-stage="' + stage + '"]');
-
                         // Update data in the card
                         var data = response[stage];
                         cardElement.find('.dFont800.dFont18').text('$' + data.sum);
