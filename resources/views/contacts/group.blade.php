@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Contact Details')
+@section('title', 'Agent Commander | Contact Group Details')
 
 @section('content')
     @vite(['resources/css/custom.css'])

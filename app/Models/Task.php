@@ -49,9 +49,9 @@ class Task extends Model
         return $this->belongsTo(User::class, 'modified_by');
     }
 
-    public function what()
+    public function dealdata()
     {
-        return $this->belongsTo(Task::class, 'what_id');
+        return $this->belongsTo(Deal::class, 'what_id');
     }
 
     public function owner()

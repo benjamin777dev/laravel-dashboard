@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
+    private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
     private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
@@ -148,12 +149,26 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho contact data response: ' . print_r($response, true));
         return $response;
     }
+
+    //create contacts to zoho 
+    public function createContactData($inputJson)
+    {
+        Log::info('Creating Zoho contacts');
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apidealsurl . "Contacts", $inputJson);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+
 
     // get deals data from search
     public function getDealsData($search, $fields = 'Deal Name,Deal Owner,Amount,Stage', $page = 1, $per_page = 200)
@@ -166,7 +181,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho deals data response: ' . print_r($response, true));
@@ -176,13 +190,13 @@ class ZohoCRM
 
     public function getModuleData(){
         
-        Log::info('Getting Zoho tasks data');
+        Log::info('Getting Zoho Module data');
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'settings/modules');
 
-        Log::info('Zoho tasks data response: ' . print_r($response, true));
+        Log::info('Zoho Module data response: ' . print_r($response, true));
         return $response;
     }
 
@@ -197,7 +211,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho tasks data response: ' . print_r($response, true));
@@ -216,7 +229,6 @@ class ZohoCRM
             'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
-            'fields' => $fields,
         ]);
 
         //Log::info('Zoho Agent_Commission_Incomes data response: ' . print_r($response, true));
@@ -241,18 +253,32 @@ class ZohoCRM
         return $response;
     }
 
-    public function createNoteData($inputJson)
+    public function createNoteData($inputJson,$id,$apiName)
     {
         Log::info('Creating Zoho Task');
-        
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
-        ])->post($this->apiUrl . "Notes", $inputJson);
+        ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
-    
+        return $response;
+    }
+
+    public function updateNoteData($inputJson,$id)
+    {
+        Log::info('Creating Zoho Task');
+        // return $inputJson;
+        try{        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->put($this->apiNoteUrl . "Notes/" . $id, $inputJson);
+        }catch(\Exception $e){
+            return "somthing went wrong".$e->getMessage();
+        }
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
     }
 
@@ -277,7 +303,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . "Tasks", $inputJson);
         
-        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
     
         return $response;
     }
@@ -327,4 +353,31 @@ class ZohoCRM
     }
     
 
+    public function getDealContact($dealId)
+    {
+        Log::info('Getting Zoho Deal contact data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+        ])->get($this->apiUrl . "Deals/$dealId/Contact_Roles", [
+            'fields' => 'Email,Department,First_Name,Last_Name'
+        ]);
+
+        Log::info('Zoho Deal contact data response: ' . print_r($response, true));
+        return $response;
+    }
+
+    public function createZohoDeal($inputJson)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . 'Deals', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
 }

@@ -48,20 +48,26 @@ Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->na
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
 // get task in json
 Route::get('/task/get-Tasks', [DashboardController::class, 'getTasks'])->middleware('auth');
+Route::get('/task/get-Deals', [DashboardController::class, 'getDeals'])->middleware('auth');
+Route::get('/task/get-Contacts', [DashboardController::class, 'getContacts'])->middleware('auth');
+Route::get('/get-stages', [DashboardController::class, 'getStagesData'])->middleware('auth');
 Route::put('/update-task/{id}', [DashboardController::class, 'updateTaskaction'])->name('update.task')->middleware('auth');
 Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskaction'])->name('delete.task')->middleware('auth');
 
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
+Route::post('/create-contact', [ContactController::class, 'createContact'])->name('create.contact')->middleware('auth');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
+Route::get('/contacts-create', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
-Route::get('/pipeline-create', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
-Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');;
+Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
+Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');;
 
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);

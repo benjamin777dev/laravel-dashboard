@@ -150,12 +150,12 @@
     "src": "resources/js/app.js"
   },
   "resources/js/contacts.js": {
-    "file": "js/contacts2.js",
+    "file": "js/contacts.js",
     "isEntry": true,
     "src": "resources/js/contacts.js"
   },
   "resources/js/custom.js": {
-    "file": "js/custom.js",
+    "file": "js/custom2.js",
     "isEntry": true,
     "src": "resources/js/custom.js"
   },
@@ -165,7 +165,7 @@
     "src": "resources/js/dashboard.js"
   },
   "resources/js/pipeline.js": {
-    "file": "js/pipeline2.js",
+    "file": "js/pipeline.js",
     "isEntry": true,
     "src": "resources/js/pipeline.js"
   },

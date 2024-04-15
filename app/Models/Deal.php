@@ -10,6 +10,7 @@ class Deal extends Model
     use HasFactory;
     
     protected $fillable = [
+        'zip',
         'personal_transaction',
         'double_ended',
         'contactId',
@@ -39,7 +40,9 @@ class Deal extends Model
         'potential_gci',
         'created_by',
         'contractId',
-        'userID'
+        'userID',
+        'isDealCompleted',
+        'isInZoho'
     ];
 
     public function userData()

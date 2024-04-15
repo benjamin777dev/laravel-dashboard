@@ -6,6 +6,16 @@
 @section('content')
     @vite(['resources/css/dashboard.css'])
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <div class="container-fluid">
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 col-sm-6 text-start">
@@ -13,10 +23,14 @@
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
-                <div class="d-flex justify-content-between align-items-baseline dCalander">
-                    <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p>
-                    <i class="fa fa-calendar calendar-icon" onclick="toggleDatePicker();"></i>
-                    <!-- <input type="text" id="dateRangePicker" onclick="datePickerRange();" value="{{ $startDate }} - {{ $endDate }}" name="daterange"> -->
+                <div class="d-flex justify-content-between align-items-center dCalander">
+                    {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
+                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text"
+                        name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
+                    {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
+                    <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
+                        onclick="triggerDateRangePicker()">
+
                 </div>
 
             </div>
@@ -24,8 +38,7 @@
             <div class="col-ld-9 col-md-9 col-sm-12">
                 <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
-                        {{-- {{ dd($data) }} --}}
-                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
+                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
                                     <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
@@ -115,7 +128,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="datetime-local" id="date_val{{$task['zoho_task_id']}}"
+                                                <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
                                                     value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
                                             </td>
                                             <td>
@@ -127,7 +140,7 @@
                                                         Save
                                                     </div>
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                        id="btnGroupAddon" data-bs-toggle="modal" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                        id="btnGroupAddon" data-bs-toggle="modal"
                                                         data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                         <i class="fas fa-trash-alt plusicon"></i>
                                                         Delete
@@ -198,10 +211,11 @@
                                                                 </div>
                                                                 <div class="d-grid gap-2 col-5">
                                                                     <button type="button"
+                                                                    data-bs-dismiss="modal"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                        data-bs-dismiss="modal"
-                                                                            alt="R">No, go back
+                                                                            data-bs-dismiss="modal" alt="R">No, go
+                                                                        back
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -223,12 +237,13 @@
                         </table>
                         <div class="dprogressCards">
                             @if (count($tasks) > 0)
-                            @foreach ($tasks as $task)
+                                @foreach ($tasks as $task)
                                     <div class="dcardscheckbox">
                                         <input type="checkbox" />
                                     </div>
                                     <div class="dcardssubjectdiv">
-                                        <p class="dcardSubject" id="editableText{{ $task['id'] }}" onclick="makeEditable('{{ $task['id'] }}')">
+                                        <p class="dcardSubject" id="editableText{{ $task['id'] }}"
+                                            onclick="makeEditable('{{ $task['id'] }}')">
                                             {{ $task['subject'] ?? 'N/A' }}
                                             {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
                                         </p>
@@ -236,7 +251,8 @@
                                             <p class="dcardsTransactionText">Transaction Related</p>
                                             <select class="form-select dselect" aria-label="Transaction test"
                                                 id="dropdownMenuButton">
-                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{$task}}</option>
+                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task }}
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="dcardsdateinput">
@@ -247,7 +263,9 @@
                                     </div>
                                     <div class="dcardsbtnsDiv">
                                         <div id="update_changes" class="input-group-text dcardssavebtn"
-                                            id="btnGroupAddon" data-bs-toggle="modal"  onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
+                                            id="btnGroupAddon" data-bs-toggle="modal"
+                                            onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
+                                            data-bs-target="#saveModalId">
                                             <i class="fas fa-hdd plusicon"></i>
                                             Save
                                         </div>
@@ -259,11 +277,11 @@
                                             Delete
                                         </div>
                                     </div>
-                            @endforeach
+                                @endforeach
                             @else
-                            <div>
-                                <div class="text-center">No records found</div>
-                            </div>
+                                <div>
+                                    <div class="text-center">No records found</div>
+                                </div>
                             @endif
                         </div>
                         @if (count($tasks) > 0)
@@ -283,21 +301,45 @@
                                             </li>
                                         @else
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $tasks->previousPageUrl() }}&tab={{ request()->query('tab') }}" rel="prev">Previous</a>
+                                                <a class="page-link"
+                                                    href="{{ $tasks->previousPageUrl() }}&tab={{ request()->query('tab') }}"
+                                                    rel="prev">Previous</a>
                                             </li>
                                         @endif
-                                
+
                                         <!-- Pagination Elements -->
-                                        @foreach ($tasks->getUrlRange(1, $tasks->lastPage()) as $page => $url)
-                                            <li class="page-item {{ ($tasks->currentPage() == $page) ? 'active' : '' }}">
-                                                <a class="page-link" href="{{ $url }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
+                                        @php
+                                            $currentPage = $tasks->currentPage();
+                                            $lastPage = $tasks->lastPage();
+                                            $startPage = max($currentPage - 1, 1);
+                                            $endPage = min($currentPage + 1, $lastPage);
+                                        @endphp
+
+                                        {{-- @if ($startPage > 1)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
                                             </li>
-                                        @endforeach
-                                
+                                        @endif --}}
+
+                                        @for ($page = $startPage; $page <= $endPage; $page++)
+                                            <li class="page-item {{ $tasks->currentPage() == $page ? 'active' : '' }}">
+                                                <a class="page-link"
+                                                    href="{{ $tasks->url($page) }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
+                                            </li>
+                                        @endfor
+
+                                        {{-- @if ($endPage < $lastPage)
+                                            <li class="page-item disabled">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                        @endif --}}
+
                                         <!-- Next Page Link -->
                                         @if ($tasks->hasMorePages())
                                             <li class="page-item">
-                                                <a class="page-link" href="{{ $tasks->nextPageUrl() }}&tab={{ request()->query('tab') }}" rel="next">Next</a>
+                                                <a class="page-link"
+                                                    href="{{ $tasks->nextPageUrl() }}&tab={{ request()->query('tab') }}"
+                                                    rel="next">Next</a>
                                             </li>
                                         @else
                                             <li class="page-item disabled">
@@ -306,7 +348,8 @@
                                         @endif
                                     </ul>
                                 </nav>
-                                
+
+
                             </div>
                         @endif
 
@@ -370,9 +413,10 @@
                                             <div class="modal-header border-0">
                                                 <p class="modal-title dHeaderText">Note</p>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                    aria-label="Close"
+                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                             </div>
-                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('POST')
@@ -386,15 +430,10 @@
                                                     <div class="btn-group dmodalTaskDiv">
                                                         <select class="form-select dmodaltaskSelect" name="related_to"
                                                             aria-label="Select Transaction">
-                                                            <option value="">Please select one</option>
-                                                            @if ($note['related_to_type'] === 'Deal')
-                                                            @foreach ($getdealsTransaction as $item)
-                                                                <option value="{{ $item['Deal_Name'] }}"
-                                                                 {{ $note->dealData->id  == $item['id'] ? 'selected' : '' }}>
-                                                                    {{ print_r($item) }}
-                                                                </option>
-                                                            @endforeach
-                                                            @endif
+                                                            <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                                {{ $note['related_to_type'] }}
+                                                            </option>
+
                                                         </select>
                                                     </div>
                                                     @error('related_to')
@@ -411,14 +450,13 @@
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center gx-2">
-                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}'); editNote('{{ $note['id'] }}')"
-                                    class="form-check-input checkbox{{ $note['id'] }}"
-                                    id="checkbox{{ $loop->index + 1 }}" id="editButton{{  $note['id']  }}"
-                                    class="btn btn-primary dnotesBottomIcon" type="button"
-                                    data-bs-toggle="modal" data-bs-target="#staticBackdropnoteupdate{{$note['id'] }}" />
-                             </div>
+                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                        class="form-check-input checkbox{{ $note['id'] }}"
+                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                        type="button" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}" />
+                                </div>
                             </li>
-                        
                         @endforeach
                         {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
                             class="btn btn-danger" style="display: none;">Delete</button> --}}
@@ -426,6 +464,90 @@
                 @endif
             </div>
             <div class="table-responsive dtranstiontable mt-3">
+                <p class="fw-bold">Transactions closing soon</p>
+                <div class="row dtabletranstion">
+                    <div class="col-md-3">Transaction Name</div>
+                    <div class="col-md-2 ">Contact Name</div>
+                    <div class="col-md-2 ">Phone</div>
+                    <div class="col-md-3">Email</div>
+                    <div class="col-md-2 ">Closing Date</div>
+                </div>
+                @if (count($closedDeals) === 0)
+                    <div>
+                        <p class="text-center" colspan="5">No records found</p>
+                    </div>
+                @else
+                    @foreach ($closedDeals as $deal)
+                        <div class="row npAttachmentBody">
+                            <div class="col-md-3 npcommontableBodytext">
+                                <div class="dTContactName">
+                                    {{ $deal['deal_name'] }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 npcommontableBodytext">
+                                <div class="dTContactName">
+                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                    {{ $deal->userData->name }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
+                                <div class="dTContactName">
+                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
+                                    765-4321
+                                </div>
+                            </div>
+                            <div class="col-md-3 commonTextEllipsis npcommontableBodytext ">
+                                <div class="dTContactName"> <img src="{{ URL::asset('/images/mailb.svg') }}"
+                                        alt="M">{{ $deal->userData->email }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 npcommontableBodytext ">
+                                <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
+                                        alt="E">
+                                    {{ date('M d', strtotime($deal['closing_date'])) }}
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+
+
+
+                {{-- @if (count($closedDeals) === 0)
+                    <div>
+                        <p class="text-center" colspan="5">No records found</p>
+                    </div>
+                @else --}}
+                <div class="dtransactionsCardDiv">
+                    @foreach ($closedDeals as $deal)
+                        <div class="dtCardMainDiv">
+                            <div class="dtCardDateDiv">
+                                <div class="dTCardName">
+                                    {{ $deal['deal_name'] }}
+                                </div>
+                                <div class="dTCardDate"><img src="{{ URL::asset('/images/event_busy.svg') }}"
+                                        alt="E">
+                                    {{ date('M d', strtotime($deal['closing_date'])) }}
+                                </div>
+                            </div>
+                            <div class="dTCardName">
+                                <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                {{ $deal->userData->name }}
+                            </div>
+                            <div class="dTCardName">
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
+                                765-4321
+                            </div>
+                            <div class="dTCardmail"> <img src="{{ URL::asset('/images/mailb.svg') }}"
+                                    alt="M">{{ $deal->userData->email }}
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                {{-- @endif --}}
+
+            </div>
+            {{-- <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
                 <table class="table dtabletranstion">
                     <thead>
@@ -445,17 +567,18 @@
                         @else
                             @foreach ($closedDeals as $deal)
                                 <tr>
-                                    <td>{{ $deal['deal_name']??'N/A' }}</td>
-                                    <td>{{ $deal->contactName->first_name ??'N/A' }} {{ $deal->contactName->last_name??'' }}</td>
-                                    <td>{{ $deal->contactName->phone??'N/A' }}</td>
-                                    <td>{{ $deal->contactName->email??'N/A' }}</td>
-                                    <td>{{ $deal['closing_date']??'N/A' }}</td>
+                                    <td>{{ $deal['deal_name'] ?? 'N/A' }}</td>
+                                    <td>{{ $deal->contactName->first_name ?? 'N/A' }}
+                                        {{ $deal->contactName->last_name ?? '' }}</td>
+                                    <td>{{ $deal->contactName->phone ?? 'N/A' }}</td>
+                                    <td>{{ $deal->contactName->email ?? 'N/A' }}</td>
+                                    <td>{{ $deal['closing_date'] ?? 'N/A' }}</td>
                                 </tr>
                             @endforeach
                         @endif
                     </tbody>
                 </table>
-            </div>
+            </div> --}}
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -468,35 +591,38 @@
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" id="darea" rows="4" class="dtextarea"></textarea>
-                    
+                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                    <div id="subject_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id" name="who_id" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
+                            name="who_id" aria-label="Select Transaction">
                             @php
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
+                          
+                            @foreach ($getdealsTransaction as $item)
+                                        @php
+                                            $contactId = $item['userData']['zoho_id'];
+                                        @endphp
 
-                        @foreach ($getdealsTransaction as $item)
-                            @php
-                                $contactId = $item['Contact_Name']['id'];
-                            @endphp
+                                        {{-- Check if the current ID has been encountered before --}}
+                                        @if (!in_array($contactId, $encounteredIds))
+                                            {{-- Add the current ID to the encountered IDs array --}}
+                                            @php
+                                                $encounteredIds[] = $contactId;
+                                            @endphp
 
-                            {{-- Check if the current ID has been encountered before --}}
-                            @if (!in_array($contactId, $encounteredIds))
-                                {{-- Add the current ID to the encountered IDs array --}}
-                                @php
-                                    $encounteredIds[] = $contactId;
-                                @endphp
-                                
-                                <option value="{{ $contactId }}"
-                                    @if (old('related_to') == $item['Contact_Name']['name']) selected @endif>{{ $item['Contact_Name']['name']}}</option>
-                            @endif
-                        @endforeach
+                                            <option value="{{ $contactId }}"
+                                                @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                                {{ $item['userData']['name'] }}</option>
+                                        @endif
+                                    @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -512,7 +638,6 @@
             </div>
         </div>
     </div>
-
     {{-- Note Modal --}}
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -520,37 +645,36 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" onclick="resetFormAndHideSelect();" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-                <form action="{{ route('save.note') }}" method="post">
+                <form id="noteForm" action="{{ route('save.note') }}" method="post">
                     @csrf
                     <div class="modal-body dtaskbody">
                         <p class="ddetailsText">Details</p>
-                        <textarea name="note_text" rows="4" class="dtextarea"></textarea>
-                        @error('note_text')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
+                        <div id="note_text_error" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" onchange="moduleSelected(this,'{{$accessToken}}')" name="related_to"
-                                aria-label="Select Transaction">
+                            <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
+                                name="related_to" aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Accounts', 'Deals', 'Tasks', 'Contacts']))
-                                    <option value="{{ $item }}">{{ $item['api_name'] }}</option>
-                                @endif
-                            @endforeach
+                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                    @endif
+                                @endforeach
                             </select>
-                            <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent" aria-label="Select Transaction" style="display: none;">
+                            <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
+                                aria-label="Select Transaction" style="display: none;">
                                 <option value="">Please Select one</option>
                             </select>
                         </div>
-                        @error('related_to')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                        <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                        <button type="button" id="validate-button" onclick="validateForm()"
+                            class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
                     </div>
@@ -767,6 +891,7 @@
 
 @endsection
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -811,6 +936,9 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
+
+        document.getElementById("note_text").addEventListener("keyup", validateForm);
+        document.getElementById("related_to").addEventListener("change", validateForm);
     });
     // var selectedNoteIds = [];
 
@@ -835,37 +963,56 @@
         });
 
     }
-  window.selectedTransation;
-  // Get the select element
+    window.selectedTransation;
+    // Get the select element
 
-  function selectedElement(element){
-    var selectedValue = element.value;
-       window.selectedTransation =  selectedValue;
-    //    console.log(selectedTransation);
-   }
+    function selectedElement(element) {
+        var selectedValue = element.value;
+        window.selectedTransation = selectedValue;
+        //    console.log(selectedTransation);
+    }
+
+    function resetValidation() {
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById('darea').value = "";
+    }
+
+    function validateTextarea() {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
-        if(!subject){
-            alert("Please Enter Subject");
+        if (subject.trim() === "") {
+            document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
         }
         var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         var whoId = window.selectedTransation
-        if(whoId===undefined){
+        if (whoId === undefined) {
             whoId = whoSelectoneid
         }
         var dueDate = document.getElementsByName("due_date")[0].value;
         var formData = {
-        "data": [{
-            "Subject": subject,
-            "Who_Id": {
-                "id": whoId
-            },
-            "Status": "In Progress",
-            "Due_Date": dueDate,
-            // "Priority": "High",
-        }],
-        "_token": '{{ csrf_token() }}'
-    };
+            "data": [{
+                "Subject": subject,
+                "Who_Id": {
+                    "id": whoId
+                },
+                "Status": "In Progress",
+                "Due_Date": dueDate,
+                // "Priority": "High",
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
 
         $.ajax({
             url: '{{ route('create.task') }}',
@@ -878,10 +1025,10 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 if (response?.data && response.data[0]?.message) {
-            // Convert message to uppercase and then display
-                const upperCaseMessage = response.data[0].message.toUpperCase();
-                alert(upperCaseMessage);
-                window.location.reload();
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    alert(upperCaseMessage);
+                    window.location.reload();
                 } else {
                     alert("Response or message not found");
                 }
@@ -913,27 +1060,28 @@
 
     function convertDateTime(inputDateTime) {
 
-    // Parse the input date string
-    let dateObj = new Date(inputDateTime);
+        // Parse the input date string
+        let dateObj = new Date(inputDateTime);
 
-    // Format the date components
-    let year = dateObj.getFullYear();
-    let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
-    let day = dateObj.getDate().toString().padStart(2, '0');
-    let hours = dateObj.getHours().toString().padStart(2, '0');
-    let minutes = dateObj.getMinutes().toString().padStart(2, '0');
-    let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+        // Format the date components
+        let year = dateObj.getFullYear();
+        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+        let day = dateObj.getDate().toString().padStart(2, '0');
+        let hours = dateObj.getHours().toString().padStart(2, '0');
+        let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+        let seconds = dateObj.getSeconds().toString().padStart(2, '0');
 
-    // Format the timezone offset
-    let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
-    let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
-    let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+        // Format the timezone offset
+        let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+        let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+        let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
 
-    // Construct the formatted datetime string
-    let formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+        // Construct the formatted datetime string
+        let formattedDateTime =
+            `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
 
-    return formattedDateTime;
-}
+        return formattedDateTime;
+    }
 
     function updateTask(id, indexid) {
         // console.log(id, indexid, 'chekcdhfsjkdh')
@@ -943,21 +1091,21 @@
             }
         });
         var inputElement = document.getElementById('editableText' + indexid);
-        var taskDate = document.getElementById('date_val'+id);
+        var taskDate = document.getElementById('date_val' + id);
         let formattedDateTime = convertDateTime(taskDate.value);
-// console.log(formattedDateTime);
-//         alert(formattedDateTime);
-//         return;
+        // console.log(formattedDateTime);
+        //         alert(formattedDateTime);
+        //         return;
         if (!inputElement) {
             console.error("Input element not found for indexid:", indexid);
             return;
         }
         var elementValue = inputElement.textContent;
         // return;
-         if(elementValue.trim()===""){
+        if (elementValue.trim() === "") {
             // console.log("chkockdsjkfjksdh")
             return alert("Please enter subject value first");
-         }
+        }
         // console.log("inputElementval",elementValue!==undefined,elementValue)
         if (elementValue !== undefined) { // return;
             var formData = {
@@ -982,18 +1130,18 @@
                         // console.log(response?.data[0], 'sdfjkshdjkfshd')
                         // Get the button element by its ID
                         if (!document.getElementById('saveModalId').classList.contains('show')) {
-                        var button = document.getElementById('update_changes');
-                        var update_message = document.getElementById('updated_message');
-                        // Get the modal target element by its ID
-                        var modalTarget = document.getElementById('saveModalId');
-                        console.log(modalTarget, 'modalTarget')
-                        // Set the data-bs-target attribute of the button to the ID of the modal
-                        button.setAttribute('data-bs-target', '#' + modalTarget.id);
-                        update_message.textContent = response?.data[0]?.message;
-                        // Trigger a click event on the button to open the modal
-                        button.click();
-                        // alert("updated success", response)
-                        window.location.reload();
+                            var button = document.getElementById('update_changes');
+                            var update_message = document.getElementById('updated_message');
+                            // Get the modal target element by its ID
+                            var modalTarget = document.getElementById('saveModalId');
+                            console.log(modalTarget, 'modalTarget')
+                            // Set the data-bs-target attribute of the button to the ID of the modal
+                            button.setAttribute('data-bs-target', '#' + modalTarget.id);
+                            update_message.textContent = response?.data[0]?.message;
+                            // Trigger a click event on the button to open the modal
+                            button.click();
+                            // alert("updated success", response)
+                            // window.location.reload();
                         }
                     }
                 },
@@ -1011,6 +1159,13 @@
         let updateids = removeAllSelected();
         if (updateids === "" && id === undefined) {
             return;
+        }
+        if(updateids!==""){
+            if (confirm("Are you sure you want to delete selected task?")) {
+                  
+            }else{
+                return;
+            }
         }
         if (id === undefined) {
             id = updateids;
@@ -1044,6 +1199,7 @@
                         alert(xhr.responseText)
                     }
                 })
+                
             }
         } catch (err) {
             console.error("error", err);
@@ -1128,50 +1284,156 @@
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }
 
-    function moduleSelected(selectedModule,accessToken){
+    function clearValidationMessages() {
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+    }
+
+    function resetFormAndHideSelect() {
+        document.getElementById('noteForm').reset();
+        document.getElementById('taskSelect').style.display = 'none';
+        clearValidationMessages();
+    }
+    // validation function onsubmit
+    function validateForm() {
+        let noteText = document.getElementById("note_text").value;
+        let relatedTo = document.getElementById("related_to").value;
+        let isValid = true;
+
+        // Reset errors
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+
+        // Validate note text length
+        if (noteText.trim().length > 10) {
+            document.getElementById("note_text_error").innerText = "Note text must be 10 characters or less";
+            isValid = false;
+        }
+        // Validate note text
+        if (noteText.trim() === "") {
+            document.getElementById("note_text_error").innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error").innerText = "Related to is required";
+            document.getElementById("taskSelect").style.display = "none";
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button');
+            changeButton.type = "submit";
+        }
+        return isValid;
+    }
+
+
+
+    function moduleSelected(selectedModule, accessToken) {
         // console.log(accessToken,'accessToken')
-    var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-    var selectedText = selectedOption.text;
-    $.ajaxSetup({
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    $.ajax({
-        url: '/task/get-'+selectedText,
-        method: "GET",
-        dataType: "json",
-      
-        success: function(response) {
-            // Handle successful response
-            console.log("API Response:", response);
-            var tasks = response;
-            console.log(tasks.length,'lengtj')
-            // Assuming you have another select element with id 'taskSelect'
-            var taskSelect = $('#taskSelect');
-            // Clear existing options
-            taskSelect.empty();
-            // Populate select options with tasks
-            $.each(tasks, function(index, task) {
-                taskSelect.append($('<option>', {
-                    value: task.zoho_task_id,
-                    text: task.subject
-                }));
-            });
+        $.ajax({
+            url: '/task/get-' + selectedText,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect');
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name + ' ' + task?.last_name
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
 
-            taskSelect.show();
-            // Do whatever you want with the response data here
-        },
-        error: function(xhr, status, error) {
-            // Handle error
-            console.error("Ajax Error:", error);
-        }
-    });
-                 
     }
 
+    function triggerDateRangePicker() {
+        // Trigger click event on the input element
+        $('.ddaterangepicker').click();
+    }
 
- 
+    function calculateStageData(e) {
+        var dateRangeString = e.value; // Assuming e.value contains the date range string
+        var dates = dateRangeString.split(' - ');
+        var startDate = dates[0];
+        var endDate = dates[1];
 
+        // Convert start date to "year-month-day" format
+        // var startDateComponents = startDate.split('-');
+        // var endDateComponents = endDate.split('-');
+        // var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
+        // var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: `get-stages?start_date=${startDate}&end_date=${endDate}`,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Handle successful response
+                console.log(response,'response is here');
+                Object.keys(response).forEach(function(stage) {
+                    if (response.hasOwnProperty(stage)) {
+                        // Find the corresponding card element using data-stage attribute
+                        var cardElement = $('.dCardsCols[data-stage="' + stage + '"]');
+                        // Update data in the card
+                        var data = response[stage];
+                        cardElement.find('.dFont800.dFont18').text('$' + data.sum);
+                        cardElement.find('.dpercentage').text(data.stageProgressExpr + data
+                            .stageProgress + '%');
+                        cardElement.find('.dpercentage').removeClass().addClass('dpercentage ' +
+                            data.stageProgressClass);
+                        cardElement.find('.mdi').removeClass().addClass(data.stageProgressIcon);
+                        cardElement.find('.dFont800.dFont13').text(data.count + ' Transactions');
+                    }
+                });
+
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+
+    }
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>

@@ -8,7 +8,6 @@ use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
 use App\Services\DB;
 
-
 class SaveTasksToDB extends Command
 {
     /**
@@ -53,6 +52,7 @@ class SaveTasksToDB extends Command
                  // Retrieve contacts in pages
                 while ($hasMorePages) {
                     $response = $zoho->getTasksData($criteria, 'Subject,Owner,Status,Due_Date,id,Who_Id,Closed_Time,Created_By,Description,Due_Date,Priority,Contact_Name,Created_Time', $page, 200);
+                    
                     if (!$response->successful()) {
                         Log::error("Error retrieving tasks: " . $response->body());
                         // Handle unsuccessful response

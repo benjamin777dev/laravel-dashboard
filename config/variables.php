@@ -1,4 +1,6 @@
 <?php
+
 return [
-    'zohoModules'=>['Contacts','Deals'],
+    'dealName'=>'Untitled',
+    'contactId'=>"5141697000013347001"
 ];

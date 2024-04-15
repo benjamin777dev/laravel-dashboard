@@ -41,7 +41,7 @@ class DashboardController extends Controller
         Log::info("Got Access Token: $accessToken");
 
         //Get Date Range
-        $startDate = Carbon::now()->subDays(7)->format('d.m.Y'); // 7 days ago
+        $startDate = Carbon::now()->subYear()->format('d.m.Y'); // 1 year
         $endDate = Carbon::now()->format('d.m.Y'); // Current date
 
         // Set default goal or use user-defined goal
@@ -61,9 +61,13 @@ class DashboardController extends Controller
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
-            $filteredDeals = $deals->filter(function ($deal) use ($stage) {
-                return $deal['stage'] === $stage && $this->masterFilter($deal);
+        // print('<pre>');
+        // print_r(json_encode($deals));
+        // die;
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal,$startDate,$endDate) {
+            $filteredDeals = $deals->filter(function ($deal) use ($stage,$startDate,$endDate) {
+               $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($startDate) && $closingDate->lte($endDate);
             });
             $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
             $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
@@ -82,11 +86,10 @@ class DashboardController extends Controller
                 ],
             ];
         });
-
+   
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
         });
-
         // Calculate Current Pipeline Value
         $currentPipelineValue = $this->formatNumber($cpv);
 
@@ -167,12 +170,12 @@ class DashboardController extends Controller
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $db->retrieveNotes($user,$accessToken);
-         $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
-         $retrieveModuleData = $this->retrieveModuleDataZoho($user,$accessToken);
+         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
+         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print($notes);
+        //  print_r(json_encode($stageData));
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
@@ -202,9 +205,7 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-        // print("<pre>");
-        // print_r($tasks);
-        // die;
+        
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -255,7 +256,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful aci fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $aciData = collect($responseData['data'] ?? []);
                 $allACI = $allACI->concat($aciData);
 
@@ -300,7 +300,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful notes fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $allNotes = collect($responseData['data'] ?? []);
                 $allNotes = $allNotes->concat($allNotes);
 
@@ -424,7 +423,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful contact fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $contacts = collect($responseData['data'] ?? []);
                 $allContacts = $allContacts->concat($contacts);
 
@@ -449,6 +447,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
+        Log::info("Access Token,$accessToken");
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
 
@@ -457,6 +456,7 @@ class DashboardController extends Controller
         $whoid = $data['Who_Id']['id'];
         $status = $data['Status'];
         $Due_Date = $data['Due_Date'];
+        $What_Id = $data['What_Id']['id'];
         
 
 
@@ -472,7 +472,7 @@ class DashboardController extends Controller
 
 
                 if (!$response->successful()) {
-                     return "error somthing".$response;
+                     return "error something".$response;
                 }
                 $responseArray = json_decode($response, true);
                 $data = $responseArray['data'][0]['details']; 
@@ -488,6 +488,7 @@ class DashboardController extends Controller
                     'status'=>$status ?? "Not Started",
                     'who_id'=>$whoid ?? null,
                     'due_date'=>$Due_Date ?? null,
+                    'what_id'=>$What_Id ?? null,
                 ]);
         
                 return response()->json($responseArray, 201);
@@ -604,7 +605,6 @@ class DashboardController extends Controller
                 Log::info("Successful deal fetch... Page: " . $page);
                 $responseData = $response->json();
 
-                //Log::info("Response data: ". print_r($responseData, true));
                 $allDealsdata = collect($responseData['data'] ?? []);
                 $allDeals = $allDeals->concat($allDealsdata);
 
@@ -616,38 +616,14 @@ class DashboardController extends Controller
             return $allDeals;
         }
         return $allDeals;
-        echo "<pre>";
-        // print_r($responseData);
-        print_r($allDeals);
-        die;
+        
 
         Log::info("Total deals records: ". $allDeals->count());
         Log::info("deals Records: ", $allDeals->toArray());
         return $allDeals;
     }
 
-    public function retrieveModuleDataZoho(User $user, $accessToken){
-        try {
-            // Validate user token (pseudo-code, replace it with your actual validation logic)
-            if (!$accessToken) {
-                throw new \Exception("Invalid user token");
-            }
-            
-            // Retrieve module data from MySQL
-            $allModules = Module::all(); // Assuming you want to retrieve all modules
 
-            // Log the total number of module records
-            Log::info("Total Module records: " . $allModules->count());
-            
-            // Log module records
-            Log::info("Module Records: ", $allModules->toArray());
-            
-            return $allModules; // Return the fetched module data
-        } catch (\Exception $e) {
-            Log::error("Error retrieving module data: " . $e->getMessage());
-            return []; // Return an empty array or handle the error as per your application's logic
-        }
-    }
 
     public function getTasks(Request $request)
     { 
@@ -666,9 +642,84 @@ class DashboardController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
+    public function getDeals(Request $request)
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        // Pass the search parameters to the retrieveTasks method
+        $deals = $db->retreiveDealsJson($user, $accessToken);
+        
+        return response()->json($deals);
+        // return view('pipeline.index', compact('deals'));
+    }
+
+    public function getContacts(Request $request)
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        // Pass the search parameters to the retrieveTasks method
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        
+        return response()->json($contacts);
+        // return view('pipeline.index', compact('deals'));
+    }
+
+    public function getStagesData(){
+        $start_date =  request()->query('start_date') ?? ''; // Start date of the range
+        $end_date = request()->query('end_date') ?? '';   // End date of the range
+       
+        $user = auth()->user();
+        $db = new DB();
+        $accessToken = $user->getAccessToken();
+        if (!$user) {
+            return redirect('/login');
+        }
+           // Set default goal or use user-defined goal
+           $goal = $user->goal ?? 250000;
+           Log::info("Goal: $goal");
+   
+           // Retrieve deals from Zoho CRM
+           $deals = $db->retrieveDeals($user, $accessToken);
+       $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
+
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {
+        $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
+            $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
+        });
+        $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+        $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+        $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
+        $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
+        return [
+            $stage => [
+                'count' => $this->formatNumber($filteredDeals->count()),
+                'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
+                'asum' => $filteredDeals->sum('pipeline1'),
+                'stageProgress' => $stageProgress,
+                "stageProgressClass" => $stageProgressClass,
+                'stageProgressIcon' => $stageProgressIcon,
+                'stageProgressExpr' => $stageProgressExpr
+            ],
+        ];
+        });
+        Log::info("STAGE DATA: $stageData");
+        return response()->json($stageData);
+
+    }
+
     public function saveNote(Request $request)
     {
-
         $relatedToObject = json_decode($request->related_to);
         // Validate the incoming request data
         $validatedData1 = validator()->make((array) $relatedToObject, [
@@ -704,30 +755,34 @@ class DashboardController extends Controller
                 ]
             ]
         ];
-
-        // print_r($jsonData);
-        // die;
-
+        $recordId = $validatedData2['related_to_parent'];
+        $apiName = $validatedData1['api_name'];
         try {
-         $response = $zoho->createNoteData($jsonData);
+        $response = $zoho->createNoteData($jsonData,$recordId,$apiName);
+
         if (!$response->successful()) {
+            Log::error("Error creating notes:");
             return "error somthing".$response;
         }
-
+        $data = json_decode($response, true);
+        $zoho_node_id = $data['data'][0]['details']['id'];
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
-        $note->deal_id = $validatedData['deal_id'] ?? Str::random(10);
-        $note->related_to = $validatedData['zoho_module_id'];
-        $note->related_to_parent = $validatedData['related_to_parent'];
-        $note->note_text = $validatedData['note_text'];
-
+        $note->related_to_module_id = $validatedData1['zoho_module_id'];
+        $note->zoho_note_id = $zoho_node_id;
+        $note->owner = $user->id;
+        $note->related_to_type = $validatedData1['api_name'];
+        $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
+        $note->note_content = $validatedData2['note_text'];
+        
         // Save the Note to the database
         $note->save();
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Note saved successfully!');
      } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
+         Log::error("Error creating notes:new " . $e->getMessage());
+         return redirect()->back()->with('error', 'Note Not saved successfully!');
             return "somthing went wrong".$e->getMessage();
         }
     }
@@ -778,17 +833,43 @@ class DashboardController extends Controller
         'related_to.required' => 'The Related to field is required.',
         'note_text.required' => 'The Note field is required.',
     ]);
-
+    $user = auth()->user();
+    if (!$user) {
+        return redirect('/login');
+    }
+    $accessToken = $user->getAccessToken();
+    $zoho = new ZohoCRM();
+    $zoho->access_token = $accessToken;
+    try {
+      $jsonData =   [
+            "data"=>[
+               [
+                    // "Note_Title" => "Contacted",
+                    "Note_Content"=> $validatedData['note_text']
+               ]
+            ]
+               ];
+        $response = $zoho->updateNoteData($jsonData,$id);
+        if (!$response->successful()) {
+            Log::error("Error creating notes:");
+            return "error somthing".$response;
+        }
     // Find the Note instance by its ID
-    $note = Note::findOrFail($id);
+    $note = Note::where('zoho_note_id', $id)->firstOrFail();
+
 
     // Update the Note attributes
-    $note->related_to = $validatedData['related_to'];
-    $note->note_text = $validatedData['note_text'];
+    // $note->related_to = $validatedData['related_to'];
+    $note->note_content = $validatedData['note_text'];
 
     // Save the updated Note to the database
     $note->save();
-
+    return redirect()->back()->with('success', 'Note Updated successfully!');
+    }catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Note Not updated successfully!');
+            Log::error("Error creating notes: " . $e->getMessage());
+            return "somthing went wrong".$e->getMessage();
+        }
     // Redirect back with a success message
     return redirect()->back()->with('success', 'Note updated successfully!');
 }

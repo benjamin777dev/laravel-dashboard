@@ -4,6 +4,16 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
     <div class="container">
         <div class="commonFlex">
             <p class="ncText">Create new contact</p>
@@ -276,28 +286,31 @@
             </div>
 
         </div>
-        <div class="row">
+        <form class="row" action="{{ route('create.contact') }}" method="POST">
+            @csrf
+            @method('POST')
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
                 <p class="npinfoText">Internal Information</p>
-                <form class="row g-3">
+                <div class="row g-3">
                     <div>
                         <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
-                            <option selected disabled value=""></option>
-                            <option>...</option>
+                        <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04" >
+                            {{-- <option selected disabled value=""></option> --}}
+                            <option value="{{ json_encode(['id'=> $user_id,'Full_Name'=> $name])}}" selected>{{ 'CHR Technology' }}</option>
+
                         </select>
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
-                        <input type="date" class="form-control npinputinfo" id="validationDefault02" required>
+                        <input type="date" name="last_called" class="form-control npinputinfo" id="validationDefault02" >
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
-                        <input type="date" class="form-control npinputinfo" id="validationDefault02" required>
+                        <input type="date" name="last_emailed" class="form-control npinputinfo" id="validationDefault02" >
                     </div>
 
-                </form>
+                </div>
             </div>
             <div class="col-md-6 col-sm-12"
                 style="border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
@@ -355,158 +368,163 @@
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
                 <p class="npinfoText">Contact Details</p>
-                <form class="row g-3">
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">First Name</label>
-                        <input type="text" placeholder="Enter First name" class="form-control npinputinfo"
-                            id="validationDefault01" required>
+                        <input type="text" name="first_name" placeholder="Enter First name" class="form-control npinputinfo"
+                            id="validationDefault01" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
-                        <input type="text" placeholder="Enter Last name" class="form-control npinputinfo"
-                            id="validationDefault02" required>
+                        <input type="text" name="last_name" onkeyup="showValidation(this)" placeholder="Enter Last name" class="form-control npinputinfo"
+                            id="last_name">
+                            <div id="last_name_error_message" class="text-danger"></div>
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Mobile</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Enter Mobile Number"
-                            id="validationDefault03" required>
+                        <input type="text" name="mobile" class="form-control npinputinfo" placeholder="Enter Mobile Number"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Phone</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Enter Phone Number"
-                            id="validationDefault03" required>
+                        <input type="text" name="phone" class="form-control npinputinfo" placeholder="Enter Phone Number"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Enter Email"
-                            id="validationDefault03" required>
+                        <input type="text" name="email" class="form-control npinputinfo" placeholder="Enter Email"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Market Area</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Downtown Chicago"
-                            id="validationDefault03" required>
+                        <input type="text" name="market_area" class="form-control npinputinfo" placeholder="Downtown Chicago"
+                            id="validationDefault03" >
                     </div>
-                </form>
+                </div>
             </div>
             {{-- Contact Preferences --}}
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
                 <p class="npinfoText">Contact Preferences</p>
-                <form class="row g-3">
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Relationship Type</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <select name="relationship_type" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
-                            <option>...</option>
+                            <option value="primary">Primary</option>
+                            <option value="secondary">Secondory</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Referred By</label>
-                        <input type="text" placeholder="Louis Rinmbaud" class="form-control npinputinfo"
-                            id="validationDefault02" required>
+                        <input name="reffered_by" type="text" placeholder="Louis Rinmbaud" class="form-control npinputinfo"
+                            id="validationDefault02" >
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Lead Source</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Peter Hunt"
-                            id="validationDefault03" required>
+                        <input name="lead_source" type="text" class="form-control npinputinfo" placeholder="Peter Hunt"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Lead source details</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Raoul P Associate"
-                            id="validationDefault03" required>
+                        <input type="text" name="lead_source_detail" class="form-control npinputinfo" placeholder="Raoul P Associate"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Envelope Salutation</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Mr."
-                            id="validationDefault03" required>
+                        <input type="text" name="envelope_salutation" class="form-control npinputinfo" placeholder="Mr."
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Mary Long"
-                            id="validationDefault03" required>
+                        <input type="text" name="spouse_partner" class="form-control npinputinfo" placeholder="Mary Long"
+                            id="validationDefault03" >
                     </div>
-                </form>
+                </div>
             </div>
             {{-- Business Information --}}
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
                 <p class="npinfoText">Business Information</p>
-                <form class="row g-3">
+                <div class="row g-3">
                     <div>
                         <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
-                        <input type="text" placeholder="Burn Co." class="form-control npinputinfo"
-                            id="validationDefault02" required>
+                        <input type="text" name="business_name" placeholder="Burn Co." class="form-control npinputinfo"
+                            id="validationDefault02" >
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select>
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Business Information</label>
-                        <textarea type="text" rows="4" class="form-control nctextarea" id="validationDefault02" required></textarea>
+                        <textarea name="business_information" type="text" rows="4" class="form-control nctextarea" id="validationDefault02" ></textarea>
                     </div>
 
-                </form>
+                </div>
             </div>
 
             {{-- Primary Contact’s Address --}}
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
                 <p class="npinfoText">Primary Contact’s Address</p>
-                <form class="row g-3">
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="22 Smith St."
-                            id="validationDefault03" required>
+                        <input type="text" name="address_line1" class="form-control npinputinfo" placeholder="22 Smith St."
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Address line 2</label>
-                        <input type="text" placeholder="Dane Sq." class="form-control npinputinfo"
-                            id="validationDefault02" required>
+                        <input type="text" name="address_line2"  placeholder="Dane Sq." class="form-control npinputinfo"
+                            id="validationDefault02" >
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">City</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Enter City"
-                            id="validationDefault03" required>
+                        <input type="text" name="city"  class="form-control npinputinfo" placeholder="Enter City"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">State</label>
-                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                        <select name="state" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">ZIP code</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Mr."
-                            id="validationDefault03" required>
+                        <input type="text" name="zip_code"  class="form-control npinputinfo" placeholder="Mr."
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Mary Long"
-                            id="validationDefault03" required>
+                        <input type="text" name="email_primary"  class="form-control npinputinfo" placeholder="Mary Long"
+                            id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <input class="form-check-input" name="primary_address" type="checkbox" value="false" id="primary_address">
                         <label class="form-check-label nplabelText" for="flexCheckChecked">
                             Primary Address
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <input class="form-check-input" name="secondry_address" id="secondry_address" type="checkbox" value="false" id="flexCheckChecked">
                         <label class="form-check-label nplabelText" for="flexCheckChecked">
                             Secondary Address
                         </label>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+            <div>
+                <button class="submit_button btn btn-primary" id="submit_button" type="button" onclick="validateContactForm()">Submit</button>
+            </div>
+        </form>
     </div>
     {{-- <div class="container">
         <h1>Contact Details: {{ $contactDetails['Full_Name'] ?? 'N/A' }}</h1>
@@ -528,3 +546,48 @@
         </div>
     </div> --}}
 @endsection
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+        $('#primary_address').change(function() {
+    if($(this).is(':checked')) {
+        $(this).val(true);
+    } else {
+        $(this).val(false);
+    }
+});
+
+// Secondary Address Checkbox
+$('#secondry_address').change(function() {
+    if($(this).is(':checked')) {
+        $(this).val(true);
+    } else {
+        $(this).val(false);
+    }
+});
+    })
+
+    function showValidation(e){
+    let lastName = e.value;
+    let regex = /^[a-zA-Z ]{1,20}$/; // Regular expression to match only letters and spaces up to 20 characters
+
+    if (lastName.trim() === "" || !regex.test(lastName)) {
+        $("#last_name_error_message").text("Last name must be between 1 and 20 characters long and contain only letters and spaces").show();
+    } else {
+        $("#last_name_error_message").hide(); // Hide the error message if the last name is valid
+    }
+    }
+  function validateContactForm(){
+    let last_name = $("#last_name").val(); 
+    // let regex = /^[a-zA-Z ]{1,20}$/;
+    if (last_name.trim() === "") {
+    $("#last_name_error_message").text("Last name cannot be empty").show();
+    return false;
+    } else {
+        $("#last_name_error_message").hide(); // Hide the error message if the last name is not empty
+    }
+    let submitbtn = $("#submit_button");
+    submitbtn.attr("type", "submit");
+
+  }
+</script>

@@ -40,8 +40,8 @@
 
         <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-                <span key="t-megamenu">@lang('Mega_Menu')</span>
-                <i class="mdi mdi-chevron-down"></i>
+                {{-- <span key="t-megamenu">@lang('Mega_Menu')</span> --}}
+                {{-- <i class="mdi mdi-chevron-down"></i> --}}
             </button>
             <div class="dropdown-menu dropdown-megamenu">
                 <div class="row">
@@ -193,58 +193,10 @@
         </div>
 
         <div class="dropdown d-inline-block">
-            <button type="button" class="btn header-item waves-effect"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @switch(Session::get('lang'))
-                    @case('ru')
-                        <img src="{{ URL::asset('build/images/flags/russia.jpg')}}" alt="Header Language" height="16">
-                    @break
-                    @case('it')
-                        <img src="{{ URL::asset('build/images/flags/italy.jpg')}}" alt="Header Language" height="16">
-                    @break
-                    @case('gr')
-                        <img src="{{ URL::asset('build/images/flags/germany.jpg')}}" alt="Header Language" height="16">
-                    @break
-                    @case('sp')
-                        <img src="{{ URL::asset('build/images/flags/spain.jpg')}}" alt="Header Language" height="16">
-                    @break
-                    @default
-                        <img src="{{ URL::asset('build/images/flags/us.jpg')}}" alt="Header Language" height="16">
-                @endswitch
-            </button>
-            <div class="dropdown-menu dropdown-menu-end">
 
-                <!-- item-->
-                <a href="{{ url('index/en') }}" class="dropdown-item notify-item language" data-lang="eng">
-                    <img src="{{ URL::asset ('build/images/flags/us.jpg') }}" alt="user-image" class="me-1" height="12"> <span class="align-middle">English</span>
-                </a>
-                <!-- item-->
-                <a href="{{ url('index/sp') }}" class="dropdown-item notify-item language" data-lang="sp">
-                    <img src="{{ URL::asset ('build/images/flags/spain.jpg') }}" alt="user-image" class="me-1" height="12"> <span class="align-middle">Spanish</span>
-                </a>
-
-                <!-- item-->
-                <a href="{{ url('index/gr') }}" class="dropdown-item notify-item language" data-lang="gr">
-                    <img src="{{ URL::asset ('build/images/flags/germany.jpg') }}" alt="user-image" class="me-1" height="12"> <span class="align-middle">German</span>
-                </a>
-
-                <!-- item-->
-                <a href="{{ url('index/it') }}" class="dropdown-item notify-item language" data-lang="it">
-                    <img src="{{ URL::asset ('build/images/flags/italy.jpg') }}" alt="user-image" class="me-1" height="12"> <span class="align-middle">Italian</span>
-                </a>
-
-                <!-- item-->
-                <a href="{{ url('index/ru') }}" class="dropdown-item notify-item language" data-lang="ru">
-                    <img src="{{ URL::asset ('build/images/flags/russia.jpg') }}" alt="user-image" class="me-1" height="12"> <span class="align-middle">Russian</span>
-                </a>
-            </div>
         </div>
 
         <div class="dropdown d-none d-lg-inline-block ms-1">
-            <button type="button" class="btn header-item noti-icon waves-effect"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="bx bx-customize"></i>
-            </button>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <div class="px-lg-2">
                     <div class="row g-0">
@@ -292,9 +244,6 @@
             </div>
         </div>
         <div class="dropdown d-none d-lg-inline-block ms-1">
-            <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
-                <i class="bx bx-fullscreen"></i>
-            </button>
         </div>
         <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
@@ -323,15 +272,16 @@
                                 </span>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mt-0 mb-1" key="t-your-order">@lang('Your_order_is_placed')</h6>
-                                <div class="font-size-12 text-muted">
+                                <h6>Notification Not Found..</h6>
+                                {{-- <h6 class="mt-0 mb-1" key="t-your-order">@lang('empty notificaton')</h6> --}}
+                                {{-- <div class="font-size-12 text-muted">
                                     <p class="mb-1" key="t-grammer">@lang('If_several_languages_coalesce_the_grammar')</p>
                                     <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">@lang('3_min_ago')</span></p>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </a>
-                    <a href="" class="text-reset notification-item">
+                    {{-- <a href="" class="text-reset notification-item">
                         <div class="d-flex">
                             <img src="{{ URL::asset ('build/images/users/avatar-3.jpg') }}"
                                 class="me-3 rounded-circle avatar-xs" alt="user-pic">
@@ -343,8 +293,8 @@
                                 </div>
                             </div>
                         </div>
-                    </a>
-                    <a href="" class="text-reset notification-item">
+                    </a> --}}
+                    {{-- <a href="" class="text-reset notification-item">
                         <div class="d-flex">
                             <div class="avatar-xs me-3">
                                 <span class="avatar-title bg-success rounded-circle font-size-16">
@@ -373,7 +323,7 @@
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="p-2 border-top d-grid">
                     <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
