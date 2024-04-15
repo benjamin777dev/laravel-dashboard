@@ -6,11 +6,12 @@
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal"
+            <a href = "{{ route('contacts.create') }}"><div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal"
                 data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
                 </i>
-                <a href = "{{ route('contacts.create') }}">New Contact</a>
+                New Contact
             </div>
+            </a>
         </div>
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
@@ -43,11 +44,11 @@
                                                 ? '#44CE1B'
                                                 : ($contact['ABCD'] === 'B'
                                                     ? // '#F7E379' ||
-                                                    '#E51F1F'
+                                                    '#F7E379'
                                                     : ($contact['ABCD'] === 'C'
-                                                        ? '#477ABB'
+                                                        ? '#FA940A'
                                                         : ($contact['ABCD'] === 'D'
-                                                            ? '#74788D'
+                                                            ? '#E51F1F'
                                                             : '#DBEDE7')))) }};">
                                         {{ $contact['ABCD'] ?? '-' }}</p>
                                 </div>

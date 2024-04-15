@@ -240,8 +240,6 @@
                 @if ($notesInfo->isEmpty())
                     <div class="noNotesFound">
                         <p class="text-center notesAsignedText">No notes assigned</p>
-                        <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
-
                     </div>
                 @else
                     <ul class="list-group dnotesUl">
@@ -459,9 +457,8 @@
                 <div class="col-md-4 ">Email</div>
             </div>
             @if ($dealContacts->isEmpty())
-                    <div class="noNotesFound">
+                    <div >
                         <p class="text-center notesAsignedText">No contacts assigned</p>
-                        <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
                     </div>
                 @else
@@ -474,13 +471,7 @@
                             </div>
                         @endforeach
                 @endif
-            @if ($dealContacts->isEmpty())
-            {{-- <div class="noNotesFound">
-                        <p class="text-center notesAsignedText">No contacts assigned</p>
-                        <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
-
-                    </div> --}}
-            @else
+           
                 @foreach ($dealContacts as $dealContact)
                     <div class="npRoleCard vprolecard">
                         <div>
@@ -503,7 +494,6 @@
                         </div>
                     </div>
                 @endforeach
-            @endif
             <div class="dpagination">
                 <div {{-- onclick="removeAllSelected()" --}}
                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
@@ -610,9 +600,8 @@
                 <div class="col-md-3 ">Modified Time</div>
             </div>
             @if ($dealaci->isEmpty())
-                <div class="noNotesFound">
+                <div >
                     <p class="text-center notesAsignedText">No ACI assigned</p>
-                    <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
                 </div>
             @else
@@ -625,13 +614,7 @@
                     </div>
                 @endforeach
             @endif
-             @if ($dealaci->isEmpty())
-                {{--<div class="noNotesFound">
-                    <p class="text-center notesAsignedText">No ACI assigned</p>
-                    <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
-
-                </div>--}}
-            @else
+            
                 @foreach ($dealaci as $aci)
                     <div class="npAgentCard">
                         <div>
@@ -652,7 +635,7 @@
                         </div>
                     </div>
                 @endforeach
-            @endif
+            
 
             <div class="dpagination">
                 <nav aria-label="..." class="dpaginationNav">

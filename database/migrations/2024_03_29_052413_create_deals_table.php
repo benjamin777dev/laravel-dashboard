@@ -41,7 +41,8 @@ class CreatedealsTable extends Migration
             $table->string('created_by')->nullable();
             $table->unsignedBigInteger('contractId')->nullable(); // Modified to unsignedBigInteger
             $table->unsignedBigInteger('contactId')->nullable(); // Modified to unsignedBigInteger
-
+            $table->boolean('isDealCompleted')->default(true);
+            $table->boolean('isInZoho')->default(true);
             $table->foreign('userID')->references('id')->on('users')->onDelete('set null');
             // $table->foreign('contractId')->references('id')->on('contracts')->onDelete('set null');
             // $table->foreign('contactId')->references('id')->on('contacts')->onDelete('set null');

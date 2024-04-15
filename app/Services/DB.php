@@ -82,6 +82,8 @@ class DB
                 'potential_gci' => $deal['Potential_GCI'],
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
+                'isDealCompleted'=>true,
+                'isInZoho'=>true
             ]);
         }
 
@@ -378,12 +380,13 @@ class DB
 
         }
     }
-    public function retreiveTasksFordeal(User $user, $accessToken,$tab = '',$dealId)
+    public function retreiveTasksFordeal(User $user, $accessToken,$tab = '',$dealId='')
     {
         try {
 
-            Log::info("Retrieve Tasks From Database");
-            $tasks = Task::with('dealData')->where([['owner', $user->id],['what_id',$dealId],['status', $tab]])->paginate(10);
+            Log::info("DealIDS".$dealId);
+            $tasks = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
+        ->where('what_id', $dealId)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -534,6 +537,38 @@ class DB
             $dealContacts = Aci::with('userData')->with('dealData')->where('dealId', $dealId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getIncompleteDeal(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Deal Contact From Database");
+            $deal = Deal::where('isDealCompleted', false)->first();
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
+            return $deal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createDeal(User $user, $accessToken,$zohoDealId)
+    {
+        try {
+            Log::info("User Deatils".$user);
+            $deal = Deal::create([
+                'deal_name' => config('variables.dealName'),
+                'isDealCompleted'=>false,
+                'userID'=>$user->id,
+                'isInZoho'=>true,
+                'zoho_deal_id'=>$zohoDealId
+            ]);
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
+            return $deal;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
