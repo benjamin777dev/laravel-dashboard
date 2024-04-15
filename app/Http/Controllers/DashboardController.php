@@ -51,8 +51,6 @@ class DashboardController extends Controller
         // Retrieve deals from Zoho CRM
         $deals = $db->retrieveDeals($user, $accessToken);
         $closedDeals = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"closedDeals");
-        // print_r($deals);
-        // die;
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
@@ -207,9 +205,7 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-        // print("<pre>");
-        // print_r($stageData);
-        // die;
+        
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -260,7 +256,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful aci fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $aciData = collect($responseData['data'] ?? []);
                 $allACI = $allACI->concat($aciData);
 
@@ -305,7 +300,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful notes fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $allNotes = collect($responseData['data'] ?? []);
                 $allNotes = $allNotes->concat($allNotes);
 
@@ -429,7 +423,6 @@ class DashboardController extends Controller
 
                 Log::info("Successful contact fetch... Page: " . $page);
                 $responseData = $response->json();
-                //Log::info("Response data: ". print_r($responseData, true));
                 $contacts = collect($responseData['data'] ?? []);
                 $allContacts = $allContacts->concat($contacts);
 
@@ -612,7 +605,6 @@ class DashboardController extends Controller
                 Log::info("Successful deal fetch... Page: " . $page);
                 $responseData = $response->json();
 
-                //Log::info("Response data: ". print_r($responseData, true));
                 $allDealsdata = collect($responseData['data'] ?? []);
                 $allDeals = $allDeals->concat($allDealsdata);
 
@@ -624,10 +616,7 @@ class DashboardController extends Controller
             return $allDeals;
         }
         return $allDeals;
-        echo "<pre>";
-        // print_r($responseData);
-        print_r($allDeals);
-        die;
+        
 
         Log::info("Total deals records: ". $allDeals->count());
         Log::info("deals Records: ", $allDeals->toArray());
@@ -688,9 +677,7 @@ class DashboardController extends Controller
     public function getStagesData(){
         $start_date =  request()->query('start_date') ?? ''; // Start date of the range
         $end_date = request()->query('end_date') ?? '';   // End date of the range
-        // print_r($start_date);
-        // print_r($end_date);
-        // die;
+       
         $user = auth()->user();
         $db = new DB();
         $accessToken = $user->getAccessToken();
