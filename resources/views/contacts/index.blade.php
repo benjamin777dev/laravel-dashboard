@@ -6,11 +6,12 @@
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal"
+            <a href = "{{ route('contacts.create') }}"><div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal"
                 data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
                 </i>
-                <a href = "{{ route('contacts.create') }}">New Contact</a>
+                New Contact
             </div>
+            </a>
         </div>
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
@@ -38,17 +39,17 @@
                                     <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
                                     <p class="databaseCardWord"
                                         style="background-color: {{ $contact['ABCD'] === 'A'
-                                            ? '#97E380'
+                                            ? '#9CC230'
                                             : ($contact['ABCD'] === 'A+'
                                                 ? '#44CE1B'
                                                 : ($contact['ABCD'] === 'B'
-                                                    ? // '#F7E379' ||
-                                                    '#E51F1F'
+                                                    ? // '#FFB800' ||
+                                                    '#FFB800'
                                                     : ($contact['ABCD'] === 'C'
-                                                        ? '#477ABB'
+                                                        ? '#D4B40C'
                                                         : ($contact['ABCD'] === 'D'
-                                                            ? '#74788D'
-                                                            : '#DBEDE7')))) }};">
+                                                            ? '#816D03'
+                                                            : '#4F6481')))) }};">
                                         {{ $contact['ABCD'] ?? '-' }}</p>
                                 </div>
                                 <div class="dataPhoneDiv">

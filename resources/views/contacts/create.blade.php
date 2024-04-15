@@ -297,7 +297,7 @@
                         <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
                         <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04" >
                             {{-- <option selected disabled value=""></option> --}}
-                            <option value="{{ json_encode(['id' => '5141697000013347001', 'Full_Name' => 'CHR Technology'])}}" selected>{{ 'CHR Technology' }}</option>
+                            <option value="{{ json_encode(['id'=> $user_id,'Full_Name'=> $name])}}" selected>{{ 'CHR Technology' }}</option>
 
                         </select>
                     </div>
@@ -412,7 +412,8 @@
                         <label for="validationDefault01" class="form-label nplabelText">Relationship Type</label>
                         <select name="relationship_type" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
-                            <option>...</option>
+                            <option value="primary">Primary</option>
+                            <option value="secondary">Secondory</option>
                         </select>
                     </div>
                     <div class="col-md-6">
@@ -507,13 +508,13 @@
                             id="validationDefault03" >
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" name="primary_address" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <input class="form-check-input" name="primary_address" type="checkbox" value="false" id="primary_address">
                         <label class="form-check-label nplabelText" for="flexCheckChecked">
                             Primary Address
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" id="secondry_address" type="checkbox" value="" id="flexCheckChecked" checked>
+                        <input class="form-check-input" name="secondry_address" id="secondry_address" type="checkbox" value="false" id="flexCheckChecked">
                         <label class="form-check-label nplabelText" for="flexCheckChecked">
                             Secondary Address
                         </label>
@@ -546,6 +547,25 @@
     </div> --}}
 @endsection
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+        $('#primary_address').change(function() {
+    if($(this).is(':checked')) {
+        $(this).val(true);
+    } else {
+        $(this).val(false);
+    }
+});
+
+// Secondary Address Checkbox
+$('#secondry_address').change(function() {
+    if($(this).is(':checked')) {
+        $(this).val(true);
+    } else {
+        $(this).val(false);
+    }
+});
+    })
 
     function showValidation(e){
     let lastName = e.value;

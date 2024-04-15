@@ -194,7 +194,7 @@ class ContactController extends Controller
         }
 
         $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactDetails = $this->retrieveContactDetailsFromZoho("5141697000013347001", $accessToken);
+        $contactDetails = $this->retrieveContactDetailsFromZoho(config('variables.contactId'), $accessToken);
 
         return view('contacts.create', compact('contactDetails'));
     }

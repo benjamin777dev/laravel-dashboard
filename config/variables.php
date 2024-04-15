@@ -1,8 +1,6 @@
 <?php
 
-// use App\Models\Module; 
-// $apiNames = Module::getApiName();
-
-// return [
-//     'zohoModules'=>$apiNames,
-// ];
+return [
+    'dealName'=>'Untitled',
+    'contactId'=>"5141697000013347001"
+];

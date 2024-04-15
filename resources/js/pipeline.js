@@ -100,3 +100,61 @@ const pipelineData = (searchValue = '') => {
             console.error('Error:', error);
         });
 };
+
+console.log("yes working")
+function addTask() {
+
+    console.log('deal is ehdjhdjkfh');
+    // var subject = document.getElementsByName("subject")[0].value;
+    // if (subject.trim() === "") {
+    //     document.getElementById("subject_error").innerHTML = "please enter details";
+    // }
+    // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+    // var whoId = window.selectedTransation
+    // if (whoId === undefined) {
+    //     whoId = whoSelectoneid
+    // }
+    // var dueDate = document.getElementsByName("due_date")[0].value;
+    // console.log("dueDate", dueDate);
+    // console.log("dealId", deal -> zoho_deal_id);
+    // var formData = {
+    //     "data": [{
+    //         "Subject": subject,
+    //         "Who_Id": {
+    //             "id": whoId
+    //         },
+    //         "Status": "In Progress",
+    //         "Due_Date": dueDate,
+    //         "Priority": "High",
+    //         "Transaction": {
+    //             "id": $deal -> zoho_deal_id
+    //         }
+    //     }],
+    //     "_token": '{{ csrf_token() }}'
+    // };
+
+    // $.ajax({
+    //     url: '{{ route('create.task') }}',
+    //     type: 'POST',
+    //     headers: {
+    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //     },
+    //     contentType: 'application/json',
+    //     dataType: 'json',
+    //     data: JSON.stringify(formData),
+    //     success: function (response) {
+    //         if (response?.data && response.data[0]?.message) {
+    //             // Convert message to uppercase and then display
+    //             const upperCaseMessage = response.data[0].message.toUpperCase();
+    //             alert(upperCaseMessage);
+    //             window.location.reload();
+    //         } else {
+    //             alert("Response or message not found");
+    //         }
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Handle error response
+    //         console.error(xhr.responseText);
+    //     }
+    // })
+}

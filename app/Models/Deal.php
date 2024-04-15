@@ -40,7 +40,9 @@ class Deal extends Model
         'potential_gci',
         'created_by',
         'contractId',
-        'userID'
+        'userID',
+        'isDealCompleted',
+        'isInZoho'
     ];
 
     public function userData()

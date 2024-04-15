@@ -41,7 +41,7 @@ class DashboardController extends Controller
         Log::info("Got Access Token: $accessToken");
 
         //Get Date Range
-        $startDate = Carbon::now()->subDays(7)->format('d.m.Y'); // 7 days ago
+        $startDate = Carbon::now()->subYear()->format('d.m.Y'); // 1 year
         $endDate = Carbon::now()->format('d.m.Y'); // Current date
 
         // Set default goal or use user-defined goal
@@ -66,9 +66,10 @@ class DashboardController extends Controller
         // print('<pre>');
         // print_r(json_encode($deals));
         // die;
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal) {
-            $filteredDeals = $deals->filter(function ($deal) use ($stage) {
-                return $deal['stage'] === $stage && $this->masterFilter($deal);
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal,$startDate,$endDate) {
+            $filteredDeals = $deals->filter(function ($deal) use ($stage,$startDate,$endDate) {
+               $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($startDate) && $closingDate->lte($endDate);
             });
             $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
             $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
@@ -171,7 +172,7 @@ class DashboardController extends Controller
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $db->retrieveNotes($user,$accessToken);
-         $getdealsTransaction = $this->retrieveDealTransactionData($user,$accessToken);
+         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
          $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
          //fetch notes
          $notes = $this->fetchNotes();
@@ -453,6 +454,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
+        Log::info("Access Token,$accessToken");
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
 
@@ -461,6 +463,7 @@ class DashboardController extends Controller
         $whoid = $data['Who_Id']['id'];
         $status = $data['Status'];
         $Due_Date = $data['Due_Date'];
+        $What_Id = $data['What_Id']['id'];
         
 
 
@@ -476,7 +479,7 @@ class DashboardController extends Controller
 
 
                 if (!$response->successful()) {
-                     return "error somthing".$response;
+                     return "error something".$response;
                 }
                 $responseArray = json_decode($response, true);
                 $data = $responseArray['data'][0]['details']; 
@@ -492,6 +495,7 @@ class DashboardController extends Controller
                     'status'=>$status ?? "Not Started",
                     'who_id'=>$whoid ?? null,
                     'due_date'=>$Due_Date ?? null,
+                    'what_id'=>$What_Id ?? null,
                 ]);
         
                 return response()->json($responseArray, 201);
@@ -701,29 +705,29 @@ class DashboardController extends Controller
            $deals = $db->retrieveDeals($user, $accessToken);
        $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
 
-       $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {
-            $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
-                return $deal['stage'] === $stage && $this->masterFilter($deal) && $deal['closing_date'] >= $start_date && $deal['closing_date'] <= $end_date;
-            });
-
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {
+        $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
+            $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
+        });
         $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
         $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
         $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
         $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
         return [
-        $stage => [
-            'count' => $this->formatNumber($filteredDeals->count()),
-            'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
-            'asum' => $filteredDeals->sum('pipeline1'),
-            'stageProgress' => $stageProgress,
-            "stageProgressClass" => $stageProgressClass,
-            'stageProgressIcon' => $stageProgressIcon,
-            'stageProgressExpr' => $stageProgressExpr
-        ],
-    ];
-});
-
-  return response()->json($stageData);
+            $stage => [
+                'count' => $this->formatNumber($filteredDeals->count()),
+                'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
+                'asum' => $filteredDeals->sum('pipeline1'),
+                'stageProgress' => $stageProgress,
+                "stageProgressClass" => $stageProgressClass,
+                'stageProgressIcon' => $stageProgressIcon,
+                'stageProgressExpr' => $stageProgressExpr
+            ],
+        ];
+        });
+        Log::info("STAGE DATA: $stageData");
+        return response()->json($stageData);
 
     }
 

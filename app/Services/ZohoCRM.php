@@ -303,7 +303,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . "Tasks", $inputJson);
         
-        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
     
         return $response;
     }
@@ -364,6 +364,20 @@ class ZohoCRM
         ]);
 
         Log::info('Zoho Deal contact data response: ' . print_r($response, true));
+        return $response;
+    }
+
+    public function createZohoDeal($inputJson)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . 'Deals', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
         return $response;
     }
 }

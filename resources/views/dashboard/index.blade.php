@@ -25,7 +25,7 @@
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-center dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
-                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" onchange="calculateStageData(this);" type="text"
+                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text"
                         name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
                     {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
@@ -141,7 +141,6 @@
                                                     </div>
                                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                                         id="btnGroupAddon" data-bs-toggle="modal"
-                                                        onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                         data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                         <i class="fas fa-trash-alt plusicon"></i>
                                                         Delete
@@ -212,6 +211,7 @@
                                                                 </div>
                                                                 <div class="d-grid gap-2 col-5">
                                                                     <button type="button"
+                                                                    data-bs-dismiss="modal"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
                                                                             data-bs-dismiss="modal" alt="R">No, go
@@ -605,24 +605,24 @@
                             @php
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
-
+                          
                             @foreach ($getdealsTransaction as $item)
-                                @php
-                                    $contactId = $item['Contact_Name']['id'];
-                                @endphp
+                                        @php
+                                            $contactId = $item['userData']['zoho_id'];
+                                        @endphp
 
-                                {{-- Check if the current ID has been encountered before --}}
-                                @if (!in_array($contactId, $encounteredIds))
-                                    {{-- Add the current ID to the encountered IDs array --}}
-                                    @php
-                                        $encounteredIds[] = $contactId;
-                                    @endphp
+                                        {{-- Check if the current ID has been encountered before --}}
+                                        @if (!in_array($contactId, $encounteredIds))
+                                            {{-- Add the current ID to the encountered IDs array --}}
+                                            @php
+                                                $encounteredIds[] = $contactId;
+                                            @endphp
 
-                                    <option value="{{ $contactId }}"
-                                        @if (old('related_to') == $item['Contact_Name']['name']) selected @endif>
-                                        {{ $item['Contact_Name']['name'] }}</option>
-                                @endif
-                            @endforeach
+                                            <option value="{{ $contactId }}"
+                                                @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                                {{ $item['userData']['name'] }}</option>
+                                        @endif
+                                    @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -993,6 +993,7 @@
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
             document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
         }
         var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         var whoId = window.selectedTransation
@@ -1159,6 +1160,13 @@
         if (updateids === "" && id === undefined) {
             return;
         }
+        if(updateids!==""){
+            if (confirm("Are you sure you want to delete selected task?")) {
+                  
+            }else{
+                return;
+            }
+        }
         if (id === undefined) {
             id = updateids;
         }
@@ -1191,6 +1199,7 @@
                         alert(xhr.responseText)
                     }
                 })
+                
             }
         } catch (err) {
             console.error("error", err);
@@ -1385,27 +1394,26 @@
         var endDate = dates[1];
 
         // Convert start date to "year-month-day" format
-        var startDateComponents = startDate.split('/');
-        var endDateComponents = endDate.split('/');
-        var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
-        var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
+        // var startDateComponents = startDate.split('-');
+        // var endDateComponents = endDate.split('-');
+        // var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
+        // var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $.ajax({
-            url: `get-stages?start_date=${formattedStartDate}&end_date=${formattedEndtDate}`,
+            url: `get-stages?start_date=${startDate}&end_date=${endDate}`,
             method: "GET",
             dataType: "json",
             success: function(response) {
                 // Handle successful response
-                // console.log(response,'response is here');
+                console.log(response,'response is here');
                 Object.keys(response).forEach(function(stage) {
                     if (response.hasOwnProperty(stage)) {
                         // Find the corresponding card element using data-stage attribute
                         var cardElement = $('.dCardsCols[data-stage="' + stage + '"]');
-
                         // Update data in the card
                         var data = response[stage];
                         cardElement.find('.dFont800.dFont18').text('$' + data.sum);
