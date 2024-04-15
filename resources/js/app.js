@@ -372,6 +372,13 @@ File: Main Js File
         $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
             // Update input value with selected date range
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
+            if (!$(this).attr('onchange')) {
+                // Add onchange attribute to call calculateStageData function
+                $(this).attr('onchange', 'calculateStageData(this)');
+                
+                // Trigger the change event only if it's the first time
+                $(this).trigger('change');
+            }
         });
     }
 
