@@ -18,7 +18,6 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $this->retrieveContactsFromZoho($user->root_user_id, $accessToken);
 
@@ -26,21 +25,97 @@ class ContactController extends Controller
     }
 
     public function createContact(Request $request){
+        try {
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-        $relatedToObject = json_decode($request->contactOwner);
-        $validatedData1 = validator()->make((array) $relatedToObject, [
-            'id' => 'required|string|max:255',
+        
+        $rules = [];
+        $contactOwnerArray = json_decode($request->contactOwner, true);
+        // Validate the array
+        $validatedData1 = validator()->make($contactOwnerArray, [
+            'id' => 'required|numeric',
             'Full_Name' => 'required|string|max:255',
         ])->validate();
 
+        $input = $request->all();
+        if (isset($input['last_called']) && $input['last_called'] !== '') {
+            $rules['last_called'] = 'date';
+        }
+        if (isset($input['last_emailed']) && $input['last_emailed'] !== '') {
+            $rules['last_emailed'] = 'date';
+        }
+        if (isset($input['mobile']) && $input['mobile'] !== '') {
+            $rules['mobile'] = 'required|string|regex:/^[0-9]{10}$/';
+        }
+        if (isset($input['phone']) && $input['phone'] !== '') {
+            $rules['phone'] = 'required|string|regex:/^[0-9]{10}$/';
+        }
+        if (isset($input['email']) && $input['email'] !== '') {
+            $rules['email'] = 'required|string|email';
+        }
+        if (isset($input['market_area']) && $input['market_area'] !== '') {
+            $rules['market_area'] = 'required|string|max:255';
+        }
+        if (isset($input['relationship_type']) && $input['relationship_type'] !== '') {
+            $rules['relationship_type'] = 'required|string|max:255';
+        }
+        if (isset($input['reffered_by']) && $input['reffered_by'] !== '') {
+            $rules['reffered_by'] = 'required|string|max:255';
+        }
+        if (isset($input['lead_source']) && $input['lead_source'] !== '') {
+            $rules['lead_source'] = 'required|string|max:255';
+        }
+        if (isset($input['lead_source_detail']) && $input['lead_source_detail'] !== '') {
+            $rules['lead_source_detail'] = 'required|string|max:255';
+        }
+        if (isset($input['envelope_salutation']) && $input['envelope_salutation'] !== '') {
+            $rules['envelope_salutation'] = 'required|string|max:255';
+        }
+        if (isset($input['spouse_partner']) && $input['spouse_partner'] !== '') {
+            $rules['spouse_partner'] = 'required|string|max:255';
+        }
+        if (isset($input['business_name']) && $input['business_name'] !== '') {
+            $rules['business_name'] = 'required|string|max:255';
+        }
+        if (isset($input['abcd_class']) && $input['abcd_class'] !== '') {
+            $rules['abcd_class'] = 'required|string|max:255';
+        }
+        if (isset($input['business_information']) && $input['business_information'] !== '') {
+            $rules['business_information'] = 'required|string|max:255';
+        }
+        if (isset($input['address_line1']) && $input['address_line1'] !== '') {
+            $rules['address_line1'] = 'required|string|max:255';
+        }
+        if (isset($input['address_line2']) && $input['address_line2'] !== '') {
+            $rules['address_line2'] = 'required|string|max:255';
+        }
+        if (isset($input['city']) && $input['city'] !== '') {
+            $rules['city'] = 'required|string|max:255';
+        }
+        if (isset($input['state']) && $input['state'] !== '') {
+            $rules['state'] = 'required|string|max:255';
+        }
+        if (isset($input['zip_code']) && $input['zip_code'] !== '') {
+            $rules['zip_code'] = 'required|string|max:255';
+        }
+        if (isset($input['email_primary']) && $input['email_primary'] !== '') {
+            $rules['email_primary'] = 'required|string|max:255';
+        }
+        if (isset($input['primary_address']) && $input['primary_address'] !== '') {
+            $rules['primary_address'] = 'required|string|max:255';
+        }
+        if (isset($input['secondry_address']) && $input['secondry_address'] !== '') {  
+            $rules['secondry_address'] = 'required|string|max:255';
+        }
+        // Validate the request data using the defined rules
+        $validatedData = $request->validate($rules);
         $validatedData2 = $request->validate([
             'last_name' => 'required|string|max:255',
         ]);
           $last_name =  $validatedData2['last_name'];
-        $responseData = [
+        $inputData = [
             "data" => [
               [
                 "Relationship_Type"=> "Primary",
@@ -64,13 +139,12 @@ class ContactController extends Controller
             ],
             "skip_mandatory"=> true
         ];
+
         $helper = new Helper();
-        $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
+        $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
-        
-        try {
-            $response = $zoho->createContactData($responseData);
+            $response = $zoho->createContactData($inputData);
 
             if (!$response->successful()) {
                 Log::error("Error creating contacts:");
@@ -93,7 +167,7 @@ class ContactController extends Controller
             return redirect()->back()->with('success', 'Contact saved successfully!');
          } catch (\Exception $e) {
              Log::error("Error creating notes:new " . $e->getMessage());
-             return redirect()->back()->with('error', 'Contact Not saved successfully!'.$e->getMessage());
+             return redirect()->back()->with('error', '!'.$e->getMessage());
                 return "somthing went wrong".$e->getMessage();
             }
        
@@ -192,11 +266,13 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        $user_id = $user->root_user_id;
+        $name = $user->name;
 
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactDetails = $this->retrieveContactDetailsFromZoho(config('variables.contactId'), $accessToken);
 
-        return view('contacts.create', compact('contactDetails'));
+        return view('contacts.create', compact('contactDetails','user_id','name'));
     }
 
     private function retrieveContactDetailsFromZoho($contactId, $accessToken)

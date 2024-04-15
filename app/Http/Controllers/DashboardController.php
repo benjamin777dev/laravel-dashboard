@@ -41,9 +41,8 @@ class DashboardController extends Controller
         Log::info("Got Access Token: $accessToken");
 
         //Get Date Range
-        $startDate = Carbon::now()->subDays(7)->format('d.m.Y'); // 7 days ago
+        $startDate = Carbon::now()->subYear()->format('d.m.Y'); // One year ago
         $endDate = Carbon::now()->format('d.m.Y'); // Current date
-
         // Set default goal or use user-defined goal
         $goal = $user->goal ?? 250000;
         Log::info("Goal: $goal");

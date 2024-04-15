@@ -1385,8 +1385,8 @@
         var endDate = dates[1];
 
         // Convert start date to "year-month-day" format
-        var startDateComponents = startDate.split('/');
-        var endDateComponents = endDate.split('/');
+        var startDateComponents = startDate.split('-');
+        var endDateComponents = endDate.split('-');
         var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
         var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
         $.ajaxSetup({
