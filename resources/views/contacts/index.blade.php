@@ -39,17 +39,17 @@
                                     <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
                                     <p class="databaseCardWord"
                                         style="background-color: {{ $contact['ABCD'] === 'A'
-                                            ? '#97E380'
+                                            ? '#9CC230'
                                             : ($contact['ABCD'] === 'A+'
                                                 ? '#44CE1B'
                                                 : ($contact['ABCD'] === 'B'
-                                                    ? // '#F7E379' ||
-                                                    '#F7E379'
+                                                    ? // '#FFB800' ||
+                                                    '#FFB800'
                                                     : ($contact['ABCD'] === 'C'
-                                                        ? '#FA940A'
+                                                        ? '#D4B40C'
                                                         : ($contact['ABCD'] === 'D'
-                                                            ? '#E51F1F'
-                                                            : '#DBEDE7')))) }};">
+                                                            ? '#816D03'
+                                                            : '#4F6481')))) }};">
                                         {{ $contact['ABCD'] ?? '-' }}</p>
                                 </div>
                                 <div class="dataPhoneDiv">

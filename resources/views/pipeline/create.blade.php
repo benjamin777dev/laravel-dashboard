@@ -64,7 +64,7 @@
                                             <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                                 id="editableText{{ $task['id'] }}">
                                                 {{ $task['subject'] ?? 'N/A' }}
-                                                <i class="fas fa-pencil-alt pencilIcon" {{-- onclick="makeEditable('{{ $task['id'] }}')" --}}></i>
+                                                <i class="fas fa-pencil-alt pencilIcon" onclick="makeEditable('{{ $task['id'] }}')"></i>
                                             </p>
                                         </td>
                                         <td>
@@ -141,10 +141,11 @@
                                     <input type="checkbox" />
                                 </div>
                                 <div class="dcardssubjectdiv">
-                                    <p class="dcardSubject">
-                                        {{ $task['subject'] ?? 'N/A' }}
-                                        {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
-                                    </p>
+                                    <p class="dcardSubject" id="editableText{{ $task['id'] }}"
+                                            onclick="makeEditable('{{ $task['id'] }}')">
+                                            {{ $task['subject'] ?? 'N/A' }}
+                                            {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
+                                        </p>
                                     <div class="btn-group dcardsselectdiv">
                                         <p class="dcardsTransactionText">Transaction Related</p>
                                         <select class="form-select dselect" aria-label="Transaction test"
@@ -809,10 +810,11 @@
                         },
                         "Status": "In Progress",
                         "Due_Date": dueDate,
-                        "Priority": "High",
+                        // "Priority": "High",
                         "What_Id":{
                             "id":deal
-                        }
+                        },
+                        "$se_module":"Deals"
                     }],
                     "_token": '{{ csrf_token() }}'
                 };
@@ -841,6 +843,24 @@
                         console.error(xhr.responseText);
                     }
                 })
+            }
+
+            function updateText(newText) {
+                //  textElement = document.getElementById('editableText');
+                textElement.innerHTML = newText;
+            }
+
+            function makeEditable(id) {
+                textElement = document.getElementById('editableText' + id);
+                var text = textElement.textContent.trim();
+                textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+
+                var inputElement = document.getElementById('editableInput' + id);
+                inputElement.focus();
+                inputElement.addEventListener('blur', function() {
+                    console.log("akhdgsakdgsakhdsakh");
+                    updateText(inputElement.value);
+                });
             }
         });
 

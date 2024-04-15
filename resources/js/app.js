@@ -217,15 +217,15 @@ File: Main Js File
             if (!alreadyVisited) {
                 if ($('html').attr('dir') === 'rtl' && $('html').attr('data-bs-theme') === 'dark') {
                     $("#dark-rtl-mode-switch").prop('checked', true);
-                    $("#light-mode-switch").prop('checked', false);  
+                    $("#light-mode-switch").prop('checked', false);
                     sessionStorage.setItem("is_visited", "dark-rtl-mode-switch");
                     updateThemeSetting(alreadyVisited);
-                }else if ($('html').attr('dir') === 'rtl') {
+                } else if ($('html').attr('dir') === 'rtl') {
                     $("#rtl-mode-switch").prop('checked', true);
                     $("#light-mode-switch").prop('checked', false);
                     sessionStorage.setItem("is_visited", "rtl-mode-switch");
                     updateThemeSetting(alreadyVisited);
-                }else if ($('html').attr('data-bs-theme') === 'dark') {
+                } else if ($('html').attr('data-bs-theme') === 'dark') {
                     $("#dark-mode-switch").prop('checked', true);
                     $("#light-mode-switch").prop('checked', false);
                     sessionStorage.setItem("is_visited", "dark-mode-switch");
@@ -256,11 +256,11 @@ File: Main Js File
             $("#dark-mode-switch").prop("checked", false);
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
-            if($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
+            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
                 $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.css');
             $('html').attr('data-bs-theme', 'light');
-            if($("#app-style").attr('href') != '/build/css/app.min.css')
-            $("#app-style").attr('href', '/build/css/app.min.css');
+            if ($("#app-style").attr('href') != '/build/css/app.min.css')
+                $("#app-style").attr('href', '/build/css/app.min.css');
             sessionStorage.setItem("is_visited", "light-mode-switch");
         } else if ($("#dark-mode-switch").prop("checked") == true && id === "dark-mode-switch") {
             $("html").removeAttr("dir");
@@ -268,18 +268,18 @@ File: Main Js File
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
             $('html').attr('data-bs-theme', 'dark');
-            if($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
+            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
                 $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.css');
-            if($("#app-style").attr('href') != '/build/css/app.min.css')
+            if ($("#app-style").attr('href') != '/build/css/app.min.css')
                 $("#app-style").attr('href', '/build/css/app.min.css');
             sessionStorage.setItem("is_visited", "dark-mode-switch");
         } else if ($("#rtl-mode-switch").prop("checked") == true && id === "rtl-mode-switch") {
             $("#light-mode-switch").prop("checked", false);
             $("#dark-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
-            if($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
+            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
                 $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.rtl.css');
-            if($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
+            if ($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
                 $("#app-style").attr('href', '/build/css/app.min.rtl.css');
             $("html").attr("dir", 'rtl');
             $('html').attr('data-bs-theme', 'light');
@@ -289,9 +289,9 @@ File: Main Js File
             $("#light-mode-switch").prop("checked", false);
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-mode-switch").prop("checked", false);
-            if($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
+            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
                 $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.rtl.css');
-            if($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
+            if ($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
                 $("#app-style").attr('href', '/build/css/app.min.rtl.css');
             $("html").attr("dir", 'rtl');
             $('html').attr('data-bs-theme', 'dark');
@@ -322,16 +322,16 @@ File: Main Js File
     }
 
     function dateRangePicker() {
-            var dateRangeValue = $('input[name="daterange"]').val();
-            // Split the value into start date and end date
-            var dates = dateRangeValue.split(' - ');
-            var startDateString = dates[0];
-            var endDateString = dates[1];
-            // Parse start date and end date strings to moment objects
-            var startDate = moment(startDateString, 'DD/MM/YYYY');
-            var endDate = moment(endDateString, 'DD/MM/YYYY');
-            // Example: Subtract one year from the start date
-            startDate.subtract(1, 'year');
+        var dateRangeValue = $('input[name="daterange"]').val();
+        // Split the value into start date and end date
+        var dates = dateRangeValue.split(' - ');
+        var startDateString = dates[0];
+        var endDateString = dates[1];
+        // Parse start date and end date strings to moment objects
+        var startDate = moment(startDateString, 'DD/MM/YYYY');
+        var endDate = moment(endDateString, 'DD/MM/YYYY');
+        // Example: Subtract one year from the start date
+        startDate.subtract(1, 'year');
         $('input[name="daterange"]')?.daterangepicker({
             startDate: startDate, // Start date: One year ago, beginning of the month
             endDate: endDate, // End date: Today, end of the month
@@ -345,7 +345,7 @@ File: Main Js File
             showDropdowns: true, // Show month and year dropdowns
             showWeekNumbers: true, // Show week numbers
             showCustomRangeLabel: false, // Hide custom range label
-            autoApply:true,
+            autoApply: true,
             locale: {
                 format: 'DD-MM-YYYY', // Specify the date format
                 applyLabel: 'Apply', // Apply button text
@@ -357,24 +357,24 @@ File: Main Js File
             },
             ranges: {
                 'Last 12 Months': [moment().subtract(1, 'year').startOf('day'), moment().endOf('day')],
-                'This Month': [moment().startOf('day'),moment().add(1, 'month').endOf('day')],
+                'This Month': [moment().startOf('day'), moment().add(1, 'month').endOf('day')],
                 // 'Next Month': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
             },
             alwaysShowCalendars: true // Always show calendars
-        }, function(start, end, label) {
-            console.log(start,end,label,'checkout');
+        }, function (start, end, label) {
+            console.log(start, end, label, 'checkout');
             // Callback function to handle date range selection
             // You can add custom logic here if needed
         });
         $('.daterangepicker.ltr .calendar.right').css('margin-right', '25px');
         $('.daterangepicker.ltr .calendar.left').css('margin-right', '25px');
-        
-        $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+
+        $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
             // Update input value with selected date range
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
         });
     }
- 
+
 
     function init() {
         initMetisMenu();

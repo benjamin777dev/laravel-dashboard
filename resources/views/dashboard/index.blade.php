@@ -607,22 +607,22 @@
                             @endphp
 
                             @foreach ($getdealsTransaction as $item)
-                                @php
-                                    $contactId = $item['Contact_Name']['id'];
-                                @endphp
+                                        @php
+                                            $contactId = $item['userData']['zoho_id'];
+                                        @endphp
 
-                                {{-- Check if the current ID has been encountered before --}}
-                                @if (!in_array($contactId, $encounteredIds))
-                                    {{-- Add the current ID to the encountered IDs array --}}
-                                    @php
-                                        $encounteredIds[] = $contactId;
-                                    @endphp
+                                        {{-- Check if the current ID has been encountered before --}}
+                                        @if (!in_array($contactId, $encounteredIds))
+                                            {{-- Add the current ID to the encountered IDs array --}}
+                                            @php
+                                                $encounteredIds[] = $contactId;
+                                            @endphp
 
-                                    <option value="{{ $contactId }}"
-                                        @if (old('related_to') == $item['Contact_Name']['name']) selected @endif>
-                                        {{ $item['Contact_Name']['name'] }}</option>
-                                @endif
-                            @endforeach
+                                            <option value="{{ $contactId }}"
+                                                @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                                {{ $item['userData']['name'] }}</option>
+                                        @endif
+                                    @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -1385,22 +1385,22 @@
         var endDate = dates[1];
 
         // Convert start date to "year-month-day" format
-        var startDateComponents = startDate.split('-');
-        var endDateComponents = endDate.split('-');
-        var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
-        var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
+        // var startDateComponents = startDate.split('-');
+        // var endDateComponents = endDate.split('-');
+        // var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
+        // var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
         $.ajax({
-            url: `get-stages?start_date=${formattedStartDate}&end_date=${formattedEndtDate}`,
+            url: `get-stages?start_date=${startDate}&end_date=${endDate}`,
             method: "GET",
             dataType: "json",
             success: function(response) {
                 // Handle successful response
-                // console.log(response,'response is here');
+                console.log(response,'response is here');
                 Object.keys(response).forEach(function(stage) {
                     if (response.hasOwnProperty(stage)) {
                         // Find the corresponding card element using data-stage attribute

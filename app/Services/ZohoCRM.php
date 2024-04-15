@@ -303,7 +303,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . "Tasks", $inputJson);
         
-        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
     
         return $response;
     }
