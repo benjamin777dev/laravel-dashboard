@@ -303,7 +303,7 @@
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
-                        <input type="date" name="last_called" class="form-control npinputinfo" id="validationDefault02" >
+                        <input type="date"  name="last_called" class="form-control npinputinfo" id="datetimeInput" >
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
@@ -411,21 +411,51 @@
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Relationship Type</label>
                         <select name="relationship_type" class="form-select npinputinfo" id="validationDefault04" >
-                            <option selected disabled value=""></option>
-                            <option value="primary">Primary</option>
-                            <option value="secondary">Secondory</option>
+                            <option selected disabled value="">-None-</option>
+                            <option value="Primary">Primary</option>
+                            <option value="Secondary">Secondory</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Referred By</label>
-                        <input name="reffered_by" type="text" placeholder="Louis Rinmbaud" class="form-control npinputinfo"
+                        <select name="reffered_by" type="text" placeholder="Louis Rinmbaud" class="form-select npinputinfo"
                             id="validationDefault02" >
+                            <option value="">-None-</option>
+                            @if (!empty($contacts))
+                            @foreach ($contacts as $contact)
+                            <option value="{{ json_encode(['id'=> $contact['zoho_contact_id'],'Full_Name'=> $contact['first_name'] . ' ' . $contact['last_name']])}}">{{$contact['first_name']}} {{$contact['last_name']}}</option>
+                            @endforeach
+                            @endif
+                        </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Lead Source</label>
-                        <input name="lead_source" type="text" class="form-control npinputinfo" placeholder="Peter Hunt"
+                        <select name="lead_source" type="text" class="form-select npinputinfo" placeholder="Peter Hunt"
                             id="validationDefault03" >
+                            <option value="">-None-</option>
+                            <option value="Activity">Activity</option>
+                            <option value="CHR Lead">CHR Lead</option>
+                            <option value="Class">Class</option>
+                            <option value="Client Reviews">Client Reviews</option>
+                            <option value="Event">Event</option>
+                            <option value="Family">Family</option>
+                            <option value="Farm">Farm</option>
+                            <option value="Friend">Friend</option>
+                            <option value="Networking Group">Networking Group</option>
+                            <option value="Office Walk In">Office Walk In</option>
+                            <option value="Online Lead">Online Lead</option>
+                            <option value="Open House">Open House</option>
+                            <option value="Past Client">Past Client</option>
+                            <option value="Raferral Agent">Raferral Agent</option>
+                            <option value="Raferral Business Partner">Raferral Business Partner</option>
+                            <option value="Raferral Client">Raferral Client</option>
+                            <option value="Raferral Client">Raferral Client</option>
+                            <option value="Referral - Family/Friend">Referral - Family/Friend</option>
+                            <option value="Sign Call">Sign Call</option>
+                            <option value="Social Media">Social Media</option>
+                            <option value="Sphere">Sphere</option>
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Lead source details</label>
@@ -439,8 +469,16 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
-                        <input type="text" name="spouse_partner" class="form-control npinputinfo" placeholder="Mary Long"
+                        <select type="text" name="spouse_partner" class="form-select npinputinfo" placeholder="Mary Long"
                             id="validationDefault03" >
+                            <option value="">-None-</option>
+                            @if (!empty($contacts))
+                            @foreach ($contacts as $contact)
+                            <option value="{{ json_encode(['id'=> $contact['zoho_contact_id'],'Full_Name'=> $contact['first_name'] . ' ' . $contact['last_name']])}}">{{$contact['first_name']}} {{$contact['last_name']}}</option>
+                            @endforeach
+                            @endif
+                          
+                        </select>
                     </div>
                 </div>
             </div>
@@ -457,8 +495,12 @@
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
                         <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04" >
-                            <option selected disabled value=""></option>
-                            <option>...</option>
+                            <option selected disabled value="">-None-</option>
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
                         </select>
                     </div>
                     <div>
@@ -492,10 +534,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">State</label>
-                        <select name="state" class="form-select npinputinfo" id="validationDefault04" >
+                        <input type="text" name="city"  class="form-control npinputinfo" placeholder="Enter State"
+                            id="validationDefault04" >
+                        {{-- <select name="state" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
                             <option>...</option>
-                        </select>
+                        </select> --}}
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">ZIP code</label>
@@ -590,4 +634,5 @@ $('#secondry_address').change(function() {
     submitbtn.attr("type", "submit");
 
   }
+
 </script>
