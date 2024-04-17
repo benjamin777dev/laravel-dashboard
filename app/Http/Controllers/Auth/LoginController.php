@@ -47,26 +47,26 @@ class LoginController extends Controller
         );
     
     }
-    protected function login(Request $request)
-    {
+    // protected function login(Request $request)
+    // {
       
-        $validate = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-        // Check if email and password match a user in the database
-        $user = User::where('email', $validate['email'])->first();
-        if ($user && Hash::check($validate['password'], $user->password)) {
-            // Redirect to Zoho for authentication
-            $zoho = new ZohoCRM();
-            $redirect_request = $zoho->redirectToZoho();
-            echo $redirect_request;
-        } else {
-            // Email and password do not match, handle the error
-            // For example, you can return a response indicating authentication failure
-            return redirect()->back()->with('password', 'credetials not match!');
-        }
-    }
+    //     $validate = $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+    //     // Check if email and password match a user in the database
+    //     $user = User::where('email', $validate['email'])->first();
+    //     if ($user && Hash::check($validate['password'], $user->password)) {
+    //         // Redirect to Zoho for authentication
+    //         $zoho = new ZohoCRM();
+    //         $redirect_request = $zoho->redirectToZoho();
+    //         echo $redirect_request;
+    //     } else {
+    //         // Email and password do not match, handle the error
+    //         // For example, you can return a response indicating authentication failure
+    //         return redirect()->back()->with('password', 'credetials not match!');
+    //     }
+    // }
 
     protected function authenticated(Request $request, $user)
     {
