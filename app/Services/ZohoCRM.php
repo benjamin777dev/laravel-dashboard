@@ -310,7 +310,6 @@ class ZohoCRM
 
     public function updateTask($inputJson,$id)
     {
-        Log::info('Creating Zoho Task');
         // return $inputJson;
         try{        // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
@@ -318,7 +317,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
         }catch(\Exception $e){
-            return "somthing went wrong".$e->getMessage();
+            return "something went wrong".$e->getMessage();
         }
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
@@ -375,6 +374,20 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . 'Deals', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function updateZohoDeal($inputJson,$id)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->put($this->apiUrl . 'Deals/'.$id, $inputJson);
 
         //Log::info('Zoho deals data response: ' . print_r($response, true));
 

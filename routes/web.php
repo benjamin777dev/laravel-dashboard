@@ -60,14 +60,16 @@ Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.ind
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::post('/create-contact', [ContactController::class, 'createContact'])->name('create.contact')->middleware('auth');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
-Route::get('/contacts-create', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
-Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');;
+Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');
+Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
@@ -80,7 +82,7 @@ Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->n
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
-Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
+// Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

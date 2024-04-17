@@ -6,11 +6,12 @@
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
-            <a href = "{{ route('contacts.create') }}"><div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal"
-                data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
-                </i>
-                New Contact
-            </div>
+            <a onclick="createContact();">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    </i>
+                    New Contact
+                </div>
             </a>
         </div>
         <div class="pfilterDiv">
@@ -30,59 +31,60 @@
 
         <div>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
-                
-                @foreach ($contacts as $contact)
-                <a href="{{ route('contacts.show', $contact['id']) }}">
-                    <div class="col">
-                        <div class="card dataCardDiv">
-                            <div class="card-body dacBodyDiv">
-                                <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                    <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
-                                    <p class="databaseCardWord"
-                                        style="background-color: {{ $contact['ABCD'] === 'A'
-                                            ? '#9CC230'
-                                            : ($contact['ABCD'] === 'A+'
-                                                ? '#44CE1B'
-                                                : ($contact['ABCD'] === 'B'
-                                                    ? // '#FFB800' ||
-                                                    '#FFB800'
-                                                    : ($contact['ABCD'] === 'C'
-                                                        ? '#D4B40C'
-                                                        : ($contact['ABCD'] === 'D'
-                                                            ? '#816D03'
-                                                            : '#4F6481')))) }};">
-                                        {{ $contact['ABCD'] ?? '-' }}</p>
-                                </div>
-                                <div class="dataPhoneDiv">
-                                    <img src="{{ URL::asset('/images/phone.svg') }}" alt="" class="dataphoneicon">
 
-                                    <p class="card-text">{{ $contact['Mobile'] ?? 'N/A' }}</p>
+                @foreach ($contacts as $contact)
+                    <a href="{{ route('contacts.show', $contact['id']) }}">
+                        <div class="col">
+                            <div class="card dataCardDiv">
+                                <div class="card-body dacBodyDiv">
+                                    <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
+                                        <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
+                                        <p class="databaseCardWord"
+                                            style="background-color: {{ $contact['ABCD'] === 'A'
+                                                ? '#9CC230'
+                                                : ($contact['ABCD'] === 'A+'
+                                                    ? '#44CE1B'
+                                                    : ($contact['ABCD'] === 'B'
+                                                        ? // '#FFB800' ||
+                                                        '#FFB800'
+                                                        : ($contact['ABCD'] === 'C'
+                                                            ? '#D4B40C'
+                                                            : ($contact['ABCD'] === 'D'
+                                                                ? '#816D03'
+                                                                : '#4F6481')))) }};">
+                                            {{ $contact['ABCD'] ?? '-' }}</p>
+                                    </div>
+                                    <div class="dataPhoneDiv">
+                                        <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
+                                            class="dataphoneicon">
+
+                                        <p class="card-text">{{ $contact['Mobile'] ?? 'N/A' }}</p>
+                                    </div>
+                                    <div class="datamailDiv">
+                                        <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
+                                        <p class="dataEmailtext">{{ $contact['Email'] ?? 'N/A' }}</p>
+                                    </div>
+                                    <div class="datadiversityDiv">
+                                        <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""
+                                            class="datadiversityicon">
+                                        <p class="datadiversitytext">2nd</p>
+                                    </div>
                                 </div>
-                                <div class="datamailDiv">
-                                    <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
-                                    <p class="dataEmailtext">{{ $contact['Email'] ?? 'N/A' }}</p>
-                                </div>
-                                <div class="datadiversityDiv">
-                                    <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""
-                                        class="datadiversityicon">
-                                    <p class="datadiversitytext">2nd</p>
-                                </div>
-                            </div>
-                            <div class="card-footer dataCardFooter">
-                                <div class="datafootericondiv">
-                                    <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                                        class="datadiversityicon">
-                                    <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                                        class="datadiversityicon">
-                                </div>
-                                <div>
-                                    <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                                        class="datadiversityicon">
+                                <div class="card-footer dataCardFooter">
+                                    <div class="datafootericondiv">
+                                        <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
+                                            class="datadiversityicon">
+                                        <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
+                                            class="datadiversityicon">
+                                    </div>
+                                    <div>
+                                        <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
+                                            class="datadiversityicon">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
                 @endforeach
             </div>
             <div class="datapagination">
@@ -142,3 +144,49 @@
         </table> --}}
     </div>
 @endsection
+<script>
+    function createContact() {
+        console.log("Onclick");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        let name = "CHR";
+        var formData = {
+            "data": [{
+                "Relationship_Type": "Primary",
+                "Missing_ABCD": true,
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "full_name": "{{ auth()->user()->name }}",
+                },
+                "Unsubscribe_From_Reviews": false,
+                "Currency": "USD",
+                "Market_Area": "-None-",
+                "Lead_Source": "-None-",
+                "ABCD": "-None-",
+                "Last_Name": name,
+                "zia_suggested_users": {}
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/contact/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>

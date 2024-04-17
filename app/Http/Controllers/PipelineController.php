@@ -99,7 +99,8 @@ class PipelineController extends Controller
         $dealaci = $db->retrieveAciFordeal($user,$accessToken,$dealId);
         
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.create', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','dealId'));
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        return view('pipeline.create', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','dealId','retrieveModuleData'));
        
     }
 
@@ -147,6 +148,30 @@ class PipelineController extends Controller
 
         
     }
+
+    public function updatePipeline(Request $request,$id)
+    {
+        $db = new DB();
+        $zoho = new ZohoCRM();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+
+            $jsonData = $request->json()->all();
+            $zohoDeal = $zoho->updateZohoDeal($jsonData,$id);
+             if (!$zohoDeal->successful()) {
+                     return "error something".$zohoDeal;
+                }
+                $zohoDealArray = json_decode($zohoDeal, true);
+                $zohoDealData = $zohoDealArray['data'][0]['details']; 
+                $data = $jsonData['data'][0]; 
+            $deal=$db->updateDeal($user,$accessToken,$data,$id);
+            return response()->json($deal);        
+    }
+
     public function getClosedDeals(Request $request)
     {
         $user = auth()->user();

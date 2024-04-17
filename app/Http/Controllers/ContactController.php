@@ -10,6 +10,7 @@ use App\Models\Contact;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use App\Services\DB;
 
 class ContactController extends Controller
 {
@@ -251,9 +252,6 @@ class ContactController extends Controller
         if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
             unset($responseData['data'][0]['Spouse_Partner']);
         }
-
-        // print_r($responseData);
-        // die;
         
             $response = $zoho->createContactData($responseData);
 
@@ -380,12 +378,50 @@ class ContactController extends Controller
         }
         $user_id = $user->root_user_id;
         $name = $user->name;
-
+        $db = new DB();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactId = request()->route('contactId');
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId );
+
+        $tab = request()->query('tab') ?? 'In Progress';
+        $contacts = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
+        $notesInfo = $db->retrieveNotes($user,$accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $contactDetails = $this->retrieveContactDetailsFromZoho(config('variables.contactId'), $accessToken);
         // $contacts = $this->retrieveContactsFromZoho($user_id, $accessToken);
         $contacts = Contact::getZohoContactInfo();
-        return view('contacts.create', compact('contactDetails','user_id','name','contacts'));
+        return view('contacts.create', compact('contact','user_id','name','contacts','notesInfo','getdealsTransaction','retrieveModuleData'));
+        
+    }
+
+    public function createContactId(Request $request)
+    {
+            $db = new DB();
+            $zoho = new ZohoCRM();
+            $user = auth()->user();
+            if (!$user) {
+                return redirect('/login');
+            }
+            $accessToken = $user->getAccessToken();
+            $isIncompleteContact = $db->getIncompleteContact($user,$accessToken);
+            if($isIncompleteContact){
+                return response()->json($isIncompleteContact);
+            }else{
+                $zoho->access_token = $accessToken;
+    
+                $jsonData = $request->json()->all();
+                $zohoContact = $zoho->createContactData($jsonData);
+                 if (!$zohoContact->successful()) {
+                         return "error somthing".$zohoContact;
+                    }
+                    $zohoContactArray = json_decode($zohoContact, true);
+                    $data = $zohoContactArray['data'][0]['details']; 
+                $contact=$db->createDeal($user,$accessToken,$data['id']);
+                return response()->json($contact);
+            }
+    
+            
         
     }
 
