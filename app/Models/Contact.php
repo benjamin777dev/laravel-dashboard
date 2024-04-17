@@ -23,4 +23,10 @@ class Contact extends Model
         "mailing_state",
         "mailing_zip"
     ];
+
+    public static function getZohoContactInfo()
+    {
+        // Retrieve Zoho contact ID, last name, and first name
+        return self::select('zoho_contact_id', 'last_name', 'first_name')->get();
+    }
 }
