@@ -1330,7 +1330,7 @@
 
 
 
-    function moduleSelected(selectedModule, accessToken) {
+    function moduleSelected(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;

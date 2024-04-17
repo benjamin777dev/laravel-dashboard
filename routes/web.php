@@ -60,7 +60,8 @@ Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.ind
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::post('/create-contact', [ContactController::class, 'createContact'])->name('create.contact')->middleware('auth');
 Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
-Route::get('/contacts-create', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');

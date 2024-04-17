@@ -22,7 +22,14 @@ class CreatecontactsTable extends Migration
             $table->string('mailing_city')->nullable();
             $table->string('mailing_state')->nullable();
             $table->string('mailing_zip')->nullable();
-
+            $table->boolean('isContactCompleted')->nullable()->default(0);
+            $table->boolean('isInZoho')->nullable()->default(0);            
+            $table->string('mobile')->nullable();
+            $table->string('Lead_Source')->nullable();
+            $table->string('group_id')->nullable();
+            $table->string('referred_id')->nullable();
+            $table->string('lead_source_detail')->nullable();
+            $table->string('spouse_partner')->nullable();
             $table->timestamps();
         });
     }

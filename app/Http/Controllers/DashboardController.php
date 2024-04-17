@@ -30,11 +30,11 @@ class DashboardController extends Controller
 
     public function index()
     {
+
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-
         $db = new DB();
         $helper = new Helper();
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
@@ -175,7 +175,7 @@ class DashboardController extends Controller
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print_r(json_encode($stageData));
+        //  print_r(json_encode($retrieveModuleData));
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
