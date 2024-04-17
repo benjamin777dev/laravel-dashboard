@@ -129,7 +129,7 @@
                                             </td>
                                             <td>
                                                 <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
-                                                    value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                                    value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                                             </td>
                                             <td>
                                                 <div class="d-flex ">
@@ -242,7 +242,7 @@
                                         <input type="checkbox" />
                                     </div>
                                     <div class="dcardssubjectdiv">
-                                        <p class="dcardSubject" id="editableText{{ $task['id'] }}"
+                                        <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
                                             onclick="makeEditable('{{ $task['id'] }}')">
                                             {{ $task['subject'] ?? 'N/A' }}
                                             {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
@@ -286,7 +286,7 @@
                         </div>
                         @if (count($tasks) > 0)
                             <div class="dpagination">
-                                <div onclick="deleteTask()"
+                                <div onclick="deleteTask('{{$task['zoho_task_id']}}')"
                                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
                                     id="removeBtn">
                                     <i class="fas fa-trash-alt plusicon"></i>
@@ -1043,8 +1043,14 @@
 
     function makeEditable(id) {
         textElement = document.getElementById('editableText' + id);
+        textElementCard = document.getElementById('editableTextCard' + id);
+        //For Table data                
         var text = textElement.textContent.trim();
         textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+
+        //For card data
+        var text = textElementCard.textContent.trim();
+        textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
 
         var inputElement = document.getElementById('editableInput' + id);
         inputElement.focus();

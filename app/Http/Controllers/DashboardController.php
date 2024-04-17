@@ -457,6 +457,9 @@ class DashboardController extends Controller
         $status = $data['Status'];
         $Due_Date = $data['Due_Date'];
         $What_Id = $data['What_Id']['id'];
+        $priority = $data['Priority']??null;
+        $created_time = Carbon::now();
+        $closed_time = $data['Closed_Time']??null;
         
 
 
@@ -489,7 +492,15 @@ class DashboardController extends Controller
                     'who_id'=>$whoid ?? null,
                     'due_date'=>$Due_Date ?? null,
                     'what_id'=>$What_Id ?? null,
+                    'closed_time'=>$closed_time??null,
+                    'created_by'=>$user->id,
+                    'priority'=>$priority??null,
+                    'created_time'=>$created_time??null
                 ]);
+
+        
+        
+        
         
                 return response()->json($responseArray, 201);
 
@@ -553,6 +564,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
+        Log::info("JSON TASK INPUT".json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
         try {
@@ -562,9 +574,12 @@ class DashboardController extends Controller
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 $requestData = json_decode($request->getContent(), true);
+                $data = $requestData['data'][0];
                 $subject = $requestData['data'][0]['Subject'];
                 if($task){
                     $task->subject = $subject;
+                    $task->status=$status ?? $task->status;
+                    $task->due_date=$data['Due_Date'] ?? $task->due_date;
                     $task->save();
                 }
 
@@ -635,8 +650,12 @@ class DashboardController extends Controller
 
         $accessToken = $user->getAccessToken();
         $search = "";
-        // Pass the search parameters to the retrieveTasks method
-        $tasks = $db->retreiveTasksJson($user, $accessToken);
+        $dealId = request()->query('dealId');
+        
+            // Pass the search parameters to the retrieveTasks method
+            $tasks = $db->retreiveTasksJson($user, $accessToken,$dealId);
+       
+        
         
         return response()->json($tasks);
         // return view('pipeline.index', compact('deals'));
@@ -651,8 +670,9 @@ class DashboardController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
+         $dealId = request()->query('dealId');
         // Pass the search parameters to the retrieveTasks method
-        $deals = $db->retreiveDealsJson($user, $accessToken);
+        $deals = $db->retreiveDealsJson($user, $accessToken,$dealId);
         
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
@@ -665,10 +685,14 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
         $accessToken = $user->getAccessToken();
         // Pass the search parameters to the retrieveTasks method
+        $dealId = request()->query('dealId');
+        if($dealId){
+            $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$dealId);
+        }else{
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        }
         
         return response()->json($contacts);
         // return view('pipeline.index', compact('deals'));
@@ -739,6 +763,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
+        $db = new DB();
         $zoho->access_token = $accessToken;
 
         $jsonData = [
@@ -751,7 +776,7 @@ class DashboardController extends Controller
                         ],
                         "id" => $validatedData2['related_to_parent'],
                     ],
-                    "Note_Content" => $validatedData2['note_text']
+                    "Note_Content" => $validatedData2['note_text'],
                 ]
             ]
         ];
@@ -766,12 +791,15 @@ class DashboardController extends Controller
         }
         $data = json_decode($response, true);
         $zoho_node_id = $data['data'][0]['details']['id'];
+        $deal = $db->retrieveDealByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
         $note->related_to_module_id = $validatedData1['zoho_module_id'];
         $note->zoho_note_id = $zoho_node_id;
         $note->owner = $user->id;
+        $note->related_to = $deal->id??null;
+        $note->created_time = Carbon::now();
         $note->related_to_type = $validatedData1['api_name'];
         $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
         $note->note_content = $validatedData2['note_text'];

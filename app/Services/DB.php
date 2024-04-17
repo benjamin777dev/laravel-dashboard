@@ -325,6 +325,32 @@ class DB
 
     }
 
+     public function retrieveDealByZohoId(User $user, $accessToken,$dealId)
+    {
+
+        try {
+            Log::info("Retrieve Deals From Database");
+            
+            $conditions = [['userID', $user->id],['zoho_deal_id', $dealId]];
+
+            // Adjust query to include contactName table using join
+            $deals = Deal::with('userData', 'contactName');
+
+            
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->first();
+            Log::info("Retrieved Deals From Database", ['deals' => $deals]);
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
     public function retreiveTasks(User $user, $accessToken, $tab = '')
     {
         try {
@@ -339,12 +365,18 @@ class DB
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken)
+    public function retreiveTasksJson(User $user, $accessToken,$dealId=null)
     {
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->get();
+            $condition =[
+                ['owner', $user->id]
+            ];
+            if($dealId){
+               $condition[] = ['what_id', $dealId];
+            }
+            $tasks = Task::where($condition)->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -353,12 +385,18 @@ class DB
         }
     }
 
-    public function retreiveDealsJson(User $user, $accessToken)
+    public function retreiveDealsJson(User $user, $accessToken,$dealId=null)
     {
         try {
 
             Log::info("Retrieve Deals From Database");
-            $Deals = Deal::where('userID', $user->id)->get();
+            $condition =[
+                ['userID', $user->id]
+            ];
+            if($dealId){
+               $condition[] = ['zoho_deal_id', $dealId];
+            }
+            $Deals = Deal::where($condition)->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
         } catch (\Exception $e) {
@@ -472,7 +510,7 @@ class DB
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('dealData')->where([['owner', $user->id],['related_to_type','Deal'],['related_to',$dealId]])->get();
+            $notes = Note::with('userData')->with('dealData')->where([['owner', $user->id],['related_to_type','Deals'],['related_to',$dealId]])->get();
             Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
@@ -566,6 +604,40 @@ class DB
                 'userID'=>$user->id,
                 'isInZoho'=>true,
                 'zoho_deal_id'=>$zohoDealId
+            ]);
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
+            return $deal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+     public function updateDeal(User $user, $accessToken,$deal,$id)
+    {
+        try {
+            $helper = new Helper();
+            Log::info("User Deatils".$user);
+            $deal =  Deal::updateOrCreate(['zoho_deal_id' => $id], [
+                'zip' => $deal['Zip'],
+                'address' => $deal['Address'],
+                'representing' => $deal['Representing'],
+                'client_name_only' => $deal['Client_Name_Only'],
+                'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
+                'deal_name' => $deal['Deal_Name'],
+                'stage' => $deal['Stage'],
+                'sale_price' => $deal['Sale_Price'],
+                'city' => $deal['City'],
+                'state' => $deal['State'],
+                'pipeline1'=>$deal['Pipeline1'],
+                'personal_transaction' => $deal['Personal_Transaction']==true?1:0,
+                'double_ended' => $deal['Double_Ended']==true?1:0,
+                'commission' => $deal['Commission'],
+                'ownership_type' => $deal['Ownership_Type'],
+                'deal_name' => $deal['Deal_Name'],
+                'pipeline_probability' => $deal['Pipeline_Probability'],
+                'property_type' => $deal['Property_Type'],
+                'potential_gci' => $deal['Potential_GCI'],
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
