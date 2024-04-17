@@ -201,89 +201,88 @@
                 </div>
 
             </div>
-            <div class="col-md-4 col-sm-12">
+            {{-- <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
-                {{-- @if ($notesInfo->isEmpty()) --}}
-                {{-- <div class="noNotesFound">
+                 @if ($notesInfo->isEmpty())
+                 <div class="noNotesFound">
                         <p class="text-center notesAsignedText">No notes assigned</p>
                         <img src="{{ URL::asset('/images/news.svg') }}" alt="News">
 
-                    </div> --}}
-                {{-- @else --}}
+                    </div> 
+                @else 
                 <ul class="list-group dnotesUl">
-                    {{-- @foreach ($notesInfo as $note) --}}
+                    @foreach ($notesInfo as $note)
                     <li
                         class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
                         <div class="text-start">
-                            {{-- @if ($note['related_to_type'] === 'Deal')
-                                <span class="dFont800 dFont13">Related to:</span>
-                                {{ $note->dealData->deal_name }}<br />
-                            @endif
-                            @if ($note['related_to_type'] === 'Contact')
+                            @if ($note !== null && $note['related_to_type'] === 'Deal')
+                            <span class="dFont800 dFont13">Related to:</span>
+                            {{ $note->dealData->deal_name }}<br />
+                          @endif
+                            @if ($note !== null && $note['related_to_type'] === 'Contact')
                                 <span class="dFont800 dFont13">Related to:</span>
                                 {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
                             @endif
                             <p class="dFont400 fs-4 mb-0">
                                 {{ $note['note_content'] }}
-                            </p> --}}
+                            </p>
                         </div>
+                        <div class="d-flex align-items-center gx-2">
+                            <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                class="form-check-input checkbox{{ $note['id'] }}"
+                                id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                type="button" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdropnoteupdatecontact{{ $note['id'] }}" />
+                        </div>
+                         {{-- note update modal --}}
+                         {{-- <div class="modal fade" id="staticBackdropnoteupdatecontact{{ $note['id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                         <div class="modal-dialog modal-dialog-centered deleteModal">
+                             <div class="modal-content noteModal">
+                                 <div class="modal-header border-0">
+                                     <p class="modal-title dHeaderText">Note</p>
+                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                         aria-label="Close" onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                 </div>
+                                 <form  action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}" method="post">
+                                     @csrf
+                                     @method('POST')
+                                     <div class="modal-body dtaskbody">
+                                         <p class="ddetailsText">Details</p>
+                                         <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
+                                         @error('note_text')
+                                             <div class="text-danger">{{ $message }}</div>
+                                         @enderror
+                                         <p class="dRelatedText">Related to...</p>
+                                         <div class="btn-group dmodalTaskDiv">
+                                            <select class="form-select dmodaltaskSelect" name="related_to"
+                                                aria-label="Select Transaction">
+                                                <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                    {{ $note['related_to_type'] }}
+                                                </option>
 
-                        {{-- dynamic edit modal --}}
-                        {{-- note update modal --}}
-                        <div class="modal fade" {{-- id="staticBackdropnoteupdate{{ $note['id'] }}" --}} data-bs-backdrop="static" data-bs-keyboard="false"
-                            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                <div class="modal-content noteModal">
-                                    <div class="modal-header border-0">
-                                        <p class="modal-title dHeaderText">Note</p>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <form {{-- action="{{ route('update.note', ['id' => $note['id']]) }}" --}} method="post">
-                                        @csrf
-                                        @method('POST')
-                                        <div class="modal-body dtaskbody">
-                                            <p class="ddetailsText">Details</p>
-                                            <textarea name="note_text" rows="4" class="dtextarea">
-                                                {{-- {{ $note['note_text'] }} --}}
-                                            </textarea>
-                                            @error('note_text')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                            <p class="dRelatedText">Related to...</p>
-                                            <div class="btn-group dmodalTaskDiv">
-                                                <select class="form-select dmodaltaskSelect" name="related_to"
-                                                    aria-label="Select Transaction">
-                                                    <option value="">Please select one</option>
-                                                    {{-- @foreach ($getdealsTransaction as $item)
-                                                        <option value="{{ $item['Deal_Name'] }}"
-                                                            {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
-                                                            {{ $item['Deal_Name'] }}
-                                                        </option>
-                                                    @endforeach --}}
-                                                </select>
-                                            </div>
-                                            @error('related_to')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
+                                            </select>
                                         </div>
-                                        <div class="modal-footer dNoteFooter border-0">
-                                            <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                <i class="fas fa-save saveIcon"></i> Mark as Done
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="checkbox" {{-- onclick="handleDeleteCheckbox('{{ $note['id'] }}')" --}} {{-- class="form-check-input checkbox{{ $note['id'] }}" --}} {{-- id="checkbox{{ $loop->index + 1 }}" --}}>
+                                        @error('related_to')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                     </div>
+                                     <div class="modal-footer dNoteFooter border-0">
+                                         <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
+                                             <i class="fas fa-save saveIcon"></i> Mark as Done
+                                         </button>
+                                     </div>
+                                 </form>
+                             </div>
+                         </div>
+                     </div>
                     </li>
-                    {{-- @endforeach --}}
-                    {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
-                            class="btn btn-danger" style="display: none;">Delete</button> --}}
+                    @endforeach
+                    <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
+                            class="btn btn-danger" style="display: none;">Delete</button>
                 </ul>
-                {{-- @endif --}}
-            </div>
+                @endif --}}
+            {{-- </div>  --}}
 
         </div>
         <form class="row" action="{{ route('create.contact') }}" method="POST">
@@ -371,12 +370,12 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">First Name</label>
-                        <input type="text" name="first_name" placeholder="Enter First name" class="form-control npinputinfo"
+                        <input type="text" name="first_name" value="{{$contact['first_name']}}" placeholder="Enter First name" class="form-control npinputinfo"
                             id="validationDefault01" >
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
-                        <input type="text" name="last_name" onkeyup="showValidation(this)" placeholder="Enter Last name" class="form-control npinputinfo"
+                        <input type="text" value="{{$contact['last_name']}}" name="last_name" onkeyup="showValidation(this)" placeholder="Enter Last name" class="form-control npinputinfo"
                             id="last_name">
                             <div id="last_name_error_message" class="text-danger"></div>
                     </div>
@@ -570,6 +569,57 @@
             </div>
         </form>
     </div>
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropContact">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    </div>
+
+
+      {{-- Note Modal --}}
+      <div class="modal fade" id="staticBackdropContact" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+      aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered deleteModal">
+          <div class="modal-content noteModal">
+              <div class="modal-header border-0">
+                  <p class="modal-title dHeaderText">Note</p>
+                  <button type="button" onclick="resetFormAndHideSelect();" class="btn-close" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+              </div>
+              <form id="noteForm" action="{{ route('save.note') }}" method="post">
+                  @csrf
+                  <div class="modal-body dtaskbody">
+                      <p class="ddetailsText">Details</p>
+                      <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
+                      <div id="note_text_error" class="text-danger"></div>
+                      <p class="dRelatedText">Related to...</p>
+                      <div class="btn-group dmodalTaskDiv">
+                          <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
+                              name="related_to" aria-label="Select Transaction">
+                              <option value="">Please select one</option>
+                              @if (!empty($retrieveModuleData))
+                              @foreach ($retrieveModuleData as $item)
+                                  @if (in_array($item['api_name'], ['Contacts']))
+                                      <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                  @endif
+                              @endforeach
+                              @endif
+                          </select>
+                          <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
+                              aria-label="Select Transaction" style="display: none;">
+                              <option value="">Please Select one</option>
+                          </select>
+                      </div>
+                      <div id="related_to_error" class="text-danger"></div>
+                  </div>
+                  <div class="modal-footer dNoteFooter border-0">
+                      <button type="button" id="validate-button" onclick="validateFormc()"
+                          class="btn btn-secondary dNoteModalmarkBtn">
+                          <i class="fas fa-save saveIcon"></i> Add Note
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
     {{-- <div class="container">
         <h1>Contact Details: {{ $contactDetails['Full_Name'] ?? 'N/A' }}</h1>
         <div>
@@ -609,6 +659,10 @@ $('#secondry_address').change(function() {
         $(this).val(false);
     }
 });
+
+        document.getElementById("note_text").addEventListener("keyup", validateFormc);
+        document.getElementById("related_to").addEventListener("change", validateFormc);
+
     })
 
     function showValidation(e){
@@ -634,5 +688,123 @@ $('#secondry_address').change(function() {
     submitbtn.attr("type", "submit");
 
   }
+
+  function handleDeleteCheckbox(id) {
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton' + id);
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Toggle delete button visibility
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                // if (deleteButton.style.display === 'block') {
+                //     selectedNoteIds.push(id)
+                // }
+            });
+        });
+
+    }
+
+    function moduleSelected(selectedModule) {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect');
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name + ' ' + task?.last_name
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
+
+    function resetFormAndHideSelect() {
+        document.getElementById('noteForm').reset();
+        document.getElementById('taskSelect').style.display = 'none';
+        clearValidationMessages();
+    }
+
+    function clearValidationMessages() {
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+    }
+
+    function validateFormc() {
+        let noteText = document.getElementById("note_text").value;
+        let relatedTo = document.getElementById("related_to").value;
+        let isValid = true;
+
+        // Reset errors
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+
+        // Validate note text length
+        if (noteText.trim().length > 50) {
+            document.getElementById("note_text_error").innerText = "Note text must be 10 characters or less";
+            isValid = false;
+        }
+        // Validate note text
+        if (noteText.trim() === "") {
+            document.getElementById("note_text_error").innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error").innerText = "Related to is required";
+            document.getElementById("taskSelect").style.display = "none";
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button');
+            changeButton.type = "submit";
+        }
+        return isValid;
+    }
 
 </script>

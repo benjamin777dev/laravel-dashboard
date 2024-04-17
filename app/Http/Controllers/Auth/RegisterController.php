@@ -79,10 +79,6 @@ class RegisterController extends Controller
 
             $userData = json_decode((string) $userDataResponse->getBody(), true);
             Log::info("User data: ", [$userData]);
-
-
-
-
             if (!isset($userData['users'], $userData['users'][0], $userData['users'][0]['id'])) {
                 Log::error('User data not found in response');
                 return redirect('/register')->withErrors(['oauth' => 'User data not found in response.']);

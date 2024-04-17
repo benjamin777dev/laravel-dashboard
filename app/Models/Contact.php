@@ -16,17 +16,37 @@ class Contact extends Model
         "first_name",
         "last_name",
         "phone",
+        "mobile",
         "created_time",
         "abcd",
         "mailing_address",
         "mailing_city",
         "mailing_state",
-        "mailing_zip"
+        "mailing_zip",
+        "isContactCompleted",
+        "isInZoho",
+        "Lead_Source",
+        "group_id",
+        "referred_id",
+        "lead_source_detail",
+        "spouse_partner",
+
+
     ];
 
     public static function getZohoContactInfo()
     {
         // Retrieve Zoho contact ID, last name, and first name
         return self::select('zoho_contact_id', 'last_name', 'first_name')->get();
+    }
+
+    public function userData()
+    {
+        return $this->belongsTo(User::class, 'contact_owner');
+    }
+
+    public function contactName()
+    {
+        return $this->belongsTo(Contact::class, 'contactId');
     }
 }

@@ -323,6 +323,32 @@ class DB
         }
 
 
+
+    }
+
+    public function retrieveContactById(User $user, $accessToken,$contactId)
+    {
+
+        try {
+            Log::info("Retrieve Deals From Database");
+            
+            $conditions = [['contact_owner', $user->id],['id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName');
+
+            
+            Log::info("Contacts Conditions", ['contacts' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved Deals From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Contacts: " . $e->getMessage());
+            throw $e;
+        }
+
     }
 
      public function retrieveDealByZohoId(User $user, $accessToken,$dealId)
@@ -427,6 +453,21 @@ class DB
         ->where('what_id', $dealId)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveTasksForContact(User $user, $accessToken,$tab = '',$dealId='')
+    {
+        try {
+
+            Log::info("DealIDS".$dealId);
+            $contactTask = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
+        ->where('what_id', $dealId)->paginate(10);
+            Log::info("Retrieved Tasks From Database", ['contactTask' => $contactTask]);
+            return $contactTask;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
@@ -588,6 +629,19 @@ class DB
             $deal = Deal::where('isDealCompleted', false)->first();
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getIncompleteContact(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Deal Contact From Database");
+            $contact = Contact::where('isContactCompleted', false)->first();
+            Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
+            return $contact;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
