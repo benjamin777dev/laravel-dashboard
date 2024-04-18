@@ -388,7 +388,6 @@ class ContactController extends Controller
         $notesInfo = $db->retrieveNotes($user,$accessToken);
         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        $contactDetails = $this->retrieveContactDetailsFromZoho(config('variables.contactId'), $accessToken);
         // $contacts = $this->retrieveContactsFromZoho($user_id, $accessToken);
         $contacts = Contact::getZohoContactInfo();
         return view('contacts.create', compact('contact','user_id','name','contacts','notesInfo','getdealsTransaction','retrieveModuleData'));
