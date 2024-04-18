@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 
 // Assuming you want to redirect authenticated users to the dashboard,
@@ -69,8 +70,11 @@ Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middlewa
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');
+Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.update');
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
+//Groups
+Route::get('/group', [GroupController::class, 'index'])->name('group.index')->middleware('auth');
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 

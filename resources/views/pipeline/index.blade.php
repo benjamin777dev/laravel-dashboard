@@ -20,14 +20,22 @@
             <i class="fas fa-search search-icon"></i>
         </div>
         <p class="porText">or</p>
-        <div class="pcommonFilterDiv">
-            <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
-            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
+        <div class="psortingFilterDiv">
+            <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
+                <option value="">Please select one</option>
+                @foreach ($allstages as $item)
+                    <option value="{{ $item }}">{{ $item }}</option>
+                @endforeach
+            </select>
+            {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
+            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">--}}
         </div>
-        <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter"></i>
+       <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
             Filter
         </div>
+
     </div>
+
      <div class="table-responsive">
             <div class="npcontactsTable">
                 <div>
@@ -43,7 +51,7 @@
                     <div class="commonFlex">
                         <p class="mb-0">Client Name</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('contactName.first_name')">
+                            id="pipelineSort" onclick="toggleSort('client_name_primary')">
                     </div>
                 </div>
                 <div>
@@ -83,8 +91,7 @@
                     <div class="npcontactsBody">
                         <div><input type="checkbox"></div>
                         <div class="commonTextEllipsis">{{ $deal['deal_name'] ?? 'N/A' }}</div>
-                        <div class="commonTextEllipsis">{{ $deal->contactName->first_name ?? 'N/A' }}
-                            {{ $deal->contactName->last_name ?? '' }}</div>
+                        <div class="commonTextEllipsis">{{ $deal->client_name_primary ?? 'N/A' }}</div>
                         <div>
                             <div class="commonFlex  pipelinestatusdiv">
                                 <p style="background-color: {{ $deal['stage'] === 'Potential'
@@ -146,8 +153,8 @@
                         </div>
                         <div class="d-flex justify-content-between psellDiv">
                             <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A">
-                                {{ $deal->contactName->first_name ?? 'N/A' }}
-                                {{ $deal->contactName->last_name ?? '' }}
+                                {{ $deal->client_name_primary ?? 'N/A' }}
+                                {{-- {{ $deal->contactName->last_name ?? '' }} --}}
                                 {{-- {{ $deal['Primary_Contact'] ?? 'N/A' }} --}}
                             </div>
                             <div>
@@ -182,18 +189,11 @@
 
 
 <script>
-    $(document).ready(function() {
-        const searchInput = $('#pipelineSearch');
-        const sortInput = $('#pipelineSort');
-        const ppipelineTableBody = $('.psearchandsort');
-        const ptableCardDiv = $('.ptableCardDiv');
-
-
-        searchInput.on('input', function() {
-        fetchData(sortInput.val(), '');
-        });
+    
+       
         // Add an event listener to send search term as request
-        function fetchData(sortValue, sortType) {
+        function fetchData(sortValue, sortType,filter=null,searchInput,ppipelineTableBody,ptableCardDiv) {
+            console.log("filter",filter);
             const searchValue = searchInput.val().trim();
             $.ajax({
                 url: '{{ url('/pipeline/deals') }}',
@@ -201,7 +201,8 @@
                 data: {
                     search: encodeURIComponent(searchValue),
                     sort: sortValue || "",
-                    sortType: sortType || ""
+                    sortType: sortType || "",
+                    filter:filter
                 },
                 dataType: 'json',
                 success: function(data) {
@@ -246,7 +247,7 @@
                                             ${item.closing_date || 'N/A'}
                                         </div>
                                         <div class="d-flex justify-content-between psellDiv">
-                                            <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.contact_name ? (item.contact_name.first_name + ' ' + item.contact_name.last_name) : 'N/A'}
+                                            <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.client_name_primary?? 'N/A'}
                                             </div>
                                             <div>
                                                 <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">$
@@ -274,7 +275,7 @@
                             <div class="npcontactsBody">
                                 <div><input type="checkbox"></div>
                                 <div class="commonTextEllipsis">${item.deal_name ?? 'N/A' }</div>
-                                <div class="commonTextEllipsis">${item.contact_name ? (item.contact_name.first_name + ' ' + item.contact_name.last_name) : 'N/A'}</div>
+                                <div class="commonTextEllipsis">${item.client_name_primary?? 'N/A'}</div>
                                 <div>
                                     <div class="commonFlex  pipelinestatusdiv">
                                         <p style="background-color: ${item.stage === 'Potential'
@@ -321,7 +322,7 @@
                         "Owner": {
                             "id": "{{ auth()->user()->root_user_id }}"
                         },
-                         "Stage":"Need Analysis"
+                        "Stage":"Potential"
                     }],
             "_token": '{{ csrf_token() }}'
             };
@@ -349,10 +350,24 @@
 
         // Function to toggle sort
         window.toggleSort = function(sortField) {
+            // Toggle the sort direction
             sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
-            fetchData(sortField, sortDirection);
+            // Call fetchDeal with the sortField parameter
+            fetchDeal(sortField, sortDirection);
         };
-    });
+
+        window.fetchDeal = function(sortField, sortDirection) {
+            const searchInput = $('#pipelineSearch');
+            const sortInput = $('#pipelineSort');
+            const ppipelineTableBody = $('.psearchandsort');
+            const ptableCardDiv = $('.ptableCardDiv');
+            var selectedModule = $('#related_to');
+            var selectedText = selectedModule.val();
+            // Call fetchData with the updated parameters
+            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv);
+        }
+
+   
 </script>
 
 @section('pipelineScript')

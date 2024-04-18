@@ -166,7 +166,7 @@ class RegisterController extends Controller
 
         $encryptedAccessToken = Crypt::encryptString($tokenData['access_token']);
         $encryptedRefreshToken = Crypt::encryptString($tokenData['refresh_token']);
-
+        
         // Create or update the user in the database
         $constraint = ['zoho_id' => $contactId];
         $userDBData = [
@@ -178,7 +178,7 @@ class RegisterController extends Controller
             'token_expires_at' => now()->addSeconds($tokenData['expires_in']),
             'root_user_id' => $rootUserId,
         ];
-
+        
         Log::info("Constraint: " . print_r($constraint, true));
         Log::info("User DB data: " . print_r($userDBData, true));
 

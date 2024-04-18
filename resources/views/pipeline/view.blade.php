@@ -14,11 +14,11 @@
                     <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                     Delete
                 </div>
-                <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
+                <a href = "{{ url('/pipeline-update/' . $deal['id']) }}"><div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#newTaskModalId">
                     <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
                     Edit All
-                </div>
+                </div></a>
             </div>
         </div>
         <div class="row">
@@ -746,9 +746,8 @@
 
         // Function to populate client information
         function populateClientInfo() {
-            var firstName = "{{ $deal->contactName->first_name ?? 'N/A' }}";
-            var lastName = "{{ $deal->contactName->last_name ?? '' }}";
-            document.getElementById('validationDefault01').value = firstName + " " + lastName;
+           
+            document.getElementById('validationDefault01').value = "{{ $deal->client_name_primary ?? 'N/A'}}";
             document.getElementById('validationDefault02').value = "{{ $deal->representing ?? 'N/A'}}";
             document.getElementById('validationDefault03').value = "{{ $deal->deal_name ?? 'N/A'}}";
             document.getElementById('validationDefault04').value = "{{ $deal->stage ?? 'N/A'}}";
@@ -779,8 +778,8 @@
             document.getElementById('validationDefault14').value = "$ {{ $deal->potential_gci ?? 'N/A'}}";
             document.getElementById('validationDefault15').value = "{{ $deal->pipeline_probability ?? 'N/A'}}";
             document.getElementById('validationDefault16').value = "$ {{ $deal->pipeline1 ?? 'N/A'}}";
-            document.getElementById('flexCheckChecked01').checked = "{{ $deal->personal_transaction}}" === 1 ? true : false;
-            document.getElementById('flexCheckChecked02').checked = "{{ $deal->double_ended}}" === 1 ? true : false;
+            document.getElementById('flexCheckChecked01').checked = "{{ $deal->personal_transaction}}" == 1 ? true : false;
+            document.getElementById('flexCheckChecked02').checked = "{{ $deal->double_ended}}" == 1 ? true : false;
         }
 
         // Assume 'deal' is defined somewhere in your page or passed as a parameter
