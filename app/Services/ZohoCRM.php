@@ -156,14 +156,14 @@ class ZohoCRM
     }
 
     //create contacts to zoho 
-    public function createContactData($inputJson)
+    public function createContactData($inputJson,$id)
     {
         Log::info('Creating Zoho contacts');
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
-        ])->post($this->apidealsurl . "Contacts", $inputJson);
+        ])->patch($this->apidealsurl . "Contacts/$id?affected_data=true", $inputJson);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;

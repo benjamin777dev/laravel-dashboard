@@ -54,9 +54,10 @@ class RegisterController extends Controller
     public function handleZohoCallback(Request $request)
     {
         try {
+            // print($request);
             $zoho = new ZohoCRM();
             $response = $zoho->handleZohoCallback($request);
-
+            $tokenData = json_decode((string) $response->getBody(), true);
             // Check the response status code directly
             if (!($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299)) {
                 Log::error('OAuth authentication failed', ['response' => (string) $response->getBody()]);
