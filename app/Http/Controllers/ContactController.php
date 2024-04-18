@@ -27,7 +27,7 @@ class ContactController extends Controller
         return view('contacts.index', compact('contacts'));
     }
 
-    public function createContact(Request $request){
+    public function updateContact(Request $request,$id){
         try {
         $user = auth()->user();
         if (!$user) {
@@ -63,6 +63,9 @@ class ContactController extends Controller
         $input = $request->all();
         if (isset($input['last_called']) && $input['last_called'] !== '') {
             $rules['last_called'] = 'date';
+        }
+        if (isset($input['first_name']) && $input['first_name'] !== '') {
+            $rules['first_name'] = 'required|string|max:255';
         }
         if (isset($input['last_emailed']) && $input['last_emailed'] !== '') {
             $rules['last_emailed'] = 'date';
@@ -146,10 +149,10 @@ class ContactController extends Controller
                 ],
                 "Unsubscribe_From_Reviews"=> false,
                 "Currency"=> "USD",
-                "Market_Area"=> $validatedData['market_area'] ??"-None-",
-                "Salutation"=> "-None-",
+                "Market_Area"=> $validatedData['market_area'] ?? "-None-",
+                "Salutation"=> $validatedData['envelope_salutation'] ?? "-None-",
                 "First_Name"=> $validatedData['first_name'] ?? "",
-                "Lead_Source"=> "-None-",
+                "Lead_Source"=> $validatedData['lead_source'] ?? "-None-",
                 "Last_Name"=> $last_name,
                 "Mobile"=> $validatedData['mobile'] ?? "",
                 "Phone"=> $validatedData['phone'] ?? "",
@@ -252,26 +255,48 @@ class ContactController extends Controller
         if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
             unset($responseData['data'][0]['Spouse_Partner']);
         }
-        
-            $response = $zoho->createContactData($responseData);
-
+        $contactInstance = Contact::where('id', $id)->first();
+            $response = $zoho->createContactData($responseData,$contactInstance->zoho_contact_id);
             if (!$response->successful()) {
                 Log::error("Error creating contacts:");
                 return "error somthing".$response;
             }
             $data = json_decode($response, true);
-            $contact = new Contact();
             if (isset($response['data'][0])) {
                 $data = $response['data'][0];
                 $id = $data['details']['id'];
                 $createdByName = $data['details']['Created_By']['name'];
                 $createdById = $data['details']['Created_By']['id'];
-                $contact->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
-                $contact->contact_owner = $user->id;
-                $contact->zoho_contact_id = $id;
-                $contact->last_name = $last_name;
-                $contact->first_name = $validatedData['first_name'] ?? "";
-                $contact->save();
+                $contactInstance->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
+                $contactInstance->last_name = $last_name;
+                $contactInstance->first_name = $validatedData['first_name'] ?? null;
+                $contactInstance->mobile = $validatedData['mobile'] ?? null;
+                $contactInstance->email = $validatedData['email'] ?? null;
+                $contactInstance->phone = $validatedData['phone'] ?? null;
+                $contactInstance->abcd = $validatedData['abcd_class'] ?? null;
+                $contactInstance->market_area = $validatedData['market_area'] ?? null;
+                $contactInstance->Lead_Source = $validatedData['lead_source'] ?? null;
+                $contactInstance->referred_id = $validatedRefferedData['id'] ?? null;
+                $contactInstance->spouse_partner = $validatedSpouse['id'] ?? null;
+                $contactInstance->mailing_state =  $validatedData['state'] ?? null;
+                $contactInstance->mailing_city =  $validatedData['city'] ?? null;
+                $contactInstance->mailing_address =  $validatedData['address_line1'] ?? null;
+                $contactInstance->mailing_zip =  $validatedData['zip_code'] ?? null;         
+                $contactInstance->secondory_email =  $validatedData['email_primary'] ?? null;         
+                $contactInstance->business_name =  $validatedData['business_name'] ?? null;         
+                $contactInstance->business_information =  $validatedData['business_information'] ?? null;         
+                $contactInstance->lead_source_detail = $validatedData['lead_source_detail'] ?? null;
+                $contactInstance->envelope_salutation = $validatedData['envelope_salutation'] ?? null;
+                $contactInstance->relationship_type = $validatedData['relationship_type'] ?? null;
+               
+                if (isset($validatedData['last_called']) && !empty($validatedData['last_called'])) {
+                    $contactInstance->last_called =  $validatedData['last_called'];
+                }
+                
+                if (isset($validatedData['last_emailed']) && !empty($validatedData['last_emailed'])) {
+                    $contactInstance->last_emailed = $validatedData['last_emailed'];
+                }
+                $contactInstance->save();
             }
             // Redirect back with a success message
             return redirect()->back()->with('success', 'Contact saved successfully!');
@@ -385,13 +410,11 @@ class ContactController extends Controller
 
         $tab = request()->query('tab') ?? 'In Progress';
         $contacts = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
-        $notesInfo = $db->retrieveNotes($user,$accessToken);
+        $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
+        $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        $contactDetails = $this->retrieveContactDetailsFromZoho(config('variables.contactId'), $accessToken);
-        // $contacts = $this->retrieveContactsFromZoho($user_id, $accessToken);
-        $contacts = Contact::getZohoContactInfo();
-        return view('contacts.create', compact('contact','user_id','name','contacts','notesInfo','getdealsTransaction','retrieveModuleData'));
+        return view('contacts.create', compact('contact','user_id','name','contacts','notes','getdealsTransaction','retrieveModuleData','dealContacts'));
         
     }
 
@@ -417,7 +440,7 @@ class ContactController extends Controller
                     }
                     $zohoContactArray = json_decode($zohoContact, true);
                     $data = $zohoContactArray['data'][0]['details']; 
-                $contact=$db->createDeal($user,$accessToken,$data['id']);
+                $contact=$db->createContact($user,$accessToken,$data['id']);
                 return response()->json($contact);
             }
     

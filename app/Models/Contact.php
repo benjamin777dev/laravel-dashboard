@@ -16,6 +16,12 @@ class Contact extends Model
         "first_name",
         "last_name",
         "phone",
+        "business_name",
+        "business_information",
+        "secondory_email",
+        "relationship_type",
+        "market_area",
+        "envelope_salutation",
         "mobile",
         "created_time",
         "abcd",
@@ -30,6 +36,8 @@ class Contact extends Model
         "referred_id",
         "lead_source_detail",
         "spouse_partner",
+        "last_called",
+        "last_emailed",
 
 
     ];

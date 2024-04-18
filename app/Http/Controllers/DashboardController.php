@@ -651,12 +651,9 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $search = "";
         $dealId = request()->query('dealId');
-        
+        $contactId = request()->query('contactId');
             // Pass the search parameters to the retrieveTasks method
-            $tasks = $db->retreiveTasksJson($user, $accessToken,$dealId);
-       
-        
-        
+        $tasks = $db->retreiveTasksJson($user, $accessToken,$dealId,$contactId);
         return response()->json($tasks);
         // return view('pipeline.index', compact('deals'));
     }
@@ -671,8 +668,9 @@ class DashboardController extends Controller
 
         $accessToken = $user->getAccessToken();
          $dealId = request()->query('dealId');
+         $contactId = request()->query('contactId');
         // Pass the search parameters to the retrieveTasks method
-        $deals = $db->retreiveDealsJson($user, $accessToken,$dealId);
+        $deals = $db->retreiveDealsJson($user, $accessToken,$dealId,$contactId);
         
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
@@ -688,9 +686,13 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         // Pass the search parameters to the retrieveTasks method
         $dealId = request()->query('dealId');
+        $contactId = request()->query('contactId');
         if($dealId){
             $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$dealId);
-        }else{
+        }else if($contactId){
+            $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$contactId);
+        }
+        else{
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         }
         
