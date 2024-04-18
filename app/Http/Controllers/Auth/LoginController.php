@@ -48,7 +48,7 @@ class LoginController extends Controller
     
     }
     // protected function login(Request $request)
-    // {
+    // {   
       
     //     $validate = $request->validate([
     //         'email' => 'required|email',
@@ -60,7 +60,7 @@ class LoginController extends Controller
     //         // Redirect to Zoho for authentication
     //         $zoho = new ZohoCRM();
     //         $redirect_request = $zoho->redirectToZoho();
-    //         echo $redirect_request;
+    //         echo $redirect_request."&login=true";
     //     } else {
     //         // Email and password do not match, handle the error
     //         // For example, you can return a response indicating authentication failure

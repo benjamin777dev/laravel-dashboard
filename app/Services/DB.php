@@ -147,8 +147,17 @@ class DB
                 "abcd" => isset($contact['ABCD']) ? $contact['ABCD'] : null,
                 "mailing_address" => isset($contact['Mailing_Address']) ? $contact['Mailing_Address'] : null,
                 "mailing_city" => isset($contact['Mailing_City']) ? $contact['Mailing_City'] : null,
+                "phone" => isset($contact['Phone']) ? $contact['Phone'] : null,
+                "mobile" => isset($contact['Mobile']) ? $contact['Mobile'] : null,
                 "mailing_state" => isset($contact['Mailing_State']) ? $contact['Mailing_State'] : null,
-                "mailing_zip" => isset($contact['Mailing_Zip']) ? $contact['Mailing_Zip'] : null,
+                "market_area" => isset($contact['Market_Area']) ? $contact['Market_Area'] : null,
+                "relationship_type" => isset($contact['Relationship_Type']) ? $contact['Relationship_Type'] : null,
+                "envelope_salutation" => isset($contact['Salutation']) ? $contact['Salutation'] : null,
+                "envelope_salutation" => isset($contact['Salutation']) ? $contact['Salutation'] : null,
+                "referred_id" => isset($contact['Referred_By']) ? $contact['Referred_By']['id'] : null,
+                "Lead_Source" => isset($contact['Lead_Source']) ? $contact['Lead_Source'] : null,
+                "lead_source_detail" => isset($contact['Lead_Source_Detail']) ? $contact['Lead_Source_Detail'] : null,
+                "spouse_partner" => isset($contact['Spouse_Partner']) ? $contact['Spouse_Partner']['id'] : null,
                 "zoho_contact_id" => isset($contact['id']) ? $contact['id'] : null
             ]);
         }
@@ -391,7 +400,7 @@ class DB
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken,$dealId=null)
+    public function retreiveTasksJson(User $user, $accessToken,$dealId=null,$contactId = null)
     {
         try {
 
@@ -402,6 +411,9 @@ class DB
             if($dealId){
                $condition[] = ['what_id', $dealId];
             }
+            if($contactId){
+                $condition[] = ['what_id', $contactId];
+             }
             $tasks = Task::where($condition)->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
@@ -411,7 +423,7 @@ class DB
         }
     }
 
-    public function retreiveDealsJson(User $user, $accessToken,$dealId=null)
+    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId)
     {
         try {
 
@@ -422,6 +434,9 @@ class DB
             if($dealId){
                $condition[] = ['zoho_deal_id', $dealId];
             }
+            if($contactId){
+                $condition[] = ['zoho_deal_id', $contactId];
+             }
             $Deals = Deal::where($condition)->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
@@ -560,6 +575,20 @@ class DB
         }
     }
 
+    public function retrieveNotesForContact(User $user, $accessToken,$contactId)
+    {
+
+        try {
+            Log::info("Retrieve Notes From Database");
+            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id],['related_to_type','Contacts'],['related_to',$contactId]])->get();
+            Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
+            return $notes;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function retrieveDealContactFordeal(User $user, $accessToken,$dealId)
     {
 
@@ -661,6 +690,25 @@ class DB
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createContact(User $user, $accessToken,$zohoContactId)
+    {
+        try {
+            Log::info("User Deatils".$user);
+            $contact = Contact::create([
+                'last_name' => "CHR",
+                'isContactCompleted'=>false,
+                'contact_owner'=>$user->id,
+                'isInZoho'=>true,
+                'zoho_contact_id'=>$zohoContactId
+            ]);
+            Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
+            return $contact;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
