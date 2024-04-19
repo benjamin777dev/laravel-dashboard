@@ -20,9 +20,9 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
+        $db = new DB();
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $this->retrieveContactsFromZoho($user->root_user_id, $accessToken);
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
 
         return view('contacts.index', compact('contacts'));
     }
@@ -388,11 +388,21 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
+        $user_id = $user->root_user_id;
+        $name = $user->name;
+        $db = new DB();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactDetails = $this->retrieveContactDetailsFromZoho($contactId, $accessToken);
+        $contactId = request()->route('contactId');
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId );
 
-        return view('contacts.detail', compact('contactDetails'));
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
+        $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
+        $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
+        $contacts = $db->retreiveContactsJson($user,$accessToken);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts'));
     }
 
     public function showCreateContactForm()

@@ -33,36 +33,37 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
 
                 @foreach ($contacts as $contact)
+                    
                     <a href="{{ route('contacts.show', $contact['id']) }}">
                         <div class="col">
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
                                     <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
+                                        <h5 class="card-title">{{ $contact['first_name'] ?? 'N/A' }}</h5>
                                         <p class="databaseCardWord"
-                                            style="background-color: {{ $contact['ABCD'] === 'A'
+                                            style="background-color: {{ $contact['abcd'] === 'A'
                                                 ? '#9CC230'
-                                                : ($contact['ABCD'] === 'A+'
+                                                : ($contact['abcd'] === 'A+'
                                                     ? '#44CE1B'
-                                                    : ($contact['ABCD'] === 'B'
+                                                    : ($contact['abcd'] === 'B'
                                                         ? // '#FFB800' ||
                                                         '#FFB800'
-                                                        : ($contact['ABCD'] === 'C'
+                                                        : ($contact['abcd'] === 'C'
                                                             ? '#D4B40C'
-                                                            : ($contact['ABCD'] === 'D'
+                                                            : ($contact['abcd'] === 'D'
                                                                 ? '#816D03'
                                                                 : '#4F6481')))) }};">
-                                            {{ $contact['ABCD'] ?? '-' }}</p>
+                                            {{ $contact['abcd'] ?? '-' }}</p>
                                     </div>
                                     <div class="dataPhoneDiv">
                                         <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
                                             class="dataphoneicon">
 
-                                        <p class="card-text">{{ $contact['Mobile'] ?? 'N/A' }}</p>
+                                        <p class="card-text">{{ $contact['mobile'] ?? 'N/A' }}</p>
                                     </div>
                                     <div class="datamailDiv">
                                         <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
-                                        <p class="dataEmailtext">{{ $contact['Email'] ?? 'N/A' }}</p>
+                                        <p class="dataEmailtext">{{ $contact['email'] ?? 'N/A' }}</p>
                                     </div>
                                     <div class="datadiversityDiv">
                                         <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""

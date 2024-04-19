@@ -504,7 +504,7 @@
                             @if (!empty($contacts))
                                 @foreach ($contacts as $contactrefs)
                                     <option
-                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>{{$contactrefs['spouse_partner']}}
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
                                         {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}</option>
                                 @endforeach
                             @endif
