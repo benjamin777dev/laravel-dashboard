@@ -449,6 +449,40 @@ class DB
         }
     }
 
+    public function retreiveContacts(User $user,$accessToken,$search = null, $sortValue = null, $sortType = null,$dateFilter=null,$filter=null){
+        try {
+            Log::info("Retrieve Contact From Database");
+            
+            $conditions = [['contact_owner', $user->id]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::where($conditions); // Select only fields from the contacts table
+
+            if ($search !== "" || $filter) {
+                $searchTerms = urldecode($search);
+                $contacts->where(function ($query) use ($searchTerms) {
+                    $query->where('first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('email', 'like', '%' . $searchTerms . '%');
+                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
+                    // Add more OR conditions as needed
+                });
+            }
+
+            if($filter){
+                $conditions[]=['abcd', $filter];
+            }
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->get();
+            Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
     public function retreiveContactsJson(User $user,$accessToken){
         try {
 

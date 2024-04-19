@@ -21,10 +21,29 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $db = new DB();
+        $search = request()->query('search');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contacts = $db->retreiveContacts($user, $accessToken,$search);
 
         return view('contacts.index', compact('contacts'));
+    }
+
+    public function getContact(Request $request)
+    {
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $search = request()->query('search');
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $filter = $request->input('filter');
+        $contact = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType,null,$filter);
+        return response()->json($contact);
+        // return view('pipeline.index', compact('deals'));
     }
 
     public function updateContact(Request $request,$id){
