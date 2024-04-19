@@ -24,8 +24,8 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $search = request()->query('search');
         $deals = $db->retrieveDeals($user, $accessToken, $search);
-
-        return view('pipeline.index', compact('deals'));
+        $allstages = config('variables.dealStages');
+        return view('pipeline.index', compact('deals','allstages'));
     }
 
     public function getDeals(Request $request)
@@ -40,7 +40,8 @@ class PipelineController extends Controller
         $search = request()->query('search');
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType);
+        $filter = $request->input('filter');
+        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType,null,$filter);
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
     }
@@ -142,7 +143,7 @@ class PipelineController extends Controller
                 }
                 $zohoDealArray = json_decode($zohoDeal, true);
                 $data = $zohoDealArray['data'][0]['details']; 
-            $deal=$db->createDeal($user,$accessToken,$data['id']);
+            $deal=$db->createDeal($user,$accessToken,$data);
             return response()->json($deal);
         }
 

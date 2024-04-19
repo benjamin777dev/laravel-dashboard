@@ -14,7 +14,7 @@
                 </div>
             </a>
         </div>
-        <div class="pfilterDiv">
+        {{-- <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
                 <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
                 <i class="fas fa-search search-icon"></i>
@@ -27,9 +27,49 @@
             <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter"></i>
                 Filter
             </div>
+        </div> --}}
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="row align-items-center" style="gap:12px">
+                    <div class="col-md-10 pcommonFilterDiv">
+                        <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <p class="col-md-1 porText">or</p>
+                </div>
+            </div>
+            <div class="col-md-5">
+
+                <div class="row" style="gap:24px">
+                    <div class="psortFilterDiv col-md-6">
+                        <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" />
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
+                            class="ppipelinesorticon">
+                    </div>
+
+                    <div class="input-group-text pfilterBtn col-md-6" id="btnGroupAddon"> <i class="fas fa-filter"></i>
+                        Filter
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 cardsTab">
+                <div class="viewCards">
+                    <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
+
+                    <p class="viewCardsP">View as Cards</p>
+                </div>
+                <div class="viewMap">
+                    <img src="{{ URL::asset('/images/universal_local.svg') }}" class="viewMapImg" alt="">
+                    <p class="viewMapP">View on Map
+
+                    </p>
+                </div>
+            </div>
         </div>
 
-        <div>
+        <div class="contactlist">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
 
                 @foreach ($contacts as $contact)

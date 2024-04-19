@@ -698,6 +698,13 @@
         line-height: 17px;
     }
 
+    .porText {
+        text-align: center;
+    }
+    .cardsTab {
+        padding-inline: 0px;
+    }
+
 }
 
 @media (min-width: 320px) and (max-width: 355px) {
@@ -849,6 +856,16 @@
     margin-bottom: 24px;
 }
 
+/* .pcommonFilterDiv {
+    flex: 1;
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+} */
 .pcommonFilterDiv {
     flex: 1;
     display: flex;
@@ -859,11 +876,15 @@
     border: 1px solid #c1b7ae;
     background: #fff;
 }
-
+.psortingFilterDiv {
+    flex: 1;
+    padding: 7.52px 12px;
+}
 .psearchInput {
     flex: 1;
     border: none;
     outline: 0;
+    overflow: hidden;
 }
 .cpinput{
     color:  #222;
@@ -881,6 +902,7 @@
     font-weight: 400;
     line-height: normal;
     margin-bottom: 0px;
+    padding-inline: 0px;
 }
 
 .pfilterBtn {
@@ -898,6 +920,7 @@
     font-style: normal;
     font-weight: 400;
     cursor: pointer;
+    height: 37px;
 }
 
 .ptransactionTable th {
@@ -1581,3 +1604,205 @@
     border: 1px solid #c1b7ae;
     resize: none;
 }
+
+ /* Groups Table */
+ .dbgTable{
+    margin-top: 24px;
+ }
+.dbgHeaderTable th {
+    background: #222;
+    color: #fff;
+    padding: 12px 14px;
+}
+.dbgBodyTable td {
+    border-right: 1px solid #f0e6dc;
+    border-bottom: 1px solid #f0e6dc;
+    background: #fff;
+}
+
+.dbgcommonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+
+/* / database groups / */
+.dbgSelectDiv {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    gap: 24px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
+}
+.dbgSortDiv {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
+    gap: 24px;
+}
+.dbgSelectinfo {
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    color: #222;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.dbgGroupDiv {
+    padding-inline: 0px;
+}
+.dbgfilterBtn {
+    display: flex;
+    height: 33px;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    cursor: pointer;
+}
+/* Tab Card */
+.viewCards {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 4px 0px 0px 4px;
+    border-top: 2px solid #253c5b;
+    border-bottom: 2px solid #253c5b;
+    border-left: 2px solid #253c5b;
+    background: #fff;
+    color: #253c5b;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    min-height: 37px;
+}
+.viewCardsImg {
+    filter: invert();
+}
+.viewCardsP {
+    color: #253c5b;
+
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+}
+
+.viewMapP {
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+    color: #fff;
+}
+.viewMap {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 0px 4px 4px 0px;
+    border-top: 2px solid #253c5b;
+    border-right: 2px solid #253c5b;
+    border-bottom: 2px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    min-height: 37px;
+}
+.viewMapImg {
+    filter: invert();
+}
+
+/*  */
+
+.searchFilterMainDiv {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 24px;
+}
+
+.cardsTab {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+.searchorDiv {
+    display: grid;
+    grid-template-columns: 11fr 1fr;
+    gap: 24px;
+    align-items: baseline;
+}
+.pcontactFilterDiv {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 24px;
+}
+
+/*  */
+
+
+.psortFilterDiv {
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+    height: 37px;
+}
+.psearchInputDiv {
+    height: 37px;
+}
+
+.contactlist{
+    margin-top: 24px;
+}
+
+

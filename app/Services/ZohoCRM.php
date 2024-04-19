@@ -393,4 +393,23 @@ class ZohoCRM
 
         return $response;
     }
+
+    public function retrieveGroupsFromZoho($user)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Contacts/search',[
+                 'criteria' => "(Owner:equals:$user)"
+                
+            ]);
+            $responseData = $response->json();
+                //  dd($responseData);
+                // die;
+       
+       
+        return $response;
+    }
 }

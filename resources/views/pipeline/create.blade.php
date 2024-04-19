@@ -694,7 +694,7 @@
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                         <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                            id="validationDefault01" required value = "{{$deal['client_name_only']}}">
+                            id="validationDefault01" required value = "{{$deal['client_name_primary']}}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Representing</label>
@@ -1320,54 +1320,55 @@
                 })
             } --}}
 
-            window.updateDeal= function(dealId) {
+           window.updateDeal = function(dealId) {
                 console.log(dealId);
-                var client_name_only = document.getElementById("validationDefault01").value;
-                var representing = document.getElementById("validationDefault02").value;
-                var deal_name = document.getElementById("validationDefault03").value;
-                var stage = document.getElementById("validationDefault04").value;
-                var sale_price = document.getElementById("validationDefault05").value;
-                var closing_date = document.getElementById("validationDefault06").value;
-                var address = document.getElementById("validationDefault07").value;
-                var city = document.getElementById("validationDefault08").value;
-                var state = document.getElementById("validationDefault09").value;
-                var zip = document.getElementById("validationDefault10").value;
-                var commission = document.getElementById("validationDefault11").value;
-                var property_type = document.getElementById("validationDefault12").value;
-                var ownership_type = document.getElementById("validationDefault13").value;
-                var potential_gci = document.getElementById("validationDefault14").value;
-                var pipeline_probability = document.getElementById("validationDefault15").value;
-                var probable_gci = document.getElementById("validationDefault16").value;
-                var personal_transaction = document.getElementById("flexCheckChecked01").checked;
-                var double_ended = document.getElementById("flexCheckChecked02").checked;
-                var personalTransactionChecked = personal_transaction.checked?true:false;
-                var doubleEndedChecked = double_ended.checked?true:false;
+                // Retrieve values from form fields
+                var client_name_primary = $('#validationDefault01').val();
+                var representing = $('#validationDefault02').val();
+                var deal_name = $('#validationDefault03').val();
+                var stage = $('#validationDefault04').val();
+                var sale_price = $('#validationDefault05').val();
+                var closing_date = $('#validationDefault06').val();
+                var address = $('#validationDefault07').val();
+                var city = $('#validationDefault08').val();
+                var state = $('#validationDefault09').val();
+                var zip = $('#validationDefault10').val();
+                var commission = $('#validationDefault11').val();
+                var property_type = $('#validationDefault12').val();
+                var ownership_type = $('#validationDefault13').val();
+                var potential_gci = $('#validationDefault14').val();
+                var pipeline_probability = $('#validationDefault15').val();
+                var probable_gci = $('#validationDefault16').val();
+                var personal_transaction = $('#flexCheckChecked01').prop('checked');
+                var double_ended = $('#flexCheckChecked02').prop('checked');
+
+                // Create formData object
                 var formData = {
                     "data": [{
-                        "Client_Name_Only":client_name_only,
-                        "Representing" : representing ,
-                        "Deal_Name" : deal_name,
-                        "Stage" : stage,
-                        "Sale_Price" : sale_price,
-                        "Closing_Date" : closing_date,
-                        "Address" : address,
-                        "City" : city,
-                        "State" : state ,
-                        "Zip" : zip,   
-                        "Commission": commission ,
-                        "Property_Type": property_type ,
+                        "Client_Name_Primary": client_name_primary,
+                        "Representing": representing,
+                        "Deal_Name": deal_name,
+                        "Stage": stage,
+                        "Sale_Price": sale_price,
+                        "Closing_Date": closing_date,
+                        "Address": address,
+                        "City": city,
+                        "State": state,
+                        "Zip": zip,
+                        "Commission": commission,
+                        "Property_Type": property_type,
                         "Ownership_Type": ownership_type,
                         "Potential_GCI": potential_gci,
-                        "Pipeline_Probability": pipeline_probability ,
-                        "Pipeline1": probable_gci ,
-                        "Personal_Transaction": personalTransactionChecked,
-                        "Double_Ended": doubleEndedChecked ,
-
+                        "Pipeline_Probability": pipeline_probability,
+                        "Pipeline1": probable_gci,
+                        "Personal_Transaction": personal_transaction,
+                        "Double_Ended": double_ended
                     }],
                     "_token": '{{ csrf_token() }}'
                 };
-                console.log("formData",formData,dealId);
-                
+                console.log("formData", formData, dealId);
+
+                // Send AJAX request
                 $.ajax({
                     url: "{{ route('pipeline.update',['dealId' => ':id']) }}".replace(':id', dealId),
                     type: 'PUT',

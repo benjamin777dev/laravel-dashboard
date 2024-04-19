@@ -247,28 +247,28 @@ class DB
         }
     }
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null)
+    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null,$filter=null)
     {
 
         try {
             Log::info("Retrieve Deals From Database");
             
-            $conditions = [['userID', $user->id]];
+            $conditions = [['userID', $user->id],['stage', '!=', 'Dead-Lost To Competition']];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName')
-                ->join('contacts', 'deals.contactId', '=', 'contacts.id') // Adjust 'contactName' to the actual table name if different
-                ->select('deals.*'); // Select only fields from the deals table
+            $deals = Deal::where($conditions); // Select only fields from the deals table
+
             if ($search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('contacts.first_name', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
-                       ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
+                        ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%');
+                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
                     // Add more OR conditions as needed
                 });
             }
+
 
             if ($sortValue != '' && $sortType != '') {
                 $sortField = $sortValue;
@@ -293,6 +293,9 @@ class DB
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
                 $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek]);
+            }
+            if($filter){
+                $conditions[]=['stage', $filter];
             }
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
@@ -677,7 +680,7 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDealId)
+    public function createDeal(User $user, $accessToken,$zohoDeal)
     {
         try {
             Log::info("User Deatils".$user);
@@ -686,7 +689,8 @@ class DB
                 'isDealCompleted'=>false,
                 'userID'=>$user->id,
                 'isInZoho'=>true,
-                'zoho_deal_id'=>$zohoDealId
+                'zoho_deal_id'=>$zohoDealId['id'],
+                'stage'=>$zohoDealId['Stage']
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -724,7 +728,7 @@ class DB
                 'zip' => $deal['Zip'],
                 'address' => $deal['Address'],
                 'representing' => $deal['Representing'],
-                'client_name_only' => $deal['Client_Name_Only'],
+                'client_name_primary' => $deal['Client_Name_Primary'],
                 'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
                 'deal_name' => $deal['Deal_Name'],
                 'stage' => $deal['Stage'],
@@ -740,6 +744,7 @@ class DB
                 'pipeline_probability' => $deal['Pipeline_Probability'],
                 'property_type' => $deal['Property_Type'],
                 'potential_gci' => $deal['Potential_GCI'],
+                'isDealCompleted'=>true
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;

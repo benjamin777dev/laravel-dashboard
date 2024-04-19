@@ -17,6 +17,7 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
+    
     // Where to redirect users after login.
     protected $redirectTo = '/dashboard';
 
@@ -25,6 +26,19 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function login(Request $request)
+    {
+        Log::info('Login user...');
+        $zoho = new ZohoCRM();
+        $constraint = ['email' => $request->get('email')];
+        $user = User::where($constraint)->first();
+        
+        Auth::login($user);
+
+        Log::info('User registered and logged in.');
+
+        return redirect($this->redirectTo);
+    }
     // Overriding the credentials method
     protected function credentials(Request $request)
     {
@@ -47,26 +61,8 @@ class LoginController extends Controller
         );
     
     }
-    // protected function login(Request $request)
-    // {   
-      
-    //     $validate = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-    //     // Check if email and password match a user in the database
-    //     $user = User::where('email', $validate['email'])->first();
-    //     if ($user && Hash::check($validate['password'], $user->password)) {
-    //         // Redirect to Zoho for authentication
-    //         $zoho = new ZohoCRM();
-    //         $redirect_request = $zoho->redirectToZoho();
-    //         echo $redirect_request."&login=true";
-    //     } else {
-    //         // Email and password do not match, handle the error
-    //         // For example, you can return a response indicating authentication failure
-    //         return redirect()->back()->with('password', 'credetials not match!');
-    //     }
-    // }
+
+    
 
     protected function authenticated(Request $request, $user)
     {
