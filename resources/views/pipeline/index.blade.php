@@ -193,7 +193,7 @@
        
         // Add an event listener to send search term as request
         function fetchData(sortValue, sortType,filter=null,searchInput,ppipelineTableBody,ptableCardDiv) {
-            console.log("filter",filter);
+            // console.log("filter",filter);
             const searchValue = searchInput.val().trim();
             $.ajax({
                 url: '{{ url('/pipeline/deals') }}',

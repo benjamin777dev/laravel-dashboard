@@ -392,11 +392,11 @@
                                 <div class="text-start">
                                     @if ($note['related_to_type'] === 'Deal')
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name }}<br />
+                                        {{ $note->dealData->deal_name ?? "" }}<br />
                                     @endif
                                     @if ($note['related_to_type'] === 'Contact')
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
+                                        {{ $note->contactData->first_name ?? "" }} {{ $note->contactData->last_name ?? "" }}<br />
                                     @endif
                                     <p class="dFont400 fs-4 mb-0">
                                         {{ $note['note_content'] }}

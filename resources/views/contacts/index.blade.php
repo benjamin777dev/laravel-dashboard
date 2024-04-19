@@ -33,22 +33,31 @@
             <div class="col-md-4">
                 <div class="row align-items-center" style="gap:12px">
                     <div class="col-md-10 pcommonFilterDiv">
-                        <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
+                        <input placeholder="Search" class="psearchInput" id="contactSearch" />
                         <i class="fas fa-search search-icon"></i>
                     </div>
                     <p class="col-md-1 porText">or</p>
                 </div>
             </div>
             <div class="col-md-5">
-
+                @php
+                    $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                @endphp
                 <div class="row" style="gap:24px">
                     <div class="psortFilterDiv col-md-6">
-                        <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" />
+                        <select name="abcd_class" class="psearchInput" id="contactSort">
+                            <option selected value="">-None-</option>
+                            @foreach ($abcd as $abcdIndex)
+                                <option value="{{ $abcdIndex }}">{{ $abcdIndex }}</option>
+                            @endforeach
+                        </select>
+                        {{-- <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" /> --}}
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
                             class="ppipelinesorticon">
                     </div>
 
-                    <div class="input-group-text pfilterBtn col-md-6" id="btnGroupAddon"> <i class="fas fa-filter"></i>
+                    <div class="input-group-text pfilterBtn col-md-6" onclick="fetchContact()" id="btnGroupAddon"> <i
+                            class="fas fa-filter"></i>
                         Filter
                     </div>
                 </div>
@@ -78,31 +87,32 @@
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
                                     <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <h5 class="card-title">{{ $contact['Full_Name'] ?? 'N/A' }}</h5>
+                                        <h5 class="card-title">{{ $contact['first_name'] ?? 'N/A' }}</h5>
                                         <p class="databaseCardWord"
-                                            style="background-color: {{ $contact['ABCD'] === 'A'
+                                            style="background-color: {{ $contact['abcd'] === 'A'
                                                 ? '#9CC230'
-                                                : ($contact['ABCD'] === 'A+'
+                                                : ($contact['abcd'] === 'A+'
                                                     ? '#44CE1B'
-                                                    : ($contact['ABCD'] === 'B'
+                                                    : ($contact['abcd'] === 'B'
                                                         ? // '#FFB800' ||
                                                         '#FFB800'
-                                                        : ($contact['ABCD'] === 'C'
+                                                        : ($contact['abcd'] === 'C'
                                                             ? '#D4B40C'
-                                                            : ($contact['ABCD'] === 'D'
+                                                            : ($contact['abcd'] === 'D'
                                                                 ? '#816D03'
                                                                 : '#4F6481')))) }};">
-                                            {{ $contact['ABCD'] ?? '-' }}</p>
+                                            {{ $contact['abcd'] ?? '-' }}</p>
                                     </div>
                                     <div class="dataPhoneDiv">
                                         <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
                                             class="dataphoneicon">
 
-                                        <p class="card-text">{{ $contact['Mobile'] ?? 'N/A' }}</p>
+                                        <p class="card-text">{{ $contact['mobile'] ?? 'N/A' }}</p>
                                     </div>
                                     <div class="datamailDiv">
-                                        <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
-                                        <p class="dataEmailtext">{{ $contact['Email'] ?? 'N/A' }}</p>
+                                        <img src="{{ URL::asset('/images/mail.svg') }}" alt=""
+                                            class="datamailicon">
+                                        <p class="dataEmailtext">{{ $contact['email'] ?? 'N/A' }}</p>
                                     </div>
                                     <div class="datadiversityDiv">
                                         <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""
@@ -228,5 +238,101 @@
                 console.error('Error:', error);
             }
         });
+    }
+
+
+    function getColorByAbcd(abcd) {
+        switch (abcd) {
+            case 'A':
+                return '#9CC230';
+            case 'A+':
+                return '#44CE1B';
+            case 'B':
+                return '#FFB800';
+            case 'C':
+                return '#D4B40C';
+            case 'D':
+                return '#816D03';
+            default:
+                return '#4F6481';
+        }
+    }
+
+    function filterContactData(sortField, sortDirection, searchInput, filterVal) {
+        const searchValue = searchInput.val().trim();
+        $.ajax({
+            url: '{{ url('/contacts/fetch-contact') }}',
+            method: 'GET',
+            data: {
+                search: encodeURIComponent(searchValue),
+                filter: filterVal,
+
+            },
+            dataType: 'json',
+            success: function(data) {
+                // Select the contact list container
+                const contactList = $('.contactlist .row');
+
+                // Clear existing contact cards
+                contactList.empty();
+                if (data.length === 0) {
+        contactList.append('<p class="text-center">No records found.</p>');
+           }else{
+                // Iterate over each contact
+                data.forEach(function(contact) {
+                    // Generate HTML for the contact card using the template
+                    const cardHtml = `
+            <a href="{{ route('contacts.show', $contact['id']) }}">
+                <div class="col">
+                    <div class="card dataCardDiv">
+                        <div class="card-body dacBodyDiv">
+                        <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
+                            <h5 class="card-title">${contact.first_name ?? 'N/A'}</h5>
+                            <p class="databaseCardWord" style="background-color: ${getColorByAbcd(contact.abcd)};">${contact.abcd ?? '-'}</p>
+                        </div>
+                        <div class="dataPhoneDiv">
+                            <img src="{{ URL::asset('/images/phone.svg') }}" alt="" class="dataphoneicon">
+                            <p class="card-text">${contact.mobile ?? 'N/A'}</p>
+                        </div>
+                        <div class="datamailDiv">
+                            <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
+                            <p class="dataEmailtext">${contact.email ?? 'N/A'}</p>
+                        </div>
+                        <div class="datadiversityDiv">
+                            <img src="{{ URL::asset('/images/diversity.svg') }}" alt="" class="datadiversityicon">
+                            <p class="datadiversitytext">2nd</p>
+                        </div>
+                    </div>
+                    <div class="card-footer dataCardFooter">
+                        <div class="datafootericondiv">
+                            <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt="" class="datadiversityicon">
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="datadiversityicon">
+                        </div>
+                        <div>
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon">
+                        </div>
+                </div>
+            </div>
+        </div>
+            </a>
+        `;
+                        // Append the contact card HTML to the contact list container
+                    contactList.append(cardHtml);
+                });
+            }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function fetchContact(sortField, sortDirection) {
+        const searchInput = $('#contactSearch');
+        var csearch = $('#contactSort');
+        var filterVal = csearch.val();
+        // var filterVal = selectedModule.val();
+        // Call fetchData with the updated parameters
+        filterContactData(sortField, sortDirection, searchInput, filterVal);
     }
 </script>

@@ -58,9 +58,10 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])->name('contacts.fetch')->middleware('auth');
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
-Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
+Route::get('/contacts-show/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 
