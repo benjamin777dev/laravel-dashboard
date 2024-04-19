@@ -409,12 +409,13 @@ class ContactController extends Controller
         $contact = $db->retrieveContactById($user, $accessToken, $contactId );
 
         $tab = request()->query('tab') ?? 'In Progress';
-        $contacts = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
+        $tasks = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
-        $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
+        $contacts = $db->retreiveContactsJson($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        return view('contacts.create', compact('contact','user_id','name','contacts','notes','getdealsTransaction','retrieveModuleData','dealContacts'));
+        return view('contacts.create', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts'));
         
     }
 

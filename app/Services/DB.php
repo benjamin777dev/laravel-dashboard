@@ -339,7 +339,7 @@ class DB
     {
 
         try {
-            Log::info("Retrieve Deals From Database");
+            Log::info("Retrieve contact From Database");
             
             $conditions = [['contact_owner', $user->id],['id', $contactId]];
 
@@ -351,7 +351,7 @@ class DB
 
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved Deals From Database", ['contacts' => $contacts]);
+            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving Contacts: " . $e->getMessage());
