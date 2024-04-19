@@ -14,6 +14,8 @@ use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use App\Models\Groups; // Import the Deal model
+use App\Models\ContactGroups; // Import the Deal model
 
 
 class DB
@@ -342,7 +344,7 @@ class DB
     {
 
         try {
-            Log::info("Retrieve Deals From Database");
+            Log::info("Retrieve contact From Database");
             
             $conditions = [['contact_owner', $user->id],['id', $contactId]];
 
@@ -354,7 +356,7 @@ class DB
 
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved Deals From Database", ['contacts' => $contacts]);
+            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving Contacts: " . $e->getMessage());
@@ -447,6 +449,40 @@ class DB
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    public function retreiveContacts(User $user,$accessToken,$search = null, $sortValue = null, $sortType = null,$dateFilter=null,$filter=null){
+        try {
+            Log::info("Retrieve Contact From Database");
+            
+            $conditions = [['contact_owner', $user->id]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::where($conditions); // Select only fields from the contacts table
+
+            if ($search !== "" || $filter) {
+                $searchTerms = urldecode($search);
+                $contacts->where(function ($query) use ($searchTerms) {
+                    $query->where('first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('email', 'like', '%' . $searchTerms . '%');
+                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
+                    // Add more OR conditions as needed
+                });
+            }
+
+            if($filter){
+                $conditions[]=['abcd', $filter];
+            }
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->get();
+            Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
     }
 
     public function retreiveContactsJson(User $user,$accessToken){
@@ -753,4 +789,69 @@ class DB
             throw $e;
         }
     }
+
+    public function storeGroupsIntoDB($allGroups, $user)
+    {
+        $helper = new Helper();
+        $zoho = new ZohoCRM();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        Log::info("Storing Groups Into Database");
+
+        foreach ($allGroups as $groupData) {
+            $group = Groups::updateOrCreate(
+                ['zoho_group_id' => $groupData['id']],
+                [
+                    "name" => $groupData['Name'] ?? null,
+                    "isPublic" => $groupData['Is_Public'] ?? false,
+                    "isABCD" => $groupData['isABC'] ?? false,
+                    "zoho_group_id" => $groupData['id'] ?? null
+                ]
+            );
+        }
+
+        Log::info("Groups stored into database successfully.");
+    }
+
+    public function storeContactGroupsIntoDB($allContactGroups, $user)
+    {
+        $helper = new Helper();
+        $zoho = new ZohoCRM();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        Log::info("Storing Groups Into Database");
+
+        foreach ($allContactGroups as $allContactGroup) {
+            $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
+            $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
+            $contactGroup = ContactGroups::updateOrCreate(
+                ['zoho_contact_group_id' => $allContactGroup['id']],
+                [
+                    'ownerId' => $user->id,
+                    "contactId" => $contact['id'] ?? null,
+                    "groupId" => $group['id'] ?? null,
+                    "zoho_contact_group_id" => $allContactGroup['id'] ?? null
+                ]
+            );
+        }
+
+        Log::info("Groups stored into database successfully.");
+    }
+
+    public function retrieveGroups(User $user, $accessToken, $tab = '')
+    {
+        try {
+
+            Log::info("Retrieve Tasks From Database");
+            $tasks = ContactGroups::where('ownerId', $user->id)->get();
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

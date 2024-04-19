@@ -59,77 +59,82 @@
                             </thead>
                             <tbody>
 
-                                {{-- @if (count($tasks) > 0) --}}
-                                {{-- @foreach ($tasks as $task) --}}
-                                <tr class="dresponsivetableTr">
-                                    <td><input type="checkbox" /></td>
-                                    <td>
-                                        <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
-                                            {{-- id="editableText{{ $task['id'] }}" --}}>
-                                            {{ $task['subject'] ?? 'N/A' }}
-                                            <i class="fas fa-pencil-alt pencilIcon" {{-- onclick="makeEditable('{{ $task['id'] }}')" --}}></i>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <input type="datetime-local" {{-- value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" --}} />
-                                    </td>
-                                    <td>
-                                        <div class="d-flex ">
-                                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                                id="btnGroupAddon" data-bs-toggle="modal" {{-- onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" --}}>
-                                                <i class="fas fa-hdd plusicon"></i>
-                                                Save
-                                            </div>
-                                            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                id="btnGroupAddon" data-bs-toggle="modal" {{-- data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}" --}}>
-                                                <i class="fas fa-trash-alt plusicon"></i>
-                                                Delete
-                                            </div>
-                                        </div>
-
-                                        {{-- delete Modal --}}
-                                        <div class="modal fade" {{-- id="deleteModalId{{ $task['zoho_task_id'] }}" --}} tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                <div class="modal-content">
-                                                    <div class="modal-header border-0 deleteModalHeaderDiv">
-                                                        {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body deletemodalBodyDiv">
-                                                        <p class="deleteModalBodyText">Please confirm you’d like
-                                                            to<br />
-                                                            delete this item.</p>
-                                                    </div>
-                                                    <div
-                                                        class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                                        <div class="d-grid gap-2 col-5">
-                                                            <button type="button" {{-- onclick="deleteTask('{{ $task['zoho_task_id'] }}')" --}}
-                                                                class="btn btn-secondary deleteModalBtn"
-                                                                data-bs-dismiss="modal">
-                                                                <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                delete
-                                                            </button>
-                                                        </div>
-                                                        <div class="d-grid gap-2 col-5">
-                                                            <button type="button" class="btn btn-primary goBackModalBtn">
-                                                                <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                    alt="R">No, go back
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
+                                @if (count($tasks) > 0)
+                                @foreach ($tasks as $task)
+                                    <tr class="dresponsivetableTr">
+                                        <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
+                                                    type="checkbox" class="task_checkbox"
+                                                    id="{{ $task['zoho_task_id'] }}" /></td>
+                                        <td>
+                                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
+                                                id="editableText{{ $task['id'] }}">
+                                                {{ $task['subject'] ?? 'N/A' }}
+                                                <i class="fas fa-pencil-alt pencilIcon" onclick="makeEditable('{{ $task['id'] }}')"></i>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
+                                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
+                                        </td>
+                                        <td>
+                                            <div class="d-flex ">
+                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
+                                                    id="btnGroupAddon" data-bs-toggle="modal" onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
+                                                    <i class="fas fa-hdd plusicon"></i>
+                                                    Save
+                                                </div>
+                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
+                                                    id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                                    <i class="fas fa-trash-alt plusicon"></i>
+                                                    Delete
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {{-- @endforeach --}}
-                                {{-- @else
+
+                                            {{-- delete Modal --}}
+                                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
+                                                tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body deletemodalBodyDiv">
+                                                            <p class="deleteModalBodyText">Please confirm you’d like
+                                                                to<br />
+                                                                delete this item.</p>
+                                                        </div>
+                                                        <div
+                                                            class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                            <div class="d-grid gap-2 col-5">
+                                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                                    class="btn btn-secondary deleteModalBtn"
+                                                                    data-bs-dismiss="modal">
+                                                                    <i class="fas fa-trash-alt trashIcon"></i> Yes,
+                                                                    delete
+                                                                </button>
+                                                            </div>
+                                                            <div class="d-grid gap-2 col-5">
+                                                                <button type="button"
+                                                                    class="btn btn-primary goBackModalBtn">
+                                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
+                                                                        alt="R">No, go back
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @else
                                     <tr>
                                         <td class="text-center" colspan="12">No records found</td>
                                     </tr>
-                                @endif --}}
+                                @endif
 
                             </tbody>
 
@@ -495,11 +500,11 @@
                             @php
                             $spause_partner = $contact['spouse_partner'];
                         @endphp
-                            <option value="">-None-{{$spause_partner}}</option>
+                            <option value="">-None-</option>
                             @if (!empty($contacts))
                                 @foreach ($contacts as $contactrefs)
                                     <option
-                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>{{$contactrefs['spouse_partner']}}
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
                                         {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}</option>
                                 @endforeach
                             @endif
@@ -647,7 +652,7 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button" onclick="validateForm()"
+                        <button type="button" id="validate-button" onclick="validateFormc()"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -656,7 +661,7 @@
             </div>
         </div>
     </div>
-
+   {{-- task modal --}}
     <div class="modal fade" id="newTaskContactModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
@@ -677,15 +682,15 @@
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
     
-                            {{-- @foreach ($getdealsTransaction as $item)
+                            @foreach ($getdealsTransaction as $item)
                                 @php
                                     $contactId = $item['userData']['zoho_id'];
-                                @endphp --}}
+                                @endphp
     
                                 {{-- Check if the current ID has been encountered before --}}
-                                {{-- @if (!in_array($contactId, $encounteredIds)) --}}
-                                    {{-- Add the current ID to the encountered IDs array --}}
-                                    {{-- @php
+                                @if (!in_array($contactId, $encounteredIds))
+                                    Add the current ID to the encountered IDs array
+                                    @php
                                         $encounteredIds[] = $contactId;
                                     @endphp
     
@@ -693,7 +698,7 @@
                                         @if (old('related_to') == $item['userData']['name']) selected @endif>
                                         {{ $item['userData']['name'] }}</option>
                                 @endif
-                             @endforeach --}}
+                             @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -701,7 +706,7 @@
                 </div>
                 <div class="modal-footer ">
                     <button type="button"
-                     {{-- onclick="addTask('{{ $deal['zoho_deal_id'] }}')" --}}
+                     onclick="addTaskforContact('{{ $contact['zoho_contact_id'] }}')"
                       class="btn btn-secondary taskModalSaveBtn">
                         <i class="fas fa-save saveIcon"></i> Save Changes
                     </button>
@@ -763,6 +768,40 @@
 
     }
 
+    function validateForm() {
+            let noteText = document.getElementById("note_text").value;
+            let relatedTo = document.getElementById("related_to").value;
+            let isValid = true;
+
+            // Reset errors
+            document.getElementById("note_text_error").innerText = "";
+            document.getElementById("related_to_error").innerText = "";
+
+            // Validate note text length
+            if (noteText.trim().length > 100) {
+                document.getElementById("note_text_error").innerText = "Note text must be 100 characters or less";
+                isValid = false;
+            }
+            // Validate note text
+            if (noteText.trim() === "") {
+                document.getElementById("note_text_error").innerText = "Note text is required";
+                isValid = false;
+            }
+
+            // Validate related to
+            if (relatedTo === "") {
+                document.getElementById("related_to_error").innerText = "Related to is required";
+                document.getElementById("taskSelect").style.display = "none";
+                isValid = false;
+            }
+            if (isValid) {
+                let changeButton = document.getElementById('validate-button');
+                changeButton.type = "submit";
+            }
+            return isValid;
+        }
+
+
     function handleDeleteCheckbox(id) {
         // Get all checkboxes
         const checkboxes = document.querySelectorAll('.checkbox' + id);
@@ -783,6 +822,76 @@
             });
         });
 
+    }
+
+
+    function validateTextarea() {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+
+    function addTaskforContact(conID){
+        var subject = document.getElementsByName("subject")[0].value;
+                if (subject.trim() === "") {
+                    document.getElementById("subject_error").innerHTML = "please enter details";
+                    return;
+                }
+                var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+                var whoId = window.selectedTransation
+                if (whoId === undefined) {
+                    whoId = whoSelectoneid
+                }
+                var dueDate = document.getElementsByName("due_date")[0].value;
+                
+                var formData = {
+                    "data": [{
+                        "Subject": subject,
+                        "Who_Id": {
+                            "id": whoId
+                        },
+                        "Status": "In Progress",
+                        "Due_Date": dueDate,
+                        // "Created_Time":new Date()
+                        // "Priority": "High",
+                        "What_Id":{
+                            "id":conID
+                        },
+                        "$se_module":"Contacts"
+                    }],
+                    "_token": '{{ csrf_token() }}'
+                };
+                console.log("formData",formData);
+                $.ajax({
+                    url: '{{ route('create.task') }}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        if (response?.data && response.data[0]?.message) {
+                            // Convert message to uppercase and then display
+                            const upperCaseMessage = response.data[0].message.toUpperCase();
+                            alert(upperCaseMessage);
+                            window.location.reload();
+                        } else {
+                            alert("Response or message not found");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                    }
+                })
     }
 
     function moduleSelectedforContact(selectedModule) {
