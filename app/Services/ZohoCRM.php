@@ -394,22 +394,38 @@ class ZohoCRM
         return $response;
     }
 
-    public function retrieveGroupsFromZoho($user)
+    public function getContactGroupData($criteria,$fields,$page = 1, $per_page = 1)
     {
-        Log::info('Creating Zoho Deal');
+        Log::info('Creating Contact Zoho Deal');
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
-        ])->get($this->apiUrl . 'Contacts/search',[
-                 'criteria' => "(Owner:equals:$user)"
-                
+        ])->get($this->apiUrl . 'Contacts_X_Groups/search',[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
             ]);
-            $responseData = $response->json();
-                //  dd($responseData);
-                // die;
-       
-       
+        
+        Log::info('Response Zoho Contact Group');
+        return $response;
+    }
+
+    public function getGroupsData($criteria,$fields,$page = 1, $per_page = 1)
+    {
+        Log::info('Creating Group Zoho ');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Groups',[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+                'fields'=>$fields
+            ]);
+        
+        Log::info('Response Zoho Group');
         return $response;
     }
 }

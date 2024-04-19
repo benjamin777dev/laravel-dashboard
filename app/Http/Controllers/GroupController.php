@@ -16,16 +16,15 @@ class GroupController extends Controller
 {
     public function index(Request $request)
     {
-        $zoho = new ZohoCRM();
+        $db = new DB();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
 
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $zoho->access_token = $accessToken;
-        $contacts = $zoho->retrieveGroupsFromZoho($user->root_user_id, $accessToken);
-
+        $contacts = $db->retrieveGroups($user, $accessToken);
+        
         return view('group.index', compact('contacts'));
     }
 
