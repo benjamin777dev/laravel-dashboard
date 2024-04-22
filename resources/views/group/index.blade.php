@@ -108,22 +108,21 @@
                     </tr>
                 </thead>
                 <tbody class="text-center dbgBodyTable">
+                    @foreach ($contacts as $contact)
                     <tr>
                         <td> <input type="checkbox" /></td>
-                        <td class="text-start"> Smith Columbine Hills Buyer</td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-                        <td> <input type="checkbox" /></td>
-
-                        <td> <input type="checkbox" /></td>
-
-
+                        <td class="text-start"> {{$contact->contactData['first_name']??'N/A'}} {{$contact->contactData['last_name']??'N/A'}}</td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'A+' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'A' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'B' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'C' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'D' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'Email Blast' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'Market Mailer' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'Notepad Mailer' ? 'checked' : '' }}/></td>
+                        <td> <input type="checkbox" {{ $contact->groupData['name'] == 'Client Event' ? 'checked' : '' }}/></td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

@@ -14,6 +14,8 @@ use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use App\Models\Groups; // Import the Deal model
+use App\Models\ContactGroups; // Import the Deal model
 
 
 class DB
@@ -801,4 +803,69 @@ class DB
             throw $e;
         }
     }
+
+    public function storeGroupsIntoDB($allGroups, $user)
+    {
+        $helper = new Helper();
+        $zoho = new ZohoCRM();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        Log::info("Storing Groups Into Database");
+
+        foreach ($allGroups as $groupData) {
+            $group = Groups::updateOrCreate(
+                ['zoho_group_id' => $groupData['id']],
+                [
+                    "name" => $groupData['Name'] ?? null,
+                    "isPublic" => $groupData['Is_Public'] ?? false,
+                    "isABCD" => $groupData['isABC'] ?? false,
+                    "zoho_group_id" => $groupData['id'] ?? null
+                ]
+            );
+        }
+
+        Log::info("Groups stored into database successfully.");
+    }
+
+    public function storeContactGroupsIntoDB($allContactGroups, $user)
+    {
+        $helper = new Helper();
+        $zoho = new ZohoCRM();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        Log::info("Storing Groups Into Database");
+
+        foreach ($allContactGroups as $allContactGroup) {
+            $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
+            $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
+            $contactGroup = ContactGroups::updateOrCreate(
+                ['zoho_contact_group_id' => $allContactGroup['id']],
+                [
+                    'ownerId' => $user->id,
+                    "contactId" => $contact['id'] ?? null,
+                    "groupId" => $group['id'] ?? null,
+                    "zoho_contact_group_id" => $allContactGroup['id'] ?? null
+                ]
+            );
+        }
+
+        Log::info("Groups stored into database successfully.");
+    }
+
+    public function retrieveGroups(User $user, $accessToken, $tab = '')
+    {
+        try {
+
+            Log::info("Retrieve Tasks From Database");
+            $tasks = ContactGroups::where('ownerId', $user->id)->get();
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }
