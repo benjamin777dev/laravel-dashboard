@@ -17,13 +17,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // Schedule the task to run every minute
- /*        $schedule->command('app:save-deals-to-d-b')->everyMinute();
+        $schedule->command('app:save-deals-to-d-b')->everyMinute();
         $schedule->command('app:save-contacts-to-d-b')->everyMinute();
         $schedule->command('app:save-tasks-to-d-b')->everyMinute();
         $schedule->command('app:save-notes-to-d-b')->everyMinute();
         $schedule->command('app:save-module-to-d-b')->everyMinute();
         $schedule->command('app:save-a-c-i-in-d-b')->everyMinute();
-        $schedule->command('app:save-group-in-d-b')->everyMinute(); */
+        $schedule->command('app:save-group-in-d-b')->everyMinute();
         $schedule->command('app:save-contact-group-in-d-b')->everyMinute();
     }
 
