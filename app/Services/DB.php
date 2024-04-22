@@ -642,6 +642,20 @@ class DB
         }
     }
 
+    public function retrieveDealContactForContact(User $user, $accessToken,$contactId)
+    {
+
+        try {
+            Log::info("Retrieve Deal Contact From Database".$contactId);
+            $dealContact = Contact::with('userData')->with('contactName')->where('zoho_contact_id', $contactId)->get();
+            Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContact->toArray()]);
+            return $dealContact;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function storeACIIntoDB($acis)
     {
         $helper = new Helper();
@@ -716,17 +730,17 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDeal)
+    public function createDeal(User $user, $accessToken,$zohoDealId)
     {
         try {
-            Log::info("User Deatils".$user);
+            Log::info("User Deatils".json_encode($zohoDeal));
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted'=>false,
                 'userID'=>$user->id,
                 'isInZoho'=>true,
-                'zoho_deal_id'=>$zohoDealId['id'],
-                'stage'=>$zohoDealId['Stage']
+                'zoho_deal_id'=>$zohoDeal['id'],
+                'stage'=>"Potential"
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -803,6 +817,7 @@ class DB
             $group = Groups::updateOrCreate(
                 ['zoho_group_id' => $groupData['id']],
                 [
+                    'ownerId' => $user->id,
                     "name" => $groupData['Name'] ?? null,
                     "isPublic" => $groupData['Is_Public'] ?? false,
                     "isABCD" => $groupData['isABC'] ?? false,
@@ -840,12 +855,70 @@ class DB
         Log::info("Groups stored into database successfully.");
     }
 
-    public function retrieveGroups(User $user, $accessToken, $tab = '')
+    public function retrieveContactGroups(User $user, $accessToken, $filter = null)
     {
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = ContactGroups::where('ownerId', $user->id)->get();
+            $condition = [['ownerId', $user->id]];
+            if($filter){
+                $condition[]=['groupId',$filter];
+            }
+            $tasks = ContactGroups::where($condition)->with('contactData', 'groupData')->get();
+            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateGroups(User $user, $accessToken, $data)
+    {
+    try {
+        Log::info("Updating Groups");
+
+        // Decode JSON data to array
+        
+
+        if (!$data) {
+            throw new \Exception("Error decoding JSON data");
+        }
+
+        // Count the number of data items
+        $dataCount = count($data);
+
+        // Loop through each data item
+        for ($i = 0; $i < $dataCount; $i++) {
+            $currData = $data[$i];
+            // Update the group record
+            $group = Groups::find($currData['id']);
+            if ($group) {
+                $group->isShow = $currData['isChecked'];
+                $group->save();
+            }
+        }
+
+        Log::info("Groups updated successfully");
+
+        // Return updated groups or any other necessary response
+        return $data; // Return the updated data for now, you may adjust it according to your requirements
+    } catch (\Exception $e) {
+        Log::error("Error updating groups: " . $e->getMessage());
+        throw $e;
+    }
+    }
+
+    public function retrieveGroups(User $user, $accessToken, $isShown=null)
+    {
+        try {
+
+            Log::info("Retrieve Tasks From Database");
+            $condition = [['ownerId', $user->id]];
+            if($isShown){
+                $condition[]=['isShow',true];
+            }
+            $tasks = Groups::where($condition)->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {

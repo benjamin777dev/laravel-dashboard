@@ -615,11 +615,11 @@
                                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                                         type="button" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
-                                    @if ($note['related_to_type'] === 'Deal')
+                                    @if ($note['related_to_type'] === 'Deals')
                                         <span class="dFont800 dFont13">Related to:</span>
                                         {{ $note->dealData->deal_name }}<br />
                                     @endif
-                                    @if ($note['related_to_type'] === 'Contact')
+                                    @if ($note['related_to_type'] === 'Contacts')
                                         <span class="dFont800 dFont13">Related to:</span>
                                         {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
                                     @endif

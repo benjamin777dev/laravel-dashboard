@@ -410,11 +410,18 @@
     background: #253c5b;
     padding: 6px 35px;
 }
-
-.dNoteFooter {
-    margin-inline: auto;
+.dNoteModalmarkBtns{
+    border-radius: 4px;
+    background: #253c5b;
+    padding: 6px 16px;
 }
 
+.dNoteFooter ,.dNoteFooters{
+    margin-inline: auto;
+}
+.dNoteFooters{
+    justify-content: center;
+}
 .deleteModal {
     width: 340px;
     margin-inline: auto;
@@ -1805,4 +1812,30 @@
     margin-top: 24px;
 }
 
+.gdropdown-div,.gdropdown-btn{
+    width:100%
+}
+.gdropdown-ul{
+    max-height: 200px;
+    overflow-y: auto;
+    width:100%
+}
+.gdropdown{
+    display: flex;
+    justify-content: space-between;
+    margin-inline: 10px;
+    padding-block: 10px;
+}
 
+.gdropdown-select {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.gdropdown-btn{
+    background: none;
+    border: none;
+}
+.gdropdown-btn:focus-visible{
+    outline: none;
+}

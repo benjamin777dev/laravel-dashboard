@@ -15,6 +15,7 @@ class Note extends Model
         'related_to_parent_record_id',
         'related_to_module_id',
         'note_content',
+        'mark_as_done',
         'created_time',
         'zoho_note_id',
         'related_to_type'

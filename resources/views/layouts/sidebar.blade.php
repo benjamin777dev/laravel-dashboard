@@ -39,9 +39,9 @@
 
                     </ul>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        {{-- <i class="bx bx-user-circle"></i> --}}
+                        <i class="bx bx-user-circle"></i>
                         <img src="{{ URL::asset('/images/campaign.svg') }}" class="sidebarIcons" alt="Ca">
 
                         <span key="t-marketing">@lang('Marketing')</span>
@@ -53,11 +53,11 @@
                         <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
                         <li><a href="#" key="t-marketing">@lang('Marketing')</a></li>
                     </ul>
-                </li>
+                </li> --}}
 
                 <li class="menu-title" key="t-backend">@lang('Activities')</li>
                 <li>
-                    <a href="#" class="waves-effect">
+                    <a href="{{ route('task.index') }}" class="waves-effect">
                         <img src="{{ URL::asset('/images/sidebarSplit.svg') }}" class="sidebarIcons" alt="Sp">
 
                         {{-- <i class="bx bx-list-ul"></i> --}}
