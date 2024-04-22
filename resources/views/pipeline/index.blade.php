@@ -112,7 +112,7 @@
                         <div>{{ $deal['representing'] ?? 'N/A' }}</div>
                         <div class="commonTextEllipsis">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
                         <div>{{ $deal['closing_date'] ?? 'N/A' }}</div>
-                        <div> <a href="{{ url('/pipeline-view/' . $deal['id']) }}"><img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"></a>
+                        <div> <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank"><img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"></a>
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Open icon" class="ppiplinecommonIcon">

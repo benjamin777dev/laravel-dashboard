@@ -16,6 +16,7 @@ class CreatenotesTable extends Migration
             $table->unsignedBigInteger('related_to_parent_record_id')->nullable();
             $table->unsignedBigInteger('related_to_module_id')->nullable();
             $table->string('related_to_type')->nullable();
+            $table->boolean('mark_as_done')->default(0);
             $table->text('note_content')->nullable();
             $table->timestamp('created_time')->nullable();
 

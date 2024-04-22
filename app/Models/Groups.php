@@ -10,11 +10,18 @@ class Groups extends Model
     use HasFactory;
 
     protected $fillable = [
+        "ownerId",
         "name",
         "isPublic",
         "isABCD",
         "zoho_group_id",
+        "isShow"
     ];
+
+    public function ownerData()
+    {
+        return $this->belongsTo(User::class, 'ownerId');
+    }
 
     /* public static function getZohoContactInfo()
     {
@@ -22,10 +29,7 @@ class Groups extends Model
         return self::select('zoho_contact_id', 'last_name', 'first_name')->get();
     }
 
-    public function userData()
-    {
-        return $this->belongsTo(User::class, 'contact_owner');
-    }
+    
 
     public function contactName()
     {
