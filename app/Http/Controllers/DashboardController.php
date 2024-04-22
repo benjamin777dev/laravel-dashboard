@@ -690,7 +690,7 @@ class DashboardController extends Controller
         if($dealId){
             $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$dealId);
         }else if($contactId){
-            $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$contactId);
+            $contacts = $db->retrieveDealContactForContact($user, $accessToken,$contactId);
         }
         else{
         $contacts = $db->retreiveContactsJson($user, $accessToken);

@@ -440,6 +440,8 @@ class ContactController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
+        // print_r($notes);
+        // die;
         $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
         $contacts = $db->retreiveContactsJson($user,$accessToken);

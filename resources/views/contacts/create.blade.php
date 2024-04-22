@@ -918,6 +918,7 @@
                     taskSelect.empty();
                     // Populate select options with tasks
                     $.each(tasks, function(index, task) {
+                        console.log(task,'task');
                         if (selectedText === "Tasks") {
                             taskSelect.append($('<option>', {
                                 value: task?.zoho_task_id,
@@ -932,8 +933,8 @@
                         }
                         if (selectedText === "Contacts") {
                             taskSelect.append($('<option>', {
-                                value: task?.contactData?.zoho_contact_id,
-                                text: task?.contactData?.first_name + ' ' + task?.contactData?.last_name
+                                value: task?.zoho_contact_id,
+                                text: task?.first_name + ' ' + task?.last_name
                             }));
                         }
                     });
