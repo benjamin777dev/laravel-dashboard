@@ -642,6 +642,20 @@ class DB
         }
     }
 
+    public function retrieveDealContactForContact(User $user, $accessToken,$contactId)
+    {
+
+        try {
+            Log::info("Retrieve Deal Contact From Database".$contactId);
+            $dealContact = Contact::with('userData')->with('contactName')->where('zoho_contact_id', $contactId)->get();
+            Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContact->toArray()]);
+            return $dealContact;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function storeACIIntoDB($acis)
     {
         $helper = new Helper();
@@ -716,7 +730,7 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDeal)
+    public function createDeal(User $user, $accessToken,$zohoDealId)
     {
         try {
             Log::info("User Deatils".json_encode($zohoDeal));

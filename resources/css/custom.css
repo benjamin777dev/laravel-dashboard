@@ -410,11 +410,18 @@
     background: #253c5b;
     padding: 6px 35px;
 }
-
-.dNoteFooter {
-    margin-inline: auto;
+.dNoteModalmarkBtns{
+    border-radius: 4px;
+    background: #253c5b;
+    padding: 6px 16px;
 }
 
+.dNoteFooter ,.dNoteFooters{
+    margin-inline: auto;
+}
+.dNoteFooters{
+    justify-content: center;
+}
 .deleteModal {
     width: 340px;
     margin-inline: auto;
