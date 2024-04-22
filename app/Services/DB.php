@@ -730,7 +730,7 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDeal)
+    public function createDeal(User $user, $accessToken,$zohoDealId)
     {
         try {
             Log::info("User Deatils".$user);
@@ -740,7 +740,7 @@ class DB
                 'userID'=>$user->id,
                 'isInZoho'=>true,
                 'zoho_deal_id'=>$zohoDealId['id'],
-                'stage'=>$zohoDealId['Stage']
+                'stage'=>$zohoDealId['stage']
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;

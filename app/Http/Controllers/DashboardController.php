@@ -453,10 +453,10 @@ class DashboardController extends Controller
 
         // Access the 'Subject' field
         $subject = $data['Subject'];
-        $whoid = $data['Who_Id']['id'];
-        $status = $data['Status'];
-        $Due_Date = $data['Due_Date'];
-        $What_Id = $data['What_Id']['id'];
+        $whoid = $data['Who_Id']['id'] ?? null;
+        $status = $data['Status'] ?? null;
+        $Due_Date = $data['Due_Date'] ?? null;
+        $What_Id = $data['What_Id']['id'] ?? null;
         $priority = $data['Priority']??null;
         $created_time = Carbon::now();
         $closed_time = $data['Closed_Time']??null;
@@ -747,6 +747,8 @@ class DashboardController extends Controller
     public function saveNote(Request $request)
     {
         $relatedToObject = json_decode($request->related_to);
+
+        $contactId = $request->query('conID');
         // Validate the incoming request data
         $validatedData1 = validator()->make((array) $relatedToObject, [
             'zoho_module_id' => 'required|string|max:255',
@@ -800,7 +802,7 @@ class DashboardController extends Controller
         $note->related_to_module_id = $validatedData1['zoho_module_id'];
         $note->zoho_note_id = $zoho_node_id;
         $note->owner = $user->id;
-        $note->related_to = $deal->id??null;
+        $note->related_to = $deal->id ?? $contactId ?? null;
         $note->created_time = Carbon::now();
         $note->related_to_type = $validatedData1['api_name'];
         $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
@@ -816,7 +818,22 @@ class DashboardController extends Controller
             return "somthing went wrong".$e->getMessage();
         }
     }
+    public function markAsDone(Request $request){
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+          // Retrieve the note ID from the request
+            $noteId = $request->input('note_id');
 
+            // Assuming you have a Note model
+            $note = Note::find($noteId);
+
+            // Update the note as done in the database
+            $note->mark_as_done = 1;
+            $note->save();
+            return $note;
+    }
     public function fetchNotes()
     {
         // Fetch notes from the database

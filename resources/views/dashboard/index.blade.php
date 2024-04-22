@@ -25,8 +25,8 @@
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-center dCalander">
                     {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
-                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text"
-                        name="daterange" value="{{ $startDate }} - {{ $endDate }}" />
+                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
+                        value="{{ $startDate }} - {{ $endDate }}" />
                     {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
                         onclick="triggerDateRangePicker()">
@@ -210,8 +210,7 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="d-grid gap-2 col-5">
-                                                                    <button type="button"
-                                                                    data-bs-dismiss="modal"
+                                                                    <button type="button" data-bs-dismiss="modal"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
                                                                             data-bs-dismiss="modal" alt="R">No, go
@@ -286,7 +285,7 @@
                         </div>
                         @if (count($tasks) > 0)
                             <div class="dpagination">
-                                <div onclick="deleteTask('{{$task['zoho_task_id']}}')"
+                                <div onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
                                     id="removeBtn">
                                     <i class="fas fa-trash-alt plusicon"></i>
@@ -389,14 +388,19 @@
                         @foreach ($notesInfo as $note)
                             <li
                                 class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                                <div class="text-start">
+                                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                class="form-check-input checkbox{{ $note['id'] }}"
+                                id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                type="button" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdropnoteview{{ $note['id'] }}" >
                                     @if ($note['related_to_type'] === 'Deal')
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name ?? "" }}<br />
+                                        {{ $note->dealData->deal_name ?? '' }}<br />
                                     @endif
                                     @if ($note['related_to_type'] === 'Contact')
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name ?? "" }} {{ $note->contactData->last_name ?? "" }}<br />
+                                        {{ $note->contactData->first_name ?? '' }}
+                                        {{ $note->contactData->last_name ?? '' }}<br />
                                     @endif
                                     <p class="dFont400 fs-4 mb-0">
                                         {{ $note['note_content'] }}
@@ -433,28 +437,74 @@
                                                             <option value="{{ $note['zoho_note_id'] }}" selected>
                                                                 {{ $note['related_to_type'] }}
                                                             </option>
-
                                                         </select>
                                                     </div>
                                                     @error('related_to')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-                                                <div class="modal-footer dNoteFooter border-0">
-                                                    <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                        <i class="fas fa-save saveIcon"></i> Mark as Done
-                                                    </button>
+                                                <div class="row">
+                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                        <button type="submit"
+                                                            class="btn btn-secondary dNoteModalmarkBtns">
+                                                            <i class="fas fa-save saveIcon"></i> Update Note
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                        <button type="button" onclick="markAsDone({{ $note['id'] }})"
+                                                            class="btn btn-secondary dNoteModalmarkBtns">
+                                                            <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
+                                   {{-- note view modal --}}
+                                   <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
+                                   data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                   aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                   <div class="modal-dialog modal-dialog-centered deleteModal">
+                                       <div class="modal-content noteModal">
+                                           <div class="modal-header border-0">
+                                               <p class="modal-title dHeaderText">Note</p>
+                                               <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                   aria-label="Close"
+                                                   onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                           </div>
+                                           <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
+                                               method="post">
+                                               @csrf
+                                               @method('POST')
+                                               <div class="modal-body dtaskbody">
+                                                   <p class="ddetailsText">Details</p>
+                                                   <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
+                                                   @error('note_content')
+                                                       <div class="text-danger" >{{ $message }}</div>
+                                                   @enderror
+                                                   <p class="dRelatedText">Related to...</p>
+                                                   <div class="btn-group dmodalTaskDiv">
+                                                       <select class="form-select dmodaltaskSelect" name="related_to"
+                                                           aria-label="Select Transaction">
+                                                           <option value="{{ $note['zoho_note_id'] }}" selected readonly>
+                                                               {{ $note['related_to_type'] }}
+                                                           </option>
+                                                       </select>
+                                                   </div>
+                                                   @error('related_to')
+                                                       <div class="text-danger">{{ $message }}</div>
+                                                   @enderror
+                                               </div>
+                                       </div>
+                                   </div>
+                               </div>
                                 <div class="d-flex align-items-center gx-2">
                                     <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                        class="form-check-input checkbox{{ $note['id'] }}"
+                                        class="form-check-input checkboxupdate{{ $note['id'] }}"
                                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                                         type="button" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}" />
+                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}"   {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
                                 </div>
                             </li>
                         @endforeach
@@ -605,24 +655,24 @@
                             @php
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
-                          
+
                             @foreach ($getdealsTransaction as $item)
-                                        @php
-                                            $contactId = $item['userData']['zoho_id'];
-                                        @endphp
+                                @php
+                                    $contactId = $item['userData']['zoho_id'];
+                                @endphp
 
-                                        {{-- Check if the current ID has been encountered before --}}
-                                        @if (!in_array($contactId, $encounteredIds))
-                                            {{-- Add the current ID to the encountered IDs array --}}
-                                            @php
-                                                $encounteredIds[] = $contactId;
-                                            @endphp
+                                {{-- Check if the current ID has been encountered before --}}
+                                @if (!in_array($contactId, $encounteredIds))
+                                    {{-- Add the current ID to the encountered IDs array --}}
+                                    @php
+                                        $encounteredIds[] = $contactId;
+                                    @endphp
 
-                                            <option value="{{ $contactId }}"
-                                                @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                                {{ $item['userData']['name'] }}</option>
-                                        @endif
-                                    @endforeach
+                                    <option value="{{ $contactId }}"
+                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                        {{ $item['userData']['name'] }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -1166,10 +1216,10 @@
         if (updateids === "" && id === undefined) {
             return;
         }
-        if(updateids!==""){
+        if (updateids !== "") {
             if (confirm("Are you sure you want to delete selected task?")) {
-                  
-            }else{
+
+            } else {
                 return;
             }
         }
@@ -1205,7 +1255,7 @@
                         alert(xhr.responseText)
                     }
                 })
-                
+
             }
         } catch (err) {
             console.error("error", err);
@@ -1393,6 +1443,30 @@
         $('.ddaterangepicker').click();
     }
 
+    function markAsDone(noteId){
+            // Send an AJAX request to the route using jQuery
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("mark.done") }}',
+                data: {
+                    // Pass the note ID to the server
+                    note_id: noteId,
+                    // Add CSRF token for Laravel security
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if(response?.mark_as_done ===1){
+                       window.location.reload();
+                    }
+                    // Handle success response if needed
+                },
+                error: function(xhr, status, error) {
+                    // Handle error if needed
+                }
+            });
+
+    }
+
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
         var dates = dateRangeString.split(' - ');
@@ -1415,7 +1489,7 @@
             dataType: "json",
             success: function(response) {
                 // Handle successful response
-                console.log(response,'response is here');
+                console.log(response, 'response is here');
                 Object.keys(response).forEach(function(stage) {
                     if (response.hasOwnProperty(stage)) {
                         // Find the corresponding card element using data-stage attribute

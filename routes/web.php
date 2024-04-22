@@ -11,6 +11,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 
 // Assuming you want to redirect authenticated users to the dashboard,
@@ -42,6 +43,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 //create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
+Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
 Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
 Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 
@@ -88,6 +90,10 @@ Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])-
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
+
+//task routes
+Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
+
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
