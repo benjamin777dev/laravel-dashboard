@@ -246,12 +246,16 @@
                         @foreach ($notesInfo as $note)
                             <li
                                 class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                                <div class="text-start">
-                                    @if ($note['related_to_type'] === 'Deal')
+                                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                        class="form-check-input checkbox{{ $note['id'] }}"
+                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                        type="button" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
+                                    @if ($note['related_to_type'] === 'Deals')
                                         <span class="dFont800 dFont13">Related to:</span>
                                         {{ $note->dealData->deal_name }}<br />
                                     @endif
-                                    @if ($note['related_to_type'] === 'Contact')
+                                    @if ($note['related_to_type'] === 'Contacts')
                                         <span class="dFont800 dFont13">Related to:</span>
                                         {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
                                     @endif
@@ -262,7 +266,7 @@
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}
-                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                               <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -270,29 +274,27 @@
                                             <div class="modal-header border-0">
                                                 <p class="modal-title dHeaderText">Note</p>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                    aria-label="Close"
+                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                             </div>
-                                            <form action="{{ route('update.note', ['id' => $note['id']]) }}"
+                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
                                                 method="post">
                                                 @csrf
                                                 @method('POST')
                                                 <div class="modal-body dtaskbody">
                                                     <p class="ddetailsText">Details</p>
-                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_text'] }}</textarea>
-                                                    @error('note_text')
+                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
+                                                    @error('note_content')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror
                                                     <p class="dRelatedText">Related to...</p>
                                                     <div class="btn-group dmodalTaskDiv">
                                                         <select class="form-select dmodaltaskSelect" name="related_to"
                                                             aria-label="Select Transaction">
-                                                            <option value="">Please select one</option>
-                                                            @foreach ($getdealsTransaction as $item)
-                                                                <option value="{{ $item['Deal_Name'] }}"
-                                                                    {{ $note['related_to'] == $item['Deal_Name'] ? 'selected' : '' }}>
-                                                                    {{ $item['Deal_Name'] }}
-                                                                </option>
-                                                            @endforeach
+                                                            <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                                {{ $note['related_to_type'] }}
+                                                            </option>
+
                                                         </select>
                                                     </div>
                                                     @error('related_to')
@@ -301,15 +303,16 @@
                                                 </div>
                                                 <div class="modal-footer dNoteFooter border-0">
                                                     <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                        <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                        <i class="fas fa-save saveIcon"></i> Update
                                                     </button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-                                <input type="checkbox" {{-- onclick="handleDeleteCheckbox('{{ $note['id'] }}')" --}}
-                                    class="form-check-input checkbox{{ $note['id'] }}" {{-- id="checkbox{{ $loop->index + 1 }}" --}}>
+                                <div class="d-flex align-items-center gx-2">
+                                    <input type="checkbox" {{-- onclick="updateNote('{{ $note['id'] }}')" --}}/>
+                                </div>
                             </li>
                         @endforeach
                         {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
@@ -789,7 +792,27 @@
             populateClientInfo();
             populateEarningsInfo();
         };
+        function handleDeleteCheckbox(id) {
+            // Get all checkboxes
+            const checkboxes = document.querySelectorAll('.checkbox' + id);
+            // Get delete button
+            const deleteButton = document.getElementById('deleteButton' + id);
+            const editButton = document.getElementById('editButton' + id);
+            console.log(checkboxes, 'checkboxes')
+            // Add event listener to checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    // Check if any checkbox is checked
+                    const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                    // Toggle delete button visibility
+                    editButton.style.display = anyChecked ? 'block' : 'none';
+                    // if (deleteButton.style.display === 'block') {
+                    //     selectedNoteIds.push(id)
+                    // }
+                });
+            });
 
+        }
     </script>
 @section('pipelineScript')
 

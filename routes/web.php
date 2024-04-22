@@ -76,6 +76,7 @@ Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipel
 
 //Groups
 Route::get('/group', [GroupController::class, 'index'])->name('group.index')->middleware('auth');
+Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 
