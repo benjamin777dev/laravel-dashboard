@@ -341,7 +341,7 @@
             </div> 
 
         </div>
-
+         <div class="row">
         <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
             @csrf
             @method('PUT')
@@ -663,6 +663,7 @@
                     onclick="validateContactForm()">Submit</button>
             </div>
         </form>
+    </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropContact">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">

@@ -285,7 +285,7 @@
                         </div>
                         @if (count($tasks) > 0)
                             <div class="dpagination">
-                                <div onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                <div onclick="deleteTask('{{ $task['zoho_task_id'] }}',true)"
                                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
                                     id="removeBtn">
                                     <i class="fas fa-trash-alt plusicon"></i>
@@ -1211,10 +1211,13 @@
         }
     }
 
-    function deleteTask(id) {
+    function deleteTask(id,isremoveselected=false) {
         let updateids = removeAllSelected();
         if (updateids === "" && id === undefined) {
             return;
+        }
+        if(isremoveselected){
+            id = undefined;
         }
         if (updateids !== "") {
             if (confirm("Are you sure you want to delete selected task?")) {

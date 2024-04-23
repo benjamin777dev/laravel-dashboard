@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Contact Details')
+@section('title', 'Agent Commander | Contact Create')
 
 @section('content')
     @vite(['resources/css/custom.css'])
@@ -60,76 +60,80 @@
                             <tbody>
 
                                 @if (count($tasks) > 0)
-                                @foreach ($tasks as $task)
-                                    <tr class="dresponsivetableTr">
-                                        <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
+                                    @foreach ($tasks as $task)
+                                        <tr class="dresponsivetableTr">
+                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
                                                     type="checkbox" class="task_checkbox"
                                                     id="{{ $task['zoho_task_id'] }}" /></td>
-                                        <td>
-                                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
-                                                id="editableText{{ $task['id'] }}">
-                                                {{ $task['subject'] ?? 'N/A' }}
-                                                <i class="fas fa-pencil-alt pencilIcon" onclick="makeEditable('{{ $task['id'] }}')"></i>
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
-                                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                                        </td>
-                                        <td>
-                                            <div class="d-flex ">
-                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                                    id="btnGroupAddon" data-bs-toggle="modal" onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                                    <i class="fas fa-hdd plusicon"></i>
-                                                    Save
-                                                </div>
-                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                    id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
-                                                    <i class="fas fa-trash-alt plusicon"></i>
-                                                    Delete
-                                                </div>
-                                            </div>
-
-                                            {{-- delete Modal --}}
-                                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
-                                                tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0 deleteModalHeaderDiv">
-                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body deletemodalBodyDiv">
-                                                            <p class="deleteModalBodyText">Please confirm you’d like
-                                                                to<br />
-                                                                delete this item.</p>
-                                                        </div>
-                                                        <div
-                                                            class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                                            <div class="d-grid gap-2 col-5">
-                                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                                                    class="btn btn-secondary deleteModalBtn"
-                                                                    data-bs-dismiss="modal">
-                                                                    <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                    delete
-                                                                </button>
-                                                            </div>
-                                                            <div class="d-grid gap-2 col-5">
-                                                                <button type="button"
-                                                                    class="btn btn-primary goBackModalBtn">
-                                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                        alt="R">No, go back
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
+                                            <td>
+                                                <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
+                                                    id="editableText{{ $task['id'] }}">
+                                                    {{ $task['subject'] ?? 'N/A' }}
+                                                    <i class="fas fa-pencil-alt pencilIcon"
+                                                        onclick="makeEditable('{{ $task['id'] }}')"></i>
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
+                                                    value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
+                                            </td>
+                                            <td>
+                                                <div class="d-flex ">
+                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
+                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
+                                                        <i class="fas fa-hdd plusicon"></i>
+                                                        Save
+                                                    </div>
+                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
+                                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                                        <i class="fas fa-trash-alt plusicon"></i>
+                                                        Delete
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
+
+                                                {{-- delete Modal --}}
+                                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
+                                                    tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body deletemodalBodyDiv">
+                                                                <p class="deleteModalBodyText">Please confirm you’d like
+                                                                    to<br />
+                                                                    delete this item.</p>
+                                                            </div>
+                                                            <div
+                                                                class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button"
+                                                                        onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                                        class="btn btn-secondary deleteModalBtn"
+                                                                        data-bs-dismiss="modal">
+                                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes,
+                                                                        delete
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button"
+                                                                        class="btn btn-primary goBackModalBtn">
+                                                                        <img src="{{ URL::asset('/images/reply.svg') }}"
+                                                                            alt="R">No, go back
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @else
                                     <tr>
                                         <td class="text-center" colspan="12">No records found</td>
@@ -206,144 +210,143 @@
                 </div>
 
             </div>
-             <div class="col-md-4 col-sm-12">
+            <div class="col-md-4 col-sm-12">
                 <h4 class="text-start dFont600 mb-4">Notes</h4>
-                 @if ($notes->isEmpty())
-                 <div class="noNotesFound">
+                @if ($notes->isEmpty())
+                    <div class="noNotesFound">
                         <p class="text-center notesAsignedText">No notes assigned</p>
 
-                    </div> 
-                @else 
-                <ul class="list-group dnotesUl">
-                    @foreach ($notes as $note)
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                        class="form-check-input checkbox{{ $note['id'] }}"
-                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                        type="button" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
-                            @if ($note !== null && $note['related_to_type'] === 'Deal')
-                            <span class="dFont800 dFont13">Related to:</span>
-                            {{ $note->dealData->deal_name }}<br />
-                          @endif
-                            @if ($note !== null && $note['related_to_type'] === 'Contact')
-                                <span class="dFont800 dFont13">Related to:</span>
-                                {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
-                            @endif
-                            <p class="dFont400 fs-4 mb-0">
-                                {{ $note['note_content'] }}
-                            </p>
-                        </div>
-                         {{-- note contact view modal --}}
-                     {{-- note update modal --}}
-                     <div class="modal fade" id="staticBackdropnotecontactupdate{{ $note['id'] }}"
-                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                     <div class="modal-dialog modal-dialog-centered deleteModal">
-                         <div class="modal-content noteModal">
-                             <div class="modal-header border-0">
-                                 <p class="modal-title dHeaderText">Note</p>
-                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                     aria-label="Close"
-                                     onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                             </div>
-                             <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                 method="post">
-                                 @csrf
-                                 @method('POST')
-                                 <div class="modal-body dtaskbody">
-                                     <p class="ddetailsText">Details</p>
-                                     <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
-                                     @error('note_content')
-                                         <div class="text-danger">{{ $message }}</div>
-                                     @enderror
-                                     <p class="dRelatedText">Related to...</p>
-                                     <div class="btn-group dmodalTaskDiv">
-                                         <select class="form-select dmodaltaskSelect" name="related_to"
-                                             aria-label="Select Transaction">
-                                             <option value="{{ $note['zoho_note_id'] }}" selected>
-                                                 {{ $note['related_to_type'] }}
-                                             </option>
-                                         </select>
-                                     </div>
-                                     @error('related_to')
-                                         <div class="text-danger">{{ $message }}</div>
-                                     @enderror
-                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                         <button type="submit"
-                                             class="btn btn-secondary dNoteModalmarkBtns">
-                                             <i class="fas fa-save saveIcon"></i> Update Note
-                                         </button>
-                                     </div>
-                                     <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                         <button type="button" onclick="markAsDone({{ $note['id'] }})"
-                                             class="btn btn-secondary dNoteModalmarkBtns">
-                                             <i class="fas fa-save saveIcon"></i> Mark as Done
-                                         </button>
-                                     </div>
-                                 </div>
-                             </form>
-                         </div>
-                     </div>
-                 </div>
-                    {{-- note view modal --}}
-                    <div class="modal fade" id="staticBackdropnotecontactview{{ $note['id'] }}"
-                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                        <div class="modal-content noteModal">
-                            <div class="modal-header border-0">
-                                <p class="modal-title dHeaderText">Note</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                            </div>
-                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                method="post">
-                                @csrf
-                                @method('POST')
-                                <div class="modal-body dtaskbody">
-                                    <p class="ddetailsText">Details</p>
-                                    <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
-                                    @error('note_content')
-                                        <div class="text-danger" >{{ $message }}</div>
-                                    @enderror
-                                    <p class="dRelatedText">Related to...</p>
-                                    <div class="btn-group dmodalTaskDiv">
-                                        <select class="form-select dmodaltaskSelect" name="related_to"
-                                            aria-label="Select Transaction">
-                                            <option value="{{ $note['zoho_note_id'] }}" selected readonly>
-                                                {{ $note['related_to_type'] }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    @error('related_to')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                        </div>
                     </div>
-                </div>
-                 <div class="d-flex align-items-center gx-2">
-                     <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                         class="form-check-input checkboxupdate{{ $note['id'] }}"
-                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                         type="button" data-bs-toggle="modal"
-                         data-bs-target="#staticBackdropnotecontactupdate{{ $note['id'] }}"   {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
-                 </div>
-             </li>
-         @endforeach
-   </ul>
-   @endif 
-</div> 
-            
+                @else
+                    <ul class="list-group dnotesUl">
+                        @foreach ($notes as $note)
+                            <li
+                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                    id="editButton{{ $note['id'] }}" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
+                                    @if ($note !== null && $note['related_to_type'] === 'Deal')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->dealData->deal_name }}<br />
+                                    @endif
+                                    @if ($note !== null && $note['related_to_type'] === 'Contact')
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
+                                    @endif
+                                    <p class="dFont400 fs-4 mb-0">
+                                        {{ $note['note_content'] }}
+                                    </p>
+                                </div>
+                                {{-- note contact view modal --}}
+                                {{-- note update modal --}}
+                                <div class="modal fade" id="staticBackdropnotecontactupdate{{ $note['id'] }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content noteModal">
+                                            <div class="modal-header border-0">
+                                                <p class="modal-title dHeaderText">Note</p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                            </div>
+                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
+                                                method="post">
+                                                @csrf
+                                                @method('POST')
+                                                <div class="modal-body dtaskbody">
+                                                    <p class="ddetailsText">Details</p>
+                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
+                                                    @error('note_content')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <p class="dRelatedText">Related to...</p>
+                                                    <div class="btn-group dmodalTaskDiv">
+                                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                                            aria-label="Select Transaction">
+                                                            <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                                {{ $note['related_to_type'] }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    @error('related_to')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                        <button type="submit"
+                                                            class="btn btn-secondary dNoteModalmarkBtns">
+                                                            <i class="fas fa-save saveIcon"></i> Update Note
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                        <button type="button" onclick="markAsDone({{ $note['id'] }})"
+                                                            class="btn btn-secondary dNoteModalmarkBtns">
+                                                            <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- note view modal --}}
+                                <div class="modal fade" id="staticBackdropnotecontactview{{ $note['id'] }}"
+                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content noteModal">
+                                            <div class="modal-header border-0">
+                                                <p class="modal-title dHeaderText">Note</p>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                            </div>
+                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
+                                                method="post">
+                                                @csrf
+                                                @method('POST')
+                                                <div class="modal-body dtaskbody">
+                                                    <p class="ddetailsText">Details</p>
+                                                    <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
+                                                    @error('note_content')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                    <p class="dRelatedText">Related to...</p>
+                                                    <div class="btn-group dmodalTaskDiv">
+                                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                                            aria-label="Select Transaction">
+                                                            <option value="{{ $note['zoho_note_id'] }}" selected readonly>
+                                                                {{ $note['related_to_type'] }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    @error('related_to')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gx-2">
+                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                        class="form-check-input checkboxupdate{{ $note['id'] }}"
+                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                        type="button" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropnotecontactupdate{{ $note['id'] }}"
+                                        {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
 
         </div>
-
-        <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
+        <div class="row">
+        <form class="row"  action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="col-md-6 col-sm-12"
@@ -364,14 +367,15 @@
                             // $date = "2024-04-11 00:00:00";
                             $lastcalled = \Carbon\Carbon::parse($contact['last_called'])->format('Y-m-d');
                             $lastemailed = \Carbon\Carbon::parse($contact['last_emailed'])->format('Y-m-d');
-                        @endphp 
+                        @endphp
                         <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
-                        <input type="date" value="{{$lastcalled}}"  name="last_called" class="form-control npinputinfo" id="datetimeInput">
+                        <input type="date" value="{{ $lastcalled }}" name="last_called"
+                            class="form-control npinputinfo" id="datetimeInput">
                     </div>
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
-                        <input type="date" value="{{$lastemailed}}"  name="last_emailed" class="form-control npinputinfo"
-                            id="validationDefault02">
+                        <input type="date" value="{{ $lastemailed }}" name="last_emailed"
+                            class="form-control npinputinfo" id="validationDefault02">
                     </div>
 
                 </div>
@@ -528,36 +532,40 @@
                             ];
                         @endphp
                         <label for="validationDefault03" class="form-label nplabelText">Lead Source</label>
-                        <select name="lead_source" type="text" class="form-select npinputinfo" placeholder="Peter Hunt" id="validationDefault03">
+                        <select name="lead_source" type="text" class="form-select npinputinfo"
+                            placeholder="Peter Hunt" id="validationDefault03">
                             <option value="">-None-</option>
                             @foreach ($leadSources as $leadSource)
-                                <option value="{{ $leadSource }}" {{ $contact['Lead_Source'] == $leadSource ? 'selected' : '' }} >{{ $leadSource }}</option>
+                                <option value="{{ $leadSource }}"
+                                    {{ $contact['Lead_Source'] == $leadSource ? 'selected' : '' }}>{{ $leadSource }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Lead source details</label>
-                        <input type="text" value="{{ $contact['lead_source_detail']}}" name="lead_source_detail" class="form-control npinputinfo"
-                            placeholder="Raoul P Associate" id="validationDefault03">
+                        <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
+                            class="form-control npinputinfo" placeholder="Raoul P Associate" id="validationDefault03">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Envelope Salutation</label>
-                        <input type="text" value="{{ $contact['envelope_salutation']}}"   name="envelope_salutation" class="form-control npinputinfo"
-                            placeholder="Mr." id="validationDefault03">
+                        <input type="text" value="{{ $contact['envelope_salutation'] }}" name="envelope_salutation"
+                            class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
                     </div>
                     <div class="col-md-6">
-                       
+
                         <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
                         <select type="text" name="spouse_partner" class="form-select npinputinfo"
                             placeholder="Mary Long" id="validationDefault03">
                             @php
-                            $spause_partner = $contact['spouse_partner'];
-                        @endphp
+                                $spause_partner = $contact['spouse_partner'];
+                            @endphp
                             <option value="">-None-</option>
                             @if (!empty($contacts))
                                 @foreach ($contacts as $contactrefs)
                                     <option
-                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                        {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
                                         {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}</option>
                                 @endforeach
                             @endif
@@ -573,30 +581,26 @@
                 <div class="row g-3">
                     <div>
                         <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
-                        <input type="text" value="{{$contact['business_name']}}" name="business_name" placeholder="Burn Co."
-                            class="form-control npinputinfo" id="validationDefault02">
+                        <input type="text" value="{{ $contact['business_name'] }}" name="business_name"
+                            placeholder="Burn Co." class="form-control npinputinfo" id="validationDefault02">
                     </div>
                     <div>
                         @php
-                        $abcd = [
-                            'A+',
-                            'A',
-                            'B',
-                            'C',
-                            'D',
-                        ];
-                    @endphp
+                            $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                        @endphp
                         <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
                         <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
                             <option selected disabled value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
-                                <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }} >{{ $abcdIndex }}</option>
+                                <option value="{{ $abcdIndex }}"
+                                    {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>{{ $abcdIndex }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label for="validationDefault02" class="form-label nplabelText">Business Information{{$contact['business_information']}}</label>
-                        <textarea  name="business_information" type="text" rows="4" class="form-control nctextarea"
+                        <label for="validationDefault02" class="form-label nplabelText">Business
+                            Information{{ $contact['business_information'] }}</label>
+                        <textarea name="business_information" type="text" rows="4" class="form-control nctextarea"
                             id="validationDefault02">{{ $contact['business_information'] }}</textarea>
                     </div>
 
@@ -610,8 +614,8 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
-                        <input type="text" value="{{$contact['mailing_address']}}" name="address_line1" class="form-control npinputinfo"
-                            placeholder="22 Smith St." id="validationDefault03">
+                        <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
+                            class="form-control npinputinfo" placeholder="22 Smith St." id="validationDefault03">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Address line 2</label>
@@ -621,13 +625,13 @@
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">City</label>
-                        <input type="text" value="{{$contact['mailing_city']}}" name="city" class="form-control npinputinfo" placeholder="Enter City"
-                            id="validationDefault03">
+                        <input type="text" value="{{ $contact['mailing_city'] }}" name="city"
+                            class="form-control npinputinfo" placeholder="Enter City" id="validationDefault03">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">State</label>
-                        <input type="text" value="{{$contact['mailing_state']}}" name="state" class="form-control npinputinfo" placeholder="Enter State"
-                            id="validationDefault04">
+                        <input type="text" value="{{ $contact['mailing_state'] }}" name="state"
+                            class="form-control npinputinfo" placeholder="Enter State" id="validationDefault04">
                         {{-- <select name="state" class="form-select npinputinfo" id="validationDefault04" >
                             <option selected disabled value=""></option>
                             <option>...</option>
@@ -635,13 +639,13 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">ZIP code</label>
-                        <input type="text" value="{{$contact['mailing_zip']}}" name="zip_code" class="form-control npinputinfo" placeholder="Mr."
-                            id="validationDefault03">
+                        <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
+                            class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                        <input type="text" value="{{$contact['secondory_email']}}" name="email_primary" class="form-control npinputinfo"
-                            placeholder="Mary Long" id="validationDefault03">
+                        <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
+                            class="form-control npinputinfo" placeholder="Mary Long" id="validationDefault03">
                     </div>
                     {{-- <div class="col-md-6">
                         <input class="form-check-input" name="primary_address" type="checkbox" value="false"
@@ -664,6 +668,7 @@
                     onclick="validateContactForm()">Submit</button>
             </div>
         </form>
+    </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropContact">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
@@ -688,8 +693,9 @@
                         <div id="note_text_error" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelectedforContact(this)"
-                                name="related_to" aria-label="Select Transaction">
+                            <select class="form-select dmodaltaskSelect" id="related_to"
+                                onchange="moduleSelectedforContact(this)" name="related_to"
+                                aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
                                     @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
@@ -714,7 +720,7 @@
             </div>
         </div>
     </div>
-   {{-- task modal --}}
+    {{-- task modal --}}
     <div class="modal fade" id="newTaskContactModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
@@ -734,38 +740,37 @@
                             @php
                                 $encounteredIds = []; // Array to store encountered IDs
                             @endphp
-    
+
                             @foreach ($getdealsTransaction as $item)
                                 @php
                                     $contactId = $item['userData']['zoho_id'];
                                 @endphp
-    
+
                                 {{-- Check if the current ID has been encountered before --}}
                                 @if (!in_array($contactId, $encounteredIds))
                                     Add the current ID to the encountered IDs array
                                     @php
                                         $encounteredIds[] = $contactId;
                                     @endphp
-    
+
                                     <option value="{{ $contactId }}"
                                         @if (old('related_to') == $item['userData']['name']) selected @endif>
                                         {{ $item['userData']['name'] }}</option>
                                 @endif
-                             @endforeach
+                            @endforeach
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
                     <input type="date" name="due_date" class="dmodalInput" />
                 </div>
                 <div class="modal-footer ">
-                    <button type="button"
-                     onclick="addTaskforContact('{{ $contact['zoho_contact_id'] }}')"
-                      class="btn btn-secondary taskModalSaveBtn">
+                    <button type="button" onclick="addTaskforContact('{{ $contact['zoho_contact_id'] }}')"
+                        class="btn btn-secondary taskModalSaveBtn">
                         <i class="fas fa-save saveIcon"></i> Save Changes
                     </button>
-    
+
                 </div>
-    
+
             </div>
         </div>
     </div>
@@ -822,37 +827,37 @@
     }
 
     function validateForm() {
-            let noteText = document.getElementById("note_text").value;
-            let relatedTo = document.getElementById("related_to").value;
-            let isValid = true;
+        let noteText = document.getElementById("note_text").value;
+        let relatedTo = document.getElementById("related_to").value;
+        let isValid = true;
 
-            // Reset errors
-            document.getElementById("note_text_error").innerText = "";
-            document.getElementById("related_to_error").innerText = "";
+        // Reset errors
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
 
-            // Validate note text length
-            if (noteText.trim().length > 100) {
-                document.getElementById("note_text_error").innerText = "Note text must be 100 characters or less";
-                isValid = false;
-            }
-            // Validate note text
-            if (noteText.trim() === "") {
-                document.getElementById("note_text_error").innerText = "Note text is required";
-                isValid = false;
-            }
-
-            // Validate related to
-            if (relatedTo === "") {
-                document.getElementById("related_to_error").innerText = "Related to is required";
-                document.getElementById("taskSelect").style.display = "none";
-                isValid = false;
-            }
-            if (isValid) {
-                let changeButton = document.getElementById('validate-button');
-                changeButton.type = "submit";
-            }
-            return isValid;
+        // Validate note text length
+        if (noteText.trim().length > 100) {
+            document.getElementById("note_text_error").innerText = "Note text must be 100 characters or less";
+            isValid = false;
         }
+        // Validate note text
+        if (noteText.trim() === "") {
+            document.getElementById("note_text_error").innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error").innerText = "Related to is required";
+            document.getElementById("taskSelect").style.display = "none";
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button');
+            changeButton.type = "submit";
+        }
+        return isValid;
+    }
 
 
     function handleDeleteCheckbox(id) {
@@ -890,117 +895,117 @@
         }
     }
 
-    function addTaskforContact(conID){
+    function addTaskforContact(conID) {
         var subject = document.getElementsByName("subject")[0].value;
-                if (subject.trim() === "") {
-                    document.getElementById("subject_error").innerHTML = "please enter details";
-                    return;
+        if (subject.trim() === "") {
+            document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
+        }
+        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        var whoId = window.selectedTransation
+        if (whoId === undefined) {
+            whoId = whoSelectoneid
+        }
+        var dueDate = document.getElementsByName("due_date")[0].value;
+
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Who_Id": {
+                    "id": whoId
+                },
+                "Status": "In Progress",
+                "Due_Date": dueDate,
+                // "Created_Time":new Date()
+                // "Priority": "High",
+                "What_Id": {
+                    "id": conID
+                },
+                "$se_module": "Contacts"
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        console.log("formData", formData);
+        $.ajax({
+            url: '{{ route('create.task') }}',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
                 }
-                var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-                var whoId = window.selectedTransation
-                if (whoId === undefined) {
-                    whoId = whoSelectoneid
-                }
-                var dueDate = document.getElementsByName("due_date")[0].value;
-                
-                var formData = {
-                    "data": [{
-                        "Subject": subject,
-                        "Who_Id": {
-                            "id": whoId
-                        },
-                        "Status": "In Progress",
-                        "Due_Date": dueDate,
-                        // "Created_Time":new Date()
-                        // "Priority": "High",
-                        "What_Id":{
-                            "id":conID
-                        },
-                        "$se_module":"Contacts"
-                    }],
-                    "_token": '{{ csrf_token() }}'
-                };
-                console.log("formData",formData);
-                $.ajax({
-                    url: '{{ route('create.task') }}',
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        if (response?.data && response.data[0]?.message) {
-                            // Convert message to uppercase and then display
-                            const upperCaseMessage = response.data[0].message.toUpperCase();
-                            alert(upperCaseMessage);
-                            window.location.reload();
-                        } else {
-                            alert("Response or message not found");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                })
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
     }
 
     function moduleSelectedforContact(selectedModule) {
-            // console.log(accessToken,'accessToken')
-            var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-            var selectedText = selectedOption.text;
-            //    var id = '{{ request()->route('id') }}'; 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/task/get-' + selectedText+'?contactId={{$contact['zoho_contact_id']}}',
-                method: "GET",
-                dataType: "json",
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        //    var id = '{{ request()->route('id') }}'; 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText + '?contactId={{ $contact['zoho_contact_id'] }}',
+            method: "GET",
+            dataType: "json",
 
-                success: function(response) {
-                    // Handle successful response
-                    var tasks = response;
-                    // Assuming you have another select element with id 'taskSelect'
-                    var taskSelect = $('#taskSelect');
-                    // Clear existing options
-                    taskSelect.empty();
-                    // Populate select options with tasks
-                    $.each(tasks, function(index, task) {
-                        console.log(task,'task');
-                        if (selectedText === "Tasks") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_task_id,
-                                text: task?.subject
-                            }));
-                        }
-                        if (selectedText === "Deals") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_deal_id,
-                                text: task?.deal_name
-                            }));
-                        }
-                        if (selectedText === "Contacts") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_contact_id,
-                                text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
-                            }));
-                        }
-                    });
-                    taskSelect.show();
-                    // Do whatever you want with the response data here
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error("Ajax Error:", error);
-                }
-            });
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect');
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    console.log(task, 'task');
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
 
-        }
+    }
 
     function resetFormAndHideSelect() {
         document.getElementById('noteForm').reset();
@@ -1012,28 +1017,28 @@
         document.getElementById("note_text_error").innerText = "";
         document.getElementById("related_to_error").innerText = "";
     }
-    
-    function markAsDone(noteId){
-            // Send an AJAX request to the route using jQuery
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("mark.done") }}',
-                data: {
-                    // Pass the note ID to the server
-                    note_id: noteId,
-                    // Add CSRF token for Laravel security
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if(response?.mark_as_done ===1){
-                       window.location.reload();
-                    }
-                    // Handle success response if needed
-                },
-                error: function(xhr, status, error) {
-                    // Handle error if needed
+
+    function markAsDone(noteId) {
+        // Send an AJAX request to the route using jQuery
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('mark.done') }}',
+            data: {
+                // Pass the note ID to the server
+                note_id: noteId,
+                // Add CSRF token for Laravel security
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response?.mark_as_done === 1) {
+                    window.location.reload();
                 }
-            });
+                // Handle success response if needed
+            },
+            error: function(xhr, status, error) {
+                // Handle error if needed
+            }
+        });
 
     }
 
