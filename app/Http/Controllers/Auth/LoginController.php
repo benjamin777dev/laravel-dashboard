@@ -26,19 +26,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function login(Request $request)
+    /* public function login(Request $request)
     {
-        Log::info('Login user...');
-        $zoho = new ZohoCRM();
-        $constraint = ['email' => $request->get('email')];
-        $user = User::where($constraint)->first();
         
-        Auth::login($user);
-
-        Log::info('User registered and logged in.');
-
         return redirect($this->redirectTo);
-    }
+    } */
     // Overriding the credentials method
     protected function credentials(Request $request)
     {

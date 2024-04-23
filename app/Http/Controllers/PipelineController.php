@@ -141,8 +141,8 @@ class PipelineController extends Controller
              if (!$zohoDeal->successful()) {
                      return "error somthing".$zohoDeal;
                 }
-                $zohoDealArray = json_decode($zohoDeal, true);
-                $data = $zohoDealArray['data'][0]['details']; 
+            $zohoDealArray = json_decode($zohoDeal, true);
+            $data = $zohoDealArray['data'][0]['details']; 
             $deal=$db->createDeal($user,$accessToken,$data);
             return response()->json($deal);
         }
