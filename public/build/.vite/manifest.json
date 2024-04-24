@@ -5,28 +5,28 @@
   },
   "resources/css/app.css": {
     "file": "css/contacts.min.css",
-    "isEntry": true,
-    "src": "resources/css/app.css"
+    "src": "resources/css/app.css",
+    "isEntry": true
   },
   "resources/css/contacts.css": {
     "file": "css/contacts.min.css",
-    "isEntry": true,
-    "src": "resources/css/app.css"
+    "src": "resources/css/app.css",
+    "isEntry": true
   },
   "resources/css/custom.css": {
     "file": "css/custom.min.css",
-    "isEntry": true,
-    "src": "resources/css/custom.css"
+    "src": "resources/css/custom.css",
+    "isEntry": true
   },
   "resources/css/dashboard.css": {
     "file": "css/dashboard.min.css",
-    "isEntry": true,
-    "src": "resources/css/dashboard.css"
+    "src": "resources/css/dashboard.css",
+    "isEntry": true
   },
   "resources/css/pipeline.css": {
     "file": "css/pipeline.min.css",
-    "isEntry": true,
-    "src": "resources/css/pipeline.css"
+    "src": "resources/css/pipeline.css",
+    "isEntry": true
   },
   "resources/fonts/boxicons.eot": {
     "file": "icons/boxicons.eot",
@@ -150,47 +150,47 @@
   },
   "resources/js/app.js": {
     "file": "js/app3.js",
-    "isEntry": true,
-    "src": "resources/js/app.js"
+    "src": "resources/js/app.js",
+    "isEntry": true
   },
   "resources/js/contacts.js": {
     "file": "js/contacts.js",
-    "isEntry": true,
-    "src": "resources/js/contacts.js"
+    "src": "resources/js/contacts.js",
+    "isEntry": true
   },
   "resources/js/custom.js": {
     "file": "js/custom2.js",
-    "isEntry": true,
-    "src": "resources/js/custom.js"
+    "src": "resources/js/custom.js",
+    "isEntry": true
   },
   "resources/js/dashboard.js": {
     "file": "js/dashboard.js",
-    "isEntry": true,
-    "src": "resources/js/dashboard.js"
+    "src": "resources/js/dashboard.js",
+    "isEntry": true
   },
   "resources/js/pipeline.js": {
     "file": "js/pipeline.js",
-    "isEntry": true,
-    "src": "resources/js/pipeline.js"
+    "src": "resources/js/pipeline.js",
+    "isEntry": true
   },
   "resources/sass/app.scss": {
     "file": "css/app.min2.css",
-    "isEntry": true,
-    "src": "resources/sass/app.scss"
+    "src": "resources/sass/app.scss",
+    "isEntry": true
   },
   "resources/scss/app.scss": {
     "file": "css/app.min.css",
-    "isEntry": true,
-    "src": "resources/scss/app.scss"
+    "src": "resources/scss/app.scss",
+    "isEntry": true
   },
   "resources/scss/bootstrap.scss": {
     "file": "css/bootstrap.min.css",
-    "isEntry": true,
-    "src": "resources/scss/bootstrap.scss"
+    "src": "resources/scss/bootstrap.scss",
+    "isEntry": true
   },
   "resources/scss/icons.scss": {
     "file": "css/icons.min.css",
-    "isEntry": true,
-    "src": "resources/scss/icons.scss"
+    "src": "resources/scss/icons.scss",
+    "isEntry": true
   }
 }
