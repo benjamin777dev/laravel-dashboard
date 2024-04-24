@@ -99,67 +99,77 @@ class DashboardController extends Controller
         // Beyond 12 Months
 
         $beyond12Months = $deals->filter(function ($deal) use ($helper) {
-            $closingDate = Carbon::parse($helper->convertToMST($deal['Closing_Date']));
+            $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
             $endOfYear = Carbon::now()->endOfYear();
             return $closingDate->gt($endOfYear)
-                && !Str::startsWith($deal['Stage'], 'Dead')
-                && $deal['Stage'] !== 'Sold';
+                && !Str::startsWith($deal['stage'], 'Dead')
+                && $deal['stage'] !== 'Sold';
         });
 
         $beyond12MonthsData = [
-            'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
+            'sum' => $this->formatNumber($beyond12Months->sum('pipeline1')),
             'count' => $beyond12Months->count(),
-            'asum' => $beyond12Months->sum('Pipeline1')
+            'asum' => $beyond12Months->sum('pipeline1')
         ];
 
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) use ($helper) {
-            return Carbon::parse($helper->convertToMST($deal['Closing_Date']))->lt(now())
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+            return Carbon::parse($helper->convertToMST($deal['closing_date']))->lt(now())
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
-            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')),
-            'asum' => $needsNewDate->sum('Pipeline1'),
+            'sum' =>$this->formatNumber($needsNewDate->sum('pipeline1')),
+            'asum' => $needsNewDate->sum('pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
         $filteredDeals = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
-
+        
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
-            return Carbon::parse($helper->convertToMST($deal['Closing_Date']))->format('Y-m');
+            return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
-            return $dealsGroup->sum('Pipeline1');
+            return $dealsGroup->sum('pipeline1');
         });
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $deals->filter(function ($deal) use ($helper) {
-            return now()->diffInDays(Carbon::parse($helper->convertToMST($deal['Created_Time']))) <= 30
+            return now()->diffInDays(Carbon::parse($helper->convertToMST($deal['zoho_deal_createdTime']))) <= 30
                    && $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->count();
-
         // Ensure all months of the year are represented, fill missing months with 0
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
-        $allMonths = collect();
+        $allMonths = [];
         while ($startOfYear->lessThanOrEqualTo($endOfYear)) {
             $month = $startOfYear->format('Y-m');
-            $allMonths->put($month, $monthlyGCI->get($month, 0));
+            $gci = $monthlyGCI->get($month, 0);
+            
+            // Get the count of deals for this month
+            $dealCount = $filteredDeals->filter(function ($deal) use ($month, $helper) {
+                return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m') === $month;
+            })->count();
+        
+            $allMonths[$month] = [
+                'gci' => $gci,
+                'deal_count' => $dealCount
+            ];
+            
             $startOfYear->addMonth();
         }
-
+        
         $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
@@ -205,7 +215,7 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-        
+      
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
