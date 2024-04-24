@@ -481,7 +481,7 @@ class ZohoCRM
                         "uri" => "/crm/v6/Contacts_X_Groups/search",
                     ],
                     [
-                        "sub_request_id"=>"ContactGroups",
+                        "sub_request_id"=>"Notes",
                         "method" => "GET",                    
                         "params" => [
                             'page' => $page,

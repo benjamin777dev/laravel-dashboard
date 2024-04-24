@@ -540,6 +540,7 @@ class DB
                 $related_to = null;
                 $related_to_type = null;
                 $apiNames = Module::getApiName();
+                if(isset($note['Parent_Id'])){
                 $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
                 Log::info("resultHelper" . $result);
                 switch ($result) {
@@ -577,6 +578,7 @@ class DB
                     'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
                     '$related_to_type' => isset($related_to_type) ? $related_to_type : null,
                 ]);
+            }
             }
 
             Log::info("Notes stored into database successfully.");
