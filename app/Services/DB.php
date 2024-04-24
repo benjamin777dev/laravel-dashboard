@@ -179,7 +179,7 @@ class DB
             if (isset($task['Who_Id'])) {
                 $contact = Contact::where('zoho_contact_id', $task['Who_Id']['id'])->first();
             }
-             if ($task['What_Id']) {
+             if (isset($task['What_Id'])) {
                 $deal = Deal::where('zoho_deal_id', $task['What_Id']['id'])->first();
                 Log::info("Tasks For loop: " . $deal);
             }
@@ -839,14 +839,18 @@ class DB
         Log::info("Storing Groups Into Database");
 
         foreach ($allContactGroups as $allContactGroup) {
+            if(isset($allContactGroup['Contacts'])){
             $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
+            }
+            if(isset($allContactGroup['Groups'])){
             $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
+            }
             $contactGroup = ContactGroups::updateOrCreate(
                 ['zoho_contact_group_id' => $allContactGroup['id']],
                 [
                     'ownerId' => $user->id,
-                    "contactId" => $contact['id'] ?? null,
-                    "groupId" => $group['id'] ?? null,
+                    "contactId" => isset($contact['id']) ?? null,
+                    "groupId" => isset($group['id']) ?? null,
                     "zoho_contact_group_id" => $allContactGroup['id'] ?? null
                 ]
             );

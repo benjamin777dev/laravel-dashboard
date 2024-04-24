@@ -428,4 +428,80 @@ class ZohoCRM
         Log::info('Response Zoho Group');
         return $response;
     }
+
+    public function compositeApi($user,$page)
+    {
+        try {
+            Log::info('Creating Composite API Zoho ');
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . '__composite_requests', [
+                "rollback_on_fail" => true,
+                "parallel_execution" => false,
+                "__composite_requests" => [
+                    [
+                        "sub_request_id"=>"Deals",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Contact_Name:equals:$user->zoho_id)"
+                        ],
+                        "uri" => "/crm/v6/Deals/search",
+                    ],
+                    [
+                        "sub_request_id"=>"Tasks",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Tasks/search",
+                    ],
+                    [
+                        "sub_request_id"=>"Contacts",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Contacts/search",
+                    ],
+                    [
+                        "sub_request_id"=>"ContactGroups",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Contacts_X_Groups/search",
+                    ],
+                    [
+                        "sub_request_id"=>"ContactGroups",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)",
+                            'fields' => "Note_Content,Created_Time,Owner,Parent_Id",
+                        ],
+                        "uri" => "/crm/v6/Notes/search",
+                    ],
+                ]
+            ]);
+
+            Log::info('Response Zoho Group');
+            Log::info(response()->json($response->json())); // Log the response data for debugging
+
+            return $response;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving notes: " . $e->getMessage());
+        }
+        
+    }
+
 }
