@@ -179,7 +179,7 @@ class DB
             if (isset($task['Who_Id'])) {
                 $contact = Contact::where('zoho_contact_id', $task['Who_Id']['id'])->first();
             }
-             if ($task['What_Id']) {
+             if (isset($task['What_Id'])) {
                 $deal = Deal::where('zoho_deal_id', $task['What_Id']['id'])->first();
                 Log::info("Tasks For loop: " . $deal);
             }
@@ -540,6 +540,7 @@ class DB
                 $related_to = null;
                 $related_to_type = null;
                 $apiNames = Module::getApiName();
+                if(isset($note['Parent_Id'])){
                 $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
                 Log::info("resultHelper" . $result);
                 switch ($result) {
@@ -577,6 +578,7 @@ class DB
                     'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
                     '$related_to_type' => isset($related_to_type) ? $related_to_type : null,
                 ]);
+            }
             }
 
             Log::info("Notes stored into database successfully.");
@@ -839,14 +841,18 @@ class DB
         Log::info("Storing Groups Into Database");
 
         foreach ($allContactGroups as $allContactGroup) {
+            if(isset($allContactGroup['Contacts'])){
             $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
+            }
+            if(isset($allContactGroup['Groups'])){
             $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
+            }
             $contactGroup = ContactGroups::updateOrCreate(
                 ['zoho_contact_group_id' => $allContactGroup['id']],
                 [
                     'ownerId' => $user->id,
-                    "contactId" => $contact['id'] ?? null,
-                    "groupId" => $group['id'] ?? null,
+                    "contactId" => isset($contact['id']) ?? null,
+                    "groupId" => isset($group['id']) ?? null,
                     "zoho_contact_group_id" => $allContactGroup['id'] ?? null
                 ]
             );

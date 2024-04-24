@@ -18,23 +18,40 @@
     @endif
     <div class="container-fluid">
         <div class="row mt-4 text-center">
-            <div class="col-lg-3 col-md-3 col-sm-6 text-start">
+            {{-- <div class="col-lg-3 col-md-3 col-sm-6 text-start">
                 <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
                 </p>
                 <p class="dFont800 dFont13 dMb5">Pipeline stats date ranges</p>
                 <div class="d-flex justify-content-between align-items-center dCalander">
-                    {{-- <p class="dFont400 dFont13 mb-0">{{ $startDate }} - {{ $endDate }}</p> --}}
                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
                         value="{{ $startDate }} - {{ $endDate }}" />
-                    {{-- <i class="fa fa-calendar calendar-icon cursor-pointer" id="calendar-icon" onclick="triggerDateRangePicker()"></i> --}}
                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
                         onclick="triggerDateRangePicker()">
+                </div>
 
+            </div> --}}
+            <div class="col-lg-3 col-md-3 col-sm-6 text-start">
+
+                <div class="row g-1">
+                    <div>
+                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
+                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            </i>
+                            New Contact
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
+                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            </i>
+                            New Transaction
+                        </div>
+                    </div>
                 </div>
 
             </div>
-
             <div class="col-ld-9 col-md-9 col-sm-12">
                 <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
@@ -64,7 +81,221 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-sm-12 dtasksection">
+            <div class="row dgraphdiv">
+                <div class="col-md-8 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12 dspeedometersection">
+                            <p class="dpipetext">My Pipeline</p>
+                            <div class="wrapper">
+                                <div class="gauge">
+                                    <div class="slice-colors">
+                                        <div class="st slice-item"></div>
+                                        <div class="st slice-item"></div>
+                                        <div class="st slice-item"></div>
+                                    </div>
+                                    <div class="needle"></div>
+                                    <div class="gauge-center"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="dFont800 dFont13 dMb5">Pipeline range</p>
+                                <div class="d-flex justify-content-between align-items-center dCalander">
+                                    <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
+                                        value="{{ $startDate }} - {{ $endDate }}" />
+                                    <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}"
+                                        alt="" onclick="triggerDateRangePicker()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-12 ">
+                            <div class="container  dgraphpstackContainer">
+                                <p class="dcamptext">Monthly Pipeline Comparison</p>
+                                <!-- Stacked Bar Chart -->
+                                <div class="stacked-bar-chart w-100 stacked-contain">
+
+                                    @php
+                                        // Extracting the 'gci' values from the nested arrays
+                                        $gcis = array_column($allMonths, 'gci');
+                                        // Finding the maximum 'gci' value
+                                        $maxGCI = max($gcis);
+                                    @endphp
+
+                                    @foreach ($allMonths as $month => $data)
+                                        @php
+                                            $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
+                                        @endphp
+                                        <div class="row">
+                                            <div class="col-md-1 align-self-center dmonth-design">
+                                                {{ Carbon\Carbon::parse($month)->format('M') }}</div>
+                                            <div class="col-md-11 dashchartImg" >
+                                                <div class="row dgraph-strip">
+                                                    @php
+                                                        // Remove the currency symbol ('$') and commas from the formatted value
+                                                        $formattedGCI = str_replace(
+                                                            ['$', ','],
+                                                            '',
+                                                            number_format($data['gci'], 0),
+                                                        );
+                                                    @endphp
+                                                    <div class="col-md-10 text-end bar-a" {{-- style="width: {{ $widthPercentage }}%"
+                                                  --}}
+                                                  style="width: {{ ($formattedGCI < 1000) ? 'auto' : $widthPercentage.'%' }}">
+                                                        {{ '$' . number_format($data['gci'], 0) }}
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <p class="dtransactions-des">{{ $data['deal_count'] }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <h4 class="text-start dFont600 mb-4">Notes</h4>
+                    @if ($notesInfo->isEmpty())
+                        <p class="text-center">No notes found.</p>
+                    @else
+                        <ul class="list-group dnotesUl">
+                            @foreach ($notesInfo as $note)
+                                <li
+                                    class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
+                                    <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                        class="form-check-input checkbox{{ $note['id'] }}"
+                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                        type="button" data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
+                                        @if ($note['related_to_type'] === 'Deal')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->dealData->deal_name ?? '' }}<br />
+                                        @endif
+                                        @if ($note['related_to_type'] === 'Contact')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->contactData->first_name ?? '' }}
+                                            {{ $note->contactData->last_name ?? '' }}<br />
+                                        @endif
+                                        <p class="dFont400 fs-4 mb-0">
+                                            {{ $note['note_content'] }}
+                                        </p>
+                                    </div>
+
+                                    {{-- dynamic edit modal --}}
+                                    {{-- note update modal --}}
+                                    <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                                            <div class="modal-content noteModal">
+                                                <div class="modal-header border-0">
+                                                    <p class="modal-title dHeaderText">Note</p>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"
+                                                        onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                                </div>
+                                                <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('POST')
+                                                    <div class="modal-body dtaskbody">
+                                                        <p class="ddetailsText">Details</p>
+                                                        <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
+                                                        @error('note_content')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                        <p class="dRelatedText">Related to...</p>
+                                                        <div class="btn-group dmodalTaskDiv">
+                                                            <select class="form-select dmodaltaskSelect" name="related_to"
+                                                                aria-label="Select Transaction">
+                                                                <option value="{{ $note['zoho_note_id'] }}" selected>
+                                                                    {{ $note['related_to_type'] }}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        @error('related_to')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                            <button type="submit"
+                                                                class="btn btn-secondary dNoteModalmarkBtns">
+                                                                <i class="fas fa-save saveIcon"></i> Update Note
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-md-6 modal-footer dNoteFooters border-0">
+                                                            <button type="button"
+                                                                onclick="markAsDone({{ $note['id'] }})"
+                                                                class="btn btn-secondary dNoteModalmarkBtns">
+                                                                <i class="fas fa-save saveIcon"></i> Mark as Done
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{-- note view modal --}}
+                                    <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
+                                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                                            <div class="modal-content noteModal">
+                                                <div class="modal-header border-0">
+                                                    <p class="modal-title dHeaderText">Note</p>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"
+                                                        onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
+                                                </div>
+                                                <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('POST')
+                                                    <div class="modal-body dtaskbody">
+                                                        <p class="ddetailsText">Details</p>
+                                                        <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
+                                                        @error('note_content')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                        <p class="dRelatedText">Related to...</p>
+                                                        <div class="btn-group dmodalTaskDiv">
+                                                            <select class="form-select dmodaltaskSelect" name="related_to"
+                                                                aria-label="Select Transaction">
+                                                                <option value="{{ $note['zoho_note_id'] }}" selected
+                                                                    readonly>
+                                                                    {{ $note['related_to_type'] }}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        @error('related_to')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gx-2">
+                                        <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                                            class="form-check-input checkboxupdate{{ $note['id'] }}"
+                                            id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                                            type="button" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}"
+                                            {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
+                                    </div>
+                                </li>
+                            @endforeach
+                            {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
+                            class="btn btn-danger" style="display: none;">Delete</button> --}}
+                        </ul>
+                    @endif
+                </div>
+            </div>
+            <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
@@ -78,16 +309,19 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
-                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">In
+                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active"
+                                    id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                                    data-tab='In Progress' type="button" role="tab" aria-controls="nav-home"
+                                    aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
-                                    id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
-                                    role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
+                            <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn"
+                                    data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
+                                    data-bs-target="#nav-profile" type="button" role="tab"
+                                    aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
                             <a href="/dashboard?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
-                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
-                                    role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
+                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+                                    type="button" role="tab" aria-controls="nav-contact"
+                                    aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
 
@@ -194,7 +428,8 @@
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body deletemodalBodyDiv">
-                                                                <p class="deleteModalBodyText">Please confirm you’d like
+                                                                <p class="deleteModalBodyText">Please confirm you’d
+                                                                    like
                                                                     to<br />
                                                                     delete this item.</p>
                                                             </div>
@@ -213,7 +448,8 @@
                                                                     <button type="button" data-bs-dismiss="modal"
                                                                         class="btn btn-primary goBackModalBtn">
                                                                         <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                            data-bs-dismiss="modal" alt="R">No, go
+                                                                            data-bs-dismiss="modal" alt="R">No,
+                                                                        go
                                                                         back
                                                                     </button>
                                                                 </div>
@@ -378,140 +614,6 @@
 
                 </div>
 
-            </div>
-            <div class="col-md-4 col-sm-12">
-                <h4 class="text-start dFont600 mb-4">Notes</h4>
-                @if ($notesInfo->isEmpty())
-                    <p class="text-center">No notes found.</p>
-                @else
-                    <ul class="list-group dnotesUl">
-                        @foreach ($notesInfo as $note)
-                            <li
-                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                class="form-check-input checkbox{{ $note['id'] }}"
-                                id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                                type="button" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdropnoteview{{ $note['id'] }}" >
-                                    @if ($note['related_to_type'] === 'Deal')
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name ?? '' }}<br />
-                                    @endif
-                                    @if ($note['related_to_type'] === 'Contact')
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name ?? '' }}
-                                        {{ $note->contactData->last_name ?? '' }}<br />
-                                    @endif
-                                    <p class="dFont400 fs-4 mb-0">
-                                        {{ $note['note_content'] }}
-                                    </p>
-                                </div>
-
-                                {{-- dynamic edit modal --}}
-                                {{-- note update modal --}}
-                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
-                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content noteModal">
-                                            <div class="modal-header border-0">
-                                                <p class="modal-title dHeaderText">Note</p>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                                            </div>
-                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('POST')
-                                                <div class="modal-body dtaskbody">
-                                                    <p class="ddetailsText">Details</p>
-                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
-                                                    @error('note_content')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                    <p class="dRelatedText">Related to...</p>
-                                                    <div class="btn-group dmodalTaskDiv">
-                                                        <select class="form-select dmodaltaskSelect" name="related_to"
-                                                            aria-label="Select Transaction">
-                                                            <option value="{{ $note['zoho_note_id'] }}" selected>
-                                                                {{ $note['related_to_type'] }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                    @error('related_to')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                                        <button type="submit"
-                                                            class="btn btn-secondary dNoteModalmarkBtns">
-                                                            <i class="fas fa-save saveIcon"></i> Update Note
-                                                        </button>
-                                                    </div>
-                                                    <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                                        <button type="button" onclick="markAsDone({{ $note['id'] }})"
-                                                            class="btn btn-secondary dNoteModalmarkBtns">
-                                                            <i class="fas fa-save saveIcon"></i> Mark as Done
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                   {{-- note view modal --}}
-                                   <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
-                                   data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                   aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                   <div class="modal-dialog modal-dialog-centered deleteModal">
-                                       <div class="modal-content noteModal">
-                                           <div class="modal-header border-0">
-                                               <p class="modal-title dHeaderText">Note</p>
-                                               <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                   aria-label="Close"
-                                                   onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                                           </div>
-                                           <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                               method="post">
-                                               @csrf
-                                               @method('POST')
-                                               <div class="modal-body dtaskbody">
-                                                   <p class="ddetailsText">Details</p>
-                                                   <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
-                                                   @error('note_content')
-                                                       <div class="text-danger" >{{ $message }}</div>
-                                                   @enderror
-                                                   <p class="dRelatedText">Related to...</p>
-                                                   <div class="btn-group dmodalTaskDiv">
-                                                       <select class="form-select dmodaltaskSelect" name="related_to"
-                                                           aria-label="Select Transaction">
-                                                           <option value="{{ $note['zoho_note_id'] }}" selected readonly>
-                                                               {{ $note['related_to_type'] }}
-                                                           </option>
-                                                       </select>
-                                                   </div>
-                                                   @error('related_to')
-                                                       <div class="text-danger">{{ $message }}</div>
-                                                   @enderror
-                                               </div>
-                                       </div>
-                                   </div>
-                               </div>
-                                <div class="d-flex align-items-center gx-2">
-                                    <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                        class="form-check-input checkboxupdate{{ $note['id'] }}"
-                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                                        type="button" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}"   {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
-                                </div>
-                            </li>
-                        @endforeach
-                        {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
-                            class="btn btn-danger" style="display: none;">Delete</button> --}}
-                    </ul>
-                @endif
             </div>
             <div class="table-responsive dtranstiontable mt-3">
                 <p class="fw-bold">Transactions closing soon</p>
@@ -784,159 +886,11 @@
 
 
 
-    @vite(['resources/js/dashboard.js'])
+    {{-- @vite(['resources/js/dashboard.js']) --}}
     <!-- Include Date Range Picker -->
 
 @section('dashboardScript')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var canvas = document.getElementById('customGaugeChart');
-            var ctx = canvas.getContext('2d');
 
-            // Resize the canvas and draw the gauge accordingly
-            function resizeCanvas() {
-                var container = document.querySelector('.widget-thermometer');
-                canvas.width = container.offsetWidth / 1.1; // Set the canvas width to the width of the container
-                canvas.height = container.offsetWidth / 2; // Keep the canvas height half of the width
-                drawGauge();
-            }
-
-            function drawGauge() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before redrawing
-
-                var centerX = canvas.width / 2;
-                var centerY = canvas.height * 0.95; // Lower the center to give more space at the top
-                var radius = canvas.width * 0.45; // Reduce the radius to ensure it fits in the canvas
-
-                // Draw the red segment
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, Math.PI, Math.PI * 1.25, false);
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = radius * 0.2;
-                ctx.stroke();
-
-                // Draw the yellow segment
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, Math.PI * 1.25, Math.PI * 1.5, false);
-                ctx.strokeStyle = 'yellow';
-                ctx.lineWidth = radius * 0.2;
-                ctx.stroke();
-
-                // Draw the green segment
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, Math.PI * 1.5, 2 * Math.PI, false);
-                ctx.strokeStyle = 'green';
-                ctx.lineWidth = radius * 0.2;
-                ctx.stroke();
-
-                // Draw the needle
-                var needleAngle = Math.PI + (progress / 100) * Math.PI;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(centerX + radius * Math.cos(needleAngle), centerY + radius * Math.sin(needleAngle));
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 5;
-                ctx.stroke();
-
-                // Draw the center circle for the needle
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius * 0.05, 0, Math.PI * 2, false);
-                ctx.fillStyle = '#333';
-                ctx.fill();
-
-                // Draw the progress text
-                ctx.fillStyle = '#000';
-                ctx.font = 'bold 20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(progress + '%', centerX, centerY - radius / 2);
-            }
-
-            function drawSegment(x, y, r, startAngle, endAngle, color, lineWidth) {
-                ctx.beginPath();
-                ctx.arc(x, y, r, startAngle, endAngle, false);
-                ctx.strokeStyle = color;
-                ctx.lineWidth = lineWidth;
-                ctx.stroke();
-            }
-
-            function drawNeedle(x, y, angle, length) {
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + length * Math.cos(angle), y + length * Math.sin(angle));
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 5;
-                ctx.stroke();
-            }
-
-            function drawProgressText(x, y, text) {
-                ctx.fillStyle = '#000';
-                ctx.font = 'bold 20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(text, x, y);
-            }
-
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas); // Redraw the gauge on window resize
-
-            // for drawing the monthly chart
-            var monthlyCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
-            var monthlyComparisonChart = new Chart(monthlyCtx, {
-                type: 'bar', // This specifies a vertical bar chart
-                data: {
-                    labels: @json($allMonths->keys()), // Laravel Blade directive
-                    datasets: [{
-                        label: 'Monthly GCI',
-                        data: @json($allMonths->values()), // Laravel Blade directive
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                return 'GCI: $' + tooltipItem.yLabel.toLocaleString();
-                            }
-                        }
-                    },
-                    indexAxis: 'y', // 'x' for vertical chart and 'y' for horizontal
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        },
-                        x: {
-                            beginAtZero: true, // Ensure this is set to have the bars start at the base
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 12 // Adjust as needed for the number of months
-                                // Include the following if the labels are still overlapping:
-                                // callback: function(value, index, values) {
-                                //   return index % 2 === 0 ? value : '';
-                                // },
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        datalabels: {
-                            color: '#444',
-                            anchor: 'end',
-                            align: 'top',
-                            formatter: function(value, context) {
-                                return '$' + value.toLocaleString();
-                            }
-                        }
-                    },
-                    maintainAspectRatio: false // Add this to prevent the chart from taking the default aspect ratio
-                }
-            });
-        });
-    </script>
 
 
 @endsection
@@ -989,6 +943,8 @@
 
         document.getElementById("note_text").addEventListener("keyup", validateForm);
         document.getElementById("related_to").addEventListener("change", validateForm);
+
+        console.log("yes tist woring", @json($allMonths), )
     });
     // var selectedNoteIds = [];
 
@@ -1211,12 +1167,12 @@
         }
     }
 
-    function deleteTask(id,isremoveselected=false) {
+    function deleteTask(id, isremoveselected = false) {
         let updateids = removeAllSelected();
         if (updateids === "" && id === undefined) {
             return;
         }
-        if(isremoveselected){
+        if (isremoveselected) {
             id = undefined;
         }
         if (updateids !== "") {
@@ -1446,27 +1402,27 @@
         $('.ddaterangepicker').click();
     }
 
-    function markAsDone(noteId){
-            // Send an AJAX request to the route using jQuery
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("mark.done") }}',
-                data: {
-                    // Pass the note ID to the server
-                    note_id: noteId,
-                    // Add CSRF token for Laravel security
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if(response?.mark_as_done ===1){
-                       window.location.reload();
-                    }
-                    // Handle success response if needed
-                },
-                error: function(xhr, status, error) {
-                    // Handle error if needed
+    function markAsDone(noteId) {
+        // Send an AJAX request to the route using jQuery
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('mark.done') }}',
+            data: {
+                // Pass the note ID to the server
+                note_id: noteId,
+                // Add CSRF token for Laravel security
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response?.mark_as_done === 1) {
+                    window.location.reload();
                 }
-            });
+                // Handle success response if needed
+            },
+            error: function(xhr, status, error) {
+                // Handle error if needed
+            }
+        });
 
     }
 
