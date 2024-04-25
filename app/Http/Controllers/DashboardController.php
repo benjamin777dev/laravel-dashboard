@@ -54,16 +54,13 @@ class DashboardController extends Controller
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
-        $progressClass = $progress <= 15 ? "bg-danger" : ($progress <= 45 ? "bg-warning" : "bg-success");
+        $progressClass = $progress <= 15 ? "#FE5243" : ($progress <= 45 ? "#FADA05" : "#21AC25");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
         Log::info("Progress: $progress");
 
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        // print('<pre>');
-        // print_r(json_encode($deals));
-        // die;
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal,$startDate,$endDate) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage,$startDate,$endDate) {
                $closingDate = Carbon::parse($deal['closing_date']);
@@ -332,13 +329,13 @@ class DashboardController extends Controller
         // don't count anything beyond 12 months
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold'
+            return !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
 
         // Sum the 'Pipeline1' values of the filtered deals.
-        $totalGCI = $filteredDeals->sum('Pipeline1');
+        $totalGCI = $filteredDeals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
 
         // Calculate the progress as a percentage of the goal.
