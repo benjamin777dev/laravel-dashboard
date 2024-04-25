@@ -82,7 +82,7 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
 
                 @foreach ($contacts as $contact)
-                    <a href="{{ route('contacts.show', $contact['id']) }}">
+                    <a id="taskRoute" href="{{ route('contacts.show', $contact['id']) }}">
                         <div class="col">
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
@@ -121,16 +121,127 @@
                                     </div>
                                 </div>
                                 <div class="card-footer dataCardFooter">
-                                    <div class="datafootericondiv">
+                                    <div class="datafootericondiv" onclick="event.preventDefault();" data-bs-toggle="modal"
+                                        data-bs-target="#newTaskContactModalId{{ $contact['zoho_contact_id'] }}">
+
                                         <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
                                             class="datadiversityicon">
                                         <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
                                             class="datadiversityicon">
                                     </div>
-                                    <div>
+                                    <div onclick="event.preventDefault();" data-bs-toggle="modal"
+                                        data-bs-target="#newTaskNoteModalId{{ $contact['zoho_contact_id'] }}">
                                         <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
                                             class="datadiversityicon">
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Note Modal --}}
+                        <div class="modal fade" onclick="event.preventDefault();" id="newTaskNoteModalId{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content noteModal">
+                                    <div class="modal-header border-0">
+                                        <p class="modal-title dHeaderText">Note</p>
+                                        <button type="button" onclick="resetFormAndHideSelect();" class="btn-close"
+                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="noteForm" action="{{ route('save.note') . '?conID=' . $contact['id'] }}"
+                                        method="post">
+                                        @csrf
+                                        <div class="modal-body dtaskbody">
+                                            <p class="ddetailsText">Details</p>
+                                            <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
+                                            <div id="note_text_error" class="text-danger"></div>
+                                            <p class="dRelatedText">Related to...</p>
+                                            <div class="btn-group dmodalTaskDiv">
+                                                <select class="form-select dmodaltaskSelect" id="related_to"
+                                                    onchange="moduleSelectedforContact(this,'{{$contact['zoho_contact_id']}}')" name="related_to"
+                                                    aria-label="Select Transaction">
+                                                    <option value="">Please select one</option>
+                                                    @foreach ($retrieveModuleData as $item)
+                                                        @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                                            <option value="{{ $item }}">{{ $item['api_name'] }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                                <select class="form-select dmodaltaskSelect" id="taskSelect"
+                                                    name="related_to_parent" aria-label="Select Transaction"
+                                                    style="display: none;">
+                                                    <option value="">Please Select one</option>
+                                                </select>
+                                            </div>
+                                            <div id="related_to_error" class="text-danger"></div>
+                                        </div>
+                                        <div class="modal-footer dNoteFooter border-0">
+                                            <button type="button" id="validate-button" onclick="validateFormc()"
+                                                class="btn btn-secondary dNoteModalmarkBtn">
+                                                <i class="fas fa-save saveIcon"></i> Add Note
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- task create model --}}
+                        <div class="modal fade" onclick="event.preventDefault();"
+                            id="newTaskContactModalId{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content dtaskmodalContent">
+                                    <div class="modal-header border-0">
+                                        <p class="modal-title dHeaderText">Create New Tasks</p>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            onclick="resetValidation()" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body dtaskbody">
+                                        <p class="ddetailsText">Details</p>
+                                        <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                                        <div id="subject_error" class="text-danger"></div>
+                                        <p class="dRelatedText">Related to...</p>
+                                        <div class="btn-group dmodalTaskDiv">
+                                            <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)"
+                                                id="who_id" name="who_id" aria-label="Select Transaction">
+                                                @php
+                                                    $encounteredIds = []; // Array to store encountered IDs
+                                                @endphp
+
+                                                @foreach ($getdealsTransaction as $item)
+                                                    @php
+                                                        $contactId = $item['userData']['zoho_id'];
+                                                    @endphp
+
+                                                    {{-- Check if the current ID has been encountered before --}}
+                                                    @if (!in_array($contactId, $encounteredIds))
+                                                        Add the current ID to the encountered IDs array
+                                                        @php
+                                                            $encounteredIds[] = $contactId;
+                                                        @endphp
+
+                                                        <option value="{{ $contactId }}"
+                                                            @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                                            {{ $item['userData']['name'] }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <p class="dDueText">Date due</p>
+                                        <input type="date" name="due_date" class="dmodalInput" />
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <button type="button"
+                                            onclick="addTaskforContact('{{ $contact['zoho_contact_id'] }}')"
+                                            class="btn btn-secondary taskModalSaveBtn">
+                                            <i class="fas fa-save saveIcon"></i> Save Changes
+                                        </button>
+
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -155,44 +266,8 @@
                 </nav>
             </div>
         </div>
-        {{-- <h1>Contacts</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Contact Name</th>
-                    <th>ABCD</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Mobile</th>
-                    <th>Address</th>
-                    <th>Imp Date</th>
-                    <th>Perfect</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($contacts as $contact)
-                    <tr>
-                        <td><a
-                                href="{{ route('contacts.show', ['contact' => $contact['id']]) }}">{{ $contact['Full_Name'] ?? 'N/A' }}</a>
-                        </td>
-                        <td class="{{ $contact['abcdBackgroundClass'] ?? '' }}">{{ $contact['ABCD'] ?? '' }}</td>
-                        <td>{{ $contact['Email'] ?? '' }}</td>
-                        <td>{{ $contact['Phone'] ?? '' }}</td>
-                        <td>{{ $contact['Mobile'] ?? '' }}</td>
-                        <td>{{ $contact['Mailing_Street'] ?? '' }} {{ $contact['Mailing_City'] ?? '' }}
-                            {{ $contact['Mailing_State'] ?? '' }} {{ $contact['Mailing_Zip'] ?? '' }}</td>
-                        <td>
-                            <input type="checkbox" disabled
-                                {{ $contact['HasMissingImportantDate'] ?? false ? '' : 'checked' }}>
-                        </td>
-                        <td>
-                            <input type="checkbox" disabled {{ $contact['perfect'] ?? false ? 'checked' : '' }}>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table> --}}
     </div>
+
 @endsection
 <script>
     function createContact() {
@@ -276,12 +351,12 @@
                 // Clear existing contact cards
                 contactList.empty();
                 if (data.length === 0) {
-        contactList.append('<p class="text-center">No records found.</p>');
-           }else{
-                // Iterate over each contact
-                data.forEach(function(contact) {
-                    // Generate HTML for the contact card using the template
-                    const cardHtml = `
+                    contactList.append('<p class="text-center">No records found.</p>');
+                } else {
+                    // Iterate over each contact
+                    data.forEach(function(contact) {
+                        // Generate HTML for the contact card using the template
+                        const cardHtml = `
             <a href="{{ route('contacts.show', $contact['id']) }}">
                 <div class="col">
                     <div class="card dataCardDiv">
@@ -317,9 +392,9 @@
             </a>
         `;
                         // Append the contact card HTML to the contact list container
-                    contactList.append(cardHtml);
-                });
-            }
+                        contactList.append(cardHtml);
+                    });
+                }
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
@@ -334,5 +409,150 @@
         // var filterVal = selectedModule.val();
         // Call fetchData with the updated parameters
         filterContactData(sortField, sortDirection, searchInput, filterVal);
+    }
+
+    function resetValidation() {
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById('darea').value = "";
+    }
+
+    function validateTextarea() {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+
+    // function taskCreate(event,conId){
+    //     event.preventDefault(); // Prevent the default action  
+    // }
+    function addTaskforContact(conID) {
+        var subject = document.getElementsByName("subject")[0].value;
+        if (subject.trim() === "") {
+            document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
+        }
+        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        var whoId = window.selectedTransation
+        if (whoId === undefined) {
+            whoId = whoSelectoneid
+        }
+        var dueDate = document.getElementsByName("due_date")[0].value;
+
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Who_Id": {
+                    "id": whoId
+                },
+                "Status": "In Progress",
+                "Due_Date": dueDate,
+                // "Created_Time":new Date()
+                // "Priority": "High",
+                "What_Id": {
+                    "id": conID
+                },
+                "$se_module": "Contacts"
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        console.log("formData", formData);
+        $.ajax({
+            url: '{{ route('create.task') }}',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+    }
+
+    //notes validation 
+    function resetFormAndHideSelect() {
+        document.getElementById('noteForm').reset();
+        document.getElementById('taskSelect').style.display = 'none';
+        clearValidationMessages();
+    }
+
+    function clearValidationMessages() {
+        document.getElementById("note_text_error").innerText = "";
+        document.getElementById("related_to_error").innerText = "";
+    }
+
+    
+    function moduleSelectedforContact(selectedModule,conId) {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        //    var id = '{{ request()->route('id') }}'; 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText + '?contactId='+conId,
+            method: "GET",
+            dataType: "json",
+
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect');
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        console.log(task);
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
     }
 </script>

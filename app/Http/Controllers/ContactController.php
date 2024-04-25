@@ -24,8 +24,10 @@ class ContactController extends Controller
         $search = request()->query('search');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken,$search);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
 
-        return view('contacts.index', compact('contacts'));
+        return view('contacts.index', compact('contacts','getdealsTransaction','retrieveModuleData'));
     }
 
     public function getContact(Request $request)
