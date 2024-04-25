@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('contactId')->nullable();
             $table->unsignedBigInteger('groupId')->nullable();
             $table->string('zoho_contact_group_id')->nullable();
+            $table->unsignedBigInteger('ownerId')->nullable();
             $table->timestamps();
         });
     }

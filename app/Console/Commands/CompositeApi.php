@@ -54,8 +54,27 @@ class CompositeApi extends Command
                             $data = collect($currResponse['details']['response']['body']['data']??[]);
                             $info = $currResponse['details']['response']['body']['info'];
 
-                            $allData = $allData->concat($data);
-                        
+                            switch ($index) {
+                                case '0':
+                                    $db->storeContactsIntoDB($data);
+                                    break;
+                                case '1':
+                                    $db->storeContactGroupsIntoDB($data,$user);
+                                    break;
+                                case '2':
+                                    $db->storeDealsIntoDB($data,$user);
+                                    break;
+                                case '3':
+                                    $db->storeTasksIntoDB($data);
+                                    break;
+                                case '4':
+                                   $db->storeNotesIntoDB($data);
+                                    break;
+                                default:
+                                    # code...
+                                    break;
+                            }
+                                                    
                             // Log the extracted data
                             Log::info("Data for index {$index}: " . json_encode($data));
                                 // Check if there are more pages to fetch
@@ -63,26 +82,6 @@ class CompositeApi extends Command
                                 $hasMorePages = $info['more_records'];
                                 $page++;
                                 // $response = $zoho->compositeApi($user,$page);
-                            }
-                            switch ($index) {
-                                case '0':
-                                    $db->storeDealsIntoDB($allData,$user);
-                                    break;
-                                case '1':
-                                    $db->storeTasksIntoDB($allData);
-                                    break;
-                                case '2':
-                                    $db->storeContactsIntoDB($allData);
-                                    break;
-                                case '3':
-                                    $db->storeContactGroupsIntoDB($allData,$user);
-                                    break;
-                                case '4':
-                                   $db->storeNotesIntoDB($allData);
-                                    break;
-                                default:
-                                    # code...
-                                    break;
                             }
                         }
 

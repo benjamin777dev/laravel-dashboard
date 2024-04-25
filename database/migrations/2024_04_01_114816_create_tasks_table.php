@@ -27,6 +27,7 @@ class CreatetasksTable extends Migration
             $table->string('tag')->nullable();
             $table->string('owner')->nullable();
             $table->string('zoho_task_id')->nullable();
+            $table->string('related_to')->nullable();
             $table->timestamp('created_time')->nullable();
 
             $table->timestamps();

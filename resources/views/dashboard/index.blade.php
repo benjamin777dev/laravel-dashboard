@@ -36,7 +36,7 @@
                 <div class="row g-1">
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
-                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            data-bs-target="#" onclick="createContact();"><i class="fas fa-plus plusicon">
                             </i>
                             New Contact
                         </div>
@@ -44,7 +44,7 @@
 
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
-                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            data-bs-target="#" onclick="createTransaction()"><i class="fas fa-plus plusicon">
                             </i>
                             New Transaction
                         </div>
@@ -355,10 +355,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <select class="form-select dselect" aria-label="Transaction test"
-                                                        id="dropdownMenuButton">
-                                                        <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                                    </select>
+                                                        <input value="{{ $task['related_to']?? '' }}">
                                                 </div>
                                             </td>
                                             <td>
@@ -484,16 +481,15 @@
                                         </p>
                                         <div class="btn-group dcardsselectdiv">
                                             <p class="dcardsTransactionText">Transaction Related</p>
-                                            <select class="form-select dselect" aria-label="Transaction test"
-                                                id="dropdownMenuButton">
-                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task }}
-                                                </option>
+                                           
+                                                <input value="{{ $task['related_to'] ?? '' }}">
+                                                
                                             </select>
                                         </div>
                                         <div class="dcardsdateinput">
                                             <p class="dcardsTaskText">Task Date</p>
                                             <input type="datetime-local"
-                                                value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                                         </div>
                                     </div>
                                     <div class="dcardsbtnsDiv">
@@ -1426,6 +1422,81 @@
 
     }
 
+    window.createTransaction= function() {
+            console.log("Onclick");
+            var formData = {
+            "data": [{
+                        "Deal_Name": "{{ config('variables.dealName') }}",
+                        "Owner": {
+                            "id": "{{ auth()->user()->root_user_id }}"
+                        },
+                        "Stage":"Potential"
+                    }],
+            "_token": '{{ csrf_token() }}'
+            };
+           $.ajax({
+                    url: '{{ url('/pipeline/create') }}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(formData),
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        // Handle success response, such as redirecting to a new page
+                        window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+        }
+
+        function createContact() {
+        console.log("Onclick");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        let name = "CHR";
+        var formData = {
+            "data": [{
+                "Relationship_Type": "Primary",
+                "Missing_ABCD": true,
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "full_name": "{{ auth()->user()->name }}",
+                },
+                "Unsubscribe_From_Reviews": false,
+                "Currency": "USD",
+                "Market_Area": "-None-",
+                "Lead_Source": "-None-",
+                "ABCD": "-None-",
+                "Last_Name": name,
+                "zia_suggested_users": {}
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/contact/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
         var dates = dateRangeString.split(' - ');

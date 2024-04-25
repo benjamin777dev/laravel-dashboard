@@ -18,14 +18,14 @@
             <div class="row">
                 <nav class="dtabs">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
+                        <a href="/task?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
                                 data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
                                 role="tab" aria-controls="nav-home" aria-selected="true">In
                                 Progress</button></a>
-                        <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
+                        <a href="/task?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
                                 id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
                                 role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                        <a href="/dashboard?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
+                        <a href="/task?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
                                 id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
                                 role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
                     </div>
@@ -61,10 +61,7 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                <select class="form-select dselect" aria-label="Transaction test"
-                                                    id="dropdownMenuButton">
-                                                    <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                                </select>
+                                                <input value="{{ $task['related_to'] ?? '' }}">
                                             </div>
                                         </td>
                                         <td>
@@ -188,16 +185,15 @@
                                     </p>
                                     <div class="btn-group dcardsselectdiv">
                                         <p class="dcardsTransactionText">Transaction Related</p>
-                                        <select class="form-select dselect" aria-label="Transaction test"
-                                            id="dropdownMenuButton">
-                                            <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task }}
-                                            </option>
+                                        
+                                            <input value="{{ $task['related_to'] ?? '' }}">
+                                            
                                         </select>
                                     </div>
                                     <div class="dcardsdateinput">
                                         <p class="dcardsTaskText">Task Date</p>
                                         <input type="datetime-local"
-                                            value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                            value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                                     </div>
                                 </div>
                                 <div class="dcardsbtnsDiv">

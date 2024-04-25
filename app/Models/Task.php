@@ -25,7 +25,8 @@ class Task extends Model
         'subject',
         'owner',
         'zoho_task_id',
-        'created_time'
+        'created_time',
+        'related_to'
     ];
 
     protected $casts = [

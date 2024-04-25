@@ -441,26 +441,6 @@ class ZohoCRM
                 "parallel_execution" => false,
                 "__composite_requests" => [
                     [
-                        "sub_request_id"=>"Deals",
-                        "method" => "GET",                    
-                        "params" => [
-                            'page' => $page,
-                            'per_page' => 200,
-                            "criteria"=>"(Contact_Name:equals:$user->zoho_id)"
-                        ],
-                        "uri" => "/crm/v6/Deals/search",
-                    ],
-                    [
-                        "sub_request_id"=>"Tasks",
-                        "method" => "GET",                    
-                        "params" => [
-                            'page' => $page,
-                            'per_page' => 200,
-                            "criteria"=>"(Owner:equals:$user->root_user_id)"
-                        ],
-                        "uri" => "/crm/v6/Tasks/search",
-                    ],
-                    [
                         "sub_request_id"=>"Contacts",
                         "method" => "GET",                    
                         "params" => [
@@ -480,6 +460,28 @@ class ZohoCRM
                         ],
                         "uri" => "/crm/v6/Contacts_X_Groups/search",
                     ],
+                    [
+                        "sub_request_id"=>"Deals",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Contact_Name:equals:$user->zoho_id)"
+                        ],
+                        "uri" => "/crm/v6/Deals/search",
+                    ],
+                    [
+                        "sub_request_id"=>"Tasks",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Tasks/search",
+                    ],
+                    
+                    
                     [
                         "sub_request_id"=>"Notes",
                         "method" => "GET",                    
