@@ -25,8 +25,8 @@ class CreatecontactsTable extends Migration
             $table->string('envelope_salutation')->nullable();
             $table->string('mailing_state')->nullable();
             $table->string('mailing_zip')->nullable();
-            $table->boolean('isContactCompleted')->nullable()->default(0);
-            $table->boolean('isInZoho')->nullable()->default(0);            
+            $table->boolean('isContactCompleted')->nullable()->default(1);
+            $table->boolean('isInZoho')->nullable()->default(1);            
             $table->string('mobile')->nullable();
             $table->string('business_name')->nullable();
             $table->string('business_information')->nullable();

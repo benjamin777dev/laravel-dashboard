@@ -25,7 +25,9 @@ class PipelineController extends Controller
         $search = request()->query('search');
         $deals = $db->retrieveDeals($user, $accessToken, $search);
         $allstages = config('variables.dealStages');
-        return view('pipeline.index', compact('deals','allstages'));
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction'));
     }
 
     public function getDeals(Request $request)
@@ -69,9 +71,9 @@ class PipelineController extends Controller
         $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$deal->zoho_deal_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
         $dealaci = $db->retrieveAciFordeal($user,$accessToken,$dealId);
-        
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci'));
+        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','retrieveModuleData'));
 
     }
 

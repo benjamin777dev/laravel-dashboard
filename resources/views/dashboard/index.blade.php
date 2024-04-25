@@ -31,12 +31,12 @@
                 </div>
 
             </div> --}}
-            <div class="col-lg-3 col-md-3 col-sm-6 text-start">
+            <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
 
                 <div class="row g-1">
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
-                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            data-bs-target="#" onclick="createContact();"><i class="fas fa-plus plusicon">
                             </i>
                             New Contact
                         </div>
@@ -44,7 +44,7 @@
 
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
-                            data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                            data-bs-target="#" onclick="createTransaction()"><i class="fas fa-plus plusicon">
                             </i>
                             New Transaction
                         </div>
@@ -80,13 +80,17 @@
 
             </div>
         </div>
-        <div class="row">
+        <div class="row dmain-Container">
             <div class="row dgraphdiv">
-                <div class="col-md-8 col-sm-12">
-                    <div class="row">
-                        <div class="col-md-4 col-sm-12 dspeedometersection">
+                <div class="col-md-8">
+                    <div class="row dspeedn-month-camaparison">
+                        <div class="col-md-4 dspeedometersection">
                             <p class="dpipetext">My Pipeline</p>
-                            <div class="wrapper">
+                            <div id="canvas-holder" style="width:100%">
+                                <canvas id="chart"  width="400" height="400"></canvas>
+                              </div>
+                              {{-- <button id="randomizeData" onclick="randomDatassss();">Randomize Data</button> --}}
+                            {{-- <div class="wrapper">
                                 <div class="gauge">
                                     <div class="slice-colors">
                                         <div class="st slice-item"></div>
@@ -96,7 +100,7 @@
                                     <div class="needle"></div>
                                     <div class="gauge-center"></div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div>
                                 <p class="dFont800 dFont13 dMb5">Pipeline range</p>
                                 <div class="d-flex justify-content-between align-items-center dCalander">
@@ -107,7 +111,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8 col-sm-12 ">
+                        <div class="col-md-8 graphp-dash">
                             <div class="container  dgraphpstackContainer">
                                 <p class="dcamptext">Monthly Pipeline Comparison</p>
                                 <!-- Stacked Bar Chart -->
@@ -157,7 +161,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-sm-12">
+                <div class="col-md-4">
                     <h4 class="text-start dFont600 mb-4">Notes</h4>
                     @if ($notesInfo->isEmpty())
                         <p class="text-center">No notes found.</p>
@@ -355,10 +359,7 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <select class="form-select dselect" aria-label="Transaction test"
-                                                        id="dropdownMenuButton">
-                                                        <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                                    </select>
+                                                        <input value="{{ $task['related_to']?? '' }}">
                                                 </div>
                                             </td>
                                             <td>
@@ -484,16 +485,15 @@
                                         </p>
                                         <div class="btn-group dcardsselectdiv">
                                             <p class="dcardsTransactionText">Transaction Related</p>
-                                            <select class="form-select dselect" aria-label="Transaction test"
-                                                id="dropdownMenuButton">
-                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">{{ $task }}
-                                                </option>
+                                           
+                                                <input value="{{ $task['related_to'] ?? '' }}">
+                                                
                                             </select>
                                         </div>
                                         <div class="dcardsdateinput">
                                             <p class="dcardsTaskText">Task Date</p>
                                             <input type="datetime-local"
-                                                value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
+                                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                                         </div>
                                     </div>
                                     <div class="dcardsbtnsDiv">
@@ -945,6 +945,8 @@
         document.getElementById("related_to").addEventListener("change", validateForm);
 
         console.log("yes tist woring", @json($allMonths), )
+
+       
     });
     // var selectedNoteIds = [];
 
@@ -1426,6 +1428,81 @@
 
     }
 
+    window.createTransaction= function() {
+            console.log("Onclick");
+            var formData = {
+            "data": [{
+                        "Deal_Name": "{{ config('variables.dealName') }}",
+                        "Owner": {
+                            "id": "{{ auth()->user()->root_user_id }}"
+                        },
+                        "Stage":"Potential"
+                    }],
+            "_token": '{{ csrf_token() }}'
+            };
+           $.ajax({
+                    url: '{{ url('/pipeline/create') }}',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify(formData),
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        // Handle success response, such as redirecting to a new page
+                        window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+        }
+
+        function createContact() {
+        console.log("Onclick");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        let name = "CHR";
+        var formData = {
+            "data": [{
+                "Relationship_Type": "Primary",
+                "Missing_ABCD": true,
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "full_name": "{{ auth()->user()->name }}",
+                },
+                "Unsubscribe_From_Reviews": false,
+                "Currency": "USD",
+                "Market_Area": "-None-",
+                "Lead_Source": "-None-",
+                "ABCD": "-None-",
+                "Last_Name": name,
+                "zia_suggested_users": {}
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/contact/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
         var dates = dateRangeString.split(' - ');
@@ -1474,5 +1551,84 @@
 
 
     }
+
+    var randomScalingFactor = function() {
+//   return Math.round(Math.random() * 100);
+    return Math.round(@json($progress));
+};
+
+var randomData = function () {
+  return [
+    randomScalingFactor(),
+    // randomScalingFactor(),
+    // randomScalingFactor(),
+  ];
+};
+var randomValue = function (data) {
+//   return Math.max.apply(null, data) * Math.random();
+  return Math.max.apply(null, data);
+};
+
+var data = randomData();
+var value = randomValue(data);
+
+var config = {
+  type: 'gauge',
+  data: {
+    //labels: ['Success', 'Warning', 'Warning', 'Error'],
+    datasets: [{
+      data: data,
+      value: value,
+      backgroundColor: [@json($progressClass)],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    title: {
+      display: true,
+    //   text: 'Gauge chart'
+    },
+    layout: {
+      padding: {
+        bottom: 30
+      }
+    },
+    needle: {
+      // Needle circle radius as the percentage of the chart area width
+      radiusPercentage: 2,
+      // Needle width as the percentage of the chart area width
+      widthPercentage: 3.2,
+      // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
+      lengthPercentage: 80,
+      // The color of the needle
+      color: 'rgba(0, 0, 0, 1)'
+    },
+    valueLabel: {
+      formatter: Math.round
+    },
+    chartArea: {
+      // Set the desired width and height of the chart area
+      width: '80%',
+      height: '80%'
+    }
+  }
+};
+
+window.onload = function() {
+  var ctx = document.getElementById('chart').getContext('2d');
+  window.myGauge = new Chart(ctx, config);
+};
+ 
+function randomDatassss(){
+    console.log("yes working")
+  config.data.datasets.forEach(function(dataset) {
+    dataset.data = randomData();
+    dataset.value = randomValue(dataset.data);
+  });
+
+  window.myGauge.update();
+}
+
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>

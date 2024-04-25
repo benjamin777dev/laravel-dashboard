@@ -95,21 +95,18 @@ class DB
     public function storeDealContactIntoDB($dealContacts, $dealId)
     {
         Log::info("Storing Deal Contacts Into Database");
-        $dealContactsCount = count($dealContacts);
-        for ($i = 0; $i < $dealContactsCount; $i++) {
-            $dealContact = $dealContacts[$i];
+        foreach ($dealContacts as $dealContact) {
+            Log::info("dealContact",$dealContact);
             $contact = Contact::where('zoho_contact_id', $dealContact['id'])->first();
             $user = User::where('zoho_id', $dealContact['id'])->first();
 
             DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
-                'contactId' => $contact ? $contact->id : null,
-                'userId' => $user ? $user->id : null,
                 'contactRole' => $dealContact['Contact_Role']['name']
             ],[
                 'zoho_deal_id' => $dealId,
-                'contactId' => $contact ? $contact->id : null,
-                'userId' => $user ? $user->id : null,
+                'contactId' => $contact?$contact->id:null,
+                'userId' =>$user?$user->id:null ,
                 'contactRole' => $dealContact['Contact_Role']['name']
             ]);
         }
@@ -202,7 +199,8 @@ class DB
                 "subject" => isset($task['Subject']) ? $task['Subject'] : null,
                 "owner" => isset($user['id']) ? $user['id'] : null,
                 "created_time" => isset($task['Created_Time']) ? $helper->convertToUTC($task['Created_Time']) : null,
-                "zoho_task_id" => isset($task['id']) ? $task['id'] : null
+                "zoho_task_id" => isset($task['id']) ? $task['id'] : null,
+                "related_to" => isset($task['$se_module']) ? $task['$se_module'] : null
             ]);
         }
 
@@ -396,7 +394,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(3);
+            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -541,44 +539,44 @@ class DB
                 $related_to_type = null;
                 $apiNames = Module::getApiName();
                 if(isset($note['Parent_Id'])){
-                $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
-                Log::info("resultHelper" . $result);
-                switch ($result) {
-                    case 'Deals':
-                        $related_to = Deal::where('zoho_deal_id', $note['Parent_Id']['id'])->first();
-                        $related_to_type = 'Deal';
-                        break;
-                    case 'Contacts':
-                        $related_to = Contact::where('zoho_contact_id', $note['Parent_Id']['id'])->first();
-                        $related_to_type = 'Contact';
-                        break;
-                    case 'Tasks':
-                        $related_to = Task::where('zoho_task_id', $note['Parent_Id']['id'])->first();
-                        $related_to_type = 'Tasks';
-                        break;
-                    default:
-                        Log::info("resultHelper" . $result);
-                        break;
-                }
-                // if (!$user) {
-                //     // Log an error if the user is not found
-                //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
-                //     continue; // Skip to the next deal
-                // }
+                    $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
+                    Log::info("resultHelper" . $result);
+                    switch ($result) {
+                        case 'Deals':
+                            $related_to = Deal::where('zoho_deal_id', $note['Parent_Id']['id'])->first();
+                            $related_to_type = 'Deal';
+                            break;
+                        case 'Contacts':
+                            $related_to = Contact::where('zoho_contact_id', $note['Parent_Id']['id'])->first();
+                            $related_to_type = 'Contact';
+                            break;
+                        case 'Tasks':
+                            $related_to = Task::where('zoho_task_id', $note['Parent_Id']['id'])->first();
+                            $related_to_type = 'Tasks';
+                            break;
+                        default:
+                            Log::info("resultHelper" . $result);
+                            break;
+                    }
+                    // if (!$user) {
+                    //     // Log an error if the user is not found
+                    //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
+                    //     continue; // Skip to the next deal
+                    // }
 
-                // Update or create the deal
-                Note::where('zoho_note_id', $note['id'])->update(['related_to_type' => $related_to_type]);
-                Note::updateOrCreate(['zoho_note_id' => $note['id']], [
-                    'owner' => isset($user['id']) ? $user['id'] : null,
-                    'related_to' => isset($related_to['id']) ? $related_to['id'] : null,
-                    'related_to_module_id' => isset($note['Parent_Id']['module']['id']) ?$note['Parent_Id']['module']['id'] : null,
-                    'related_to_parent_record_id' => isset($note['Parent_Id']['id']) ?$note['Parent_Id']['id'] : null,
-                    'note_content' => isset($note['Note_Content']) ? $note['Note_Content'] : null,
-                    'created_time' => isset($note['Created_Time']) ? $helper->convertToUTC($note['Created_Time']) : null,
-                    'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
-                    '$related_to_type' => isset($related_to_type) ? $related_to_type : null,
-                ]);
-            }
+                    // Update or create the deal
+                    Note::where('zoho_note_id', $note['id'])->update(['related_to_type' => $related_to_type]);
+                    Note::updateOrCreate(['zoho_note_id' => $note['id']], [
+                        'owner' => isset($user['id']) ? $user['id'] : null,
+                        'related_to' => isset($related_to['id']) ? $related_to['id'] : null,
+                        'related_to_module_id' => isset($note['Parent_Id']['module']['id']) ?$note['Parent_Id']['module']['id'] : null,
+                        'related_to_parent_record_id' => isset($note['Parent_Id']['id']) ?$note['Parent_Id']['id'] : null,
+                        'note_content' => isset($note['Note_Content']) ? $note['Note_Content'] : null,
+                        'created_time' => isset($note['Created_Time']) ? $helper->convertToUTC($note['Created_Time']) : null,
+                        'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
+                        '$related_to_type' => isset($related_to_type) ? $related_to_type : null,
+                    ]);
+                }
             }
 
             Log::info("Notes stored into database successfully.");
@@ -732,7 +730,7 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDealId)
+    public function createDeal(User $user, $accessToken,$zohoDeal)
     {
         try {
             Log::info("User Deatils".json_encode($zohoDeal));
@@ -841,18 +839,19 @@ class DB
         Log::info("Storing Groups Into Database");
 
         foreach ($allContactGroups as $allContactGroup) {
-            if(isset($allContactGroup['Contacts'])){
+            Log::info("allContactGroup",$allContactGroup);
+            if($allContactGroup['Contacts']){
             $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
             }
-            if(isset($allContactGroup['Groups'])){
+            if($allContactGroup['Groups']){
             $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
             }
             $contactGroup = ContactGroups::updateOrCreate(
                 ['zoho_contact_group_id' => $allContactGroup['id']],
                 [
                     'ownerId' => $user->id,
-                    "contactId" => isset($contact['id']) ?? null,
-                    "groupId" => isset($group['id']) ?? null,
+                    "contactId" => $contact['id'] ?? null,
+                    "groupId" => $group['id'] ?? null,
                     "zoho_contact_group_id" => $allContactGroup['id'] ?? null
                 ]
             );
