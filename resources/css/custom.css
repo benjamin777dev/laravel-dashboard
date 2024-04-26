@@ -575,6 +575,10 @@
     display: none;
 }
 
+.submit_button{
+    background-color: #253c5b;
+}
+
 @media (min-width: 768px) {
     .calendarInput {
         width: 206px !important;
