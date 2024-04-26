@@ -243,7 +243,7 @@ class ZohoCRM
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'Notes/search', [
-             'page' => $page,
+            'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
             'fields' => $fields,
@@ -502,6 +502,44 @@ class ZohoCRM
             return $response;
         } catch (\Throwable $e) {
              Log::error("Error retrieving notes: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getAttachmentData($dealId)
+    {
+        try {
+            Log::info('Creating Attachment Zoho ');
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000000003819&fields=Owner,Modified_Time,Size,File_Name,Parent_Id,Record_Status__s");
+
+            Log::info('Response Zoho Attachments');
+            Log::info(response()->json($response->json())); // Log the response data for debugging
+
+            return $response;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving Attachments: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getNonTmData($dealId)
+    {
+        try {
+            Log::info('Creating nonTm Zoho ');
+
+            $nonTm = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000005317635&fields=Owner,Number,Close_Date,Created_Time");
+
+            Log::info('Response Zoho nonTm');
+            Log::info(response()->json($nonTm->json())); // Log the response data for debugging
+
+            return $nonTm;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving nonTm: " . $e->getMessage());
         }
         
     }

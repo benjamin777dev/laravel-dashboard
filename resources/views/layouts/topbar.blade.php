@@ -32,10 +32,10 @@
 
            <!-- App Search-->
            <form class="app-search d-none d-lg-block">
-            <div class="position-relative">
+            {{-- <div class="position-relative">
                 <input type="text" class="form-control" placeholder="@lang('Search')">
                 <span class="bx bx-search-alt"></span>
-            </div>
+            </div> --}}
         </form>
 
         <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
@@ -245,7 +245,7 @@
         </div>
         <div class="dropdown d-none d-lg-inline-block ms-1">
         </div>
-        <div class="dropdown d-inline-block">
+        {{-- <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bx bx-bell bx-tada"></i>
@@ -278,9 +278,9 @@
                                     <p class="mb-1" key="t-grammer">@lang('If_several_languages_coalesce_the_grammar')</p>
                                     <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">@lang('3_min_ago')</span></p>
                                 </div> --}}
-                            </div>
+                            {{-- </div>
                         </div>
-                    </a>
+                    </a> --}}
                     {{-- <a href="" class="text-reset notification-item">
                         <div class="d-flex">
                             <img src="{{ URL::asset ('build/images/users/avatar-3.jpg') }}"
@@ -324,14 +324,14 @@
                             </div>
                         </div>
                     </a> --}}
-                </div>
+                {{-- </div>
                 <div class="p-2 border-top d-grid">
                     <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
                         <i class="mdi mdi-arrow-right-circle me-1"></i> <span key="t-view-more">@lang('View_More')</span>
                     </a>
                 </div>
-            </div>
-        </div>
+            </div> --}}
+        {{-- </div>  --}}
 
         <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
@@ -343,10 +343,10 @@
             </button>
             <div class="dropdown-menu dropdown-menu-end">
                 <!-- item-->
-                <a class="dropdown-item" href="contacts-profile"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">@lang('Profile')</span></a>
-                <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">@lang('My_Wallet')</span></a>
+                {{-- <a class="dropdown-item" href="contacts-profile"><i class="bx bx-user font-size-16 align-middle me-1"></i> <span key="t-profile">@lang('Profile')</span></a> --}}
+                {{-- <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">@lang('My_Wallet')</span></a> --}}
                 <a class="dropdown-item d-block" href="#" data-bs-toggle="modal" data-bs-target=".change-password"><span class="badge bg-success float-end">11</span><i class="bx bx-wrench font-size-16 align-middle me-1"></i> <span key="t-settings">@lang('Settings')</span></a>
-                <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen">@lang('Lock_screen')</span></a>
+                {{-- <a class="dropdown-item" href="#"><i class="bx bx-lock-open font-size-16 align-middle me-1"></i> <span key="t-lock-screen">@lang('Lock_screen')</span></a> --}}
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item text-danger" href="javascript:void();" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i> <span key="t-logout">@lang('Logout')</span></a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -354,11 +354,11 @@
                 </form>
             </div>
         </div>
-        <div class="dropdown d-inline-block">
+        {{-- <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
                 <i class="bx bx-cog bx-spin"></i>
             </button>
-        </div>
+        </div> --}}
     </div>
 </div>
 </header>

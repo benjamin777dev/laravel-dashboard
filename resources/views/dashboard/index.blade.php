@@ -87,9 +87,9 @@
                         <div class="col-md-4 dspeedometersection">
                             <p class="dpipetext">My Pipeline</p>
                             <div id="canvas-holder" style="width:100%">
-                                <canvas id="chart"  width="400" height="400"></canvas>
-                              </div>
-                              {{-- <button id="randomizeData" onclick="randomDatassss();">Randomize Data</button> --}}
+                                <canvas id="chart" width="400" height="400"></canvas>
+                            </div>
+                            {{-- <button id="randomizeData" onclick="randomDatassss();">Randomize Data</button> --}}
                             {{-- <div class="wrapper">
                                 <div class="gauge">
                                     <div class="slice-colors">
@@ -131,7 +131,7 @@
                                         <div class="row">
                                             <div class="col-md-1 align-self-center dmonth-design">
                                                 {{ Carbon\Carbon::parse($month)->format('M') }}</div>
-                                            <div class="col-md-11 dashchartImg" >
+                                            <div class="col-md-11 dashchartImg">
                                                 <div class="row dgraph-strip">
                                                     @php
                                                         // Remove the currency symbol ('$') and commas from the formatted value
@@ -143,7 +143,7 @@
                                                     @endphp
                                                     <div class="col-md-10 text-end bar-a" {{-- style="width: {{ $widthPercentage }}%"
                                                   --}}
-                                                  style="width: {{ ($formattedGCI < 1000) ? 'auto' : $widthPercentage.'%' }}">
+                                                        style="width: {{ $formattedGCI < 1000 ? 'auto' : $widthPercentage . '%' }}">
                                                         {{ '$' . number_format($data['gci'], 0) }}
                                                     </div>
                                                     <div class="col-md-1">
@@ -797,8 +797,8 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" onclick="resetFormAndHideSelect();" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="noteForm" action="{{ route('save.note') }}" method="post">
                     @csrf
@@ -944,9 +944,11 @@
         document.getElementById("note_text").addEventListener("keyup", validateForm);
         document.getElementById("related_to").addEventListener("change", validateForm);
 
-        console.log("yes tist woring", @json($allMonths), )
+        // console.log("yes tist woring", @json($allMonths), )
+        var ctx = document.getElementById('chart').getContext('2d');
+        window.myGauge = new Chart(ctx, config);
 
-       
+
     });
     // var selectedNoteIds = [];
 
@@ -1306,8 +1308,8 @@
         document.getElementById("related_to_error").innerText = "";
     }
 
-    function resetFormAndHideSelect() {
-        document.getElementById('noteForm').reset();
+    function resetFormAndHideSelectDashboard() {
+        document.getElementById('noteForm')?.reset();
         document.getElementById('taskSelect').style.display = 'none';
         clearValidationMessages();
     }
@@ -1503,6 +1505,69 @@
             }
         });
     }
+
+
+    var randomScalingFactor = function(progressCount = "") {
+        console.log(progressCount,'progressCount')
+        //   return Math.round(Math.random() * 100);
+        return Math.round(progressCount!==""?progressCount:@json($progress) );
+    };
+
+    var randomData = function(data) {
+        return [
+            randomScalingFactor(data),
+        ];
+    };
+    var randomValue = function(data) {
+        //   return Math.max.apply(null, data) * Math.random();
+        return Math.max.apply(null, data);
+    };
+
+    var data = randomData();
+    var value = randomValue(data);
+    var config = {
+        type: 'gauge',
+        data: {
+            //labels: ['Success', 'Warning', 'Warning', 'Error'],
+            datasets: [{
+                data: data,
+                value: value,
+                backgroundColor: [@json($progressClass)],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                //   text: 'Gauge chart'
+            },
+            layout: {
+                padding: {
+                    bottom: 30
+                }
+            },
+            needle: {
+                // Needle circle radius as the percentage of the chart area width
+                radiusPercentage: 2,
+                // Needle width as the percentage of the chart area width
+                widthPercentage: 3.2,
+                // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
+                lengthPercentage: 80,
+                // The color of the needle
+                color: 'rgba(0, 0, 0, 1)'
+            },
+            valueLabel: {
+                formatter: Math.round
+            },
+            chartArea: {
+                // Set the desired width and height of the chart area
+                width: '80%',
+                height: '80%'
+            }
+        }
+    };
+
     function calculateStageData(e) {
         var dateRangeString = e.value; // Assuming e.value contains the date range string
         var dates = dateRangeString.split(' - ');
@@ -1525,7 +1590,17 @@
             dataType: "json",
             success: function(response) {
                 // Handle successful response
-                console.log(response, 'response is here');
+                randomScalingFactor(response?.calculateProgress);
+                data = randomData(response?.calculateProgress);
+                value = randomValue(data);
+                console.log(data,value,'datavalue')
+                 // Update gauge chart data and value
+                config.data.datasets[0].data = data;
+                config.data.datasets[0].value = value;
+                 // Update gauge chart with new data
+                window.myGauge.update();
+                var ctx = document.getElementById('chart').getContext('2d');
+                window.myGauge = new Chart(ctx, config);
                 Object.keys(response).forEach(function(stage) {
                     if (response.hasOwnProperty(stage)) {
                         // Find the corresponding card element using data-stage attribute
@@ -1551,84 +1626,7 @@
 
 
     }
-
-    var randomScalingFactor = function() {
-//   return Math.round(Math.random() * 100);
-    return Math.round(@json($progress));
-};
-
-var randomData = function () {
-  return [
-    randomScalingFactor(),
-    // randomScalingFactor(),
-    // randomScalingFactor(),
-  ];
-};
-var randomValue = function (data) {
-//   return Math.max.apply(null, data) * Math.random();
-  return Math.max.apply(null, data);
-};
-
-var data = randomData();
-var value = randomValue(data);
-
-var config = {
-  type: 'gauge',
-  data: {
-    //labels: ['Success', 'Warning', 'Warning', 'Error'],
-    datasets: [{
-      data: data,
-      value: value,
-      backgroundColor: [@json($progressClass)],
-      borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true,
-    title: {
-      display: true,
-    //   text: 'Gauge chart'
-    },
-    layout: {
-      padding: {
-        bottom: 30
-      }
-    },
-    needle: {
-      // Needle circle radius as the percentage of the chart area width
-      radiusPercentage: 2,
-      // Needle width as the percentage of the chart area width
-      widthPercentage: 3.2,
-      // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
-      lengthPercentage: 80,
-      // The color of the needle
-      color: 'rgba(0, 0, 0, 1)'
-    },
-    valueLabel: {
-      formatter: Math.round
-    },
-    chartArea: {
-      // Set the desired width and height of the chart area
-      width: '80%',
-      height: '80%'
-    }
-  }
-};
-
-window.onload = function() {
-  var ctx = document.getElementById('chart').getContext('2d');
-  window.myGauge = new Chart(ctx, config);
-};
- 
-function randomDatassss(){
-    console.log("yes working")
-  config.data.datasets.forEach(function(dataset) {
-    dataset.data = randomData();
-    dataset.value = randomValue(dataset.data);
-  });
-
-  window.myGauge.update();
-}
+   
 
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>

@@ -660,7 +660,7 @@
             </div>
             <div>
                 <button class="submit_button btn btn-primary" id="submit_button" type="button"
-                    onclick="validateContactForm()">Submit</button>
+                    onclick="validateContactForm()">Update Contact</button>
             </div>
         </form>
     </div>

@@ -1041,34 +1041,37 @@
                 <div class="col-md-3 ">Owner</div>
                 <div class="col-md-3 ">Uploaded On</div>
             </div>
-
-            {{-- <div class="row npAttachmentBody">
-                <div class="col-md-3 npcommontableBodytext">mycontract.pdf</div>
+            @foreach($attachments as $attachment)
+            <div class="row npAttachmentBody">
+                <div class="col-md-3 npcommontableBodytext">{{$attachment['file_name']}}</div>
                 <div class="col-md-3 npcommontableBodytext">PDF</div>
-                <div class="col-md-3 npcommontableBodytext">Chad Seagal</div>
-                <div class="col-md-3 commonTextEllipsis npcommontableBodyDatetext">Mar 25, 2024 08:33 AM</div>
-            </div> --}}
+                <div class="col-md-3 npcommontableBodytext">{{$attachment['userData']['name']}}</div>
+                <div class="col-md-3 commonTextEllipsis npcommontableBodyDatetext">{{$attachment['modified_time']}}</div>
+            </div>
+            @endforeach
 
+            @foreach($attachments as $attachment)
             <div class="npContactCard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="npcommonheaderText">Attachment Name</p>
-                       {{-- <p class="npcommontableBodytext">mycontract.pdf</p> --}}
+                       <p class="npcommontableBodytext">{{$attachment['file_name']}}</p>
                     </div>
                     <div>
                         <p class="npcommonheaderText">Type</p>
-                        {{-- <p class="npcommontableBodytext">PDF</p> --}}
+                        <p class="npcommontableBodytext">PDF</p>
                     </div>
                 </div>
                 <div class="npCardPhoneDiv">
                     <p class="npcommonheaderText">Owner</p>
-                    {{--<p class="npcommontableBodytext">Chad Seagal</p>--}}
+                    <p class="npcommontableBodytext">{{$attachment['userData']['name']}}</p>
                 </div>
                 <div>
                     <p class="npcommonheaderText">Uploaded On</p>
-                    {{--<p class="npcommontableBodyDatetext">Mar 25, 2024 08:33 AM</p>--}}
+                    <p class="npcommontableBodyDatetext">{{$attachment['modified_time']}}</p>
                 </div>
             </div>
+             @endforeach
             <div class="dpagination">
 
                 <nav aria-label="..." class="dpaginationNav">
