@@ -16,6 +16,7 @@ use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use App\Models\Groups; // Import the Deal model
 use App\Models\ContactGroups; // Import the Deal model
+use App\Models\Attachment; // Import the Deal model
 
 
 class DB
@@ -51,6 +52,26 @@ class DB
             }
             $dealContacts = collect($response->json()['data'] ?? []);
             $this->storeDealContactIntoDB($dealContacts, $deal['id']);
+
+            // Fetching deal attachments
+            $attachmentResponse = $zoho->getAttachmentData($deal['id']);
+            if (!$attachmentResponse->successful()) {
+                Log::error("Error retrieving deal contacts: " . $attachmentResponse->body());
+                continue; // Skip to the next deal
+            }
+            $attachments = collect($attachmentResponse->json()['data'] ?? []);
+            Log::error("USERSARA" . $user);
+            $this->storeAttachmentIntoDB($attachments, $userInstance, $deal['id']);
+
+            // Fetching deal nonTM
+            $nonTmResponse = $zoho->getNonTmData($deal['id']);
+            if (!$nonTmResponse->successful()) {
+                Log::error("Error retrieving deal contacts: " . $nonTmResponse->body());
+                continue; // Skip to the next deal
+            }
+            $nonTm = collect($nonTmResponse->json()['data'] ?? []);
+            Log::error("USERSARA" . $user);
+            $this->storeAttachmentIntoDB($nonTm, $userInstance, $deal['id']);
 
             // Update or create the deal
             Deal::updateOrCreate(['zoho_deal_id' => $deal['id']], [
@@ -928,6 +949,49 @@ class DB
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function storeAttachmentIntoDB($attachments,$userInstance,$dealId)
+    {
+        $helper = new Helper();
+        Log::info("Storing Attachments Into Database".$userInstance['root_user_id']);
+        $filteredAttachments = $attachments->filter(function ($value, $key) use ($userInstance){
+            return $value['Owner']['id'] == $userInstance['root_user_id'];
+        });
+        Log::info("filteredAttachments".$filteredAttachments);
+        foreach ($filteredAttachments as $attachment) {
+            $user = User::where('root_user_id', $attachment['Owner']['id'])->first();
+            // if(isset($attachment['Parent_Id']['id'])){
+            //     $deal = Deal::where('zoho_deal_id', $attachment['Parent_Id']['id'])->first();
+            //     if((isset($deal))){
+                    Attachment::updateOrCreate(['dealId'=>$dealId],[
+                        "file_name" => isset($attachment['File_Name']) ? $attachment['File_Name'] : null,
+                        "modified_time" => isset($attachment['Modified_Time']) ? $helper->convertToUTC($attachment['Modified_Time']) : null,
+                        "size" => isset($attachment['Size']) ? $attachment['Size'] : null,
+                        "userId" => isset($user['id']) ? $user['id'] : null,
+                        "dealId" => isset($dealId) ? $dealId : null,
+                    ]);
+            //     }
+            // }   
+        }
+
+        Log::info("Attachment stored into database successfully.");
+    }
+
+   
+    public function retreiveAttachment($dealId)
+    {
+        try {
+
+            Log::info("Retrieve attachments From Database");
+           
+            $attachments = Attachment::where('dealId',$dealId)->get();
+            Log::info("Retrieved attachments From Database", ['attachments' => $attachments->toArray()]);
+            return $attachments;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving attachments: " . $e->getMessage());
             throw $e;
         }
     }
