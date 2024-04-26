@@ -3,6 +3,16 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
@@ -52,8 +62,8 @@
                             @endforeach
                         </select>
                         {{-- <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" /> --}}
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
-                            class="ppipelinesorticon">
+                        {{-- <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
+                            class="ppipelinesorticon"> --}}
                     </div>
 
                     <div class="input-group-text pfilterBtn col-md-6" onclick="fetchContact()" id="btnGroupAddon"> <i
@@ -87,7 +97,7 @@
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
                                     <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <h5 class="card-title">{{ $contact['first_name'] ?? 'N/A' }}</h5>
+                                        <h5 class="card-title">{{ $contact['first_name'].' '. $contact['last_name'] ?? 'N/A' }}</h5>
                                         <p class="databaseCardWord"
                                             style="background-color: {{ $contact['abcd'] === 'A'
                                                 ? '#9CC230'
@@ -139,28 +149,29 @@
                         </div>
 
                         {{-- Note Modal --}}
-                        <div class="modal fade" onclick="event.preventDefault();" id="newTaskNoteModalId{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
-                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                        <div class="modal fade" onclick="event.preventDefault();"
+                            id="newTaskNoteModalId{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" data-custom="noteModal" tabindex="-1" aria-labelledby="staticBackdropLabel"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered deleteModal">
                                 <div class="modal-content noteModal">
                                     <div class="modal-header border-0">
                                         <p class="modal-title dHeaderText">Note</p>
-                                        <button type="button" onclick="resetFormAndHideSelect();" class="btn-close"
+                                        <button type="button" onclick="resetFormAndHideSelect('{{ $contact['zoho_contact_id'] }}');" class="btn-close"
                                             data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form id="noteForm" action="{{ route('save.note') . '?conID=' . $contact['id'] }}"
+                                    <form id="noteForm{{ $contact['zoho_contact_id'] }}" action="{{ route('save.note') . '?conID=' . $contact['id'] }}"
                                         method="post">
                                         @csrf
                                         <div class="modal-body dtaskbody">
                                             <p class="ddetailsText">Details</p>
-                                            <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
-                                            <div id="note_text_error" class="text-danger"></div>
+                                            <textarea name="note_text" id="note_text{{ $contact['zoho_contact_id'] }}" rows="4" class="dtextarea"></textarea>
+                                            <div id="note_text_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                                             <p class="dRelatedText">Related to...</p>
                                             <div class="btn-group dmodalTaskDiv">
-                                                <select class="form-select dmodaltaskSelect" id="related_to"
-                                                    onchange="moduleSelectedforContact(this,'{{$contact['zoho_contact_id']}}')" name="related_to"
-                                                    aria-label="Select Transaction">
+                                                <select class="form-select dmodaltaskSelect" id="related_to{{ $contact['zoho_contact_id'] }}"
+                                                    onchange="moduleSelectedforContact(this,'{{ $contact['zoho_contact_id'] }}')"
+                                                    name="related_to" aria-label="Select Transaction">
                                                     <option value="">Please select one</option>
                                                     @foreach ($retrieveModuleData as $item)
                                                         @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
@@ -169,16 +180,17 @@
                                                         @endif
                                                     @endforeach
                                                 </select>
-                                                <select class="form-select dmodaltaskSelect" id="taskSelect"
+                                                <select class="form-select dmodaltaskSelect" id="taskSelect{{ $contact['zoho_contact_id'] }}"
                                                     name="related_to_parent" aria-label="Select Transaction"
                                                     style="display: none;">
                                                     <option value="">Please Select one</option>
                                                 </select>
                                             </div>
-                                            <div id="related_to_error" class="text-danger"></div>
+                                            <div id="related_to_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                                         </div>
                                         <div class="modal-footer dNoteFooter border-0">
-                                            <button type="button" id="validate-button" onclick="validateFormc()"
+                                            <button type="button" id="validate-button{{ $contact['zoho_contact_id'] }}"
+                                                onclick="validateFormc('submit','{{ $contact['zoho_contact_id'] }}')"
                                                 class="btn btn-secondary dNoteModalmarkBtn">
                                                 <i class="fas fa-save saveIcon"></i> Add Note
                                             </button>
@@ -270,6 +282,22 @@
 
 @endsection
 <script>
+   window.onload = function() {
+    @foreach ($contacts as $contact)
+        var noteTextElement = document.getElementById("note_text{{ $contact['zoho_contact_id'] }}");
+        var relatedToElement = document.getElementById("related_to{{ $contact['zoho_contact_id'] }}");
+        if (noteTextElement && relatedToElement) {
+            noteTextElement.addEventListener("keyup", function() {
+                validateFormc("", "{{ $contact['zoho_contact_id'] }}");
+            });
+            relatedToElement.addEventListener("change", function() {
+                validateFormc("", "{{ $contact['zoho_contact_id'] }}");
+            });
+        } else {
+            console.log("One or both elements not found for contact ID {{ $contact['zoho_contact_id'] }}");
+        }
+    @endforeach
+}
     function createContact() {
         console.log("Onclick");
         $.ajaxSetup({
@@ -489,19 +517,19 @@
     }
 
     //notes validation 
-    function resetFormAndHideSelect() {
-        document.getElementById('noteForm').reset();
-        document.getElementById('taskSelect').style.display = 'none';
-        clearValidationMessages();
+    function resetFormAndHideSelect(id) {
+        document.getElementById('noteForm'+id).reset();
+        document.getElementById('taskSelect'+id).style.display = 'none';
+        clearValidationMessages(id);
     }
 
-    function clearValidationMessages() {
-        document.getElementById("note_text_error").innerText = "";
-        document.getElementById("related_to_error").innerText = "";
+    function clearValidationMessages(id) {
+        document.getElementById("note_text_error"+id).innerText = "";
+        document.getElementById("related_to_error"+id).innerText = "";
     }
 
-    
-    function moduleSelectedforContact(selectedModule,conId) {
+
+    function moduleSelectedforContact(selectedModule, conId) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -512,7 +540,7 @@
             }
         });
         $.ajax({
-            url: '/task/get-' + selectedText + '?contactId='+conId,
+            url: '/task/get-' + selectedText + '?contactId=' + conId,
             method: "GET",
             dataType: "json",
 
@@ -520,7 +548,7 @@
                 // Handle successful response
                 var tasks = response;
                 // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect');
+                var taskSelect = $('#taskSelect'+conId);
                 // Clear existing options
                 taskSelect.empty();
                 // Populate select options with tasks
@@ -554,5 +582,40 @@
             }
         });
 
+    }
+
+    function validateFormc(submitClick='',modId="") {
+        let noteText = document.getElementById("note_text"+modId).value;
+        let relatedTo = document.getElementById("related_to"+modId).value;
+        let isValid = true;
+        console.log(noteText,'text')
+        // Reset errors
+        document.getElementById("note_text_error"+modId).innerText = "";
+        document.getElementById("related_to_error"+modId).innerText = "";
+        // Validate note text length
+        if (noteText.trim().length > 50) {
+            document.getElementById("note_text_error"+modId).innerText = "Note text must be 10 characters or less";
+            isValid = false;
+        }
+        // Validate note text
+        if (noteText.trim() === "") {
+            console.log("yes here sdklfhsdf");
+            document.getElementById("note_text_error"+modId).innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error"+modId).innerText = "Related to is required";
+            document.getElementById("taskSelect"+modId).style.display = "none";
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button'+modId);
+            changeButton.type = "submit";
+            if(submitClick==="submit") $('[data-custom="noteModal"]').removeAttr("onclick");
+            
+        }
+        return isValid;
     }
 </script>

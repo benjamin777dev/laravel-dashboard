@@ -731,6 +731,7 @@ class DashboardController extends Controller
             return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
         });
         $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+        $stageProgressCal = $this->calculateProgress($filteredDeals, $goal);
         $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
         $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
         $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
@@ -742,11 +743,18 @@ class DashboardController extends Controller
                 'stageProgress' => $stageProgress,
                 "stageProgressClass" => $stageProgressClass,
                 'stageProgressIcon' => $stageProgressIcon,
-                'stageProgressExpr' => $stageProgressExpr
+                'stageProgressExpr' => $stageProgressExpr,
+                'stageProgressCal'  => $stageProgressCal,
             ],
         ];
         });
         Log::info("STAGE DATA: $stageData");
+        $sums = [];
+        foreach ($stageData as $segment => $data) {
+            $sums[$segment] = $data['stageProgressCal'];
+        }
+        $totalSum = array_sum($sums);
+        $stageData['calculateProgress'] = $totalSum;
         return response()->json($stageData);
 
     }
