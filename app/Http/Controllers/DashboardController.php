@@ -30,11 +30,11 @@ class DashboardController extends Controller
 
     public function index()
     {
+
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-
         $db = new DB();
         $helper = new Helper();
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
@@ -54,16 +54,13 @@ class DashboardController extends Controller
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
-        $progressClass = $progress <= 15 ? "bg-danger" : ($progress <= 45 ? "bg-warning" : "bg-success");
+        $progressClass = $progress <= 15 ? "#FE5243" : ($progress <= 45 ? "#FADA05" : "#21AC25");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
         Log::info("Progress: $progress");
 
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        // print('<pre>');
-        // print_r(json_encode($deals));
-        // die;
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal,$startDate,$endDate) {
             $filteredDeals = $deals->filter(function ($deal) use ($stage,$startDate,$endDate) {
                $closingDate = Carbon::parse($deal['closing_date']);
@@ -99,67 +96,77 @@ class DashboardController extends Controller
         // Beyond 12 Months
 
         $beyond12Months = $deals->filter(function ($deal) use ($helper) {
-            $closingDate = Carbon::parse($helper->convertToMST($deal['Closing_Date']));
+            $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
             $endOfYear = Carbon::now()->endOfYear();
             return $closingDate->gt($endOfYear)
-                && !Str::startsWith($deal['Stage'], 'Dead')
-                && $deal['Stage'] !== 'Sold';
+                && !Str::startsWith($deal['stage'], 'Dead')
+                && $deal['stage'] !== 'Sold';
         });
 
         $beyond12MonthsData = [
-            'sum' => $this->formatNumber($beyond12Months->sum('Pipeline1')),
+            'sum' => $this->formatNumber($beyond12Months->sum('pipeline1')),
             'count' => $beyond12Months->count(),
-            'asum' => $beyond12Months->sum('Pipeline1')
+            'asum' => $beyond12Months->sum('pipeline1')
         ];
 
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) use ($helper) {
-            return Carbon::parse($helper->convertToMST($deal['Closing_Date']))->lt(now())
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+            return Carbon::parse($helper->convertToMST($deal['closing_date']))->lt(now())
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
-            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')),
-            'asum' => $needsNewDate->sum('Pipeline1'),
+            'sum' =>$this->formatNumber($needsNewDate->sum('pipeline1')),
+            'asum' => $needsNewDate->sum('pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
         $filteredDeals = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
-
+        
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
-            return Carbon::parse($helper->convertToMST($deal['Closing_Date']))->format('Y-m');
+            return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
-            return $dealsGroup->sum('Pipeline1');
+            return $dealsGroup->sum('pipeline1');
         });
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $deals->filter(function ($deal) use ($helper) {
-            return now()->diffInDays(Carbon::parse($helper->convertToMST($deal['Created_Time']))) <= 30
+            return now()->diffInDays(Carbon::parse($helper->convertToMST($deal['zoho_deal_createdTime']))) <= 30
                    && $this->masterFilter($deal)
-                   && !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->count();
-
         // Ensure all months of the year are represented, fill missing months with 0
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
-        $allMonths = collect();
+        $allMonths = [];
         while ($startOfYear->lessThanOrEqualTo($endOfYear)) {
             $month = $startOfYear->format('Y-m');
-            $allMonths->put($month, $monthlyGCI->get($month, 0));
+            $gci = $monthlyGCI->get($month, 0);
+            
+            // Get the count of deals for this month
+            $dealCount = $filteredDeals->filter(function ($deal) use ($month, $helper) {
+                return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m') === $month;
+            })->count();
+        
+            $allMonths[$month] = [
+                'gci' => $gci,
+                'deal_count' => $dealCount
+            ];
+            
             $startOfYear->addMonth();
         }
-
+        
         $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
@@ -175,7 +182,7 @@ class DashboardController extends Controller
          //fetch notes
          $notes = $this->fetchNotes();
         //  print("<pre/>");
-        //  print_r(json_encode($stageData));
+        //  print_r(json_encode($retrieveModuleData));
         //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
@@ -205,7 +212,7 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
-        
+      
         // Pass data to the view
         return view('dashboard.index',
             compact('deals', 'progress', 'goal',
@@ -322,13 +329,13 @@ class DashboardController extends Controller
         // don't count anything beyond 12 months
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['Stage'], 'Dead')
-                   && $deal['Stage'] !== 'Sold'
+            return !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
 
         // Sum the 'Pipeline1' values of the filtered deals.
-        $totalGCI = $filteredDeals->sum('Pipeline1');
+        $totalGCI = $filteredDeals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
 
         // Calculate the progress as a percentage of the goal.
@@ -453,10 +460,13 @@ class DashboardController extends Controller
 
         // Access the 'Subject' field
         $subject = $data['Subject'];
-        $whoid = $data['Who_Id']['id'];
-        $status = $data['Status'];
-        $Due_Date = $data['Due_Date'];
-        $What_Id = $data['What_Id']['id'];
+        $whoid = $data['Who_Id']['id'] ?? null;
+        $status = $data['Status'] ?? null;
+        $Due_Date = $data['Due_Date'] ?? null;
+        $What_Id = $data['What_Id']['id'] ?? null;
+        $priority = $data['Priority']??null;
+        $created_time = Carbon::now();
+        $closed_time = $data['Closed_Time']??null;
         
 
 
@@ -489,7 +499,15 @@ class DashboardController extends Controller
                     'who_id'=>$whoid ?? null,
                     'due_date'=>$Due_Date ?? null,
                     'what_id'=>$What_Id ?? null,
+                    'closed_time'=>$closed_time??null,
+                    'created_by'=>$user->id,
+                    'priority'=>$priority??null,
+                    'created_time'=>$created_time??null
                 ]);
+
+        
+        
+        
         
                 return response()->json($responseArray, 201);
 
@@ -553,6 +571,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
+        Log::info("JSON TASK INPUT".json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
         try {
@@ -562,9 +581,12 @@ class DashboardController extends Controller
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 $requestData = json_decode($request->getContent(), true);
+                $data = $requestData['data'][0];
                 $subject = $requestData['data'][0]['Subject'];
                 if($task){
                     $task->subject = $subject;
+                    $task->status=$status ?? $task->status;
+                    $task->due_date=$data['Due_Date'] ?? $task->due_date;
                     $task->save();
                 }
 
@@ -635,9 +657,10 @@ class DashboardController extends Controller
 
         $accessToken = $user->getAccessToken();
         $search = "";
-        // Pass the search parameters to the retrieveTasks method
-        $tasks = $db->retreiveTasksJson($user, $accessToken);
-        
+        $dealId = request()->query('dealId');
+        $contactId = request()->query('contactId');
+            // Pass the search parameters to the retrieveTasks method
+        $tasks = $db->retreiveTasksJson($user, $accessToken,$dealId,$contactId);
         return response()->json($tasks);
         // return view('pipeline.index', compact('deals'));
     }
@@ -651,8 +674,10 @@ class DashboardController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
+         $dealId = request()->query('dealId');
+         $contactId = request()->query('contactId');
         // Pass the search parameters to the retrieveTasks method
-        $deals = $db->retreiveDealsJson($user, $accessToken);
+        $deals = $db->retreiveDealsJson($user, $accessToken,$dealId,$contactId);
         
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
@@ -665,10 +690,18 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
         $accessToken = $user->getAccessToken();
         // Pass the search parameters to the retrieveTasks method
+        $dealId = request()->query('dealId');
+        $contactId = request()->query('contactId');
+        if($dealId){
+            $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$dealId);
+        }else if($contactId){
+            $contacts = $db->retrieveDealContactForContact($user, $accessToken,$contactId);
+        }
+        else{
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        }
         
         return response()->json($contacts);
         // return view('pipeline.index', compact('deals'));
@@ -698,6 +731,7 @@ class DashboardController extends Controller
             return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
         });
         $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+        $stageProgressCal = $this->calculateProgress($filteredDeals, $goal);
         $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
         $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
         $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
@@ -709,11 +743,18 @@ class DashboardController extends Controller
                 'stageProgress' => $stageProgress,
                 "stageProgressClass" => $stageProgressClass,
                 'stageProgressIcon' => $stageProgressIcon,
-                'stageProgressExpr' => $stageProgressExpr
+                'stageProgressExpr' => $stageProgressExpr,
+                'stageProgressCal'  => $stageProgressCal,
             ],
         ];
         });
         Log::info("STAGE DATA: $stageData");
+        $sums = [];
+        foreach ($stageData as $segment => $data) {
+            $sums[$segment] = $data['stageProgressCal'];
+        }
+        $totalSum = array_sum($sums);
+        $stageData['calculateProgress'] = $totalSum;
         return response()->json($stageData);
 
     }
@@ -721,6 +762,8 @@ class DashboardController extends Controller
     public function saveNote(Request $request)
     {
         $relatedToObject = json_decode($request->related_to);
+
+        $contactId = $request->query('conID');
         // Validate the incoming request data
         $validatedData1 = validator()->make((array) $relatedToObject, [
             'zoho_module_id' => 'required|string|max:255',
@@ -739,6 +782,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
+        $db = new DB();
         $zoho->access_token = $accessToken;
 
         $jsonData = [
@@ -751,7 +795,7 @@ class DashboardController extends Controller
                         ],
                         "id" => $validatedData2['related_to_parent'],
                     ],
-                    "Note_Content" => $validatedData2['note_text']
+                    "Note_Content" => $validatedData2['note_text'],
                 ]
             ]
         ];
@@ -766,12 +810,15 @@ class DashboardController extends Controller
         }
         $data = json_decode($response, true);
         $zoho_node_id = $data['data'][0]['details']['id'];
+        $deal = $db->retrieveDealByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
         $note->related_to_module_id = $validatedData1['zoho_module_id'];
         $note->zoho_note_id = $zoho_node_id;
         $note->owner = $user->id;
+        $note->related_to = $deal->id ?? $contactId ?? null;
+        $note->created_time = Carbon::now();
         $note->related_to_type = $validatedData1['api_name'];
         $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
         $note->note_content = $validatedData2['note_text'];
@@ -786,7 +833,22 @@ class DashboardController extends Controller
             return "somthing went wrong".$e->getMessage();
         }
     }
+    public function markAsDone(Request $request){
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+          // Retrieve the note ID from the request
+            $noteId = $request->input('note_id');
 
+            // Assuming you have a Note model
+            $note = Note::find($noteId);
+
+            // Update the note as done in the database
+            $note->mark_as_done = 1;
+            $note->save();
+            return $note;
+    }
     public function fetchNotes()
     {
         // Fetch notes from the database

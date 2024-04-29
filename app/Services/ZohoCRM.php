@@ -36,7 +36,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.modules.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -156,14 +156,14 @@ class ZohoCRM
     }
 
     //create contacts to zoho 
-    public function createContactData($inputJson)
+    public function createContactData($inputJson,$id)
     {
         Log::info('Creating Zoho contacts');
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
-        ])->post($this->apidealsurl . "Contacts", $inputJson);
+        ])->patch($this->apidealsurl . "Contacts/$id?affected_data=true", $inputJson);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
@@ -243,7 +243,7 @@ class ZohoCRM
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
         ])->get($this->apiUrl . 'Notes/search', [
-             'page' => $page,
+            'page' => $page,
             'per_page' => $per_page,
             'criteria' => $search,
             'fields' => $fields,
@@ -310,7 +310,6 @@ class ZohoCRM
 
     public function updateTask($inputJson,$id)
     {
-        Log::info('Creating Zoho Task');
         // return $inputJson;
         try{        // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
@@ -318,7 +317,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
         }catch(\Exception $e){
-            return "somthing went wrong".$e->getMessage();
+            return "something went wrong".$e->getMessage();
         }
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
@@ -380,4 +379,193 @@ class ZohoCRM
 
         return $response;
     }
+
+    public function updateZohoDeal($inputJson,$id)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->put($this->apiUrl . 'Deals/'.$id, $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function getContactGroupData($criteria,$fields,$page = 1, $per_page = 1)
+    {
+        Log::info('Creating Contact Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Contacts_X_Groups/search',[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+            ]);
+        
+        Log::info('Response Zoho Contact Group');
+        return $response;
+    }
+
+    public function getGroupsData($criteria,$fields,$page = 1, $per_page = 1)
+    {
+        Log::info('Creating Group Zoho ');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Groups',[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+                'fields'=>$fields
+            ]);
+        
+        Log::info('Response Zoho Group');
+        return $response;
+    }
+
+    public function compositeApi($user,$page)
+    {
+        try {
+            Log::info('Creating Composite API Zoho ');
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . '__composite_requests', [
+                "rollback_on_fail" => true,
+                "parallel_execution" => false,
+                "__composite_requests" => [
+                    [
+                        "sub_request_id"=>"Contacts",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Contacts/search",
+                    ],
+                    [
+                        "sub_request_id"=>"ContactGroups",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Contacts_X_Groups/search",
+                    ],
+                    [
+                        "sub_request_id"=>"Deals",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Contact_Name:equals:$user->zoho_id)"
+                        ],
+                        "uri" => "/crm/v6/Deals/search",
+                    ],
+                    [
+                        "sub_request_id"=>"Tasks",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)"
+                        ],
+                        "uri" => "/crm/v6/Tasks/search",
+                    ],
+                    
+                    
+                    [
+                        "sub_request_id"=>"Notes",
+                        "method" => "GET",                    
+                        "params" => [
+                            'page' => $page,
+                            'per_page' => 200,
+                            "criteria"=>"(Owner:equals:$user->root_user_id)",
+                            'fields' => "Note_Content,Created_Time,Owner,Parent_Id",
+                        ],
+                        "uri" => "/crm/v6/Notes/search",
+                    ],
+                ]
+            ]);
+
+            Log::info('Response Zoho Group');
+            Log::info(response()->json($response->json())); // Log the response data for debugging
+
+            return $response;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving notes: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getAttachmentData($dealId)
+    {
+        try {
+            Log::info('Creating Attachment Zoho ');
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000000003819&fields=Owner,Modified_Time,Size,File_Name,Parent_Id,Record_Status__s");
+
+            Log::info('Response Zoho Attachments');
+            Log::info(response()->json($response->json())); // Log the response data for debugging
+
+            return $response;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving Attachments: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getNonTmData($dealId)
+    {
+        try {
+            Log::info('Creating nonTm Zoho ');
+
+            $nonTm = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000005296186&fields=Name,Close_Date,Owner");
+
+            Log::info('Response Zoho nonTm');
+            Log::info(response()->json($nonTm->json())); // Log the response data for debugging
+
+            return $nonTm;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving nonTm: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getSubmittalsData($criteria,$fields, $page=1, $per_page=200)
+    {
+        try {
+            Log::info('Creating Submittals Zoho ');
+
+            $submittals = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Listing_Submittals/bulk?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria",[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+                'fields'=>$fields
+            ]);
+
+            Log::info('Response Zoho submittals');
+            Log::info(response()->json($submittals->json())); // Log the response data for debugging
+
+            return $submittals;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving submittals: " . $e->getMessage());
+        }
+        
+    }
+
 }

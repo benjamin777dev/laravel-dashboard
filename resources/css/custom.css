@@ -9,6 +9,34 @@
     cursor: pointer;
 }
 
+.dcontactBtns {
+    display: flex;
+    height: 52px;
+
+    padding: 16px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    background: #253C5B;
+
+    /* selected btn */
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #FFF;
+    text-align: center;
+
+    cursor: pointer;
+    /* base-bold */
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18.4px;
+    /* 115% */
+}
+
 .plusicon {
     margin-right: 4px;
 }
@@ -35,9 +63,11 @@
     background-color: transparent;
     cursor: pointer;
 }
-.celendar_icon{
+
+.celendar_icon {
     cursor: pointer;
 }
+
 .ddaterangepicker:focus-visible {
     outline: none;
 }
@@ -96,7 +126,7 @@
 }
 
 .dnotesUl {
-    max-height: 418px;
+    max-height: 325px;
     overflow-y: auto;
 }
 
@@ -232,7 +262,7 @@
     background: #fff;
     padding: 8px;
     border-radius: 4px;
-    gap: 24px;
+    gap: 5px;
 }
 
 .noNotesFound {
@@ -411,8 +441,20 @@
     padding: 6px 35px;
 }
 
-.dNoteFooter {
+.dNoteModalmarkBtns {
+    border-radius: 4px;
+    background: #253c5b;
+    padding: 6px 16px;
+}
+
+.dNoteFooter,
+.dNoteFooters {
     margin-inline: auto;
+}
+
+
+.dNoteFooters {
+    justify-content: center;
 }
 
 .deleteModal {
@@ -531,6 +573,10 @@
 .dprogressCards,
 .dprogressCardselse {
     display: none;
+}
+
+.submit_button{
+    background-color: #253c5b;
 }
 
 @media (min-width: 768px) {
@@ -698,6 +744,23 @@
         line-height: 17px;
     }
 
+    .porText {
+        text-align: center;
+    }
+
+    .cardsTab {
+        padding-inline: 0px;
+    }
+
+    .dspeedometersection ,.graphp-dash,.dcontactbtns-div{
+        margin-bottom: 24px;
+    }
+   
+    .dspeedn-month-camaparison,.dmain-Container,.dgraphdiv{
+        --bs-gutter-x: 0;
+    }
+    
+
 }
 
 @media (min-width: 320px) and (max-width: 355px) {
@@ -849,6 +912,16 @@
     margin-bottom: 24px;
 }
 
+/* .pcommonFilterDiv {
+    flex: 1;
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+} */
 .pcommonFilterDiv {
     flex: 1;
     display: flex;
@@ -860,20 +933,28 @@
     background: #fff;
 }
 
+.psortingFilterDiv {
+    flex: 1;
+    padding: 7.52px 12px;
+}
+
 .psearchInput {
     flex: 1;
     border: none;
     outline: 0;
+    overflow: hidden;
 }
-.cpinput{
-    color:  #222;
+
+.cpinput {
+    color: #222;
     font-family: Avenir;
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
-    line-height: 19.2px; 
+    line-height: 19.2px;
     text-transform: uppercase;
 }
+
 .porText {
     color: #222;
     font-size: 13px;
@@ -881,6 +962,7 @@
     font-weight: 400;
     line-height: normal;
     margin-bottom: 0px;
+    padding-inline: 0px;
 }
 
 .pfilterBtn {
@@ -898,6 +980,7 @@
     font-style: normal;
     font-weight: 400;
     cursor: pointer;
+    height: 37px;
 }
 
 .ptransactionTable th {
@@ -1103,6 +1186,7 @@
     .npRoleCard {
         display: unset;
     }
+
     .npAgentCard {
         display: flex;
         padding: 20px;
@@ -1113,6 +1197,7 @@
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
         margin-bottom: 24px;
     }
+
     .vprolecard {
         display: flex;
         flex-direction: column;
@@ -1123,7 +1208,8 @@
         margin-bottom: 24px;
         padding: 20px;
     }
-    .npNom-TM-Card{
+
+    .npNom-TM-Card {
         display: flex;
         padding: 20px;
         flex-direction: column;
@@ -1133,7 +1219,8 @@
         margin-bottom: 24px;
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
     }
-    .npContactCard{
+
+    .npContactCard {
         display: flex;
         padding: 20px;
         flex-direction: column;
@@ -1144,16 +1231,16 @@
     }
 
     .noRecordFound {
-    padding: 20px;
-    gap: 24px;
-    border-radius: 4px;
-    background: #e8ddd4;
-    box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
+        padding: 20px;
+        gap: 24px;
+        border-radius: 4px;
+        background: #e8ddd4;
+        box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
 }
 
 @media (min-width: 351px) and (max-width: 767px) {
@@ -1581,3 +1668,344 @@
     border: 1px solid #c1b7ae;
     resize: none;
 }
+
+/* Groups Table */
+.dbgTable {
+    margin-top: 24px;
+}
+
+.dbgHeaderTable th {
+    background: #222;
+    color: #fff;
+    padding: 12px 14px;
+}
+
+.dbgBodyTable td {
+    border-right: 1px solid #f0e6dc;
+    border-bottom: 1px solid #f0e6dc;
+    background: #fff;
+}
+
+.dbgcommonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Avenir;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 16.8px;
+}
+
+/* / database groups / */
+.dbgSelectDiv {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    gap: 24px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
+}
+
+.dbgSortDiv {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
+    gap: 24px;
+}
+
+.dbgSelectinfo {
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    color: #222;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.dbgGroupDiv {
+    padding-inline: 0px;
+}
+
+.dbgfilterBtn {
+    display: flex;
+    height: 33px;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 4px;
+    border: 1px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    cursor: pointer;
+}
+
+/* Tab Card */
+.viewCards {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 4px 0px 0px 4px;
+    border-top: 2px solid #253c5b;
+    border-bottom: 2px solid #253c5b;
+    border-left: 2px solid #253c5b;
+    background: #fff;
+    color: #253c5b;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    min-height: 37px;
+}
+
+.viewCardsImg {
+    filter: invert();
+}
+
+.viewCardsP {
+    color: #253c5b;
+
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+}
+
+.viewMapP {
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    margin-bottom: 0px;
+    color: #fff;
+}
+
+.viewMap {
+    display: flex;
+    padding: 6px 11px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 0px 4px 4px 0px;
+    border-top: 2px solid #253c5b;
+    border-right: 2px solid #253c5b;
+    border-bottom: 2px solid #253c5b;
+    background: #253c5b;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 19.5px;
+    min-height: 37px;
+}
+
+.viewMapImg {
+    filter: invert();
+}
+
+/*  */
+
+.searchFilterMainDiv {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 24px;
+}
+
+.cardsTab {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.searchorDiv {
+    display: grid;
+    grid-template-columns: 11fr 1fr;
+    gap: 24px;
+    align-items: baseline;
+}
+
+.pcontactFilterDiv {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 24px;
+}
+
+/*  */
+
+
+.psortFilterDiv {
+    display: flex;
+    padding: 7.52px 12px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid #c1b7ae;
+    background: #fff;
+    height: 37px;
+}
+
+.psearchInputDiv {
+    height: 37px;
+}
+
+.contactlist {
+    margin-top: 24px;
+}
+
+.dspeedometersection {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1 0 0;
+    align-self: stretch;
+    border-radius: 8px;
+    background: #FFF;
+    box-shadow: 0px 2px 10px 0px #DAD6D3;
+}
+
+/* cards pipe chart */
+.dpipetext {
+    color: #222;
+
+    /* title-md */
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+}
+
+
+/* stacked chart css */
+.dgraphdiv {
+    margin-bottom: 24px;
+}
+
+html,
+body {
+    font: 500 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    height: 100%;
+    color: #444;
+}
+
+.stacked-bar-chart {
+    [class*="bar-"] {
+        /* padding: 5px; */
+    }
+
+    .bar-a {
+        background-color: #253C5B;
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .bar-b {
+        background-color: #C5C0BE;
+    }
+
+
+
+}
+
+.stacked-contain {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dgraph-strip {
+
+    align-items: center;
+}
+
+.dmonth-design {
+    color: #6D6D6D;
+    text-align: right;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+}
+
+.dtransactions-des {
+    color: #000;
+    font-family: Avenir;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+.dgraphpstackContainer {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    flex: 1 0 0;
+
+    border-radius: 8px;
+    background: #FFF;
+    box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
+}
+
+.dcamptext {
+    color: #222;
+
+    text-align: start;
+    /* title-md */
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+}
+
+.dashchartImg {
+    /* /* background-image:  url("{{ asset('images/Rectangle.png') }}"); */
+    background-image: url("/public/images/Rectangle.png");
+    padding-inline: 20px;
+    background-size: 100%;
+}
+
+canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }

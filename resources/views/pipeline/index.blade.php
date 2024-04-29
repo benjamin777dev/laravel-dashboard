@@ -20,14 +20,22 @@
             <i class="fas fa-search search-icon"></i>
         </div>
         <p class="porText">or</p>
-        <div class="pcommonFilterDiv">
-            <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
-            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
+        <div class="psortingFilterDiv">
+            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction">
+                <option value="">Please select one</option>
+                @foreach ($allstages as $item)
+                    <option value="{{ $item }}">{{ $item }}</option>
+                @endforeach
+            </select>
+            {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
+            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">--}}
         </div>
-        <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter"></i>
+       <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
             Filter
         </div>
+
     </div>
+
      <div class="table-responsive">
             <div class="npcontactsTable">
                 <div>
@@ -43,7 +51,7 @@
                     <div class="commonFlex">
                         <p class="mb-0">Client Name</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('contactName.first_name')">
+                            id="pipelineSort" onclick="toggleSort('client_name_primary')">
                     </div>
                 </div>
                 <div>
@@ -79,41 +87,144 @@
             </div>
             <div class = "psearchandsort">
                 @if (count($deals) > 0)
-                @foreach ($deals as $deal)
+               @foreach ($deals as $deal)
                     <div class="npcontactsBody">
                         <div><input type="checkbox"></div>
                         <div class="commonTextEllipsis">{{ $deal['deal_name'] ?? 'N/A' }}</div>
-                        <div class="commonTextEllipsis">{{ $deal->contactName->first_name ?? 'N/A' }}
-                            {{ $deal->contactName->last_name ?? '' }}</div>
+                        <div class="commonTextEllipsis">{{ $deal->client_name_primary ?? 'N/A' }}</div>
                         <div>
-                            <div class="commonFlex  pipelinestatusdiv">
+                            <div class="commonFlex pipelinestatusdiv">
                                 <p style="background-color: {{ $deal['stage'] === 'Potential'
-                                    ? '#85A69C'
-                                    : ($deal['stage'] === 'Active'
-                                        ? '#70BCA5'
-                                        : ($deal['stage'] === 'Pre-Active'
-                                            ? '#4B8170'
-                                            : ($deal['stage'] === 'Under Contract'
-                                                ? '#477ABB'
-                                                : ($deal['stage'] === 'Dead-Lost To Competition'
-                                                    ? '#575B58'
-                                                    : '#F18F01')))) }}"
-                                    class="pstatusText ">{{ $deal['stage'] ?? 'N/A' }} </p>
+                                        ? '#85A69C'
+                                        : ($deal['stage'] === 'Active'
+                                            ? '#70BCA5'
+                                            : ($deal['stage'] === 'Pre-Active'
+                                                ? '#4B8170'
+                                                : ($deal['stage'] === 'Under Contract'
+                                                    ? '#477ABB'
+                                                    : ($deal['stage'] === 'Dead-Lost To Competition'
+                                                        ? '#575B58'
+                                                        : '#F18F01')))) }}"
+                                    class="pstatusText">{{ $deal['stage'] ?? 'N/A' }}</p>
                                 <i class="fas fa-angle-down"></i>
                             </div>
                         </div>
                         <div>{{ $deal['representing'] ?? 'N/A' }}</div>
                         <div class="commonTextEllipsis">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
                         <div>{{ $deal['closing_date'] ?? 'N/A' }}</div>
-                        <div> <a href="{{ url('/pipeline-view/' . $deal['id']) }}"><img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"></a>
-                            <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
+                        <div>
+                            <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
+                            </a>
+                            <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdrop_{{ $deal['id'] }}">
                         </div>
+                    </div>
+                    {{-- Create New Task Modal --}}
+                    <div class="modal fade" id="newTaskModalId{{ $deal['id'] }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                            <div class="modal-content dtaskmodalContent">
+                                <div class="modal-header border-0">
+                                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body dtaskbody">
+                                    <p class="ddetailsText">Details</p>
+                                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                                    <div id="subject_error" class="text-danger"></div>
+                                    <p class="dRelatedText">Related to...</p>
+                                    <div class="btn-group dmodalTaskDiv">
+                                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
+                                            name="who_id" aria-label="Select Transaction">
+                                            @php
+                                                $encounteredIds = []; // Array to store encountered IDs
+                                            @endphp
 
+                                            @foreach ($getdealsTransaction as $item)
+                                                @php
+                                                    $contactId = $item['userData']['zoho_id'];
+                                                @endphp
 
+                                                {{-- Check if the current ID has been encountered before --}}
+                                                @if (!in_array($contactId, $encounteredIds))
+                                                    {{-- Add the current ID to the encountered IDs array --}}
+                                                    @php
+                                                        $encounteredIds[] = $contactId;
+                                                    @endphp
+
+                                                    <option value="{{ $contactId }}"
+                                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
+                                                        {{ $item['userData']['name'] }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <p class="dDueText">Date due</p>
+                                    <input type="date" name="due_date" class="dmodalInput" />
+                                </div>
+                                <div class="modal-footer ">
+                                    <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')" class="btn btn-secondary taskModalSaveBtn">
+                                        <i class="fas fa-save saveIcon"></i> Save Changes
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Notes Modal --}}
+                    <div class="modal fade" id="staticBackdrop_{{ $deal['id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel_{{ $deal['id'] }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                            <div class="modal-content noteModal">
+                                <div class="modal-header border-0">
+                                    <p class="modal-title dHeaderText">Note</p>
+                                    <button type="button" onclick="resetFormAndHideSelect();" class="btn-close"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="noteForm_{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post">
+                                    @csrf
+                                    <div class="modal-body dtaskbody">
+                                        <p class="ddetailsText">Details</p>
+                                        <textarea name="note_text" id="note_text_{{ $deal['id'] }}" rows="4"
+                                            class="dtextarea"></textarea>
+                                        <div id="note_text_error_{{ $deal['id'] }}" class="text-danger"></div>
+                                        <p class="dRelatedText">Related to...</p>
+                                        <div class="btn-group dmodalTaskDiv">
+                                            <select class="form-select dmodaltaskSelect" id="related_to_{{ $deal['id'] }}"
+                                                onchange="moduleSelected(this,'{{$deal}}')" name="related_to"
+                                                aria-label="Select Transaction">
+                                                <option value="">Please select one</option>
+                                                @foreach ($retrieveModuleData as $item)
+                                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            <select class="form-select dmodaltaskSelect" id="taskSelect_{{ $deal['id'] }}"
+                                                name="related_to_parent" aria-label="Select Transaction" style="display: none;">
+                                                <option value="">Please Select one</option>
+                                            </select>
+                                        </div>
+                                        <div id="related_to_error_{{ $deal['id'] }}" class="text-danger"></div>
+                                    </div>
+                                    <div class="modal-footer dNoteFooter border-0">
+                                        <button type="button" id="validate-button_{{ $deal['id'] }}"
+                                            onclick="validateForm('{{ $deal['id'] }}')"
+                                            class="btn btn-secondary dNoteModalmarkBtn">
+                                            <i class="fas fa-save saveIcon"></i> Add Note
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 @endforeach
+
                  @else
                 <div class="pnofound">
                     <p>No records found</p>
@@ -146,8 +257,8 @@
                         </div>
                         <div class="d-flex justify-content-between psellDiv">
                             <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A">
-                                {{ $deal->contactName->first_name ?? 'N/A' }}
-                                {{ $deal->contactName->last_name ?? '' }}
+                                {{ $deal->client_name_primary ?? 'N/A' }}
+                                {{-- {{ $deal->contactName->last_name ?? '' }} --}}
                                 {{-- {{ $deal['Primary_Contact'] ?? 'N/A' }} --}}
                             </div>
                             <div>
@@ -175,6 +286,7 @@
                                 </div>
             @endif
             </div>
+            
         </div>
 </div>
 @vite(['resources/js/pipeline.js'])
@@ -182,18 +294,9 @@
 
 
 <script>
-    $(document).ready(function() {
-        const searchInput = $('#pipelineSearch');
-        const sortInput = $('#pipelineSort');
-        const ppipelineTableBody = $('.psearchandsort');
-        const ptableCardDiv = $('.ptableCardDiv');
-
-
-        searchInput.on('input', function() {
-        fetchData(sortInput.val(), '');
-        });
         // Add an event listener to send search term as request
-        function fetchData(sortValue, sortType) {
+        function fetchData(sortValue, sortType,filter=null,searchInput,ppipelineTableBody,ptableCardDiv) {
+            // console.log("filter",filter);
             const searchValue = searchInput.val().trim();
             $.ajax({
                 url: '{{ url('/pipeline/deals') }}',
@@ -201,7 +304,8 @@
                 data: {
                     search: encodeURIComponent(searchValue),
                     sort: sortValue || "",
-                    sortType: sortType || ""
+                    sortType: sortType || "",
+                    filter:filter
                 },
                 dataType: 'json',
                 success: function(data) {
@@ -246,7 +350,7 @@
                                             ${item.closing_date || 'N/A'}
                                         </div>
                                         <div class="d-flex justify-content-between psellDiv">
-                                            <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.contact_name ? (item.contact_name.first_name + ' ' + item.contact_name.last_name) : 'N/A'}
+                                            <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.client_name_primary?? 'N/A'}
                                             </div>
                                             <div>
                                                 <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">$
@@ -274,7 +378,7 @@
                             <div class="npcontactsBody">
                                 <div><input type="checkbox"></div>
                                 <div class="commonTextEllipsis">${item.deal_name ?? 'N/A' }</div>
-                                <div class="commonTextEllipsis">${item.contact_name ? (item.contact_name.first_name + ' ' + item.contact_name.last_name) : 'N/A'}</div>
+                                <div class="commonTextEllipsis">${item.client_name_primary?? 'N/A'}</div>
                                 <div>
                                     <div class="commonFlex  pipelinestatusdiv">
                                         <p style="background-color: ${item.stage === 'Potential'
@@ -321,7 +425,7 @@
                         "Owner": {
                             "id": "{{ auth()->user()->root_user_id }}"
                         },
-                         "Stage":"Need Analysis"
+                        "Stage":"Potential"
                     }],
             "_token": '{{ csrf_token() }}'
             };
@@ -349,10 +453,168 @@
 
         // Function to toggle sort
         window.toggleSort = function(sortField) {
+            // Toggle the sort direction
             sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
-            fetchData(sortField, sortDirection);
+            // Call fetchDeal with the sortField parameter
+            fetchDeal(sortField, sortDirection);
         };
-    });
+
+        window.fetchDeal = function(sortField, sortDirection) {
+            const searchInput = $('#pipelineSearch');
+            const sortInput = $('#pipelineSort');
+            const ppipelineTableBody = $('.psearchandsort');
+            const ptableCardDiv = $('.ptableCardDiv');
+            var selectedModule = $('#related_to_stage');
+            var selectedText = selectedModule.val();
+            // Call fetchData with the updated parameters
+            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv);
+        }
+
+    window.moduleSelected = function(selectedModule, deal) {
+        console.log("dealId",deal);
+        deal = JSON.parse(deal)
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText + '?dealId=' + deal.zoho_deal_id, // Fixed the concatenation
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                var tasks = response;
+                var taskSelect = $('#taskSelect_'+deal.id);
+                taskSelect.empty();
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.contactData?.zoho_contact_id,
+                            text: task?.contactData?.first_name + ' ' + task?.contactData?.last_name
+                        }));
+                    }
+                });
+                taskSelect.show();
+            },
+            error: function(xhr, status, error) {
+                console.error("Ajax Error:", error);
+            }
+        });
+    }
+
+    window.resetFormAndHideSelect = function(dealId) {
+        $('#noteForm_'+dealId).get(0).reset(); // Changed to jQuery method
+        $('#taskSelect_'+_dealId).hide();
+        clearValidationMessages(dealId);
+    }
+
+    window.clearValidationMessages = function(dealId) {
+        $("#note_text_error_"+dealId).text("");
+        $("#related_to_error_"+dealId).text("");
+    }
+
+    window.validateForm = function(dealId) {
+        let noteText = $("#note_text_"+dealId).val().trim();
+        let relatedTo = $("#related_to_notes_"+dealId).val();
+        let isValid = true;
+
+        // Reset errors
+        clearValidationMessages(dealId);
+
+        // Validate note text length
+        if (noteText.length > 100) {
+            $("#note_text_error_"+dealId).text("Note text must be 100 characters or less");
+            isValid = false;
+        }
+        // Validate note text
+        if (noteText === "") {
+            $("#note_text_error_"+dealId).text("Note text is required");
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            $("#related_to_error_"+dealId).text("Related to is required");
+            $('#taskSelect_'+dealId).hide();
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = $('#validate-button_'+dealId);
+            changeButton.prop("type", "submit"); // Changed to jQuery method
+        }
+        return isValid;
+    }
+
+    window.addTask= function(deal) {
+        var subject = document.getElementsByName("subject")[0].value;
+        if (subject.trim() === "") {
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        }
+        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        var whoId = window.selectedTransation
+        if (whoId === undefined) {
+            whoId = whoSelectoneid
+        }
+        var dueDate = document.getElementsByName("due_date")[0].value;
+        
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Who_Id": {
+                    "id": whoId
+                },
+                "Status": "In Progress",
+                "Due_Date": dueDate,
+                // "Created_Time":new Date()
+                "Priority": "High",
+                "What_Id":{
+                    "id":deal
+                },
+                "$se_module":"Deals"
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        console.log("formData",formData);
+        $.ajax({
+            url: '{{ route('create.task') }}',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+    }
+   
 </script>
 
 @section('pipelineScript')

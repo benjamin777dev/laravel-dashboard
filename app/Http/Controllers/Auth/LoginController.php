@@ -10,12 +10,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\Services\ZohoCRM;
 
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
+    
     // Where to redirect users after login.
     protected $redirectTo = '/dashboard';
 
@@ -24,6 +26,11 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    /* public function login(Request $request)
+    {
+        
+        return redirect($this->redirectTo);
+    } */
     // Overriding the credentials method
     protected function credentials(Request $request)
     {
@@ -44,7 +51,10 @@ class LoginController extends Controller
             $credentials,
             $request->filled('remember')
         );
+    
     }
+
+    
 
     protected function authenticated(Request $request, $user)
     {

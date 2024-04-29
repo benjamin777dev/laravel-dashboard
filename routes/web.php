@@ -10,6 +10,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 
 // Assuming you want to redirect authenticated users to the dashboard,
@@ -41,6 +43,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 //create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
+Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
 Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
 Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 
@@ -57,18 +60,25 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])->name('contacts.fetch')->middleware('auth');
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
-Route::post('/create-contact', [ContactController::class, 'createContact'])->name('create.contact')->middleware('auth');
-Route::get('/contacts/{contact}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
-Route::get('/contacts-create', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
+Route::get('/contacts-show/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
+Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
-Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');;
+Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');
+Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.update');
+Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
+//Groups
+Route::get('/group', [GroupController::class, 'index'])->name('group.index')->middleware('auth');
+Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 
@@ -80,7 +90,11 @@ Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->n
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
-Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
+// Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
+
+//task routes
+Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
+
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
