@@ -21,11 +21,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:save-contacts-to-d-b')->everyMinute();
         $schedule->command('app:save-tasks-to-d-b')->everyMinute();
         $schedule->command('app:save-notes-to-d-b')->everyMinute();
-        $schedule->command('app:save-contact-group-in-d-b')->everyMinute(); */
+        $schedule->command('app:save-contact-group-in-d-b')->everyMinute(); 
         $schedule->command('app:save-group-in-d-b')->everyMinute();
-        $schedule->command('app:save-module-to-d-b')->everyMinute();
-        $schedule->command('app:composite-api')->everyMinute();
-        $schedule->command('app:save-a-c-i-in-d-b')->everyMinute();
+        $schedule->command('app:save-module-to-d-b')->everyMinute();*/
+        // $schedule->command('app:composite-api')->everyMinute();
+         $schedule->command('app:save-submittals-in-d-b')->everyMinute();
+        // $schedule->command('app:save-a-c-i-in-d-b')->everyMinute();
         // $schedule->command('app:save-attachment-to-d-b')->everyMinute();
     }
 

@@ -17,6 +17,8 @@ use Carbon\Carbon;
 use App\Models\Groups; // Import the Deal model
 use App\Models\ContactGroups; // Import the Deal model
 use App\Models\Attachment; // Import the Deal model
+use App\Models\NonTm; // Import the Deal model
+use App\Models\Submittals; // Import the Deal model
 
 
 class DB
@@ -71,7 +73,7 @@ class DB
             }
             $nonTm = collect($nonTmResponse->json()['data'] ?? []);
             Log::error("USERSARA" . $user);
-            $this->storeAttachmentIntoDB($nonTm, $userInstance, $deal['id']);
+            $this->storeNonTmIntoDB($nonTm, $userInstance, $deal['id']);
 
             // Update or create the deal
             Deal::updateOrCreate(['zoho_deal_id' => $deal['id']], [
@@ -992,6 +994,82 @@ class DB
             return $attachments;
         } catch (\Exception $e) {
             Log::error("Error retrieving attachments: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function storeNonTmIntoDB($nontms,$userInstance,$dealId)
+    {
+        $helper = new Helper();
+        Log::info("Storing NonTm Into Database".$userInstance['root_user_id']);
+        $filterednontms = $nontms->filter(function ($value, $key) use ($userInstance){
+            return $value['Owner']['id'] == $userInstance['root_user_id'];
+        });
+        Log::info("filterednontms".$filterednontms);
+        foreach ($filterednontms as $nontm) {
+            $user = User::where('root_user_id', $nontm['Owner']['id'])->first();
+            NonTm::updateOrCreate(['zoho_nontm_id'=> $nontm['id']],[
+                "name" => isset($nontm['Name']) ? $nontm['Name'] : null,
+                "closed_date" => isset($nontm['Close_Date']) ? $helper->convertToUTC($nontm['Close_Date']) : null,
+                "dealId" => isset($dealId) ? $dealId : null,
+                "zoho_nontm_id"=>isset($nontm['id']) ? $nontm['id'] : null,
+                "userId"=>isset($user) ? $user->id : null,
+            ]);
+            
+        }
+
+        Log::info("NonTm stored into database successfully.");
+    }
+
+    public function retreiveNonTm($dealId)
+    {
+        try {
+
+            Log::info("Retrieve NonTm From Database");
+           
+            $NonTm = NonTm::where('dealId',$dealId)->get();
+            Log::info("Retrieved NonTm From Database", ['NonTm' => $NonTm->toArray()]);
+            return $NonTm;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving NonTm: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function storeSubmittalsIntoDB($allSubmittals,$userInstance)
+    {
+        $helper = new Helper();
+        Log::info("Storing NonTm Into Database".$userInstance['root_user_id']);
+        $filteredsubmittals = $allSubmittals->filter(function ($value, $key) use ($userInstance){
+            return $value['Owner']['id'] == $userInstance['root_user_id'];
+        });
+        Log::info("filteredsubmittals".$filteredsubmittals);
+        foreach ($filteredsubmittals as $submittals) {
+            $user = User::where('root_user_id', $submittals['Owner']['id'])->first();
+            Submittals::updateOrCreate(['zoho_submittal_id'=> $submittals['id']],[
+                "name" => isset($submittals['Name']) ? $submittals['Name'] : null,
+                "closed_date" => isset($submittals['Close_Date']) ? $helper->convertToUTC($submittals['Close_Date']) : null,
+                "dealId" => isset($submittals['Transaction_Name']['id']) ? $submittals['Transaction_Name']['id'] : null,
+                "zoho_submittal_id"=>isset($submittals['id']) ? $submittals['id'] : null,
+                "userId"=>isset($user) ? $user->id : null,
+            ]);
+            
+        }
+
+        Log::info("NonTm stored into database successfully.");
+    }
+
+    public function retreiveSubmittals($dealId)
+    {
+        try {
+
+            Log::info("Retrieve Submittals From Database");
+           
+            $Submittals = Submittals::where('dealId',$dealId)->with('userData')->get();
+            Log::info("Retrieved Submittals From Database", ['Submittals' => $Submittals->toArray()]);
+            return $Submittals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Submittals: " . $e->getMessage());
             throw $e;
         }
     }

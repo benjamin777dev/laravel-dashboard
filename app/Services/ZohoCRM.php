@@ -532,7 +532,7 @@ class ZohoCRM
 
             $nonTm = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000005317635&fields=Owner,Number,Close_Date,Created_Time");
+            ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000005296186&fields=Name,Close_Date,Owner");
 
             Log::info('Response Zoho nonTm');
             Log::info(response()->json($nonTm->json())); // Log the response data for debugging
@@ -540,6 +540,30 @@ class ZohoCRM
             return $nonTm;
         } catch (\Throwable $e) {
              Log::error("Error retrieving nonTm: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getSubmittalsData($criteria,$fields, $page=1, $per_page=200)
+    {
+        try {
+            Log::info('Creating Submittals Zoho ');
+
+            $submittals = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->post($this->apiUrl . "Listing_Submittals/bulk?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria",[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+                'fields'=>$fields
+            ]);
+
+            Log::info('Response Zoho submittals');
+            Log::info(response()->json($submittals->json())); // Log the response data for debugging
+
+            return $submittals;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving submittals: " . $e->getMessage());
         }
         
     }

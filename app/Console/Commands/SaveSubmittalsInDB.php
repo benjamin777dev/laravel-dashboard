@@ -8,14 +8,14 @@ use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
 use App\Services\DB;
 
-class SaveAttachmentToDB extends Command
+class SaveSubmittalsInDB extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:save-attachment-to-d-b';
+    protected $signature = 'app:save-submittals-in-d-b';
 
     /**
      * The console command description.
@@ -29,64 +29,56 @@ class SaveAttachmentToDB extends Command
      */
     public function handle()
     {
-        // Retrieve all users
         $users = User::all();
 
-        // Iterate over each user
         foreach ($users as $user) {
-            // Retrieve the root user ID for the current user
+             // Retrieve the root user ID for the current user
             $rootUserId = $user->root_user_id;
 
             // Get user access token
             $accessToken = $user->getAccessToken();
-
-            // Initialize variables
-            $allContactGroups = collect();
+            $allSubmittals = collect();
             $page = 1;
             $hasMorePages = true;
+            $error = '';
 
-            // Define criteria and fields
-            $criteria = "(Owner:equals:$rootUserId)";
-            $fields = 'Contact_Owner,Email,First_Name,Last_Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
+            $criteria = "(Owner:equals:$user->root_user_id)";
+            Log::info("Retrieving tasks for criteria: $criteria");
 
-            Log::info("Retrieving contacts for user {$user->id}");
-
-            // Create ZohoCRM instance and set access token
             $zoho = new ZohoCRM();
             $zoho->access_token = $accessToken;
 
             try {
-                // Retrieve contacts in pages
+                 // Retrieve submittals in pages
                 while ($hasMorePages) {
-                    $response = $zoho->getAttachmentData($criteria, $fields, $page, 200);
-
+                    $response = $zoho->getSubmittalsData($criteria, 'Name,Owner,Transaction_Name,', $page, 200);
+                    
                     if (!$response->successful()) {
-                        Log::error("Error retrieving Attachments for user {$user->id}: " . $response->body());
+                        Log::error("Error retrieving tasks: " . $response->body());
                         // Handle unsuccessful response
                         $hasMorePages = false;
-                        break;
-                    }
-
+                    break;
+                    } 
                     // Process successful response
                     $responseData = $response->json();
-                    $contactGroups = collect($responseData['data'] ?? []);
-                    $allContactGroups = $allContactGroups->concat($contactGroups);
+                    $submittals = collect($responseData['data'] ?? []);
+                    $allSubmittals = $allSubmittals->concat($submittals);
 
                     // Check for more pages
                     $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
                     $page++;
+                
                 }
             } catch (\Exception $e) {
                 // Log any errors
-                Log::error("Error retrieving Attachments for user {$user->id}: " . $e->getMessage());
+                Log::error("Error retrieving tasks for user {$user->id}: " . $e->getMessage());
             }
+            // Log the number of submittals retrieved for the user
+            Log::info("Retrieved tasks for user {$user->id}: " . $allSubmittals);
 
-            // Log the number of contacts retrieved for the user
-            Log::info("Retrieved Attachments for user {$user->id}: " . $allContactGroups);
-
-            // Store contacts in the database
+            // Store submittals in the database
             $saveInDB = new DB();
-            $saveInDB->storeAttachmentIntoDB($allContactGroups,$user);
+            $saveInDB->storeSubmittalsIntoDB($allSubmittals,$user);
         }
     }
 }
