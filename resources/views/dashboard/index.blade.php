@@ -58,18 +58,18 @@
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
-                                    <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
+                                    <h5 class="card-title dTitle mb-0">{{ $stage }}</h5>
 
 
-                                    <div class="d-flex justify-content-center align-items-center dCenterText">
+                                    {{-- <div class="d-flex justify-content-center align-items-center dCenterText"> --}}
 
-                                        <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
-                                        <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
+                                        <p class="dSumValue">${{ $data['sum'] }}</p>
+                                        {{-- <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
                                         <p class="mb-0 dpercentage {{ $data['stageProgressClass'] }}">
-                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p>
+                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p> --}}
 
-                                    </div>
-                                    <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
+                                    {{-- </div> --}}
+                                    <p class="card-text dcountText">{{ $data['count'] }} Transactions
                                     </p>
                                 </div>
                             </div>
@@ -258,10 +258,6 @@
                                                         aria-label="Close"
                                                         onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                                 </div>
-                                                <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    @method('POST')
                                                     <div class="modal-body dtaskbody">
                                                         <p class="ddetailsText">Details</p>
                                                         <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
@@ -305,7 +301,7 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i
                             class="fas fa-plus plusicon">
                         </i>
                         New Task
@@ -746,12 +742,12 @@
             </div> --}}
         </div>
     </div>
-    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"  tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
@@ -793,7 +789,7 @@
         </div>
     </div>
     {{-- Note Modal --}}
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content noteModal">
@@ -802,8 +798,9 @@
                     <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
                     @csrf
+                    @method("POST")
                     <div class="modal-body dtaskbody">
                         <p class="ddetailsText">Details</p>
                         <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
@@ -827,7 +824,7 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button" onclick="validateForm()"
+                        <button type="button" id="validate-button" onclick="validateNoteDash()"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -943,8 +940,8 @@
             activeTab.style.borderRadius = "4px";
         }
 
-        document.getElementById("note_text").addEventListener("keyup", validateForm);
-        document.getElementById("related_to").addEventListener("change", validateForm);
+        document.getElementById("note_text").addEventListener("keyup", validateNoteDash);
+        document.getElementById("related_to").addEventListener("change", validateNoteDash);
 
         // console.log("yes tist woring", @json($allMonths), )
         var ctx = document.getElementById('chart').getContext('2d');
@@ -1316,12 +1313,12 @@
     }
 
     function resetFormAndHideSelectDashboard() {
-        document.getElementById('noteForm')?.reset();
+        document.getElementById('noteForm_dash')?.reset();
         document.getElementById('taskSelect').style.display = 'none';
         clearValidationMessages();
     }
     // validation function onsubmit
-    function validateForm() {
+    function validateNoteDash() {
         let noteText = document.getElementById("note_text").value;
         let relatedTo = document.getElementById("related_to").value;
         let isValid = true;

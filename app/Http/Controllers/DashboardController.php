@@ -11,6 +11,7 @@ use App\Services\ZohoCRM;
 use App\Services\DB;
 use App\Models\Note;
 use App\Models\Deal;
+use App\Models\Contact;
 use App\Models\Task;
 use App\Models\Module;
 use App\Services\Helper;
@@ -179,11 +180,12 @@ class DashboardController extends Controller
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
          $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-         //fetch notes
+         $contactInfo = Contact::getZohoContactInfo();
+        //  fetch notes
+        //   print("<pre/>");
+        //   print_r(json_encode($contactInfo));
+        //   die;
          $notes = $this->fetchNotes();
-        //  print("<pre/>");
-        //  print_r(json_encode($retrieveModuleData));
-        //  die;
         $totalaci = $aciInfo->filter(function ($aci) {
             return isset($aci['Total'], $aci['Closing_Date'])
                    && $aci['Total'] > 0
@@ -221,7 +223,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
     }
 
     private function formatNumber($number) {
@@ -507,7 +509,6 @@ class DashboardController extends Controller
                     'created_time'=>$created_time??null,
                     'related_to'=>$related_to
                 ]);
-
                 return response()->json($responseArray, 201);
 
                 // $task->modified_by_name = $modifiedByName;
@@ -760,6 +761,7 @@ class DashboardController extends Controller
 
     public function saveNote(Request $request)
     {
+      
         $relatedToObject = json_decode($request->related_to);
 
         $contactId = $request->query('conID');

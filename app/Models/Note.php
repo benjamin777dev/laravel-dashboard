@@ -31,6 +31,11 @@ class Note extends Model
         return $this->belongsTo(Deal::class, 'related_to');
     }
 
+    public function moduleData()
+    {
+        return $this->belongsTo(Module::class, 'related_to_module_id', 'zoho_module_id');
+    }
+
     public function ContactData()
     {
         return $this->belongsTo(Contact::class, 'related_to');

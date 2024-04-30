@@ -26,8 +26,10 @@ class ContactController extends Controller
         $contacts = $db->retreiveContacts($user, $accessToken,$search);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        
+        $groups = $db->retrieveGroups($user, $accessToken);
 
-        return view('contacts.index', compact('contacts','getdealsTransaction','retrieveModuleData'));
+        return view('contacts.index', compact('contacts','getdealsTransaction','retrieveModuleData','groups'));
     }
 
     public function getContact(Request $request)
@@ -320,7 +322,7 @@ class ContactController extends Controller
                 $contactInstance->save();
             }
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Contact saved successfully!');
+            return redirect()->back()->with('success', 'Contact Updated successfully!');
          } catch (\Exception $e) {
              Log::error("Error creating notes:new " . $e->getMessage());
              return redirect()->back()->with('error', '!'.$e->getMessage());
@@ -412,17 +414,21 @@ class ContactController extends Controller
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DB();
+        // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId );
         $tab = request()->query('tab') ?? 'In Progress';
+        $users  = User::getUsersByname();
+        // print_r(json_encode($users));
+        // die;
         $tasks = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
         $contacts = $db->retreiveContactsJson($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId'));
+        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users'));
     }
 
     public function showCreateContactForm()
@@ -465,7 +471,7 @@ class ContactController extends Controller
                 $zoho->access_token = $accessToken;
     
                 $jsonData = $request->json()->all();
-                $zohoContact = $zoho->createContactData($jsonData);
+                $zohoContact = $zoho->createNewContactData($jsonData);
                  if (!$zohoContact->successful()) {
                          return "error somthing".$zohoContact;
                     }

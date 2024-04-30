@@ -19,7 +19,7 @@
     gap: 8px;
     align-self: stretch;
 
-    border-radius: 8px;
+    border-radius: 15px;
     background: #253C5B;
 
     /* selected btn */
@@ -56,6 +56,7 @@
     min-height: 109px;
     max-height: 109px;
     min-width: 170px;
+    border-radius: 12px;
 }
 
 .ddaterangepicker {
@@ -73,12 +74,42 @@
 }
 
 .dash-front-cards {
-    padding-block: 8px;
-    padding-inline: 15.5px;
+    padding-block: 5px;
+    padding-inline: 12px;
 }
 
 .dTitle {
-    padding-bottom: 12px;
+    /* padding-bottom: 12px; */
+    align-self: stretch;
+    color: #222;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: -0.28px;
+}
+
+.dSumValue {
+    /* max-width: 195.09px; */
+    color: #4F6481;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 34.5px;
+}
+
+.dcountText {
+    color: #222;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px;
 }
 
 .dCenterText {
@@ -398,6 +429,12 @@
     margin-bottom: 24px;
 }
 
+.checkBox-Design {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .dRelatedNoteText {
     color: #685b50;
     font-size: 11px;
@@ -575,7 +612,7 @@
     display: none;
 }
 
-.submit_button{
+.submit_button {
     background-color: #253c5b;
 }
 
@@ -752,14 +789,18 @@
         padding-inline: 0px;
     }
 
-    .dspeedometersection ,.graphp-dash,.dcontactbtns-div{
+    .dspeedometersection,
+    .graphp-dash,
+    .dcontactbtns-div {
         margin-bottom: 24px;
     }
-   
-    .dspeedn-month-camaparison,.dmain-Container,.dgraphdiv{
+
+    .dspeedn-month-camaparison,
+    .dmain-Container,
+    .dgraphdiv {
         --bs-gutter-x: 0;
     }
-    
+
 
 }
 
@@ -2008,4 +2049,4 @@ canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-  }
+}
