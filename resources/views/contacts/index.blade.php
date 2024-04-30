@@ -219,27 +219,11 @@
                                         <div class="btn-group dmodalTaskDiv">
                                             <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)"
                                                 id="who_id" name="who_id" aria-label="Select Transaction">
-                                                @php
-                                                    $encounteredIds = []; // Array to store encountered IDs
-                                                @endphp
+                                                <option value="{{ $contact['zoho_contact_id'] }}"
+                                @if (old($contact['zoho_contact_id'] ) == $contact['zoho_contact_id']) selected @endif>
+                                {{ $contact['first_name'].' '.$contact['last_name']}}</option>
 
-                                                @foreach ($getdealsTransaction as $item)
-                                                    @php
-                                                        $contactId = $item['userData']['zoho_id'];
-                                                    @endphp
-
-                                                    {{-- Check if the current ID has been encountered before --}}
-                                                    @if (!in_array($contactId, $encounteredIds))
-                                                        Add the current ID to the encountered IDs array
-                                                        @php
-                                                            $encounteredIds[] = $contactId;
-                                                        @endphp
-
-                                                        <option value="{{ $contactId }}"
-                                                            @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                                            {{ $item['userData']['name'] }}</option>
-                                                    @endif
-                                                @endforeach
+                                                
                                             </select>
                                         </div>
                                         <p class="dDueText">Date due</p>
@@ -475,9 +459,9 @@
         var formData = {
             "data": [{
                 "Subject": subject,
-                "Who_Id": {
-                    "id": whoId
-                },
+                // "Who_Id": {
+                //     "id": whoId
+                // },
                 "Status": "In Progress",
                 "Due_Date": dueDate,
                 // "Created_Time":new Date()
