@@ -169,6 +169,19 @@ class ZohoCRM
         return $response;
     }
 
+    public function createNewContactData($inputJson)
+    {
+        Log::info('Creating Zoho contacts');
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->post($this->apidealsurl . "Contacts", $inputJson);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+
 
     // get deals data from search
     public function getDealsData($search, $fields = 'Deal Name,Deal Owner,Amount,Stage', $page = 1, $per_page = 200)
@@ -564,6 +577,29 @@ class ZohoCRM
             return $submittals;
         } catch (\Throwable $e) {
              Log::error("Error retrieving submittals: " . $e->getMessage());
+        }
+        
+    }
+
+    public function getAllStages($criteria,$fields, $page=1, $per_page=200)
+    {
+        try {
+            Log::info('Creating stages Zoho ');
+
+            $stages = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->get($this->apiUrl . "Stages?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria",[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+            ]);
+
+            Log::info('Response Zoho stages');
+            Log::info(response()->json($stages->json())); // Log the response data for debugging
+
+            return $stages;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving stages: " . $e->getMessage());
         }
         
     }

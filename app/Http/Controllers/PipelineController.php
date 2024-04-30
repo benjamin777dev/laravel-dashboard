@@ -16,15 +16,18 @@ class PipelineController extends Controller
     public function index(Request $request)
     {
         $db = new DB();
+        $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
 
         $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
         $search = request()->query('search');
         $deals = $db->retrieveDeals($user, $accessToken, $search);
         $allstages = config('variables.dealStages');
+        // $allstages = $zoho->getAllStages("(Owner:equals:$user->root_user_id)","Name,Owner",1,10);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
         return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction'));
@@ -75,8 +78,9 @@ class PipelineController extends Controller
         $attachments =  $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms =  $db->retreiveNonTm($deal->zoho_deal_id);
         $submittals =  $db->retreiveSubmittals($deal->zoho_deal_id);
+        $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','retrieveModuleData','attachments','nontms','submittals'));
+        return view('pipeline.view', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','retrieveModuleData','attachments','nontms','submittals','allStages'));
 
     }
 
@@ -108,7 +112,8 @@ class PipelineController extends Controller
         $submittals =  $db->retreiveSubmittals($deal->zoho_deal_id);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        return view('pipeline.create', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','dealId','retrieveModuleData','attachments','nontms','submittals'));
+        $allStages = config('variables.dealStages');
+        return view('pipeline.create', compact('tasks','notesInfo','pipelineData','getdealsTransaction','deal','closingDate','dealContacts','dealaci','dealId','retrieveModuleData','attachments','nontms','submittals','allStages'));
        
     }
 

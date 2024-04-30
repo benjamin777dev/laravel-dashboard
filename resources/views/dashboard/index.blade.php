@@ -58,18 +58,18 @@
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
-                                    <h5 class="card-title dFont400 dFont13 dTitle mb-0">{{ $stage }}</h5>
+                                    <h5 class="card-title dTitle mb-0">{{ $stage }}</h5>
 
 
-                                    <div class="d-flex justify-content-center align-items-center dCenterText">
+                                    {{-- <div class="d-flex justify-content-center align-items-center dCenterText"> --}}
 
-                                        <span class="dFont800 dFont18">${{ $data['sum'] }}</span>
-                                        <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
+                                        <p class="dSumValue">${{ $data['sum'] }}</p>
+                                        {{-- <i class = "{{ $data['stageProgressIcon'] }}" style = "font-size:25px"></i>
                                         <p class="mb-0 dpercentage {{ $data['stageProgressClass'] }}">
-                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p>
+                                            {{ $data['stageProgressExpr'] }}{{ $data['stageProgress'] }}%</p> --}}
 
-                                    </div>
-                                    <p class="card-text dFont800 dFont13">{{ $data['count'] }} Transactions
+                                    {{-- </div> --}}
+                                    <p class="card-text dcountText">{{ $data['count'] }} Transactions
                                     </p>
                                 </div>
                             </div>
@@ -178,11 +178,13 @@
                                         @if ($note['related_to_type'] === 'Deal')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->dealData->deal_name ?? '' }}<br />
-                                        @endif
-                                        @if ($note['related_to_type'] === 'Contact')
+                                        @elseif ($note['related_to_type'] === 'Contact')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->contactData->first_name ?? '' }}
                                             {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        Global
                                         @endif
                                         <p class="dFont400 fs-4 mb-0">
                                             {{ $note['note_content'] }}
@@ -256,10 +258,6 @@
                                                         aria-label="Close"
                                                         onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                                 </div>
-                                                <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    @method('POST')
                                                     <div class="modal-body dtaskbody">
                                                         <p class="ddetailsText">Details</p>
                                                         <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
@@ -303,7 +301,7 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i
                             class="fas fa-plus plusicon">
                         </i>
                         New Task
@@ -359,7 +357,13 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                        <input value="{{ $task['related_to']?? '' }}">
+                                                         @if ($task['related_to']=='Contacts')
+                                            <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
+                                            @elseif ($task['related_to']=='Deals')
+                                            <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
+                                            @else
+                                            <input value="Global">
+                                            @endif 
                                                 </div>
                                             </td>
                                             <td>
@@ -485,8 +489,13 @@
                                         </p>
                                         <div class="btn-group dcardsselectdiv">
                                             <p class="dcardsTransactionText">Transaction Related</p>
-                                           
-                                                <input value="{{ $task['related_to'] ?? '' }}">
+                                                 @if ($task['related_to']=='Contacts')
+                                            <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
+                                            @elseif ($task['related_to']=='Deals')
+                                            <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
+                                            @else
+                                            <input value="Global">
+                                            @endif 
                                                 
                                             </select>
                                         </div>
@@ -733,12 +742,12 @@
             </div> --}}
         </div>
     </div>
-    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"  tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
@@ -748,33 +757,22 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
+                    <textarea name="subject" id="subject" rows="4" class="dtextarea"></textarea>
+                    <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                            name="who_id" aria-label="Select Transaction">
-                            @php
-                                $encounteredIds = []; // Array to store encountered IDs
-                            @endphp
-
-                            @foreach ($getdealsTransaction as $item)
-                                @php
-                                    $contactId = $item['userData']['zoho_id'];
-                                @endphp
-
-                                {{-- Check if the current ID has been encountered before --}}
-                                @if (!in_array($contactId, $encounteredIds))
-                                    {{-- Add the current ID to the encountered IDs array --}}
-                                    @php
-                                        $encounteredIds[] = $contactId;
-                                    @endphp
-
-                                    <option value="{{ $contactId }}"
-                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                        {{ $item['userData']['name'] }}</option>
+                        <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
+                            name="related_to" aria-label="Select Transaction">
+                            <option value="">Please select one</option>
+                            @foreach ($retrieveModuleData as $item)
+                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
+                                    <option value="{{ $item['api_name'] }}">{{ $item['api_name'] }}</option>
                                 @endif
                             @endforeach
+                        </select>
+                        <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
+                            aria-label="Select Transaction" style="display: none;">
+                            <option value="">Please Select one</option>
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -791,7 +789,7 @@
         </div>
     </div>
     {{-- Note Modal --}}
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content noteModal">
@@ -800,8 +798,9 @@
                     <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
                     @csrf
+                    @method("POST")
                     <div class="modal-body dtaskbody">
                         <p class="ddetailsText">Details</p>
                         <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
@@ -812,7 +811,7 @@
                                 name="related_to" aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach
@@ -825,7 +824,7 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button" onclick="validateForm()"
+                        <button type="button" id="validate-button" onclick="validateNoteDash()"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -941,8 +940,8 @@
             activeTab.style.borderRadius = "4px";
         }
 
-        document.getElementById("note_text").addEventListener("keyup", validateForm);
-        document.getElementById("related_to").addEventListener("change", validateForm);
+        document.getElementById("note_text").addEventListener("keyup", validateNoteDash);
+        document.getElementById("related_to").addEventListener("change", validateNoteDash);
 
         // console.log("yes tist woring", @json($allMonths), )
         var ctx = document.getElementById('chart').getContext('2d');
@@ -1005,21 +1004,26 @@
             document.getElementById("subject_error").innerHTML = "please enter details";
             return;
         }
-        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        var whoId = window.selectedTransation
-        if (whoId === undefined) {
-            whoId = whoSelectoneid
-        }
+        var seModule = document.getElementsByName("related_to")[0].value;
+        var WhatSelectoneid = document.getElementsByName("related_to_parent")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
         var dueDate = document.getElementsByName("due_date")[0].value;
         var formData = {
             "data": [{
                 "Subject": subject,
-                "Who_Id": {
-                    "id": whoId
-                },
-                "Status": "In Progress",
+                // "Who_Id": {
+                //     "id": whoId
+                // },
+                "Status": "Not Started",
                 "Due_Date": dueDate,
-                // "Priority": "High",
+                "Priority": "High",
+                "What_Id":{
+                            "id":WhatSelectoneid
+                        },
+                "$se_module":seModule
             }],
             "_token": '{{ csrf_token() }}'
         };
@@ -1309,12 +1313,12 @@
     }
 
     function resetFormAndHideSelectDashboard() {
-        document.getElementById('noteForm')?.reset();
+        document.getElementById('noteForm_dash')?.reset();
         document.getElementById('taskSelect').style.display = 'none';
         clearValidationMessages();
     }
     // validation function onsubmit
-    function validateForm() {
+    function validateNoteDash() {
         let noteText = document.getElementById("note_text").value;
         let relatedTo = document.getElementById("related_to").value;
         let isValid = true;

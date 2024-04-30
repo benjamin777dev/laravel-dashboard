@@ -225,14 +225,17 @@
                                 <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
                                     id="editButton{{ $note['id'] }}" type="button" data-bs-toggle="modal"
                                     data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
-                                    @if ($note !== null && $note['related_to_type'] === 'Deal')
+                                    @if ($note['related_to_type'] === 'Deal')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->dealData->deal_name ?? '' }}<br />
+                                        @elseif ($note['related_to_type'] === 'Contact')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->contactData->first_name ?? '' }}
+                                            {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name }}<br />
-                                    @endif
-                                    @if ($note !== null && $note['related_to_type'] === 'Contact')
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
-                                    @endif
+                                        Global
+                                        @endif
                                     <p class="dFont400 fs-4 mb-0">
                                         {{ $note['note_content'] }}
                                     </p>
@@ -391,8 +394,8 @@
                             <i class="fas fa-pencil-alt ncpencilIcon"></i>
                             Edit
                         </div>
-                        <div class="input-group-text text-white justify-content-center ncAssignBtn" id="btnGroupAddon"
-                            data-bs-toggle="modal" data-bs-target="#newTaskModalId">
+                        <div class="input-group-text text-white justify-content-center ncAssignBtn"
+                            data-bs-toggle="modal" data-bs-target="#staticBackdropforViewGroup">
                             <i class="fas fa-plus plusicon">
                             </i>
                             Assign
@@ -674,7 +677,36 @@
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
 
-
+    {{-- view group secton --}}
+    <div class="modal fade" id="staticBackdropforViewGroup" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-content noteModal">
+            <div class="modal-header border-0">
+                <p class="modal-title dHeaderText">Groups</p>
+                <button type="button"  class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+         
+                <div class="modal-body dtaskbody">
+                    <p class="ddetailsText">Assign the Groups...</p>
+                    <div class="checkBox-Design">
+                         <input type="checkbox" />
+                         <p class="mb-0">GroupOne</p>
+                          
+                        
+                    </div>
+                    <div id="related_to_error" class="text-danger"></div>
+                </div>
+                <div class="modal-footer dNoteFooter border-0">
+                    <button type="button" id="validate-button" onclick="validateFormc()"
+                        class="btn btn-secondary dNoteModalmarkBtn">
+                        <i class="fas fa-save saveIcon"></i> Save
+                    </button>
+                </div>
+        </div>
+    </div>
+</div>
     {{-- Note Modal --}}
     <div class="modal fade" id="staticBackdropContact" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -698,7 +730,7 @@
                                 aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach
@@ -1005,6 +1037,33 @@
             }
         });
 
+    }
+
+    function getContact(){
+     
+ 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-Contacts',
+            method: "GET",
+            dataType: "json",
+
+            success: function(response) {
+                // Handle successful response
+               console.log(response);
+               
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    
     }
 
     function resetFormAndHideSelect() {

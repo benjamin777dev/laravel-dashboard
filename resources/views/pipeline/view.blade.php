@@ -620,14 +620,17 @@
                                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                                         type="button" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
-                                    @if ($note['related_to_type'] === 'Deals')
+                                    @if ($note['related_to_type'] === 'Deal')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->dealData->deal_name ?? '' }}<br />
+                                        @elseif ($note['related_to_type'] === 'Contact')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->contactData->first_name ?? '' }}
+                                            {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name }}<br />
-                                    @endif
-                                    @if ($note['related_to_type'] === 'Contacts')
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
-                                    @endif
+                                        Global
+                                        @endif
                                     <p class="dFont400 fs-4 mb-0">
                                         {{ $note['note_content'] }}
                                     </p>
@@ -703,8 +706,11 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Representing</label>
-                        <input type="text" placeholder="Representing" class="form-control npinputinfo"
-                            id="validationDefault02" required value = "{{$deal['representing']}}">
+                        <select class="form-select npinputinfo" id="validationDefault02" required>
+                            <option value="">Select</option>
+                            <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
+                            <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
+                        </select>
                     </div>
 
                     <div class="col-md-6">
@@ -714,8 +720,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault04" class="form-label nplabelText">Stage</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Potential"
-                            id="validationDefault04" required value = "{{$deal['stage']}}">
+                        <select class="form-select npinputinfo" id="validationDefault04" required>
+                            <option value="">Select</option>
+                            @foreach($allStages as $stage)
+                                <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
@@ -814,7 +824,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Contact Roles</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     Add Contact Role
                 </div>
@@ -896,7 +906,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Non-TM Check request</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     Add Non-TM Check request
                 </div>
@@ -965,7 +975,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Agent’s Commissions</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     Add Agent’s Commissions
                 </div>
@@ -1041,7 +1051,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Attachments</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     Add New Attachment
                 </div>
@@ -1116,7 +1126,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Submittals</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     Add New Submittal
                 </div>
@@ -1198,30 +1208,12 @@
                 <div id="subject_error" class="text-danger"></div>
                 <p class="dRelatedText">Related to...</p>
                 <div class="btn-group dmodalTaskDiv">
-                    <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                        name="who_id" aria-label="Select Transaction">
-                        @php
-                            $encounteredIds = []; // Array to store encountered IDs
-                        @endphp
-
-                        @foreach ($getdealsTransaction as $item)
-                            @php
-                                $contactId = $item['userData']['zoho_id'];
-                            @endphp
-
-                            {{-- Check if the current ID has been encountered before --}}
-                            @if (!in_array($contactId, $encounteredIds))
-                                {{-- Add the current ID to the encountered IDs array --}}
-                                @php
-                                    $encounteredIds[] = $contactId;
-                                @endphp
-
-                                <option value="{{ $contactId }}"
-                                    @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                    {{ $item['userData']['name'] }}</option>
-                            @endif
-                        @endforeach
-                    </select>
+                    <select class="form-select dmodaltaskSelect" name="related_to"
+                                            aria-label="Select Transaction">
+                                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
+                                                {{ $deal['deal_name'] }}
+                                            </option>
+                                        </select>
                 </div>
                 <p class="dDueText">Date due</p>
                 <input type="date" name="due_date" class="dmodalInput" />
@@ -1258,7 +1250,7 @@
                             name="related_to" aria-label="Select Transaction">
                             <option value="">Please select one</option>
                             @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                     <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                 @endif
                             @endforeach
@@ -1304,19 +1296,19 @@
                 if (subject.trim() === "") {
                     document.getElementById("subject_error").innerHTML = "please enter details";
                 }
-                var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-                var whoId = window.selectedTransation
-                if (whoId === undefined) {
-                    whoId = whoSelectoneid
-                }
+                // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+                // var whoId = window.selectedTransation
+                // if (whoId === undefined) {
+                //     whoId = whoSelectoneid
+                // }
                 var dueDate = document.getElementsByName("due_date")[0].value;
                 
                 var formData = {
                     "data": [{
                         "Subject": subject,
-                        "Who_Id": {
-                            "id": whoId
-                        },
+                        // "Who_Id": {
+                        //     "id": whoId
+                        // },
                         "Status": "In Progress",
                         "Due_Date": dueDate,
                         // "Created_Time":new Date()

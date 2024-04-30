@@ -50,9 +50,14 @@ class Task extends Model
         return $this->belongsTo(User::class, 'modified_by');
     }
 
-    public function dealdata()
+    public function dealData()
     {
-        return $this->belongsTo(Deal::class, 'what_id');
+        return $this->belongsTo(Deal::class, 'what_id','zoho_deal_id');
+    }
+
+    public function contactData()
+    {
+        return $this->belongsTo(Contact::class, 'what_id','zoho_contact_id');
     }
 
     public function owner()
