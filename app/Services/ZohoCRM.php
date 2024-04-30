@@ -568,4 +568,27 @@ class ZohoCRM
         
     }
 
+    public function getAllStages($criteria,$fields, $page=1, $per_page=200)
+    {
+        try {
+            Log::info('Creating stages Zoho ');
+
+            $stages = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            ])->get($this->apiUrl . "Stages?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria",[
+                'page' => $page,
+                'per_page' => $per_page,
+                'criteria' => $criteria,
+            ]);
+
+            Log::info('Response Zoho stages');
+            Log::info(response()->json($stages->json())); // Log the response data for debugging
+
+            return $stages;
+        } catch (\Throwable $e) {
+             Log::error("Error retrieving stages: " . $e->getMessage());
+        }
+        
+    }
+
 }

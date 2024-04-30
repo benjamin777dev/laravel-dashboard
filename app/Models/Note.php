@@ -35,4 +35,8 @@ class Note extends Model
     {
         return $this->belongsTo(Contact::class, 'related_to');
     }
+    public function taskData()
+    {
+        return $this->belongsTo(Task::class, 'related_to');
+    }
 }

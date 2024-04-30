@@ -27,7 +27,7 @@
                 <div class="row dbgSortDiv">
                     <div class="col-md-6 col-sm-12 dbgGroupDiv">
                         <select class="form-select dbgSelectinfo" id="validationDefault05" required>
-                            <option selected disabled value = null>Filter Groups by...</option>
+                            <option selected value = "">--None--</option>
                             @foreach ($groups as $group)
                                 <option value = "{{$group['id']}}">{{ $group['name'] }} </option>
                             @endforeach
@@ -60,8 +60,9 @@
                         @foreach($shownGroups as $shownGroup)
                             <th scope="col">
                                 <div class="dbgcommonFlex">
+                                    <p id="selectedCountHeader{{$loop->index}}">0</p><br><br>
                                     <p class="mb-0">{{$shownGroup['name']}}</p>
-                                    <input type="checkbox" />
+                                    <input type="checkbox" class="headerCheckbox" data-index="{{$loop->index}}" />
                                 </div>
                             </th>
                         @endforeach
@@ -70,10 +71,10 @@
                 <tbody class="text-center dbgBodyTable">
                     @foreach ($contacts as $contact)
                         <tr>
-                            <td> <input type="checkbox" /></td>
+                            <td> <input type="checkbox" class="rowCheckbox" /></td>
                             <td class="text-start"> {{$contact->contactData['first_name']??'N/A'}} {{$contact->contactData['last_name']??'N/A'}}</td>
-                            @foreach ($shownGroups as $shownGroup)
-                                <td><input type="checkbox" {{ $contact->groupData['name'] == $shownGroup['name'] ? 'checked' : '' }} /></td>
+                            @foreach ($shownGroups as $index => $shownGroup)
+                                <td><input type="checkbox" class="groupCheckbox" {{ $contact->groupData['name'] == $shownGroup['name'] ? 'checked' : '' }} data-index="{{$index}}" /></td>
                             @endforeach
                         </tr>
                     @endforeach
@@ -109,7 +110,32 @@
             console.log(selectedValues);
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+        const headerCheckboxes = document.querySelectorAll('.headerCheckbox');
+        const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
+        const groupCheckboxes = document.querySelectorAll('.groupCheckbox');
 
+        function updateSelectedCount() {
+            headerCheckboxes.forEach((checkbox, index) => {
+                const selectedCount = document.querySelectorAll(`.groupCheckbox[data-index="${index}"]:checked`).length;
+                document.getElementById(`selectedCountHeader${index}`).textContent = selectedCount;
+            });
+        }
+
+        headerCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        groupCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        updateSelectedCount(); // Initial count update
+    });
     // Function to fetch data based on selected values and filter
     // Function to fetch data based on selected values and filter
 window.fetchData = function() {

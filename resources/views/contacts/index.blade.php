@@ -18,7 +18,7 @@
             <p class="pText">Database</p>
             <a onclick="createContact();">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     New Contact
                 </div>
@@ -174,7 +174,7 @@
                                                     name="related_to" aria-label="Select Transaction">
                                                     <option value="">Please select one</option>
                                                     @foreach ($retrieveModuleData as $item)
-                                                        @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                                        @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                                             <option value="{{ $item }}">{{ $item['api_name'] }}
                                                             </option>
                                                         @endif
@@ -478,7 +478,7 @@
                 "Who_Id": {
                     "id": whoId
                 },
-                "Status": "In Progress",
+                "Status": "Not Started",
                 "Due_Date": dueDate,
                 // "Created_Time":new Date()
                 // "Priority": "High",
