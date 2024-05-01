@@ -225,14 +225,17 @@
                                 <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
                                     id="editButton{{ $note['id'] }}" type="button" data-bs-toggle="modal"
                                     data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
-                                    @if ($note !== null && $note['related_to_type'] === 'Deal')
+                                    @if ($note['related_to_type'] === 'Deal')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->dealData->deal_name ?? '' }}<br />
+                                        @elseif ($note['related_to_type'] === 'Contact')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->contactData->first_name ?? '' }}
+                                            {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
                                         <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->dealData->deal_name }}<br />
-                                    @endif
-                                    @if ($note !== null && $note['related_to_type'] === 'Contact')
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
-                                    @endif
+                                        Global
+                                        @endif
                                     <p class="dFont400 fs-4 mb-0">
                                         {{ $note['note_content'] }}
                                     </p>
@@ -732,7 +735,7 @@
                                 aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach

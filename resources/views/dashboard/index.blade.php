@@ -178,11 +178,13 @@
                                         @if ($note['related_to_type'] === 'Deal')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->dealData->deal_name ?? '' }}<br />
-                                        @endif
-                                        @if ($note['related_to_type'] === 'Contact')
+                                        @elseif ($note['related_to_type'] === 'Contact')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->contactData->first_name ?? '' }}
                                             {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        Global
                                         @endif
                                         <p class="dFont400 fs-4 mb-0">
                                             {{ $note['note_content'] }}
@@ -355,7 +357,13 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group">
-                                                        <input value="{{ $task['related_to']?? '' }}">
+                                                         @if ($task['related_to']=='Contacts')
+                                            <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
+                                            @elseif ($task['related_to']=='Deals')
+                                            <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
+                                            @else
+                                            <input value="Global">
+                                            @endif 
                                                 </div>
                                             </td>
                                             <td>
@@ -481,8 +489,13 @@
                                         </p>
                                         <div class="btn-group dcardsselectdiv">
                                             <p class="dcardsTransactionText">Transaction Related</p>
-                                           
-                                                <input value="{{ $task['related_to'] ?? '' }}">
+                                                 @if ($task['related_to']=='Contacts')
+                                            <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
+                                            @elseif ($task['related_to']=='Deals')
+                                            <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
+                                            @else
+                                            <input value="Global">
+                                            @endif 
                                                 
                                             </select>
                                         </div>
@@ -744,33 +757,22 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
+                    <textarea name="subject" id="subject" rows="4" class="dtextarea"></textarea>
+                    <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                            name="who_id" aria-label="Select Transaction">
-                            {{-- @php
-                                $encounteredIds = []; // Array to store encountered IDs
-                            @endphp
-
-                            @php
-                            $contactId = $item['userData']['zoho_id'];
-                            @endphp
-
-                            {{-- Check if the current ID has been encountered before --}}
-                            {{-- @if (!in_array($contactId, $encounteredIds)) --}}
-                                    {{-- Add the current ID to the encountered IDs array --}}
-                                    {{-- @php
-                                        $encounteredIds[] = $contactId;
-                                        @endphp --}}
-
-                                        @foreach ($contactInfo as $item)
-                                    <option value="{{ $item['zoho_contact_id'] }}"
-                                        @if (old('zoho_contact_id') == $item['zoho_contact_id']) selected @endif>
-                                        {{ $item['first_name'].' '.$item['last_name']}}</option>
-                                {{-- @endif --}}
+                        <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
+                            name="related_to" aria-label="Select Transaction">
+                            <option value="">Please select one</option>
+                            @foreach ($retrieveModuleData as $item)
+                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
+                                    <option value="{{ $item['api_name'] }}">{{ $item['api_name'] }}</option>
+                                @endif
                             @endforeach
+                        </select>
+                        <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
+                            aria-label="Select Transaction" style="display: none;">
+                            <option value="">Please Select one</option>
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -809,7 +811,7 @@
                                 name="related_to" aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach
@@ -1002,21 +1004,26 @@
             document.getElementById("subject_error").innerHTML = "please enter details";
             return;
         }
-        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        var whoId = window.selectedTransation
-        if (whoId === undefined) {
-            whoId = whoSelectoneid
-        }
+        var seModule = document.getElementsByName("related_to")[0].value;
+        var WhatSelectoneid = document.getElementsByName("related_to_parent")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
         var dueDate = document.getElementsByName("due_date")[0].value;
         var formData = {
             "data": [{
                 "Subject": subject,
-                "Who_Id": {
-                    "id": whoId
-                },
-                "Status": "In Progress",
+                // "Who_Id": {
+                //     "id": whoId
+                // },
+                "Status": "Not Started",
                 "Due_Date": dueDate,
-                // "Priority": "High",
+                "Priority": "High",
+                "What_Id":{
+                            "id":WhatSelectoneid
+                        },
+                "$se_module":seModule
             }],
             "_token": '{{ csrf_token() }}'
         };

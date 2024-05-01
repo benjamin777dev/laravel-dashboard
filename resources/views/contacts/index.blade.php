@@ -18,7 +18,7 @@
             <p class="pText">Database</p>
             <a onclick="createContact();">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
                     New Contact
                 </div>
@@ -174,7 +174,7 @@
                                                     name="related_to" aria-label="Select Transaction">
                                                     <option value="">Please select one</option>
                                                     @foreach ($retrieveModuleData as $item)
-                                                        @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                                        @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                                             <option value="{{ $item }}">{{ $item['api_name'] }}
                                                             </option>
                                                         @endif
@@ -449,11 +449,11 @@
             document.getElementById("subject_error").innerHTML = "please enter details";
             return;
         }
-        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        var whoId = window.selectedTransation
-        if (whoId === undefined) {
-            whoId = whoSelectoneid
-        }
+        // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
         var dueDate = document.getElementsByName("due_date")[0].value;
 
         var formData = {

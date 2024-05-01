@@ -26,7 +26,7 @@ class GroupController extends Controller
         $contacts = $db->retrieveContactGroups($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         
-        $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups",);
+        $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
         
         return view('group.index', compact('contacts','groups','shownGroups'));
     }
