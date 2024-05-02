@@ -1,8 +1,4 @@
 {
-  "public/images/Rectangle.png": {
-    "file": "icons/Rectangle.png",
-    "src": "public/images/Rectangle.png"
-  },
   "resources/css/app.css": {
     "file": "css/contacts.min.css",
     "src": "resources/css/app.css",

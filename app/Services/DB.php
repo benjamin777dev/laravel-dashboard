@@ -449,7 +449,7 @@ class DB
         }
     }
 
-    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId)
+    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId=null)
     {
         try {
 
