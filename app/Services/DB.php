@@ -496,7 +496,7 @@ class DB
                 $conditions[]=['abcd', $filter];
             }
             // Retrieve deals based on the conditions
-            $contacts = $contacts->where($conditions)->get();
+            $contacts = $contacts->where($conditions)->paginate(10);
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {

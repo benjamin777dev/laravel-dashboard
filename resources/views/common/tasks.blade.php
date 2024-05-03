@@ -270,64 +270,7 @@
                 <i class="fas fa-trash-alt plusicon"></i>
                 Remove Selected
             </div>
-            <nav aria-label="..." class="dpaginationNav">
-                <ul class="pagination ppipelinepage d-flex justify-content-end">
-                    <!-- Previous Page Link -->
-                    @if ($tasks->onFirstPage())
-                        <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
-                        </li>
-                    @else
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="{{ $tasks->previousPageUrl() }}&tab={{ request()->query('tab') }}"
-                                rel="prev">Previous</a>
-                        </li>
-                    @endif
-
-                    <!-- Pagination Elements -->
-                    @php
-                        $currentPage = $tasks->currentPage();
-                        $lastPage = $tasks->lastPage();
-                        $startPage = max($currentPage - 1, 1);
-                        $endPage = min($currentPage + 1, $lastPage);
-                    @endphp
-
-                    {{-- @if ($startPage > 1)
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                    @endif --}}
-
-                    @for ($page = $startPage; $page <= $endPage; $page++)
-                        <li class="page-item {{ $tasks->currentPage() == $page ? 'active' : '' }}">
-                            <a class="page-link"
-                                href="{{ $tasks->url($page) }}&tab={{ request()->query('tab') }}">{{ $page }}</a>
-                        </li>
-                    @endfor
-
-                    {{-- @if ($endPage < $lastPage)
-                        <li class="page-item disabled">
-                            <span class="page-link">...</span>
-                        </li>
-                    @endif --}}
-
-                    <!-- Next Page Link -->
-                    @if ($tasks->hasMorePages())
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="{{ $tasks->nextPageUrl() }}&tab={{ request()->query('tab') }}"
-                                rel="next">Next</a>
-                        </li>
-                    @else
-                        <li class="page-item disabled">
-                            <span class="page-link">Next</span>
-                        </li>
-                    @endif
-                </ul>
-            </nav>
-
-
+            @include('common.pagination', ['module' => $tasks])
         </div>
     @endif
 
@@ -355,7 +298,52 @@
     </div> --}}
 </div>
 <script>
+   
+   document.addEventListener('DOMContentLoaded', function() {
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
 
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
+
+        // Update the status information based on the current status
+        statusInfo[status] = true;
+
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
+        }
+
+        // Example of accessing status information
+        console.log(statusInfo);
+
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.color = "#fff";
+            activeTab.style.borderRadius = "4px";
+        }
+
+    });
 
     function getModule(id) {
         console.log('yes triggerwed')
@@ -403,5 +391,149 @@
             var WhatSelectoneid = document.getElementsByName("related_to_parent"+id)[0].value;
             updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
         }
+    }
+
+    var textElement;
+
+function makeEditable(id, textfield, zohoID) {
+     
+    if (textfield === "subject") {
+        textElement = document.getElementById('editableText' + id);
+        textElementCard = document.getElementById('editableTextCard' + id);
+        //For Table data                
+        var text = textElement.textContent.trim();
+        textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+
+        //For card data
+        var text = textElementCard.textContent.trim();
+        textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+
+        let inputElementmake = document.getElementById('editableInput' + id);
+        inputElementmake.focus();                          
+        inputElementmake.addEventListener('blur', function() {
+            updateText(inputElementmake.value, textfield, zohoID);
+        });
+    }
+    if (textfield === "date") {
+        let dateLocal = document.getElementById('date_local' + id);
+        var text = dateLocal.value.trim();
+        updateText(text, textfield, zohoID);
+    }
+   
+
+}
+
+function updateText(newText, textfield, id,WhatSelectoneid="") {
+    let inputElementtext;
+    let dateLocal;
+    if(textfield==="subject"){
+         inputElementtext = document.getElementById('editableText' + id);
+    }else if(textfield==="date"){
+         dateLocal = document.getElementById('date_local' + id);
+         console.log(dateLocal,newText,'checlout');
+         dateLocal = dateLocal?.substring(0, 10);
+         newText = newText?.substring(0, 10);
+    }else{
+        
+    }
+    if (newText == "") {
+        alert("Empty text feild");
+        return;
+    }
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var formData = {
+        "data": [{
+            "Subject": textfield === "subject" ? newText : inputElementtext?.value,
+            "Due_Date": textfield === "date" ? newText : dateLocal?.value,
+            "What_Id": WhatSelectoneid ? { "id": WhatSelectoneid } : undefined,
+             "$se_module": textfield === "deals" ? newText : undefined
+        }]
+    };
+    // Filter out undefined values
+        formData.data[0] = Object.fromEntries(
+            Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+        );
+    // console.log("ys check ot")
+    $.ajax({
+        url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+        method: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            // Handle success response
+            if (response?.data[0]?.status == "success") {
+                if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
+                    var modalTarget = document.getElementById('savemakeModalId' + id);
+                    var update_message = document.getElementById('updated_message_make');
+                    update_message.textContent = response?.data[0]?.message;
+                    // Show the modal
+                    $(modalTarget).modal('show');
+                    window.location.reload();
+                }
+
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText, 'errrorroororooro');
+        }
+    })
+}
+
+    function moduleSelected(selectedModule,id="") {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect'+id);
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name + ' ' + task?.last_name
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
     }
 </script>

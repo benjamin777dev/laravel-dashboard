@@ -61,6 +61,39 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
+        $frontData = $request->all();
+        if(!empty($frontData['data'])){
+            $contactInstanceforJson = Contact::where('zoho_contact_id', $id)->first();
+            $responseFromZoho = $zoho->createContactData($frontData,$id);
+            if (!$responseFromZoho->successful()) {
+                Log::error("Error creating contacts:");
+                return "error somthing".$responseFromZoho;
+            }
+            
+            $dataJson = json_decode($responseFromZoho, true);
+            if (isset($responseFromZoho['data'][0])) {
+                $data = $responseFromZoho['data'][0];
+                $id = $data['details']['id'];
+                $createdByName = $data['details']['Created_By']['name'];
+                $createdById = $data['details']['Created_By']['id'];
+                $contactInstanceforJson->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
+                if(!empty($frontData['data'][0]['First_Name'])){
+                    $contactInstanceforJson->first_name = $frontData['data'][0]['First_Name'] ?? null;
+                }
+                if(!empty($frontData['data'][0]['Mobile'])){
+                    $contactInstanceforJson->mobile =  $frontData['data'][0]['Mobile']  ?? null;
+
+                }
+                if(!empty($frontData['data'][0]['Email'])){
+                    $contactInstanceforJson->email = $frontData['data'][0]['Email'] ?? null;
+
+                }
+                $contactInstanceforJson->zoho_contact_id =$id ?? null;
+                // $contactInstanceforJson->abcd = $validatedData['abcd_class'] ?? null;
+                $contactInstanceforJson->save();
+                return $responseFromZoho;
+            }
+        }
         $contactOwnerArray = json_decode($request->contactOwner, true);
         // Validate the array
         $validatedData1 = validator()->make($contactOwnerArray, [
@@ -418,6 +451,7 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId );
+        $groups = $db->retrieveGroups($user, $accessToken);
         $tab = request()->query('tab') ?? 'In Progress';
         $users  = User::getUsersByname();
         // print_r(json_encode($users));
@@ -428,7 +462,7 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
         $contacts = $db->retreiveContactsJson($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users'));
+        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users','groups'));
     }
 
     public function showCreateContactForm()

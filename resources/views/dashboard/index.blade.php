@@ -353,7 +353,7 @@
                                     aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
-                    @include('task.tasks_table', ['tasks' => $tasks,'dealFordash'=>$dealFordash,'retrieveModuleData'=>$retrieveModuleData])
+                    @include('common.tasks', ['tasks' => $tasks,'retrieveModuleData'=>$retrieveModuleData])
                 </div>
 
             </div>
@@ -763,102 +763,7 @@
             }
         })
     }
-    var textElement;
-
-    function makeEditable(id, textfield, zohoID) {
-         
-        if (textfield === "subject") {
-            textElement = document.getElementById('editableText' + id);
-            textElementCard = document.getElementById('editableTextCard' + id);
-            //For Table data                
-            var text = textElement.textContent.trim();
-            textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
-
-            //For card data
-            var text = textElementCard.textContent.trim();
-            textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
-
-            let inputElementmake = document.getElementById('editableInput' + id);
-            inputElementmake.focus();                          
-            inputElementmake.addEventListener('blur', function() {
-                updateText(inputElementmake.value, textfield, zohoID);
-            });
-        }
-        if (textfield === "date") {
-            let dateLocal = document.getElementById('date_local' + id);
-            var text = dateLocal.value.trim();
-            updateText(text, textfield, zohoID);
-        }
-       
-
-    }
-
-    function updateText(newText, textfield, id,WhatSelectoneid="") {
-        let inputElementtext;
-        let dateLocal;
-        if(textfield==="subject"){
-             inputElementtext = document.getElementById('editableText' + id);
-        }else if(textfield==="date"){
-             dateLocal = document.getElementById('date_local' + id);
-             console.log(dateLocal,newText,'checlout');
-             dateLocal = dateLocal?.substring(0, 10);
-             newText = newText?.substring(0, 10);
-        }else{
-            
-        }
-        if (newText == "") {
-            alert("Empty text feild");
-            return;
-        }
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        var formData = {
-            "data": [{
-                "Subject": textfield === "subject" ? newText : inputElementtext?.value,
-                "Due_Date": textfield === "date" ? newText : dateLocal?.value,
-                "What_Id": WhatSelectoneid ? { "id": WhatSelectoneid } : undefined,
-                 "$se_module": textfield === "deals" ? newText : undefined
-            }]
-        };
-        // Filter out undefined values
-            formData.data[0] = Object.fromEntries(
-                Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
-            );
-        // console.log("ys check ot")
-        $.ajax({
-            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-            method: 'PUT',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                // Handle success response
-                if (response?.data[0]?.status == "success") {
-                    if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
-                        var modalTarget = document.getElementById('savemakeModalId' + id);
-                        var update_message = document.getElementById('updated_message_make');
-                        update_message.textContent = response?.data[0]?.message;
-                        // Show the modal
-                        $(modalTarget).modal('show');
-                        window.location.reload();
-                    }
-
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText, 'errrorroororooro');
-
-
-            }
-        })
-
-
-
-    }
+  
 
     function convertDateTime(inputDateTime) {
 
@@ -1183,57 +1088,7 @@
 
 
 
-    function moduleSelected(selectedModule,id="") {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                // Handle successful response
-                var tasks = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect'+id);
-                // Clear existing options
-                taskSelect.empty();
-                // Populate select options with tasks
-                $.each(tasks, function(index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: task?.first_name + ' ' + task?.last_name
-                        }));
-                    }
-                });
-                taskSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
+   
 
     function triggerDateRangePicker() {
         // Trigger click event on the input element

@@ -2051,6 +2051,10 @@ body {
     background-size: 100%;
 }
 
+.inputDesign{
+    width: 80%;
+}
+
 canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
