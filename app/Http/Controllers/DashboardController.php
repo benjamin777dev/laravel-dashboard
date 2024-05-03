@@ -180,10 +180,11 @@ class DashboardController extends Controller
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
          $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+         $dealFordash = $this->getDealsForDash();
          $contactInfo = Contact::getZohoContactInfo();
         //  fetch notes
         //   print("<pre/>");
-        //   print_r(json_encode($contactInfo));
+        //   print_r(json_encode($dealFordash));
         //   die;
          $notes = $this->fetchNotes();
         $totalaci = $aciInfo->filter(function ($aci) {
@@ -223,7 +224,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
     }
 
     private function formatNumber($number) {
@@ -582,11 +583,16 @@ class DashboardController extends Controller
                 $task = Task::where('zoho_task_id', $id)->first();
                 $requestData = json_decode($request->getContent(), true);
                 $data = $requestData['data'][0];
-                $subject = $requestData['data'][0]['Subject'];
+                $subject = $requestData['data'][0]['Subject'] ?? null;
+                $dueDate = $requestData['data'][0]['Due_Date'] ?? null;
                 if($task){
-                    $task->subject = $subject;
+                    if($dueDate !== null){
+                        $task->due_date = $dueDate ?? $task->due_date;
+                    }
+                    if($subject !== null){
+                        $task->subject = $subject;
+                    }
                     $task->status=$status ?? $task->status;
-                    $task->due_date=$data['Due_Date'] ?? $task->due_date;
                     $task->save();
                 }
 
@@ -683,6 +689,22 @@ class DashboardController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
+    public function getDealsForDash()
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        // Pass the search parameters to the retrieveTasks method
+        $deals = $db->retreiveDealsJson($user, $accessToken);
+        
+        return $deals;
+        // return view('pipeline.index', compact('deals'));
+    }
+
     public function getContacts(Request $request)
     { 
         $db = new DB();
@@ -759,6 +781,11 @@ class DashboardController extends Controller
 
     }
 
+    public function deleteNote(Request $request)
+    {
+       
+    }
+    
     public function saveNote(Request $request)
     {
       
@@ -874,17 +901,6 @@ class DashboardController extends Controller
     return response()->json($note);
     }
 
-    public function deleteNote($id)
-    {
-        echo "Hi Note Delete";
-        // $note = Note::findOrFail($id);
-
-        // // Delete the note
-        // $note->delete();
-
-        // // Redirect or respond with a success message
-        // return redirect()->back()->with('success', 'Note deleted successfully');
-    }
 
     public function updateNote(Request $request, $id)
 {

@@ -77,6 +77,9 @@
     padding-block: 5px;
     padding-inline: 12px;
 }
+.closeIcon{
+    margin-top: 5px;
+}
 
 .dTitle {
     /* padding-bottom: 12px; */
@@ -154,6 +157,11 @@
     padding: 20px;
     border-radius: 4px;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
+    cursor: pointer;
+}
+
+.page-link.active, .active>.page-link {
+    background-color: rgb(37, 60, 91) !important;
 }
 
 .dnotesUl {
@@ -408,7 +416,7 @@
     padding: 19px;
     background: #253c5b;
     border-radius: 50%;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 /* / / / Note Modal / / / */
@@ -2040,10 +2048,12 @@ body {
 }
 
 .dashchartImg {
-    /* /* background-image:  url("{{ asset('images/Rectangle.png') }}"); */
-    background-image: url("/public/images/Rectangle.png");
     padding-inline: 20px;
     background-size: 100%;
+}
+
+.inputDesign{
+    width: 80%;
 }
 
 canvas {

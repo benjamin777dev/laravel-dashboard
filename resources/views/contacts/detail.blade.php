@@ -402,12 +402,9 @@
 
                 </div>
                 <div class="row ncGroupTable">
-
-
-
                     <div class="col-md-3 col-sm-3 col-3">
                         <div class="commonFlex">
-                            <p class="mb-0">Group Name </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                            <p class="mb-0">Group Name</p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
                                 alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
@@ -592,7 +589,7 @@
                         ];
                     @endphp
                         <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
-                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
+                        <select  name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
                             <option selected disabled value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
                                 <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }} >{{ $abcdIndex }}</option>
