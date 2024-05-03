@@ -175,10 +175,10 @@
                                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                                         type="button" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
-                                        @if ($note['related_to_type'] === 'Deal')
+                                        @if ($note['related_to_type'] === 'Deals')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->dealData->deal_name ?? '' }}<br />
-                                        @elseif ($note['related_to_type'] === 'Contact')
+                                        @elseif ($note['related_to_type'] === 'Contacts')
                                             <span class="dFont800 dFont13">Related to:</span>
                                             {{ $note->contactData->first_name ?? '' }}
                                             {{ $note->contactData->last_name ?? '' }}<br />
@@ -358,12 +358,12 @@
                                             <td>
                                                 <div class="btn-group">
                                                          @if ($task['related_to']=='Contacts')
-                                            <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
-                                            @elseif ($task['related_to']=='Deals')
-                                            <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
-                                            @else
-                                            <input value="Global">
-                                            @endif 
+                                                        <input value="{{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? '' }}">
+                                                        @elseif ($task['related_to']=='Deals')
+                                                        <input value="{{ $task['dealData']['deal_name'] ?? '' }}">
+                                                        @else
+                                                        <input value="Global">
+                                                        @endif 
                                                 </div>
                                             </td>
                                             <td>
@@ -624,14 +624,15 @@
                 </div>
 
             </div>
-            <div class="table-responsive dtranstiontable mt-3">
+            <div class="table-responsive dtranstiontable mt-2">
                 <p class="fw-bold">Transactions closing soon</p>
                 <div class="row dtabletranstion">
-                    <div class="col-md-3">Transaction Name</div>
-                    <div class="col-md-2 ">Contact Name</div>
-                    <div class="col-md-2 ">Phone</div>
-                    <div class="col-md-3">Email</div>
-                    <div class="col-md-2 ">Closing Date</div>
+                    <div class="col-md-2">Transaction Name</div>
+                    <div class="col-md-2">Owner</div>
+                    <div class="col-md-2">Contact Name</div>
+                    <div class="col-md-2">Phone</div>
+                    <div class="col-md-2">Email</div>
+                    <div class="col-md-2">Closing Date</div>
                 </div>
                 @if (count($closedDeals) === 0)
                     <div>
@@ -640,7 +641,7 @@
                 @else
                     @foreach ($closedDeals as $deal)
                         <div class="row npAttachmentBody">
-                            <div class="col-md-3 npcommontableBodytext">
+                            <div class="col-md-2 npcommontableBodytext">
                                 <div class="dTContactName">
                                     {{ $deal['deal_name'] }}
                                 </div>
@@ -651,15 +652,20 @@
                                     {{ $deal->userData->name }}
                                 </div>
                             </div>
-                            <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
+                            <div class="col-md-2 npcommontableBodytext">
                                 <div class="dTContactName">
-                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
-                                    765-4321
+                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                    {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
                                 </div>
                             </div>
-                            <div class="col-md-3 commonTextEllipsis npcommontableBodytext ">
+                            <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
+                                <div class="dTContactName">
+                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'9999999999' }}
+                                </div>
+                            </div>
+                            <div class="col-md-2 commonTextEllipsis npcommontableBodytext ">
                                 <div class="dTContactName"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                        alt="M">{{ $deal->userData->email }}
+                                        alt="M">{{ $deal->contactName->email??'N/A' }}
                                 </div>
                             </div>
                             <div class="col-md-2 npcommontableBodytext ">
@@ -693,14 +699,17 @@
                             </div>
                             <div class="dTCardName">
                                 <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                {{ $deal->userData->name }}
+                                {{ $deal->userData->name??'N/A' }}
                             </div>
                             <div class="dTCardName">
-                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">(720)
-                                765-4321
+                                <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
+                            </div>
+                            <div class="dTCardName">
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'N/A' }}
                             </div>
                             <div class="dTCardmail"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                    alt="M">{{ $deal->userData->email }}
+                                    alt="M">{{ $deal->contactName->email??'N/A' }}
                             </div>
                         </div>
                     @endforeach
@@ -761,8 +770,8 @@
                     <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
-                            name="related_to" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" id="related_to_task" onchange="taskModuleSelected(this)"
+                            name="related_to_task" aria-label="Select Transaction">
                             <option value="">Please select one</option>
                             @foreach ($retrieveModuleData as $item)
                                 @if (in_array($item['api_name'], ['Deals', 'Contacts']))
@@ -816,7 +825,7 @@
                                     @endif
                                 @endforeach
                             </select>
-                            <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
+                            <select class="form-select dmodaltaskSelect" id="noteSelect" name="related_to_parent"
                                 aria-label="Select Transaction" style="display: none;">
                                 <option value="">Please Select one</option>
                             </select>
@@ -1001,10 +1010,10 @@
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
-            document.getElementById("subject_error").innerHTML = "please enter details";
+            document.getElementById("task_error").innerHTML = "please enter details";
             return;
         }
-        var seModule = document.getElementsByName("related_to")[0].value;
+        var seModule = document.getElementsByName("related_to_task")[0].value;
         var WhatSelectoneid = document.getElementsByName("related_to_parent")[0].value;
         // var whoId = window.selectedTransation
         // if (whoId === undefined) {
@@ -1014,16 +1023,13 @@
         var formData = {
             "data": [{
                 "Subject": subject,
-                // "Who_Id": {
-                //     "id": whoId
-                // },
                 "Status": "Not Started",
                 "Due_Date": dueDate,
                 "Priority": "High",
-                "What_Id":{
-                            "id":WhatSelectoneid
-                        },
-                "$se_module":seModule
+                "What_Id": {
+                    "id": WhatSelectoneid
+                },
+                "$se_module": seModule
             }],
             "_token": '{{ csrf_token() }}'
         };
@@ -1353,7 +1359,60 @@
 
 
 
-    function moduleSelected(selectedModule) {
+    function moduleSelected(selectedModule,id="") {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        console.log(selectedText,"selectedText");
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                // Handle successful response
+                var notes = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var noteSelect = $('#noteSelect');
+                // Clear existing options
+                noteSelect.empty();
+                // Populate select options with tasks
+                $.each(notes, function(index, note) {
+                    if (selectedText === "Tasks") {
+                        noteSelect.append($('<option>', {
+                            value: note?.zoho_task_id,
+                            text: note?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        noteSelect.append($('<option>', {
+                            value: note?.zoho_deal_id,
+                            text: note?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        noteSelect.append($('<option>', {
+                            value: note?.zoho_contact_id,
+                            text: (note?.first_name??'') + ' ' + (note?.last_name??'')
+                        }));
+                    }
+                });
+                noteSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
+
+     function taskModuleSelected(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -1373,7 +1432,6 @@
                 var taskSelect = $('#taskSelect');
                 // Clear existing options
                 taskSelect.empty();
-                // Populate select options with tasks
                 $.each(tasks, function(index, task) {
                     if (selectedText === "Tasks") {
                         taskSelect.append($('<option>', {
@@ -1390,7 +1448,7 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_contact_id,
-                            text: task?.first_name + ' ' + task?.last_name
+                            text: (task?.first_name??'') + ' ' + (task?.last_name??'')
                         }));
                     }
                 });
@@ -1404,6 +1462,7 @@
         });
 
     }
+
 
     function triggerDateRangePicker() {
         // Trigger click event on the input element

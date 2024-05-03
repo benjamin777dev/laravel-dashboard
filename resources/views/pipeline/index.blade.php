@@ -7,21 +7,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
-        <p class="pText">Pipelines</p>
+        <p class="pText">My Pipelines</p>
         <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()"><i class="fas fa-plus plusicon">
             </i>
-            New Pipeline
+            New Transaction
         </div>
         
     </div>
     <div class="pfilterDiv">
         <div class="pcommonFilterDiv">
-            <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
+            <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()"/>
             <i class="fas fa-search search-icon"></i>
         </div>
         <p class="porText">or</p>
         <div class="psortingFilterDiv">
-            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction">
+            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction" onchange="fetchDeal()">
                 <option value="">Please select one</option>
                 @foreach ($allstages as $item)
                     <option value="{{ $item }}">{{ $item }}</option>
@@ -189,7 +189,7 @@
                                             </select>
                                             <select class="form-select dmodaltaskSelect" id="taskSelect_{{ $deal['id'] }}"
                                                 name="related_to_parent" aria-label="Select Transaction" style="display: none;">
-                                                <option value="">Please Select one</option>
+                                                <option value="{{$deal['zoho_deal_id']}}">{{$deal['deal_name']}}</option>
                                             </select>
                                         </div>
                                         <div id="related_to_error_{{ $deal['id'] }}" class="text-danger"></div>

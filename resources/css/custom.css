@@ -839,7 +839,7 @@
     display: flex;
     padding: 16px 0px;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     gap: 5px;
     flex: 1 0 0;
     align-self: stretch;
@@ -1526,8 +1526,9 @@
 /* CSS (inside your stylesheet or style tag) */
 .commonTextEllipsis {
     overflow: hidden;
-    white-space: nowrap;
+    white-space:normal;
     text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 /* .npcontactsTable th,
@@ -2049,4 +2050,15 @@ canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+}
+
+.gdropdown-ul {
+    width: 100% !important;
+}
+
+.gdropdown-btn {
+    width: 100% !important;
+}
+.gdropdown{
+    padding:10px
 }
