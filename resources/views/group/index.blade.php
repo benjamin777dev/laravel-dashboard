@@ -13,20 +13,19 @@
                 <div class="dropdown gdropdown-div dbgSelectinfo">
                     <div class="dropdown-toggle gdropdown-select " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                         <input class="gdropdown-btn" value="Select columns to show" readonly />
-                       <i class="dripicons-chevron-down"></i>
                     </div>
     
-                <ul class="dropdown-menu gdropdown-ul" aria-labelledby="dropdownMenuButton1">
-                    @foreach($groups as $group)
-                    <li class="gdropdown" value="{{$group['id']}}">{{$group['name']}}  <input type="checkbox" {{ $group->isShow == true ? 'checked' : '' }}/></li>
-                    @endforeach
-                </ul>
+                    <ul class="dropdown-menu gdropdown-ul" aria-labelledby="dropdownMenuButton1" onchange="">
+                        @foreach($groups as $group)
+                        <li class="gdropdown" value="{{$group['id']}}">{{$group['name']}}  <input type="checkbox" {{ $group->isShow == true ? 'checked' : '' }}/></li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
             <div class="col-md-6 col-sm-12">
                 <div class="row dbgSortDiv">
                     <div class="col-md-6 col-sm-12 dbgGroupDiv">
-                        <select class="form-select dbgSelectinfo" id="validationDefault05" required>
+                        <select class="form-select dbgSelectinfo" id="validationDefault05" onchange="fetchData()" required>
                             <option selected value = "">--None--</option>
                             @foreach ($groups as $group)
                                 <option value = "{{$group['id']}}">{{ $group['name'] }} </option>
@@ -45,16 +44,14 @@
                 <thead>
                     <tr class="dFont700 dFont10">
                         <th scope="col">
-                            <div class="dbgcommonFlex">
-                                <input type="checkbox" />
-                            </div>
+                            
                         </th>
                         
                         <th scope="col">
                             <div class="dbgcommonFlex">
                                 <p class="mb-0">Name</p>
                                 <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
-                                    alt="Transaction icon">
+                                    alt="Transaction icon" onclick="toggleSort()">
                             </div>
                         </th>
                         @foreach($shownGroups as $shownGroup)
@@ -70,13 +67,19 @@
                 </thead>
                 <tbody class="text-center dbgBodyTable">
                     @foreach ($contacts as $contact)
-                        <tr>
-                            <td> <input type="checkbox" class="rowCheckbox" /></td>
-                            <td class="text-start"> {{$contact->contactData['first_name']??'N/A'}} {{$contact->contactData['last_name']??'N/A'}}</td>
-                            @foreach ($shownGroups as $index => $shownGroup)
-                                <td><input type="checkbox" class="groupCheckbox" {{ $contact->groupData['name'] == $shownGroup['name'] ? 'checked' : '' }} data-index="{{$index}}" /></td>
-                            @endforeach
-                        </tr>
+                    <tr>
+                        <td> <input type="checkbox" class="rowCheckbox" /></td>
+                        <td class="text-start"> {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}</td>
+                        @foreach ($shownGroups as $index => $shownGroup)
+                        @php
+                        $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
+                        @endphp
+                        <td>
+                                <input type="checkbox" onclick="contactGroupUpdate('{{ $contact ? $contact : 'null' }}', '{{ $shownGroup }}', this.checked, '{{ $group ? $group->zoho_contact_group_id : 'null' }}')" class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
+                            
+                        </td>
+                        @endforeach
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
@@ -138,7 +141,7 @@
     });
     // Function to fetch data based on selected values and filter
     // Function to fetch data based on selected values and filter
-window.fetchData = function() {
+window.fetchData = function(sortField = null) {
     // Get selected filter value
     const filterSelect = document.getElementById('validationDefault05');
     const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
@@ -148,7 +151,8 @@ window.fetchData = function() {
         method: 'GET',
         data: {
             columnShow: JSON.stringify(selectedValues),
-            filter: filterValue
+            filter: filterValue,
+            sort:sortField
         },
         dataType: 'json',
         success: function(data) {
@@ -160,15 +164,13 @@ window.fetchData = function() {
 
             // Append checkbox column header
             thead.append(`<th scope="col">
-                            <div class="dbgcommonFlex">
-                                <input type="checkbox" />
-                            </div>
+                            
                         </th>`);
             // Append Name column header
             thead.append(`<th scope="col">
                             <div class="dbgcommonFlex">
                                 <p class="mb-0">Name</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon">
+                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon" onclick="toggleSort()">
                             </div>
                         </th>`);
 
@@ -185,26 +187,40 @@ window.fetchData = function() {
             tbody.empty(); // Clear existing table body content
 
             // Append rows for contacts
-            $.each(data.contacts, function(index, contact) {
-                const row = $('<tr>'); // Create a new row
-                // Append checkbox cell
-                row.append(`<td><input type="checkbox" /></td>`);
-                // Append Name cell
-                row.append(`<td class="text-start">${contact.contact_data.first_name ?? 'N/A'} ${contact.contact_data.last_name ?? 'N/A'}</td>`);
-                // Append cells for shownGroups
-                $.each(data.shownGroups, function(index, item) {
-                    row.append(`<td><input type="checkbox" ${contact.group_data.name == item.name ? 'checked' : ''}></td>`);
+           $.each(data.contacts, function (index, contact) {
+            const row = $('<tr>'); // Create a new row
+            // Append checkbox cell
+            row.append(`<td><input type="checkbox" /></td>`);
+            // Append Name cell
+            row.append(`<td class="text-start">${contact.first_name ?? ''} ${contact.last_name ?? ''}</td>`);
+            // Append cells for shownGroups
+            $.each(data.shownGroups, function (index, item) {
+                let groupFound = false;
+                $.each(contact.groups, function (index, group) {
+                    if (group.groupId === item.id) {
+                        groupFound = true;
+                        return false; // exit the loop
+                    }
                 });
-                tbody.append(row); // Append row to tbody
+                row.append(`<td><input type="checkbox" ${groupFound ? 'checked' : ''}></td>`);
             });
+            $('tbody').append(row); // Append row to tbody
+        });
         },
         error: function(xhr, status, error) {
             // Handle errors
             console.error('Error:', error);
         }
     });
+    
 }
-
+let sortDirection = 'desc'
+    window.toggleSort = function() {
+            // Toggle the sort direction
+            sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
+            // Call fetchDeal with the sortField parameter
+            fetchData(sortDirection);
+        };
 
 </script>
 
