@@ -164,7 +164,6 @@
                             </div>
                         </div>
 
-                        @include('common.note', ['module' => $contacts,'retrieveModuleData'=>$retrieveModuleData,'targetId' => 'newTaskNoteModalId'.$contact['zoho_contact_id']])
                         {{-- task create model --}}
                         <div class="modal fade" onclick="event.preventDefault();"
                             id="newTaskContactModalId{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"

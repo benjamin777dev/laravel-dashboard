@@ -407,6 +407,20 @@ class ZohoCRM
         return $response;
     }
 
+    public function getZohoDeal($id)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Deals/'.$id);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
     public function getContactGroupData($criteria,$fields,$page = 1, $per_page = 1)
     {
         Log::info('Creating Contact Zoho Deal');

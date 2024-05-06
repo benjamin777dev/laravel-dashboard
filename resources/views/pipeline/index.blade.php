@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="commonFlex">
+                    <div class="commonFlex" style="width: 75px;">
                         <p class="mb-0">Rep</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Rep icon" class="ppiplineSwapIcon"
                             id="pipelineSort" onclick="toggleSort('representing')">
@@ -90,11 +90,11 @@
                @foreach ($deals as $deal)
                     <div class="npcontactsBody">
                         <div><input type="checkbox"></div>
-                        <div class="commonTextEllipsis">{{ $deal['deal_name'] ?? 'N/A' }}</div>
-                        <div class="commonTextEllipsis">{{ $deal->client_name_primary ?? 'N/A' }}</div>
+                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')" id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</div>
+                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{$deal['id']}}')" id="client_name_primary{{ $deal['zoho_deal_id'] }}">{{ $deal->client_name_primary ?? 'N/A' }}</div>
                         <div>
                             <div class="commonFlex pipelinestatusdiv">
-                                <p style="background-color: {{ $deal['stage'] === 'Potential'
+                                <select class="form-select pstatusText" style="background-color: {{ $deal['stage'] === 'Potential'
                                         ? '#85A69C'
                                         : ($deal['stage'] === 'Active'
                                             ? '#70BCA5'
@@ -104,14 +104,21 @@
                                                     ? '#477ABB'
                                                     : ($deal['stage'] === 'Dead-Lost To Competition'
                                                         ? '#575B58'
-                                                        : '#F18F01')))) }}"
-                                    class="pstatusText">{{ $deal['stage'] ?? 'N/A' }}</p>
-                                {{-- <i class="fas fa-angle-down"></i> --}}
+                                                        : '#F18F01')))) }}" id="stage{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                                    @foreach($allstages as $stage)
+                                        <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
+                                    @endforeach 
+                                </select>
                             </div>
                         </div>
-                        <div>{{ $deal['representing'] ?? 'N/A' }}</div>
-                        <div class="commonTextEllipsis">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
-                        <div>{{ $deal['closing_date'] ?? 'N/A' }}</div>
+                        <div class="" style="width: 75px;">
+                            <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('representing','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                                <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
+                                <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
+                            </select>
+                        </div>
+                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')" id="sale_price{{ $deal['zoho_deal_id'] }}">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
+                        <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}')" id="closing_date{{ $deal['zoho_deal_id'] }}">{{ $deal['closing_date'] ?? 'N/A' }}</div>
                         <div>
                             <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
                                 <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
@@ -180,15 +187,14 @@
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $deal['id'] }}"
                                                 onchange="moduleSelected(this,'{{$deal}}')" name="related_to"
                                                 aria-label="Select Transaction">
-                                                <option value="">Please select one</option>
                                                 @foreach ($retrieveModuleData as $item)
-                                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
+                                                    @if (in_array($item['api_name'], ['Deals']))
                                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
                                             <select class="form-select dmodaltaskSelect" id="taskSelect_{{ $deal['id'] }}"
-                                                name="related_to_parent" aria-label="Select Transaction" style="display: none;">
+                                                name="related_to_parent" aria-label="Select Transaction">
                                                 <option value="{{$deal['zoho_deal_id']}}">{{$deal['deal_name']}}</option>
                                             </select>
                                         </div>
@@ -202,6 +208,33 @@
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Update Notification--}}
+                    <div class="modal fade" id="savemakeModalId{{ $deal['zoho_deal_id'] }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                            <div class="modal-content">
+                                <div class="modal-header saveModalHeaderDiv border-0">
+                                    {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body saveModalBodyDiv">
+                                    <p class="saveModalBodyText" id="updated_message_make">
+                                        Changes have been saved</p>
+                                </div>
+                                <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                    <div class="d-grid col-12">
+                                        <button type="button" class="btn btn-secondary saveModalBtn"
+                                            data-bs-dismiss="modal">
+                                            <i class="fas fa-check trashIcon"></i>
+                                            Understood
+                                        </button>
+                                    </div>
+
+                                </div>
+
                             </div>
                         </div>
                     </div>

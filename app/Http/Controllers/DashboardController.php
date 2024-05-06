@@ -224,7 +224,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notesInfo','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
     }
 
     private function formatNumber($number) {

@@ -800,29 +800,29 @@ class DB
     {
         try {
             $helper = new Helper();
-            Log::info("User Deatils".$user);
+            Log::info("User Details".$user);
             $deal =  Deal::updateOrCreate(['zoho_deal_id' => $id], [
-                'zip' => $deal['Zip'],
-                'address' => $deal['Address'],
-                'representing' => $deal['Representing'],
-                'client_name_primary' => $deal['Client_Name_Primary'],
-                'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
-                'deal_name' => $deal['Deal_Name'],
-                'stage' => $deal['Stage'],
-                'sale_price' => $deal['Sale_Price'],
-                'city' => $deal['City'],
-                'state' => $deal['State'],
-                'pipeline1'=>$deal['Pipeline1'],
-                'personal_transaction' => $deal['Personal_Transaction']==true?1:0,
-                'double_ended' => $deal['Double_Ended']==true?1:0,
-                'commission' => $deal['Commission'],
-                'ownership_type' => $deal['Ownership_Type'],
-                'deal_name' => $deal['Deal_Name'],
-                'pipeline_probability' => $deal['Pipeline_Probability'],
-                'property_type' => $deal['Property_Type'],
-                'potential_gci' => $deal['Potential_GCI'],
-                'isDealCompleted'=>true
+                'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
+                'address' => isset($deal['Address']) ? $deal['Address'] : null,
+                'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
+                'client_name_primary' => isset($deal['Client_Name_Primary']) ? $deal['Client_Name_Primary'] : null,
+                'closing_date' => isset($deal['Closing_Date']) ? $helper->convertToUTC($deal['Closing_Date']) : null,
+                'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
+                'sale_price' => isset($deal['Sale_Price']) ? $deal['Sale_Price'] : null,
+                'city' => isset($deal['City']) ? $deal['City'] : null,
+                'state' => isset($deal['State']) ? $deal['State'] : null,
+                'pipeline1' => isset($deal['Pipeline1']) ? $deal['Pipeline1'] : null,
+                'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
+                'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
+                'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
+                'ownership_type' => isset($deal['Ownership_Type']) ? $deal['Ownership_Type'] : null,
+                'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
+                'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
+                'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
+                'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
+                'isDealCompleted' => true
             ]);
+
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
         } catch (\Exception $e) {

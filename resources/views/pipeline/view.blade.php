@@ -394,7 +394,7 @@
         }
     </script>
     <div class="container-fluid">
-         <div class="commonFlex ppipeDiv">
+         <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
             <p class="pText">{{$deal['deal_name']}}</p>
             <div class="npbtnsDiv">
                 <div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
@@ -604,94 +604,7 @@
                 </div>
 
             </div>
-            <div class="col-md-4 col-sm-12">
-                <h4 class="text-start dFont600 mb-4">Notes</h4>
-                @if ($notesInfo->isEmpty())
-                    <div class="noNotesFound">
-                        <p class="text-center notesAsignedText">No notes assigned</p>
-                    </div>
-                @else
-                    <ul class="list-group dnotesUl">
-                        @foreach ($notesInfo as $note)
-                            <li
-                                class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list" >
-                                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                                        class="form-check-input checkbox{{ $note['id'] }}"
-                                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                                        type="button" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
-                                    @if ($note['related_to_type'] === 'Deal')
-                                            <span class="dFont800 dFont13">Related to:</span>
-                                            {{ $note->dealData->deal_name ?? '' }}<br />
-                                        @elseif ($note['related_to_type'] === 'Contact')
-                                            <span class="dFont800 dFont13">Related to:</span>
-                                            {{ $note->contactData->first_name ?? '' }}
-                                            {{ $note->contactData->last_name ?? '' }}<br />
-                                        @else
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        Global
-                                        @endif
-                                    <p class="dFont400 fs-4 mb-0">
-                                        {{ $note['note_content'] }}
-                                    </p>
-                                </div>
-
-                                {{-- dynamic edit modal --}}
-                                {{-- note update modal --}}
-                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
-                                    data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content noteModal">
-                                            <div class="modal-header border-0">
-                                                <p class="modal-title dHeaderText">Note</p>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                    onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                                            </div>
-                                            <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                                method="post">
-                                                @csrf
-                                                @method('POST')
-                                                <div class="modal-body dtaskbody">
-                                                    <p class="ddetailsText">Details</p>
-                                                    <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
-                                                    @error('note_content')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                    <p class="dRelatedText">Related to...</p>
-                                                    <div class="btn-group dmodalTaskDiv">
-                                                        <select class="form-select dmodaltaskSelect" name="related_to"
-                                                            aria-label="Select Transaction">
-                                                            <option value="{{ $note['zoho_note_id'] }}" selected>
-                                                                {{ $note['related_to_type'] }}
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
-                                                    @error('related_to')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="modal-footer dNoteFooter border-0">
-                                                    <button type="submit" class="btn btn-secondary dNoteModalmarkBtn">
-                                                        <i class="fas fa-save saveIcon"></i> Update
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gx-2">
-                                    <input type="checkbox" {{-- onclick="updateNote('{{ $note['id'] }}')" --}}/>
-                                </div>
-                            </li>
-                        @endforeach
-                        {{-- <button id="deleteButton{{ $note['id'] }}" onclick="deleteNote('{{ $note['id'] }}')"
-                            class="btn btn-danger" style="display: none;">Delete</button> --}}
-                    </ul>
-                @endif
-            </div>
+            @include('common.notes.view',['notesInfo'=>$notesInfo,'retrieveModuleData'=>$retrieveModuleData,'module'=>'Deals'])
         </div>
         {{-- information form --}}
         <div class="row">
@@ -1256,7 +1169,7 @@
                             @endforeach
                         </select>
                         <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
-                            aria-label="Select Transaction" style="display: none;">
+                            aria-label="Select Transaction">
                             <option value="">Please Select one</option>
                         </select>
                     </div>
