@@ -63,6 +63,12 @@ class User extends Authenticatable
         return $this->refreshAccessToken();
     }
 
+    public static function getUsersByname()
+    {
+        // Retrieve Zoho contact ID, last name, and first name
+        return self::select('root_user_id', 'name')->get();
+    }
+
     private function isAccessTokenValid()
     {
         Log::info('isAccessTokenValid check');

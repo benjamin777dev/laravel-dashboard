@@ -19,7 +19,7 @@
     gap: 8px;
     align-self: stretch;
 
-    border-radius: 8px;
+    border-radius: 15px;
     background: #253C5B;
 
     /* selected btn */
@@ -56,6 +56,7 @@
     min-height: 109px;
     max-height: 109px;
     min-width: 170px;
+    border-radius: 12px;
 }
 
 .ddaterangepicker {
@@ -73,12 +74,45 @@
 }
 
 .dash-front-cards {
-    padding-block: 8px;
-    padding-inline: 15.5px;
+    padding-block: 5px;
+    padding-inline: 12px;
+}
+.closeIcon{
+    margin-top: 5px;
 }
 
 .dTitle {
-    padding-bottom: 12px;
+    /* padding-bottom: 12px; */
+    align-self: stretch;
+    color: #222;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: -0.28px;
+}
+
+.dSumValue {
+    /* max-width: 195.09px; */
+    color: #4F6481;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 34.5px;
+}
+
+.dcountText {
+    color: #222;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px;
 }
 
 .dCenterText {
@@ -123,6 +157,11 @@
     padding: 20px;
     border-radius: 4px;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
+    cursor: pointer;
+}
+
+.page-link.active, .active>.page-link {
+    background-color: rgb(37, 60, 91) !important;
 }
 
 .dnotesUl {
@@ -377,7 +416,7 @@
     padding: 19px;
     background: #253c5b;
     border-radius: 50%;
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 /* / / / Note Modal / / / */
@@ -396,6 +435,12 @@
     font-weight: 400;
     line-height: 18px;
     margin-bottom: 24px;
+}
+
+.checkBox-Design {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .dRelatedNoteText {
@@ -575,7 +620,7 @@
     display: none;
 }
 
-.submit_button{
+.submit_button {
     background-color: #253c5b;
 }
 
@@ -752,14 +797,18 @@
         padding-inline: 0px;
     }
 
-    .dspeedometersection ,.graphp-dash,.dcontactbtns-div{
+    .dspeedometersection,
+    .graphp-dash,
+    .dcontactbtns-div {
         margin-bottom: 24px;
     }
-   
-    .dspeedn-month-camaparison,.dmain-Container,.dgraphdiv{
+
+    .dspeedn-month-camaparison,
+    .dmain-Container,
+    .dgraphdiv {
         --bs-gutter-x: 0;
     }
-    
+
 
 }
 
@@ -798,7 +847,7 @@
     display: flex;
     padding: 16px 0px;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     gap: 5px;
     flex: 1 0 0;
     align-self: stretch;
@@ -1485,8 +1534,9 @@
 /* CSS (inside your stylesheet or style tag) */
 .commonTextEllipsis {
     overflow: hidden;
-    white-space: nowrap;
+    white-space:normal;
     text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 /* .npcontactsTable th,
@@ -1998,14 +2048,27 @@ body {
 }
 
 .dashchartImg {
-    /* /* background-image:  url("{{ asset('images/Rectangle.png') }}"); */
-    background-image: url("/public/images/Rectangle.png");
     padding-inline: 20px;
     background-size: 100%;
+}
+
+.inputDesign{
+    width: 80%;
 }
 
 canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-  }
+}
+
+.gdropdown-ul {
+    width: 100% !important;
+}
+
+.gdropdown-btn {
+    width: 100% !important;
+}
+.gdropdown{
+    padding:10px
+}

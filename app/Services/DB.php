@@ -247,7 +247,7 @@ class DB
         Log::info("Module stored into database successfully.");
     }
 
-    public function retrieveModuleDataDB(User $user, $accessToken){
+    public function retrieveModuleDataDB(User $user, $accessToken,$filter=null){
         try {
             // Validate user token (pseudo-code, replace it with your actual validation logic)
             if (!$accessToken) {
@@ -255,8 +255,12 @@ class DB
             }
             
             // Retrieve module data from MySQL
+            if($filter){
+                $allModules = Module::where('api_name',$filter)->get();
+            }else{
             $allModules = Module::all(); // Assuming you want to retrieve all modules
-
+            }
+            // dd(json_encode($allModules));
             // Log the total number of module records
             Log::info("Total Module records: " . $allModules->count());
             
@@ -417,7 +421,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->where('status', $tab)->paginate(10);
+            $tasks = Task::where('owner', $user->id)->with(['dealData','contactData'])->where('status', $tab)->orderBy('updated_at','desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -440,7 +444,7 @@ class DB
             if($contactId){
                 $condition[] = ['what_id', $contactId];
              }
-            $tasks = Task::where($condition)->get();
+            $tasks = Task::where($condition)->orderBy('updated_at','desc')->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -449,7 +453,7 @@ class DB
         }
     }
 
-    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId)
+    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId=null)
     {
         try {
 
@@ -496,7 +500,7 @@ class DB
                 $conditions[]=['abcd', $filter];
             }
             // Retrieve deals based on the conditions
-            $contacts = $contacts->where($conditions)->get();
+            $contacts = $contacts->where($conditions)->paginate(10);
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {
@@ -525,7 +529,7 @@ class DB
 
             Log::info("DealIDS".$dealId);
             $tasks = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
-        ->where('what_id', $dealId)->paginate(10);
+        ->where('what_id', $dealId)->orderBy('updated_at','desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -540,7 +544,7 @@ class DB
 
             Log::info("DealIDS".$dealId);
             $contactTask = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
-        ->where('what_id', $dealId)->paginate(10);
+        ->where('what_id', $dealId)->orderBy('updated_at','desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['contactTask' => $contactTask]);
             return $contactTask;
         } catch (\Exception $e) {
@@ -614,7 +618,7 @@ class DB
 
         try {
             Log::info("Retrieve Notes From Database");
-            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->get();
+            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at','desc')->get();
             Log::info("Retrieved Notes From Database", ['notes' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -628,7 +632,7 @@ class DB
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('dealData')->where([['owner', $user->id],['related_to_type','Deals'],['related_to',$dealId]])->get();
+            $notes = Note::where([['owner', $user->id],['related_to_type','Deals'],['related_to',$dealId]])->get();
             Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
@@ -883,22 +887,36 @@ class DB
         Log::info("Groups stored into database successfully.");
     }
 
-    public function retrieveContactGroups(User $user, $accessToken, $filter = null)
+    public function retrieveContactGroups(User $user, $accessToken, $filter = null,$sort = null)
     {
         try {
-
             Log::info("Retrieve Tasks From Database");
-            $condition = [['ownerId', $user->id]];
-            if($filter){
-                $condition[]=['groupId',$filter];
-            }
-            $tasks = ContactGroups::where($condition)->with('contactData', 'groupData')->get();
-            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
+
+            $tasks = Contact::where('contact_owner', $user->id)
+                            ->with('groups')
+                            ->when($sort, function ($query, $sort) {
+                               $query->orderBy('created_at' ,$sort);
+                            })
+                            ->when($filter, function ($query, $filter) {
+                                $query->whereHas('groups', function ($query) use ($filter) {
+                                    $query->where('groupId', $filter);
+                                });
+                            })
+                            ->get();
+
+            // Filter out contacts with empty groups arrays (optional)
+            $tasks = $tasks->filter(function ($contact) {
+                return $contact->groups->isNotEmpty();
+            });
+
+            Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
+            
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
+
     }
 
     public function updateGroups(User $user, $accessToken, $data)
@@ -946,7 +964,7 @@ class DB
             if($isShown){
                 $condition[]=['isShow',true];
             }
-            $tasks = Groups::where($condition)->get();
+            $tasks = Groups::where($condition)->orderBy('name','asc')->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {

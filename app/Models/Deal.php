@@ -55,11 +55,10 @@ class Deal extends Model
         return $this->belongsTo(Contact::class, 'contactId');
     }
 
-    /*  public function contract()
-     {
-         return $this->belongsTo(Contract::class);
-     } */
-
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'zoho_deal_id','what_id');
+    }
     /* public function contract()
     {
         return $this->belongsTo(Contract::class, 'contractId');

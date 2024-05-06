@@ -223,14 +223,17 @@
                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                         type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
-                            @if ($note !== null && $note['related_to_type'] === 'Deal')
-                            <span class="dFont800 dFont13">Related to:</span>
-                            {{ $note->dealData->deal_name }}<br />
-                          @endif
-                            @if ($note !== null && $note['related_to_type'] === 'Contact')
-                                <span class="dFont800 dFont13">Related to:</span>
-                                {{ $note->contactData->first_name }} {{ $note->contactData->last_name }}<br />
-                            @endif
+                            @if ($note['related_to_type'] === 'Deal')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->dealData->deal_name ?? '' }}<br />
+                                        @elseif ($note['related_to_type'] === 'Contact')
+                                            <span class="dFont800 dFont13">Related to:</span>
+                                            {{ $note->contactData->first_name ?? '' }}
+                                            {{ $note->contactData->last_name ?? '' }}<br />
+                                        @else
+                                        <span class="dFont800 dFont13">Related to:</span>
+                                        Global
+                                        @endif
                             <p class="dFont400 fs-4 mb-0">
                                 {{ $note['note_content'] }}
                             </p>
@@ -351,10 +354,13 @@
                 <div class="row g-3">
                     <div>
                         <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
+                      
                         <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
-                            {{-- <option selected disabled value=""></option> --}}
-                            <option value="{{ json_encode(['id' => $user_id, 'Full_Name' => $name]) }}" selected>
-                                {{ 'CHR Technology' }}</option>
+                            @foreach ($users as $user )
+                                
+                            <option value="{{ json_encode(['id' => $user['root_user_id'], 'Full_Name' =>  $user['name']]) }}" selected>
+                               {{ $user['name']}}</option>
+                            @endforeach
 
                         </select>
                     </div>
@@ -386,8 +392,8 @@
                             <i class="fas fa-pencil-alt ncpencilIcon"></i>
                             Edit
                         </div>
-                        <div class="input-group-text text-white justify-content-center ncAssignBtn" id="btnGroupAddon"
-                            data-bs-toggle="modal" data-bs-target="#newTaskModalId">
+                        <div class="input-group-text text-white justify-content-center ncAssignBtn"
+                            data-bs-toggle="modal" data-bs-target="#staticBackdropforViewGroupforDetails">
                             <i class="fas fa-plus plusicon">
                             </i>
                             Assign
@@ -396,12 +402,9 @@
 
                 </div>
                 <div class="row ncGroupTable">
-
-
-
                     <div class="col-md-3 col-sm-3 col-3">
                         <div class="commonFlex">
-                            <p class="mb-0">Group Name </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                            <p class="mb-0">Group Name</p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
                                 alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
@@ -586,7 +589,7 @@
                         ];
                     @endphp
                         <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
-                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
+                        <select  name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
                             <option selected disabled value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
                                 <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }} >{{ $abcdIndex }}</option>
@@ -668,7 +671,37 @@
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropContact">
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
+ 
 
+      {{-- view group secton --}}
+      <div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
+      tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered deleteModal">
+          <div class="modal-content noteModal">
+              <div class="modal-header border-0">
+                  <p class="modal-title dHeaderText">Groups</p>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body dtaskbody">
+                  <p class="ddetailsText">Assign the Groups...</p>
+                  <div class="checkBox-Design">
+                      <input type="checkbox" />
+                      <p class="mb-0">GroupOne</p>
+
+
+                  </div>
+                  <div id="related_to_error" class="text-danger"></div>
+              </div>
+              <div class="modal-footer dNoteFooter border-0">
+                  <button type="button" id="validate-button" onclick="validateFormc()"
+                      class="btn btn-secondary dNoteModalmarkBtn">
+                      <i class="fas fa-save saveIcon"></i> Save
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
 
     {{-- Note Modal --}}
     <div class="modal fade" id="staticBackdropContact" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -692,7 +725,7 @@
                                 name="related_to" aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach
@@ -729,29 +762,14 @@
                     <div id="subject_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                            name="who_id" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" name="who_id" onchange="selectedElement(this)" id="who_id">
                             @php
-                                $encounteredIds = []; // Array to store encountered IDs
+                                $data = json_decode($contact, true);
                             @endphp
-    
-                            @foreach ($getdealsTransaction as $item)
-                                @php
-                                    $contactId = $item['userData']['zoho_id'];
-                                @endphp
-    
-                                {{-- Check if the current ID has been encountered before --}}
-                                @if (!in_array($contactId, $encounteredIds))
-                                    Add the current ID to the encountered IDs array
-                                    @php
-                                        $encounteredIds[] = $contactId;
-                                    @endphp
-    
-                                    <option value="{{ $contactId }}"
-                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                        {{ $item['userData']['name'] }}</option>
-                                @endif
-                             @endforeach
+                            <option value="{{ $data['zoho_contact_id'] }}"
+                                @if (old( $data['zoho_contact_id'] ) == $data['zoho_contact_id']) selected @endif>
+                                {{ $data['first_name'].' '.$data['last_name']}}</option>
+                     
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -889,7 +907,13 @@
             document.getElementById("subject_error").innerHTML = "";
         }
     }
-
+  
+    window.selectedTransation;
+    function selectedElement(element) {
+        var selectedValue = element.value;
+        window.selectedTransation = selectedValue;
+        //    console.log(selectedTransation);
+    }
     function addTaskforContact(conID){
         var subject = document.getElementsByName("subject")[0].value;
                 if (subject.trim() === "") {
@@ -897,6 +921,7 @@
                     return;
                 }
                 var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+                // console.log(window.selectedTransation,'sdfjhsjkdfhjk')
                 var whoId = window.selectedTransation
                 if (whoId === undefined) {
                     whoId = whoSelectoneid
@@ -920,7 +945,7 @@
                     }],
                     "_token": '{{ csrf_token() }}'
                 };
-                console.log("formData",formData);
+             
                 $.ajax({
                     url: '{{ route('create.task') }}',
                     type: 'POST',
@@ -1035,6 +1060,8 @@
             });
 
     }
+    
+ 
 
     function validateFormc() {
         let noteText = document.getElementById("note_text").value;

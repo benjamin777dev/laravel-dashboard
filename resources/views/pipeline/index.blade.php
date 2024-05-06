@@ -7,21 +7,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
-        <p class="pText">Pipelines</p>
+        <p class="pText">My Pipelines</p>
         <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()"><i class="fas fa-plus plusicon">
             </i>
-            New Pipeline
+            New Transaction
         </div>
         
     </div>
     <div class="pfilterDiv">
         <div class="pcommonFilterDiv">
-            <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
+            <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()"/>
             <i class="fas fa-search search-icon"></i>
         </div>
         <p class="porText">or</p>
         <div class="psortingFilterDiv">
-            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction">
+            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction" onchange="fetchDeal()">
                 <option value="">Please select one</option>
                 @foreach ($allstages as $item)
                     <option value="{{ $item }}">{{ $item }}</option>
@@ -106,7 +106,7 @@
                                                         ? '#575B58'
                                                         : '#F18F01')))) }}"
                                     class="pstatusText">{{ $deal['stage'] ?? 'N/A' }}</p>
-                                <i class="fas fa-angle-down"></i>
+                                {{-- <i class="fas fa-angle-down"></i> --}}
                             </div>
                         </div>
                         <div>{{ $deal['representing'] ?? 'N/A' }}</div>
@@ -138,29 +138,11 @@
                                     <div id="subject_error" class="text-danger"></div>
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
-                                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                                            name="who_id" aria-label="Select Transaction">
-                                            @php
-                                                $encounteredIds = []; // Array to store encountered IDs
-                                            @endphp
-
-                                            @foreach ($getdealsTransaction as $item)
-                                                @php
-                                                    $contactId = $item['userData']['zoho_id'];
-                                                @endphp
-
-                                                {{-- Check if the current ID has been encountered before --}}
-                                                @if (!in_array($contactId, $encounteredIds))
-                                                    {{-- Add the current ID to the encountered IDs array --}}
-                                                    @php
-                                                        $encounteredIds[] = $contactId;
-                                                    @endphp
-
-                                                    <option value="{{ $contactId }}"
-                                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                                        {{ $item['userData']['name'] }}</option>
-                                                @endif
-                                            @endforeach
+                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                            aria-label="Select Transaction">
+                                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
+                                                {{ $deal['deal_name'] }}
+                                            </option>
                                         </select>
                                     </div>
                                     <p class="dDueText">Date due</p>
@@ -200,14 +182,14 @@
                                                 aria-label="Select Transaction">
                                                 <option value="">Please select one</option>
                                                 @foreach ($retrieveModuleData as $item)
-                                                    @if (in_array($item['api_name'], ['Deals', 'Tasks', 'Contacts']))
+                                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
                                                     @endif
                                                 @endforeach
                                             </select>
                                             <select class="form-select dmodaltaskSelect" id="taskSelect_{{ $deal['id'] }}"
                                                 name="related_to_parent" aria-label="Select Transaction" style="display: none;">
-                                                <option value="">Please Select one</option>
+                                                <option value="{{$deal['zoho_deal_id']}}">{{$deal['deal_name']}}</option>
                                             </select>
                                         </div>
                                         <div id="related_to_error_{{ $deal['id'] }}" class="text-danger"></div>
@@ -564,20 +546,20 @@
         if (subject.trim() === "") {
             document.getElementById("subject_error").innerHTML = "please enter details";
         }
-        var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        var whoId = window.selectedTransation
-        if (whoId === undefined) {
-            whoId = whoSelectoneid
-        }
+        // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
         var dueDate = document.getElementsByName("due_date")[0].value;
         
         var formData = {
             "data": [{
                 "Subject": subject,
-                "Who_Id": {
-                    "id": whoId
-                },
-                "Status": "In Progress",
+                // "Who_Id": {
+                //     "id": whoId
+                // },
+                "Status": "Not Started",
                 "Due_Date": dueDate,
                 // "Created_Time":new Date()
                 "Priority": "High",
