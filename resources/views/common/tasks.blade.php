@@ -499,6 +499,7 @@ function updateText(newText, textfield, id,WhatSelectoneid="") {
             method: "GET",
             dataType: "json",
             success: function(response) {
+                console.log(response,'resoponse')
                 // Handle successful response
                 var tasks = response;
                 // Assuming you have another select element with id 'taskSelect'

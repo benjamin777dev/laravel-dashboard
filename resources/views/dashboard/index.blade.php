@@ -207,25 +207,14 @@
 
                                                     <div>
                                                         <i class="fa fa-trash trash-icon"
-                                                            onclick="openConfirmationModal('confirmModal{{ $note['id'] }}')"></i>
+                                                            onclick="openConfirmationModal('confirmModal{{ $note['zoho_note_id'] }}')"></i>
 
                                                         <button type="button" class="btn-close closeIcon"
                                                             data-bs-dismiss="modal" aria-label="Close"
                                                             onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                                     </div>
                                                     <!-- Your modal markup (assuming it has an id 'confirmModal') -->
-                                                    <div id="confirmModal{{ $note['id'] }}" class="modal">
-                                                        <!-- Modal content -->
-                                                        <div class="modal-content">
-                                                            <span class="close"
-                                                                onclick="closeConfirmationModal('confirmModal{{ $note['id'] }}')">&times;</span>
-                                                            <p>Are you sure you want to delete?</p>
-                                                            <!-- Add buttons for confirmation -->
-                                                            <button onclick="deleteNoteItem()">Yes</button>
-                                                            <button
-                                                                onclick="closeConfirmationModal('confirmModal{{ $note['id'] }}')">No</button>
-                                                        </div>
-                                                    </div>
+                                                    @include('common.confirmmodal', ['targetId' => 'confirmModal'.$note['zoho_note_id'],'zoho_note_id'=>$note['zoho_note_id']])
                                                 </div>
                                                 <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
                                                     method="post">
@@ -550,7 +539,7 @@
                         <div id="note_text_error" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
+                            <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelectedNote(this)"
                                 name="related_to" aria-label="Select Transaction">
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
@@ -576,6 +565,8 @@
             </div>
         </div>
     </div>
+
+    @include('common.saverecord', ['targetId' => 'deleteNoteSuccessMessage']);
 
     {{-- save Modal --}}
     {{-- <div class="modal fade" id="saveModalId" tabindex="-1">
@@ -805,12 +796,13 @@
     }
     // Function to close the confirmation modal
     function closeConfirmationModal(id) {
+        console.log(id,'closeConfirmationModal')
         var modal = document.getElementById(id);
         modal.style.display = 'none';
     }
 
     // Function to handle deletion
-    function deleteNoteItem(ids) {
+    function deleteNoteItem(id) {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -819,23 +811,25 @@
         try {
             if (id) {
                 $.ajax({
-                    url: "{{ route('delete.note', ['id' => ':id']) }}".replace(':id', ids),
+                    url: "/delete-note/"+id,
                     method: 'DELETE', // Change to DELETE method
                     contentType: 'application/json',
                     dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully", response);
-                        window.location.reload();
+                        if(response?.data[0]?.code==="SUCCESS"){
+                            $('#deleteNoteSuccessMessage').modal('show');
+                        // Update modal content if needed
+                        $('#updated_message').text(response?.data[0]?.message);
+                        // Reload the page after modal is closed
+                        $('#deleteNoteSuccessMessage').on('hidden.bs.modal', function () {
+                            window.location.reload();
+                        });
+                        }
                     },
                     error: function(xhr, status, error) {
                         // Handle error response
                         console.error(xhr.responseText);
-                        alert(xhr.responseText)
                     }
                 })
 
@@ -1058,7 +1052,7 @@
 
     function resetFormAndHideSelectDashboard() {
         document.getElementById('noteForm_dash')?.reset();
-        document.getElementById('taskSelect').style.display = 'none';
+        document.getElementById('noteSelect').style.display = 'none';
         clearValidationMessages();
     }
     // validation function onsubmit
@@ -1097,7 +1091,7 @@
 
 
 
-    function moduleSelected(selectedModule,id="") {
+    function moduleSelectedNote(selectedModule,id="") {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -1112,6 +1106,7 @@
             method: "GET",
             dataType: "json",
             success: function(response) {
+                console.log(response,'resoponse')
                 // Handle successful response
                 var notes = response;
                 // Assuming you have another select element with id 'taskSelect'

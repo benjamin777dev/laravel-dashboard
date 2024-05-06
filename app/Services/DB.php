@@ -919,6 +919,58 @@ class DB
 
     }
 
+    public function retrieveContactGroupsData(User $user, $accessToken, $filter = null,$sortType = null,$contactId,$sortValue=null,$sort=null)
+    {
+        
+        try {
+            Log::info("Retrieve Tasks From Database");
+
+            $tasks = ContactGroups::where('ownerId', $user->id)
+                            ->with('group')
+                            ->when($sort, function ($query, $sort) {
+                               $query->orderBy('created_at' ,$sort);
+                            })
+                            ->when($filter, function ($query, $filter) {
+                                $query->whereHas('group', function ($query) use ($filter) {
+                                    $query->where('groupId', $filter);
+                                });
+                            })
+                            ->when($contactId, function ($query, $contactId) {
+                                $query->where('id', $contactId);
+                            })
+                            ->get();
+
+                            if ($sortValue != '' && $sortType != '') {
+                                $sortField = $sortValue;
+                                // Add sorting logic based on the field and type
+                                switch ($sortType) {
+                                    case 'asc':
+                                        $tasks->orderBy($sortField, 'asc');
+                                        break;
+                                    case 'desc':
+                                        $tasks->orderBy($sortField, 'desc');
+                                        break;
+                                    default:
+                                        // Handle default sorting logic if needed
+                                        break;
+                                }
+                            }
+
+            // Filter out contacts with empty groups arrays (optional)
+            $tasks = $tasks->filter(function ($contact) {
+                return $contact->groups->isNotEmpty();
+            });
+
+            Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
+            
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
     public function updateGroups(User $user, $accessToken, $data)
     {
     try {
