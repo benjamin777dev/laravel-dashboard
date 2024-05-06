@@ -781,8 +781,48 @@ class DashboardController extends Controller
 
     }
 
-    public function deleteNote(Request $request)
+    public function deleteNote(Request $request,$id)
     {
+            $user = auth()->user();
+            if (!$user) {
+                return redirect('/login');
+            }
+            $accessToken = $user->getAccessToken();
+            // $jsonData = $request->json()->all();
+            $zoho = new ZohoCRM();
+            $zoho->access_token = $accessToken;
+            try {
+                // if (strpos($id, ',') === false) {
+                //     $response = $zoho->deleteTask($jsonData,$id);
+                //     if (!$response->successful()) {
+                //          return "error somthing".$response;
+                //     }
+                //     $task = Task::where('zoho_task_id', $id)->first();
+                //     if (!$task) {
+                //         return "Task not found";
+                //     }
+                //     $task->delete();
+                // } else {
+                    // Multiple IDs provided
+                    $response = $zoho->deleteNote($id);
+                    if (!$response->successful()) {
+                         return "error somthing".$response;
+                    }
+                    // $idArray = explode(',', $id);
+                   $tasks = Note::where('zoho_note_id', $id)->delete();
+                    if (!$tasks) {
+                        return "Note not found";
+                    }
+                // }
+                Log::info("Successful notes delete... ".$response);
+                return $response;
+    
+                
+            } catch (\Exception $e) {
+                Log::error("Error creating notes: " . $e->getMessage());
+                return "somthing went wrong". $e->getMessage();
+            }
+
        
     }
     

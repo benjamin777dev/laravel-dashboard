@@ -269,30 +269,50 @@
                     <div class="col-md-3 col-sm-3 col-3">
                         <div class="commonFlex">
                             <p class="mb-0">Group Name</p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                                alt="Close icon" onclick="toggleSortGroup('name')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-3">Is Public?</div>
+                    <div class="col-md-3 col-sm-3 col-3"><div class="commonFlex">
+                        <p class="mb-0">Is Public? </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                            alt="Close icon" onclick="toggleSortGroup('isPublic')" class="ppiplineSwapIcon" id="pipelineSort">
+                    </div></div>
                     <div class="col-md-3 col-sm-3 col-3 ">
                         <div class="commonFlex">
-                            <p class="mb-0">Class </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                            <p class="mb-0">IsABC </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                alt="Close icon" onclick="toggleSortGroup('isABCD')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-3 ">
                         <div class="commonFlex">
                             <p class="mb-0">ID No. </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                                alt="Close icon" onclick="toggleSortGroup('id')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
                 </div>
-
-                <div class="row ncGroupBody">
-                    <div class="col-md-3 col-sm-3 col-3">Pop-by</div>
-                    <div class="col-md-3 col-sm-3 col-3">---</div>
-                    <div class="col-md-3 col-sm-3 col-3">A</div>
-                    <div class="col-md-3 col-sm-3 col-3">4254353</div>
-                </div>
+          
+                @foreach ($contactsGroups as $contactGroup)
+                @foreach ($contactGroup['groups'] as $group)
+                    <div class="row ncGroupBody">
+                        <div class="col-md-3 col-sm-3 col-3">{{ $group['group']['name'] }}</div>
+                        <div class="col-md-3 col-sm-3 col-3">
+                            @if ($group['group']['isPublic'] == 1)
+                                <i class="fas fa-check" style="color: green;"></i>
+                            @else
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-3">
+                            @if ($group['group']['isABCD'] == 1)
+                                <i class="fas fa-check" style="color: green;"></i>
+                            @else
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-3">{{ $group['group']['id'] }}</div>
+                    </div>
+                @endforeach
+            @endforeach
+            
             </div>
             {{-- Contact Details --}}
             <div class="col-md-6 col-sm-12"
@@ -771,6 +791,35 @@
             document.getElementById("subject_error").innerHTML = "";
         }
     }
+    let sortDirection = 'desc';
+    function toggleSortGroup(sortField){
+        
+            // Toggle the sort direction
+            sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
+            // Call fetchDeal with the sortField parameter
+            fetchGroups(sortField, sortDirection);
+       
+    }
+
+     function fetchGroups(sortField, sortDirection) {
+        $.ajax({
+                url: '{{ url('/get-groups') }}',
+                method: 'GET',
+                data: {
+                    sort: sortField || "",
+                    sortType: sortDirection || "",
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data,'data')
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+     }
+
+   
   
     window.selectedTransation;
     function selectedElement(element) {

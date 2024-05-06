@@ -46,7 +46,7 @@ Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.
 Route::delete('/delete-note', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
 Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
-Route::post('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
+Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 
 //task actions
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
@@ -61,6 +61,7 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::get('/get-groups', [ContactController::class, 'getGroups'])->name('group.sort')->middleware('auth');
 Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])->name('contacts.fetch')->middleware('auth');
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');

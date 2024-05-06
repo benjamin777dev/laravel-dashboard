@@ -374,11 +374,11 @@
                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="datadiversityicon">
                         </div>
                         <div>
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon" onclick="event.preventDefault();" data-bs-target="#newTaskNoteModalId${contact?.id}">
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon" onclick="event.preventDefault(),showPopup(${contact?.id});" data-bs-target=#newTaskNoteModalId${contact?.id}>
                         </div>
                         
         <div class="modal fade" onclick="event.preventDefault();"
-                            id=newTaskNoteModalId${contact?.id}" data-bs-backdrop="static"
+                            id=newTaskNoteModalId${contact?.id} data-bs-backdrop="static"
                             data-bs-keyboard="false" data-custom="noteModal" tabindex="-1"
                             aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -439,8 +439,8 @@
             </a>
             
         `;
-                        // Append the contact card HTML to the contact list container
-                        contactList.append(cardHtml);
+        // Append the contact card HTML to the contact list container
+        contactList.append(cardHtml);
                     });
                 }
             },
@@ -602,6 +602,10 @@
             }
         });
 
+    }
+
+    function showPopup(contact){
+        new bootstrap.Modal(document.getElementById('newTaskNoteModalId' + contact)).show();
     }
 
     function validateFormc(submitClick = '', modId = "") {
