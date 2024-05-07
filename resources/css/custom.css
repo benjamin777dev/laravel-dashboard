@@ -161,7 +161,12 @@
 }
 
 .page-link.active, .active>.page-link {
-    background-color: #3b3b3b !important;
+    background-color: #6f6f6f !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #6f6f6f;
 }
 
 .dnotesUl {
