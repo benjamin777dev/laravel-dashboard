@@ -1542,6 +1542,8 @@
     white-space:normal;
     text-overflow: ellipsis;
     word-break: break-all;
+    font-size: 16px;
+    line-height: 18px;
 }
 
 /* .npcontactsTable th,
@@ -1965,9 +1967,14 @@
     margin-bottom: 0;
 }
 
-.dRangeText{
+.dRangeText {
     margin-bottom: 0;
     font-size: 14px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: center;
 }
 /* stacked chart css */
 .dgraphdiv {
