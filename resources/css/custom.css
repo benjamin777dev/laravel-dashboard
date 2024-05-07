@@ -5,7 +5,7 @@
 .taskbtn {
     background-color: #222;
     padding: 6px 11px 6px 11px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -19,7 +19,7 @@
     gap: 8px;
     align-self: stretch;
 
-    border-radius: 15px;
+    border-radius: 5px;
     background: #3f3f3f;
 
     /* selected btn */
@@ -45,7 +45,7 @@
     background-color: #848484;
     cursor: pointer;
     padding: 6px 11px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .page-item.active {
@@ -125,7 +125,7 @@
 
 .dpercentage {
     padding: 2px 5px 2px 5px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: rgba(52, 195, 143, 0.18);
     margin-left: 9px;
 }
@@ -155,7 +155,7 @@
 .dashboard-notes-list {
     background: #efefef !important;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
     cursor: pointer;
 }
@@ -180,7 +180,7 @@
 .dtranstiontable {
     background: rgba(255, 255, 255, 1);
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .dselect {
@@ -202,7 +202,7 @@
     color: #fff;
     margin-top: 12px;
     padding-left: 0px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .dtabsbtn {
@@ -300,14 +300,14 @@
 .dCalander {
     background: #fff;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 5px;
     gap: 5px;
 }
 
 .noNotesFound {
     padding: 20px;
     gap: 24px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #EFF6FF;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
     display: flex;
@@ -404,7 +404,7 @@
 
 .taskModalSaveBtn {
     width: 100%;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #222;
     padding: 6px 11px;
 }
@@ -481,13 +481,13 @@
 }
 
 .dNoteModalmarkBtn {
-    border-radius: 4px;
+    border-radius: 5px;
     background: #222;
     padding: 6px 35px;
 }
 
 .dNoteModalmarkBtns {
-    border-radius: 4px;
+    border-radius: 5px;
     background: #222;
     padding: 6px 16px;
 }
@@ -526,7 +526,7 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #333;
     background: #222;
     color: #fff;
@@ -546,7 +546,7 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 2px solid #333;
     background: #fff;
     color: var(--Brand, #222);
@@ -592,7 +592,7 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #333;
     background: #222;
 }
@@ -757,7 +757,7 @@
         align-items: center;
         gap: 5px;
         align-self: stretch;
-        border-radius: 3.2px;
+        border-radius: 5px;
         border: 1px solid #333;
         background: #222;
         color: #fff;
@@ -777,7 +777,7 @@
         align-items: center;
         gap: 5px;
         align-self: stretch;
-        border-radius: 3.2px;
+        border-radius: 5px;
         border: 1px solid #333;
         background: #222;
         color: #fff;
@@ -937,7 +937,7 @@
 
 .ppipeBtn {
     padding: 6px 11px;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #222;
     background: #222;
     cursor: pointer;
@@ -955,7 +955,7 @@
     flex-wrap: wrap;
     padding: 16px;
     align-self: stretch;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #fff;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
     margin-bottom: 24px;
@@ -977,7 +977,7 @@
     padding: 7.52px 12px;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #dfdfdf;
     background: #fff;
 }
@@ -1020,7 +1020,7 @@
     padding: 8.52px 12px;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #222;
     background: #222;
     color: #fff;
@@ -1445,7 +1445,7 @@
     justify-content: center;
     align-items: center;
     gap: 12px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #dfdfdf;
     color: #222;
     text-align: center;
@@ -1463,7 +1463,7 @@
     justify-content: center;
     align-items: center;
     gap: 12px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #8f8f8f;
     cursor: pointer;
     color: #fff;
@@ -1513,7 +1513,7 @@
     padding: 6px 11px;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #3f3f3f;
     background: #222;
     color: #fff;
@@ -1667,7 +1667,7 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-    border-radius: 3.2px;
+    border-radius: 5px;
     background: #222;
     color: #fff;
     text-align: center;
@@ -1797,7 +1797,7 @@
     justify-content: center;
     align-items: center;
     flex: 1 0 0;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #222;
     background: #222;
     color: #fff;
@@ -1920,7 +1920,7 @@
     padding: 7.52px 12px;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 5px;
     border: 1px solid #afafaf;
     background: #fff;
     height: 37px;
