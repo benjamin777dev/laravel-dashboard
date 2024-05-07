@@ -39,8 +39,6 @@
      <div class="table-responsive">
             <div class="npcontactsTable">
                 <div>
-                </div>
-                <div>
                     <div class="commonFlex">
                         <p class="mb-0">Transaction</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon"
@@ -89,7 +87,6 @@
                 @if (count($deals) > 0)
                @foreach ($deals as $deal)
                     <div class="npcontactsBody">
-                        <div><input type="checkbox"></div>
                         <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')" id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</div>
                         <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{$deal['id']}}')" id="client_name_primary{{ $deal['zoho_deal_id'] }}">{{ $deal->client_name_primary ?? 'N/A' }}</div>
                         <div>
