@@ -95,16 +95,16 @@
                         <div>
                             <div class="commonFlex pipelinestatusdiv">
                                 <select class="form-select pstatusText" style="background-color: {{ $deal['stage'] === 'Potential'
-                                        ? '#85A69C'
+                                        ? '#dfdfdf'
                                         : ($deal['stage'] === 'Active'
-                                            ? '#70BCA5'
+                                            ? '#afafaf'
                                             : ($deal['stage'] === 'Pre-Active'
-                                                ? '#4B8170'
+                                                ? '#cfcfcf'
                                                 : ($deal['stage'] === 'Under Contract'
-                                                    ? '#477ABB'
+                                                    ? '#8f8f8f;color=#fff;'
                                                     : ($deal['stage'] === 'Dead-Lost To Competition'
-                                                        ? '#575B58'
-                                                        : '#F18F01')))) }}" id="stage{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                                                        ? '#efefef'
+                                                        : '#6f6f6f;color=#fff;')))) }}" id="stage{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
                                     @foreach($allstages as $stage)
                                         <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
                                     @endforeach 
@@ -212,16 +212,16 @@
                         <div class="d-flex justify-content-between">
                             <div class="pTableSelect pipelinestatusdiv">
                                 <p style="background-color: {{ $deal['stage'] === 'Potential'
-                                    ? '#85A69C'
+                                    ? '#dfdfdf'
                                     : ($deal['stage'] === 'Active'
-                                        ? '#70BCA5'
+                                        ? '#afafaf'
                                         : ($deal['stage'] === 'Pre-Active'
-                                            ? '#4B8170'
+                                            ? '#cfcfcf'
                                             : ($deal['stage'] === 'Under Contract'
-                                                ? '#477ABB'
+                                                ? '#8f8f8f;color=#fff;'
                                                 : ($deal['stage'] === 'Dead-Lost To Competition'
-                                                    ? '#575B58'
-                                                    : '#F18F01')))) }}"
+                                                    ? '#efefef'
+                                                    : '#6f6f6f;color=#fff;')))) }}"
                                     class="pstatusText">{{ $deal['stage'] ?? 'N/A' }} </p>
                                 <i class="fas fa-angle-down"></i>
                             </div>
@@ -306,16 +306,16 @@
                                         <div class="d-flex justify-content-between">
                                             <div class="pTableSelect pipelinestatusdiv">
                                                 <p style="background-color: ${item.stage === 'Potential'
-                                    ? '#85A69C'
+                                    ? '#dfdfdf'
                                     : (item.stage === 'Active'
-                                        ? '#70BCA5'
+                                        ? '#afafaf'
                                         : (item.stage === 'Pre-Active'
-                                            ? '#4B8170'
+                                            ? '#cfcfcf'
                                             : (item.stage === 'Under Contract'
-                                                ? '#477ABB'
+                                                ? '#8f8f8f;color=#fff;'
                                                 : (item.stage === 'Dead-Lost To Competition'
-                                                    ? '#575B58'
-                                                    : '#F18F01'))))}"
+                                                    ? '#efefef'
+                                                    : '#6f6f6f;color=#fff;'))))}"
                                                     class="pstatusText">${item.stage || 'N/A'}</p>
                                                 <i class="fas fa-angle-down"></i>
                                             </div>
@@ -354,16 +354,16 @@
                                 <div>
                                     <div class="commonFlex  pipelinestatusdiv">
                                         <p style="background-color: ${item.stage === 'Potential'
-                                            ? '#85A69C'
+                                            ? '#dfdfdf'
                                             : (item.stage === 'Active'
-                                                ? '#70BCA5'
+                                                ? '#afafaf'
                                                 : (item.stage === 'Pre-Active'
-                                                    ? '#4B8170'
+                                                    ? '#cfcfcf'
                                                     : (item.stage === 'Under Contract'
-                                                        ? '#477ABB'
+                                                        ? '#8f8f8f;color=#fff;'
                                                         : (item.stage === 'Dead-Lost To Competition'
-                                                            ? '#575B58'
-                                                            : '#F18F01')))) }"
+                                                            ? '#efefef'
+                                                            : '#6f6f6f;color=#fff;')))) }"
                                             class="pstatusText ">${item.stage ?? 'N/A' } </p>
                                         <i class="fas fa-angle-down"></i>
                                     </div>

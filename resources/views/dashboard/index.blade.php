@@ -704,7 +704,7 @@
                     "checkbox_all") {
                     // Concatenate the checkbox ID with a comma
                     ids += checkbox.id + ",";
-                    document.getElementById("removeBtn").style.backgroundColor = "rgb(37, 60, 91);"
+                    document.getElementById("removeBtn").style.backgroundColor = "#222;"
                 }
             }
         });
@@ -736,10 +736,10 @@
             }
         });
         if (state) {
-            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
+            updateColor.style.backgroundColor = "#222";
         } else {
 
-            updateColor.style.backgroundColor = "rgb(192 207 227)";
+            updateColor.style.backgroundColor = "#dfdfdf";
         }
     }
 
@@ -753,17 +753,15 @@
         checkboxes.forEach(function(checkbox) {
             if (!checkbox.checked) {
                 anyUnchecked = true; // Set flag to true if any checkbox is unchecked
-                // updateColor.style.backgroundColor = "rgb(192 207 227)";
             } else {
-                // updateColor.style.backgroundColor = "rgb(37, 60, 91)";
                 anyChecked = true;
             }
         });
 
         if (anyChecked) {
-            updateColor.style.backgroundColor = "rgb(37, 60, 91)"; // Checked color
+            updateColor.style.backgroundColor = "#222"; // Checked color
         } else {
-            updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
+            updateColor.style.backgroundColor = "#dfdfdf"; // Unchecked color
         }
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }

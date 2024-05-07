@@ -105,18 +105,6 @@
                                         </div>
 
                                         <p class="databaseCardWord"
-                                            style="background-color: {{ $contact['abcd'] === 'A'
-                                                ? '#9CC230'
-                                                : ($contact['abcd'] === 'A+'
-                                                    ? '#44CE1B'
-                                                    : ($contact['abcd'] === 'B'
-                                                        ? // '#FFB800' ||
-                                                        '#FFB800'
-                                                        : ($contact['abcd'] === 'C'
-                                                            ? '#D4B40C'
-                                                            : ($contact['abcd'] === 'D'
-                                                                ? '#816D03'
-                                                                : '#4F6481')))) }};">
                                             {{ $contact['abcd'] ?? '-' }}</p>
                                     </div>
                                     <div class="dataPhoneDiv">
@@ -308,20 +296,7 @@
 
 
     function getColorByAbcd(abcd) {
-        switch (abcd) {
-            case 'A':
-                return '#9CC230';
-            case 'A+':
-                return '#44CE1B';
-            case 'B':
-                return '#FFB800';
-            case 'C':
-                return '#D4B40C';
-            case 'D':
-                return '#816D03';
-            default:
-                return '#4F6481';
-        }
+        return '#b5b5b5';
     }
 
     function filterContactData(sortField, sortDirection, searchInput, filterVal) {
