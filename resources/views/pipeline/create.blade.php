@@ -821,7 +821,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Contact Roles</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                    data-bs-target="#contactRoleID"><i class="fas fa-plus plusicon">
                     </i>
                     Add Contact Role
                 </div>
@@ -1266,6 +1266,45 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+{{-- add contact role modal --}}
+<div class="modal fade" id="contactRoleID" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Contact Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row
+                 {{-- npNom-TM-Table --}}
+                 ">
+                    <div class="col-1">
+                        <input type="checkbox" />
+                    </div>
+                    <div class="col-3">Contact Name</div>
+                    <div class="col-4">Account Name</div>
+                    <div class="col-4">Contact Roles</div>
+                </div>
+                <div class="row py-2">
+                    <div class="col-1">
+                        <input type="checkbox" />
+                    </div>
+                    <div class="col-3">Testing</div>
+                    <div class="col-4">Testing Account</div>
+                    <div class="col-4"><select class="form-select dbgSelectinfo" id="validationDefault04" required>
+                            <option selected disabled value="Sort Groups by...">Sort Groups by...</option>
+                            <option>...</option>
+                        </select></div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
         </div>
     </div>
 </div>

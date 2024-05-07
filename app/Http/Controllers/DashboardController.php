@@ -55,6 +55,7 @@ class DashboardController extends Controller
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
+        $totalGciForDah = $this->totalGCIForDash($deals, $goal);
         $progressClass = $progress <= 15 ? "#FE5243" : ($progress <= 45 ? "#FADA05" : "#21AC25");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
         Log::info("Progress: $progress");
@@ -224,7 +225,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
     }
 
     private function formatNumber($number) {
@@ -347,6 +348,23 @@ class DashboardController extends Controller
 
         // Ensure progress does not exceed 100%.
         return min($progress, 100);
+    }
+
+    private function totalGCIForDash($deals, $goal)
+    {
+        // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
+        // don't count anything beyond 12 months
+        // exclude bad dates as well
+        $filteredDeals = $deals->filter(function ($deal) {
+            return !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold'
+                   && $this->masterFilter($deal); // Correct usage within the method
+        });
+
+        // Sum the 'Pipeline1' values of the filtered deals.
+        $totalGCI = $filteredDeals->sum('pipeline1');
+       
+        return $totalGCI;
     }
 
     private function calculateStageProgress($deals, $goal)
