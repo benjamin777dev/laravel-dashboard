@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3 cardsTab">
+            {{--<div class="col-md-3 cardsTab">
                 <div class="viewCards">
                     <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
 
@@ -85,7 +85,7 @@
 
                     </p>
                 </div>
-            </div>
+            </div>--}}
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -156,7 +156,7 @@
                                             class="datadiversityicon">
                                     </div>
                                     <div onclick="event.preventDefault();" data-bs-toggle="modal"
-                                        data-bs-target="#newTaskNoteModalId{{ $contact['zoho_contact_id'] }}">
+                                        data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
                                         <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
                                             class="datadiversityicon">
                                     </div>
@@ -232,6 +232,7 @@
                                 </div>
                             </div>
                         </div>
+                        @include('common.notes.create',['contact'=>$contact])
                     </a>
                 @endforeach
             </div>
@@ -534,113 +535,6 @@
                 console.error(xhr.responseText);
             }
         })
-    }
-
-    //notes validation 
-    function resetFormAndHideSelect(id) {
-        document.getElementById('noteForm' + id).reset();
-        document.getElementById('taskSelect' + id).style.display = 'none';
-        clearValidationMessages(id);
-    }
-
-    function clearValidationMessages(id) {
-        document.getElementById("note_text_error" + id).innerText = "";
-        document.getElementById("related_to_error" + id).innerText = "";
-    }
-
-
-    function moduleSelectedforContact(selectedModule, conId) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        //    var id = '{{ request()->route('id') }}'; 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText + '?contactId=' + conId,
-            method: "GET",
-            dataType: "json",
-
-            success: function(response) {
-                // Handle successful response
-                var tasks = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect' + conId);
-                // Clear existing options
-                taskSelect.empty();
-                // Populate select options with tasks
-                $.each(tasks, function(index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        console.log(task);
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
-                        }));
-                    }
-                });
-                taskSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
-
-    function showPopup(contact){
-        new bootstrap.Modal(document.getElementById('newTaskNoteModalId' + contact)).show();
-    }
-
-    function validateFormc(submitClick = '', modId = "") {
-        let noteText = document.getElementById("note_text" + modId).value;
-        let relatedTo = document.getElementById("related_to" + modId).value;
-        let isValid = true;
-        console.log(noteText, 'text')
-        // Reset errors
-        document.getElementById("note_text_error" + modId).innerText = "";
-        document.getElementById("related_to_error" + modId).innerText = "";
-        // Validate note text length
-        if (noteText.trim().length > 50) {
-            document.getElementById("note_text_error" + modId).innerText = "Note text must be 10 characters or less";
-            isValid = false;
-        }
-        // Validate note text
-        if (noteText.trim() === "") {
-            console.log("yes here sdklfhsdf");
-            document.getElementById("note_text_error" + modId).innerText = "Note text is required";
-            isValid = false;
-        }
-
-        // Validate related to
-        if (relatedTo === "") {
-            document.getElementById("related_to_error" + modId).innerText = "Related to is required";
-            document.getElementById("taskSelect" + modId).style.display = "none";
-            isValid = false;
-        }
-        if (isValid) {
-            let changeButton = document.getElementById('validate-button' + modId);
-            changeButton.type = "submit";
-            if (submitClick === "submit") $('[data-custom="noteModal"]').removeAttr("onclick");
-
-        }
-        return isValid;
     }
 
     function editText(zohoID, name) {

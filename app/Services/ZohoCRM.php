@@ -275,7 +275,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
         
-        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
     }
 
@@ -628,6 +628,39 @@ class ZohoCRM
             return $stages;
         } catch (\Throwable $e) {
              Log::error("Error retrieving stages: " . $e->getMessage());
+        }
+        
+    }
+    public function updateContactGroup($inputJSON)
+    {
+        try 
+        {
+            Log::info('Creating Contact Zoho Deal: ' . json_encode($inputJSON));
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->post($this->apiUrl . 'Contacts_X_Groups',$inputJSON);
+            return $response;
+        } catch (\Throwable $e) {
+            Log::error("Error retrieving Update Group: " . $e->getMessage());
+        }
+        
+    }
+
+    public function deleteContactGroup($id)
+    {
+        try 
+        {
+            Log::info('Deleting Contact Zoho Deal: ' . json_encode($id));
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->delete($this->apiUrl . 'Contacts_X_Groups'.$id);
+            return $response;
+        } catch (\Throwable $e) {
+            Log::error("Error retrieving Update Group: " . $e->getMessage());
         }
         
     }

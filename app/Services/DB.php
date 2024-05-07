@@ -416,6 +416,32 @@ class DB
 
     }
 
+    public function retrieveContactByZohoId(User $user, $accessToken,$contactId)
+    {
+
+        try {
+            Log::info("Retrieve Contact From Database");
+            
+            $conditions = [['contact_owner', $user->id],['zoho_contact_id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName');
+
+            
+            Log::info("Deal Conditions", ['contacts' => $conditions]);
+
+            // Retrieve contacts based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved contacts From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
     public function retreiveTasks(User $user, $accessToken, $tab = '')
     {
         try {

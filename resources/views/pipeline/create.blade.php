@@ -277,121 +277,6 @@
             }
             allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
         }
-        function resetFormAndHideSelect() {
-            document.getElementById('noteForm').reset();
-            document.getElementById('taskSelect').style.display = 'none';
-            clearValidationMessages();
-        }
-        function clearValidationMessages() {
-            document.getElementById("note_text_error").innerText = "";
-            document.getElementById("related_to_error").innerText = "";
-        }
-        function validateForm() {
-            let noteText = document.getElementById("note_text").value;
-            let relatedTo = document.getElementById("related_to").value;
-            let isValid = true;
-
-            // Reset errors
-            document.getElementById("note_text_error").innerText = "";
-            document.getElementById("related_to_error").innerText = "";
-
-            // Validate note text length
-            if (noteText.trim().length > 100) {
-                document.getElementById("note_text_error").innerText = "Note text must be 100 characters or less";
-                isValid = false;
-            }
-            // Validate note text
-            if (noteText.trim() === "") {
-                document.getElementById("note_text_error").innerText = "Note text is required";
-                isValid = false;
-            }
-
-            // Validate related to
-            if (relatedTo === "") {
-                document.getElementById("related_to_error").innerText = "Related to is required";
-                document.getElementById("taskSelect").style.display = "none";
-                isValid = false;
-            }
-            if (isValid) {
-                let changeButton = document.getElementById('validate-button');
-                changeButton.type = "submit";
-            }
-            return isValid;
-        }
-        function handleDeleteCheckbox(id) {
-            // Get all checkboxes
-            const checkboxes = document.querySelectorAll('.checkbox' + id);
-            // Get delete button
-            const deleteButton = document.getElementById('deleteButton' + id);
-            const editButton = document.getElementById('editButton' + id);
-            console.log(checkboxes, 'checkboxes')
-            // Add event listener to checkboxes
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    // Check if any checkbox is checked
-                    const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-                    // Toggle delete button visibility
-                    editButton.style.display = anyChecked ? 'block' : 'none';
-                    // if (deleteButton.style.display === 'block') {
-                    //     selectedNoteIds.push(id)
-                    // }
-                });
-            });
-
-        }
-        function moduleSelected(selectedModule, accessToken) {
-            // console.log(accessToken,'accessToken')
-            var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-            var selectedText = selectedOption.text;
-            //    var id = '{{ request()->route('id') }}'; 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/task/get-' + selectedText+'?dealId={{$deal['zoho_deal_id']}}',
-                method: "GET",
-                dataType: "json",
-
-                success: function(response) {
-                    // Handle successful response
-                    var tasks = response;
-                    // Assuming you have another select element with id 'taskSelect'
-                    var taskSelect = $('#taskSelect');
-                    // Clear existing options
-                    taskSelect.empty();
-                    // Populate select options with tasks
-                    $.each(tasks, function(index, task) {
-                        if (selectedText === "Tasks") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_task_id,
-                                text: task?.subject
-                            }));
-                        }
-                        if (selectedText === "Deals") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_deal_id,
-                                text: task?.deal_name
-                            }));
-                        }
-                        if (selectedText === "Contacts") {
-                            taskSelect.append($('<option>', {
-                                value: task?.contactData?.zoho_contact_id,
-                                text: task?.contactData?.first_name + ' ' + task?.contactData?.last_name
-                            }));
-                        }
-                    });
-                    taskSelect.show();
-                    // Do whatever you want with the response data here
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error("Ajax Error:", error);
-                }
-            });
-
-        }
     </script>
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
@@ -1100,7 +985,7 @@
 
         </div>
 </div>
-<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
     <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
 </div>
 {{-- Create New Task Modal --}}
@@ -1139,49 +1024,7 @@
     </div>
 </div>
 {{-- Notes Model --}}
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered deleteModal">
-        <div class="modal-content noteModal">
-            <div class="modal-header border-0">
-                <p class="modal-title dHeaderText">Note</p>
-                <button type="button" onclick="resetFormAndHideSelect();" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <form id="noteForm" action="{{ route('save.note') }}" method="post">
-                @csrf
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
-                    <div id="note_text_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
-                            name="related_to" aria-label="Select Transaction">
-                            <option value="">Please select one</option>
-                            @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                    <option value="{{ $item }}">{{ $item['api_name'] }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
-                            aria-label="Select Transaction" style="display: none;">
-                            <option value="">Please Select one</option>
-                        </select>
-                    </div>
-                    <div id="related_to_error" class="text-danger"></div>
-                </div>
-                <div class="modal-footer dNoteFooter border-0">
-                    <button type="button" id="validate-button" onclick="validateForm()"
-                        class="btn btn-secondary dNoteModalmarkBtn">
-                        <i class="fas fa-save saveIcon"></i> Add Note
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+@include('common.notes.create',['deal'=>$deal])
     
     @vite(['resources/js/pipeline.js'])
 
