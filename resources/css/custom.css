@@ -1581,7 +1581,8 @@
 }
 
 .databaseCardWord {
-    color: #b5b5b5;
+    background-color: #dfdfdf;
+    color: #000 !important;
     text-align: center;
     font-family: Avenir;
     font-size: 20px;
