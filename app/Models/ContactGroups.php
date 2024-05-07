@@ -27,9 +27,20 @@ class ContactGroups extends Model
         return $this->belongsTo(Contact::class, 'contactId');
     }
 
+
+
     public function userData()
     {
         return $this->belongsTo(User::class, 'ownerId');
+    }
+
+    public function groups()
+    {
+        return $this->hasMany(ContactGroups::class, 'contactId')->with("group");
+    }
+    public function group()
+    {
+        return $this->belongsTo(Groups::class, 'groupId');
     }
 
     public function groupData()

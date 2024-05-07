@@ -171,18 +171,24 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
+        $zoho->access_token = $accessToken;
 
-            $jsonData = $request->json()->all();
-            $zohoDeal = $zoho->updateZohoDeal($jsonData,$id);
-             if (!$zohoDeal->successful()) {
-                     return "error something".$zohoDeal;
-                }
-                $zohoDealArray = json_decode($zohoDeal, true);
-                $zohoDealData = $zohoDealArray['data'][0]['details']; 
-                $data = $jsonData['data'][0]; 
-            $deal=$db->updateDeal($user,$accessToken,$data,$id);
-            return response()->json($deal);        
+        $jsonData = $request->json()->all();
+        $zohoDeal = $zoho->updateZohoDeal($jsonData,$id);
+            if (!$zohoDeal->successful()) {
+            return "error something".$zohoDeal;
+        }
+        $zohoDealArray = json_decode($zohoDeal, true);
+        $zohoDealData = $zohoDealArray['data'][0]['details'];
+        $resp = $zoho->getZohoDeal($zohoDealData['id']); 
+        if (!$resp->successful()) {
+            return "error something".$resp;
+        }
+        $zohoDeal_Array = json_decode($resp, true);
+        $zohoDealValues = $zohoDeal_Array['data'][0];
+        $data = $jsonData['data']; 
+        $deal=$db->updateDeal($user,$accessToken,$zohoDealValues,$id);
+        return response()->json($zohoDealArray);        
     }
 
     public function getClosedDeals(Request $request)

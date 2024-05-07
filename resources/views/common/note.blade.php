@@ -26,7 +26,6 @@
                           id="related_to{{ $module['zoho_contact_id'] }}"
                           onchange="moduleSelectedforContact(this,'{{ $module['zoho_contact_id'] }}')"
                           name="related_to" aria-label="Select Transaction">
-                          <option value="">Please select one</option>
                           @foreach ($retrieveModuleData as $item)
                               @if (in_array($item['api_name'], ['Deals', 'Contacts']))
                                   <option value="{{ $item }}">{{ $item['api_name'] }}
@@ -37,8 +36,10 @@
                       <select class="form-select dmodaltaskSelect"
                           id="taskSelect{{ $module['zoho_contact_id'] }}"
                           name="related_to_parent" aria-label="Select Transaction"
-                          style="display: none;">
-                          <option value="">Please Select one</option>
+                          >
+                           <option value="{{ $deal['zoho_deal_id'] }}" selected>
+                                {{ $deal['deal_name'] }}
+                            </option>
                       </select>
                   </div>
                   <div id="related_to_error{{ $module['zoho_contact_id'] }}"
