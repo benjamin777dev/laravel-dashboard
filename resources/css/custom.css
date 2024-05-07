@@ -1070,12 +1070,12 @@
 }
 
 .pstatusText {
-    color: #fff !important;
+    color: #000 !important;
     text-align: center;
-    font-size: 13px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 900;
-    line-height: 11px;
+    line-height: 18px;
     letter-spacing: -0.65px;
     padding: 4px 6px;
     border-radius: 4px;
