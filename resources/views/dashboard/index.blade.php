@@ -101,9 +101,8 @@
                                     <div class="gauge-center"></div>
                                 </div>
                             </div> --}}
+                            <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
                             <div>
-                                <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
-                                <p class="dFont800 dFont13 dMb5 dRangeText">Pipeline range</p>
                                 {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
                                         value="{{ $startDate }} - {{ $endDate }}" />
