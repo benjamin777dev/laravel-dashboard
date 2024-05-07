@@ -153,7 +153,7 @@
 }
 
 .dashboard-notes-list {
-    background: #dfdfdf !important;
+    background: #efefef !important;
     padding: 20px;
     border-radius: 4px;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
@@ -2075,4 +2075,12 @@ canvas {
 }
 .gdropdown{
     padding:10px
+}
+
+body[data-sidebar=dark] .vertical-menu {
+    background: #000 !important;
+}
+
+body[data-sidebar=dark] .navbar-brand-box {
+    background: #000;
 }
