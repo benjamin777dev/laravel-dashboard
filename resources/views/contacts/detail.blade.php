@@ -229,7 +229,6 @@
                             <option value="{{ json_encode(['id' => $user['root_user_id'], 'Full_Name' =>  $user['name']]) }}" selected>
                                {{ $user['name']}}</option>
                             @endforeach
-                        @endforeach
                         @endif
                     </div>
                     </div>
