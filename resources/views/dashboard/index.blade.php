@@ -87,7 +87,7 @@
                         <div class="col-md-4 dspeedometersection">
                             <p class="dpipetext">My Pipeline</p>
                             <div id="canvas-holder" style="width:100%">
-                                <canvas id="chart" width="400" height="400"></canvas>
+                                <canvas id="chart" width="100%" height="100%"></canvas>
                             </div>
                             {{-- <button id="randomizeData" onclick="randomDatassss();">Randomize Data</button> --}}
                             {{-- <div class="wrapper">
@@ -102,13 +102,14 @@
                                 </div>
                             </div> --}}
                             <div>
-                                <p class="dFont800 dFont13 dMb5">Pipeline range</p>
-                                <div class="d-flex justify-content-between align-items-center dCalander">
+                                <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
+                                <p class="dFont800 dFont13 dMb5 dRangeText">Pipeline range</p>
+                                {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
                                         value="{{ $startDate }} - {{ $endDate }}" />
                                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
                                         onclick="triggerDateRangePicker()">
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="col-md-8 graphp-dash">
@@ -192,7 +193,10 @@
                                     aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
-                    @include('common.tasks', ['tasks' => $tasks,'retrieveModuleData'=>$retrieveModuleData])
+                    @include('common.tasks', [
+                        'tasks' => $tasks,
+                        'retrieveModuleData' => $retrieveModuleData,
+                    ])
                 </div>
 
             </div>
@@ -227,17 +231,18 @@
                             <div class="col-md-2 npcommontableBodytext">
                                 <div class="dTContactName">
                                     <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                    {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
+                                    {{ $deal->contactName->first_name ?? '' }} {{ $deal->contactName->last_name ?? '' }}
                                 </div>
                             </div>
                             <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
                                 <div class="dTContactName">
-                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'9999999999' }}
+                                    <img src="{{ URL::asset('/images/phoneb.svg') }}"
+                                        alt="P">{{ $deal->contactName->phone ?? '9999999999' }}
                                 </div>
                             </div>
                             <div class="col-md-2 commonTextEllipsis npcommontableBodytext ">
                                 <div class="dTContactName"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                        alt="M">{{ $deal->contactName->email??'N/A' }}
+                                        alt="M">{{ $deal->contactName->email ?? 'N/A' }}
                                 </div>
                             </div>
                             <div class="col-md-2 npcommontableBodytext ">
@@ -264,17 +269,18 @@
                             </div>
                             <div class="dTCardName">
                                 <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                {{ $deal->userData->name??'N/A' }}
+                                {{ $deal->userData->name ?? 'N/A' }}
                             </div>
                             <div class="dTCardName">
                                 <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
+                                {{ $deal->contactName->first_name ?? '' }} {{ $deal->contactName->last_name ?? '' }}
                             </div>
                             <div class="dTCardName">
-                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'N/A' }}
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}"
+                                    alt="P">{{ $deal->contactName->phone ?? 'N/A' }}
                             </div>
                             <div class="dTCardmail"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                    alt="M">{{ $deal->contactName->email??'N/A' }}
+                                    alt="M">{{ $deal->contactName->email ?? 'N/A' }}
                             </div>
                         </div>
                     @endforeach
@@ -300,12 +306,12 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea()"  id="subject" rows="4" class="dtextarea"></textarea>
+                    <textarea name="subject" onkeyup="validateTextarea()" id="subject" rows="4" class="dtextarea"></textarea>
                     <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" id="related_to_task" onchange="taskModuleSelected(this)"
-                            name="related_to_task" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" id="related_to_task"
+                            onchange="taskModuleSelected(this)" name="related_to_task" aria-label="Select Transaction">
                             <option value="">Please select one</option>
                             @foreach ($retrieveModuleData as $item)
                                 @if (in_array($item['api_name'], ['Deals', 'Contacts']))
@@ -462,7 +468,7 @@
 
     function resetValidation() {
         document.getElementById("task_error").innerHTML = "";
-        
+
     }
 
     function validateTextarea() {
@@ -529,7 +535,7 @@
             }
         })
     }
-  
+
 
     function convertDateTime(inputDateTime) {
 
@@ -763,7 +769,7 @@
     }
 
 
-     function taskModuleSelected(selectedModule) {
+    function taskModuleSelected(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -799,7 +805,8 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_contact_id,
-                            text: (task?.first_name??'') + ' ' + (task?.last_name??'')
+                            text: (task?.first_name ?? '') + ' ' + (task?.last_name ??
+                                '')
                         }));
                     }
                 });
@@ -920,12 +927,10 @@
     var config = {
         type: 'gauge',
         data: {
-            //labels: ['Success', 'Warning', 'Warning', 'Error'],
             datasets: [{
                 data: data,
                 value: value,
                 backgroundColor: ['#FE5243', '#FADA05', '#21AC25'],
-                //  [@json($progressClass)],
                 borderWidth: 2
             }]
         },
@@ -933,7 +938,6 @@
             responsive: true,
             title: {
                 display: true,
-                //   text: 'Gauge chart'
             },
             layout: {
                 padding: {
@@ -941,22 +945,38 @@
                 }
             },
             needle: {
-                // Needle circle radius as the percentage of the chart area width
                 radiusPercentage: 2,
-                // Needle width as the percentage of the chart area width
                 widthPercentage: 3.2,
-                // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
                 lengthPercentage: 80,
-                // The color of the needle
                 color: 'rgba(0, 0, 0, 1)'
             },
             valueLabel: {
-                formatter: Math.round,
+                formatter: function(value) {
+                    return Math.round(value) + "%";
+                }
             },
             chartArea: {
-                // Set the desired width and height of the chart area
                 width: '80%',
                 height: '80%'
+            },
+            // Add callbacks to draw percentage labels
+            plugins: {
+                afterDraw: function(chart, easing) {
+                    var ctx = chart.ctx;
+                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart
+                        .defaults.global.defaultFontFamily);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    chart.data.datasets.forEach(function(dataset) {
+                        for (var i = 0; i < dataset.data.length; i++) {
+                            var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                            var labelText = Math.round(dataset.data[i]) + "%";
+                            ctx.fillStyle = '#000'; // set font color
+                            ctx.fillText(labelText, model.x, model.y -
+                            5); // adjust Y position for label
+                        }
+                    });
+                }
             }
         }
     };

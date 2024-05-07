@@ -372,12 +372,96 @@
                                 <div class="commonTextEllipsis">$ ${item.sale_price ?? 'N/A' }</div>
                                 <div>${item.closing_date ?? 'N/A' }</div>
                                 <div> <img src="{{ URL::asset('/images/open.svg')}}" alt="Open icon" class="ppiplinecommonIcon">
-                                    <img src="{{URL::asset('/images/splitscreen.svg')}}" alt="Open icon" class="ppiplinecommonIcon">
+                                    <img src="{{URL::asset('/images/splitscreen.svg')}}" alt="Open icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#newTaskModalId${item.id}">
                                     <img src="{{URL::asset('/images/sticky_note.svg')}}" alt="Open icon" class="ppiplinecommonIcon">
-                                    <img src="{{URL::asset('/images/noteBtn.svg')}}" alt="Open icon" class="ppiplinecommonIcon">
+                                    <img src="{{URL::asset('/images/noteBtn.svg')}}" alt="Open icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#staticBackdrop_${item.id}">
+                                </div>
+
+                                {{-- Notes Modal --}}
+                    <div class="modal fade" id="staticBackdrop_${item.id}" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel_{{ $deal['id'] }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                            <div class="modal-content noteModal">
+                                <div class="modal-header border-0">
+                                    <p class="modal-title dHeaderText">Note</p>
+                                    <button type="button" onclick="resetFormAndHideSelect();" class="btn-close"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="noteForm_{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post">
+                                    @csrf
+                                    <div class="modal-body dtaskbody">
+                                        <p class="ddetailsText">Details</p>
+                                        <textarea name="note_text" id="note_text_{{ $deal['id'] }}" rows="4"
+                                            class="dtextarea"></textarea>
+                                        <div id="note_text_error_{{ $deal['id'] }}" class="text-danger"></div>
+                                        <p class="dRelatedText">Related to...</p>
+                                        <div class="btn-group dmodalTaskDiv">
+                                            <select class="form-select dmodaltaskSelect" id="related_to_{{ $deal['id'] }}"
+                                                onchange="moduleSelected(this,'{{$deal}}')" name="related_to"
+                                                aria-label="Select Transaction">
+                                                <option value="">Please select one</option>
+                                                @foreach ($retrieveModuleData as $item)
+                                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
+                                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            <select class="form-select dmodaltaskSelect" id="taskSelect_{{ $deal['id'] }}"
+                                                name="related_to_parent" aria-label="Select Transaction" style="display: none;">
+                                                <option value="{{$deal['zoho_deal_id']}}">{{$deal['deal_name']}}</option>
+                                            </select>
+                                        </div>
+                                        <div id="related_to_error_{{ $deal['id'] }}" class="text-danger"></div>
+                                    </div>
+                                    <div class="modal-footer dNoteFooter border-0">
+                                        <button type="button" id="validate-button_{{ $deal['id'] }}"
+                                            onclick="validateForm('{{ $deal['id'] }}')"
+                                            class="btn btn-secondary dNoteModalmarkBtn">
+                                            <i class="fas fa-save saveIcon"></i> Add Note
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Create New Task Modal --}}
+                    <div class="modal fade" id="newTaskModalId${item.id}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered deleteModal">
+                            <div class="modal-content dtaskmodalContent">
+                                <div class="modal-header border-0">
+                                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body dtaskbody">
+                                    <p class="ddetailsText">Details</p>
+                                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                                    <div id="subject_error" class="text-danger"></div>
+                                    <p class="dRelatedText">Related to...</p>
+                                    <div class="btn-group dmodalTaskDiv">
+                                        <select class="form-select dmodaltaskSelect" name="related_to"
+                                            aria-label="Select Transaction">
+                                            <option value="${item.zoho_deal_id}" selected>
+                                                ${item.deal_name}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <p class="dDueText">Date due</p>
+                                    <input type="date" name="due_date" class="dmodalInput" />
+                                </div>
+                                <div class="modal-footer ">
+                                    <button type="button" onclick="addTask('${item.zoho_deal_id}')" class="btn btn-secondary taskModalSaveBtn">
+                                        <i class="fas fa-save saveIcon"></i> Save Changes
+                                    </button>
+
                                 </div>
 
                             </div>
+                        </div>
+                    </div>
+                            </div>
+                            
                             `);
                             ppipelineTableBody.append(row);
                         }
@@ -388,6 +472,18 @@
                 }
             });
         }
+
+        function validateTextarea() {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
 
         window.createTransaction= function() {
             console.log("Onclick");
@@ -535,6 +631,7 @@
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
             document.getElementById("subject_error").innerHTML = "please enter details";
+            return;
         }
         // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         // var whoId = window.selectedTransation

@@ -619,7 +619,7 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Contact Roles</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                    data-bs-target="#contactRoleID"><i class="fas fa-plus plusicon">
                     </i>
                     Add Contact Role
                 </div>
