@@ -87,7 +87,7 @@
                         <div class="col-md-4 dspeedometersection">
                             <p class="dpipetext">My Pipeline</p>
                             <div id="canvas-holder" style="width:100%">
-                                <canvas id="chart" width="400" height="400"></canvas>
+                                <canvas id="chart" width="100%" height="100%"></canvas>
                             </div>
                             {{-- <button id="randomizeData" onclick="randomDatassss();">Randomize Data</button> --}}
                             {{-- <div class="wrapper">
@@ -102,13 +102,14 @@
                                 </div>
                             </div> --}}
                             <div>
-                                <p class="dFont800 dFont13 dMb5">Pipeline range</p>
-                                <div class="d-flex justify-content-between align-items-center dCalander">
+                                <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
+                                <p class="dFont800 dFont13 dMb5 dRangeText">Pipeline range</p>
+                                {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
                                         value="{{ $startDate }} - {{ $endDate }}" />
                                     <img class="celendar_icon" src="{{ URL::asset('/images/calendar.svg') }}" alt=""
                                         onclick="triggerDateRangePicker()">
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="col-md-8 graphp-dash">
@@ -192,7 +193,10 @@
                                     aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
-                    @include('common.tasks', ['tasks' => $tasks,'retrieveModuleData'=>$retrieveModuleData])
+                    @include('common.tasks', [
+                        'tasks' => $tasks,
+                        'retrieveModuleData' => $retrieveModuleData,
+                    ])
                 </div>
 
             </div>
@@ -227,17 +231,18 @@
                             <div class="col-md-2 npcommontableBodytext">
                                 <div class="dTContactName">
                                     <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                    {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
+                                    {{ $deal->contactName->first_name ?? '' }} {{ $deal->contactName->last_name ?? '' }}
                                 </div>
                             </div>
                             <div class="col-md-2 commonTextEllipsis npcommontableBodytext">
                                 <div class="dTContactName">
-                                    <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'9999999999' }}
+                                    <img src="{{ URL::asset('/images/phoneb.svg') }}"
+                                        alt="P">{{ $deal->contactName->phone ?? '9999999999' }}
                                 </div>
                             </div>
                             <div class="col-md-2 commonTextEllipsis npcommontableBodytext ">
                                 <div class="dTContactName"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                        alt="M">{{ $deal->contactName->email??'N/A' }}
+                                        alt="M">{{ $deal->contactName->email ?? 'N/A' }}
                                 </div>
                             </div>
                             <div class="col-md-2 npcommontableBodytext ">
@@ -250,13 +255,6 @@
                     @endforeach
                 @endif
 
-
-
-                {{-- @if (count($closedDeals) === 0)
-                    <div>
-                        <p class="text-center" colspan="5">No records found</p>
-                    </div>
-                @else --}}
                 <div class="dtransactionsCardDiv">
                     @foreach ($closedDeals as $deal)
                         <div class="dtCardMainDiv">
@@ -271,17 +269,18 @@
                             </div>
                             <div class="dTCardName">
                                 <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                {{ $deal->userData->name??'N/A' }}
+                                {{ $deal->userData->name ?? 'N/A' }}
                             </div>
                             <div class="dTCardName">
                                 <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                {{ $deal->contactName->first_name??'' }} {{ $deal->contactName->last_name??'' }}
+                                {{ $deal->contactName->first_name ?? '' }} {{ $deal->contactName->last_name ?? '' }}
                             </div>
                             <div class="dTCardName">
-                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt="P">{{ $deal->contactName->phone??'N/A' }}
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}"
+                                    alt="P">{{ $deal->contactName->phone ?? 'N/A' }}
                             </div>
                             <div class="dTCardmail"> <img src="{{ URL::asset('/images/mailb.svg') }}"
-                                    alt="M">{{ $deal->contactName->email??'N/A' }}
+                                    alt="M">{{ $deal->contactName->email ?? 'N/A' }}
                             </div>
                         </div>
                     @endforeach
@@ -307,12 +306,12 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea()"  id="subject" rows="4" class="dtextarea"></textarea>
+                    <textarea name="subject" onkeyup="validateTextarea()" id="subject" rows="4" class="dtextarea"></textarea>
                     <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" id="related_to_task" onchange="taskModuleSelected(this)"
-                            name="related_to_task" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" id="related_to_task"
+                            onchange="taskModuleSelected(this)" name="related_to_task" aria-label="Select Transaction">
                             <option value="">Please select one</option>
                             @foreach ($retrieveModuleData as $item)
                                 @if (in_array($item['api_name'], ['Deals', 'Contacts']))
@@ -339,52 +338,7 @@
         </div>
     </div>
     {{-- Note Modal --}}
-    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content noteModal">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
-                    @csrf
-                    @method('POST')
-                    <div class="modal-body dtaskbody">
-                        <p class="ddetailsText">Details</p>
-                        <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
-                        <div id="note_text_error" class="text-danger"></div>
-                        <p class="dRelatedText">Related to...</p>
-                        <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelectedNote(this)"
-                                name="related_to" aria-label="Select Transaction">
-                                <option value="">Please select one</option>
-                                @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                            <select class="form-select dmodaltaskSelect" id="noteSelect" name="related_to_parent"
-                                aria-label="Select Transaction" style="display: none;">
-                                <option value="">Please Select one</option>
-                            </select>
-                        </div>
-                        <div id="related_to_error" class="text-danger"></div>
-                    </div>
-                    <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button" onclick="validateNoteData()"
-                            class="btn btn-secondary dNoteModalmarkBtn">
-                            <i class="fas fa-save saveIcon"></i> Add Note
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    @include('common.saverecord', ['targetId' => 'deleteNoteSuccessMessage']);
+    @include('common.notes.create')
 
     {{-- save Modal --}}
     {{-- <div class="modal fade" id="saveModalId" tabindex="-1">
@@ -471,8 +425,8 @@
             activeTab.style.borderRadius = "4px";
         }
 
-        document.getElementById("note_text").addEventListener("keyup", validateNoteData);
-        document.getElementById("related_to").addEventListener("change", validateNoteData);
+        document.getElementById("note_text").addEventListener("keyup", validateNoteDash);
+        document.getElementById("related_to").addEventListener("change", validateNoteDash);
 
         // console.log("yes tist woring", @json($allMonths), )
         var ctx = document.getElementById('chart').getContext('2d');
@@ -514,7 +468,7 @@
 
     function resetValidation() {
         document.getElementById("task_error").innerHTML = "";
-        
+
     }
 
     function validateTextarea() {
@@ -581,7 +535,7 @@
             }
         })
     }
-  
+
 
     function convertDateTime(inputDateTime) {
 
@@ -607,56 +561,7 @@
 
         return formattedDateTime;
     }
-    // Function to open the confirmation modal
-    function openConfirmationModal(id) {
-        var modal = document.getElementById(id);
-        modal.style.display = 'block';
-    }
-    // Function to close the confirmation modal
-    function closeConfirmationModal(id) {
-        console.log(id,'closeConfirmationModal')
-        var modal = document.getElementById(id);
-        modal.style.display = 'none';
-    }
-
-    // Function to handle deletion
-    function deleteNoteItem(id) {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "/delete-note/"+id,
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    success: function(response) {
-                        // Handle success response
-                        if(response?.data[0]?.code==="SUCCESS"){
-                            $('#deleteNoteSuccessMessage').modal('show');
-                        // Update modal content if needed
-                        $('#updated_message').text(response?.data[0]?.message);
-                        // Reload the page after modal is closed
-                        $('#deleteNoteSuccessMessage').on('hidden.bs.modal', function () {
-                            window.location.reload();
-                        });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
-
-    }
+    
 
     function updateTask(id, indexid) {
         alert('update task');
@@ -863,113 +768,11 @@
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }
 
-    function clearValidationMessages() {
-        document.getElementById("note_text_error").innerText = "";
-        document.getElementById("related_to_error").innerText = "";
-    }
 
-    function resetFormAndHideSelectDashboard() {
-        document.getElementById('noteForm_dash')?.reset();
-        document.getElementById('noteSelect').style.display = 'none';
-        clearValidationMessages();
-    }
-    // validation function onsubmit
-    function validateNoteData() {
-        let noteText = document.getElementById("note_text").value;
-        let relatedTo = document.getElementById("related_to").value;
-        console.log("relatedTo",relatedTo);
-        let isValid = true;
-
-        // Reset errors
-        document.getElementById("note_text_error").innerText = "";
-        document.getElementById("related_to_error").innerText = "";
-
-        // Validate note text length
-        if (noteText.trim().length > 10) {
-            document.getElementById("note_text_error").innerText = "Note text must be 10 characters or less";
-            isValid = false;
-        }
-        // Validate note text
-        if (noteText.trim() === "") {
-            document.getElementById("note_text_error").innerText = "Note text is required";
-            isValid = false;
-        }
-
-        // Validate related to
-        if (relatedTo.trim() === "") {
-            document.getElementById("related_to_error").innerText = "Related to is required";
-            document.getElementById("noteSelect").style.display = "none";
-            isValid = false;
-        }
-        if (isValid) {
-            let changeButton = document.getElementById('validate-button');
-            changeButton.type = "submit";
-        }
-         
-        return isValid;
-    }
-
-
-
-    function moduleSelectedNote(selectedModule,id="") {
+    function taskModuleSelected(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
-        console.log(selectedText,"selectedText");
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                console.log(response,'resoponse')
-                // Handle successful response
-                var notes = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var noteSelect = $('#noteSelect');
-                // Clear existing options
-                noteSelect.empty();
-                // Populate select options with tasks
-                $.each(notes, function(index, note) {
-                    if (selectedText === "Tasks") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_task_id,
-                            text: note?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_deal_id,
-                            text: note?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_contact_id,
-                            text: (note?.first_name??'') + ' ' + (note?.last_name??'')
-                        }));
-                    }
-                });
-                noteSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
-
-     function taskModuleSelected(selectedModule) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        document.getElementById("related_to_error").innerText = "";
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1002,7 +805,8 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_contact_id,
-                            text: (task?.first_name??'') + ' ' + (task?.last_name??'')
+                            text: (task?.first_name ?? '') + ' ' + (task?.last_name ??
+                                '')
                         }));
                     }
                 });
@@ -1021,30 +825,6 @@
     function triggerDateRangePicker() {
         // Trigger click event on the input element
         $('.ddaterangepicker').click();
-    }
-
-    function markAsDone(noteId) {
-        // Send an AJAX request to the route using jQuery
-        $.ajax({
-            type: 'POST',
-            url: '{{ route('mark.done') }}',
-            data: {
-                // Pass the note ID to the server
-                note_id: noteId,
-                // Add CSRF token for Laravel security
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response?.mark_as_done === 1) {
-                    window.location.reload();
-                }
-                // Handle success response if needed
-            },
-            error: function(xhr, status, error) {
-                // Handle error if needed
-            }
-        });
-
     }
 
     window.createTransaction = function() {
@@ -1147,12 +927,10 @@
     var config = {
         type: 'gauge',
         data: {
-            //labels: ['Success', 'Warning', 'Warning', 'Error'],
             datasets: [{
                 data: data,
                 value: value,
                 backgroundColor: ['#FE5243', '#FADA05', '#21AC25'],
-                //  [@json($progressClass)],
                 borderWidth: 2
             }]
         },
@@ -1160,7 +938,6 @@
             responsive: true,
             title: {
                 display: true,
-                //   text: 'Gauge chart'
             },
             layout: {
                 padding: {
@@ -1168,22 +945,38 @@
                 }
             },
             needle: {
-                // Needle circle radius as the percentage of the chart area width
                 radiusPercentage: 2,
-                // Needle width as the percentage of the chart area width
                 widthPercentage: 3.2,
-                // Needle length as the percentage of the interval between inner radius (0%) and outer radius (100%) of the arc
                 lengthPercentage: 80,
-                // The color of the needle
                 color: 'rgba(0, 0, 0, 1)'
             },
             valueLabel: {
-                formatter: Math.round,
+                formatter: function(value) {
+                    return Math.round(value) + "%";
+                }
             },
             chartArea: {
-                // Set the desired width and height of the chart area
                 width: '80%',
                 height: '80%'
+            },
+            // Add callbacks to draw percentage labels
+            plugins: {
+                afterDraw: function(chart, easing) {
+                    var ctx = chart.ctx;
+                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart
+                        .defaults.global.defaultFontFamily);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    chart.data.datasets.forEach(function(dataset) {
+                        for (var i = 0; i < dataset.data.length; i++) {
+                            var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                            var labelText = Math.round(dataset.data[i]) + "%";
+                            ctx.fillStyle = '#000'; // set font color
+                            ctx.fillText(labelText, model.x, model.y -
+                            5); // adjust Y position for label
+                        }
+                    });
+                }
             }
         }
     };
@@ -1248,57 +1041,6 @@
 
     }
 
-    function noteModuleSelected(selectedModule,id) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        console.log(selectedText,"selectedText");
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                // Handle successful response
-                var notes = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var noteSelect = $('#noteSelect');
-                // Clear existing options
-                noteSelect.empty();
-                // Populate select options with tasks
-                $.each(notes, function(index, note) {
-                    if (selectedText === "Tasks") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_task_id,
-                            text: note?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_deal_id,
-                            text: note?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        noteSelect.append($('<option>', {
-                            value: note?.zoho_contact_id,
-                            text: (note?.first_name??'') + ' ' + (note?.last_name??'')
-                        }));
-                    }
-                });
-                noteSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
+    
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
