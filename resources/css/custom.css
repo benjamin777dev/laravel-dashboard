@@ -170,11 +170,11 @@
 }
 
 .dnotesUl::-webkit-scrollbar {
-    width: 5px;
+    width: 7px;
 }
 
 .dnotesUl::-webkit-scrollbar-thumb {
-    background: #eff6ff;
+    background: #000;
 }
 
 .dtranstiontable {
@@ -1956,9 +1956,12 @@
     font-style: normal;
     font-weight: 800;
     line-height: 18px;
+    margin-bottom: 0;
 }
 
-
+.dRangeText{
+    margin-bottom: 0;
+}
 /* stacked chart css */
 .dgraphdiv {
     margin-bottom: 24px;

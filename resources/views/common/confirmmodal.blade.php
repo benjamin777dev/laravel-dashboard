@@ -24,7 +24,7 @@
                     <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
                         <div class="d-grid gap-2 col-5">
                             <button type="button"
-                            onclick="deleteNoteItem('{{ $zoho_note_id}}')"
+                            onclick="deleteNoteItem('{{ $targetId}}')"
                                 class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
                                 <i class="fas fa-trash-alt trashIcon"></i> Yes,
                                 delete

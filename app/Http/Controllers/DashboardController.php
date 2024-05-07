@@ -55,6 +55,7 @@ class DashboardController extends Controller
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
+        $totalGciForDah = $this->totalGCIForDash($deals, $goal);
         $progressClass = $progress <= 15 ? "#FE5243" : ($progress <= 45 ? "#FADA05" : "#21AC25");
         $progressTextColor = $progress <= 15 ? "#fff" : ($progress <= 45 ? "#333" : "#fff");
         Log::info("Progress: $progress");
@@ -224,7 +225,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notesInfo','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
     }
 
     private function formatNumber($number) {
@@ -347,6 +348,23 @@ class DashboardController extends Controller
 
         // Ensure progress does not exceed 100%.
         return min($progress, 100);
+    }
+
+    private function totalGCIForDash($deals, $goal)
+    {
+        // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
+        // don't count anything beyond 12 months
+        // exclude bad dates as well
+        $filteredDeals = $deals->filter(function ($deal) {
+            return !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold'
+                   && $this->masterFilter($deal); // Correct usage within the method
+        });
+
+        // Sum the 'Pipeline1' values of the filtered deals.
+        $totalGCI = $filteredDeals->sum('pipeline1');
+       
+        return $totalGCI;
     }
 
     private function calculateStageProgress($deals, $goal)
@@ -879,18 +897,19 @@ class DashboardController extends Controller
         $data = json_decode($response, true);
         $zoho_node_id = $data['data'][0]['details']['id'];
         $deal = $db->retrieveDealByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
+        // dd($deal);
+        $contact = $db->retrieveContactByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
         $note->related_to_module_id = $validatedData1['zoho_module_id'];
         $note->zoho_note_id = $zoho_node_id;
         $note->owner = $user->id;
-        $note->related_to = $deal->id ?? $contactId ?? null;
+        $note->related_to = $deal->id ?? $contact->id ?? null;
         $note->created_time = Carbon::now();
         $note->related_to_type = $validatedData1['api_name'];
         $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
         $note->note_content = $validatedData2['note_text'];
-        
         // Save the Note to the database
         $note->save();
         // Redirect back with a success message
@@ -943,54 +962,52 @@ class DashboardController extends Controller
 
 
     public function updateNote(Request $request, $id)
-{
-    // Validate the incoming request data
-    $validatedData = $request->validate([
-        'related_to' => 'required|string|max:255',
-        'note_text' => 'required|string',
-    ], [
-        'related_to.required' => 'The Related to field is required.',
-        'note_text.required' => 'The Note field is required.',
-    ]);
-    $user = auth()->user();
-    if (!$user) {
-        return redirect('/login');
+    {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'note_text' => 'required|string',
+        ], [
+            'note_text.required' => 'The Note field is required.',
+        ]);
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+        try {
+        $jsonData =   [
+                "data"=>[
+                [
+                        // "Note_Title" => "Contacted",
+                        "Note_Content"=> $validatedData['note_text']
+                ]
+                ]
+                ];
+            $response = $zoho->updateNoteData($jsonData,$id);
+            if (!$response->successful()) {
+                Log::error("Error creating notes:");
+                return "error somthing".$response;
+            }
+        // Find the Note instance by its ID
+        $note = Note::where('zoho_note_id', $id)->firstOrFail();
+
+
+        // Update the Note attributes
+        // $note->related_to = $validatedData['related_to'];
+        $note->note_content = $validatedData['note_text'];
+
+        // Save the updated Note to the database
+        $note->save();
+        return redirect()->back()->with('success', 'Note Updated successfully!');
+        }catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Note Not updated successfully!');
+                Log::error("Error creating notes: " . $e->getMessage());
+                return "somthing went wrong".$e->getMessage();
+            }
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Note updated successfully!');
     }
-    $accessToken = $user->getAccessToken();
-    $zoho = new ZohoCRM();
-    $zoho->access_token = $accessToken;
-    try {
-      $jsonData =   [
-            "data"=>[
-               [
-                    // "Note_Title" => "Contacted",
-                    "Note_Content"=> $validatedData['note_text']
-               ]
-            ]
-               ];
-        $response = $zoho->updateNoteData($jsonData,$id);
-        if (!$response->successful()) {
-            Log::error("Error creating notes:");
-            return "error somthing".$response;
-        }
-    // Find the Note instance by its ID
-    $note = Note::where('zoho_note_id', $id)->firstOrFail();
-
-
-    // Update the Note attributes
-    // $note->related_to = $validatedData['related_to'];
-    $note->note_content = $validatedData['note_text'];
-
-    // Save the updated Note to the database
-    $note->save();
-    return redirect()->back()->with('success', 'Note Updated successfully!');
-    }catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Note Not updated successfully!');
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong".$e->getMessage();
-        }
-    // Redirect back with a success message
-    return redirect()->back()->with('success', 'Note updated successfully!');
-}
 
 }
