@@ -7,7 +7,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
-        <p class="pText">My Pipelines</p>
+        <p class="pText">My Pipeline</p>
         <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()"><i class="fas fa-plus plusicon">
             </i>
             New Transaction
@@ -80,6 +80,34 @@
                             id="pipelineSort" onclick="toggleSort('closing_date')">
                     </div>
                 </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Commission</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Potential GCI</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Probability</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Probable GCI</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
                 <div></div>
 
             </div>
@@ -116,6 +144,14 @@
                         </div>
                         <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')" id="sale_price{{ $deal['zoho_deal_id'] }}">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
                         <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}')" id="closing_date{{ $deal['zoho_deal_id'] }}">{{ $deal['closing_date'] ?? 'N/A' }}</div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
+                        </div>
                         <div>
                             <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
                                 <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
