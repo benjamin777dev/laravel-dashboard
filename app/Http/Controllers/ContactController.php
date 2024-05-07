@@ -443,12 +443,13 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        $contactId = request()->route('contactId');
         $db = new DB();
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
                 // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null,$sort,$contactId,$sortVal);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null,$sortType,$contactId,$sortField);
         return response()->json($contactsGroups);
         
     }
