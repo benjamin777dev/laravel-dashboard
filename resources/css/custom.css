@@ -1190,7 +1190,7 @@
 
 .npcontactsBody {
     display: grid;
-    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 2.5fr;
+    grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr;
     gap: 10px;
     color: #222;
     padding: 16px 12px;
