@@ -206,143 +206,7 @@
                 </div>
 
             </div>
-             <div class="col-md-4 col-sm-12">
-                <h4 class="text-start dFont600 mb-4">Notes</h4>
-                 @if ($notes->isEmpty())
-                 <div class="noNotesFound">
-                        <p class="text-center notesAsignedText">No notes assigned</p>
-
-                    </div> 
-                @else 
-                <ul class="list-group dnotesUl">
-                    @foreach ($notes as $note)
-                    <li
-                        class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                        <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                        class="form-check-input checkbox{{ $note['id'] }}"
-                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                        type="button" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropnotecontactview{{ $note['id'] }}">
-                            @if ($note['related_to_type'] === 'Deal')
-                                            <span class="dFont800 dFont13">Related to:</span>
-                                            {{ $note->dealData->deal_name ?? '' }}<br />
-                                        @elseif ($note['related_to_type'] === 'Contact')
-                                            <span class="dFont800 dFont13">Related to:</span>
-                                            {{ $note->contactData->first_name ?? '' }}
-                                            {{ $note->contactData->last_name ?? '' }}<br />
-                                        @else
-                                        <span class="dFont800 dFont13">Related to:</span>
-                                        Global
-                                        @endif
-                            <p class="dFont400 fs-4 mb-0">
-                                {{ $note['note_content'] }}
-                            </p>
-                        </div>
-                        
-                         {{-- note update modal --}}
-                         <div class="modal fade" id="staticBackdropnotecontactupdate{{ $note['id'] }}"
-                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                         <div class="modal-dialog modal-dialog-centered deleteModal">
-                             <div class="modal-content noteModal">
-                                 <div class="modal-header border-0">
-                                     <p class="modal-title dHeaderText">Note</p>
-                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                         aria-label="Close"
-                                         onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                                 </div>
-                                 <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                     method="post">
-                                     @csrf
-                                     @method('POST')
-                                     <div class="modal-body dtaskbody">
-                                         <p class="ddetailsText">Details</p>
-                                         <textarea name="note_text" rows="4" class="dtextarea">{{ $note['note_content'] }}</textarea>
-                                         @error('note_content')
-                                             <div class="text-danger">{{ $message }}</div>
-                                         @enderror
-                                         <p class="dRelatedText">Related to...</p>
-                                         <div class="btn-group dmodalTaskDiv">
-                                             <select class="form-select dmodaltaskSelect" name="related_to"
-                                                 aria-label="Select Transaction">
-                                                 <option value="{{ $note['zoho_note_id'] }}" selected>
-                                                     {{ $note['related_to_type'] }}
-                                                 </option>
-                                             </select>
-                                         </div>
-                                         @error('related_to')
-                                             <div class="text-danger">{{ $message }}</div>
-                                         @enderror
-                                     </div>
-                                     <div class="row">
-                                         <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                             <button type="submit"
-                                                 class="btn btn-secondary dNoteModalmarkBtns">
-                                                 <i class="fas fa-save saveIcon"></i> Update Note
-                                             </button>
-                                         </div>
-                                         <div class="col-md-6 modal-footer dNoteFooters border-0">
-                                             <button type="button" onclick="markAsDone({{ $note['id'] }})"
-                                                 class="btn btn-secondary dNoteModalmarkBtns">
-                                                 <i class="fas fa-save saveIcon"></i> Mark as Done
-                                             </button>
-                                         </div>
-                                     </div>
-                                 </form>
-                             </div>
-                         </div>
-                     </div>
-                        {{-- note view modal --}}
-                        <div class="modal fade" id="staticBackdropnotecontactview{{ $note['id'] }}"
-                        data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered deleteModal">
-                            <div class="modal-content noteModal">
-                                <div class="modal-header border-0">
-                                    <p class="modal-title dHeaderText">Note</p>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                        onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
-                                </div>
-                                <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}"
-                                    method="post">
-                                    @csrf
-                                    @method('POST')
-                                    <div class="modal-body dtaskbody">
-                                        <p class="ddetailsText">Details</p>
-                                        <textarea name="note_text" rows="4" class="dtextarea" readonly>{{ $note['note_content'] }}</textarea>
-                                        @error('note_content')
-                                            <div class="text-danger" >{{ $message }}</div>
-                                        @enderror
-                                        <p class="dRelatedText">Related to...</p>
-                                        <div class="btn-group dmodalTaskDiv">
-                                            <select class="form-select dmodaltaskSelect" name="related_to"
-                                                aria-label="Select Transaction">
-                                                <option value="{{ $note['zoho_note_id'] }}" selected readonly>
-                                                    {{ $note['related_to_type'] }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        @error('related_to')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="d-flex align-items-center gx-2">
-                         <input type="checkbox" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
-                             class="form-check-input checkboxupdate{{ $note['id'] }}"
-                             id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
-                             type="button" data-bs-toggle="modal"
-                             data-bs-target="#staticBackdropnotecontactupdate{{ $note['id'] }}"   {{ $note['mark_as_done'] == 1 ? 'checked' : '' }} />
-                     </div>
-                 </li>
-             @endforeach
-                </ul>
-                @endif 
-            </div> 
-
+             @include('common.notes.view',['notesInfo'=>$notes,'retrieveModuleData'=>$retrieveModuleData,'module'=>'Contacts']) 
         </div>
          <div class="row">
         <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
@@ -405,30 +269,50 @@
                     <div class="col-md-3 col-sm-3 col-3">
                         <div class="commonFlex">
                             <p class="mb-0">Group Name</p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                                alt="Close icon" onclick="toggleSortGroup('name')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-3">Is Public?</div>
+                    <div class="col-md-3 col-sm-3 col-3"><div class="commonFlex">
+                        <p class="mb-0">Is Public? </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                            alt="Close icon" onclick="toggleSortGroup('isPublic')" class="ppiplineSwapIcon" id="pipelineSort">
+                    </div></div>
                     <div class="col-md-3 col-sm-3 col-3 ">
                         <div class="commonFlex">
-                            <p class="mb-0">Class </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                            <p class="mb-0">IsABC </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                alt="Close icon" onclick="toggleSortGroup('isABCD')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-3 ">
                         <div class="commonFlex">
                             <p class="mb-0">ID No. </p><img src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                alt="Close icon" class="ppiplineSwapIcon" id="pipelineSort">
+                                alt="Close icon" onclick="toggleSortGroup('id')" class="ppiplineSwapIcon" id="pipelineSort">
                         </div>
                     </div>
                 </div>
-
-                <div class="row ncGroupBody">
-                    <div class="col-md-3 col-sm-3 col-3">Pop-by</div>
-                    <div class="col-md-3 col-sm-3 col-3">---</div>
-                    <div class="col-md-3 col-sm-3 col-3">A</div>
-                    <div class="col-md-3 col-sm-3 col-3">4254353</div>
-                </div>
+          
+                @foreach ($contactsGroups as $contactGroup)
+                @foreach ($contactGroup['groups'] as $group)
+                    <div class="row ncGroupBody">
+                        <div class="col-md-3 col-sm-3 col-3">{{ $group['group']['name'] }}</div>
+                        <div class="col-md-3 col-sm-3 col-3">
+                            @if ($group['group']['isPublic'] == 1)
+                                <i class="fas fa-check" style="color: green;"></i>
+                            @else
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-3">
+                            @if ($group['group']['isABCD'] == 1)
+                                <i class="fas fa-check" style="color: green;"></i>
+                            @else
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-3">{{ $group['group']['id'] }}</div>
+                    </div>
+                @endforeach
+            @endforeach
+            
             </div>
             {{-- Contact Details --}}
             <div class="col-md-6 col-sm-12"
@@ -907,6 +791,35 @@
             document.getElementById("subject_error").innerHTML = "";
         }
     }
+    let sortDirection = 'desc';
+    function toggleSortGroup(sortField){
+        
+            // Toggle the sort direction
+            sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
+            // Call fetchDeal with the sortField parameter
+            fetchGroups(sortField, sortDirection);
+       
+    }
+
+     function fetchGroups(sortField, sortDirection) {
+        $.ajax({
+                url: '{{ url('/get-groups') }}',
+                method: 'GET',
+                data: {
+                    sort: sortField || "",
+                    sortType: sortDirection || "",
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data,'data')
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+     }
+
+   
   
     window.selectedTransation;
     function selectedElement(element) {

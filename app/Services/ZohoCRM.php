@@ -336,7 +336,7 @@ class ZohoCRM
         return $response;
     }
 
-    public function deleteTask($inputJson,$id)
+    public function deleteTask($inputJson,$id) 
     {
         Log::info('Creating Zoho Task');
         
@@ -345,6 +345,20 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Tasks/" . $id);
+        
+        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        return $response;
+    }
+
+    public function deleteNote($id) 
+    {
+        Log::info('Creating Zoho Task');
+        
+        // Adjust the URL and HTTP method based on your Zoho API requirements
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->delete($this->apiUrl . "Notes/" . $id);
         
         //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
         return $response;
@@ -401,6 +415,20 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
         ])->put($this->apiUrl . 'Deals/'.$id, $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function getZohoDeal($id)
+    {
+        Log::info('Creating Zoho Deal');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Deals/'.$id);
 
         //Log::info('Zoho deals data response: ' . print_r($response, true));
 

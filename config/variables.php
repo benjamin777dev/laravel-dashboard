@@ -2,5 +2,5 @@
 
 return [
     'dealName'=>'Untitled',
-    'dealStages'=>['Potential', 'Pre-Active', 'Active', 'Under Contract']
+    'dealStages'=>['Potential', 'Pre-Active', 'Active', 'Under Contract','Dead-Lost To Competition']
 ];

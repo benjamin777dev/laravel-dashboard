@@ -438,6 +438,21 @@ class ContactController extends Controller
         }
     }
 
+    function getGroups(Request $request){
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DB();
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+                // $contactInfo = Contact::getZohoContactInfo();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null,$sort,$contactId,$sortVal);
+        return response()->json($contactsGroups);
+        
+    }
+
     public function show($contactId)
     {
         $user = auth()->user();
@@ -454,15 +469,14 @@ class ContactController extends Controller
         $groups = $db->retrieveGroups($user, $accessToken);
         $tab = request()->query('tab') ?? 'In Progress';
         $users  = User::getUsersByname();
-        // print_r(json_encode($users));
-        // die;
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null,$sort = null,$contactId);
         $tasks = $db->retreiveTasksForContact($user, $accessToken,$tab,$contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user,$accessToken,$contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null,$sortType=null,"");
         $contacts = $db->retreiveContactsJson($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users','groups'));
+        return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users','groups','contactsGroups'));
     }
 
     public function showCreateContactForm()
