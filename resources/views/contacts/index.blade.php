@@ -104,7 +104,7 @@
                                                 onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name')"></i>
                                         </div>
 
-                                        <p class="databaseCardWord"
+                                        <p class="databaseCardWord">
                                             {{ $contact['abcd'] ?? '-' }}</p>
                                     </div>
                                     <div class="dataPhoneDiv">
