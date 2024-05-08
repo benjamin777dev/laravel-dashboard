@@ -923,10 +923,8 @@
 
 .commonFlex {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
-    padding: 20px;
     gap: 10px; /* Ensures spacing between items */
 }
 
@@ -938,7 +936,7 @@
 }
 
 .alert {
-    flex: 1 1 70px; /* Allows flex items to grow and shrink but not smaller than 200px */
+    flex: 1 1 200px; /* Allows flex items to grow and shrink but not smaller than 200px */
 }
 
 .pText {
@@ -973,7 +971,9 @@
 
     .alert {
         width: 100%; /* Make alert boxes full width on small screens */
+        flex: 1 1 70px; /* Allows flex items to grow and shrink but not smaller than 200px */
     }
+   
 }
 
 .pfilterDiv {
