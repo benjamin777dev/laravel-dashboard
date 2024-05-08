@@ -247,7 +247,7 @@
                             <div class="col-md-2 npcommontableBodytext ">
                                 <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
                                         alt="E">
-                                    {{ date('M d', strtotime($deal['closing_date'])) }}
+                                    {{  date('m/d/Y', strtotime($deal['closing_date'])); }}
                                 </div>
                             </div>
                         </div>
@@ -382,9 +382,6 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
-
-        document.getElementById("note_text").addEventListener("keyup", validateNoteDash);
-        document.getElementById("related_to").addEventListener("change", validateNoteDash);
 
         // console.log("yes tist woring", @json($allMonths), )
         var ctx = document.getElementById('chart').getContext('2d');
@@ -522,7 +519,6 @@
     
 
     function updateTask(id, indexid) {
-        alert('update task');
         // console.log(id, indexid, 'chekcdhfsjkdh')
         $.ajaxSetup({
             headers: {

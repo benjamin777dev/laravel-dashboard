@@ -353,12 +353,11 @@
             // Change the flag to indicate that it's no longer the first click
             isFirstClick = false;
             selectElement.addEventListener('change', function() {
-                // Remove the onclick attribute
+                // Remove the onclick attribute 
                 selectElement.removeAttribute("onclick");
-
                 // Set the onchange attribute to call moduleSelected function passing this as a parameter
-                selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
             });
+            selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
         
     }
 
