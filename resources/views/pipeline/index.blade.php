@@ -3,56 +3,71 @@
 @section('title', 'Agent Commander | Pipeline')
 
 @section('content')
-@vite(['resources/css/pipeline.css'])
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<div class="container-fluid">
-    <div class="commonFlex ppipeDiv">
-        <p class="pText">My Pipeline</p>
-        <div class="alert alert-secondary text-center">
-            <strong>Sales Volume</strong><br>
-            ${{ number_format($totalSalesVolume, 0, '.', ',') }}
+    @vite(['resources/css/pipeline.css'])
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <div class="container-fluid">
+        <div class="dbgroupsFlex">
+            <p class="ngText">Pipelines</p>
+            <div class="pipeline-btns-container">
+
+                <div class="input-group-text text-white justify-content-center pcontactBtn" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()">
+                    <i class="fas fa-plus plusicon">
+                    </i> New Pipeline
+                </div>
+                <div class="input-group-text text-white justify-content-center pTransactionBtn">
+                    <i class="fas fa-plus plusicon">
+                    </i>
+                    New Submittal
+
+                </div>
+            </div>
         </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Avg Commission</strong><br>
-            {{ number_format($averageCommission, 2) }}%
-        </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Potential GCI</strong><br>
-            ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
-        </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Avg Probability</strong><br>
-            {{ number_format($averageProbability, 2) }}%
-        </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Probable GCI</strong><br>
-            ${{ number_format($totalProbableGCI, 0, '.', ',') }}
-        </div>
-        <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()">
-            <i class="fas fa-plus plusicon">
-            </i>
-            New Transaction
+        <div class="pipeline-cards-container">
+            <div class="alert alert-secondary text-center">
+                <strong>Sales Volume</strong><br>
+                ${{ number_format($totalSalesVolume, 0, '.', ',') }}
+            </div>
+            <div class="alert alert-secondary text-center">
+                <strong>Avg Commission</strong><br>
+                {{ number_format($averageCommission, 2) }}%
+            </div>
+            <div class="alert alert-secondary text-center">
+                <strong>Potential GCI</strong><br>
+                ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
+            </div>
+            <div class="alert alert-secondary text-center">
+                <strong>Avg Probability</strong><br>
+                {{ number_format($averageProbability, 2) }}%
+            </div>
+            <div class="alert alert-secondary text-center">
+                <strong>Probable GCI</strong><br>
+                ${{ number_format($totalProbableGCI, 0, '.', ',') }}
+            </div>
+
         </div>
 
-    </div>
-    <div class="pfilterDiv">
-        <div class="pcommonFilterDiv">
-            <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()"/>
-            <i class="fas fa-search search-icon"></i>
-        </div>
-        <p class="porText">or</p>
-        <div class="psortingFilterDiv">
-            <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage" aria-label="Select Transaction" onchange="fetchDeal()">
-                <option value="">Please select one</option>
-                @foreach ($allstages as $item)
-                    <option value="{{ $item }}">{{ $item }}</option>
-                @endforeach
-            </select>
-            {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
-            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">--}}
-        </div>
-       <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
-            Filter
+        <div class="pfilterDiv">
+            <div class="pcommonFilterDiv">
+                <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <p class="porText">or</p>
+            <div class="psortingFilterDiv">
+                <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
+                    aria-label="Select Transaction" onchange="fetchDeal()">
+                    <option value="">Please select one</option>
+                    @foreach ($allstages as $item)
+                        <option value="{{ $item }}">{{ $item }}</option>
+                    @endforeach
+                </select>
+                {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
+            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon"> --}}
+            </div>
+            <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
+                Filter
+            </div>
+
         </div>
 
     </div>
@@ -60,14 +75,14 @@
         <div class="transaction-container">
             @include('pipeline.transaction')
         </div>
-</div>
-@vite(['resources/js/pipeline.js'])
+    </div>
+    @vite(['resources/js/pipeline.js'])
 
 
 
-<script>
+    <script>
         // Add an event listener to send search term as request
-        function fetchData(sortValue, sortType,filter=null,searchInput,ppipelineTableBody,ptableCardDiv) {
+        function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv) {
             // console.log("filter",filter);
             const searchValue = searchInput.val().trim();
             $.ajax({
@@ -77,7 +92,7 @@
                     search: encodeURIComponent(searchValue),
                     sort: sortValue || "",
                     sortType: sortType || "",
-                    filter:filter
+                    filter: filter
                 },
                 
                 success: function(data) {
@@ -162,32 +177,32 @@
         window.createTransaction= function() {
             console.log("Onclick");
             var formData = {
-            "data": [{
-                        "Deal_Name": "{{ config('variables.dealName') }}",
-                        "Owner": {
-                            "id": "{{ auth()->user()->root_user_id }}"
-                        },
-                        "Stage":"Potential"
-                    }],
-            "_token": '{{ csrf_token() }}'
+                "data": [{
+                    "Deal_Name": "{{ config('variables.dealName') }}",
+                    "Owner": {
+                        "id": "{{ auth()->user()->root_user_id }}"
+                    },
+                    "Stage": "Potential"
+                }],
+                "_token": '{{ csrf_token() }}'
             };
-           $.ajax({
-                    url: '{{ url('/pipeline/create') }}',
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: JSON.stringify(formData),
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log(data);
-                        // Handle success response, such as redirecting to a new page
-                        window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                    }
-                });
+            $.ajax({
+                url: '{{ url('/pipeline/create') }}',
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: JSON.stringify(formData),
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data);
+                    // Handle success response, such as redirecting to a new page
+                    window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
         }
 
         window.fetchDeal = function(sortField, sortDirection) {

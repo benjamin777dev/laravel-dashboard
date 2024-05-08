@@ -146,6 +146,7 @@
   },
   "resources/js/app.js": {
     "file": "js/app3.js",
+<<<<<<< HEAD:public/build/manifest.json
     "isEntry": true,
     "src": "resources/js/app.js"
   },
@@ -168,6 +169,35 @@
     "file": "js/pipeline.js",
     "isEntry": true,
     "src": "resources/js/pipeline.js"
+=======
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/contacts.js": {
+    "file": "js/contacts.js",
+    "name": "contacts",
+    "src": "resources/js/contacts.js",
+    "isEntry": true
+  },
+  "resources/js/custom.js": {
+    "file": "js/custom2.js",
+    "name": "custom",
+    "src": "resources/js/custom.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard.js": {
+    "file": "js/dashboard.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard.js",
+    "isEntry": true
+  },
+  "resources/js/pipeline.js": {
+    "file": "js/pipeline.js",
+    "name": "pipeline",
+    "src": "resources/js/pipeline.js",
+    "isEntry": true
+>>>>>>> 11aee8b017e518449400cb1f9e45065be7040b28:public/build/.vite/manifest.json
   },
   "resources/sass/app.scss": {
     "file": "css/app.min2.css",
