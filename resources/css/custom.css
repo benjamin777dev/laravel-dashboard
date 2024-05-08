@@ -3,9 +3,9 @@
 }
 
 .taskbtn {
-    background-color: rgb(37, 60, 91);
+    background-color: #222;
     padding: 6px 11px 6px 11px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
@@ -19,8 +19,8 @@
     gap: 8px;
     align-self: stretch;
 
-    border-radius: 15px;
-    background: #253C5B;
+    border-radius: 5px;
+    background: #3f3f3f;
 
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
@@ -42,14 +42,14 @@
 }
 
 .removebtn {
-    background-color: rgb(37, 60, 91);
+    background-color: #848484;
     cursor: pointer;
     padding: 6px 11px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .page-item.active {
-    background-color: #253c5b;
+    background-color: #3b3b3b;
 }
 
 .dash-card {
@@ -96,7 +96,7 @@
 
 .dSumValue {
     /* max-width: 195.09px; */
-    color: #4F6481;
+    color: #6c6c6c;
     text-align: center;
     font-family: Avenir;
     font-size: 30px;
@@ -125,7 +125,7 @@
 
 .dpercentage {
     padding: 2px 5px 2px 5px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: rgba(52, 195, 143, 0.18);
     margin-left: 9px;
 }
@@ -136,7 +136,7 @@
 }
 
 .savebtn {
-    background: #253c5b;
+    background: #222;
     margin-right: 12px;
     border-radius: 3.2px;
     padding: 5px, 9px, 5px, 9px;
@@ -153,15 +153,20 @@
 }
 
 .dashboard-notes-list {
-    background: #eff6ff !important;
+    background: #efefef !important;
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
     cursor: pointer;
 }
 
 .page-link.active, .active>.page-link {
-    background-color: rgb(37, 60, 91) !important;
+    background-color: #6f6f6f !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #4f4f4f !important;
 }
 
 .dnotesUl {
@@ -180,7 +185,7 @@
 .dtranstiontable {
     background: rgba(255, 255, 255, 1);
     padding: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .dselect {
@@ -202,7 +207,7 @@
     color: #fff;
     margin-top: 12px;
     padding-left: 0px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .dtabsbtn {
@@ -300,14 +305,14 @@
 .dCalander {
     background: #fff;
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 5px;
     gap: 5px;
 }
 
 .noNotesFound {
     padding: 20px;
     gap: 24px;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #EFF6FF;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
     display: flex;
@@ -356,7 +361,7 @@
 
 .dtextarea {
     width: 100%;
-    border: 1px solid #c1b7ae;
+    border: 1px solid #3f3f3f;
     background: #fff;
     padding: 12px;
     resize: none;
@@ -395,7 +400,7 @@
     width: 100%;
     padding: 11px 12px;
     border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border: 1px solid #3f3f3f;
 }
 
 .dmodalInput:focus-visible {
@@ -404,8 +409,8 @@
 
 .taskModalSaveBtn {
     width: 100%;
-    border-radius: 4px;
-    background: #253c5b;
+    border-radius: 5px;
+    background: #222;
     padding: 6px 11px;
 }
 
@@ -414,7 +419,7 @@
     bottom: 63px;
     right: 26px;
     padding: 19px;
-    background: #253c5b;
+    background: #222;
     border-radius: 50%;
     /* cursor: pointer; */
 }
@@ -422,9 +427,9 @@
 /* / / / Note Modal / / / */
 .noteModal {
     border-radius: 4px;
-    background: #c1b7ae;
+    background: #dfdfdf;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
-    border-color: #c1b7ae;
+    border-color: #cfcfcf;
 }
 
 .dnoteBodyText {
@@ -444,7 +449,7 @@
 }
 
 .dRelatedNoteText {
-    color: #685b50;
+    color: #3f3f3f;
     font-size: 11px;
     font-style: normal;
     font-weight: 800;
@@ -475,20 +480,20 @@
 .dNoteIcon {
     padding: 14px;
     border-radius: 4px 0px 0px 4px;
-    border: 1px solid #7a8681;
+    border: 1px solid #9f9f9f;
     background: transparent;
-    color: #7a8681;
+    color: #8f8f8f;
 }
 
 .dNoteModalmarkBtn {
-    border-radius: 4px;
-    background: #253c5b;
+    border-radius: 5px;
+    background: #222;
     padding: 6px 35px;
 }
 
 .dNoteModalmarkBtns {
-    border-radius: 4px;
-    background: #253c5b;
+    border-radius: 5px;
+    background: #222;
     padding: 6px 16px;
 }
 
@@ -526,9 +531,9 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
-    border: 1px solid #253c5b;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: #222;
     color: #fff;
     text-align: center;
     font-family: Avenir;
@@ -546,10 +551,10 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
-    border: 2px solid #253c5b;
+    border-radius: 5px;
+    border: 2px solid #333;
     background: #fff;
-    color: var(--Brand, #253c5b);
+    color: var(--Brand, #222);
     text-align: center;
     font-family: Avenir;
     font-size: 13px;
@@ -592,9 +597,9 @@
     align-items: center;
     gap: 8px;
     flex: 1 0 0;
-    border-radius: 4px;
-    border: 1px solid #253c5b;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: #222;
 }
 
 /* / / pagination / / */
@@ -621,7 +626,7 @@
 }
 
 .submit_button {
-    background-color: #253c5b;
+    background-color: #222;
 }
 
 @media (min-width: 768px) {
@@ -712,7 +717,7 @@
     }
 
     .dcardsTransactionText {
-        color: #685b50;
+        color: #3f3f3f;
         font-family: Avenir;
         font-size: 13px;
         font-style: normal;
@@ -732,7 +737,7 @@
     }
 
     .dcardsTaskText {
-        color: #685b50;
+        color: #3f3f3f;
         font-family: Avenir;
         font-size: 13px;
         font-style: normal;
@@ -757,9 +762,9 @@
         align-items: center;
         gap: 5px;
         align-self: stretch;
-        border-radius: 3.2px;
-        border: 1px solid #5e7153;
-        background: #5e7153;
+        border-radius: 5px;
+        border: 1px solid #333;
+        background: #222;
         color: #fff;
         text-align: center;
         font-family: Avenir;
@@ -777,9 +782,9 @@
         align-items: center;
         gap: 5px;
         align-self: stretch;
-        border-radius: 3.2px;
-        border: 1px solid #253c5b;
-        background: #253c5b;
+        border-radius: 5px;
+        border: 1px solid #333;
+        background: #222;
         color: #fff;
         text-align: center;
         font-family: Avenir;
@@ -918,12 +923,20 @@
 
 .commonFlex {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 
 .ppipeDiv {
-    margin-bottom: 24px;
+    background-color: #f8f9fa; /* Example background color */
+    margin: 20px;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.alert {
+    flex: 1 1 200px; /* Allows flex items to grow and shrink but not smaller than 200px */
+    margin: 5px;
 }
 
 .pText {
@@ -937,15 +950,30 @@
 
 .ppipeBtn {
     padding: 6px 11px;
-    border-radius: 4px;
-    border: 1px solid #0071ce;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #222;
+    background: #222;
     cursor: pointer;
     color: #fff;
+    font-size: 16px;
 }
 
 .ppipeaText {
     color: #fff;
+}
+
+
+/* Media query for screens smaller than 768px */
+@media (max-width: 768px) {
+    .commonFlex {
+        flex-direction: column; /* Stack flex children vertically on small screens */
+    }
+
+    .alert {
+        width: 100%; /* Make alert boxes full width on small screens */
+        flex: 1 1 70px; /* Allows flex items to grow and shrink but not smaller than 200px */
+    }
+   
 }
 
 .pfilterDiv {
@@ -955,7 +983,7 @@
     flex-wrap: wrap;
     padding: 16px;
     align-self: stretch;
-    border-radius: 4px;
+    border-radius: 5px;
     background: #fff;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
     margin-bottom: 24px;
@@ -977,8 +1005,8 @@
     padding: 7.52px 12px;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border-radius: 5px;
+    border: 1px solid #dfdfdf;
     background: #fff;
 }
 
@@ -1020,9 +1048,9 @@
     padding: 8.52px 12px;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
-    border: 1px solid #253c5b;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #222;
+    background: #222;
     color: #fff;
     text-align: center;
     font-size: 13px;
@@ -1065,12 +1093,12 @@
 }
 
 .pstatusText {
-    color: #fff !important;
+    color: #000 !important;
     text-align: center;
-    font-size: 13px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 900;
-    line-height: 11px;
+    line-height: 18px;
     letter-spacing: -0.65px;
     padding: 4px 6px;
     border-radius: 4px;
@@ -1091,7 +1119,7 @@
 }
 
 .custom-option[data-stage="Potential"] {
-    background-color: #85a69c;
+    background-color: #dfdfdf;
 }
 
 /* / Table Card / */
@@ -1101,7 +1129,7 @@
 
 /* new pipeline common table css */
 .npcommonheaderText {
-    color: #685b50;
+    color: #3f3f3f;
     font-family: Avenir;
     font-size: 13px;
     font-style: normal;
@@ -1155,7 +1183,7 @@
 
 .npcontactsTable {
     display: grid;
-    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 2.5fr;
+    grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr;
     gap: 10px;
     background: #222;
     padding: 14px 12px;
@@ -1185,7 +1213,7 @@
 
 .npcontactsBody {
     display: grid;
-    grid-template-columns: 0.2fr 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 2.5fr;
+    grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr;
     gap: 10px;
     color: #222;
     padding: 16px 12px;
@@ -1283,7 +1311,7 @@
         padding: 20px;
         gap: 24px;
         border-radius: 4px;
-        background: #e8ddd4;
+        background: #efefef;
         box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
         display: flex;
         justify-content: space-between;
@@ -1323,7 +1351,7 @@
     }
 
     .pTableTransText {
-        color: #7a8681;
+        color: #8f8f8f;
         font-family: Montserrat;
         font-size: 11px;
         font-style: normal;
@@ -1385,7 +1413,7 @@
     }
 
     .pTableTransText {
-        color: #7a8681;
+        color: #8f8f8f;
         font-family: Montserrat;
         font-size: 11px;
         font-style: normal;
@@ -1445,9 +1473,9 @@
     justify-content: center;
     align-items: center;
     gap: 12px;
-    border-radius: 4px;
-    background: #dad6d3;
-    color: #685b50;
+    border-radius: 5px;
+    background: #dfdfdf;
+    color: #222;
     text-align: center;
     font-family: Avenir;
     font-size: 13px;
@@ -1463,8 +1491,8 @@
     justify-content: center;
     align-items: center;
     gap: 12px;
-    border-radius: 4px;
-    background: #a5978b;
+    border-radius: 5px;
+    background: #8f8f8f;
     cursor: pointer;
     color: #fff;
     text-align: center;
@@ -1485,7 +1513,7 @@
 }
 
 .nplabelText {
-    color: #685b50;
+    color: #222;
     font-family: Avenir;
     font-size: 13px;
     font-style: normal;
@@ -1496,7 +1524,7 @@
 .npinputinfo {
     padding: 7.52px 11.993px 7.52px 12.003px;
     border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border: 1px solid #afafaf;
 }
 
 .nproletext {
@@ -1513,9 +1541,9 @@
     padding: 6px 11px;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
-    border: 1px solid #0071ce;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #3f3f3f;
+    background: #222;
     color: #fff;
     text-align: center;
     font-family: Avenir;
@@ -1537,6 +1565,8 @@
     white-space:normal;
     text-overflow: ellipsis;
     word-break: break-all;
+    font-size: 16px;
+    line-height: 18px;
 }
 
 /* .npcontactsTable th,
@@ -1581,7 +1611,8 @@
 }
 
 .databaseCardWord {
-    color: #18460a;
+    background-color: #dfdfdf;
+    color: #000 !important;
     text-align: center;
     font-family: Avenir;
     font-size: 20px;
@@ -1630,7 +1661,7 @@
 }
 
 .dataCardFooter {
-    border-top: 0.667px solid #c1b7ae;
+    border-top: 0.667px solid #bfbfbf;
     display: flex;
     padding: 10.667px 20px 10px 20px;
     justify-content: space-between;
@@ -1666,8 +1697,8 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-    border-radius: 3.2px;
-    background: #253c5b;
+    border-radius: 5px;
+    background: #222;
     color: #fff;
     text-align: center;
     font-family: Avenir;
@@ -1685,7 +1716,7 @@
     justify-content: space-between;
     align-items: center;
     align-self: stretch;
-    border-right: #a5978b;
+    border-right: #8f8f8f;
     background: #222;
     color: #fff;
     font-family: Avenir;
@@ -1697,8 +1728,8 @@
 
 .ncGroupBody {
     padding: 16px 12px;
-    border-right: 1px solid var(--Skiding-btns-back, #f0e6dc);
-    border-bottom: 1px solid var(--Skiding-btns-back, #f0e6dc);
+    border-right: 1px solid var(--Skiding-btns-back, #dfdfdf);
+    border-bottom: 1px solid var(--Skiding-btns-back, #efefef);
     background: #fff;
     color: #222;
     font-family: Avenir;
@@ -1715,7 +1746,7 @@
 .nctextarea {
     padding: 10px 12px;
     border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border: 1px solid #efefef;
     resize: none;
 }
 
@@ -1731,8 +1762,8 @@
 }
 
 .dbgBodyTable td {
-    border-right: 1px solid #f0e6dc;
-    border-bottom: 1px solid #f0e6dc;
+    border-right: 1px solid #dfdfdf;
+    border-bottom: 1px solid #efefef;
     background: #fff;
 }
 
@@ -1777,7 +1808,7 @@
     align-items: center;
     flex: 1 0 0;
     border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border: 1px solid #afafaf;
     color: #222;
     font-family: Avenir;
     font-size: 13px;
@@ -1796,9 +1827,9 @@
     justify-content: center;
     align-items: center;
     flex: 1 0 0;
-    border-radius: 4px;
-    border: 1px solid #253c5b;
-    background: #253c5b;
+    border-radius: 5px;
+    border: 1px solid #222;
+    background: #222;
     color: #fff;
     text-align: center;
     font-family: Avenir;
@@ -1818,11 +1849,11 @@
     gap: 8px;
 
     border-radius: 4px 0px 0px 4px;
-    border-top: 2px solid #253c5b;
-    border-bottom: 2px solid #253c5b;
-    border-left: 2px solid #253c5b;
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
+    border-left: 2px solid #333;
     background: #fff;
-    color: #253c5b;
+    color: #222;
     text-align: center;
     font-family: Avenir;
     font-size: 13px;
@@ -1867,10 +1898,10 @@
     gap: 8px;
 
     border-radius: 0px 4px 4px 0px;
-    border-top: 2px solid #253c5b;
-    border-right: 2px solid #253c5b;
-    border-bottom: 2px solid #253c5b;
-    background: #253c5b;
+    border-top: 2px solid #333;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    background: #222;
     color: #fff;
     text-align: center;
     font-family: Avenir;
@@ -1919,8 +1950,8 @@
     padding: 7.52px 12px;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
-    border: 1px solid #c1b7ae;
+    border-radius: 5px;
+    border: 1px solid #afafaf;
     background: #fff;
     height: 37px;
 }
@@ -1943,7 +1974,7 @@
     align-self: stretch;
     border-radius: 8px;
     background: #FFF;
-    box-shadow: 0px 2px 10px 0px #DAD6D3;
+    box-shadow: 0px 2px 10px 0px #efefef;
 }
 
 /* cards pipe chart */
@@ -1959,8 +1990,14 @@
     margin-bottom: 0;
 }
 
-.dRangeText{
+.dRangeText {
     margin-bottom: 0;
+    font-size: 14px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 24px;
+    text-align: center;
 }
 /* stacked chart css */
 .dgraphdiv {
@@ -1980,13 +2017,13 @@ body {
     }
 
     .bar-a {
-        background-color: #253C5B;
+        background-color: #222;
         color: #fff;
         font-size: 12px;
     }
 
     .bar-b {
-        background-color: #C5C0BE;
+        background-color: #bfbfbf;
     }
 
 
@@ -2005,7 +2042,7 @@ body {
 }
 
 .dmonth-design {
-    color: #6D6D6D;
+    color: #7f7f7f;
     text-align: right;
     font-family: Avenir;
     font-size: 12px;
@@ -2074,4 +2111,12 @@ canvas {
 }
 .gdropdown{
     padding:10px
+}
+
+body[data-sidebar=dark] .vertical-menu {
+    background: #000 !important;
+}
+
+body[data-sidebar=dark] .navbar-brand-box {
+    background: #000;
 }

@@ -7,12 +7,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
-        <p class="pText">My Pipelines</p>
-        <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()"><i class="fas fa-plus plusicon">
+        <p class="pText">My Pipeline</p>
+        <div class="alert alert-secondary text-center">
+            <strong>Sales Volume</strong><br>
+            ${{ number_format($totalSalesVolume, 0, '.', ',') }}
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Avg Commission</strong><br>
+            {{ number_format($averageCommission, 2) }}%
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Potential GCI</strong><br>
+            ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Avg Probability</strong><br>
+            {{ number_format($averageProbability, 2) }}%
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Probable GCI</strong><br>
+            ${{ number_format($totalProbableGCI, 0, '.', ',') }}
+        </div>
+        <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()">
+            <i class="fas fa-plus plusicon">
             </i>
             New Transaction
         </div>
-        
+
     </div>
     <div class="pfilterDiv">
         <div class="pcommonFilterDiv">
@@ -38,8 +59,6 @@
 
      <div class="table-responsive">
             <div class="npcontactsTable">
-                <div>
-                </div>
                 <div>
                     <div class="commonFlex">
                         <p class="mb-0">Transaction</p>
@@ -82,54 +101,83 @@
                             id="pipelineSort" onclick="toggleSort('closing_date')">
                     </div>
                 </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Commission</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Potential GCI</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Probability</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
+                <div>
+                    <div class="commonFlex">
+                        <p class="mb-0">Probable GCI</p>
+                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI" class="ppiplineSwapIcon"
+                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                    </div>
+                </div>
                 <div></div>
-
             </div>
             <div class = "psearchandsort">
                 @if (count($deals) > 0)
                @foreach ($deals as $deal)
                     <div class="npcontactsBody">
-                        <div><input type="checkbox"></div>
-                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')" id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</div>
-                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{$deal['id']}}')" id="client_name_primary{{ $deal['zoho_deal_id'] }}">{{ $deal->client_name_primary ?? 'N/A' }}</div>
-                        <div>
-                            <div class="commonFlex pipelinestatusdiv">
-                                <select class="form-select pstatusText" style="background-color: {{ $deal['stage'] === 'Potential'
-                                        ? '#85A69C'
-                                        : ($deal['stage'] === 'Active'
-                                            ? '#70BCA5'
-                                            : ($deal['stage'] === 'Pre-Active'
-                                                ? '#4B8170'
-                                                : ($deal['stage'] === 'Under Contract'
-                                                    ? '#477ABB'
-                                                    : ($deal['stage'] === 'Dead-Lost To Competition'
-                                                        ? '#575B58'
-                                                        : '#F18F01')))) }}" id="stage{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
-                                    @foreach($allstages as $stage)
-                                        <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
-                                    @endforeach 
-                                </select>
-                            </div>
-                        </div>
-                        <div class="" style="width: 75px;">
-                            <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('representing','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
-                                <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
-                                <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
-                            </select>
-                        </div>
-                        <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')" id="sale_price{{ $deal['zoho_deal_id'] }}">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
-                        <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}')" id="closing_date{{ $deal['zoho_deal_id'] }}">{{ $deal['closing_date'] ?? 'N/A' }}</div>
-                        <div>
-                            <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                            </a>
-                            <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
-                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
-                        </div>
+                    <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')" id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</div>
+<div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{$deal['id']}}')" id="client_name_primary{{ $deal['zoho_deal_id'] }}">{{ $deal->client_name_primary ?? 'N/A' }}</div>
+<div>
+    <div class="commonFlex pipelinestatusdiv">
+        <select class="form-select pstatusText" style="background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}" id="stage{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+            @foreach($allstages as $stage)
+                <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
+            @endforeach 
+        </select>
+    </div>
+</div>
+<div class="" style="width: 75px;">
+    <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}" required onchange="updateDealData('representing','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+        <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
+        <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
+    </select>
+</div>
+<div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')" id="sale_price{{ $deal['zoho_deal_id'] }}">$ {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}</div>
+<div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}')" id="closing_date{{ $deal['zoho_deal_id'] }}">{{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}</div>
+<div>
+    <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{$deal['id']}}')" id="commission{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['commission'] ?? '0', 2) }}%</div>
+</div>
+<div>
+    <div class="commonTextEllipsis">${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}</div>
+</div>
+<div>
+    <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','pipeline_probability','{{$deal['id']}}')" id="pipeline_probability{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['pipeline_probability'] ?? '0', 2) }}%</div>
+</div>
+<div>
+    <div class="commonTextEllipsis">${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0)/100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
+</div>
+</div>
+<div>
+    <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+        <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
+    </a>
+    <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
+        data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
+    <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
+        data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
+    <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
+        data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+</div>
                     </div>
                     {{-- Create New Task Modal --}}
                     <div class="modal fade" id="newTaskModalId{{ $deal['id'] }}" tabindex="-1">
@@ -212,16 +260,16 @@
                         <div class="d-flex justify-content-between">
                             <div class="pTableSelect pipelinestatusdiv">
                                 <p style="background-color: {{ $deal['stage'] === 'Potential'
-                                    ? '#85A69C'
+                                    ? '#dfdfdf'
                                     : ($deal['stage'] === 'Active'
-                                        ? '#70BCA5'
+                                        ? '#afafaf'
                                         : ($deal['stage'] === 'Pre-Active'
-                                            ? '#4B8170'
+                                            ? '#cfcfcf'
                                             : ($deal['stage'] === 'Under Contract'
-                                                ? '#477ABB'
+                                                ? '#8f8f8f;color=#fff;'
                                                 : ($deal['stage'] === 'Dead-Lost To Competition'
-                                                    ? '#575B58'
-                                                    : '#F18F01')))) }}"
+                                                    ? '#efefef'
+                                                    : '#6f6f6f;color=#fff;')))) }}"
                                     class="pstatusText">{{ $deal['stage'] ?? 'N/A' }} </p>
                                 <i class="fas fa-angle-down"></i>
                             </div>
@@ -306,16 +354,16 @@
                                         <div class="d-flex justify-content-between">
                                             <div class="pTableSelect pipelinestatusdiv">
                                                 <p style="background-color: ${item.stage === 'Potential'
-                                    ? '#85A69C'
+                                    ? '#dfdfdf'
                                     : (item.stage === 'Active'
-                                        ? '#70BCA5'
+                                        ? '#afafaf'
                                         : (item.stage === 'Pre-Active'
-                                            ? '#4B8170'
+                                            ? '#cfcfcf'
                                             : (item.stage === 'Under Contract'
-                                                ? '#477ABB'
+                                                ? '#8f8f8f;color=#fff;'
                                                 : (item.stage === 'Dead-Lost To Competition'
-                                                    ? '#575B58'
-                                                    : '#F18F01'))))}"
+                                                    ? '#efefef'
+                                                    : '#6f6f6f;color=#fff;'))))}"
                                                     class="pstatusText">${item.stage || 'N/A'}</p>
                                                 <i class="fas fa-angle-down"></i>
                                             </div>
@@ -354,16 +402,16 @@
                                 <div>
                                     <div class="commonFlex  pipelinestatusdiv">
                                         <p style="background-color: ${item.stage === 'Potential'
-                                            ? '#85A69C'
+                                            ? '#dfdfdf'
                                             : (item.stage === 'Active'
-                                                ? '#70BCA5'
+                                                ? '#afafaf'
                                                 : (item.stage === 'Pre-Active'
-                                                    ? '#4B8170'
+                                                    ? '#cfcfcf'
                                                     : (item.stage === 'Under Contract'
-                                                        ? '#477ABB'
+                                                        ? '#8f8f8f;color=#fff;'
                                                         : (item.stage === 'Dead-Lost To Competition'
-                                                            ? '#575B58'
-                                                            : '#F18F01')))) }"
+                                                            ? '#efefef'
+                                                            : '#6f6f6f;color=#fff;')))) }"
                                             class="pstatusText ">${item.stage ?? 'N/A' } </p>
                                         <i class="fas fa-angle-down"></i>
                                     </div>

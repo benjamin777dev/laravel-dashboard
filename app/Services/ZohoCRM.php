@@ -159,6 +159,10 @@ class ZohoCRM
     public function createContactData($inputJson,$id)
     {
         Log::info('Creating Zoho contacts');
+
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
+
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -172,6 +176,8 @@ class ZohoCRM
     public function createNewContactData($inputJson)
     {
         Log::info('Creating Zoho contacts');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -269,6 +275,8 @@ class ZohoCRM
     public function createNoteData($inputJson,$id,$apiName)
     {
         Log::info('Creating Zoho Task');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -282,6 +290,8 @@ class ZohoCRM
     public function updateNoteData($inputJson,$id)
     {
         Log::info('Creating Zoho Task');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // return $inputJson;
         try{        // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
@@ -309,7 +319,8 @@ class ZohoCRM
     public function createTask($inputJson)
     {
         Log::info('Creating Zoho Task');
-        
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -323,6 +334,8 @@ class ZohoCRM
 
     public function updateTask($inputJson,$id)
     {
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // return $inputJson;
         try{        // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
@@ -339,7 +352,8 @@ class ZohoCRM
     public function deleteTask($inputJson,$id) 
     {
         Log::info('Creating Zoho Task');
-        
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -353,7 +367,8 @@ class ZohoCRM
     public function deleteNote($id) 
     {
         Log::info('Creating Zoho Task');
-        
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -367,7 +382,8 @@ class ZohoCRM
     public function deleteTaskSelected($inputJson,$ids)
     {
         Log::info('Creating Zoho Task');
-        
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -396,7 +412,8 @@ class ZohoCRM
     public function createZohoDeal($inputJson)
     {
         Log::info('Creating Zoho Deal');
-
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
@@ -410,7 +427,8 @@ class ZohoCRM
     public function updateZohoDeal($inputJson,$id)
     {
         Log::info('Creating Zoho Deal');
-
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
             'Content-Type' => 'application/json',
@@ -521,8 +539,6 @@ class ZohoCRM
                         ],
                         "uri" => "/crm/v6/Tasks/search",
                     ],
-                    
-                    
                     [
                         "sub_request_id"=>"Notes",
                         "method" => "GET",                    
@@ -636,7 +652,8 @@ class ZohoCRM
         try 
         {
             Log::info('Creating Contact Zoho Deal: ' . json_encode($inputJSON));
-
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
                 'Content-Type' => 'application/json',
@@ -653,7 +670,8 @@ class ZohoCRM
         try 
         {
             Log::info('Deleting Contact Zoho Deal: ' . json_encode($id));
-
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
                 'Content-Type' => 'application/json',

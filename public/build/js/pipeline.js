@@ -20,16 +20,16 @@ const pipelineData = (searchValue = '') => {
                                             <div class="d-flex justify-content-between">
                                                 <div class="pTableSelect pipelinestatusdiv">
                                                     <p style="background-color: ${item.stage === 'Potential'
-                            ? '#85A69C'
+                            ? '#dfdfdf'
                             : (item.stage === 'Active'
-                                ? '#70BCA5'
+                                ? '#afafaf'
                                 : (item.stage === 'Pre-Active'
-                                    ? '#4B8170'
+                                    ? '#cfcfcf'
                                     : (item.stage === 'Under Contract'
-                                        ? '#477ABB'
+                                        ? '#8f8f8f;color=#fff;'
                                         : (item.stage === 'Dead-Lost To Competition'
-                                            ? '#575B58'
-                                            : '#F18F01'))))}"
+                                            ? '#efefef'
+                                            : '#6f6f6f;color=#fff;'))))}"
                                                         class="pstatusText">${item.stage || 'N/A'}</p>
                                                     <i class="fas fa-angle-down"></i>
                                                 </div>
@@ -68,16 +68,16 @@ const pipelineData = (searchValue = '') => {
                                             <td>
                                                 <div class="commonFlex pipelinestatusdiv">
                                                     <p style="background-color: ${item.stage === 'Potential'
-                            ? '#85A69C'
+                            ? '#dfdfdf'
                             : (item.stage === 'Active'
-                                ? '#70BCA5'
+                                ? '#afafaf'
                                 : (item.stage === 'Pre-Active'
-                                    ? '#4B8170'
+                                    ? '#cfcfcf'
                                     : (item.stage === 'Under Contract'
-                                        ? '#477ABB'
+                                        ? '#8f8f8f;color=#fff'
                                         : (item.stage === 'Dead-Lost To Competition'
-                                            ? '#575B58'
-                                            : '#F18F01'))))}"
+                                            ? '#efefef'
+                                            : '#6f6f6f;color=#fff;'))))}"
                                             class="pstatusText">${item.stage || 'N/A'} </p>
                                                     <i class="fas fa-angle-down"></i>
                                                 </div>
