@@ -79,7 +79,7 @@ Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreateP
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
 //Groups
-Route::get('/group', [GroupController::class, 'index'])->name('group.index')->middleware('auth');
+Route::get('/group', [GroupController::class, 'index'])->name('groups.index')->middleware('auth');
 Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');

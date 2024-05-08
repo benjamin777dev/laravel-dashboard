@@ -1,5 +1,5 @@
-@if(isset($deal))
- <div class="modal fade" id="newTaskModalId{{ $deal['id'] }}" tabindex="-1">
+@if(isset($deal) && is_object($deal))
+ <div class="modal fade" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content dtaskmodalContent">
             <div class="modal-header border-0">
@@ -113,7 +113,3 @@
         </div>
     </div>
 @endif
-
-<script>
-    
-</script>

@@ -217,8 +217,7 @@
     }
 
     // validation function onsubmit
-    function validateNoteDash(noteId=null) {
-        console.log("sdfsdfsdfsdfdsfdsfdsfsdfsdfsdfsdf",id);
+    function validateNoteDash(id=null) {
         let noteText,relatedTo,changeButton
          if(id){
             noteText = document.getElementById("note_text"+id).value;

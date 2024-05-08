@@ -35,7 +35,7 @@
                         {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('Contacts Database')</a></li> --}}
                          <li><a href="{{ route('contacts.index') }}" key="t-database">@lang('Contacts Database')</a></li> 
                         {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('testing route')</a></li> --}}
-                         <li><a href="{{ route('group.index') }}" key="t-database">@lang('Groups')</a></li>
+                         <li><a href="{{ route('groups.index') }}" key="t-database">@lang('Groups')</a></li>
 
                     </ul>
                 </li>
