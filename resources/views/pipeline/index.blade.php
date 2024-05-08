@@ -130,7 +130,6 @@
                     </div>
                 </div>
                 <div></div>
-d
             </div>
             <div class = "psearchandsort">
                 @if (count($deals) > 0)
