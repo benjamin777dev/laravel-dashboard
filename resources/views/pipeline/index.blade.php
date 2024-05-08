@@ -164,7 +164,7 @@
     <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','pipeline_probability','{{$deal['id']}}')" id="pipeline_probability{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['pipeline_probability'] ?? '0', 2) }}%</div>
 </div>
 <div>
-    <div class="commonTextEllipsis">${{ number_format(($deal->sale_price ?? 0) * ($deal->commission ?? 0) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
+    <div class="commonTextEllipsis">${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0)/100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
 </div>
 </div>
 <div>
