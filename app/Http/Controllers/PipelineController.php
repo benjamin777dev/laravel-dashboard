@@ -40,11 +40,11 @@ class PipelineController extends Controller
         // Calculate stats from deals
         // Calculate stats from deals
         foreach ($deals as $deal) {
-            $totalSalesVolume += $deal->probable_volume ?? 0; // Updated field name
+            $totalSalesVolume += $deal->sale_price ?? 0; // Updated field name
             $totalCommission += $deal->commission ?? 0;       // Directly mapped
             $totalPotentialGCI += $deal->potential_gci ?? 0;  // Directly mapped
             $totalProbability += $deal->pipeline_probability ?? 0; // Updated field name
-            $totalProbableGCI += (($deal->probable_volume ?? 0) * (($deal->pipeline_probability??0) / 100)); // Calculate based on percentage
+            $totalProbableGCI += (($deal->sale_price ?? 0) * ($deal->commission ?? 0) * (($deal->pipeline_probability??0) / 100)); // Calculate based on percentage
         }
 
         // Calculate averages
