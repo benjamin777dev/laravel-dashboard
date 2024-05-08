@@ -960,10 +960,9 @@
     color: #fff;
 }
 
-<<<<<<< HEAD
 .database-filter-div{
     margin-inline: 0;
-=======
+}
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1037,7 +1036,6 @@
     font-style: normal;
     font-weight: 800;
     line-height: 16.1px; /* 115% */
->>>>>>> 11aee8b017e518449400cb1f9e45065be7040b28
 }
 /* Media query for screens smaller than 768px */
 @media (max-width: 768px) {
