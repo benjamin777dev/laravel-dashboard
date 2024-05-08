@@ -68,6 +68,8 @@ Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])-
 Route::get('/contacts-show/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+//notes fetch in json for contact
+Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContactFun'])->name('notes.fetch')->middleware('auth');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
@@ -79,7 +81,7 @@ Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreateP
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
 //Groups
-Route::get('/group', [GroupController::class, 'index'])->name('group.index')->middleware('auth');
+Route::get('/group', [GroupController::class, 'index'])->name('groups.index')->middleware('auth');
 Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');
@@ -99,6 +101,7 @@ Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])-
 
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
+
 
 
 // Language Translation

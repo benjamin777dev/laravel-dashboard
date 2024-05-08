@@ -25,7 +25,10 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
         $search = request()->query('search');
-        $deals = $db->retrieveDeals($user, $accessToken, $search);
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $filter = $request->input('filter');
+        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType,null,$filter);
 
         // configure the necessary pipeline stats
         $totalSalesVolume = 0;
@@ -55,7 +58,7 @@ class PipelineController extends Controller
         $allstages = config('variables.dealStages');
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken,"Deals");
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
-        return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction','totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'));
+        return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction','totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 
     public function getDeals(Request $request)
@@ -72,8 +75,11 @@ class PipelineController extends Controller
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
         $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType,null,$filter);
-        return response()->json($deals);
-        // return view('pipeline.index', compact('deals'));
+        $allstages = config('variables.dealStages');
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken,"Deals");
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
+        // return response()->json($deals);
+        return view('pipeline.transaction', compact('deals','allstages','retrieveModuleData','getdealsTransaction'))->render();
     }
 
     public function showViewPipelineForm(Request $request)

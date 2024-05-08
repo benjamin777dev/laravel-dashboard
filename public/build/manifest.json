@@ -1,28 +1,28 @@
 {
   "resources/css/app.css": {
     "file": "css/contacts.min.css",
-    "src": "resources/css/app.css",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/css/app.css"
   },
   "resources/css/contacts.css": {
     "file": "css/contacts.min.css",
-    "src": "resources/css/app.css",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/css/app.css"
   },
   "resources/css/custom.css": {
     "file": "css/custom.min.css",
-    "src": "resources/css/custom.css",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/css/custom.css"
   },
   "resources/css/dashboard.css": {
     "file": "css/dashboard.min.css",
-    "src": "resources/css/dashboard.css",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/css/dashboard.css"
   },
   "resources/css/pipeline.css": {
     "file": "css/pipeline.min.css",
-    "src": "resources/css/pipeline.css",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/css/pipeline.css"
   },
   "resources/fonts/boxicons.eot": {
     "file": "icons/boxicons.eot",
@@ -146,47 +146,77 @@
   },
   "resources/js/app.js": {
     "file": "js/app3.js",
+<<<<<<< HEAD:public/build/manifest.json
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  },
+  "resources/js/contacts.js": {
+    "file": "js/contacts.js",
+    "isEntry": true,
+    "src": "resources/js/contacts.js"
+  },
+  "resources/js/custom.js": {
+    "file": "js/custom2.js",
+    "isEntry": true,
+    "src": "resources/js/custom.js"
+  },
+  "resources/js/dashboard.js": {
+    "file": "js/dashboard.js",
+    "isEntry": true,
+    "src": "resources/js/dashboard.js"
+  },
+  "resources/js/pipeline.js": {
+    "file": "js/pipeline.js",
+    "isEntry": true,
+    "src": "resources/js/pipeline.js"
+=======
+    "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
   },
   "resources/js/contacts.js": {
     "file": "js/contacts.js",
+    "name": "contacts",
     "src": "resources/js/contacts.js",
     "isEntry": true
   },
   "resources/js/custom.js": {
     "file": "js/custom2.js",
+    "name": "custom",
     "src": "resources/js/custom.js",
     "isEntry": true
   },
   "resources/js/dashboard.js": {
     "file": "js/dashboard.js",
+    "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true
   },
   "resources/js/pipeline.js": {
     "file": "js/pipeline.js",
+    "name": "pipeline",
     "src": "resources/js/pipeline.js",
     "isEntry": true
+>>>>>>> 11aee8b017e518449400cb1f9e45065be7040b28:public/build/.vite/manifest.json
   },
   "resources/sass/app.scss": {
     "file": "css/app.min2.css",
-    "src": "resources/sass/app.scss",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/sass/app.scss"
   },
   "resources/scss/app.scss": {
     "file": "css/app.min.css",
-    "src": "resources/scss/app.scss",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/scss/app.scss"
   },
   "resources/scss/bootstrap.scss": {
     "file": "css/bootstrap.min.css",
-    "src": "resources/scss/bootstrap.scss",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/scss/bootstrap.scss"
   },
   "resources/scss/icons.scss": {
     "file": "css/icons.min.css",
-    "src": "resources/scss/icons.scss",
-    "isEntry": true
+    "isEntry": true,
+    "src": "resources/scss/icons.scss"
   }
 }

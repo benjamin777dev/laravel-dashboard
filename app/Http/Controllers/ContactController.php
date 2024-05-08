@@ -480,6 +480,19 @@ class ContactController extends Controller
         return view('contacts.detail', compact('contact','user_id','name','contacts','tasks','notes','getdealsTransaction','retrieveModuleData','dealContacts','contactId','users','groups','contactsGroups'));
     }
 
+
+    public function retriveNotesForContactFun(){
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DB();
+        $contactId = request()->route('contactId');
+        $accessToken = $user->getAccessToken();
+        $notes = $db->retrieveNotesForContact($user,$accessToken,$contactId);
+        return response()->json($notes);
+    }
+
     public function showCreateContactForm()
     {
         $user = auth()->user();

@@ -327,7 +327,7 @@ class DB
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->get();
+            $deals = $deals->where($conditions)->paginate(10);
             Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]);
             return $deals;
         } catch (\Exception $e) {

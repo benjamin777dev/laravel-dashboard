@@ -273,29 +273,6 @@
             @include('common.pagination', ['module' => $tasks])
         </div>
     @endif
-
-    {{-- <div class="dpagination">
-        <div onclick="removeAllSelected()"
-            class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"> <i
-                class="fas fa-trash-alt plusicon"></i>
-            Remove Selected
-        </div>
-        <nav aria-label="..." class="dpaginationNav">
-            <ul class="pagination d-flex justify-content-end">
-                <li class="page-item disabled">
-                    <a class="page-link">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div> --}}
 </div>
 <script>
    
@@ -376,12 +353,11 @@
             // Change the flag to indicate that it's no longer the first click
             isFirstClick = false;
             selectElement.addEventListener('change', function() {
-                // Remove the onclick attribute
+                // Remove the onclick attribute 
                 selectElement.removeAttribute("onclick");
-
                 // Set the onchange attribute to call moduleSelected function passing this as a parameter
-                selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
             });
+            selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
         
     }
 
