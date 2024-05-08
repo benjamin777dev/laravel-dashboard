@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            {{--<div class="col-md-3 cardsTab">
+            {{-- <div class="col-md-3 cardsTab">
                 <div class="viewCards">
                     <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
 
@@ -85,7 +85,7 @@
 
                     </p>
                 </div>
-            </div>--}}
+            </div> --}}
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                         </div>
-                        @include('common.notes.create',['contact'=>$contact])
+                        @include('common.notes.create', ['contact' => $contact])
                     </a>
                 @endforeach
             </div>
@@ -415,8 +415,8 @@
             </a>
             
         `;
-        // Append the contact card HTML to the contact list container
-        contactList.append(cardHtml);
+                        // Append the contact card HTML to the contact list container
+                        contactList.append(cardHtml);
                     });
                 }
             },

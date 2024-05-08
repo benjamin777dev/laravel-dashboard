@@ -24,7 +24,7 @@
 
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
-    color: #FFF;
+    color: #fff;
     text-align: center;
 
     cursor: pointer;
@@ -77,7 +77,7 @@
     padding-block: 5px;
     padding-inline: 12px;
 }
-.closeIcon{
+.closeIcon {
     margin-top: 5px;
 }
 
@@ -160,7 +160,8 @@
     cursor: pointer;
 }
 
-.page-link.active, .active>.page-link {
+.page-link.active,
+.active > .page-link {
     background-color: #6f6f6f !important;
 }
 
@@ -313,7 +314,7 @@
     padding: 20px;
     gap: 24px;
     border-radius: 5px;
-    background: #EFF6FF;
+    background: #eff6ff;
     box-shadow: 0px 3px 7px 0px rgba(18, 38, 63, 0.06);
     display: flex;
     justify-content: space-between;
@@ -501,7 +502,6 @@
 .dNoteFooters {
     margin-inline: auto;
 }
-
 
 .dNoteFooters {
     justify-content: center;
@@ -813,8 +813,6 @@
     .dgraphdiv {
         --bs-gutter-x: 0;
     }
-
-
 }
 
 @media (min-width: 320px) and (max-width: 355px) {
@@ -923,15 +921,15 @@
 
 .commonFlex {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
 .ppipeDiv {
     background-color: #f8f9fa; /* Example background color */
-    margin: 20px;
+    /* margin: 20px; */
     border-radius: 5px;
-    padding: 15px;
+    /* padding: 15px; */
 }
 
 .alert {
@@ -962,7 +960,80 @@
     color: #fff;
 }
 
+.pipeline-btns-container {
+    display: flex;
+    gap: 24px;
+}
+.pcontactBtn,
+.pTransactionBtn {
+    display: flex;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
 
+    /* selected btn */
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px;
+    cursor: pointer;
+}
+
+.pipeline-cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+.pcDeleteBtn {
+    display: flex;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    border-radius: 16px;
+    background: #848484;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px; /* 115% */
+}
+
+.pcEditBtn {
+    display: flex;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
+
+    /* selected btn */
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px; /* 115% */
+}
 /* Media query for screens smaller than 768px */
 @media (max-width: 768px) {
     .commonFlex {
@@ -973,7 +1044,10 @@
         width: 100%; /* Make alert boxes full width on small screens */
         flex: 1 1 70px; /* Allows flex items to grow and shrink but not smaller than 200px */
     }
-   
+    .pipeline-cards-container {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 }
 
 .pfilterDiv {
@@ -1103,6 +1177,8 @@
     padding: 4px 6px;
     border-radius: 4px;
     margin-bottom: 0;
+    padding-right: 30px;
+    text-overflow: ellipsis;
 }
 
 .pipelinestatusdiv {
@@ -1238,7 +1314,6 @@
 }
 
 @media (max-width: 767px) {
-
     .ppipelineTable,
     .dtabletranstion,
     .npcontactsTable,
@@ -1270,7 +1345,7 @@
         flex-direction: column;
         align-items: flex-start;
         border-radius: 4px;
-        background: #FFF;
+        background: #fff;
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
         margin-bottom: 24px;
     }
@@ -1280,7 +1355,7 @@
         flex-direction: column;
         align-self: stretch;
         border-radius: 4px;
-        background: #FFF;
+        background: #fff;
         box-shadow: 0px 2px 10px 0px rgba(18, 38, 63, 0.07);
         margin-bottom: 24px;
         padding: 20px;
@@ -1292,7 +1367,7 @@
         flex-direction: column;
         display: flex;
         border-radius: 4px;
-        background: #FFF;
+        background: #fff;
         margin-bottom: 24px;
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
     }
@@ -1301,7 +1376,7 @@
         display: flex;
         padding: 20px;
         flex-direction: column;
-        background: #FFF;
+        background: #fff;
         box-shadow: 0px 2px 10px 0px rgba(18, 38, 63, 0.07);
         margin-bottom: 24px;
         border-radius: 4px;
@@ -1562,7 +1637,7 @@
 /* CSS (inside your stylesheet or style tag) */
 .commonTextEllipsis {
     overflow: hidden;
-    white-space:normal;
+    white-space: normal;
     text-overflow: ellipsis;
     word-break: break-all;
     font-size: 16px;
@@ -1710,6 +1785,69 @@
 }
 
 /* Group table */
+.dbgroupsFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+@media (min-width: 320px) and (max-width: 475px) {
+    .dbgroupsFlex,
+    .pipeline-btns-container {
+        display: block;
+    }
+    .pcontactBtn,
+    .pTransactionBtn {
+        width: 100%;
+    }
+    .pcDeleteBtn {
+        width: 100%;
+    }
+    .pcontactBtn,
+    .pcDeleteBtn {
+        margin-bottom: 24px;
+    }
+}
+.ngText {
+    color: #000;
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 19.2px;
+    text-transform: uppercase;
+}
+.dbNewGroups {
+    display: flex;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
+
+    /* selected btn */
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px; /* 115% */
+}
+.dbgheaderFlex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.checkboxText {
+    display: flex;
+    gap: 4px;
+}
 .ncGroupTable {
     display: flex;
     padding: 14px 12px 15px 12px;
@@ -1779,42 +1917,85 @@
 }
 
 /* / database groups / */
+/* .dbgSelectDiv {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    gap: 24px;
+    flex: 1 0 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
+} */
 .dbgSelectDiv {
     display: flex;
-    padding: 16px;
+    padding: 20px;
     align-items: center;
     gap: 24px;
     flex: 1 0 0;
-    border-radius: 4px;
-    background: #fff;
-    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
-}
+    align-self: stretch;
 
+    border-radius: 8px;
+    background: #fff;
+
+    /* layoutCardsShadow */
+    box-shadow: 0px 2px 10px 0px #cecece;
+}
+.gdropdown-select {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.gdropdown-btn {
+    flex: 1 0 0;
+    color: #848484;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    border: none;
+    cursor: pointer;
+}
+.gdropdown-btn:focus-visible {
+    outline: none;
+}
+.gdropdown {
+    display: flex;
+    justify-content: space-between;
+}
+.gdropdownMax {
+    max-height: 250px;
+    overflow-y: auto;
+}
 .dbgSortDiv {
     display: flex;
-    padding: 16px;
+    padding: 20px;
     align-items: center;
-    flex: 1 0 0;
-    border-radius: 4px;
-    background: #fff;
-    box-shadow: 0px 12px 12px 0px rgba(18, 38, 63, 0.03);
     gap: 24px;
+    flex: 1 0 0;
+    align-self: stretch;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0px 2px 10px 0px #cecece;
 }
 
 .dbgSelectinfo {
     display: flex;
-    padding: 7.52px 12px;
-    justify-content: space-between;
+    height: 48px;
+    padding: 12px;
     align-items: center;
-    flex: 1 0 0;
+    align-self: stretch;
     border-radius: 4px;
-    border: 1px solid #afafaf;
-    color: #222;
+    border: 1px solid #cecece;
+    flex: 1 0 0;
+    color: #848484;
     font-family: Avenir;
-    font-size: 13px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    cursor: pointer;
 }
 
 .dbgGroupDiv {
@@ -1823,21 +2004,26 @@
 
 .dbgfilterBtn {
     display: flex;
-    height: 33px;
+    padding: 24px;
     justify-content: center;
     align-items: center;
-    flex: 1 0 0;
-    border-radius: 5px;
+    gap: 4px;
+    align-self: stretch;
+
+    border-radius: 16px;
     border: 1px solid #222;
     background: #222;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
     font-family: Avenir;
-    font-size: 13px;
+    font-size: 14px;
     font-style: normal;
-    font-weight: 400;
-    line-height: 19.5px;
-    cursor: pointer;
+    font-weight: 800;
+    line-height: 16.1px; /* 115% */
 }
 
 /* Tab Card */
@@ -1944,7 +2130,6 @@
 
 /*  */
 
-
 .psortFilterDiv {
     display: flex;
     padding: 7.52px 12px;
@@ -1973,7 +2158,7 @@
     flex: 1 0 0;
     align-self: stretch;
     border-radius: 8px;
-    background: #FFF;
+    background: #fff;
     box-shadow: 0px 2px 10px 0px #efefef;
 }
 
@@ -2006,7 +2191,8 @@
 
 html,
 body {
-    font: 500 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font: 500 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     height: 100%;
     color: #444;
 }
@@ -2025,9 +2211,6 @@ body {
     .bar-b {
         background-color: #bfbfbf;
     }
-
-
-
 }
 
 .stacked-contain {
@@ -2037,7 +2220,6 @@ body {
 }
 
 .dgraph-strip {
-
     align-items: center;
 }
 
@@ -2071,7 +2253,7 @@ body {
     flex: 1 0 0;
 
     border-radius: 8px;
-    background: #FFF;
+    background: #fff;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
 }
 
@@ -2092,7 +2274,7 @@ body {
     background-size: 100%;
 }
 
-.inputDesign{
+.inputDesign {
     width: 80%;
 }
 
@@ -2109,14 +2291,14 @@ canvas {
 .gdropdown-btn {
     width: 100% !important;
 }
-.gdropdown{
-    padding:10px
+.gdropdown {
+    padding: 10px;
 }
 
-body[data-sidebar=dark] .vertical-menu {
+body[data-sidebar="dark"] .vertical-menu {
     background: #000 !important;
 }
 
-body[data-sidebar=dark] .navbar-brand-box {
+body[data-sidebar="dark"] .navbar-brand-box {
     background: #000;
 }
