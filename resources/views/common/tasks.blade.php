@@ -273,29 +273,6 @@
             @include('common.pagination', ['module' => $tasks])
         </div>
     @endif
-
-    {{-- <div class="dpagination">
-        <div onclick="removeAllSelected()"
-            class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"> <i
-                class="fas fa-trash-alt plusicon"></i>
-            Remove Selected
-        </div>
-        <nav aria-label="..." class="dpaginationNav">
-            <ul class="pagination d-flex justify-content-end">
-                <li class="page-item disabled">
-                    <a class="page-link">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div> --}}
 </div>
 <script>
    
