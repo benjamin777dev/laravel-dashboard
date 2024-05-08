@@ -923,12 +923,22 @@
 
 .commonFlex {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: space-around;
     align-items: center;
+    padding: 20px;
+    gap: 10px; /* Ensures spacing between items */
 }
 
 .ppipeDiv {
-    margin-bottom: 24px;
+    background-color: #f8f9fa; /* Example background color */
+    margin: 20px;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.alert {
+    flex: 1 1 200px; /* Allows flex items to grow and shrink but not smaller than 200px */
 }
 
 .pText {
@@ -947,10 +957,23 @@
     background: #222;
     cursor: pointer;
     color: #fff;
+    font-size: 16px;
 }
 
 .ppipeaText {
     color: #fff;
+}
+
+
+/* Media query for screens smaller than 768px */
+@media (max-width: 768px) {
+    .commonFlex {
+        flex-direction: column; /* Stack flex children vertically on small screens */
+    }
+
+    .alert {
+        width: 100%; /* Make alert boxes full width on small screens */
+    }
 }
 
 .pfilterDiv {
