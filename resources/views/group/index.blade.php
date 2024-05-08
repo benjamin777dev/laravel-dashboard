@@ -113,6 +113,9 @@
                 </tbody>
             </table>
         </div>
+        {{-- <div class="datapagination">
+            @include('common.pagination', ['module' => $deals])
+        </div> --}}
     </div>
 
    <script>

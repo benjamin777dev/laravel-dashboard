@@ -306,6 +306,9 @@
                                 </div>
             @endif
             </div>
+            <div class="datapagination">
+                @include('common.pagination', ['module' => $deals])
+            </div>
             
         </div>
 </div>

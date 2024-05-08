@@ -68,6 +68,8 @@ Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])-
 Route::get('/contacts-show/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+//notes fetch in json for contact
+Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContactFun'])->name('notes.fetch')->middleware('auth');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
@@ -99,6 +101,7 @@ Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])-
 
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
+
 
 
 // Language Translation

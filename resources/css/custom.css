@@ -923,15 +923,15 @@
 
 .commonFlex {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
 .ppipeDiv {
     background-color: #f8f9fa; /* Example background color */
-    margin: 20px;
+    /* margin: 20px; */
     border-radius: 5px;
-    padding: 15px;
+    /* padding: 15px; */
 }
 
 .alert {
@@ -962,7 +962,9 @@
     color: #fff;
 }
 
-
+.database-filter-div{
+    margin-inline: 0;
+}
 /* Media query for screens smaller than 768px */
 @media (max-width: 768px) {
     .commonFlex {
@@ -1589,7 +1591,7 @@
 
 /* / database component / */
 .dataCardDiv {
-    min-height: 245px;
+    min-height: 260px;
     cursor: pointer;
 }
 
@@ -1630,6 +1632,7 @@
     position: absolute;
     right: 0px;
     border-radius: 4px;
+    top: 0;
 }
 
 .dataPhoneDiv,

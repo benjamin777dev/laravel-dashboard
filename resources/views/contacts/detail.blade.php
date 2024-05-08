@@ -434,7 +434,6 @@
                                 <input type="text" name="address_line2" placeholder="Dane Sq."
                                     class="form-control npinputinfo" id="validationDefault02">
                             </div>
-
                             <div class="col-md-6">
                                 <label for="validationDefault03" class="form-label nplabelText">City</label>
                                 <input type="text" value="{{ $contact['mailing_city'] }}" name="city"

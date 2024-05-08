@@ -1,160 +1,162 @@
-const pipelineData = (searchValue = '') => {
-    fetch(`{{ url('/pipeline/deals') }}?search=${encodeURIComponent(searchValue) ? encodeURIComponent(searchValue) : ""}`)
-        .then(response => response.json())
-        .then(data => {
-            // Clear previous results
-            ppipelineTableBody.innerHTML = '';
-            ptableCardDiv.innerHTML = ''
-            // Render new results
-            const isMobile = window.innerWidth < 767; // Check if viewport width is less than 767 pixels
-            console.log("ISMOBILE", isMobile);
-            data.forEach(item => {
-                if (isMobile) {
-                    // Render data in card format
-                    const card = document.createElement('div');
-                    card.classList.add('pTableCard');
-                    card.innerHTML = `
-                                            <div class="pTableCard">
-                                            <p class="pTableTransText">Transaction</p>
-                                            <p class="pTableNameText">${item.deal_name || 'N/A'}</p>
-                                            <div class="d-flex justify-content-between">
-                                                <div class="pTableSelect pipelinestatusdiv">
-                                                    <p style="background-color: ${item.stage === 'Potential'
-                            ? '#dfdfdf'
-                            : (item.stage === 'Active'
-                                ? '#afafaf'
-                                : (item.stage === 'Pre-Active'
-                                    ? '#cfcfcf'
-                                    : (item.stage === 'Under Contract'
-                                        ? '#8f8f8f;color=#fff;'
-                                        : (item.stage === 'Dead-Lost To Competition'
-                                            ? '#efefef'
-                                            : '#6f6f6f;color=#fff;'))))}"
-                                                        class="pstatusText">${item.stage || 'N/A'}</p>
-                                                    <i class="fas fa-angle-down"></i>
-                                                </div>
-                                                ${item.closing_date || 'N/A'}
-                                            </div>
-                                            <div class="d-flex justify-content-between psellDiv">
-                                                <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> {{ $deal->contactName->first_name ?? 'N/A' }} {{ $deal->contactName->last_name ?? '' }}
-                                                </div>
-                                                <div>
-                                                    <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">
-                                                    ${item.sale_price || 'N/A'}
-                                                </div>
-                                            </div>
-                                            <div class="pCardFooter">
-                                                <div class="pfootericondiv">
-                                                    <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                                                        class="pdiversityicon">
-                                                    <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                                                        class="pdiversityicon">
-                                                </div>
-                                                <div>
-                                                    <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                                                        class="pdiversityicon">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        `;
-                    ptableCardDiv.appendChild(card);
-                } else {
-                    // Render data in table format
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                                            <td><input type="checkbox" /></td>
-                                            <td>${item.deal_name || 'N/A'}</td>
-                                            <td>${item.contactName ? (item.contactName.first_name + ' ' + item.contactName.last_name) : 'N/A'}</td>
-                                            <td>
-                                                <div class="commonFlex pipelinestatusdiv">
-                                                    <p style="background-color: ${item.stage === 'Potential'
-                            ? '#dfdfdf'
-                            : (item.stage === 'Active'
-                                ? '#afafaf'
-                                : (item.stage === 'Pre-Active'
-                                    ? '#cfcfcf'
-                                    : (item.stage === 'Under Contract'
-                                        ? '#8f8f8f;color=#fff'
-                                        : (item.stage === 'Dead-Lost To Competition'
-                                            ? '#efefef'
-                                            : '#6f6f6f;color=#fff;'))))}"
-                                            class="pstatusText">${item.stage || 'N/A'} </p>
-                                                    <i class="fas fa-angle-down"></i>
-                                                </div>
-                                            </td>
-                                            <td>${item.representing || 'N/A'}</td>
-                                            <td>${item.sale_price || 'N/A'}</td>
-                                            <td>${item.closing_date || 'N/A'}</td>
-                                            <td>
-                                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                                                <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                                                <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                                            </td>
-                                        `;
-                    ppipelineTableBody.appendChild(row);
-                }
+
+window.updateDeal = function (dealID, field, Id) {
+    console.log(dealID, field);
+    event.preventDefault();
+    let updateElement = document.getElementById(field + dealID);
+    var text = updateElement.textContent.trim();
+    if (field == "closing_date") {
+        updateElement.innerHTML =
+            '<input type="date" class="form-control npinputinfo" id="edit' + field + dealID +
+            '" required="" value="">';
+    } else {
+        updateElement.innerHTML =
+            '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
+            '" value="' + text + '" />';
+    }
+
+    let inputElementmake = document.getElementById('edit' + field + dealID);
+    inputElementmake.focus();
+    inputElementmake.addEventListener('keydown', function (event) {
+        // Check if the key pressed is Enter
+        if (event.key === 'Enter') {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+            // Call the function to update the element
+            updateDealData(field, Id, dealID);
+        }
+    });
+
+    if (field == "closing_date") {
+        inputElementmake.addEventListener('click', function () {
+            // Create a date input element
+            var dateInput = document.createElement('input');
+            dateInput.type = 'text'; // Change type to text for Bootstrap Datepicker compatibility
+            dateInput.classList.add('form-control', 'npinputinfo');
+            dateInput.id = 'edit' + field + dealID;
+            dateInput.required = true;
+
+            // Set the value of the date input element
+            if (inputElementmake.value) {
+                dateInput.value = inputElementmake.value;
+            }
+
+            // Replace the update element with the date input element
+            updateElement.innerHTML = '';
+            updateElement.appendChild(dateInput);
+
+            // Initialize Bootstrap Datepicker
+            $(dateInput).datepicker();
+
+            // Add event listener to update the deal data when the date input loses focus
+            dateInput.addEventListener('blur', function () {
+                updateDealData(field, Id, dealID);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
         });
-};
+    }
+    else {
+        inputElementmake.addEventListener('blur', function () {
+            // Update the update element with the input element's value
+            updateElement.innerHTML = '<div class="commonTextEllipsis" id="' + field + dealID + '">' + inputElementmake.value + '</div>';
 
-console.log("yes working")
-function addTask() {
+            // Update the deal data
+            updateDealData(field, Id, dealID);
+        });
+    }
 
-    console.log('deal is ehdjhdjkfh');
-    // var subject = document.getElementsByName("subject")[0].value;
-    // if (subject.trim() === "") {
-    //     document.getElementById("subject_error").innerHTML = "please enter details";
-    // }
-    // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-    // var whoId = window.selectedTransation
-    // if (whoId === undefined) {
-    //     whoId = whoSelectoneid
-    // }
-    // var dueDate = document.getElementsByName("due_date")[0].value;
-    // console.log("dueDate", dueDate);
-    // console.log("dealId", deal -> zoho_deal_id);
-    // var formData = {
-    //     "data": [{
-    //         "Subject": subject,
-    //         "Who_Id": {
-    //             "id": whoId
-    //         },
-    //         "Status": "In Progress",
-    //         "Due_Date": dueDate,
-    //         "Priority": "High",
-    //         "Transaction": {
-    //             "id": $deal -> zoho_deal_id
-    //         }
-    //     }],
-    //     "_token": '{{ csrf_token() }}'
-    // };
 
-    // $.ajax({
-    //     url: '{{ route('create.task') }}',
-    //     type: 'POST',
-    //     headers: {
-    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //     },
-    //     contentType: 'application/json',
-    //     dataType: 'json',
-    //     data: JSON.stringify(formData),
-    //     success: function (response) {
-    //         if (response?.data && response.data[0]?.message) {
-    //             // Convert message to uppercase and then display
-    //             const upperCaseMessage = response.data[0].message.toUpperCase();
-    //             alert(upperCaseMessage);
-    //             window.location.reload();
-    //         } else {
-    //             alert("Response or message not found");
-    //         }
-    //     },
-    //     error: function (xhr, status, error) {
-    //         // Handle error response
-    //         console.error(xhr.responseText);
-    //     }
-    // })
+    // Prevent default action when clicking on container
+    let container = document.getElementById("contactlist");
+    container?.addEventListener("click", function (event) {
+        event.preventDefault();
+    });
 }
+
+
+window.updateDealData = function (field, id, dealID, value = null) {
+    let elementId = document.getElementById(field + dealID);
+    console.log(field, dealID, elementId?.textContent ? elementId?.textContent : elementId.value, 'eleme');
+    let formData = {
+        "data": [{
+            "Deal_Name": field == "deal_name" ? elementId?.textContent : undefined,
+            "Stage": field == "stage" ? value : undefined,
+            // "ABCD": "",
+            "Client_Name_Primary": field == "client_name_primary" ? elementId?.textContent : undefined,
+            "Representing": field == "representing" ? value : undefined,
+            "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
+            "Sale_Price": field == "sale_price" ? elementId?.textContent : undefined,
+        }],
+        "skip_mandatory": true
+    }
+    // Iterate through the data array
+    formData?.data?.forEach(obj => {
+        // Iterate through the keys of each object
+        Object.keys(obj).forEach(key => {
+            // Check if the value is undefined and delete the key
+            if (obj[key] === undefined) {
+                delete obj[key];
+            }
+        });
+    });
+    //ajax call hitting here
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        url: `/pipeline/update/${dealID}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function (response) {
+            console.log("LJHJLDKGFLHDSGFKDHSGF", response)
+            // Handle success response
+            if (response?.data[0]?.status == "success") {
+                if (!document.getElementById('savemakeModalId' + dealID).classList.contains('show')) {
+                    var modalTarget = document.getElementById('savemakeModalId' + dealID);
+                    var update_message = document.getElementById('updated_message_make');
+                    update_message.textContent = response?.data[0]?.message;
+                    // Show the modal
+                    $(modalTarget).modal('show');
+                    window.location.reload();
+                }
+
+            }
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText, 'errrorroororooro');
+
+
+        }
+    })
+
+
+
+}
+
+window.populateSecondSelect = function (selectedValue, dealId, dealName) {
+    // Get the second select element
+    var secondSelect = document.getElementById('taskSelect_' + dealId);
+
+    // Clear previous options
+    secondSelect.innerHTML = '';
+
+    // Populate options based on selected value
+    if (selectedValue === 'Deals') {
+        // Add option for the selected deal
+        var option = document.createElement('option');
+        option.value = dealId;
+        option.text = dealName;
+        secondSelect.appendChild(option);
+    }
+
+    // Show the second select element
+    secondSelect.style.display = 'block';
+}
+var selectedValue = 'Deals'; // Example value
+var dealId = '{{ $deal["id"] }}'; // Deal ID from your PHP code
+var dealName = '{{ $deal["deal_name"] }}'; // Deal name from your PHP code
+populateSecondSelect(selectedValue, dealId, dealName);
