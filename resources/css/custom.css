@@ -925,7 +925,6 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 10px; /* Ensures spacing between items */
 }
 
 .ppipeDiv {
@@ -937,6 +936,7 @@
 
 .alert {
     flex: 1 1 200px; /* Allows flex items to grow and shrink but not smaller than 200px */
+    margin: 5px;
 }
 
 .pText {
