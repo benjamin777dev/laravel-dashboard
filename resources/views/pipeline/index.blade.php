@@ -165,12 +165,16 @@
                         <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')" id="sale_price{{ $deal['zoho_deal_id'] }}">$ {{ $deal['sale_price'] ?? 'N/A' }}</div>
                         <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}')" id="closing_date{{ $deal['zoho_deal_id'] }}">{{ $deal['closing_date'] ?? 'N/A' }}</div>
                         <div>
+                            <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{$deal['id']}}')" id="commission{{ $deal['zoho_deal_id'] }}">{{ $deal['commission'] ?? '0' }}%</div>
                         </div>
                         <div>
+                            <div class="commonTextEllipsis">${{ $deal['potential_gci'] ?? '0' }}</div>
                         </div>
                         <div>
+                            <div class="commonTextEllipsis" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','probability','{{$deal['id']}}')" id="probability{{ $deal['zoho_deal_id'] }}">{{ $deal['probability'] ?? '0' }}%</div>
                         </div>
                         <div>
+                            <div class="commonTextEllipsis">${{ $deal['probable_gci'] ?? '0' }}</div>
                         </div>
                         <div>
                             <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
