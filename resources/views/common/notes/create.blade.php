@@ -123,7 +123,7 @@
                     <div id="related_to_error" class="text-danger"></div>
                 </div>
                 <div class="modal-footer dNoteFooter border-0">
-                    <button type="button" id="validate-button" onclick="validateNoteDash()"
+                    <button type="button" id="validate-button" onclick="validateNoteDash('')"
                         class="btn btn-secondary dNoteModalmarkBtn">
                         <i class="fas fa-save saveIcon"></i> Add Note
                     </button>
@@ -217,7 +217,7 @@
     }
 
     // validation function onsubmit
-    function validateNoteDash(id) {
+    function validateNoteDash(id=null) {
         let noteText,relatedTo,changeButton
          if(id){
             noteText = document.getElementById("note_text"+id).value;

@@ -39,7 +39,7 @@
             </div>
         </div> --}}
 
-        <div class="row g-4">
+        <div class="row g-4 database-filter-div">
             <div class="col-md-4">
                 <div class="row align-items-center" style="gap:12px">
                     <div class="col-md-10 pcommonFilterDiv">
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            {{--<div class="col-md-3 cardsTab">
+            {{-- <div class="col-md-3 cardsTab">
                 <div class="viewCards">
                     <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
 
@@ -85,7 +85,7 @@
 
                     </p>
                 </div>
-            </div>--}}
+            </div> --}}
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -97,11 +97,10 @@
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
                                     <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2" style="max-width: 83%;"
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name')">
                                             <h5 class="card-title" id="first_name{{ $contact['zoho_contact_id'] }}">
                                                 {{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}</h5>
-                                            <i class="fas fa-pencil-alt pencilIcon"
-                                                onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name')"></i>
                                         </div>
 
                                         <p class="databaseCardWord">
@@ -111,21 +110,20 @@
                                         <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
                                             class="dataphoneicon">
 
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2"
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile')">
                                             <p id="mobile{{ $contact['zoho_contact_id'] }}" class="card-text">
                                                 {{ $contact['mobile'] ?? 'N/A' }}</p>
-                                            <i class="fas fa-pencil-alt pencilIcon"
-                                                onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile')"></i>
                                         </div>
                                     </div>
                                     <div class="datamailDiv">
                                         <img src="{{ URL::asset('/images/mail.svg') }}" alt=""
                                             class="datamailicon">
-                                        <div class="d-flex gap-2">
+                                        <div class="d-flex gap-2 overflow-hidden"
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','email')">
                                             <p id="email{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
                                                 {{ $contact['email'] ?? 'N/A' }}</p>
-                                            <i class="fas fa-pencil-alt pencilIcon"
-                                                onclick="editText('{{ $contact['zoho_contact_id'] }}','email')"></i>
+
                                         </div>
                                     </div>
                                     <div class="datadiversityDiv">
@@ -135,13 +133,14 @@
                                     </div>
                                 </div>
                                 <div class="card-footer dataCardFooter">
-                                    <div class="datafootericondiv" onclick="event.preventDefault();" data-bs-toggle="modal"
-                                        data-bs-target="#newTaskContactModalId{{ $contact['zoho_contact_id'] }}">
+                                    <div class="datafootericondiv" onclick="event.preventDefault();">
 
                                         <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                                            class="datadiversityicon">
+                                            class="datadiversityicon" data-bs-toggle="modal"
+                                            data-bs-target="#newTaskContactModalId{{ $contact['zoho_contact_id'] }}">
                                         <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                                            class="datadiversityicon">
+                                            class="datadiversityicon"
+                                            onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
                                     </div>
                                     <div onclick="event.preventDefault();" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
@@ -194,6 +193,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        {{-- fetch details notes related 0 --}}
+                        <div class="modal fade testing" onclick="event.preventDefault();"
+                            id="notefetchrelatedContact{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
+                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content dtaskmodalContent">
+                                    <div class="modal-header border-0">
+                                        <p class="modal-title dHeaderText">Notes</p>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            onclick="resetValidation()" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body dtaskbody" id="notesContainer">
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
                         <div class="modal fade" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered deleteModal">
                                 <div class="modal-content">
@@ -220,7 +240,7 @@
                                 </div>
                             </div>
                         </div>
-                        @include('common.notes.create',['contact'=>$contact])
+                        @include('common.notes.create', ['contact' => $contact])
                     </a>
                 @endforeach
             </div>
@@ -299,6 +319,87 @@
         return '#b5b5b5';
     }
 
+    function validateFormc(submitClick = '', modId = "") {
+        let noteText = document.getElementById("note_text" + modId).value;
+        let relatedTo = document.getElementById("related_to" + modId).value;
+        let isValid = true;
+        console.log(noteText, 'text')
+        // Reset errors
+        document.getElementById("note_text_error" + modId).innerText = "";
+        document.getElementById("related_to_error" + modId).innerText = "";
+        // Validate note text length
+        if (noteText.trim().length > 50) {
+            document.getElementById("note_text_error" + modId).innerText = "Note text must be 10 characters or less";
+            isValid = false;
+        }
+        // Validate note text
+        if (noteText.trim() === "") {
+            console.log("yes here sdklfhsdf");
+            document.getElementById("note_text_error" + modId).innerText = "Note text is required";
+            isValid = false;
+        }
+
+        // Validate related to
+        if (relatedTo === "") {
+            document.getElementById("related_to_error" + modId).innerText = "Related to is required";
+            document.getElementById("taskSelect" + modId).style.display = "none";
+            isValid = false;
+        }
+        if (isValid) {
+            let changeButton = document.getElementById('validate-button' + modId);
+            changeButton.type = "submit";
+            if (submitClick === "submit") $('[data-custom="noteModal"]').removeAttr("onclick");
+
+        }
+        return isValid;
+    }
+
+
+    function fetchNotesForContact(id, conId) {
+        event.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('notes.fetch', ['contactId' => ':contactId']) }}".replace(':contactId', id),
+            method: "GET",
+            dataType: "json",
+
+            success: function(response) {
+                // $('#notesContainer').append('<p>New Note Content</p>');
+                let noteContainer = $("#notesContainer");
+                console.log(noteContainer, 'noteContainer')
+                // Clear previous contents of note containe
+                // noteContainer.empty();
+                // Loop through each note in the response array
+                response?.forEach(function(note) {
+                    console.log(note,'note')
+                    // Create HTML to display note content and creation time
+                    let data = `<div class="note">
+                        <h1 id="${note.id}">Note ID: ${note.id}</h1>
+                        <p>Note Content: ${note.note_content}</p>
+                        <p>Created Time: ${note.created_time}</p>
+                    </div>`;
+                    // Append the HTML to noteContainer
+                    noteContainer.append(data);
+                    console.log("testing", noteContainer)
+                });
+                // Show the modal after appending notes
+                $("#notefetchrelatedContact" + conId).modal('show');
+
+
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
+
+
     function filterContactData(sortField, sortDirection, searchInput, filterVal) {
         const searchValue = searchInput.val().trim();
         $.ajax({
@@ -328,16 +429,16 @@
                     <div class="card dataCardDiv">
                         <div class="card-body dacBodyDiv">
                         <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                            <h5 class="card-title">${contact.first_name ?? 'N/A'}</h5>
+                            <h5 class="card-title" id="first_name${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','first_name')">${contact.first_name ?? 'N/A'}</h5>
                             <p class="databaseCardWord" style="background-color: ${getColorByAbcd(contact.abcd)};">${contact.abcd ?? '-'}</p>
                         </div>
                         <div class="dataPhoneDiv">
                             <img src="{{ URL::asset('/images/phone.svg') }}" alt="" class="dataphoneicon">
-                            <p class="card-text">${contact.mobile ?? 'N/A'}</p>
+                            <p id="mobile${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','mobile')" class="card-text">${contact.mobile ?? 'N/A'}</p>
                         </div>
                         <div class="datamailDiv">
                             <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
-                            <p class="dataEmailtext">${contact.email ?? 'N/A'}</p>
+                            <p id="email${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','email')"  class="dataEmailtext">${contact.email ?? 'N/A'}</p>
                         </div>
                         <div class="datadiversityDiv">
                             <img src="{{ URL::asset('/images/diversity.svg') }}" alt="" class="datadiversityicon">
@@ -352,7 +453,33 @@
                         <div>
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon" onclick="event.preventDefault(),showPopup(${contact?.id});" data-bs-target=#newTaskNoteModalId${contact?.id}>
                         </div>
-                        
+
+                        <div class="modal fade" id="savemakeModalId${contact.zoho_contact_id}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content">
+                                    <div class="modal-header saveModalHeaderDiv border-0">
+                                        {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body saveModalBodyDiv">
+                                        <p class="saveModalBodyText" id="updated_message_make">
+                                            Changes have been saved</p>
+                                    </div>
+                                    <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                        <div class="d-grid col-12">
+                                            <button type="button" class="btn btn-secondary saveModalBtn"
+                                                data-bs-dismiss="modal">
+                                                <i class="fas fa-check trashIcon"></i>
+                                                Understood
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div> 
         <div class="modal fade" onclick="event.preventDefault();"
                             id=newTaskNoteModalId${contact?.id} data-bs-backdrop="static"
                             data-bs-keyboard="false" data-custom="noteModal" tabindex="-1"
@@ -366,18 +493,18 @@
                                             class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <form id="noteForm${contact.zoho_contact_id}"
-                                        action="{{ route('save.note') . '?conID=' . $contact['id'] }}" method="post">
+                                    action="{{ route('save.note') }}?conId=${Number(contact?.id)}" method="post">
                                         @csrf
                                         <div class="modal-body dtaskbody">
                                             <p class="ddetailsText">Details</p>
-                                            <textarea name="note_text" id="note_text{{ $contact['zoho_contact_id'] }}" rows="4" class="dtextarea"></textarea>
-                                            <div id="note_text_error{{ $contact['zoho_contact_id'] }}"
+                                            <textarea name="note_text" id="note_text${contact.zoho_contact_id}" rows="4" class="dtextarea"></textarea>
+                                            <div id="note_text_error${contact.zoho_contact_id}"
                                                 class="text-danger"></div>
                                             <p class="dRelatedText">Related to...</p>
                                             <div class="btn-group dmodalTaskDiv">
                                                 <select class="form-select dmodaltaskSelect"
-                                                    id="related_to{{ $contact['zoho_contact_id'] }}"
-                                                    onchange="moduleSelectedforContact(this,'{{ $contact['zoho_contact_id'] }}')"
+                                                    id="related_to${contact.zoho_contact_id}"
+                                                    onchange="moduleSelectedforContact(this,'${contact.zoho_contact_id}')"
                                                     name="related_to" aria-label="Select Transaction">
                                                     <option value="">Please select one</option>
                                                     @foreach ($retrieveModuleData as $item)
@@ -388,18 +515,18 @@
                                                     @endforeach
                                                 </select>
                                                 <select class="form-select dmodaltaskSelect"
-                                                    id="taskSelect{{ $contact['zoho_contact_id'] }}"
+                                                    id="taskSelect${contact.zoho_contact_id}"
                                                     name="related_to_parent" aria-label="Select Transaction"
                                                     style="display: none;">
                                                     <option value="">Please Select one</option>
                                                 </select>
                                             </div>
-                                            <div id="related_to_error{{ $contact['zoho_contact_id'] }}"
+                                            <div id="related_to_error${contact.zoho_contact_id}"
                                                 class="text-danger"></div>
                                         </div>
                                         <div class="modal-footer dNoteFooter border-0">
-                                            <button type="button" id="validate-button{{ $contact['zoho_contact_id'] }}"
-                                                onclick="validateFormc('submit','{{ $contact['zoho_contact_id'] }}')"
+                                            <button type="button" id="validate-button${contact.zoho_contact_id}"
+                                                onclick="validateFormc('submit','${contact.zoho_contact_id}')"
                                                 class="btn btn-secondary dNoteModalmarkBtn">
                                                 <i class="fas fa-save saveIcon"></i> Add Note
                                             </button>
@@ -415,8 +542,8 @@
             </a>
             
         `;
-        // Append the contact card HTML to the contact list container
-        contactList.append(cardHtml);
+                        // Append the contact card HTML to the contact list container
+                        contactList.append(cardHtml);
                     });
                 }
             },
@@ -424,6 +551,65 @@
                 console.error('Error:', error);
             }
         });
+    }
+
+    function moduleSelectedforContact(selectedModule, conId) {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        //    var id = '{{ request()->route('id') }}'; 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText + '?contactId=' + conId,
+            method: "GET",
+            dataType: "json",
+
+            success: function(response) {
+                // Handle successful response
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect' + conId);
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        console.log(task);
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
+                        }));
+                    }
+                });
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
+
+    function showPopup(contact) {
+        new bootstrap.Modal(document.getElementById('newTaskNoteModalId' + contact)).show();
     }
 
     function fetchContact(sortField, sortDirection) {
@@ -515,6 +701,7 @@
     function editText(zohoID, name) {
         event.preventDefault();
         let firstNameElement = document.getElementById(name + zohoID);
+        console.log(firstNameElement, name, zohoID, 'testing it');
         var text = firstNameElement.textContent.trim();
         firstNameElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + name + zohoID +

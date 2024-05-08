@@ -29,10 +29,9 @@ class GroupController extends Controller
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retrieveContactGroups($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
-        
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
         
-        return view('group.index', compact('contacts','groups','shownGroups'));
+        return view('groups.index', compact('contacts','groups','shownGroups'));
     }
 
     public function filterGroups(Request $request)
@@ -51,7 +50,8 @@ class GroupController extends Controller
         }
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
         $contacts = $db->retrieveContactGroups($user, $accessToken,$filter);
-        return response()->json(['shownGroups' => $shownGroups, 'contacts' => $contacts]);
+        // return response()->json(['shownGroups' => $shownGroups, 'contacts' => $contacts]);
+        return view('groups.group', compact('shownGroups','contacts'))->render();
     }
 
     public function updateContactGroup(Request $request){
@@ -141,7 +141,13 @@ class GroupController extends Controller
             }
         }
         $filename = 'example_' . uniqid() . '.csv';
-        $cleanFilename = preg_replace('/[^\w\.]/', '_', $filename);
+        $cleanFilename = '';
+        foreach (str_split($filename) as $char) {
+            if (ctype_alnum($char) || $char === '_' || $char === '.') {
+                $cleanFilename .= $char;
+            }
+        }
+
 
         $filePath = storage_path('app' . DIRECTORY_SEPARATOR . 'csv' . DIRECTORY_SEPARATOR . $cleanFilename);
 

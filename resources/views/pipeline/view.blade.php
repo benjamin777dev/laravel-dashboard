@@ -6,30 +6,30 @@
     @vite(['resources/css/pipeline.css'])
     <script>
         function updateText(newText) {
-                //  textElement = document.getElementById('editableText');
-                console.log("newText",newText);
-                textElement.innerHTML = newText;
-            }
+            //  textElement = document.getElementById('editableText');
+            console.log("newText", newText);
+            textElement.innerHTML = newText;
+        }
 
         function makeEditable(id) {
-                textElement = document.getElementById('editableText' + id);
-                textElementCard = document.getElementById('editableTextCard' + id);
-                //For Table data                
-                var text = textElement.textContent.trim();
-                textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+            textElement = document.getElementById('editableText' + id);
+            textElementCard = document.getElementById('editableTextCard' + id);
+            //For Table data                
+            var text = textElement.textContent.trim();
+            textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
 
-                //For card data
-                var text = textElementCard.textContent.trim();
-                textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+            //For card data
+            var text = textElementCard.textContent.trim();
+            textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
 
-                var inputElement = document.getElementById('editableInput' + id);
-                inputElement.focus();
-                inputElement.addEventListener('blur', function() {
-                    updateText(inputElement.value);
-                });
-                
-                
-            }
+            var inputElement = document.getElementById('editableInput' + id);
+            inputElement.focus();
+            inputElement.addEventListener('blur', function() {
+                updateText(inputElement.value);
+            });
+
+
+        }
 
         function updateTask(id, indexid) {
             // console.log(id, indexid, 'chekcdhfsjkdh')
@@ -42,8 +42,8 @@
             var taskDate = document.getElementById('date_val' + id);
             let formattedDateTime = convertDateTime(taskDate.value);
             console.log(formattedDateTime);
-                   /*  alert(formattedDateTime);
-                    return; */
+            /*  alert(formattedDateTime);
+             return; */
             if (!inputElement) {
                 console.error("Input element not found for indexid:", indexid);
                 return;
@@ -105,14 +105,14 @@
             // Assuming dateTimeString is in a format like 'YYYY-MM-DDTHH:MM:SS'
             var date = new Date(dateTimeString);
             // Format the date into a desired format
-            var formattedDateTime = date.toLocaleString('en-US', { 
-                year: 'numeric', 
-                month: '2-digit', 
-                day: '2-digit', 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            var formattedDateTime = date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-            
+
             // Split the dateTimeString into date and time parts
             var parts = formattedDateTime.split(', ');
             var datePart = parts[0]; // "04/19/2024"
@@ -138,29 +138,30 @@
             if (ampm === 'PM' && hour < 12) {
                 hour += 12;
             }
-            console.log("month",month.length);
+            console.log("month", month.length);
             // Zero-pad month and day if necessary
-                if (month.length === 1) {
-                    month = '0' + month;
-                }
-                if (day.length === 1) {
-                    day = '0' + day;
-                }
+            if (month.length === 1) {
+                month = '0' + month;
+            }
+            if (day.length === 1) {
+                day = '0' + day;
+            }
 
-                // Construct the date string in "YYYY-MM-DD" format
-                var formattedDate = year + '-' + month + '-' + day;
+            // Construct the date string in "YYYY-MM-DD" format
+            var formattedDate = year + '-' + month + '-' + day;
 
-                return formattedDate;
+            return formattedDate;
         }
+
         function deleteTask(id) {
             let updateids = removeAllSelected();
             if (updateids === "" && id === undefined) {
                 return;
             }
-            if(updateids!==""){
+            if (updateids !== "") {
                 if (confirm("Are you sure you want to delete selected task?")) {
-                    
-                }else{
+
+                } else {
                     return;
                 }
             }
@@ -196,12 +197,13 @@
                             alert(xhr.responseText)
                         }
                     })
-                    
+
                 }
             } catch (err) {
                 console.error("error", err);
             }
         }
+
         function removeAllSelected() {
             // Select all checkboxes
             var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
@@ -228,6 +230,7 @@
 
             return ids;
         }
+
         function toggleAllCheckboxes() {
             // console.log("yes it")
             let state = false;
@@ -253,6 +256,7 @@
                 updateColor.style.backgroundColor = "#dfdfdf";
             }
         }
+
         function triggerCheckbox(checkboxid) {
             let updateColor = document.getElementById("removeBtn");
             var allCheckbox = document.getElementById('checkbox_all');
@@ -277,22 +281,24 @@
         }
     </script>
     <div class="container-fluid">
-         <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
-            <p class="pText">{{$deal['deal_name']}}</p>
+        <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
+            <p class="pText">{{ $deal['deal_name'] }}</p>
             <div class="npbtnsDiv">
                 <div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#">
                     <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                     Delete
                 </div>
-                <a href = "{{ url('/pipeline-update/' . $deal['id']) }}"><div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#">
-                    <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
-                    Edit All
-                </div></a>
+                <a href = "{{ url('/pipeline-update/' . $deal['id']) }}">
+                    <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#">
+                        <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
+                        Edit All
+                    </div>
+                </a>
             </div>
         </div>
-         <div class="row">
+        <div class="row">
             <div class="col-md-8 col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
@@ -307,187 +313,35 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
-                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">In
+                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=In Progress"> <button
+                                    class="nav-link dtabsbtn" id="nav-home-tab" data-bs-toggle="tab"
+                                    data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
+                                    aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
-                                    id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
-                                    role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
-                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
-                                    role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
+                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Not Started"> <button
+                                    class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
+                                    data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
+                                    aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
+                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
+                                    data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
+                                    data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                                    aria-selected="false">Overdue</button></a>
                         </div>
                     </nav>
 
-                    <div class="table-responsive dresponsivetable">
-                        <table class="table dtableresp">
-                            <thead>
-                                <tr class="dFont700 dFont10">
-                                    <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()"
-                                            id="checkbox_all" id="checkbox_task" /></th>
-                                    <th scope="col">Subject</th>
-                                    <th scope="col">Task Date</th>
-                                    <th scope="col">Options</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @if (count($tasks) > 0)
-                                @foreach ($tasks as $task)
-                                    <tr class="dresponsivetableTr">
-                                        <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
-                                                    type="checkbox" class="task_checkbox"
-                                                    id="{{ $task['zoho_task_id'] }}" /></td>
-                                        <td>
-                                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
-                                                id="editableText{{ $task['id'] }}">
-                                                {{ $task['subject'] ?? 'N/A' }}
-                                                <i class="fas fa-pencil-alt pencilIcon" onclick="makeEditable('{{ $task['id'] }}')"></i>
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
-                                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                                        </td>
-                                        <td>
-                                            <div class="d-flex ">
-                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                                    id="btnGroupAddon" data-bs-toggle="modal" onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                                    <i class="fas fa-hdd plusicon"></i>
-                                                    Save
-                                                </div>
-                                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                    id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
-                                                    <i class="fas fa-trash-alt plusicon"></i>
-                                                    Delete
-                                                </div>
-                                            </div>
-
-                                            {{-- delete Modal --}}
-                                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
-                                                tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0 deleteModalHeaderDiv">
-                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body deletemodalBodyDiv">
-                                                            <p class="deleteModalBodyText">Please confirm you’d like
-                                                                to<br />
-                                                                delete this item.</p>
-                                                        </div>
-                                                        <div
-                                                            class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                                            <div class="d-grid gap-2 col-5">
-                                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                                                    class="btn btn-secondary deleteModalBtn"
-                                                                    data-bs-dismiss="modal">
-                                                                    <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                    delete
-                                                                </button>
-                                                            </div>
-                                                            <div class="d-grid gap-2 col-5">
-                                                                <button type="button"
-                                                                    class="btn btn-primary goBackModalBtn">
-                                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                        alt="R">No, go back
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="12">No records found</td>
-                                    </tr>
-                                @endif
-
-                            </tbody>
-
-                        </table>
-                        <div class="dprogressCards">
-                            @if (count($tasks) > 0)
-                            @foreach ($tasks as $task)
-                                <div class="dcardscheckbox">
-                                    <input type="checkbox" />
-                                </div>
-                                <div class="dcardssubjectdiv">
-                                    <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
-                                            onclick="makeEditable('{{ $task['id'] }}')">
-                                            {{ $task['subject'] ?? 'N/A' }}
-                                        </p>
-                                    <div class="btn-group dcardsselectdiv">
-                                        <p class="dcardsTransactionText">Transaction Related</p>
-                                        <select class="form-select dselect" aria-label="Transaction test"
-                                            id="dropdownMenuButton">
-                                            <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                        </select>
-                                    </div>
-                                    <div class="dcardsdateinput">
-                                        <p class="dcardsTaskText">Task Date</p>
-                                        <input type="datetime-local"
-                                            value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
-                                    </div>
-                                </div>
-                                <div class="dcardsbtnsDiv">
-                                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
-                                        data-bs-toggle="modal" data-bs-target="#saveModalId" onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                        <i class="fas fa-hdd plusicon"></i>
-                                        Save
-                                    </div>
-                                    <div class="input-group-text dcardsdeletebtn" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId">
-                                        <i class="fas fa-trash-alt plusicon"></i>
-
-                                        Delete
-                                    </div>
-                                </div>
-                            @endforeach
-                            @else
-                                <div class="dprogressCardselse">
-                                    <p class="text-center" colspan="12">No records found</p>
-                                </div>
-                            @endif
-                        </div>
-                        @if (count($tasks) > 0)
-                        <div class="dpagination">
-                           <div onclick="deleteTask('{{$task['zoho_task_id']}}')"
-                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
-                                    id="removeBtn">
-                                    <i class="fas fa-trash-alt plusicon"></i>
-                                    Remove Selected
-                                </div>
-                            <nav aria-label="..." class="dpaginationNav">
-                                <ul class="pagination ppipelinepage d-flex justify-content-end">
-                                    <li class="page-item disabled">
-                                        <a class="page-link">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item active" aria-current="page">
-                                        <a class="page-link" href="#">2</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                         @endif
-                    </div>
+                    @include('common.tasks', [
+                        'tasks' => $tasks,
+                        'retrieveModuleData' => $retrieveModuleData,
+                    ])
 
                 </div>
 
             </div>
-            @include('common.notes.view',['notesInfo'=>$notesInfo,'retrieveModuleData'=>$retrieveModuleData,'module'=>'Deals'])
+            @include('common.notes.view', [
+                'notesInfo' => $notesInfo,
+                'retrieveModuleData' => $retrieveModuleData,
+                'module' => 'Deals',
+            ])
         </div>
         {{-- information form --}}
         <div class="row">
@@ -498,49 +352,52 @@
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                         <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                            id="validationDefault01" required value = "{{$deal['client_name_primary']}}">
+                            id="validationDefault01" required value = "{{ $deal['client_name_primary'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Representing</label>
                         <select class="form-select npinputinfo" id="validationDefault02" required>
                             <option value="">Select</option>
-                            <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
-                            <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
+                            <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
+                            <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
+                            </option>
                         </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Transaction Name"
-                            id="validationDefault03" required value = "{{$deal['deal_name']}}">
+                            id="validationDefault03" required value = "{{ $deal['deal_name'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault04" class="form-label nplabelText">Stage</label>
                         <select class="form-select npinputinfo" id="validationDefault04" required>
                             <option value="">Select</option>
-                            @foreach($allStages as $stage)
-                                <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
+                            @foreach ($allStages as $stage)
+                                <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
+                                    {{ $stage }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
                         <input type="text" class="form-control npinputinfo" placeholder="$ 725,000.00"
-                            id="validationDefault05" required value = "{{$deal['sale_price']}}">
+                            id="validationDefault05" required value = "{{ $deal['sale_price'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
-                        <input type="date" class="form-control npinputinfo" id="validationDefault06" required value = "{{$deal['closing_date']}}">
+                        <input type="date" class="form-control npinputinfo" id="validationDefault06" required
+                            value = "{{ $deal['closing_date'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault07" class="form-label nplabelText">Address</label>
                         <input type="text" class="form-control npinputinfo" placeholder="52 Realand Road"
-                            id="validationDefault07" required value = "{{$deal['address']}}">
+                            id="validationDefault07" required value = "{{ $deal['address'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault08" class="form-label nplabelText">City</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
-                            id="validationDefault08" required value = "{{$deal['city']}}">
+                            id="validationDefault08" required value = "{{ $deal['city'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault09" class="form-label nplabelText">State</label>
@@ -549,12 +406,12 @@
                             <option>...</option>
                         </select> --}}
                         <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
-                            id="validationDefault09" required value = "{{$deal['state']}}">
+                            id="validationDefault09" required value = "{{ $deal['state'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
                         <input type="text" class="form-control npinputinfo" placeholder="80129"
-                            id="validationDefault10" required value = "{{$deal['zip']}}">
+                            id="validationDefault10" required value = "{{ $deal['zip'] }}">
                     </div>
                 </form>
             </div>
@@ -565,7 +422,8 @@
                 <form class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
-                        <input type="text" class="form-control npinputinfo" id="validationDefault11" required value = "{{$deal['commission']}}">
+                        <input type="text" class="form-control npinputinfo" id="validationDefault11" required
+                            value = "{{ $deal['commission'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
@@ -573,7 +431,8 @@
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required value = "{{$deal['property_type']}}">
+                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required
+                            value = "{{ $deal['property_type'] }}">
                     </div>
 
                     <div class="col-md-6">
@@ -582,31 +441,38 @@
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required value = "{{$deal['ownership_type']}}">
+                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required
+                            value = "{{ $deal['ownership_type'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Potential GCI"
-                            id="validationDefault14" required value = "{{$deal['potential_gci']}}">
+                            id="validationDefault14" required value = "{{ $deal['potential_gci'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
                         <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault15"
-                            required value = "{{$deal['pipeline_probability']}}">
+                            required value = "{{ $deal['pipeline_probability'] }}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
                         <input type="text" class="form-control npinputinfo" placeholder="$ 3,045.00"
-                            id="validationDefault16" required value = "{{$deal['pipeline1']}}">
+                            id="validationDefault16" required value = "{{ $deal['pipeline1'] }}">
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction']) echo 'checked'; ?>>
+                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01"
+                            <?php if ($deal['personal_transaction']) {
+                                echo 'checked';
+                            } ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02" <?php if ($deal['double_ended']) echo 'checked'; ?>>
+                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02"
+                            <?php if ($deal['double_ended']) {
+                                echo 'checked';
+                            } ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
                         </label>
@@ -619,8 +485,8 @@
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Contact Roles</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+                    <i class="fas fa-plus plusicon">
                     </i>
                     Add Contact Role
                 </div>
@@ -634,43 +500,55 @@
                 <div class="col-md-4 ">Email</div>
             </div>
             @if ($dealContacts->isEmpty())
-                    <div>
-                        <p class="text-center notesAsignedText">No contacts assigned</p>
-                    </div>
-                @else
-                        @foreach ($dealContacts as $dealContact)
-                             <div class="row npRoleBody">
-                                <div class="col-md-3 ">{{$dealContact->contactData?$dealContact->contactData->first_name.' '.$dealContact->contactData->last_name:($dealContact->userData?$dealContact->userData->name:'N/A')}}</div>
-                                <div class="col-md-2 ">{{$dealContact['contactRole']}}</div>
-                                <div class="col-md-3 ">{{$dealContact->contactData?($dealContact->contactData->phone?$dealContact->contactData->phone:'N/A'):'N/A'}}</div>
-                                <div class="col-md-4 commonTextEllipsis">{{$dealContact->contactData?$dealContact->contactData->email:($dealContact->userData?$dealContact->userData->email:'N/A')}}</div>
-                            </div>
-                        @endforeach
-                @endif
-           
+                <div>
+                    <p class="text-center notesAsignedText">No contacts assigned</p>
+                </div>
+            @else
                 @foreach ($dealContacts as $dealContact)
-                    <div class="npRoleCard vprolecard">
-                        <div>
-                            <p class="npcommonheaderText">Role</p>
-                            <p class="npcommontableBodytext">{{$dealContact->contactData?$dealContact->contactData->first_name.' '.$dealContact->contactData->last_name:($dealContact->userData?$dealContact->userData->name:'N/A')}}</p>
+                    <div class="row npRoleBody">
+                        <div class="col-md-3 ">
+                            {{ $dealContact->contactData ? $dealContact->contactData->first_name . ' ' . $dealContact->contactData->last_name : ($dealContact->userData ? $dealContact->userData->name : 'N/A') }}
                         </div>
-                        <div class="d-flex justify-content-between align-items-center npCardPhoneDiv">
-                            <div>
-                                <p class="npcommonheaderText">Role Name</p>
-                                <p class="npcommontableBodyDatetext">{{$dealContact['contactRole']}}</p>
-                            </div>
-                            <div>
-                                <p class="npcommonheaderText">Phone</p>
-                                <p class="npcommontableBodyDatetext">{{$dealContact->contactData?($dealContact->contactData->phone?$dealContact->contactData->phone:'N/A'):'N/A'}}</p>
-                            </div>
+                        <div class="col-md-2 ">{{ $dealContact['contactRole'] }}</div>
+                        <div class="col-md-3 ">
+                            {{ $dealContact->contactData ? ($dealContact->contactData->phone ? $dealContact->contactData->phone : 'N/A') : 'N/A' }}
                         </div>
-                        <div>
-                            <p class="npcommonheaderText">Email</p>
-                            <p class="npcommontableBodyDatetext">{{$dealContact->contactData?$dealContact->contactData->email:($dealContact->userData?$dealContact->userData->email:'N/A')}}</p>
+                        <div class="col-md-4 commonTextEllipsis">
+                            {{ $dealContact->contactData ? $dealContact->contactData->email : ($dealContact->userData ? $dealContact->userData->email : 'N/A') }}
                         </div>
                     </div>
                 @endforeach
-           
+            @endif
+
+            @foreach ($dealContacts as $dealContact)
+                <div class="npRoleCard vprolecard">
+                    <div>
+                        <p class="npcommonheaderText">Role</p>
+                        <p class="npcommontableBodytext">
+                            {{ $dealContact->contactData ? $dealContact->contactData->first_name . ' ' . $dealContact->contactData->last_name : ($dealContact->userData ? $dealContact->userData->name : 'N/A') }}
+                        </p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center npCardPhoneDiv">
+                        <div>
+                            <p class="npcommonheaderText">Role Name</p>
+                            <p class="npcommontableBodyDatetext">{{ $dealContact['contactRole'] }}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Phone</p>
+                            <p class="npcommontableBodyDatetext">
+                                {{ $dealContact->contactData ? ($dealContact->contactData->phone ? $dealContact->contactData->phone : 'N/A') : 'N/A' }}
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="npcommonheaderText">Email</p>
+                        <p class="npcommontableBodyDatetext">
+                            {{ $dealContact->contactData ? $dealContact->contactData->email : ($dealContact->userData ? $dealContact->userData->email : 'N/A') }}
+                        </p>
+                    </div>
+                </div>
+            @endforeach
+
             <div class="dpagination">
                 <div onclick="removeAllSelected()"
                     class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
@@ -701,8 +579,8 @@
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Non-TM Check request</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+                    <i class="fas fa-plus plusicon">
                     </i>
                     Add Non-TM Check request
                 </div>
@@ -719,31 +597,31 @@
 
                 </div>
             @else
-             @foreach($nontms as $nontm)
-           <div class="row npNom-TM-Body">
-                <div class="col-md-4 ">{{$nontm['name']}}</div>
-                <div class="col-md-4 ">{{$nontm['closed_date']}}</div>
-                <div class="col-md-4 commonTextEllipsis">{{$nontm['created_at']}}</div>
-            </div>
-             @endforeach               
-              @endif              
-             @foreach($nontms as $nontm)
-            <div class="npNom-TM-Card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="npcommonheaderText">Number</p>
-                        <p class="npcommontableBodytext">{{$nontm['name']}}</p>
+                @foreach ($nontms as $nontm)
+                    <div class="row npNom-TM-Body">
+                        <div class="col-md-4 ">{{ $nontm['name'] }}</div>
+                        <div class="col-md-4 ">{{ $nontm['closed_date'] }}</div>
+                        <div class="col-md-4 commonTextEllipsis">{{ $nontm['created_at'] }}</div>
                     </div>
-                    <div>
-                        <p class="npcommonheaderText">Close Date</p>
-                        <p class="npcommontableBodyDatetext">{{$nontm['closed_date']}}</p>
+                @endforeach
+            @endif
+            @foreach ($nontms as $nontm)
+                <div class="npNom-TM-Card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="npcommonheaderText">Number</p>
+                            <p class="npcommontableBodytext">{{ $nontm['name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Close Date</p>
+                            <p class="npcommontableBodyDatetext">{{ $nontm['closed_date'] }}</p>
+                        </div>
+                    </div>
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">Created Time</p>
+                        <p class="npcommontableBodyDatetext">{{ $nontm['created_at'] }}</p>
                     </div>
                 </div>
-                <div class="npCardPhoneDiv">
-                    <p class="npcommonheaderText">Created Time</p>
-                    <p class="npcommontableBodyDatetext">{{$nontm['created_at']}}</p>
-                </div>
-            </div>
             @endforeach
             <div class="dpagination">
                 <nav aria-label="..." class="dpaginationNav">
@@ -770,8 +648,8 @@
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Agent’s Commissions</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+                    <i class="fas fa-plus plusicon">
                     </i>
                     Add Agent’s Commissions
                 </div>
@@ -792,35 +670,35 @@
             @else
                 @foreach ($dealaci as $aci)
                     <div class="row npAgentBody">
-                        <div class="col-md-3 ">{{$aci['agentName']}}</div>
-                        <div class="col-md-3 ">${{$aci['irs_reported_1099_income_for_this_transaction']}}</div>
-                        <div class="col-md-3 ">${{$aci['less_split_to_chr']}}</div>
-                        <div class="col-md-3 commonTextEllipsis">{{$aci['closing_date']}}</div>
+                        <div class="col-md-3 ">{{ $aci['agentName'] }}</div>
+                        <div class="col-md-3 ">${{ $aci['irs_reported_1099_income_for_this_transaction'] }}</div>
+                        <div class="col-md-3 ">${{ $aci['less_split_to_chr'] }}</div>
+                        <div class="col-md-3 commonTextEllipsis">{{ $aci['closing_date'] }}</div>
                     </div>
                 @endforeach
             @endif
-             
-                @foreach ($dealaci as $aci)
-                    <div class="npAgentCard">
-                        <div>
-                            <p class="npcommonheaderText">Agent’s Name</p>
-                            <p class="npcommontableBodytext">{{$aci['agentName']}}</p>
-                        </div>
-                        <div class="npCardPhoneDiv">
-                            <p class="npcommonheaderText">IRS 1099 Income for this Transaction</p>
-                            <p class="npcommontableBodytext">${{$aci['irs_reported_1099_income_for_this_transaction']}}</p>
-                        </div>
-                        <div>
-                            <p class="npcommonheaderText">Less Split to CHR</p>
-                            <p class="npcommontableBodytext">${{$aci['less_split_to_chr']}}</p>
-                        </div>
-                        <div class="npCardPhoneDiv">
-                            <p class="npcommonheaderText">Modified Time</p>
-                            <p class="npcommontableBodyDatetext">{{$aci['closing_date']}}</p>
-                        </div>
+
+            @foreach ($dealaci as $aci)
+                <div class="npAgentCard">
+                    <div>
+                        <p class="npcommonheaderText">Agent’s Name</p>
+                        <p class="npcommontableBodytext">{{ $aci['agentName'] }}</p>
                     </div>
-                @endforeach
-           
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">IRS 1099 Income for this Transaction</p>
+                        <p class="npcommontableBodytext">${{ $aci['irs_reported_1099_income_for_this_transaction'] }}</p>
+                    </div>
+                    <div>
+                        <p class="npcommonheaderText">Less Split to CHR</p>
+                        <p class="npcommontableBodytext">${{ $aci['less_split_to_chr'] }}</p>
+                    </div>
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">Modified Time</p>
+                        <p class="npcommontableBodyDatetext">{{ $aci['closing_date'] }}</p>
+                    </div>
+                </div>
+            @endforeach
+
             <div class="dpagination">
                 <nav aria-label="..." class="dpaginationNav">
                     <ul class="pagination ppipelinepage d-flex justify-content-end">
@@ -846,8 +724,8 @@
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Attachments</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+                    <i class="fas fa-plus plusicon">
                     </i>
                     Add New Attachment
                 </div>
@@ -860,43 +738,44 @@
                 <div class="col-md-3 ">Owner</div>
                 <div class="col-md-3 ">Uploaded On</div>
             </div>
-              @if ($attachments->isEmpty())
+            @if ($attachments->isEmpty())
                 <div>
                     <p class="text-center notesAsignedText">No Attachment assigned</p>
 
                 </div>
-            @else               
-            @foreach($attachments as $attachment)
-            <div class="row npAttachmentBody">
-                <div class="col-md-3 npcommontableBodytext">{{$attachment['file_name']}}</div>
-                <div class="col-md-3 npcommontableBodytext">PDF</div>
-                <div class="col-md-3 npcommontableBodytext">{{$attachment['userData']['name']}}</div>
-                <div class="col-md-3 commonTextEllipsis npcommontableBodyDatetext">{{$attachment['modified_time']}}</div>
-            </div>
+            @else
+                @foreach ($attachments as $attachment)
+                    <div class="row npAttachmentBody">
+                        <div class="col-md-3 npcommontableBodytext">{{ $attachment['file_name'] }}</div>
+                        <div class="col-md-3 npcommontableBodytext">PDF</div>
+                        <div class="col-md-3 npcommontableBodytext">{{ $attachment['userData']['name'] }}</div>
+                        <div class="col-md-3 commonTextEllipsis npcommontableBodyDatetext">
+                            {{ $attachment['modified_time'] }}</div>
+                    </div>
+                @endforeach
+            @endif
+            @foreach ($attachments as $attachment)
+                <div class="npContactCard">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="npcommonheaderText">Attachment Name</p>
+                            <p class="npcommontableBodytext">{{ $attachment['file_name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Type</p>
+                            <p class="npcommontableBodytext">PDF</p>
+                        </div>
+                    </div>
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">Owner</p>
+                        <p class="npcommontableBodytext">{{ $attachment['userData']['name'] }}</p>
+                    </div>
+                    <div>
+                        <p class="npcommonheaderText">Uploaded On</p>
+                        <p class="npcommontableBodyDatetext">{{ $attachment['modified_time'] }}</p>
+                    </div>
+                </div>
             @endforeach
-            @endif                
-            @foreach($attachments as $attachment)
-            <div class="npContactCard">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="npcommonheaderText">Attachment Name</p>
-                       <p class="npcommontableBodytext">{{$attachment['file_name']}}</p>
-                    </div>
-                    <div>
-                        <p class="npcommonheaderText">Type</p>
-                        <p class="npcommontableBodytext">PDF</p>
-                    </div>
-                </div>
-                <div class="npCardPhoneDiv">
-                    <p class="npcommonheaderText">Owner</p>
-                    <p class="npcommontableBodytext">{{$attachment['userData']['name']}}</p>
-                </div>
-                <div>
-                    <p class="npcommonheaderText">Uploaded On</p>
-                    <p class="npcommontableBodyDatetext">{{$attachment['modified_time']}}</p>
-                </div>
-            </div>
-             @endforeach
             <div class="dpagination">
 
                 <nav aria-label="..." class="dpaginationNav">
@@ -921,8 +800,8 @@
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Submittals</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#"><i class="fas fa-plus plusicon">
+                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+                    <i class="fas fa-plus plusicon">
                     </i>
                     Add New Submittal
                 </div>
@@ -939,31 +818,31 @@
 
                 </div>
             @else
-             @foreach($submittals as $submittal)
-           <div class="row npNom-TM-Body">
-                <div class="col-md-4 ">{{$submittal['name']}}</div>
-                <div class="col-md-4 ">{{$submittal['userData']['name']}}</div>
-                <div class="col-md-4 commonTextEllipsis">{{$submittal['created_at']}}</div>
-            </div>
-             @endforeach               
-              @endif              
-             @foreach($submittals as $submittal)
-            <div class="npNom-TM-Card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <p class="npcommonheaderText">Submittal Name</p>
-                        <p class="npcommontableBodytext">{{$submittal['name']}}</p>
+                @foreach ($submittals as $submittal)
+                    <div class="row npNom-TM-Body">
+                        <div class="col-md-4 ">{{ $submittal['name'] }}</div>
+                        <div class="col-md-4 ">{{ $submittal['userData']['name'] }}</div>
+                        <div class="col-md-4 commonTextEllipsis">{{ $submittal['created_at'] }}</div>
                     </div>
-                    <div>
-                        <p class="npcommonheaderText">Owner</p>
-                        <p class="npcommontableBodyDatetext">{{$submittal['closed_date']}}</p>
+                @endforeach
+            @endif
+            @foreach ($submittals as $submittal)
+                <div class="npNom-TM-Card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="npcommonheaderText">Submittal Name</p>
+                            <p class="npcommontableBodytext">{{ $submittal['name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Owner</p>
+                            <p class="npcommontableBodyDatetext">{{ $submittal['closed_date'] }}</p>
+                        </div>
+                    </div>
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">Created Time</p>
+                        <p class="npcommontableBodyDatetext">{{ $submittal['created_at'] }}</p>
                     </div>
                 </div>
-                <div class="npCardPhoneDiv">
-                    <p class="npcommonheaderText">Created Time</p>
-                    <p class="npcommontableBodyDatetext">{{$submittal['created_at']}}</p>
-                </div>
-            </div>
             @endforeach
             <div class="dpagination">
                 <nav aria-label="..." class="dpaginationNav">
@@ -985,123 +864,123 @@
 
 
         </div>
-</div>
-<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
-    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
-</div>
-{{-- Create New Task Modal --}}
-<div class="modal fade" id="newTaskModalId" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered deleteModal">
-        <div class="modal-content dtaskmodalContent">
-            <div class="modal-header border-0">
-                <p class="modal-title dHeaderText">Create New Tasks</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body dtaskbody">
-                <p class="ddetailsText">Details</p>
-                <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                <div id="subject_error" class="text-danger"></div>
-                <p class="dRelatedText">Related to...</p>
-                <div class="btn-group dmodalTaskDiv">
-                    <select class="form-select dmodaltaskSelect" name="related_to"
-                                            aria-label="Select Transaction">
-                                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
-                                                {{ $deal['deal_name'] }}
-                                            </option>
-                                        </select>
+    </div>
+    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
+        data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    </div>
+    {{-- Create New Task Modal --}}
+    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered deleteModal">
+            <div class="modal-content dtaskmodalContent">
+                <div class="modal-header border-0">
+                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                        aria-label="Close"></button>
                 </div>
-                <p class="dDueText">Date due</p>
-                <input type="date" name="due_date" class="dmodalInput" />
-            </div>
-            <div class="modal-footer ">
-                <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')" class="btn btn-secondary taskModalSaveBtn">
-                    <i class="fas fa-save saveIcon"></i> Save Changes
-                </button>
+                <div class="modal-body dtaskbody">
+                    <p class="ddetailsText">Details</p>
+                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
+                    <div id="subject_error" class="text-danger"></div>
+                    <p class="dRelatedText">Related to...</p>
+                    <div class="btn-group dmodalTaskDiv">
+                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
+                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
+                                {{ $deal['deal_name'] }}
+                            </option>
+                        </select>
+                    </div>
+                    <p class="dDueText">Date due</p>
+                    <input type="date" name="due_date" class="dmodalInput" />
+                </div>
+                <div class="modal-footer ">
+                    <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')"
+                        class="btn btn-secondary taskModalSaveBtn">
+                        <i class="fas fa-save saveIcon"></i> Save Changes
+                    </button>
+
+                </div>
 
             </div>
-
         </div>
     </div>
-</div>
-{{-- Notes Model --}}
-@include('common.notes.create',['deal'=>$deal])
-    
+    {{-- Notes Model --}}
+    @include('common.notes.create', ['deal' => $deal])
+
     @vite(['resources/js/pipeline.js'])
 
     <script>
-         document.addEventListener("DOMContentLoaded", function() {
-                $.ajax({
+        document.addEventListener("DOMContentLoaded", function() {
+            $.ajax({
                 url: '{{ url('/pipeline-view') }}',
                 method: 'GET',
                 data: {},
                 dataType: 'json',
-                success: function(data) {
-                },
+                success: function(data) {},
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
             });
         });
 
-            // Function to populate client information
-            window.addTask= function(deal) {
-                var subject = document.getElementsByName("subject")[0].value;
-                if (subject.trim() === "") {
-                    document.getElementById("subject_error").innerHTML = "please enter details";
-                }
-                // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-                // var whoId = window.selectedTransation
-                // if (whoId === undefined) {
-                //     whoId = whoSelectoneid
-                // }
-                var dueDate = document.getElementsByName("due_date")[0].value;
-                
-                var formData = {
-                    "data": [{
-                        "Subject": subject,
-                        // "Who_Id": {
-                        //     "id": whoId
-                        // },
-                        "Status": "In Progress",
-                        "Due_Date": dueDate,
-                        // "Created_Time":new Date()
-                        "Priority": "High",
-                        "What_Id":{
-                            "id":deal
-                        },
-                        "$se_module":"Deals"
-                    }],
-                    "_token": '{{ csrf_token() }}'
-                };
-                console.log("formData",formData);
-                $.ajax({
-                    url: '{{ route('create.task') }}',
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        if (response?.data && response.data[0]?.message) {
-                            // Convert message to uppercase and then display
-                            const upperCaseMessage = response.data[0].message.toUpperCase();
-                            alert(upperCaseMessage);
-                            window.location.reload();
-                        } else {
-                            alert("Response or message not found");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                })
+        // Function to populate client information
+        window.addTask = function(deal) {
+            var subject = document.getElementsByName("subject")[0].value;
+            if (subject.trim() === "") {
+                document.getElementById("subject_error").innerHTML = "please enter details";
             }
+            // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
+            // var whoId = window.selectedTransation
+            // if (whoId === undefined) {
+            //     whoId = whoSelectoneid
+            // }
+            var dueDate = document.getElementsByName("due_date")[0].value;
 
-            {{-- window.updateNote= function(noteId) {
+            var formData = {
+                "data": [{
+                    "Subject": subject,
+                    // "Who_Id": {
+                    //     "id": whoId
+                    // },
+                    "Status": "In Progress",
+                    "Due_Date": dueDate,
+                    // "Created_Time":new Date()
+                    "Priority": "High",
+                    "What_Id": {
+                        "id": deal
+                    },
+                    "$se_module": "Deals"
+                }],
+                "_token": '{{ csrf_token() }}'
+            };
+            console.log("formData", formData);
+            $.ajax({
+                url: '{{ route('create.task') }}',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        alert(upperCaseMessage);
+                        window.location.reload();
+                    } else {
+                        alert("Response or message not found");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }
+
+        {{-- window.updateNote= function(noteId) {
                 var subject = document.getElementsByName("subject")[0].value;
                 if (subject.trim() === "") {
                     document.getElementById("subject_error").innerHTML = "please enter details";
@@ -1157,86 +1036,80 @@
                 })
             } --}}
 
-           window.updateDeal = function(dealId) {
-                console.log(dealId);
-                // Retrieve values from form fields
-                var client_name_primary = $('#validationDefault01').val();
-                var representing = $('#validationDefault02').val();
-                var deal_name = $('#validationDefault03').val();
-                var stage = $('#validationDefault04').val();
-                var sale_price = $('#validationDefault05').val();
-                var closing_date = $('#validationDefault06').val();
-                var address = $('#validationDefault07').val();
-                var city = $('#validationDefault08').val();
-                var state = $('#validationDefault09').val();
-                var zip = $('#validationDefault10').val();
-                var commission = $('#validationDefault11').val();
-                var property_type = $('#validationDefault12').val();
-                var ownership_type = $('#validationDefault13').val();
-                var potential_gci = $('#validationDefault14').val();
-                var pipeline_probability = $('#validationDefault15').val();
-                var probable_gci = $('#validationDefault16').val();
-                var personal_transaction = $('#flexCheckChecked01').prop('checked');
-                var double_ended = $('#flexCheckChecked02').prop('checked');
+        window.updateDeal = function(dealId) {
+            console.log(dealId);
+            // Retrieve values from form fields
+            var client_name_primary = $('#validationDefault01').val();
+            var representing = $('#validationDefault02').val();
+            var deal_name = $('#validationDefault03').val();
+            var stage = $('#validationDefault04').val();
+            var sale_price = $('#validationDefault05').val();
+            var closing_date = $('#validationDefault06').val();
+            var address = $('#validationDefault07').val();
+            var city = $('#validationDefault08').val();
+            var state = $('#validationDefault09').val();
+            var zip = $('#validationDefault10').val();
+            var commission = $('#validationDefault11').val();
+            var property_type = $('#validationDefault12').val();
+            var ownership_type = $('#validationDefault13').val();
+            var potential_gci = $('#validationDefault14').val();
+            var pipeline_probability = $('#validationDefault15').val();
+            var probable_gci = $('#validationDefault16').val();
+            var personal_transaction = $('#flexCheckChecked01').prop('checked');
+            var double_ended = $('#flexCheckChecked02').prop('checked');
 
-                // Create formData object
-                var formData = {
-                    "data": [{
-                        "Client_Name_Primary": client_name_primary,
-                        "Representing": representing,
-                        "Deal_Name": deal_name,
-                        "Stage": stage,
-                        "Sale_Price": sale_price,
-                        "Closing_Date": closing_date,
-                        "Address": address,
-                        "City": city,
-                        "State": state,
-                        "Zip": zip,
-                        "Commission": commission,
-                        "Property_Type": property_type,
-                        "Ownership_Type": ownership_type,
-                        "Potential_GCI": potential_gci,
-                        "Pipeline_Probability": pipeline_probability,
-                        "Pipeline1": probable_gci,
-                        "Personal_Transaction": personal_transaction,
-                        "Double_Ended": double_ended
-                    }],
-                    "_token": '{{ csrf_token() }}'
-                };
-                console.log("formData", formData, dealId);
+            // Create formData object
+            var formData = {
+                "data": [{
+                    "Client_Name_Primary": client_name_primary,
+                    "Representing": representing,
+                    "Deal_Name": deal_name,
+                    "Stage": stage,
+                    "Sale_Price": sale_price,
+                    "Closing_Date": closing_date,
+                    "Address": address,
+                    "City": city,
+                    "State": state,
+                    "Zip": zip,
+                    "Commission": commission,
+                    "Property_Type": property_type,
+                    "Ownership_Type": ownership_type,
+                    "Potential_GCI": potential_gci,
+                    "Pipeline_Probability": pipeline_probability,
+                    "Pipeline1": probable_gci,
+                    "Personal_Transaction": personal_transaction,
+                    "Double_Ended": double_ended
+                }],
+                "_token": '{{ csrf_token() }}'
+            };
+            console.log("formData", formData, dealId);
 
-                // Send AJAX request
-                $.ajax({
-                    url: "{{ route('pipeline.update',['dealId' => ':id']) }}".replace(':id', dealId),
-                    type: 'PUT',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        if (response?.data && response.data[0]?.message) {
-                            // Convert message to uppercase and then display
-                            const upperCaseMessage = response.data[0].message.toUpperCase();
-                            alert(upperCaseMessage);
-                            window.location.reload();
-                        } else {
-                            alert("Deal Updated Successfully");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
+            // Send AJAX request
+            $.ajax({
+                url: "{{ route('pipeline.update', ['dealId' => ':id']) }}".replace(':id', dealId),
+                type: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        alert(upperCaseMessage);
+                        window.location.reload();
+                    } else {
+                        alert("Deal Updated Successfully");
                     }
-                })
-            }
-
-
-        
-        
-
-
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }
     </script>
 @section('pipelineScript')
 

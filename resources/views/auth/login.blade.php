@@ -91,8 +91,8 @@
                                                 </div>
                                                 <label class="form-label">Password <span class="text-danger">*</span></label>
                                                 <div class="input-group auth-pass-inputgroup @error('password') is-invalid @enderror">
-                                                    <input type="password" name="password" class="form-control  @error('password') is-invalid @enderror" id="userpassword" value="12345678" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
-                                                    <button class="btn btn-light " type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                                    <input type="password" name="password" class="form-control  @error('password') is-invalid @enderror" id="userpassword" value="" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
+                                                    <button class="btn btn-light toggle-password" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                                     @error('password')
                                                     <span class="invalid-feedback" role="alert">
                                                         <strong>{{ $message }}</strong>
@@ -139,6 +139,22 @@
 
     @endsection
     @section('script')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const passwordInput = document.getElementById("userpassword");
+            const togglePasswordButton = document.querySelector(".toggle-password");
+
+            togglePasswordButton.addEventListener("click", function() {
+                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                passwordInput.setAttribute("type", type);
+
+                // Change eye icon based on password visibility
+                const eyeIcon = togglePasswordButton.querySelector("i");
+                eyeIcon.classList.toggle("mdi-eye-outline");
+                eyeIcon.classList.toggle("mdi-eye-off-outline");
+            });
+        });
+    </script>
     <!-- owl.carousel js -->
     <script src="{{ URL::asset('build/libs/owl.carousel/owl.carousel.min.js') }}"></script>
     <!-- auth-2-carousel init -->
