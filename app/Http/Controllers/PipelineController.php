@@ -26,11 +26,36 @@ class PipelineController extends Controller
         $zoho->access_token = $accessToken;
         $search = request()->query('search');
         $deals = $db->retrieveDeals($user, $accessToken, $search);
+
+        // configure the necessary pipeline stats
+        $totalSalesVolume = 0;
+        $totalCommission = 0;
+        $averageCommission = 0;
+        $totalPotentialGCI = 0;
+        $totalProbability = 0;
+        $averageProbability = 0;
+        $totalProbableGCI = 0;
+        $dealCount = count($deals);
+
+        // Calculate stats from deals
+        // Calculate stats from deals
+        foreach ($deals as $deal) {
+            $totalSalesVolume += $deal->probable_volume ?? 0; // Updated field name
+            $totalCommission += $deal->commission ?? 0;       // Directly mapped
+            $totalPotentialGCI += $deal->potential_gci ?? 0;  // Directly mapped
+            $totalProbability += $deal->pipeline_probability ?? 0; // Updated field name
+            $totalProbableGCI += (($deal->probable_volume ?? 0) * (($deal->pipeline_probability??0) / 100)); // Calculate based on percentage
+        }
+
+        // Calculate averages
+        $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
+        $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
+
+
         $allstages = config('variables.dealStages');
-        // $allstages = $zoho->getAllStages("(Owner:equals:$user->root_user_id)","Name,Owner",1,10);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken,"Deals");
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"");
-        return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction'));
+        return view('pipeline.index', compact('deals','allstages','retrieveModuleData','getdealsTransaction','totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'));
     }
 
     public function getDeals(Request $request)

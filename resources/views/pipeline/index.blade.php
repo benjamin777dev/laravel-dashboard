@@ -8,11 +8,32 @@
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
         <p class="pText">My Pipeline</p>
-        <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()"><i class="fas fa-plus plusicon">
+        <div class="alert alert-secondary text-center">
+            <strong>Sales Volume</strong><br>
+            ${{ number_format($totalSalesVolume, 0, '.', ',') }}
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Avg Commission</strong><br>
+            {{ number_format($averageCommission, 2) }}%
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Potential GCI</strong><br>
+            ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Avg Probability</strong><br>
+            {{ number_format($averageProbability, 2) }}%
+        </div>
+        <div class="alert alert-secondary text-center">
+            <strong>Probable GCI</strong><br>
+            ${{ number_format($totalProbableGCI, 0, '.', ',') }}
+        </div>
+        <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()">
+            <i class="fas fa-plus plusicon">
             </i>
             New Transaction
         </div>
-        
+
     </div>
     <div class="pfilterDiv">
         <div class="pcommonFilterDiv">
@@ -109,7 +130,7 @@
                     </div>
                 </div>
                 <div></div>
-
+d
             </div>
             <div class = "psearchandsort">
                 @if (count($deals) > 0)
