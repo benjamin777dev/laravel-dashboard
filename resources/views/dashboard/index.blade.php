@@ -132,7 +132,7 @@
                                             <div class="col-md-1 align-self-center dmonth-design">
                                                 {{ Carbon\Carbon::parse($month)->format('M') }}</div>
                                             <div class="col-md-11 dashchartImg">
-                                                <div class="row dgraph-strip">
+                                                <div class="row dgraph-strip justify-content-between">
                                                     @php
                                                         // Remove the currency symbol ('$') and commas from the formatted value
                                                         $formattedGCI = str_replace(
