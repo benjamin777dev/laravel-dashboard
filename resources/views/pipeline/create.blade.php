@@ -498,7 +498,6 @@
                             <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial</option>
                             <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
                         </select>
-                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required value = "{{$deal['property_type']}}">
                     </div>
 
                     <div class="col-md-6">
@@ -509,7 +508,6 @@
                             <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second Home</option>
                             <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
                         </select>
-                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required value = "{{$deal['ownership_type']}}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
