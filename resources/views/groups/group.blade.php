@@ -50,18 +50,20 @@
                 @endforeach
             </tr>
             <tr class="dFont700 dFont10">
+                @foreach($shownGroups as $shownGroup)
+                <th scope="col">
+                </th>
                 <th scope="col">
                     <div class="dbgcommonFlex">
                         <p>{{ count($shownGroup['contacts']) }}</p>
                     </div>
                 </th>
+                @endforeach
             </tr>
         </thead>
         <tbody class="text-center dbgBodyTable">
             @foreach ($contacts as $contact)
                     <tr>
-                        <td> <input type="checkbox" class="rowCheckbox" /></td>
-
                         <td class="text-start">
                             @if($contact->relationship_type == 'Secondary')
                                 <i class="fa fa-caret-right"></i>
