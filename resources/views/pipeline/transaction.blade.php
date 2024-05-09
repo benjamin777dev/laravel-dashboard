@@ -111,7 +111,7 @@
                     </div>
                     <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}',null,'{{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}')"
                         id="closing_date{{ $deal['zoho_deal_id'] }}">
-                        {{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}
+                        {{ \Carbon\Carbon::parse($deal['closing_date'])->format('m/d/Y') ?? 'N/A' }}
                     </div>
                     <div>
                         <div class="commonTextEllipsis"
