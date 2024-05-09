@@ -3,10 +3,6 @@
         <thead>
             <tr class="dFont700 dFont10">
                 <th scope="col">
-
-                </th>
-
-                <th scope="col">
                     <div class="dbgcommonFlex">
                         <p class="mb-0">Name</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
@@ -16,8 +12,6 @@
                 @foreach($shownGroups as $shownGroup)
                     <th scope="col">
                         <div class="dbgcommonFlex">
-                            <p>{{ count($shownGroup['contacts']) }}</p>
-
                             <p class="mb-0">{{$shownGroup['name']}}</p>
                             <input type="checkbox" class="headerCheckbox" data-target="#confirmModel{{$shownGroup['id']}}"
                                 data-index="{{$loop->index}}" onclick="showPopup('{{$shownGroup['id']}}')" />
@@ -52,10 +46,15 @@
                                 </div>
                             </div>
                         </div>
-
                     </th>
-
                 @endforeach
+            </tr>
+            <tr class="dFont700 dFont10">
+                <th scope="col">
+                    <div class="dbgcommonFlex">
+                        <p>{{ count($shownGroup['contacts']) }}</p>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody class="text-center dbgBodyTable">

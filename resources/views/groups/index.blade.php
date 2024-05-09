@@ -2,7 +2,7 @@
 
 @section('title', 'Agent Commander | Groups')
 
-@section('content')
+@section('content') 
     @vite(['resources/css/custom.css'])
     <div class="container">
         <div class="commonFlex">
