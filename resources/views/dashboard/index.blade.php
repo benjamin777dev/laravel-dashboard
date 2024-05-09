@@ -132,7 +132,7 @@
                                             <div class="col-md-1 align-self-center dmonth-design">
                                                 {{ Carbon\Carbon::parse($month)->format('M') }}</div>
                                             <div class="col-md-11 dashchartImg">
-                                                <div class="row dgraph-strip">
+                                                <div class="row dgraph-strip justify-content-between">
                                                     @php
                                                         // Remove the currency symbol ('$') and commas from the formatted value
                                                         $formattedGCI = str_replace(
@@ -186,7 +186,7 @@
                                     data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab"
                                     aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/dashboard?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
+                            <a href="/dashboard?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
                                     id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
                                     type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Overdue</button></a>
@@ -900,9 +900,10 @@
                 radiusPercentage: 2,
                 widthPercentage: 3.2,
                 lengthPercentage: 80,
-                color: 'rgba(0, 0, 0, 1)'
+                color: '#fff'
             },
             valueLabel: {
+                fontSize: 20,
                 formatter: function(value) {
                     return Math.round(value) + "%";
                 }

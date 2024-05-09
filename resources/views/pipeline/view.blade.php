@@ -24,7 +24,7 @@
 
             var inputElement = document.getElementById('editableInput' + id);
             inputElement.focus();
-            inputElement.addEventListener('blur', function() {
+            inputElement.addEventListener('change', function() {
                 updateText(inputElement.value);
             });
 
@@ -303,7 +303,7 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{$deal['id']}}"><i
                             class="fas fa-plus plusicon">
                         </i>
                         New Task
@@ -313,16 +313,16 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=In Progress"> <button
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=In Progress"> <button
                                     class="nav-link dtabsbtn" id="nav-home-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
                                     aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Not Started"> <button
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=Not Started"> <button
                                     class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
                                     data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                                     aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
                                     data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Overdue</button></a>
@@ -330,18 +330,18 @@
                     </nav>
 
                     @include('common.tasks', [
-                        'tasks' => $tasks,
-                        'retrieveModuleData' => $retrieveModuleData,
-                    ])
+    'tasks' => $tasks,
+    'retrieveModuleData' => $retrieveModuleData,
+])
 
                 </div>
 
             </div>
             @include('common.notes.view', [
-                'notesInfo' => $notesInfo,
-                'retrieveModuleData' => $retrieveModuleData,
-                'module' => 'Deals',
-            ])
+    'notesInfo' => $notesInfo,
+    'retrieveModuleData' => $retrieveModuleData,
+    'module' => 'Deals',
+])
         </div>
         {{-- information form --}}
         <div class="row">
@@ -462,8 +462,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01"
                             <?php if ($deal['personal_transaction']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
@@ -471,8 +471,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02"
                             <?php if ($deal['double_ended']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
                         </label>
@@ -870,46 +870,59 @@
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
-                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
-                                {{ $deal['deal_name'] }}
-                            </option>
-                        </select>
-                    </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')"
-                        class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('common.tasks.create', ['deal' => $deal])
     {{-- Notes Model --}}
     @include('common.notes.create', ['deal' => $deal])
 
     @vite(['resources/js/pipeline.js'])
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
+
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
+
+        // Update the status information based on the current status
+        statusInfo[status] = true;
+
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
+        }
+
+        // Example of accessing status information
+        console.log(statusInfo);
+
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.color = "#fff";
+            activeTab.style.borderRadius = "4px";
+        }
+
+
+    });
         document.addEventListener("DOMContentLoaded", function() {
             $.ajax({
                 url: '{{ url('/pipeline-view') }}',
@@ -942,7 +955,7 @@
                     // "Who_Id": {
                     //     "id": whoId
                     // },
-                    "Status": "In Progress",
+                    "Status": "Upcoming",
                     "Due_Date": dueDate,
                     // "Created_Time":new Date()
                     "Priority": "High",
