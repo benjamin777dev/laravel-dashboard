@@ -24,24 +24,24 @@
             </div>
         </div>
         <div class="pipeline-cards-container">
-            <div class="alert alert-secondary text-center">
-                <strong>Sales Volume</strong><br>
+            <div class="progressCardsContainer">
+                <p class="proCardsText">Sales Volume</p>
                 ${{ number_format($totalSalesVolume, 0, '.', ',') }}
             </div>
-            <div class="alert alert-secondary text-center">
-                <strong>Avg Commission</strong><br>
+            <div class="progressCardsContainer">
+                <p class="proCardsText">Avg Commission</p>
                 {{ number_format($averageCommission, 2) }}%
             </div>
-            <div class="alert alert-secondary text-center">
-                <strong>Potential GCI</strong><br>
+            <div class="progressCardsContainer">
+                <p class="proCardsText">Potential GCI</p>
                 ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
             </div>
-            <div class="alert alert-secondary text-center">
-                <strong>Avg Probability</strong><br>
+            <div class="progressCardsContainer">
+                <p class="proCardsText">Avg Probability</p>
                 {{ number_format($averageProbability, 2) }}%
             </div>
-            <div class="alert alert-secondary text-center">
-                <strong>Probable GCI</strong><br>
+            <div class="progressCardsContainer">
+                <p class="proCardsText">Probable GCI</p>
                 ${{ number_format($totalProbableGCI, 0, '.', ',') }}
             </div>
 
@@ -56,7 +56,7 @@
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                     aria-label="Select Transaction" onchange="fetchDeal()">
-                    <option value="">Please select one</option>
+                    <option value="">Sort Pipelines by...</option>
                     @foreach ($allstages as $item)
                         <option value="{{ $item }}">{{ $item }}</option>
                     @endforeach
@@ -72,9 +72,9 @@
 
     </div>
 
-        <div class="transaction-container">
-            @include('pipeline.transaction')
-        </div>
+    <div class="transaction-container">
+        @include('pipeline.transaction')
+    </div>
     </div>
     @vite(['resources/js/pipeline.js'])
 
@@ -94,7 +94,7 @@
                     sortType: sortType || "",
                     filter: filter
                 },
-                
+
                 success: function(data) {
                     const card = $('.transaction-container').html(data);
                     // ppipelineTableBody.empty();
@@ -117,48 +117,48 @@
                     //     if (isMobile) {
                     //         // Render data in card format
                     //         const card = $('<div class="pTableCard">').html(`
-                    //             <p class="pTableTransText">Transaction</p>
-                    //                     <p class="pTableNameText">${item.deal_name || 'N/A'}</p>
-                    //                     <div class="d-flex justify-content-between">
-                    //                         <div class="pTableSelect pipelinestatusdiv">
-                    //                             <p style="background-color: ${item.stage === 'Potential'
-                    //                 ? '#dfdfdf'
-                    //                 : (item.stage === 'Active'
-                    //                     ? '#afafaf'
-                    //                     : (item.stage === 'Pre-Active'
-                    //                         ? '#cfcfcf'
-                    //                         : (item.stage === 'Under Contract'
-                    //                             ? '#8f8f8f;color=#fff;'
-                    //                             : (item.stage === 'Dead-Lost To Competition'
-                    //                                 ? '#efefef'
-                    //                                 : '#6f6f6f;color=#fff;'))))}"
-                    //                                 class="pstatusText">${item.stage || 'N/A'}</p>
-                    //                             <i class="fas fa-angle-down"></i>
-                    //                         </div>
-                    //                         ${item.closing_date || 'N/A'}
-                    //                     </div>
-                    //                     <div class="d-flex justify-content-between psellDiv">
-                    //                         <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.client_name_primary?? 'N/A'}
-                    //                         </div>
-                    //                         <div>
-                    //                             <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">$
-                    //                             ${item.sale_price || 'N/A'}
-                    //                         </div>
-                    //                     </div>
-                    //                     <div class="pCardFooter">
-                    //                         <div class="pfootericondiv">
-                    //                             <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                    //                                 class="pdiversityicon">
-                    //                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                    //                                 class="pdiversityicon">
-                    //                         </div>
-                    //                         <div>
-                    //                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                    //                                 class="pdiversityicon">
-                    //                         </div>
-                    //                     </div>
-                    //                 </div>
-                    //         `);
+                //             <p class="pTableTransText">Transaction</p>
+                //                     <p class="pTableNameText">${item.deal_name || 'N/A'}</p>
+                //                     <div class="d-flex justify-content-between">
+                //                         <div class="pTableSelect pipelinestatusdiv">
+                //                             <p style="background-color: ${item.stage === 'Potential'
+                //                 ? '#dfdfdf'
+                //                 : (item.stage === 'Active'
+                //                     ? '#afafaf'
+                //                     : (item.stage === 'Pre-Active'
+                //                         ? '#cfcfcf'
+                //                         : (item.stage === 'Under Contract'
+                //                             ? '#8f8f8f;color=#fff;'
+                //                             : (item.stage === 'Dead-Lost To Competition'
+                //                                 ? '#efefef'
+                //                                 : '#6f6f6f;color=#fff;'))))}"
+                //                                 class="pstatusText">${item.stage || 'N/A'}</p>
+                //                             <i class="fas fa-angle-down"></i>
+                //                         </div>
+                //                         ${item.closing_date || 'N/A'}
+                //                     </div>
+                //                     <div class="d-flex justify-content-between psellDiv">
+                //                         <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.client_name_primary?? 'N/A'}
+                //                         </div>
+                //                         <div>
+                //                             <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">$
+                //                             ${item.sale_price || 'N/A'}
+                //                         </div>
+                //                     </div>
+                //                     <div class="pCardFooter">
+                //                         <div class="pfootericondiv">
+                //                             <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
+                //                                 class="pdiversityicon">
+                //                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
+                //                                 class="pdiversityicon">
+                //                         </div>
+                //                         <div>
+                //                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
+                //                                 class="pdiversityicon">
+                //                         </div>
+                //                     </div>
+                //                 </div>
+                //         `);
                     //         ptableCardDiv.append(card);
                     //     } else {
                     //         deal = item
@@ -174,7 +174,7 @@
             });
         }
 
-        window.createTransaction= function() {
+        window.createTransaction = function() {
             console.log("Onclick");
             var formData = {
                 "data": [{
@@ -215,8 +215,7 @@
             // Call fetchData with the updated parameters
             fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv);
         }
-   
-</script>
+    </script>
 
 @section('pipelineScript')
 

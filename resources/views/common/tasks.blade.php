@@ -1,7 +1,7 @@
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>
-            <tr class="dFont700 dFont10">
+            <tr class="dFont700 dFont10 dtableHeaderTr">
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
@@ -26,8 +26,8 @@
                             </p>
                         </td>
                         <td>
-                            <div class="btn-group">
-                                <select class="form-select" id="related_to_rem{{ $task['id'] }}"
+                            <div class="btn-group dSelect-container">
+                                <select class="form-select dtransaction-Select" id="related_to_rem{{ $task['id'] }}"
                                     onclick="getModule('{{ $task['id'] }}')" name="related_to_rem{{ $task['id'] }}">
                                     @if ($task['related_to'] == 'Contacts')
                                         <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
@@ -44,13 +44,14 @@
                                 </select>
                                 <select class="form-select dmodaltaskSelect" id="taskSelect{{ $task['id'] }}"
                                     onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                                    name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction" style="display: none;">
+                                    name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
+                                    style="display: none;">
                                     <option value="">Please Select one</option>
                                 </select>
                             </div>
                         </td>
                         <td>
-                            <input type="datetime-local" id="date_local{{ $task['id'] }}"
+                            <input class="ddateInput" type="datetime-local" id="date_local{{ $task['id'] }}"
                                 onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}')"
                                 id="date_val{{ $task['zoho_task_id'] }}"
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
@@ -237,7 +238,7 @@
                     </div>
                     <div class="dcardsdateinput">
                         <p class="dcardsTaskText">Task Date</p>
-                        <input type="datetime-local"
+                        <input class="ddateInput" type="datetime-local"
                             value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                     </div>
                 </div>
@@ -268,15 +269,14 @@
             <div onclick="deleteTask('{{ $task['zoho_task_id'] }}',true)"
                 class="input-group-text text-white justify-content-center removebtn dFont400 dFont13" id="removeBtn">
                 <i class="fas fa-trash-alt plusicon"></i>
-                Remove Selected
+                Delete Selected
             </div>
             @include('common.pagination', ['module' => $tasks])
         </div>
     @endif
 </div>
 <script>
-   
-   document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')
         localStorage.setItem('status', defaultTab);
@@ -328,140 +328,142 @@
         var selectElement = document.getElementById("related_to_rem" + id);
 
         // Check if it's the first click
-            // Remove the existing options
-            selectElement.innerHTML = "";
+        // Remove the existing options
+        selectElement.innerHTML = "";
 
-            // Add a default option
-            var option1 = document.createElement("option");
-            option1.value = "";
-            option1.text = "Please select Module";
-            selectElement.appendChild(option1);
-            // Populate select with new options
-            @if (!empty($retrieveModuleData))
-                @foreach ($retrieveModuleData as $item)
-                    @if (!empty($item['api_name']) && in_array($item['api_name'], ['Deals', 'Contacts']))
-                        var option = document.createElement("option");
-                        option.id = "{{ $item['zoho_module_id'] }}";
-                        option.value = "{{ $item['api_name'] }}";
-                        option.text = "{{ $item['api_name'] }}";
-                        selectElement.appendChild(option);
-                    @endif
-                @endforeach
-            @endif
+        // Add a default option
+        var option1 = document.createElement("option");
+        option1.value = "";
+        option1.text = "Please select Module";
+        selectElement.appendChild(option1);
+        // Populate select with new options
+        @if (!empty($retrieveModuleData))
+            @foreach ($retrieveModuleData as $item)
+                @if (!empty($item['api_name']) && in_array($item['api_name'], ['Deals', 'Contacts']))
+                    var option = document.createElement("option");
+                    option.id = "{{ $item['zoho_module_id'] }}";
+                    option.value = "{{ $item['api_name'] }}";
+                    option.text = "{{ $item['api_name'] }}";
+                    selectElement.appendChild(option);
+                @endif
+            @endforeach
+        @endif
 
 
-            // Change the flag to indicate that it's no longer the first click
-            isFirstClick = false;
-            selectElement.addEventListener('change', function() {
-                // Remove the onclick attribute 
-                selectElement.removeAttribute("onclick");
-                // Set the onchange attribute to call moduleSelected function passing this as a parameter
-            });
-            selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
-        
+        // Change the flag to indicate that it's no longer the first click
+        isFirstClick = false;
+        selectElement.addEventListener('change', function() {
+            // Remove the onclick attribute 
+            selectElement.removeAttribute("onclick");
+            // Set the onchange attribute to call moduleSelected function passing this as a parameter
+        });
+        selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
+
     }
 
     function testFun(id, textfield, zohoID) {
         if (textfield === "deals") {
-            var related_to_rem = document.getElementsByName("related_to_rem"+id)[0].value;
-            var WhatSelectoneid = document.getElementsByName("related_to_parent"+id)[0].value;
+            var related_to_rem = document.getElementsByName("related_to_rem" + id)[0].value;
+            var WhatSelectoneid = document.getElementsByName("related_to_parent" + id)[0].value;
             updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
         }
     }
 
     var textElement;
 
-function makeEditable(id, textfield, zohoID) {
-     
-    if (textfield === "subject") {
-        textElement = document.getElementById('editableText' + id);
-        textElementCard = document.getElementById('editableTextCard' + id);
-        //For Table data                
-        var text = textElement.textContent.trim();
-        textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+    function makeEditable(id, textfield, zohoID) {
 
-        //For card data
-        var text = textElementCard.textContent.trim();
-        textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+        if (textfield === "subject") {
+            textElement = document.getElementById('editableText' + id);
+            textElementCard = document.getElementById('editableTextCard' + id);
+            //For Table data                
+            var text = textElement.textContent.trim();
+            textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
 
-        let inputElementmake = document.getElementById('editableInput' + id);
-        inputElementmake.focus();                          
-        inputElementmake.addEventListener('blur', function() {
-            updateText(inputElementmake.value, textfield, zohoID);
-        });
-    }
-    if (textfield === "date") {
-        let dateLocal = document.getElementById('date_local' + id);
-        var text = dateLocal.value.trim();
-        updateText(text, textfield, zohoID);
-    }
-   
+            //For card data
+            var text = textElementCard.textContent.trim();
+            textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
 
-}
-
-function updateText(newText, textfield, id,WhatSelectoneid="") {
-    let inputElementtext;
-    let dateLocal;
-    if(textfield==="subject"){
-         inputElementtext = document.getElementById('editableText' + id);
-    }else if(textfield==="date"){
-         dateLocal = document.getElementById('date_local' + id);
-         console.log(dateLocal,newText,'checlout');
-         dateLocal = dateLocal?.substring(0, 10);
-         newText = newText?.substring(0, 10);
-    }else{
-        
-    }
-    if (newText == "") {
-        alert("Empty text feild");
-        return;
-    }
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            let inputElementmake = document.getElementById('editableInput' + id);
+            inputElementmake.focus();
+            inputElementmake.addEventListener('blur', function() {
+                updateText(inputElementmake.value, textfield, zohoID);
+            });
         }
-    });
-    var formData = {
-        "data": [{
-            "Subject": textfield === "subject" ? newText : inputElementtext?.value,
-            "Due_Date": textfield === "date" ? newText : dateLocal?.value,
-            "What_Id": WhatSelectoneid ? { "id": WhatSelectoneid } : undefined,
-             "$se_module": textfield === "deals" ? newText : undefined
-        }]
-    };
-    // Filter out undefined values
+        if (textfield === "date") {
+            let dateLocal = document.getElementById('date_local' + id);
+            var text = dateLocal.value.trim();
+            updateText(text, textfield, zohoID);
+        }
+
+
+    }
+
+    function updateText(newText, textfield, id, WhatSelectoneid = "") {
+        let inputElementtext;
+        let dateLocal;
+        if (textfield === "subject") {
+            inputElementtext = document.getElementById('editableText' + id);
+        } else if (textfield === "date") {
+            dateLocal = document.getElementById('date_local' + id);
+            console.log(dateLocal, newText, 'checlout');
+            dateLocal = dateLocal?.substring(0, 10);
+            newText = newText?.substring(0, 10);
+        } else {
+
+        }
+        if (newText == "") {
+            alert("Empty text feild");
+            return;
+        }
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        var formData = {
+            "data": [{
+                "Subject": textfield === "subject" ? newText : inputElementtext?.value,
+                "Due_Date": textfield === "date" ? newText : dateLocal?.value,
+                "What_Id": WhatSelectoneid ? {
+                    "id": WhatSelectoneid
+                } : undefined,
+                "$se_module": textfield === "deals" ? newText : undefined
+            }]
+        };
+        // Filter out undefined values
         formData.data[0] = Object.fromEntries(
             Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
         );
-    // console.log("ys check ot")
-    $.ajax({
-        url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-        method: 'PUT',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-            // Handle success response
-            if (response?.data[0]?.status == "success") {
-                if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
-                    var modalTarget = document.getElementById('savemakeModalId' + id);
-                    var update_message = document.getElementById('updated_message_make');
-                    update_message.textContent = response?.data[0]?.message;
-                    // Show the modal
-                    $(modalTarget).modal('show');
-                    window.location.reload();
+        // console.log("ys check ot")
+        $.ajax({
+            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                // Handle success response
+                if (response?.data[0]?.status == "success") {
+                    if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
+                        var modalTarget = document.getElementById('savemakeModalId' + id);
+                        var update_message = document.getElementById('updated_message_make');
+                        update_message.textContent = response?.data[0]?.message;
+                        // Show the modal
+                        $(modalTarget).modal('show');
+                        window.location.reload();
+                    }
+
                 }
-
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText, 'errrorroororooro');
             }
-        },
-        error: function(xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText, 'errrorroororooro');
-        }
-    })
-}
+        })
+    }
 
-    function moduleSelected(selectedModule,id="") {
+    function moduleSelected(selectedModule, id = "") {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -475,11 +477,11 @@ function updateText(newText, textfield, id,WhatSelectoneid="") {
             method: "GET",
             dataType: "json",
             success: function(response) {
-                console.log(response,'resoponse')
+                console.log(response, 'resoponse')
                 // Handle successful response
                 var tasks = response;
                 // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect'+id);
+                var taskSelect = $('#taskSelect' + id);
                 // Clear existing options
                 taskSelect.empty();
                 // Populate select options with tasks
