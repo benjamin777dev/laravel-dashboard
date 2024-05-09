@@ -13,7 +13,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <div class="container">
+    <div class="container full-width-container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
             <a onclick="createContact();">
