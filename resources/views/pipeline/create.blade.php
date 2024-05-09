@@ -398,7 +398,6 @@
     </script>
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
-            <input type="text" value="{{$deal['deal_name']}}" class="cpinput">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
                     data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
@@ -509,23 +508,13 @@
                             <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
-                        <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
-                        <p class="form-control-plaintext npinputinfo" id="validationDefault16">
-                            {{ $deal['potential_gci'] }}
-                        </p>
-                    </div>
+                    
                     <div class="col-md-6">
                         <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
                         <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault15"
                             required value = "{{$deal['pipeline_probability']}}">
                     </div>
-                    <div class="col-md-6">
-                        <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
-                        <p class="form-control-plaintext npinputinfo" id="validationDefault16">
-                            {{ $deal['pipeline1'] }}
-                        </p>
-                    </div>
+                    
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
     echo 'checked'; ?>>
@@ -918,10 +907,6 @@
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
     <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
 </div>
-{{-- Create New Task Modal --}}
-@include('common.tasks.create', ['deal' => $deal])
-{{-- Notes Model --}}
-@include('common.notes.create', ['deal' => $deal])
     
     @vite(['resources/js/pipeline.js'])
 
