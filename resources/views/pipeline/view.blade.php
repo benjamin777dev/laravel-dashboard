@@ -427,20 +427,26 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault12" required >
+                        <select class="form-select npinputinfo" id="validationDefault12" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
+                            <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>Residential</option>
+                            <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
+                            <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
+                            <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial</option>
+                            <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
+                        </select>
                         <input type="text" class="form-control npinputinfo" id="validationDefault12" required
                             value = "{{ $deal['property_type'] }}">
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault13" required >
+                        <select class="form-select npinputinfo" id="validationDefault13" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
+                            <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
+                            <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second Home</option>
+                            <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
+                        </select>
                         <input type="text" class="form-control npinputinfo" id="validationDefault13" required
                             value = "{{ $deal['ownership_type'] }}">
                     </div>
