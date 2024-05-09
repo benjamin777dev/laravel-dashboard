@@ -398,7 +398,6 @@
     </script>
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
-            <input type="text" value="{{$deal['deal_name']}}" class="cpinput">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
                     data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
@@ -908,10 +907,6 @@
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
     <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
 </div>
-{{-- Create New Task Modal --}}
-@include('common.tasks.create', ['deal' => $deal])
-{{-- Notes Model --}}
-@include('common.notes.create', ['deal' => $deal])
     
     @vite(['resources/js/pipeline.js'])
 
