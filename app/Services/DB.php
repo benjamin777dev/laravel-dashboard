@@ -927,6 +927,11 @@ class DB
                         $query->where('groupId', $filter);
                     }
                 }])
+                ->when($filter, function ($query) use ($filter) {
+                    $query->whereHas('groups', function ($query) use ($filter) {
+                        $query->where('groupId', $filter);
+                    });
+                })
                 ->when($sort, function ($query, $sort) {
                     $query->orderBy('created_at', $sort);
                 })
