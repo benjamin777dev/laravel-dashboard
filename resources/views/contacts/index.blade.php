@@ -721,6 +721,11 @@
         });
     }
 
+    function formatSentence(sentence) {
+        // Convert the first character to uppercase and the rest to lowercase
+        return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
+    }
+
     function updateContact(zohoID, name) {
         let elementId = document.getElementById(name + zohoID);
         console.log(name, 'eleme');
@@ -771,7 +776,7 @@
                     if (!document.getElementById('savemakeModalId' + zohoID).classList.contains('show')) {
                         var modalTarget = document.getElementById('savemakeModalId' + zohoID);
                         var update_message = document.getElementById('updated_message_make');
-                        update_message.textContent = response?.data[0]?.message;
+                        update_message.textContent = formatSentence(response?.data[0]?.message);
                         // Show the modal
                         $(modalTarget).modal('show');
                         window.location.reload();

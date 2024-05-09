@@ -61,4 +61,15 @@ class Contact extends Model
     {
         return $this->hasMany(ContactGroups::class, 'contactId');
     }
+
+    public function parentContact()
+    {
+        return $this->belongsTo(Contact::class, 'referred_id');
+    }
+
+    // Define the relationship for child categories
+    public function childContact()
+    {
+        return $this->hasMany(Contact::class, 'referred_id');
+    }
 }

@@ -321,7 +321,18 @@
     align-items: center;
     margin-bottom: 24px;
 }
+.pdealName{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.nav-link:hover, .nav-link:focus {
+    color: red;
+    text-decoration: none;
+}
 
+.paddressName{
+ font-size: 12px;
+}
 .notesAsignedText {
     color: #222;
     font-family: Avenir;
@@ -960,9 +971,6 @@
     color: #fff;
 }
 
-.database-filter-div{
-    margin-inline: 0;
-}
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1667,7 +1675,7 @@
 
 /* / database component / */
 .dataCardDiv {
-    min-height: 260px;
+    min-height: 245px;
     cursor: pointer;
 }
 
@@ -1708,7 +1716,6 @@
     position: absolute;
     right: 0px;
     border-radius: 4px;
-    top: 0;
 }
 
 .dataPhoneDiv,

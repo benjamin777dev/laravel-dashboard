@@ -3,9 +3,9 @@
         <thead>
             <tr class="dFont700 dFont10">
                 <th scope="col">
-                    
+
                 </th>
-                
+
                 <th scope="col">
                     <div class="dbgcommonFlex">
                         <p class="mb-0">Name</p>
@@ -16,66 +16,78 @@
                 @foreach($shownGroups as $shownGroup)
                     <th scope="col">
                         <div class="dbgcommonFlex">
-                            <p id="selectedCountHeader{{$loop->index}}">0</p>
-                            <p class="mb-0">{{$shownGroup['name']}}</p>
-                            <input type="checkbox" class="headerCheckbox" data-target="#confirmModel{{$shownGroup['id']}}" data-index="{{$loop->index}}" onclick="showPopup('{{$shownGroup['id']}}')"/>
-                            <div id="confirmModel{{$shownGroup['id']}}" class="modal">
-                        <div class="modal-dialog modal-dialog-centered deleteModal">
-                            <div class="modal-content">
-                                <div class="modal-header border-0 deleteModalHeaderDiv">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close" ></button>
-                                </div>
-                                <div class="modal-body deletemodalBodyDiv">
-                                    <p class="deleteModalBodyText">Are you Sure?
-                                        <br>
-                                        This will add ALL your contacts to this group.</p>
-                                </div>
-                                <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                    <div class="d-grid gap-2 col-5">
-                                        <button type="button"
-                                            class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal" onclick="selectAllCheckboxes('{{$loop->index}}','{{$shownGroup['zoho_group_id']}}','confirmModel{{$shownGroup['id']}}')">
-                                            Select All
-                                        </button>
-                                    </div>
-                                    <div class="d-grid gap-2 col-5">
-                                        <button type="button" data-bs-dismiss="modal"
-                                        aria-label="Close">Cancel
-                                        </button>
-                                    </div>
-                                </div>
+                            <p>{{ count($shownGroup['contacts']) }}</p>
 
+                            <p class="mb-0">{{$shownGroup['name']}}</p>
+                            <input type="checkbox" class="headerCheckbox" data-target="#confirmModel{{$shownGroup['id']}}"
+                                data-index="{{$loop->index}}" onclick="showPopup('{{$shownGroup['id']}}')" />
+                            <div id="confirmModel{{$shownGroup['id']}}" class="modal">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0 deleteModalHeaderDiv">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body deletemodalBodyDiv">
+                                            <p class="deleteModalBodyText">Are you Sure?
+                                                <br>
+                                                This will add ALL your contacts to this group.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid gap-2 col-5">
+                                                <button type="button" class="btn btn-secondary deleteModalBtn"
+                                                    data-bs-dismiss="modal"
+                                                    onclick="selectAllCheckboxes('{{$loop->index}}','{{$shownGroup['zoho_group_id']}}','confirmModel{{$shownGroup['id']}}')">
+                                                    Select All
+                                                </button>
+                                            </div>
+                                            <div class="d-grid gap-2 col-5">
+                                                <button type="button" data-bs-dismiss="modal" aria-label="Cancel">Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
                         </div>
 
                     </th>
-                    
+
                 @endforeach
             </tr>
         </thead>
         <tbody class="text-center dbgBodyTable">
             @foreach ($contacts as $contact)
-            <tr>
-                <td> <input type="checkbox" class="rowCheckbox" /></td>
-                <td class="text-start"> {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}</td>
-                @foreach ($shownGroups as $index => $shownGroup)
-                @php
-                $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
-                @endphp
-                <td>
-                        <input type="checkbox" data-id="{{$contact['zoho_contact_id']}}"onclick="contactGroupUpdate('{{ $contact ? $contact : 'null' }}', '{{ $shownGroup }}', this.checked,'{{$group}}')" class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
-                    
-                </td>
-                @endforeach
-            </tr>
+                    <tr>
+                        <td> <input type="checkbox" class="rowCheckbox" /></td>
+
+                        <td class="text-start">
+                            @if($contact->relationship_type == 'Secondary')
+                                <i class="fa fa-caret-right"></i>
+                            @endif
+                            {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}
+                        </td>
+
+                        @foreach ($shownGroups as $index => $shownGroup)
+                                    @php
+        $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
+                                    @endphp
+                                    <td>
+                                        <input type="checkbox" data-id="{{$contact['zoho_contact_id']}}"
+                                            onclick="contactGroupUpdate('{{ $contact ? $contact : 'null' }}', '{{ $shownGroup }}', this.checked,'{{$group}}')"
+                                            class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
+
+                                    </td>
+                        @endforeach
+                    </tr>
             @endforeach
         </tbody>
     </table>
 </div>
 <script>
-    window.closeConfirmationModal=function(id) {
+    window.closeConfirmationModal = function (id) {
         // var modal = document.getElementById(id);
         // modal.style.display = 'none';
     }
@@ -83,9 +95,9 @@
     window.selectedValues = [];
 
     // Add event listener to checkboxes
-    document.querySelectorAll('.gdropdown-ul input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            const value =  this.parentNode.getAttribute('value');
+    document.querySelectorAll('.gdropdown-ul input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const value = this.parentNode.getAttribute('value');
             const isChecked = this.checked;
             const existingIndex = selectedValues.findIndex(item => item.id === value);
 
@@ -143,11 +155,11 @@
             });
         });
 
-        
+
         headerCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCount);
         });
-    
+
         rowCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', updateSelectedCount);
         });
@@ -160,7 +172,7 @@
     });
     // Function to fetch data based on selected values and filter
     // Function to fetch data based on selected values and filter
-    window.fetchData = function(sortField = null) {
+    window.fetchData = function (sortField = null) {
         // Get selected filter value
         const filterSelect = document.getElementById('validationDefault05');
         const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
@@ -171,26 +183,26 @@
             data: {
                 columnShow: JSON.stringify(selectedValues),
                 filter: filterValue,
-                sort:sortField
+                sort: sortField
             },
-            success: function(data) {
+            success: function (data) {
                 $('.dbgTable').html(data)
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle errors
                 console.error('Error:', error);
             }
         });
-        
+
     }
     window.sortDirection = 'desc'
-    window.toggleSort = function() {
+    window.toggleSort = function () {
         // Toggle the sort direction
         sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
         // Call fetchDeal with the sortField parameter
         fetchData(sortDirection);
     };
-    window.contactGroupUpdate = function (contact, group, isChecked,contactGroup) {
+    window.contactGroupUpdate = function (contact, group, isChecked, contactGroup) {
         contact = JSON.parse(contact);
         group = JSON.parse(group);
         $.ajaxSetup({
@@ -230,13 +242,13 @@
             });
         } else {
             contactGroup = JSON.parse(contactGroup);
-            console.log("contactGroup",contactGroup);
+            console.log("contactGroup", contactGroup);
             console.log(formData);
             $.ajax({
-                url: '/contact/group/delete/'+contactGroup.zoho_contact_group_id,
+                url: '/contact/group/delete/' + contactGroup.zoho_contact_group_id,
                 method: 'DELETE',
                 contentType: 'application/json',
-                
+
                 success: function (response) {
                     // Handle successful API response
                     // if (response?.status == "success") {
@@ -250,59 +262,59 @@
             });
         }
     }
-    window.selectAllCheckboxes=function(columnIndex,groupId,targetModalId) {
-        console.log("Select ALl Inbox",targetModalId);
+    window.selectAllCheckboxes = function (columnIndex, groupId, targetModalId) {
+        console.log("Select ALl Inbox", targetModalId);
         let checkedGroup = []
         var checkboxes = document.querySelectorAll('.groupCheckbox[data-index="' + columnIndex + '"]');
         // Get the elements to update
         const buttonElement = document.querySelector('.deleteModalBtn');
         const elementInnerText = buttonElement.innerText; // Retrieves visible text content, ignoring hidden elements
 
-        
-        checkboxes.forEach(function(checkbox) {
+
+        checkboxes.forEach(function (checkbox) {
             var contactId = checkbox.getAttribute('data-id');
-            if(elementInnerText=="Select All"&&!(checkbox.checked)){
-                checkedGroup.push({groupId:groupId,contactId:contactId})
+            if (elementInnerText == "Select All" && !(checkbox.checked)) {
+                checkedGroup.push({ groupId: groupId, contactId: contactId })
                 checkbox.checked = true;
             }
-            if(elementInnerText=="Deselect All"&&checkbox.checked){
-                checkedGroup.push({groupId:groupId,contactId:contactId})
+            if (elementInnerText == "Deselect All" && checkbox.checked) {
+                checkedGroup.push({ groupId: groupId, contactId: contactId })
                 checkbox.checked = false;
             }
         })
-            console.log(checkedGroup);
-            var jsonString = JSON.stringify(checkedGroup);
+        console.log(checkedGroup);
+        var jsonString = JSON.stringify(checkedGroup);
 
-            var formData = {
-                "data": jsonString,
-            };
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/contact/group/create/CSVfile',
-                method: 'GET',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: {
-                    "laravelData": jsonString,
-                },
-                success: function (response) {
-                    // Handle successful API response
-                    // if (response?.status == "success") {
-                    window.location.href = '/group';
-                    // }
-                },
-                error: function (xhr, status, error) {
-                    // Handle errors
-                    console.error('Error:', error);
-                }
-            });
-            
+        var formData = {
+            "data": jsonString,
+        };
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/contact/group/create/CSVfile',
+            method: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: {
+                "laravelData": jsonString,
+            },
+            success: function (response) {
+                // Handle successful API response
+                // if (response?.status == "success") {
+                window.location.href = '/group';
+                // }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+
     }
-    window.showPopup=function(id){
+    window.showPopup = function (id) {
         new bootstrap.Modal(document.getElementById('confirmModel' + id)).show();
     }
 </script>
