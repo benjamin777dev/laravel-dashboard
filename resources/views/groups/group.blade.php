@@ -50,9 +50,9 @@
                 @endforeach
             </tr>
             <tr class="dFont700 dFont10">
-                @foreach($shownGroups as $shownGroup)
-                <th scope="col">
-                </th>
+            <th scope="col">
+            </th>
+            @foreach($shownGroups as $shownGroup)
                 <th scope="col">
                     <div class="dbgcommonFlex">
                         <p>{{ count($shownGroup['contacts']) }}</p>

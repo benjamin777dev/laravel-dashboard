@@ -4,7 +4,7 @@
 
 @section('content') 
     @vite(['resources/css/custom.css'])
-    <div class="container">
+    <div class="container full-width-container">
         <div class="commonFlex">
             <p class="ncText">Database Groups</p>
         </div>
