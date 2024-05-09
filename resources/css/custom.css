@@ -1693,7 +1693,7 @@
 
 .dacHeaderDiv {
     padding-left: 20px;
-    padding-top: 20px;
+    padding-top: .8rem;
 }
 
 .databaseCardWord {
@@ -1921,7 +1921,7 @@
     justify-content: space-between;
     align-items: center;
     font-family: Avenir;
-    font-size: 11px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 900;
     line-height: 16.8px;
