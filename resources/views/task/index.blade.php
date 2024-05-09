@@ -7,9 +7,8 @@
         <div class="col-sm-12 dtasksection">
             <div class="d-flex justify-content-between">
                 <p class="dFont800 dFont15">Tasks</p>
-                <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                    id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
-                        class="fas fa-plus plusicon">
+                <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
                     </i>
                     New Task
                 </div>
@@ -25,18 +24,18 @@
                         <a href="/task?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
                                 id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
                                 role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                        <a href="/task?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
+                        <a href="/task?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
                                 id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
                                 role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
                     </div>
                 </nav>
-                @include('common.tasks', ['tasks' => $tasks,'retrieveModuleData'=>$retrieveModuleData])
+                @include('common.tasks', ['tasks' => $tasks, 'retrieveModuleData' => $retrieveModuleData])
 
             </div>
 
         </div>
-      
-        
+
+
         {{-- <div class="table-responsive dtranstiontable mt-3">
             <p class="fw-bold">Transactions closing soon</p>
             <table class="table dtabletranstion">
@@ -70,8 +69,8 @@
             </table>
         </div> --}}
     </div>
-      {{-- Create New Task Modal --}}
-      <div class="modal fade" id="newTaskModalId" tabindex="-1">
+    {{-- Create New Task Modal --}}
+    <div class="modal fade" id="newTaskModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
@@ -85,6 +84,7 @@
                     <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
+
                         <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
                             name="related_to" aria-label="Select Transaction">
                             <option value="">Please select one</option>
@@ -94,6 +94,7 @@
                                 @endif
                             @endforeach
                         </select>
+                        <input type="text" id="searchInput" placeholder="Search..." style="display: none;">
                         <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
                             aria-label="Select Transaction" style="display: none;">
                             <option value="">Please Select one</option>
@@ -112,8 +113,8 @@
             </div>
         </div>
     </div>
-     {{-- save Modal --}}
-     <div class="modal fade" id="saveModalId" tabindex="-1">
+    {{-- save Modal --}}
+    <div class="modal fade" id="saveModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content">
                 <div class="modal-header saveModalHeaderDiv border-0">
@@ -135,11 +136,11 @@
 
             </div>
         </div>
-    </div>`
+    </div>
 @endsection
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
-
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.nav-link');
         let activeTab = localStorage.getItem('activeTab');
 
@@ -154,20 +155,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         tabs.forEach(tab => {
-            tab.addEventListener('click', function () {
+            tab.addEventListener('click', function() {
                 tabs.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 localStorage.setItem('activeTab', this.getAttribute('href'));
             });
         });
     });
-    
-window.selectedTransation;
-function selectedElement(element) {
+
+    window.selectedTransation;
+
+    function selectedElement(element) {
         var selectedValue = element.value;
         window.selectedTransation = selectedValue;
         //    console.log(selectedTransation);
     }
+
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
@@ -190,10 +193,10 @@ function selectedElement(element) {
                 "Status": "Not Started",
                 "Due_Date": dueDate,
                 "Priority": "High",
-                "What_Id":{
-                            "id":WhatSelectoneid
-                        },
-                "$se_module":seModule
+                "What_Id": {
+                    "id": WhatSelectoneid
+                },
+                "$se_module": seModule
             }],
             "_token": '{{ csrf_token() }}'
         };
@@ -211,15 +214,15 @@ function selectedElement(element) {
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
+                    showToast(upperCaseMessage);
                     window.location.reload();
                 } else {
-                    alert("Response or message not found");
+                    showToastError("Response or message not found");
                 }
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
             }
         })
     }
@@ -278,7 +281,7 @@ function selectedElement(element) {
         allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
     }
 
-    
+
     function validateTextarea() {
         var textarea = document.getElementById('darea');
         var textareaValue = textarea.value.trim();
@@ -290,16 +293,16 @@ function selectedElement(element) {
             document.getElementById("subject_error").innerHTML = "";
         }
     }
-   
-    function deleteTask(id,isremoveselected=false) {
+
+    function deleteTask(id, isremoveselected = false) {
         let updateids = removeAllSelected();
         if (updateids === "" && id === 'remove_selected') {
             return;
         }
-        if(isremoveselected){
+        if (isremoveselected) {
             id = undefined;
         }
-        
+
         if (updateids !== "") {
             if (confirm("Are you sure you want to delete selected task?")) {
 
@@ -330,13 +333,13 @@ function selectedElement(element) {
                     },
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully", response);
+                        showToast("deleted successfully");
                         window.location.reload();
                     },
                     error: function(xhr, status, error) {
                         // Handle error response
                         console.error(xhr.responseText);
-                        alert(xhr.responseText)
+                        showToastError(xhr.responseText)
                     }
                 })
 
@@ -368,7 +371,7 @@ function selectedElement(element) {
         // return;
         if (elementValue.trim() === "") {
             // console.log("chkockdsjkfjksdh")
-            return alert("Please enter subject value first");
+            return showToastError("Please enter subject value first");
         }
         // console.log("inputElementval",elementValue!==undefined,elementValue)
         if (elementValue !== undefined) { // return;
@@ -411,14 +414,16 @@ function selectedElement(element) {
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
+                    showToastError("Something went wrong");
                     console.error(xhr.responseText, 'errrorroororooro');
+
 
 
                 }
             })
         }
     }
-  
+
     function removeAllSelected() {
         // Select all checkboxes
         var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
@@ -448,30 +453,30 @@ function selectedElement(element) {
 
     function convertDateTime(inputDateTime) {
 
-// Parse the input date string
-let dateObj = new Date(inputDateTime);
+        // Parse the input date string
+        let dateObj = new Date(inputDateTime);
 
-// Format the date components
-let year = dateObj.getFullYear();
-let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
-let day = dateObj.getDate().toString().padStart(2, '0');
-let hours = dateObj.getHours().toString().padStart(2, '0');
-let minutes = dateObj.getMinutes().toString().padStart(2, '0');
-let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+        // Format the date components
+        let year = dateObj.getFullYear();
+        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+        let day = dateObj.getDate().toString().padStart(2, '0');
+        let hours = dateObj.getHours().toString().padStart(2, '0');
+        let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+        let seconds = dateObj.getSeconds().toString().padStart(2, '0');
 
-// Format the timezone offset
-let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
-let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
-let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+        // Format the timezone offset
+        let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+        let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+        let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
 
-// Construct the formatted datetime string
-let formattedDateTime =
-    `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+        // Construct the formatted datetime string
+        let formattedDateTime =
+            `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
 
-return formattedDateTime;
-}
+        return formattedDateTime;
+    }
 
-function updateText(newText) {
+    function updateText(newText) {
         //  textElement = document.getElementById('editableText');
         textElement.innerHTML = newText;
     }
@@ -494,58 +499,67 @@ function updateText(newText) {
         });
     }
 
-function moduleSelected(selectedModule, accessToken) {
-            // console.log(accessToken,'accessToken')
-            var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-            var selectedText = selectedOption.text;
-            //    var id = '{{ request()->route('id') }}'; 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: '/task/get-' + selectedText,
-                method: "GET",
-                dataType: "json",
+    function moduleSelected(selectedModule, accessToken) {
+        // console.log(accessToken,'accessToken')
+        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+        var selectedText = selectedOption.text;
+        //    var id = '{{ request()->route('id') }}'; 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: '/task/get-' + selectedText,
+            method: "GET",
+            dataType: "json",
 
-                success: function(response) {
-                    // Handle successful response
-                    var tasks = response;
-                    // Assuming you have another select element with id 'taskSelect'
-                    var taskSelect = $('#taskSelect');
-                    // Clear existing options
-                    taskSelect.empty();
-                    // Populate select options with tasks
-                    $.each(tasks, function(index, task) {
-                        if (selectedText === "Tasks") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_task_id,
-                                text: task?.subject
-                            }));
-                        }
-                        if (selectedText === "Deals") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_deal_id,
-                                text: task?.deal_name
-                            }));
-                        }
-                        if (selectedText === "Contacts") {
-                            taskSelect.append($('<option>', {
-                                value: task?.zoho_contact_id,
-                                text: task?.first_name??'' + ' ' + task?.last_name??''
-                            }));
-                        }
-                    });
-                    taskSelect.show();
-                    // Do whatever you want with the response data here
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.error("Ajax Error:", error);
-                }
-            });
+            success: function(response) {
+                // Handle successful response
+                console.log("task");
+                var tasks = response;
+                // Assuming you have another select element with id 'taskSelect'
+                var taskSelect = $('#taskSelect');
+                // Clear existing options
+                taskSelect.empty();
+                // Populate select options with tasks
+                $.each(tasks, function(index, task) {
+                    if (selectedText === "Tasks") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_task_id,
+                            text: task?.subject
+                        }));
+                    }
+                    if (selectedText === "Deals") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_deal_id,
+                            text: task?.deal_name
+                        }));
+                    }
+                    if (selectedText === "Contacts") {
+                        taskSelect.append($('<option>', {
+                            value: task?.zoho_contact_id,
+                            text: task?.first_name ?? '' + ' ' + task?.last_name ?? ''
+                        }));
+                    }
+                });
 
-        }
+                new TomSelect("#taskSelect", {
+                    create: false,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    }
+                });
+                
+                taskSelect.show();
+                // Do whatever you want with the response data here
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
 
+    }
 </script>
