@@ -119,10 +119,9 @@
                             id="commission{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['commission'] ?? '0', 2) }}%</div>
                     </div>
                     <div>
-                        <div class="commonTextEllipsis"
-                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','potential_gci','{{$deal['id']}}')"
-                            id="potential_gci{{ $deal['zoho_deal_id'] }}">
-                            ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}</div>
+                        <div class="commonTextEllipsis">
+                            ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}
+                        </div>
                     </div>
                     <div>
                         <div class="commonTextEllipsis"
