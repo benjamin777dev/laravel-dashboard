@@ -303,7 +303,7 @@
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{$deal['id']}}"><i
                             class="fas fa-plus plusicon">
                         </i>
                         New Task
@@ -330,18 +330,18 @@
                     </nav>
 
                     @include('common.tasks', [
-                        'tasks' => $tasks,
-                        'retrieveModuleData' => $retrieveModuleData,
-                    ])
+    'tasks' => $tasks,
+    'retrieveModuleData' => $retrieveModuleData,
+])
 
                 </div>
 
             </div>
             @include('common.notes.view', [
-                'notesInfo' => $notesInfo,
-                'retrieveModuleData' => $retrieveModuleData,
-                'module' => 'Deals',
-            ])
+    'notesInfo' => $notesInfo,
+    'retrieveModuleData' => $retrieveModuleData,
+    'module' => 'Deals',
+])
         </div>
         {{-- information form --}}
         <div class="row">
@@ -462,8 +462,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01"
                             <?php if ($deal['personal_transaction']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
@@ -471,8 +471,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02"
                             <?php if ($deal['double_ended']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
                         </label>
@@ -870,40 +870,7 @@
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
-                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
-                                {{ $deal['deal_name'] }}
-                            </option>
-                        </select>
-                    </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')"
-                        class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('common.tasks.create', ['deal' => $deal])
     {{-- Notes Model --}}
     @include('common.notes.create', ['deal' => $deal])
 
@@ -988,7 +955,7 @@
                     // "Who_Id": {
                     //     "id": whoId
                     // },
-                    "Status": "In Progress",
+                    "Status": "Upcoming",
                     "Due_Date": dueDate,
                     // "Created_Time":new Date()
                     "Priority": "High",
