@@ -281,16 +281,16 @@
         }
     </script>
     <div class="container-fluid">
-        {{-- <div class="commonFlex ppipeDiv">
+        <div class="commonFlex ppipeDiv">
             <input type="text" value="{{$deal['deal_name']}}" class="cpinput">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal"onclick="updateDeal('{{$deal['zoho_deal_id']}}')">
+                    data-bs-toggle="modal"onclick="updateDealCreation('{{$deal['zoho_deal_id']}}')">
                     <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
                     Save
                 </div>
             </div>
-        </div> --}}
+        </div>
         {{-- <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
             <p class="pText">{{ $deal['deal_name'] }}</p>
             <div class="npbtnsDiv">
@@ -308,7 +308,7 @@
                 </a>
             </div>
         </div> --}}
-        <div class="dbgroupsFlex">
+        {{--<div class="dbgroupsFlex">
             <p class="ngText" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">{{ $deal['deal_name'] }}</p>
             <div class="pipeline-btns-container">
 
@@ -322,13 +322,13 @@
 
                 </div>
             </div>
-        </div>
+        </div>--}}
         <div class="row">
             <div class="col-md-8 col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{$deal['id']}}"><i
                             class="fas fa-plus plusicon">
                         </i>
                         New Task
@@ -354,184 +354,19 @@
                         </div>
                     </nav>
 
-                    <div class="table-responsive dresponsivetable">
-                        <table class="table dtableresp">
-                            <thead>
-                                <tr class="dFont700 dFont10">
-                                    <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()"
-                                            id="checkbox_all" id="checkbox_task" /></th>
-                                    <th scope="col">Subject</th>
-                                    <th scope="col">Task Date</th>
-                                    <th scope="col">Options</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @if (count($tasks) > 0)
-                                    @foreach ($tasks as $task)
-                                        <tr class="dresponsivetableTr">
-                                            <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')"
-                                                    type="checkbox" class="task_checkbox"
-                                                    id="{{ $task['zoho_task_id'] }}" /></td>
-                                            <td>
-                                                <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
-                                                    id="editableText{{ $task['id'] }}">
-                                                    {{ $task['subject'] ?? 'N/A' }}
-                                                    <i class="fas fa-pencil-alt pencilIcon"
-                                                        onclick="makeEditable('{{ $task['id'] }}')"></i>
-                                                </p>
-                                            </td>
-                                            <td>
-                                                <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
-                                                    value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                                            </td>
-                                            <td>
-                                                <div class="d-flex ">
-                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                                        id="btnGroupAddon" data-bs-toggle="modal"
-                                                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                                        <i class="fas fa-hdd plusicon"></i>
-                                                        Save
-                                                    </div>
-                                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                        id="btnGroupAddon" data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
-                                                        <i class="fas fa-trash-alt plusicon"></i>
-                                                        Delete
-                                                    </div>
-                                                </div>
-
-                                                {{-- delete Modal --}}
-                                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
-                                                    tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header border-0 deleteModalHeaderDiv">
-                                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body deletemodalBodyDiv">
-                                                                <p class="deleteModalBodyText">Please confirm you’d like
-                                                                    to<br />
-                                                                    delete this item.</p>
-                                                            </div>
-                                                            <div
-                                                                class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                                                <div class="d-grid gap-2 col-5">
-                                                                    <button type="button"
-                                                                        onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                                                        class="btn btn-secondary deleteModalBtn"
-                                                                        data-bs-dismiss="modal">
-                                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                        delete
-                                                                    </button>
-                                                                </div>
-                                                                <div class="d-grid gap-2 col-5">
-                                                                    <button type="button"
-                                                                        class="btn btn-primary goBackModalBtn">
-                                                                        <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                                            alt="R">No, go back
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="12">No records found</td>
-                                    </tr>
-                                @endif
-
-                            </tbody>
-
-                        </table>
-                        <div class="dprogressCards">
-                            @if (count($tasks) > 0)
-                                @foreach ($tasks as $task)
-                                    <div class="dcardscheckbox">
-                                        <input type="checkbox" />
-                                    </div>
-                                    <div class="dcardssubjectdiv">
-                                        <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
-                                            onclick="makeEditable('{{ $task['id'] }}')">
-                                            {{ $task['subject'] ?? 'N/A' }}
-                                        </p>
-                                        <div class="btn-group dcardsselectdiv">
-                                            <p class="dcardsTransactionText">Transaction Related</p>
-                                            <select class="form-select dselect" aria-label="Transaction test"
-                                                id="dropdownMenuButton">
-                                                <option value="{{ $task['Who_Id']['id'] ?? '' }}">
-                                            </select>
-                                        </div>
-                                        <div class="dcardsdateinput">
-                                            <p class="dcardsTaskText">Task Date</p>
-                                            <input type="datetime-local"
-                                                value="{{ \Carbon\Carbon::parse($task['created_time'])->format('Y-m-d\TH:i') }}" />
-                                        </div>
-                                    </div>
-                                    <div class="dcardsbtnsDiv">
-                                        <div id="update_changes" class="input-group-text dcardssavebtn"
-                                            id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#saveModalId"
-                                            onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                            <i class="fas fa-hdd plusicon"></i>
-                                            Save
-                                        </div>
-                                        <div class="input-group-text dcardsdeletebtn"
-                                            onclick="deleteTask('{{ $task['zoho_task_id'] }}')" id="btnGroupAddon"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModalId">
-                                            <i class="fas fa-trash-alt plusicon"></i>
-
-                                            Delete
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="dprogressCardselse">
-                                    <p class="text-center" colspan="12">No records found</p>
-                                </div>
-                            @endif
-                        </div>
-                        @if (count($tasks) > 0)
-                            <div class="dpagination">
-                                <div onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                    class="input-group-text text-white justify-content-center removebtn dFont400 dFont13"
-                                    id="removeBtn">
-                                    <i class="fas fa-trash-alt plusicon"></i>
-                                    Remove Selected
-                                </div>
-                                <nav aria-label="..." class="dpaginationNav">
-                                    <ul class="pagination ppipelinepage d-flex justify-content-end">
-                                        <li class="page-item disabled">
-                                            <a class="page-link">Previous</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="#">2</a>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="#">Next</a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        @endif
-                    </div>
+                    @include('common.tasks', [
+    'tasks' => $tasks,
+    'retrieveModuleData' => $retrieveModuleData,
+])
 
                 </div>
 
             </div>
             @include('common.notes.view', [
-                'notesInfo' => $notesInfo,
-                'retrieveModuleData' => $retrieveModuleData,
-                'module' => 'Deals',
-            ])
+    'notesInfo' => $notesInfo,
+    'retrieveModuleData' => $retrieveModuleData,
+    'module' => 'Deals',
+])
         </div>
         {{-- information form --}}
         <div class="row">
@@ -654,8 +489,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01"
                             <?php if ($deal['personal_transaction']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
@@ -663,8 +498,8 @@
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02"
                             <?php if ($deal['double_ended']) {
-                                echo 'checked';
-                            } ?>>
+    echo 'checked';
+} ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
                         </label>
@@ -678,58 +513,63 @@
         <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
     </div>
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
-                            <option value="{{ $deal['zoho_deal_id'] }}" selected>
-                                {{ $deal['deal_name'] }}
-                            </option>
-                        </select>
-                    </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addTask('{{ $deal['zoho_deal_id'] }}')"
-                        class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('common.tasks.create', ['deal' => $deal])
     {{-- Notes Model --}}
     @include('common.notes.create', ['deal' => $deal])
 
     @vite(['resources/js/pipeline.js'])
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            $.ajax({
-                url: '{{ url('/pipeline-view') }}',
-                method: 'GET',
-                data: {},
-                dataType: 'json',
-                success: function(data) {},
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
-            });
-        });
+            document.addEventListener('DOMContentLoaded', function () {
+                    var defaultTab = "{{ $tab }}";
+                    console.log(defaultTab, 'tab is here')
+                    localStorage.setItem('status', defaultTab);
+                    // Retrieve the status from local storage
+                    var status = localStorage.getItem('status');
+
+                    // Object to store status information
+                    var statusInfo = {
+                        'In Progress': false,
+                        'Overdue': false,
+                        'Not Started': false,
+                    };
+
+                    // Update the status information based on the current status
+                    statusInfo[status] = true;
+
+                    // Loop through statusInfo to set other statuses to false
+                    for (var key in statusInfo) {
+                        if (key !== status) {
+                            statusInfo[key] = false;
+                        }
+                    }
+
+                    // Example of accessing status information
+                    console.log(statusInfo);
+
+                    // Remove active class from all tabs
+                    var tabs = document.querySelectorAll('.nav-link');
+                    console.log(tabs, 'tabssss')
+                    tabs.forEach(function (tab) {
+                        tab.classList.remove('active');
+                    });
+
+                    // Set active class to the tab corresponding to the status
+                    console.log(status, 'status');
+                    var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+                    if (activeTab) {
+                        activeTab.classList.add('active');
+                        activeTab.style.backgroundColor = "#253C5B"
+                        activeTab.style.color = "#fff";
+                        activeTab.style.borderRadius = "4px";
+                    }
+
+                    
+
+
+                });
+        
+       
 
         // Function to populate client information
         window.addTask = function(deal) {
@@ -844,7 +684,7 @@
                 })
             } --}}
 
-        window.updateDeal = function(dealId) {
+        window.updateDealCreation = function(dealId) {
             console.log(dealId);
             // Retrieve values from form fields
             var client_name_primary = $('#validationDefault01').val();

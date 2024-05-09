@@ -107,8 +107,8 @@ class DB
                 'potential_gci' => $deal['Potential_GCI'],
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
-                'isDealCompleted'=>true,
-                'isInZoho'=>true
+                'isDealCompleted' => true,
+                'isInZoho' => true
             ]);
         }
 
@@ -119,17 +119,17 @@ class DB
     {
         Log::info("Storing Deal Contacts Into Database");
         foreach ($dealContacts as $dealContact) {
-            Log::info("dealContact",$dealContact);
+            Log::info("dealContact", $dealContact);
             $contact = Contact::where('zoho_contact_id', $dealContact['id'])->first();
             $user = User::where('zoho_id', $dealContact['id'])->first();
 
             DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
                 'contactRole' => $dealContact['Contact_Role']['name']
-            ],[
+            ], [
                 'zoho_deal_id' => $dealId,
-                'contactId' => $contact?$contact->id:null,
-                'userId' =>$user?$user->id:null ,
+                'contactId' => $contact ? $contact->id : null,
+                'userId' => $user ? $user->id : null,
                 'contactRole' => $dealContact['Contact_Role']['name']
             ]);
         }
@@ -199,7 +199,7 @@ class DB
             if (isset($task['Who_Id'])) {
                 $contact = Contact::where('zoho_contact_id', $task['Who_Id']['id'])->first();
             }
-             if (isset($task['What_Id'])) {
+            if (isset($task['What_Id'])) {
                 $deal = Deal::where('zoho_deal_id', $task['What_Id']['id'])->first();
                 Log::info("Tasks For loop: " . $deal);
             }
@@ -238,8 +238,8 @@ class DB
         foreach ($modules as $module) {
             // Update or create the Module
             Module::updateOrCreate(['zoho_module_id' => $module['id']], [
-                 "api_name"=> isset($module['api_name']) ? $module['api_name'] : null,
-                "modified_time"=>isset($module['modified_time']) ? $module['modified_time'] : null,
+                "api_name" => isset($module['api_name']) ? $module['api_name'] : null,
+                "modified_time" => isset($module['modified_time']) ? $module['modified_time'] : null,
                 "zoho_module_id" => isset($module['id']) ? $module['id'] : null
             ]);
         }
@@ -247,26 +247,27 @@ class DB
         Log::info("Module stored into database successfully.");
     }
 
-    public function retrieveModuleDataDB(User $user, $accessToken,$filter=null){
+    public function retrieveModuleDataDB(User $user, $accessToken, $filter = null)
+    {
         try {
             // Validate user token (pseudo-code, replace it with your actual validation logic)
             if (!$accessToken) {
                 throw new \Exception("Invalid user token");
             }
-            
+
             // Retrieve module data from MySQL
-            if($filter){
-                $allModules = Module::where('api_name',$filter)->get();
-            }else{
-            $allModules = Module::all(); // Assuming you want to retrieve all modules
+            if ($filter) {
+                $allModules = Module::where('api_name', $filter)->get();
+            } else {
+                $allModules = Module::all(); // Assuming you want to retrieve all modules
             }
             // dd(json_encode($allModules));
             // Log the total number of module records
             Log::info("Total Module records: " . $allModules->count());
-            
+
             // Log module records
             Log::info("Module Records: ", $allModules->toArray());
-            
+
             return $allModules; // Return the fetched module data
         } catch (\Exception $e) {
             Log::error("Error retrieving module data: " . $e->getMessage());
@@ -274,13 +275,13 @@ class DB
         }
     }
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null,$dateFilter=null,$filter=null)
+    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null)
     {
 
         try {
             Log::info("Retrieve Deals From Database");
-            
-            $conditions = [['userID', $user->id],['stage', '!=', 'Dead-Lost To Competition']];
+
+            $conditions = [['userID', $user->id], ['stage', '!=', 'Dead-Lost To Competition']];
 
             // Adjust query to include contactName table using join
             $deals = Deal::where($conditions); // Select only fields from the deals table
@@ -316,13 +317,13 @@ class DB
                 }
             }
 
-            if($dateFilter&&$dateFilter!=''){
+            if ($dateFilter && $dateFilter != '') {
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
                 $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek]);
             }
-            if($filter){
-                $conditions[]=['stage', $filter];
+            if ($filter) {
+                $conditions[] = ['stage', $filter];
             }
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
@@ -338,18 +339,18 @@ class DB
 
     }
 
-    public function retrieveDealById(User $user, $accessToken,$dealId)
+    public function retrieveDealById(User $user, $accessToken, $dealId)
     {
 
         try {
             Log::info("Retrieve Deals From Database");
-            
-            $conditions = [['userID', $user->id],['id', $dealId]];
+
+            $conditions = [['userID', $user->id], ['id', $dealId]];
 
             // Adjust query to include contactName table using join
             $deals = Deal::with('userData', 'contactName');
 
-            
+
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -365,18 +366,18 @@ class DB
 
     }
 
-    public function retrieveContactById(User $user, $accessToken,$contactId)
+    public function retrieveContactById(User $user, $accessToken, $contactId)
     {
 
         try {
             Log::info("Retrieve contact From Database");
-            
-            $conditions = [['contact_owner', $user->id],['id', $contactId]];
+
+            $conditions = [['contact_owner', $user->id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
 
-            
+
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -390,18 +391,18 @@ class DB
 
     }
 
-     public function retrieveDealByZohoId(User $user, $accessToken,$dealId)
+    public function retrieveDealByZohoId(User $user, $accessToken, $dealId)
     {
 
         try {
             Log::info("Retrieve Deals From Database");
-            
-            $conditions = [['userID', $user->id],['zoho_deal_id', $dealId]];
+
+            $conditions = [['userID', $user->id], ['zoho_deal_id', $dealId]];
 
             // Adjust query to include contactName table using join
             $deals = Deal::with('userData', 'contactName');
 
-            
+
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -416,18 +417,18 @@ class DB
 
     }
 
-    public function retrieveContactByZohoId(User $user, $accessToken,$contactId)
+    public function retrieveContactByZohoId(User $user, $accessToken, $contactId)
     {
 
         try {
             Log::info("Retrieve Contact From Database");
-            
-            $conditions = [['contact_owner', $user->id],['zoho_contact_id', $contactId]];
+
+            $conditions = [['contact_owner', $user->id], ['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
 
-            
+
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
             // Retrieve contacts based on the conditions
@@ -447,7 +448,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->with(['dealData','contactData'])->where('status', $tab)->orderBy('updated_at','desc')->paginate(10);
+            $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData'])->where('status', $tab)->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -456,21 +457,21 @@ class DB
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken,$dealId=null,$contactId = null)
+    public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $condition =[
+            $condition = [
                 ['owner', $user->id]
             ];
-            if($dealId){
-               $condition[] = ['what_id', $dealId];
+            if ($dealId) {
+                $condition[] = ['what_id', $dealId];
             }
-            if($contactId){
+            if ($contactId) {
                 $condition[] = ['what_id', $contactId];
-             }
-            $tasks = Task::where($condition)->orderBy('updated_at','desc')->get();
+            }
+            $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -479,20 +480,20 @@ class DB
         }
     }
 
-    public function retreiveDealsJson(User $user, $accessToken,$dealId=null,$contactId=null)
+    public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
         try {
 
             Log::info("Retrieve Deals From Database");
-            $condition =[
+            $condition = [
                 ['userID', $user->id]
             ];
-            if($dealId){
-               $condition[] = ['zoho_deal_id', $dealId];
+            if ($dealId) {
+                $condition[] = ['zoho_deal_id', $dealId];
             }
-            if($contactId){
+            if ($contactId) {
                 $condition[] = ['zoho_deal_id', $contactId];
-             }
+            }
             $Deals = Deal::where($condition)->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
@@ -502,10 +503,11 @@ class DB
         }
     }
 
-    public function retreiveContacts(User $user,$accessToken,$search = null, $sortValue = null, $sortType = null,$dateFilter=null,$filter=null){
+    public function retreiveContacts(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null)
+    {
         try {
             Log::info("Retrieve Contact From Database");
-            
+
             $conditions = [['contact_owner', $user->id]];
 
             // Adjust query to include contactName table using join
@@ -522,8 +524,8 @@ class DB
                 });
             }
 
-            if($filter){
-                $conditions[]=['abcd', $filter];
+            if ($filter) {
+                $conditions[] = ['abcd', $filter];
             }
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->paginate(10);
@@ -536,7 +538,8 @@ class DB
 
     }
 
-    public function retreiveContactsJson(User $user,$accessToken){
+    public function retreiveContactsJson(User $user, $accessToken)
+    {
         try {
 
             Log::info("Retrieve contacts From Database");
@@ -549,13 +552,13 @@ class DB
 
         }
     }
-    public function retreiveTasksFordeal(User $user, $accessToken,$tab = '',$dealId='')
+    public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
 
-            Log::info("DealIDS".$dealId);
-            $tasks = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
-        ->where('what_id', $dealId)->orderBy('updated_at','desc')->paginate(10);
+            Log::info("DealIDS" . $dealId);
+            $tasks = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('what_id')
+                ->where('what_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
@@ -564,13 +567,13 @@ class DB
         }
     }
 
-    public function retreiveTasksForContact(User $user, $accessToken,$tab = '',$dealId='')
+    public function retreiveTasksForContact(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
 
-            Log::info("DealIDS".$dealId);
-            $contactTask = Task::with('dealData')->where([['owner', $user->id],['status', $tab]])->whereNotNull('what_id')
-        ->where('what_id', $dealId)->orderBy('updated_at','desc')->paginate(10);
+            Log::info("DealIDS" . $dealId);
+            $contactTask = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('what_id')
+                ->where('what_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['contactTask' => $contactTask]);
             return $contactTask;
         } catch (\Exception $e) {
@@ -591,7 +594,7 @@ class DB
                 $related_to = null;
                 $related_to_type = null;
                 $apiNames = Module::getApiName();
-                if(isset($note['Parent_Id'])){
+                if (isset($note['Parent_Id'])) {
                     $result = $helper->getValue($apiNames, $note['Parent_Id']['module']['api_name']);
                     Log::info("resultHelper" . $result);
                     switch ($result) {
@@ -622,8 +625,8 @@ class DB
                     Note::updateOrCreate(['zoho_note_id' => $note['id']], [
                         'owner' => isset($user['id']) ? $user['id'] : null,
                         'related_to' => isset($related_to['id']) ? $related_to['id'] : null,
-                        'related_to_module_id' => isset($note['Parent_Id']['module']['id']) ?$note['Parent_Id']['module']['id'] : null,
-                        'related_to_parent_record_id' => isset($note['Parent_Id']['id']) ?$note['Parent_Id']['id'] : null,
+                        'related_to_module_id' => isset($note['Parent_Id']['module']['id']) ? $note['Parent_Id']['module']['id'] : null,
+                        'related_to_parent_record_id' => isset($note['Parent_Id']['id']) ? $note['Parent_Id']['id'] : null,
                         'note_content' => isset($note['Note_Content']) ? $note['Note_Content'] : null,
                         'created_time' => isset($note['Created_Time']) ? $helper->convertToUTC($note['Created_Time']) : null,
                         'zoho_note_id' => isset($note['id']) ? $note['id'] : null,
@@ -644,7 +647,7 @@ class DB
 
         try {
             Log::info("Retrieve Notes From Database");
-            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at','desc')->get();
+            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved Notes From Database", ['notes' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -653,12 +656,12 @@ class DB
         }
     }
 
-    public function retrieveNotesFordeal(User $user, $accessToken,$dealId)
+    public function retrieveNotesFordeal(User $user, $accessToken, $dealId)
     {
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::where([['owner', $user->id],['related_to_type','Deals'],['related_to',$dealId]])->get();
+            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->get();
             Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
@@ -667,12 +670,12 @@ class DB
         }
     }
 
-    public function retrieveNotesForContact(User $user, $accessToken,$contactId)
+    public function retrieveNotesForContact(User $user, $accessToken, $contactId)
     {
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id],['related_to_type','Contacts'],['related_to',$contactId]])->get();
+            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->get();
             Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
@@ -681,11 +684,11 @@ class DB
         }
     }
 
-    public function retrieveDealContactFordeal(User $user, $accessToken,$dealId)
+    public function retrieveDealContactFordeal(User $user, $accessToken, $dealId)
     {
 
         try {
-            Log::info("Retrieve Deal Contact From Database".$dealId);
+            Log::info("Retrieve Deal Contact From Database" . $dealId);
             $dealContacts = DealContact::with('userData')->with('contactData')->where('zoho_deal_id', $dealId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
@@ -695,11 +698,11 @@ class DB
         }
     }
 
-    public function retrieveDealContactForContact(User $user, $accessToken,$contactId)
+    public function retrieveDealContactForContact(User $user, $accessToken, $contactId)
     {
 
         try {
-            Log::info("Retrieve Deal Contact From Database".$contactId);
+            Log::info("Retrieve Deal Contact From Database" . $contactId);
             $dealContact = Contact::with('userData')->with('contactName')->where('zoho_contact_id', $contactId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContact->toArray()]);
             return $dealContact;
@@ -736,18 +739,18 @@ class DB
                 "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
                 'dealId' => isset($deal['id']) ? $deal['id'] : null,
                 'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
-                'less_split_to_chr'=> isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+                'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
             ]);
         }
 
         Log::info("ACI stored into database successfully.");
     }
 
-    public function retrieveAciFordeal(User $user, $accessToken,$dealId)
+    public function retrieveAciFordeal(User $user, $accessToken, $dealId)
     {
 
         try {
-            Log::info("Retrieve Deal Contact From Database".$dealId);
+            Log::info("Retrieve Deal Contact From Database" . $dealId);
             $dealContacts = Aci::with('userData')->with('dealData')->where('dealId', $dealId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
@@ -783,17 +786,17 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken,$zohoDeal)
+    public function createDeal(User $user, $accessToken, $zohoDeal)
     {
         try {
-            Log::info("User Deatils".json_encode($zohoDeal));
+            Log::info("User Deatils" . json_encode($zohoDeal));
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
-                'isDealCompleted'=>false,
-                'userID'=>$user->id,
-                'isInZoho'=>true,
-                'zoho_deal_id'=>$zohoDeal['id'],
-                'stage'=>"Potential"
+                'isDealCompleted' => false,
+                'userID' => $user->id,
+                'isInZoho' => true,
+                'zoho_deal_id' => $zohoDeal['id'],
+                'stage' => "Potential"
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -803,16 +806,16 @@ class DB
         }
     }
 
-    public function createContact(User $user, $accessToken,$zohoContactId)
+    public function createContact(User $user, $accessToken, $zohoContactId)
     {
         try {
-            Log::info("User Deatils".$user);
+            Log::info("User Deatils" . $user);
             $contact = Contact::create([
                 'last_name' => "CHR",
-                'isContactCompleted'=>false,
-                'contact_owner'=>$user->id,
-                'isInZoho'=>true,
-                'zoho_contact_id'=>$zohoContactId
+                'isContactCompleted' => false,
+                'contact_owner' => $user->id,
+                'isInZoho' => true,
+                'zoho_contact_id' => $zohoContactId
             ]);
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
@@ -822,12 +825,12 @@ class DB
         }
     }
 
-     public function updateDeal(User $user, $accessToken,$deal,$id)
+    public function updateDeal(User $user, $accessToken, $deal, $id)
     {
         try {
             $helper = new Helper();
-            Log::info("User Details".$user);
-            $deal =  Deal::updateOrCreate(['zoho_deal_id' => $id], [
+            Log::info("User Details" . $user);
+            $deal = Deal::updateOrCreate(['zoho_deal_id' => $id], [
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
                 'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
@@ -892,12 +895,12 @@ class DB
         Log::info("Storing Groups Into Database");
 
         foreach ($allContactGroups as $allContactGroup) {
-            Log::info("allContactGroup",$allContactGroup);
-            if($allContactGroup['Contacts']){
-            $contact = Contact::where('zoho_contact_id',$allContactGroup['Contacts']['id'])->first();
+            Log::info("allContactGroup", $allContactGroup);
+            if ($allContactGroup['Contacts']) {
+                $contact = Contact::where('zoho_contact_id', $allContactGroup['Contacts']['id'])->first();
             }
-            if($allContactGroup['Groups']){
-            $group = Groups::where('zoho_group_id',$allContactGroup['Groups']['id'])->first();
+            if ($allContactGroup['Groups']) {
+                $group = Groups::where('zoho_group_id', $allContactGroup['Groups']['id'])->first();
             }
             $contactGroup = ContactGroups::updateOrCreate(
                 ['zoho_contact_group_id' => $allContactGroup['id']],
@@ -913,22 +916,22 @@ class DB
         Log::info("Groups stored into database successfully.");
     }
 
-    public function retrieveContactGroups(User $user, $accessToken, $filter = null,$sort = null)
+    public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = null)
     {
         try {
             Log::info("Retrieve Tasks From Database");
 
             $tasks = Contact::where('contact_owner', $user->id)
-                            ->with('groups')
-                            ->when($sort, function ($query, $sort) {
-                               $query->orderBy('created_at' ,$sort);
-                            })
-                            ->when($filter, function ($query, $filter) {
-                                $query->whereHas('groups', function ($query) use ($filter) {
-                                    $query->where('groupId', $filter);
-                                });
-                            })
-                            ->get();
+                ->with('groups')
+                ->when($sort, function ($query, $sort) {
+                    $query->orderBy('created_at', $sort);
+                })
+                ->when($filter, function ($query, $filter) {
+                    $query->whereHas('groups', function ($query) use ($filter) {
+                        $query->where('groupId', $filter);
+                    });
+                })
+                ->get();
 
             // Filter out contacts with empty groups arrays (optional)
             $tasks = $tasks->filter(function ($contact) {
@@ -936,7 +939,7 @@ class DB
             });
 
             Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
-            
+
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -944,92 +947,94 @@ class DB
         }
 
     }
-public function retrieveContactGroupsData(User $user, $accessToken, $filter = null, $sortType = null, $contactId, $sortValue = null, $sort = null)
-{
-    try {
-        Log::info("Retrieve Tasks From Database");
-        $tasks = ContactGroups::where('ownerId', $user->id)
-        ->with(['groups' => function ($query) use ($contactId, $sortValue, $sortType) {
-                // Sort the groups only if contact ID is provided
-                if ($sortValue && $sortType) {
-                    $query->join('groups', 'contact_groups.groupId', '=', 'groups.id')
-                        ->orderBy('groups.' . $sortValue, $sortType);
-                }
-        }])
-            ->when($sort, function ($query, $sort) {
-                $query->orderBy('created_at', $sort);
-            })
-            ->when($filter, function ($query, $filter) {
-                $query->whereHas('group', function ($query) use ($filter) {
-                    $query->where('groupId', $filter);
-                });
-            })
-            ->when($contactId, function ($query, $contactId) {
-                $query->where('id', $contactId);
-            })
-            ->get();
+    public function retrieveContactGroupsData(User $user, $accessToken, $filter = null, $sortType = null, $contactId, $sortValue = null, $sort = null)
+    {
+        try {
+            Log::info("Retrieve Tasks From Database");
+            $tasks = ContactGroups::where('ownerId', $user->id)
+                ->with([
+                    'groups' => function ($query) use ($contactId, $sortValue, $sortType) {
+                        // Sort the groups only if contact ID is provided
+                        if ($sortValue && $sortType) {
+                            $query->join('groups', 'contact_groups.groupId', '=', 'groups.id')
+                                ->orderBy('groups.' . $sortValue, $sortType);
+                        }
+                    }
+                ])
+                ->when($sort, function ($query, $sort) {
+                    $query->orderBy('created_at', $sort);
+                })
+                ->when($filter, function ($query, $filter) {
+                    $query->whereHas('group', function ($query) use ($filter) {
+                        $query->where('groupId', $filter);
+                    });
+                })
+                ->when($contactId, function ($query, $contactId) {
+                    $query->where('id', $contactId);
+                })
+                ->get();
 
-        // Filter out contacts with empty groups arrays (optional)
-        $tasks = $tasks->filter(function ($contact) {
-            return $contact->groups->isNotEmpty();
-        });
+            // Filter out contacts with empty groups arrays (optional)
+            $tasks = $tasks->filter(function ($contact) {
+                return $contact->groups->isNotEmpty();
+            });
 
-        Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
+            Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
 
-        return $tasks;
-    } catch (\Exception $e) {
-        Log::error("Error retrieving tasks: " . $e->getMessage());
-        throw $e;
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
     }
-}
 
 
     public function updateGroups(User $user, $accessToken, $data)
     {
-    try {
-        Log::info("Updating Groups");
+        try {
+            Log::info("Updating Groups");
 
-        // Decode JSON data to array
-        
+            // Decode JSON data to array
 
-        if (!$data) {
-            throw new \Exception("Error decoding JSON data");
-        }
 
-        // Count the number of data items
-        $dataCount = count($data);
-
-        // Loop through each data item
-        for ($i = 0; $i < $dataCount; $i++) {
-            $currData = $data[$i];
-            // Update the group record
-            $group = Groups::find($currData['id']);
-            if ($group) {
-                $group->isShow = $currData['isChecked'];
-                $group->save();
+            if (!$data) {
+                throw new \Exception("Error decoding JSON data");
             }
+
+            // Count the number of data items
+            $dataCount = count($data);
+
+            // Loop through each data item
+            for ($i = 0; $i < $dataCount; $i++) {
+                $currData = $data[$i];
+                // Update the group record
+                $group = Groups::find($currData['id']);
+                if ($group) {
+                    $group->isShow = $currData['isChecked'];
+                    $group->save();
+                }
+            }
+
+            Log::info("Groups updated successfully");
+
+            // Return updated groups or any other necessary response
+            return $data; // Return the updated data for now, you may adjust it according to your requirements
+        } catch (\Exception $e) {
+            Log::error("Error updating groups: " . $e->getMessage());
+            throw $e;
         }
-
-        Log::info("Groups updated successfully");
-
-        // Return updated groups or any other necessary response
-        return $data; // Return the updated data for now, you may adjust it according to your requirements
-    } catch (\Exception $e) {
-        Log::error("Error updating groups: " . $e->getMessage());
-        throw $e;
-    }
     }
 
-    public function retrieveGroups(User $user, $accessToken, $isShown=null)
+    public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
         try {
 
             Log::info("Retrieve Tasks From Database");
             $condition = [['ownerId', $user->id]];
-            if($isShown){
-                $condition[]=['isShow',true];
+            if ($isShown) {
+                $condition[] = ['isShow', true];
             }
-            $tasks = Groups::where($condition)->orderBy('name','asc')->get();
+            $tasks = Groups::where($condition)->with('contacts')->orderBy('name', 'asc')->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -1038,26 +1043,26 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         }
     }
 
-    public function storeAttachmentIntoDB($attachments,$userInstance,$dealId)
+    public function storeAttachmentIntoDB($attachments, $userInstance, $dealId)
     {
         $helper = new Helper();
-        Log::info("Storing Attachments Into Database".$userInstance['root_user_id']);
-        $filteredAttachments = $attachments->filter(function ($value, $key) use ($userInstance){
+        Log::info("Storing Attachments Into Database" . $userInstance['root_user_id']);
+        $filteredAttachments = $attachments->filter(function ($value, $key) use ($userInstance) {
             return $value['Owner']['id'] == $userInstance['root_user_id'];
         });
-        Log::info("filteredAttachments".$filteredAttachments);
+        Log::info("filteredAttachments" . $filteredAttachments);
         foreach ($filteredAttachments as $attachment) {
             $user = User::where('root_user_id', $attachment['Owner']['id'])->first();
             // if(isset($attachment['Parent_Id']['id'])){
             //     $deal = Deal::where('zoho_deal_id', $attachment['Parent_Id']['id'])->first();
             //     if((isset($deal))){
-                    Attachment::updateOrCreate(['dealId'=>$dealId],[
-                        "file_name" => isset($attachment['File_Name']) ? $attachment['File_Name'] : null,
-                        "modified_time" => isset($attachment['Modified_Time']) ? $helper->convertToUTC($attachment['Modified_Time']) : null,
-                        "size" => isset($attachment['Size']) ? $attachment['Size'] : null,
-                        "userId" => isset($user['id']) ? $user['id'] : null,
-                        "dealId" => isset($dealId) ? $dealId : null,
-                    ]);
+            Attachment::updateOrCreate(['dealId' => $dealId], [
+                "file_name" => isset($attachment['File_Name']) ? $attachment['File_Name'] : null,
+                "modified_time" => isset($attachment['Modified_Time']) ? $helper->convertToUTC($attachment['Modified_Time']) : null,
+                "size" => isset($attachment['Size']) ? $attachment['Size'] : null,
+                "userId" => isset($user['id']) ? $user['id'] : null,
+                "dealId" => isset($dealId) ? $dealId : null,
+            ]);
             //     }
             // }   
         }
@@ -1065,14 +1070,14 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         Log::info("Attachment stored into database successfully.");
     }
 
-   
+
     public function retreiveAttachment($dealId)
     {
         try {
 
             Log::info("Retrieve attachments From Database");
-           
-            $attachments = Attachment::where('dealId',$dealId)->get();
+
+            $attachments = Attachment::where('dealId', $dealId)->get();
             Log::info("Retrieved attachments From Database", ['attachments' => $attachments->toArray()]);
             return $attachments;
         } catch (\Exception $e) {
@@ -1081,24 +1086,24 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         }
     }
 
-    public function storeNonTmIntoDB($nontms,$userInstance,$dealId)
+    public function storeNonTmIntoDB($nontms, $userInstance, $dealId)
     {
         $helper = new Helper();
-        Log::info("Storing NonTm Into Database".$userInstance['root_user_id']);
-        $filterednontms = $nontms->filter(function ($value, $key) use ($userInstance){
+        Log::info("Storing NonTm Into Database" . $userInstance['root_user_id']);
+        $filterednontms = $nontms->filter(function ($value, $key) use ($userInstance) {
             return $value['Owner']['id'] == $userInstance['root_user_id'];
         });
-        Log::info("filterednontms".$filterednontms);
+        Log::info("filterednontms" . $filterednontms);
         foreach ($filterednontms as $nontm) {
             $user = User::where('root_user_id', $nontm['Owner']['id'])->first();
-            NonTm::updateOrCreate(['zoho_nontm_id'=> $nontm['id']],[
+            NonTm::updateOrCreate(['zoho_nontm_id' => $nontm['id']], [
                 "name" => isset($nontm['Name']) ? $nontm['Name'] : null,
                 "closed_date" => isset($nontm['Close_Date']) ? $helper->convertToUTC($nontm['Close_Date']) : null,
                 "dealId" => isset($dealId) ? $dealId : null,
-                "zoho_nontm_id"=>isset($nontm['id']) ? $nontm['id'] : null,
-                "userId"=>isset($user) ? $user->id : null,
+                "zoho_nontm_id" => isset($nontm['id']) ? $nontm['id'] : null,
+                "userId" => isset($user) ? $user->id : null,
             ]);
-            
+
         }
 
         Log::info("NonTm stored into database successfully.");
@@ -1109,8 +1114,8 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         try {
 
             Log::info("Retrieve NonTm From Database");
-           
-            $NonTm = NonTm::where('dealId',$dealId)->get();
+
+            $NonTm = NonTm::where('dealId', $dealId)->get();
             Log::info("Retrieved NonTm From Database", ['NonTm' => $NonTm->toArray()]);
             return $NonTm;
         } catch (\Exception $e) {
@@ -1119,24 +1124,24 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         }
     }
 
-    public function storeSubmittalsIntoDB($allSubmittals,$userInstance)
+    public function storeSubmittalsIntoDB($allSubmittals, $userInstance)
     {
         $helper = new Helper();
-        Log::info("Storing NonTm Into Database".$userInstance['root_user_id']);
-        $filteredsubmittals = $allSubmittals->filter(function ($value, $key) use ($userInstance){
+        Log::info("Storing NonTm Into Database" . $userInstance['root_user_id']);
+        $filteredsubmittals = $allSubmittals->filter(function ($value, $key) use ($userInstance) {
             return $value['Owner']['id'] == $userInstance['root_user_id'];
         });
-        Log::info("filteredsubmittals".$filteredsubmittals);
+        Log::info("filteredsubmittals" . $filteredsubmittals);
         foreach ($filteredsubmittals as $submittals) {
             $user = User::where('root_user_id', $submittals['Owner']['id'])->first();
-            Submittals::updateOrCreate(['zoho_submittal_id'=> $submittals['id']],[
+            Submittals::updateOrCreate(['zoho_submittal_id' => $submittals['id']], [
                 "name" => isset($submittals['Name']) ? $submittals['Name'] : null,
                 "closed_date" => isset($submittals['Close_Date']) ? $helper->convertToUTC($submittals['Close_Date']) : null,
                 "dealId" => isset($submittals['Transaction_Name']['id']) ? $submittals['Transaction_Name']['id'] : null,
-                "zoho_submittal_id"=>isset($submittals['id']) ? $submittals['id'] : null,
-                "userId"=>isset($user) ? $user->id : null,
+                "zoho_submittal_id" => isset($submittals['id']) ? $submittals['id'] : null,
+                "userId" => isset($user) ? $user->id : null,
             ]);
-            
+
         }
 
         Log::info("NonTm stored into database successfully.");
@@ -1147,8 +1152,8 @@ public function retrieveContactGroupsData(User $user, $accessToken, $filter = nu
         try {
 
             Log::info("Retrieve Submittals From Database");
-           
-            $Submittals = Submittals::where('dealId',$dealId)->with('userData')->get();
+
+            $Submittals = Submittals::where('dealId', $dealId)->with('userData')->get();
             Log::info("Retrieved Submittals From Database", ['Submittals' => $Submittals->toArray()]);
             return $Submittals;
         } catch (\Exception $e) {

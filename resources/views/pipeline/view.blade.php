@@ -24,7 +24,7 @@
 
             var inputElement = document.getElementById('editableInput' + id);
             inputElement.focus();
-            inputElement.addEventListener('blur', function() {
+            inputElement.addEventListener('change', function() {
                 updateText(inputElement.value);
             });
 
@@ -313,16 +313,16 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=In Progress"> <button
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=In Progress"> <button
                                     class="nav-link dtabsbtn" id="nav-home-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
                                     aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Not Started"> <button
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=Not Started"> <button
                                     class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
                                     data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                                     aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/pipeline-create/{{ $deal['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
+                            <a href="/pipeline-view/{{ $deal['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
                                     data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Overdue</button></a>
@@ -910,6 +910,52 @@
     @vite(['resources/js/pipeline.js'])
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
+
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
+
+        // Update the status information based on the current status
+        statusInfo[status] = true;
+
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
+        }
+
+        // Example of accessing status information
+        console.log(statusInfo);
+
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.color = "#fff";
+            activeTab.style.borderRadius = "4px";
+        }
+
+
+    });
         document.addEventListener("DOMContentLoaded", function() {
             $.ajax({
                 url: '{{ url('/pipeline-view') }}',

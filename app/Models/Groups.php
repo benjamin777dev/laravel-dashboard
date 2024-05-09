@@ -27,13 +27,13 @@ class Groups extends Model
     {
         // Retrieve Zoho contact ID, last name, and first name
         return self::select('zoho_contact_id', 'last_name', 'first_name')->get();
-    }
+    }*/
 
-    
 
-    public function contactName()
+
+    public function contacts()
     {
-        return $this->belongsTo(Contact::class, 'contactId');
-    } */
+        return $this->hasMany(ContactGroups::class, 'groupId');
+    }
 }
 

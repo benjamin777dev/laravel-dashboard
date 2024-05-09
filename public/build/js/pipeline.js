@@ -1,13 +1,20 @@
 
-window.updateDeal = function (dealID, field, Id) {
+window.updateDeal = function (dealID, field, Id, card, date) {
     console.log(dealID, field);
     event.preventDefault();
-    let updateElement = document.getElementById(field + dealID);
+    let updateElement
+    if (card) {
+        updateElement = document.getElementById("card_" + field + dealID);
+    } else {
+        updateElement = document.getElementById(field + dealID);
+
+    }
+    console.log(updateElement);
     var text = updateElement.textContent.trim();
+
     if (field == "closing_date") {
         updateElement.innerHTML =
-            '<input type="date" class="form-control npinputinfo" id="edit' + field + dealID +
-            '" required="" value="">';
+            `<input type="date" class="form-control npinputinfo" id="edit${field}${dealID}" required="" value="${date}">`;
     } else {
         updateElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
@@ -54,7 +61,7 @@ window.updateDeal = function (dealID, field, Id) {
         });
     }
     else {
-        inputElementmake.addEventListener('blur', function () {
+        inputElementmake.addEventListener('change', function () {
             // Update the update element with the input element's value
             updateElement.innerHTML = '<div class="commonTextEllipsis" id="' + field + dealID + '">' + inputElementmake.value + '</div>';
 
@@ -137,26 +144,4 @@ window.updateDealData = function (field, id, dealID, value = null) {
 
 }
 
-window.populateSecondSelect = function (selectedValue, dealId, dealName) {
-    // Get the second select element
-    var secondSelect = document.getElementById('taskSelect_' + dealId);
 
-    // Clear previous options
-    secondSelect.innerHTML = '';
-
-    // Populate options based on selected value
-    if (selectedValue === 'Deals') {
-        // Add option for the selected deal
-        var option = document.createElement('option');
-        option.value = dealId;
-        option.text = dealName;
-        secondSelect.appendChild(option);
-    }
-
-    // Show the second select element
-    secondSelect.style.display = 'block';
-}
-var selectedValue = 'Deals'; // Example value
-var dealId = '{{ $deal["id"] }}'; // Deal ID from your PHP code
-var dealName = '{{ $deal["deal_name"] }}'; // Deal name from your PHP code
-populateSecondSelect(selectedValue, dealId, dealName);
