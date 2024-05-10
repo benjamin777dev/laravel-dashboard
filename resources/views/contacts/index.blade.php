@@ -670,14 +670,14 @@
     function editText(zohoID, name) {
         event.preventDefault();
         let firstNameElement = document.getElementById(name + zohoID);
-        console.log(firstNameElement, name, zohoID, 'testing it');
         var text = firstNameElement.textContent.trim();
         firstNameElement.innerHTML =
-            '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + name + zohoID +
+            '<input type="text" class="inputDesign" onclick="event.preventDefault(),textUpdate(' + name + zohoID +
+            ')" id="edit' + name + zohoID +
             '" value="' + text + '" />';
         let inputElementmake = document.getElementById('edit' + name + zohoID);
         inputElementmake.focus();
-        inputElementmake.addEventListener('blur', function () {
+        inputElementmake.addEventListener('change', function () {
             firstNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
                 .value + '</h5>';
             updateContact(zohoID, name);
@@ -688,6 +688,10 @@
         container?.addEventListener("click", function (event) {
             event.preventDefault();
         });
+    }
+
+    function textUpdate(name) {
+        console.log(name, 'sdhfjksjkdfhskdhf');
     }
 
     function formatSentence(sentence) {

@@ -3,8 +3,8 @@
 @section('title', 'Agent Commander | Pipeline Create')
 
 @section('content')
-    @vite(['resources/css/pipeline.css'])
-
+@vite(['resources/css/pipeline.css'])
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
     function updateText(newText) {
         //  textElement = document.getElementById('editableText');
@@ -189,7 +189,7 @@
                     },
                     success: function (response) {
                         // Handle success response
-                        alert("deleted successfully", response);
+                        showToast("deleted successfully");
                         window.location.reload();
                     },
                     error: function (xhr, status, error) {
@@ -246,6 +246,132 @@
 
                 state = true;
 
+<<<<<<< HEAD
+=======
+            // Split the time into hour and minute
+            var timeComponents = time.split(':');
+            var hour = parseInt(timeComponents[0]);
+            var minute = timeComponents[1];
+
+            // Adjust hour if it's PM
+            if (ampm === 'PM' && hour < 12) {
+                hour += 12;
+            }
+            console.log("month", month.length);
+            // Zero-pad month and day if necessary
+            if (month.length === 1) {
+                month = '0' + month;
+            }
+            if (day.length === 1) {
+                day = '0' + day;
+            }
+
+            // Construct the date string in "YYYY-MM-DD" format
+            var formattedDate = year + '-' + month + '-' + day;
+
+            return formattedDate;
+        }
+
+        function deleteTask(id) {
+            let updateids = removeAllSelected();
+            if (updateids === "" && id === undefined) {
+                return;
+            }
+            if (updateids !== "") {
+                if (showConfirmation()) {
+
+                } else {
+                    return;
+                }
+            }
+            if (id === undefined) {
+                id = updateids;
+            }
+            //remove duplicate ids
+            ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            try {
+                if (id) {
+                    $.ajax({
+                        url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                        method: 'DELETE', // Change to DELETE method
+                        contentType: 'application/json',
+                        dataType: 'JSON',
+                        data: {
+                            'id': id,
+                            '_token': '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            // Handle success response
+                            showToast("deleted successfully");
+                            window.location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error response
+                            showToastError("something went wrong");
+                            console.error(xhr.responseText);
+                        }
+                    })
+
+                }
+            } catch (err) {
+                console.error("error", err);
+                showToastError("error");
+            }
+        }
+
+        function removeAllSelected() {
+            // Select all checkboxes
+            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+            var ids = ""; // Initialize ids variable to store concatenated IDs
+            // Iterate through each checkbox
+            checkboxes.forEach(function(checkbox) {
+                // console.log(checkboxes,'checkboxes')
+                // Check if the checkbox is checked
+                if (checkbox.checked) {
+                    if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
+                        .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
+                        "checkbox_all") {
+                        // Concatenate the checkbox ID with a comma
+                        ids += checkbox.id + ",";
+                        document.getElementById("removeBtn").style.backgroundColor = "#222;"
+                    }
+                }
+            });
+
+            // Remove the trailing comma
+            if (ids !== "") {
+                ids = ids.replace(/,+(?=,|$)/g, "");
+            }
+
+            return ids;
+        }
+
+        function toggleAllCheckboxes() {
+            // console.log("yes it")
+            let state = false;
+            let updateColor = document.getElementById("removeBtn");
+            var allCheckbox = document.getElementById('checkbox_all');
+            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+
+            checkboxes.forEach(function(checkbox) {
+                // Set the state of each checkbox based on the state of the "checkbox_all"
+                checkbox.checked = allCheckbox.checked;
+                if (checkbox.checked) {
+
+                    state = true;
+
+                } else {
+                    state = false;
+                }
+            });
+            if (state) {
+                updateColor.style.backgroundColor = "#222";
+>>>>>>> 005ee8853e64b16a9b556bca96d7eaa14a71c032
             } else {
                 state = false;
             }
@@ -376,11 +502,11 @@
                     <select class="form-select npinputinfo" id="validationDefault04" required>
                         <option value="">Select</option>
                         @foreach ($allStages as $stage)
-                                    <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
+                            <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
                                 {{ $stage }}
                             </option>
                         @endforeach
-                        </select>
+                    </select>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
@@ -515,7 +641,7 @@
         @else
 
             @foreach ($dealContacts as $dealContact)
-                            <div class="row npRoleBody">
+                <div class="row npRoleBody">
                     <div class="col-md-3 ">
                         {{ $dealContact->contactData ? $dealContact->contactData->first_name . ' ' . $dealContact->contactData->last_name : ($dealContact->userData ? $dealContact->userData->name : 'N/A') }}
                     </div>
@@ -532,7 +658,7 @@
 
 
         @foreach ($dealContacts as $dealContact)
-                    <div class="npRoleCard vprolecard">
+            <div class="npRoleCard vprolecard">
                 <div>
                     <p class="npcommonheaderText">Role</p>
                     <p class="npcommontableBodytext">
@@ -560,7 +686,7 @@
             </div>
         @endforeach
 
-            <div class="dpagination">
+        <div class="dpagination">
             <div onclick="removeAllSelected()"
                 class="input-group-text text-white justify-content-center removebtn dFont400 dFont13">
                 <i class="fas fa-trash-alt plusicon"></i>
@@ -611,7 +737,7 @@
         @else
 
             @foreach ($nontms as $nontm)
-                            <div class="row npNom-TM-Body">
+                <div class="row npNom-TM-Body">
                     <div class="col-md-4 ">{{ $nontm['name'] }}</div>
                     <div class="col-md-4 ">{{ $nontm['closed_date'] }}</div>
                     <div class="col-md-4 commonTextEllipsis">{{ $nontm['created_at'] }}</div>
@@ -620,7 +746,7 @@
         @endif
 
         @foreach ($nontms as $nontm)
-                    <div class="npNom-TM-Card">
+            <div class="npNom-TM-Card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="npcommonheaderText">Number</p>
@@ -637,7 +763,7 @@
                 </div>
             </div>
         @endforeach
-            <div class="dpagination">
+        <div class="dpagination">
             <nav aria-label="..." class="dpaginationNav">
                 <ul class="pagination ppipelinepage d-flex justify-content-end">
                     <li class="page-item disabled">
@@ -685,7 +811,7 @@
         @else
 
             @foreach ($dealaci as $aci)
-                            <div class="row npAgentBody">
+                <div class="row npAgentBody">
                     <div class="col-md-3 ">{{ $aci['agentName'] }}</div>
                     <div class="col-md-3 ">${{ $aci['irs_reported_1099_income_for_this_transaction'] }}</div>
                     <div class="col-md-3 ">${{ $aci['less_split_to_chr'] }}</div>
@@ -696,7 +822,7 @@
 
 
         @foreach ($dealaci as $aci)
-                    <div class="npAgentCard">
+            <div class="npAgentCard">
                 <div>
                     <p class="npcommonheaderText">Agent’s Name</p>
                     <p class="npcommontableBodytext">{{ $aci['agentName'] }}</p>
@@ -716,7 +842,7 @@
             </div>
         @endforeach
 
-            <div class="dpagination">
+        <div class="dpagination">
             <nav aria-label="..." class="dpaginationNav">
                 <ul class="pagination ppipelinepage d-flex justify-content-end">
                     <li class="page-item disabled">
@@ -764,7 +890,7 @@
         @else
 
             @foreach ($attachments as $attachment)
-                            <div class="row npAttachmentBody">
+                <div class="row npAttachmentBody">
                     <div class="col-md-3 npcommontableBodytext">{{ $attachment['file_name'] }}</div>
                     <div class="col-md-3 npcommontableBodytext">PDF</div>
                     <div class="col-md-3 npcommontableBodytext">{{ $attachment['userData']['name'] }}</div>
@@ -776,7 +902,7 @@
         @endif
 
         @foreach ($attachments as $attachment)
-                    <div class="npContactCard">
+            <div class="npContactCard">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="npcommonheaderText">Attachment Name</p>
@@ -797,7 +923,7 @@
                 </div>
             </div>
         @endforeach
-            <div class="dpagination">
+        <div class="dpagination">
 
             <nav aria-label="..." class="dpaginationNav">
                 <ul class="pagination ppipelinepage d-flex justify-content-end">
@@ -842,7 +968,7 @@
         @else
 
             @foreach ($submittals as $submittal)
-                            <div class="row npNom-TM-Body">
+                <div class="row npNom-TM-Body">
                     <div class="col-md-4 ">{{ $submittal['name'] }}</div>
                     <div class="col-md-4 ">{{ $submittal['userData']['name'] }}</div>
                     <div class="col-md-4 commonTextEllipsis">{{ $submittal['created_at'] }}</div>
@@ -851,7 +977,7 @@
         @endif
 
         @foreach ($submittals as $submittal)
-                    <div class="npNom-TM-Card">
+            <div class="npNom-TM-Card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <p class="npcommonheaderText">Submittal Name</p>
@@ -868,7 +994,7 @@
                 </div>
             </div>
         @endforeach
-            <div class="dpagination">
+        <div class="dpagination">
             <nav aria-label="..." class="dpaginationNav">
                 <ul class="pagination ppipelinepage d-flex justify-content-end">
                     <li class="page-item disabled">
@@ -895,10 +1021,10 @@
 </div>
 {{-- Create New Task Modal --}}
 @include('common.tasks.create', ['deal' => $deal, 'type' => 'Deals'])
-    {{-- Notes Model --}}
+{{-- Notes Model --}}
 @include('common.notes.create', ['deal' => $deal, 'type' => 'Deals'])
 
-    @vite(['resources/js/pipeline.js'])
+@vite(['resources/js/pipeline.js'])
 
 
 <script>

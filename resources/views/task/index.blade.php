@@ -304,7 +304,7 @@
         }
 
         if (updateids !== "") {
-            if (confirm("Are you sure you want to delete selected task?")) {
+            if (showConfirmation()) {
 
             } else {
                 return;

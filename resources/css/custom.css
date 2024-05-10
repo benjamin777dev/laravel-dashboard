@@ -242,10 +242,7 @@
     border: 1px solid #222;
 }
 
-.nav-tabs .nav-link.active {
-    color: #fff;
-    background-color: #4f4f4f !important;
-}
+
 
 .dnotesUl {
     max-height: 325px;
@@ -291,9 +288,9 @@
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
     color: #fff;
+    background-color: #3B3B3B;
 }
-
-.dtabsbtn:hover {
+.dtabsbtn:hover{
     color: #fff;
 }
 
@@ -402,11 +399,6 @@
     margin-top: 0;
     margin-bottom: 0;
 }
-.nav-link:hover, .nav-link:focus {
-    color: red;
-    text-decoration: none;
-}
-
 .paddressName{
  font-size: 12px;
 }
@@ -470,6 +462,16 @@
     outline: none;
 }
 
+.select2-container--default .select2-selection--single {
+   border: none !important;
+
+}
+.select2-container--open .select2-dropdown--below {
+   font-size: 12px !important;
+}
+.select2-selection__arrow{
+    display: none !important;
+}
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
@@ -2500,10 +2502,27 @@ body[data-sidebar="dark"] .vertical-menu {
 body[data-sidebar="dark"] .navbar-brand-box {
     background: #000;
 }
+.ts-control{
+    border: none !important;
+    padding: 0 !important;
+}
+.btnTaskSelects{
+    display: flex;
+    gap: 10px;
+}
+.dealTaskSelect{
+    width: 100% !important;
+}
+.select2-container{
+    width: 100% !important;
+}
 
-/* media Query */
-@media (max-width: 768px) {
-    .dbtnsCardsRow {
+@media (max-width: 992px) {
+    .vertical-menu {
+        display: none;
+    }
+
+    .vertical-menu.show {
         display: block;
     }
 }

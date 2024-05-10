@@ -339,7 +339,7 @@ $maxGCI = max($gcis);
 
 @endsection
 @endsection
-
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";

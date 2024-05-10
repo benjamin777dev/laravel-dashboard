@@ -13,196 +13,231 @@
         <tbody>
 
             @if (count($tasks) > 0)
-                            @foreach ($tasks as $task)
-                                            <tr class="dresponsivetableTr">
-                                                <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')" type="checkbox"
-                                                        class="task_checkbox" id="{{ $task['zoho_task_id'] }}" /></td>
-                                                <td>
-                                                    <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
-                                                        id="editableText{{ $task['id'] }}">
-                                                        {{ $task['subject'] ?? 'N/A' }}
-                                                        <i class="fas fa-pencil-alt pencilIcon"
-                                                            onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}')"></i>
-                                                    </p>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group dSelect-container">
-                                                        <select class="form-select dtransaction-Select" id="related_to_rem{{ $task['id'] }}"
-                                                            onclick="getModule('{{ $task['id'] }}','related_to_rem{{ $task['id'] }}')"
-                                                            name="related_to_rem{{ $task['id'] }}">
-                                                            @if ($task['related_to'] == 'Contacts')
-                                                                <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
-                                                                    {{ $task['contactData']['first_name'] ?? '' }}
-                                                                    {{ $task['contactData']['last_name'] ?? 'please select One' }}
-                                                                </option>
-                                                            @elseif ($task['related_to'] == 'Deals')
-                                                                <option value="" {{ empty($task['dealData']) ? 'selected' : '' }}>
-                                                                    {{ $task['dealData']['deal_name'] ?? 'Please select One' }}
-                                                                </option>
-                                                            @else
-                                                                <option value="" selected>Please select One</option>
-                                                            @endif
-                                                        </select>
-                                                        <select class="form-select dmodaltaskSelect" id="taskSelect{{ $task['id'] }}"
-                                                            onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                                                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                                                            style="display: none;">
-                                                            <option value="">Please Select one</option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input class="ddateInput" type="datetime-local" id="date_local{{ $task['id'] }}"
-                                                        onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}')"
-                                                        id="date_val{{ $task['zoho_task_id'] }}"
-                                                        value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex ">
-                                                        <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                                            id="btnGroupAddon" data-bs-toggle="modal"
-                                                            onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                                                            <i class="fas fa-hdd plusicon"></i>
-                                                            Save
-                                                        </div>
-                                                        <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                                            id="btnGroupAddon" data-bs-toggle="modal"
-                                                            data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
-                                                            <i class="fas fa-trash-alt plusicon"></i>
-                                                            Delete
-                                                        </div>
-                                                    </div>
-                                                    {{-- delete Modal --}}
-                                                    {{-- <div class="modal fade" id="deleteModalId{{$task['zoho_task_id']}}" tabindex="-1">
-                                                        <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header border-0">
-                                                                    {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                                    {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <p class="deleteModalBodyText">Please confirm you’d
-                                                                        like to<br />
-                                                                        delete this item.</p>
-                                                                </div>
-                                                                <div class="modal-footer justify-content-evenly border-0">
-                                                                    <div class="d-grid gap-2 col-5">
-                                                                        <button onclick="deleteTask('{{$task['zoho_task_id']}}')" type="button"
-                                                                            class="btn btn-secondary deleteModalBtn" data-bs-dismiss="">
-                                                                            <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                                            delete
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="d-grid gap-2 col-5">
-                                                                        <button type="button" class="btn btn-primary goBackModalBtn">
-                                                                            <i class="fas fa-arrow-left goBackIcon"></i>
-                                                                            No, go back
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
+                @foreach ($tasks as $task)
+                    <tr class="dresponsivetableTr">
+                        <td><input onchange="triggerCheckbox('{{ $task['zoho_task_id'] }}')" type="checkbox"
+                                class="task_checkbox" id="{{ $task['zoho_task_id'] }}" /></td>
+                        <td>
+                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
+                                id="editableText{{ $task['id'] }}">
+                                {{ $task['subject'] ?? 'N/A' }}
+                                <i class="fas fa-pencil-alt pencilIcon"
+                                    onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableText{{ $task['id'] }}')"></i>
+                            </p>
+                        </td>
+                        <td>
+                            <div class="btn-group btnTaskSelects">
+                                <select class="form-select dealTaskSelect" id="related_to_rem{{ $task['id'] }}"
+                                    onclick="getModule('{{ $task['id'] }}','related_to_rem{{ $task['id'] }}')"
+                                    name="related_to_rem{{ $task['id'] }}">
+                                    @if ($task['related_to'] == 'Contacts')
+                                        <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
+                                            {{ $task['contactData']['first_name'] ?? '' }}
+                                            {{ $task['contactData']['last_name'] ?? 'Please select' }}
+                                        </option>
+                                    @elseif ($task['related_to'] == 'Deals')
+                                        <option value="" {{ empty($task['dealData']) ? 'selected' : '' }}>
+                                            {{ $task['dealData']['deal_name'] ?? 'Please select' }}
+                                        </option>
+                                    @else
+                                        <option value="" selected>Please select</option>
+                                    @endif
+                                </select>
+                                <select class="form-select dmodaltaskSelect" id="taskSelect{{ $task['id'] }}"
+                                    onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
+                                    name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
+                                    style="display: none;">
+                                    <option value="">Please Select</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="datetime-local" id="date_local_web{{ $task['id'] }}"
+                                onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_local_web{{ $task['id'] }}')"
+                                id="date_local{{ $task['zoho_task_id'] }}"
+                                value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
+                        </td>
+                        <td>
+                            <div class="d-flex ">
+                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
+                                    id="btnGroupAddon" data-bs-toggle="modal"
+                                    onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
+                                    <i class="fas fa-hdd plusicon"></i>
+                                    Save
+                                </div>
+                                <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
+                                    id="btnGroupAddon" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                    <i class="fas fa-trash-alt plusicon"></i>
+                                    Delete
+                                </div>
+                            </div>
+                            {{-- delete Modal --}}
+                            {{-- <div class="modal fade" id="deleteModalId{{$task['zoho_task_id']}}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header border-0 deleteModalHeaderDiv">
+                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body deletemodalBodyDiv">
+                                            <p class="deleteModalBodyText">Please confirm you’d
+                                                like
+                                                to<br />
+                                                delete this item.</p>
+                                        </div>
+                                        <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid gap-2 col-5">
+                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                    class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                                    <i class="fas fa-trash-alt trashIcon"></i> Yes,
+                                                    delete
+                                                </button>
+                                            </div>
+                                            <div class="d-grid gap-2 col-5">
+                                                <button type="button" data-bs-dismiss="modal"
+                                                    class="btn btn-primary goBackModalBtn">
+                                                    <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal"
+                                                        alt="R">No,
+                                                    go
+                                                    back
+                                                </button>
+                                            </div>
+                                        </div>
 
-                                                            </div>
-                                                        </div>
-                                                    </div> --}}
-                                                    {{--
-                                </div> --}}
-                                {{-- delete Modal --}}
-                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content">
-                                            <div class="modal-header border-0 deleteModalHeaderDiv">
-                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body deletemodalBodyDiv">
-                                                <p class="deleteModalBodyText">Please confirm you’d
-                                                    like
-                                                    to<br />
-                                                    delete this item.</p>
-                                            </div>
-                                            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                                <div class="d-grid gap-2 col-5">
-                                                    <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                                                        class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
-                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                        delete
-                                                    </button>
-                                                </div>
-                                                <div class="d-grid gap-2 col-5">
-                                                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
-                                                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No,
-                                                        go
-                                                        back
-                                                    </button>
-                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="saveModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header saveModalHeaderDiv border-0">
+                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body saveModalBodyDiv">
+                                            <p class="saveModalBodyText" id="updated_message">Changes
+                                                have been saved</p>
+                                        </div>
+                                        <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid col-12">
+                                                <button type="button" class="btn btn-secondary saveModalBtn"
+                                                    data-bs-dismiss="modal">
+                                                    <i class="fas fa-check trashIcon"></i>
+                                                    Understood
+                                                </button>
                                             </div>
 
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="modal fade" id="saveModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content">
-                                            <div class="modal-header saveModalHeaderDiv border-0">
-                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body saveModalBodyDiv">
-                                                <p class="saveModalBodyText" id="updated_message">Changes
-                                                    have been saved</p>
-                                            </div>
-                                            <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                                <div class="d-grid col-12">
-                                                    <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
-                                                        <i class="fas fa-check trashIcon"></i>
-                                                        Understood
-                                                    </button>
-                                                </div>
-
+                            </div>
+                            <div class="modal fade" id="savemakeModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header saveModalHeaderDiv border-0">
+                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body saveModalBodyDiv">
+                                            <p class="saveModalBodyText" id="updated_message_make">
+                                                Changes have been saved</p>
+                                        </div>
+                                        <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid col-12">
+                                                <button type="button" class="btn btn-secondary saveModalBtn"
+                                                    data-bs-dismiss="modal">
+                                                    <i class="fas fa-check trashIcon"></i>
+                                                    Understood
+                                                </button>
                                             </div>
 
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="modal fade" id="savemakeModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content">
-                                            <div class="modal-header saveModalHeaderDiv border-0">
-                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body saveModalBodyDiv">
-                                                <p class="saveModalBodyText" id="updated_message_make">
-                                                    Changes have been saved</p>
-                                            </div>
-                                            <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                                <div class="d-grid col-12">
-                                                    <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
-                                                        <i class="fas fa-check trashIcon"></i>
-                                                        Understood
-                                                    </button>
-                                                </div>
+                            </div>
+                        </td>
 
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                </td>
-
-                                </tr>
-                            @endforeach
+                    </tr>
+                @endforeach
             @else
                 <tr>
                     <td class="text-center" colspan="12">No records found</td>
                 </tr>
             @endif
 
-</tbody>
+        </tbody>
 
-</table>
-<div class="dprogressCards">
+    </table>
+    <div class="dprogressCards">
+        @if (count($tasks) > 0)
+            @foreach ($tasks as $task)
+                <div class="dcardscheckbox">
+                    <input type="checkbox" />
+                </div>
+                <div class="dcardssubjectdiv">
+                    <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
+                        onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableTextCard{{ $task['id'] }}')">
+                        {{ $task['subject'] ?? 'N/A' }}
+                        {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
+                    </p>
+                    <div class="btn-group dcardsselectdiv">
+                        <p class="dcardsTransactionText">Transaction Related</p>
+                        <select class="form-select" id="related_to_rem_card{{ $task['id'] }}"
+                            onclick="getModule('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
+                            name="related_to_rem{{ $task['id'] }}">
+                            @if ($task['related_to'] == 'Contacts')
+                                <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
+                                    {{ $task['contactData']['first_name'] ?? '' }}
+                                    {{ $task['contactData']['last_name'] ?? 'Please select' }}
+                                </option>
+                            @elseif ($task['related_to'] == 'Deals')
+                                <option value="" {{ empty($task['dealData']) ? 'selected' : '' }}>
+                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
+                                </option>
+                            @else
+                                <option value="" selected>Please select</option>
+                            @endif
+                        </select>
+                        <select class="form-select dmodaltaskSelect" id="taskSelectcard{{ $task['id'] }}"
+                            onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
+                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction" style="display: none;">
+                            <option value="">Please Select</option>
+                        </select>
+                    </div>
+                    <div class="dcardsdateinput">
+                        <p class="dcardsTaskText">Task Date</p>
+                        <input type="datetime-local"
+                            onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val_card{{ $task['zoho_task_id'] }}')"
+                            id="date_val_card{{ $task['zoho_task_id'] }}"
+                            value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
+                    </div>
+                </div>
+                <div class="dcardsbtnsDiv">
+                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon" data-bs-toggle="modal"
+                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
+                        <i class="fas fa-hdd plusicon"></i>
+                        Save
+                    </div>
+                    <div class="input-group-text dcardsdeletebtn" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId">
+                        <i class="fas fa-trash-alt plusicon"></i>
+
+                        Delete
+                    </div>
+                </div>
+            @endforeach
+        @else
+            <div>
+                <div class="text-center">No records found</div>
+            </div>
+        @endif
+    </div>
     @if (count($tasks) > 0)
         @foreach ($tasks as $task)
             <div class="dcardscheckbox">
@@ -314,10 +349,9 @@
         // Set active class to the tab corresponding to the status
         console.log(status, 'statussssss');
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
-        console.log(activeTab, 'activeTab')
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.backgroundColor = "#222"
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
@@ -365,39 +399,40 @@
     function testFun(id, textfield, zohoID) {
         if (textfield === "deals") {
             var related_to_rem = document.getElementsByName("related_to_rem" + id)[0].value;
+            if (!related_to_rem) {
+                var related_to_rem1 = document.getElementsByName("related_to_rem" + id)[1].value;
+                related_to_rem = related_to_rem1;
+            }
             var WhatSelectoneid = document.getElementsByName("related_to_parent" + id)[0].value;
+            if (!WhatSelectoneid) {
+                var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
+                WhatSelectoneid = WhatSelectoneid1;
+            }
             updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
         }
     }
 
     var textElement;
 
-    function makeEditable(id, textfield, zohoID) {
+    function makeEditable(id, textfield, zohoID, textid) {
 
         if (textfield === "subject") {
-            textElement = document.getElementById('editableText' + id);
-            textElementCard = document.getElementById('editableTextCard' + id);
+            textElement = document.getElementById(textid);
             //For Table data                
             var text = textElement.textContent.trim();
-            textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
+            textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
 
-            //For card data
-            var text = textElementCard.textContent.trim();
-            textElementCard.innerHTML = '<input type="text" id="editableInputForCard' + id + '" value="' + text + '" />';
-
-            let inputElementmake = document.getElementById('editableInput' + id);
-            let inputElementmakeCard = document.getElementById('editableInputForCard' + id);
+            let inputElementmake = document.getElementById('editableInput' + textid + id);
             inputElementmake.focus();
             inputElementmake.addEventListener('change', function () {
+                textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
+                    inputElementmake.value + '</p>';
                 updateText(inputElementmake.value, textfield, zohoID);
-            });
-            inputElementmakeCard.focus();
-            inputElementmakeCard.addEventListener('change', function () {
-                updateText(inputElementmakeCard.value, textfield, zohoID);
             });
         }
         if (textfield === "date") {
-            let dateLocal = document.getElementById('date_local' + id);
+            let dateLocal = document.getElementById(textid);
+            console.log(textid, 'dateLocal')
             var text = dateLocal.value.trim();
             updateText(text, textfield, zohoID);
         }
@@ -486,8 +521,24 @@
                 console.log(response, 'resoponse')
                 // Handle successful response
                 var tasks = response;
+                var taskSelect;
                 // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect' + id);
+                var taskSelectid = ""; // Initialize id variable
+                if ($(window).innerWidth() <= 767) {
+                    taskSelect = $("#taskSelect" + id);
+                    taskSelect.removeAttr('id');
+                    taskSelectcard = $("#taskSelectcard" + id);
+                    taskSelect = taskSelectcard;
+                    console.log(taskSelect, 'taskSelect' + id)
+
+                } else {
+                    taskSelectcard = $("#taskSelectcard" + id);
+                    console.log(taskSelectcard, 'taskSelectcard')
+                    taskSelectcard.removeAttr('id');
+                    taskSelect = $("#taskSelect" + id);
+                    taskSelect = taskSelect;
+                    console.log(taskSelect, 'taskSelect')
+                }
                 // Clear existing options
                 taskSelect.empty();
                 // Populate select options with tasks
@@ -507,18 +558,14 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_contact_id,
-                            text: task?.first_name + ' ' + task?.last_name
+                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? ""
                         }));
                     }
                 });
-                new TomSelect(taskSelect, {
-                    create: false,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    }
-                });
+
+                taskSelect.select2();
                 taskSelect.show();
+                taskSelect.next(".select2-container").addClass("form-select");
                 // Do whatever you want with the response data here
             },
             error: function (xhr, status, error) {
