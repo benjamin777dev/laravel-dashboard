@@ -361,7 +361,7 @@
                     success: function(response) {
                         // Handle successful API response
                         // if (response?.status == "success") {
-                        window.location.href = '/group';
+                        // window.location.href = '/group';
                         // }
                     },
                     error: function(xhr, status, error) {

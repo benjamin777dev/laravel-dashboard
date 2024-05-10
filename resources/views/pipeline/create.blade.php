@@ -907,6 +907,7 @@
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
     <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
 </div>
+@include('common.notes.create',["deal"=>$deal, 'type' => 'Deals'])
     
     @vite(['resources/js/pipeline.js'])
 
@@ -978,7 +979,7 @@
                         // "Who_Id": {
                         //     "id": whoId
                         // },
-                        "Status": "Upcoming",
+                        "Status": "Not Started",
                         "Due_Date": dueDate,
                         // "Created_Time":new Date()
                         "Priority": "High",
