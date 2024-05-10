@@ -4,6 +4,7 @@
 
 @section('content')
     @vite(['resources/css/pipeline.css'])
+    <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
     <script>
         function updateText(newText) {
             //  textElement = document.getElementById('editableText');
@@ -52,7 +53,7 @@
             // return;
             if (elementValue.trim() === "") {
                 // console.log("chkockdsjkfjksdh")
-                return alert("Please enter subject value first");
+                return showToastError("Please enter subject value first");
             }
             // console.log("inputElementval",elementValue!==undefined,elementValue)
             if (elementValue !== undefined) { // return;
@@ -159,7 +160,7 @@
                 return;
             }
             if (updateids !== "") {
-                if (confirm("Are you sure you want to delete selected task?")) {
+                if (showConfirmation()) {
 
                 } else {
                     return;
@@ -188,19 +189,20 @@
                         },
                         success: function(response) {
                             // Handle success response
-                            alert("deleted successfully", response);
+                            showToast("deleted successfully");
                             window.location.reload();
                         },
                         error: function(xhr, status, error) {
                             // Handle error response
+                            showToastError("something went wrong");
                             console.error(xhr.responseText);
-                            alert(xhr.responseText)
                         }
                     })
 
                 }
             } catch (err) {
                 console.error("error", err);
+                showToastError("error");
             }
         }
 
