@@ -14,15 +14,27 @@
         </div>
     @endif
     <div class="container">
-        <div class="commonFlex ppipeDiv">
-            <p class="pText">Database</p>
-            <a onclick="createContact();">
-                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                    </i>
-                    New Contact
+
+        <div class="dbgroupsFlex">
+            <p class="ngText">Database</p>
+            <div class="pipeline-btns-container">
+
+                <div>
+                    <div class="input-group-text dcontactBtns dnewContactBtn" id="btnGroupAddon" data-bs-toggle="modal"
+                        data-bs-target="#" onclick="createContact();"><i class="fas fa-plus plusicon">
+                        </i>
+                        New Contact
+                    </div>
                 </div>
-            </a>
+
+                <div>
+                    <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#"
+                        onclick="createTransaction()"><i class="fas fa-plus plusicon">
+                        </i>
+                        New Transaction
+                    </div>
+                </div>
+            </div>
         </div>
         {{-- <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
@@ -375,7 +387,7 @@
                 // noteContainer.empty();
                 // Loop through each note in the response array
                 response?.forEach(function(note) {
-                    console.log(note,'note')
+                    console.log(note, 'note')
                     // Create HTML to display note content and creation time
                     let data = `<div class="note">
                         <h1 id="${note.id}">Note ID: ${note.id}</h1>

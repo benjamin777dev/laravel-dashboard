@@ -3,38 +3,70 @@
 }
 
 .taskbtn {
-    background-color: #222;
-    padding: 6px 11px 6px 11px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.dcontactBtns {
     display: flex;
-    height: 52px;
-
-    padding: 16px 12px;
+    height: 40px;
+    padding: 12px;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    align-self: stretch;
-
-    border-radius: 5px;
-    background: #3f3f3f;
-
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16.1px; /* 115% */
     cursor: pointer;
-    /* base-bold */
+}
+
+/* btnsRowAndCards-css */
+.dbtnsCardsRow {
+    display: grid;
+    grid-template-columns: 2.5fr 9.5fr;
+    gap: 24px;
+}
+/* Tasks */
+.dSelect-container {
+    display: flex;
+}
+.dtransaction-Select {
+    border: none;
+    word-break: break-all;
+    text-overflow: ellipsis;
+}
+.dtransaction-Select:focus-visible {
+    outline: 0;
+}
+.ddateInput {
+    border: none;
+}
+.ddateInput:focus-visible {
+    outline: 0;
+}
+.dcontactBtns {
+    display: flex;
+    height: 52px;
+    padding: 16px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    align-self: stretch;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
     font-family: Avenir;
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
     line-height: 18.4px;
-    /* 115% */
 }
 
 .plusicon {
@@ -42,10 +74,21 @@
 }
 
 .removebtn {
-    background-color: #848484;
+    display: flex;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    background: #848484;
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
     cursor: pointer;
-    padding: 6px 11px;
-    border-radius: 5px;
 }
 
 .page-item.active {
@@ -134,22 +177,55 @@
     background: rgba(255, 255, 255, 1);
     padding: 20px;
 }
-
-.savebtn {
+.dtableHeaderTr {
+    padding: 8px 12px;
+    border-bottom: 0.667px solid #f2f2f2;
+    background: #f2f2f2;
+}
+.dtableHeaderTr th {
+    color: #333;
+    font-family: Avenir;
+    font-size: 14px !important;
+    font-style: normal;
+    font-weight: 900;
+}
+.savebtn,
+.dcardssavebtn {
+    display: flex;
+    padding: 6px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
     background: #222;
-    margin-right: 12px;
-    border-radius: 3.2px;
-    padding: 5px, 9px, 5px, 9px;
-    min-width: 70px;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px !important;
+    font-style: normal;
+    font-weight: 800;
     cursor: pointer;
 }
 
-.deletebtn {
-    background: #222;
-    border-radius: 3.2px;
-    padding: 5px, 9px, 5px, 9px;
-    min-width: 70px;
+.deletebtn,
+.dcardsdeletebtn {
+    display: flex;
+    padding: 6px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    background: #848484;
+    color: var(--white, #fff);
+    text-align: center;
+    font-family: Avenir;
+    font-size: 12px !important;
+    font-style: normal;
+    font-weight: 800;
     cursor: pointer;
+    border: none;
 }
 
 .dashboard-notes-list {
@@ -162,7 +238,8 @@
 
 .page-link.active,
 .active > .page-link {
-    background-color: #6f6f6f !important;
+    background-color: #222 !important;
+    border: 1px solid #222;
 }
 
 .nav-tabs .nav-link.active {
@@ -204,7 +281,7 @@
 } */
 
 .dtabs {
-    background: #222 !important;
+    background: #6c6c6c !important;
     color: #fff;
     margin-top: 12px;
     padding-left: 0px;
@@ -765,7 +842,7 @@
         padding: 16px 12px;
     }
 
-    .dcardssavebtn {
+    /* .dcardssavebtn {
         display: flex;
         height: 40px;
         padding: 5px 9px;
@@ -783,8 +860,8 @@
         font-style: normal;
         font-weight: 800;
         line-height: 17px;
-    }
-
+    } */
+    /* 
     .dcardsdeletebtn {
         display: flex;
         height: 40px;
@@ -803,7 +880,7 @@
         font-style: normal;
         font-weight: 800;
         line-height: 17px;
-    }
+    } */
 
     .porText {
         text-align: center;
@@ -826,11 +903,11 @@
     }
 }
 
-@media (min-width: 320px) and (max-width: 355px) {
+@media (min-width: 320px) and (max-width: 398px) {
     .dtabsbtn {
         padding: 8px 10px 8px 10px;
         color: #fff;
-        font-size: 12px;
+        font-size: 11px;
     }
 }
 
@@ -916,7 +993,7 @@
 
     .dTCardmail {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 5px;
         align-self: stretch;
         color: #222;
@@ -924,7 +1001,8 @@
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
-        line-height: 19.5px;
+        line-height: 16px;
+        word-break: break-all;
     }
 }
 
@@ -943,11 +1021,41 @@
     /* padding: 15px; */
 }
 
-.alert {
-    flex: 1 1 200px; /* Allows flex items to grow and shrink but not smaller than 200px */
-    margin: 5px;
-}
+.progressCardsContainer {
+    display: flex;
+    padding: 16px 12px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    flex: 1 0 0;
+    display: flex;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0px 2px 10px 0px #cecece;
 
+    color: #6c6c6c;
+    text-align: center;
+
+    /* dashStatsNumber */
+    font-family: Avenir;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: 34.5px;
+}
+.proCardsText {
+    align-self: stretch;
+    color: #000;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: -0.28px;
+    margin-bottom: 0;
+}
 .pText {
     color: #222;
     font-size: 16px;
@@ -971,6 +1079,9 @@
     color: #fff;
 }
 
+.database-filter-div {
+    margin-inline: 0;
+}
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1128,7 +1239,24 @@
 }
 
 .pfilterBtn {
-    flex: 1;
+    display: flex;
+    width: 226px;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #222;
+    background: #222;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+    /* flex: 1;
     display: flex;
     padding: 8.52px 12px;
     justify-content: center;
@@ -1142,7 +1270,7 @@
     font-style: normal;
     font-weight: 400;
     cursor: pointer;
-    height: 37px;
+    height: 37px; */
 }
 
 .ptransactionTable th {
@@ -1268,10 +1396,15 @@
     padding-block: 10px;
 }
 
-.npcontactsTable {
-    display: grid;
-    grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr;
-    gap: 10px;
+.npcontacts-Table {
+    display: flex;
+    gap: 20px;
+    /* display: grid; */
+    /* grid-template-columns: 2fr 1.1fr 2.4fr 1.3fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2fr; */
+    /* grid-template-columns: repeat(1fr, 10);*/
+    /* grid-template-columns: 1.3fr 1fr 1.5fr 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr 2fr; */
+
+    /* gap: 10px; */
     background: #222;
     padding: 14px 12px;
     color: #fff;
@@ -1281,6 +1414,9 @@
     font-style: normal;
     font-weight: 900;
     line-height: 16.8px;
+}
+.npcontacts-Table th {
+    flex: 1;
 }
 
 .npAttachmentTable,
@@ -1298,17 +1434,30 @@
     line-height: 16.8px;
 }
 
-.npcontactsBody {
-    display: grid;
-    grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr;
-    gap: 10px;
+.npcontacts-Body {
+    display: flex;
+    gap: 20px;
+    /* display: grid;
+    grid-template-columns: 1.3fr 1fr 1.5fr 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr 2fr; */
+
+    /* grid-template-columns: 2.3fr 1.5fr 2fr 0.5fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2.5fr; */
+    /* grid-template-columns: 2fr 1.1fr 2.4fr 1.3fr 1.5fr 1.5fr 0.8fr 0.8fr 0.8fr 0.8fr 2fr; */
+    /* grid-template-columns: repeat(1fr, 10);*/
+    /* gap: 10px; */
     color: #222;
+
     padding: 16px 12px;
+    background: #fff;
+}
+
+.npcontacts-Body td {
+    color: #000;
+    flex: 1;
     font-family: Avenir;
     font-size: 14px;
     font-style: normal;
-    font-weight: 350;
-    line-height: 16.8px;
+    font-weight: 400;
+    letter-spacing: -0.28px;
 }
 
 .npAttachmentBody,
@@ -1327,13 +1476,13 @@
 @media (max-width: 767px) {
     .ppipelineTable,
     .dtabletranstion,
-    .npcontactsTable,
+    .npcontacts-Table,
     .npAttachmentTable,
     .npAttachmentBody,
     .npAgentTable,
     .npAgentBody,
     .npNom-TM-Table,
-    .npcontactsBody,
+    .npcontacts-Body,
     .npNom-TM-Body,
     .npRoleBody,
     .npRoleTable {
@@ -1497,7 +1646,9 @@
     .psellDiv {
         padding-block: 10px 20px;
     }
-
+    .psellDivnew {
+        gap: 20px;
+    }
     .pTableTransText {
         color: #8f8f8f;
         font-family: Montserrat;
@@ -1528,12 +1679,19 @@
 
 @media (max-width: 767px) {
     .pcommonFilterDiv {
+        margin-bottom: 24px;
         flex: 100%;
     }
-
     .pfilterDiv {
-        justify-content: center;
+        display: block;
     }
+    .psortingFilterDiv {
+        padding: 0;
+        margin-block: 24px;
+    }
+    /* .pfilterDiv {
+        justify-content: center;
+    } */
 
     .psearchInput,
     .pfilterBtn {
@@ -1608,9 +1766,11 @@
 }
 
 .npinputinfo {
-    padding: 7.52px 11.993px 7.52px 12.003px;
+    padding: 4px;
     border-radius: 4px;
     border: 1px solid #afafaf;
+    word-break: break-all;
+    text-overflow: ellipsis;
 }
 
 .nproletext {
@@ -1670,6 +1830,9 @@
 @media (min-width: 320px) and (max-width: 475px) {
     .npNom-TMRoles {
         display: block !important;
+    }
+    .dnewContactBtn {
+        margin-bottom: 24px;
     }
 }
 
@@ -1944,8 +2107,8 @@
     align-items: center;
     gap: 24px;
     flex: 1 0 0;
-    align-self: stretch;
-
+    align-self: flex-start;
+    margin-left: 12px;
     border-radius: 8px;
     background: #fff;
 
@@ -2007,20 +2170,23 @@
     font-weight: 400;
     line-height: normal;
     cursor: pointer;
+    padding-right: 30px;
+    text-overflow: ellipsis;
 }
 
 .dbgGroupDiv {
     padding-inline: 0px;
+    width: 100%;
 }
 
 .dbgfilterBtn {
     display: flex;
-    padding: 24px;
+    padding: 16px;
     justify-content: center;
     align-items: center;
     gap: 4px;
     align-self: stretch;
-
+    width: 100%;
     border-radius: 16px;
     border: 1px solid #222;
     background: #222;
@@ -2035,6 +2201,25 @@
     font-style: normal;
     font-weight: 800;
     line-height: 16.1px; /* 115% */
+}
+.groupCheckbox {
+    accent-color: black;
+}
+
+@media (max-width: 768px) {
+    .dbgSortDiv {
+        display: block;
+    }
+    .dbgGroupDiv {
+        margin-bottom: 24px;
+    }
+    .dbgSelectDiv {
+        margin-right: 12px;
+    }
+}
+.headerCheckbox {
+    /* Set default background color to black */
+    --checkbox-bg-color: black;
 }
 
 /* Tab Card */
@@ -2192,7 +2377,7 @@
     width: 100%;
     font-size: 18px;
     font-weight: 800;
-    line-height: 24px;
+    line-height: 16px;
     text-align: center;
 }
 /* stacked chart css */
@@ -2209,10 +2394,9 @@ body {
 }
 
 .stacked-bar-chart {
-    [class*="bar-"] {
+    /* [class*="bar-"] {
         /* padding: 5px; */
-    }
-
+    /* } */
     .bar-a {
         background-color: #222;
         color: #fff;
@@ -2312,4 +2496,11 @@ body[data-sidebar="dark"] .vertical-menu {
 
 body[data-sidebar="dark"] .navbar-brand-box {
     background: #000;
+}
+
+/* media Query */
+@media (max-width: 768px) {
+    .dbtnsCardsRow {
+        display: block;
+    }
 }

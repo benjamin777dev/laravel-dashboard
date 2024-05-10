@@ -13,48 +13,56 @@
                             alt="Transaction icon" onclick="toggleSort()">
                     </div>
                 </th>
-                @foreach($shownGroups as $shownGroup)
+                @foreach ($shownGroups as $shownGroup)
                     <th scope="col">
-                        <div class="dbgcommonFlex">
-                            <p>{{ count($shownGroup['contacts']) }}</p>
-
-                            <p class="mb-0">{{$shownGroup['name']}}</p>
-                            <input type="checkbox" class="headerCheckbox" data-target="#confirmModel{{$shownGroup['id']}}"
-                                data-index="{{$loop->index}}" onclick="showPopup('{{$shownGroup['id']}}')" />
-                            <div id="confirmModel{{$shownGroup['id']}}" class="modal">
-                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                    <div class="modal-content">
-                                        <div class="modal-header border-0 deleteModalHeaderDiv">
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body deletemodalBodyDiv">
-                                            <p class="deleteModalBodyText">Are you Sure?
-                                                <br>
-                                                This will add ALL your contacts to this group.
-                                            </p>
-                                        </div>
-                                        <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                                            <div class="d-grid gap-2 col-5">
-                                                <button type="button" class="btn btn-secondary deleteModalBtn"
-                                                    data-bs-dismiss="modal"
-                                                    onclick="selectAllCheckboxes('{{$loop->index}}','{{$shownGroup['zoho_group_id']}}','confirmModel{{$shownGroup['id']}}')">
-                                                    Select All
-                                                </button>
-                                            </div>
-                                            <div class="d-grid gap-2 col-5">
-                                                <button type="button" data-bs-dismiss="modal" aria-label="Cancel">Cancel
-                                                </button>
-                                            </div>
-                                        </div>
-
+                        {{-- <div class="dbgcommonFlex">
+                            <p id="selectedCountHeader{{ $loop->index }}">012</p>
+                            <p class="mb-0">{{ $shownGroup['name'] }}</p>
+                            <input type="checkbox" class="headerCheckbox"
+                                data-target="#confirmModel{{ $shownGroup['id'] }}" data-index="{{ $loop->index }}"
+                                onclick="showPopup('{{ $shownGroup['id'] }}')" /> --}}
+                        <div class="dbgheaderFlex">
+                            <p class="mb-0">{{ count($shownGroup['contacts']) }}</p>
+                            <div class="checkboxText">
+                                <p class="mb-0 text-end">{{ $shownGroup['name'] }}</p>
+                                <input type="checkbox" class="headerCheckbox"
+                                    data-target="#confirmModel{{ $shownGroup['id'] }}"
+                                    data-index="{{ $loop->index }}" />
+                            </div>
+                        </div>
+                        <div id="confirmModel{{ $shownGroup['id'] }}" class="modal">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content">
+                                    <div class="modal-header border-0 deleteModalHeaderDiv">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
+                                    <div class="modal-body deletemodalBodyDiv">
+                                        <p class="deleteModalBodyText">Are you Sure?
+                                            <br>
+                                            This will add ALL your contacts to this group.
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                        <div class="d-grid gap-2 col-5">
+                                            <button type="button" class="btn btn-secondary deleteModalBtn"
+                                                data-bs-dismiss="modal"
+                                                onclick="selectAllCheckboxes('{{ $loop->index }}','{{ $shownGroup['zoho_group_id'] }}','confirmModel{{ $shownGroup['id'] }}')">
+                                                Select All
+                                            </button>
+                                        </div>
+                                        <div class="d-grid gap-2 col-5">
+                                            <button type="button" data-bs-dismiss="modal" aria-label="Close">Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+                        {{-- </div> --}}
 
                     </th>
-
                 @endforeach
             </tr>
         </thead>
@@ -118,19 +126,20 @@
         });
     });
     window.headerCheckboxes = document.querySelectorAll('.headerCheckbox');
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const rowCheckboxes = document.querySelectorAll('.rowCheckbox');
         const groupCheckboxes = document.querySelectorAll('.groupCheckbox');
 
         function updateSelectedCount() {
             headerCheckboxes.forEach((checkbox, index) => {
-                const selectedCount = document.querySelectorAll(`.groupCheckbox[data-index="${index}"]:checked`).length;
+                const selectedCount = document.querySelectorAll(
+                    `.groupCheckbox[data-index="${index}"]:checked`).length;
                 document.getElementById(`selectedCountHeader${index}`).textContent = selectedCount;
             });
         }
 
-        headerCheckboxes.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
+        headerCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
                 // Get the target modal id from data attribute
                 const targetModalId = this.getAttribute('data-target');
                 // Get the elements to update
@@ -140,11 +149,13 @@
 
                 if (checkbox.checked) {
                     // Checkbox is checked, update modal content and button text for "Select All"
-                    targetModalElement.innerHTML = `Are you Sure?<br>This will add ALL your contacts to this group.`;
+                    targetModalElement.innerHTML =
+                        `Are you Sure?<br>This will add ALL your contacts to this group.`;
                     buttonElement.innerText = `Select All`;
                 } else {
                     // Checkbox is not checked, update modal content and button text for "Deselect All"
-                    targetModalElement.innerHTML = `Are you Sure?<br>This will remove ALL your contacts from this group.`;
+                    targetModalElement.innerHTML =
+                        `Are you Sure?<br>This will remove ALL your contacts from this group.`;
                     buttonElement.innerText = `Deselect All`;
                 }
 
@@ -229,13 +240,13 @@
                 contentType: 'application/json',
                 dataType: 'json',
                 data: JSON.stringify(formData),
-                success: function (response) {
+                success: function(response) {
                     // Handle successful API response
                     // if (response?.status == "success") {
                     window.location.href = '/group';
                     // }
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     // Handle errors
                     console.error('Error:', error);
                 }
@@ -255,7 +266,7 @@
                     window.location.href = '/group';
                     // }
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     // Handle errors
                     console.error('Error:', error);
                 }
@@ -268,7 +279,9 @@
         var checkboxes = document.querySelectorAll('.groupCheckbox[data-index="' + columnIndex + '"]');
         // Get the elements to update
         const buttonElement = document.querySelector('.deleteModalBtn');
-        const elementInnerText = buttonElement.innerText; // Retrieves visible text content, ignoring hidden elements
+        const elementInnerText = buttonElement
+            .innerText; // Retrieves visible text content, ignoring hidden elements
+
 
 
         checkboxes.forEach(function (checkbox) {

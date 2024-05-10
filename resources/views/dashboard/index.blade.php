@@ -17,7 +17,7 @@
         </div>
     @endif
     <div class="container-fluid">
-        <div class="row mt-4 text-center">
+        <div class="dbtnsCardsRow mt-4 text-center">
             {{-- <div class="col-lg-3 col-md-3 col-sm-6 text-start">
                 <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
@@ -31,9 +31,9 @@
                 </div>
 
             </div> --}}
-            <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
+            <div class="text-start dcontactbtns-div">
 
-                <div class="row g-1">
+                <div class="row g-2">
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#"
                             onclick="createContact();"><i class="fas fa-plus plusicon">
@@ -52,7 +52,7 @@
                 </div>
 
             </div>
-            <div class="col-ld-9 col-md-9 col-sm-12">
+            <div>
                 <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
@@ -101,7 +101,7 @@
                                     <div class="gauge-center"></div>
                                 </div>
                             </div> --}}
-                            <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
+                            <p class="dFont13 dMb5 dRangeText">{{ '$' . $totalGciForDah . ' of 250,000 Goal' }}</p>
                             <div>
                                 {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
@@ -161,7 +161,10 @@
                         </div>
                     </div>
                 </div>
-                @include('common.notes.view',['notesInfo'=>$notesInfo,'retrieveModuleData'=>$retrieveModuleData])
+                @include('common.notes.view', [
+                    'notesInfo' => $notesInfo,
+                    'retrieveModuleData' => $retrieveModuleData,
+                ])
             </div>
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
@@ -177,10 +180,9 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active"
-                                    id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
-                                    data-tab='In Progress' type="button" role="tab" aria-controls="nav-home"
-                                    aria-selected="true">In
+                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
+                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
+                                    role="tab" aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
                             <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn"
                                     data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
@@ -247,7 +249,7 @@
                             <div class="col-md-2 npcommontableBodytext ">
                                 <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
                                         alt="E">
-                                    {{  date('m/d/Y', strtotime($deal['closing_date'])); }}
+                                    {{ date('m/d/Y', strtotime($deal['closing_date'])) }}
                                 </div>
                             </div>
                         </div>
@@ -378,7 +380,7 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.backgroundColor = "#222"
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
@@ -516,7 +518,7 @@
 
         return formattedDateTime;
     }
-    
+
 
     function updateTask(id, indexid) {
         // console.log(id, indexid, 'chekcdhfsjkdh')
@@ -926,7 +928,7 @@
                             var labelText = Math.round(dataset.data[i]) + "%";
                             ctx.fillStyle = '#000'; // set font color
                             ctx.fillText(labelText, model.x, model.y -
-                            5); // adjust Y position for label
+                                5); // adjust Y position for label
                         }
                     });
                 }
@@ -993,7 +995,5 @@
 
 
     }
-
-    
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
