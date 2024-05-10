@@ -101,7 +101,9 @@
                                     <div class="gauge-center"></div>
                                 </div>
                             </div> --}}
-                            <p class="dFont13 dMb5 dRangeText">{{ '$' . $totalGciForDah . ' of 250,000 Goal' }}</p>
+                            <p class="dFont13 dMb5 dRangeText">
+                                {{ '$' . number_format($totalGciForDah, 0) . ' of $' . number_format($goal, 0) . ' Goal' }}
+                            </p>
                             <div>
                                 {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
@@ -516,9 +518,9 @@ $maxGCI = max($gcis);
             },
             needle: {
                 radiusPercentage: 2,
-                widthPercentage: 3.2,
+                widthPercentage: 4.2,
                 lengthPercentage: 80,
-                color: '#fff'
+                color: '#000'
             },
             valueLabel: {
                 fontSize: 20,
