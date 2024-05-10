@@ -16,7 +16,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -62,7 +62,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
@@ -84,7 +84,7 @@
     background: #848484;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -129,7 +129,7 @@
     align-self: stretch;
     color: #222;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -141,7 +141,7 @@
     /* max-width: 195.09px; */
     color: #6c6c6c;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 30px;
     font-style: normal;
     font-weight: 900;
@@ -151,7 +151,7 @@
 .dcountText {
     color: #222;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -184,7 +184,7 @@
 }
 .dtableHeaderTr th {
     color: #333;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px !important;
     font-style: normal;
     font-weight: 900;
@@ -202,7 +202,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -220,7 +220,7 @@
     background: #848484;
     color: var(--white, #fff);
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -404,7 +404,7 @@
 }
 .notesAsignedText {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -626,7 +626,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -646,7 +646,7 @@
     background: #fff;
     color: var(--Brand, #222);
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -790,7 +790,7 @@
 
     .dcardSubject {
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -808,7 +808,7 @@
 
     .dcardsTransactionText {
         color: #3f3f3f;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -818,7 +818,7 @@
 
     .dcardsselectdiv {
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -828,7 +828,7 @@
 
     .dcardsTaskText {
         color: #3f3f3f;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -857,7 +857,7 @@
         background: #222;
         color: #fff;
         text-align: center;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 11.4px;
         font-style: normal;
         font-weight: 800;
@@ -877,7 +877,7 @@
         background: #222;
         color: #fff;
         text-align: center;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 11.4px;
         font-style: normal;
         font-weight: 800;
@@ -929,7 +929,7 @@
 /* Dashboard transactions table css */
 .dtHeaderName {
     color: #fff;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -945,7 +945,7 @@
     flex: 1 0 0;
     align-self: stretch;
     color: #000;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -972,7 +972,7 @@
     }
 
     .dTCardDate {
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -986,7 +986,7 @@
         align-self: stretch;
         padding-block: 5px;
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 350;
@@ -999,7 +999,7 @@
         gap: 5px;
         align-self: stretch;
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -1025,22 +1025,21 @@
 
 .progressCardsContainer {
     display: flex;
-    padding: 16px 12px;
+    padding: 10px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 18px;
     flex: 1 0 0;
     display: flex;
     border-radius: 12px;
     background: #fff;
-    box-shadow: 0px 2px 10px 0px #cecece;
+    box-shadow: 0px 2px 2px 0px #cecece;
 
     color: #6c6c6c;
     text-align: center;
 
     /* dashStatsNumber */
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 30px;
     font-style: normal;
     font-weight: 900;
@@ -1050,7 +1049,7 @@
     align-self: stretch;
     color: #000;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1104,7 +1103,7 @@
 
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1130,7 +1129,7 @@
     background: #848484;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1152,7 +1151,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1222,7 +1221,7 @@
 
 .cpinput {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -1254,7 +1253,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1347,7 +1346,7 @@
 /* new pipeline common table css */
 .npcommonheaderText {
     color: #3f3f3f;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 350;
@@ -1357,7 +1356,7 @@
 
 .npcommontableBodytext {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -1377,7 +1376,7 @@
 
 .npcommontableBodyDatetext {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1411,7 +1410,7 @@
     padding: 14px 12px;
     color: #fff;
 
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1429,7 +1428,7 @@
     background: #222;
     padding: 14px 12px;
     color: #fff;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1455,7 +1454,7 @@
 .npcontacts-Body td {
     color: #000;
     flex: 1;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1468,7 +1467,7 @@
 .npRoleBody {
     color: #222;
     padding: 16px 12px;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1600,7 +1599,7 @@
 
     .pTableNameText {
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1664,7 +1663,7 @@
 
     .pTableNameText {
         color: #222;
-        font-family: Avenir;
+        font-family: Montserrat;
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1723,7 +1722,7 @@
     background: #dfdfdf;
     color: #222;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1742,7 +1741,7 @@
     cursor: pointer;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1751,7 +1750,7 @@
 
 .npinfoText {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -1760,7 +1759,7 @@
 
 .nplabelText {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 350;
@@ -1777,7 +1776,7 @@
 
 .nproletext {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -1794,7 +1793,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1870,7 +1869,7 @@
     background-color: #dfdfdf;
     color: #000 !important;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 20px;
     font-style: normal;
     font-weight: 900;
@@ -1938,7 +1937,7 @@
 
 .ncText {
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -1957,7 +1956,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 11.4px;
     font-style: normal;
     font-weight: 800;
@@ -1991,7 +1990,7 @@
 }
 .ngText {
     color: #000;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -2013,7 +2012,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2038,7 +2037,7 @@
     border-right: #8f8f8f;
     background: #222;
     color: #fff;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -2051,7 +2050,7 @@
     border-bottom: 1px solid var(--Skiding-btns-back, #efefef);
     background: #fff;
     color: #222;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -2090,7 +2089,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -2130,7 +2129,7 @@
 .gdropdown-btn {
     flex: 1 0 0;
     color: #848484;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2170,7 +2169,7 @@
     border: 1px solid #cecece;
     flex: 1 0 0;
     color: #848484;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2201,7 +2200,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2242,7 +2241,7 @@
     background: #fff;
     color: #222;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2258,7 +2257,7 @@
     color: #253c5b;
 
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2268,7 +2267,7 @@
 
 .viewMapP {
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2291,7 +2290,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2368,7 +2367,7 @@
     color: #222;
 
     /* title-md */
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
@@ -2392,8 +2391,7 @@
 
 html,
 body {
-    font: 500 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font: 500 15px/1.5 Montserrat, sans-serif;
     height: 100%;
     color: #444;
 }
@@ -2426,7 +2424,7 @@ body {
 .dmonth-design {
     color: #7f7f7f;
     text-align: right;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px;
     font-style: normal;
     font-weight: 800;
@@ -2435,7 +2433,7 @@ body {
 
 .dtransactions-des {
     color: #000;
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 12px;
     font-style: normal;
     font-weight: 800;
@@ -2462,7 +2460,7 @@ body {
 
     text-align: start;
     /* title-md */
-    font-family: Avenir;
+    font-family: Montserrat;
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
