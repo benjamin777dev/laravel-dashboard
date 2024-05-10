@@ -9,8 +9,20 @@ window.updateDeal = function (dealID, field, Id, card, date) {
         updateElement = document.getElementById(field + dealID);
 
     }
-    console.log(updateElement);
+
+    if (!updateElement) {
+        console.log("not found");
+        return;
+    }
+
+    // Check if the input element already exists
+    if (updateElement.querySelector('input')) {
+        return; // Exit if input is already present
+    }
+
+    // Extract and clean the text value
     var text = updateElement.textContent.trim();
+    text = text.replace(/\$\s*/, '').trim();  // Remove dollar sign and extra spaces
 
     if (field == "closing_date") {
         updateElement.innerHTML =
