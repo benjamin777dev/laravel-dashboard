@@ -26,9 +26,11 @@
                 </a>
             </div>
 
-            <button type="button" class="btn btn-sm px-3 font-size-16 header-item waves-effect" id="vertical-menu-btn">
-                <i class="fa fa-fw fa-bars"></i>
-            </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+            <i class="fa fa-fw fa-bars"></i>
+        </button>
 
             <!-- App Search-->
             <form class="app-search d-none d-lg-block">
@@ -440,3 +442,13 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var button = document.querySelector('.navbar-toggler');
+        var sidebar = document.querySelector('.vertical-menu');
+
+        button.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+    });
+</script>
