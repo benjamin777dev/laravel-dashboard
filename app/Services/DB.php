@@ -448,7 +448,18 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData'])->where('status', $tab)->orderBy('updated_at', 'desc')->paginate(10);
+            $condition = [];
+            $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
+            if ($tab == 'Completed') {
+                $tasks->where('status', $tab)
+                    ->orWhereDate('due_date', '<', now());
+            } elseif ($tab == 'Not Started') {
+                $tasks->where('status', $tab)
+                    ->orWhereDate('due_date', '>', now());
+            } else {
+                $tasks->where('status', $tab);
+            }
+            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
@@ -528,7 +539,7 @@ class DB
                 $conditions[] = ['abcd', $filter];
             }
             // Retrieve deals based on the conditions
-            $contacts = $contacts->where($conditions)->paginate(10);
+            $contacts = $contacts->where($conditions)->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {
@@ -922,11 +933,13 @@ class DB
             Log::info("Retrieve Contacts From Database");
 
             $contacts = Contact::where('contact_owner', $user->id)
-                ->with(['groups' => function ($query) use ($filter) {
-                    if ($filter) {
-                        $query->where('groupId', $filter);
+                ->with([
+                    'groups' => function ($query) use ($filter) {
+                        if ($filter) {
+                            $query->where('groupId', $filter);
+                        }
                     }
-                }])
+                ])
                 ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
                         $query->where('groupId', $filter);
@@ -936,6 +949,7 @@ class DB
                     $query->orderBy('created_at', $sort);
                 })
                 ->get();
+
 
             Log::info("Retrieved Contacts From Database", ['contacts_count' => $contacts->count()]);
 
