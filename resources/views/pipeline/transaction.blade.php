@@ -9,12 +9,47 @@
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
                                 alt="Transaction icon" id="pipelineSort" onclick="toggleSort('deal_name')">
                         </div>
+<<<<<<< HEAD
                     </th>
                     <th>
                         <div class="commonFlex">
                             <p class="mb-0">Client Name</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('client_name_primary')">
+=======
+                    </div>
+                    <div class="" style="width: 75px;">
+                        <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}" required
+                            onchange="updateDealData('representing','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                            <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
+                            <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
+                        </select>
+                    </div>
+                    <div class="commonTextEllipsis"
+                        onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')"
+                        id="sale_price{{ $deal['zoho_deal_id'] }}">$
+                        {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}
+                    </div>
+                    <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}',null,'{{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}')"
+                        id="closing_date{{ $deal['zoho_deal_id'] }}">
+                        {{ \Carbon\Carbon::parse($deal['closing_date'])->format('m/d/Y') ?? 'N/A' }}
+                    </div>
+                    <div>
+                        <div class="commonTextEllipsis"
+                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{$deal['id']}}')"
+                            id="commission{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['commission'] ?? '0', 2) }}%</div>
+                    </div>
+                    <div>
+                        <div class="commonTextEllipsis">
+                            ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="commonTextEllipsis"
+                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','pipeline_probability','{{$deal['id']}}')"
+                            id="pipeline_probability{{ $deal['zoho_deal_id'] }}">
+                            {{ number_format($deal['pipeline_probability'] ?? '0', 2) }}%
+>>>>>>> a46829014c2b94da4032f6eb8b82629a94f44c87
                         </div>
                     </th>
                     <th>

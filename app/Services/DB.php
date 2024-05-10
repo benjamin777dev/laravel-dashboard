@@ -919,34 +919,33 @@ class DB
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = null)
     {
         try {
-            Log::info("Retrieve Tasks From Database");
+            Log::info("Retrieve Contacts From Database");
 
-            $tasks = Contact::where('contact_owner', $user->id)
-                ->with('groups')
-                ->when($sort, function ($query, $sort) {
-                    $query->orderBy('created_at', $sort);
-                })
-                ->when($filter, function ($query, $filter) {
+            $contacts = Contact::where('contact_owner', $user->id)
+                ->with(['groups' => function ($query) use ($filter) {
+                    if ($filter) {
+                        $query->where('groupId', $filter);
+                    }
+                }])
+                ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
                         $query->where('groupId', $filter);
                     });
                 })
+                ->when($sort, function ($query, $sort) {
+                    $query->orderBy('created_at', $sort);
+                })
                 ->get();
 
-            // Filter out contacts with empty groups arrays (optional)
-            $tasks = $tasks->filter(function ($contact) {
-                return $contact->groups->isNotEmpty();
-            });
+            Log::info("Retrieved Contacts From Database", ['contacts_count' => $contacts->count()]);
 
-            Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
-
-            return $tasks;
+            return $contacts;
         } catch (\Exception $e) {
-            Log::error("Error retrieving tasks: " . $e->getMessage());
+            Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
-
     }
+
     public function retrieveContactGroupsData(User $user, $accessToken, $filter = null, $sortType = null, $contactId, $sortValue = null, $sort = null)
     {
         try {

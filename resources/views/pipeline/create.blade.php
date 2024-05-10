@@ -398,7 +398,6 @@
     </script>
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
-            <input type="text" value="{{$deal['deal_name']}}" class="cpinput">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
                     data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
@@ -407,48 +406,7 @@
                 </div>
             </div>
         </div>
-         <div class="row">
-            <div class="col-md-8 col-sm-12 dtasksection">
-                <div class="d-flex justify-content-between">
-                    <p class="dFont800 dFont15">Tasks</p>
-                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{$deal['id']}}"><i
-                            class="fas fa-plus plusicon">
-                        </i>
-                        New Task
-                    </div>
-
-                </div>
-                <div class="row">
-                    <nav class="dtabs">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
-                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">In
-                                    Progress</button></a>
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
-                                    id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
-                                    role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/pipeline-create/{{$deal['id']}}?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Overdue'
-                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
-                                    role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
-                        </div>
-                    </nav>
-
-                     @include('common.tasks', [
-    'tasks' => $tasks,
-    'retrieveModuleData' => $retrieveModuleData,
-])
-
-                </div>
-
-            </div>
-            @include('common.notes.view', [
-    'notesInfo' => $notesInfo,
-    'retrieveModuleData' => $retrieveModuleData,
-    'module' => 'Deals',
-])
-        </div>
+         
         {{-- information form --}}
         <div class="row">
             <div class="col-md-6 col-sm-12"
@@ -531,36 +489,32 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault12" required >
+                        <select class="form-select npinputinfo" id="validationDefault12" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required value = "{{$deal['property_type']}}">
+                            <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>Residential</option>
+                            <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
+                            <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
+                            <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial</option>
+                            <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
+                        </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault13" required >
+                        <select class="form-select npinputinfo" id="validationDefault13" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required value = "{{$deal['ownership_type']}}">
+                            <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
+                            <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second Home</option>
+                            <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
+                        </select>
                     </div>
-                    <div class="col-md-6">
-                        <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Potential GCI"
-                            id="validationDefault14" required value = "{{$deal['potential_gci']}}">
-                    </div>
+                    
                     <div class="col-md-6">
                         <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
                         <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault15"
                             required value = "{{$deal['pipeline_probability']}}">
                     </div>
-                    <div class="col-md-6">
-                        <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="$ 3,045.00"
-                            id="validationDefault16" required value = "{{$deal['pipeline1']}}">
-                    </div>
+                    
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
     echo 'checked'; ?>>
@@ -953,10 +907,6 @@
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$deal['id']}}">
     <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
 </div>
-{{-- Create New Task Modal --}}
-@include('common.tasks.create', ['deal' => $deal])
-{{-- Notes Model --}}
-@include('common.notes.create', ['deal' => $deal])
     
     @vite(['resources/js/pipeline.js'])
 

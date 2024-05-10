@@ -3,10 +3,6 @@
         <thead>
             <tr class="dFont700 dFont10">
                 <th scope="col">
-
-                </th>
-
-                <th scope="col">
                     <div class="dbgcommonFlex">
                         <p class="mb-0">Name</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
@@ -69,8 +65,6 @@
         <tbody class="text-center dbgBodyTable">
             @foreach ($contacts as $contact)
                     <tr>
-                        <td> <input type="checkbox" class="rowCheckbox" /></td>
-
                         <td class="text-start">
                             @if($contact->relationship_type == 'Secondary')
                                 <i class="fa fa-caret-right"></i>

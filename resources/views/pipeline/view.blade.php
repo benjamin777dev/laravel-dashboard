@@ -427,27 +427,30 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault12" required >
+                        <select class="form-select npinputinfo" id="validationDefault12" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault12" required
-                            value = "{{ $deal['property_type'] }}">
+                            <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>Residential</option>
+                            <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
+                            <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
+                            <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial</option>
+                            <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
+                        </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
-                        {{-- <select class="form-select npinputinfo" id="validationDefault13" required >
+                        <select class="form-select npinputinfo" id="validationDefault13" required >
                             <option selected disabled value=""></option>
-                            <option>...</option>
-                        </select> --}}
-                        <input type="text" class="form-control npinputinfo" id="validationDefault13" required
-                            value = "{{ $deal['ownership_type'] }}">
+                            <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
+                            <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second Home</option>
+                            <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
+                        </select>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Potential GCI"
-                            id="validationDefault14" required value = "{{ $deal['potential_gci'] }}">
+                        <p class="form-control-plaintext npinputinfo" id="validationDefault16">
+                            {{ $deal['potential_gci'] }}
+                        </p>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
@@ -456,8 +459,9 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="$ 3,045.00"
-                            id="validationDefault16" required value = "{{ $deal['pipeline1'] }}">
+                        <p class="form-control-plaintext npinputinfo" id="validationDefault16">
+                            {{ $deal['pipeline1'] }}
+                        </p>
                     </div>
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01"

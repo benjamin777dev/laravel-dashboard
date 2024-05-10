@@ -2,9 +2,9 @@
 
 @section('title', 'Agent Commander | Groups')
 
-@section('content')
+@section('content') 
     @vite(['resources/css/custom.css'])
-    <div class="container">
+    <div class="container full-width-container">
         <div class="dbgroupsFlex">
             <p class="ngText">Database Groups</p>
             <div class="input-group-text dbNewGroups"><i class="fas fa-plus plusicon">
