@@ -284,6 +284,7 @@
                         }));
                     }
                 });
+                
                 taskSelect.show();
                 // Do whatever you want with the response data here
             },
