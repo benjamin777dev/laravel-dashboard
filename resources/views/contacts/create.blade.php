@@ -3,279 +3,289 @@
 @section('title', 'Agent Commander | Contact Create')
 
 @section('content')
-    @vite(['resources/css/custom.css'])
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-    <div class="container">
-        <div class="commonFlex">
-            <p class="ncText">Create new contact</p>
-        </div>
-        <div class="row">
-            <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="col-md-6 col-sm-12"
-                    style="display: none;padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Internal Information</p>
-                    <div class="row g-3">
-                        <div>
-                            <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
-                            <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
-                                {{-- <option selected disabled value=""></option> --}}
-                                <option value="{{ json_encode(['id' => $user_id, 'Full_Name' => $name]) }}" selected>
-                                    {{ 'CHR Technology' }}</option>
+@vite(['resources/css/custom.css'])
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+<div class="container">
+    <div class="commonFlex">
+        <p class="ncText">Create new contact</p>
+    </div>
+    <div class="row">
+        <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="col-md-6 col-sm-12"
+                style="display: none;padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Internal Information</p>
+                <div class="row g-3">
+                    <div>
+                        <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
+                        <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
+                            {{-- <option selected disabled value=""></option> --}}
+                            <option value="{{ json_encode(['id' => $user_id, 'Full_Name' => $name]) }}" selected>
+                                {{ 'CHR Technology' }}
+                            </option>
 
-                            </select>
-                        </div>
-                        <div>
-                            @php
-                                // $date = "2024-04-11 00:00:00";
-                                $lastcalled = \Carbon\Carbon::parse($contact['last_called'])->format('Y-m-d');
-                                $lastemailed = \Carbon\Carbon::parse($contact['last_emailed'])->format('Y-m-d');
-                            @endphp
-                            <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
-                            <input type="date" value="{{ $lastcalled }}" name="last_called"
-                                class="form-control npinputinfo" id="datetimeInput">
-                        </div>
-                        <div>
-                            <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
-                            <input type="date" value="{{ $lastemailed }}" name="last_emailed"
-                                class="form-control npinputinfo" id="validationDefault02">
-                        </div>
+                        </select>
+                    </div>
+                    <div>
+                        @php
+                            // $date = "2024-04-11 00:00:00";
+                            $lastcalled = \Carbon\Carbon::parse($contact['last_called'])->format('Y-m-d');
+                            $lastemailed = \Carbon\Carbon::parse($contact['last_emailed'])->format('Y-m-d');
+                        @endphp
+                        <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
+                        <input type="date" value="{{ $lastcalled }}" name="last_called" class="form-control npinputinfo"
+                            id="datetimeInput">
+                    </div>
+                    <div>
+                        <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
+                        <input type="date" value="{{ $lastemailed }}" name="last_emailed"
+                            class="form-control npinputinfo" id="validationDefault02">
+                    </div>
 
+                </div>
+            </div>
+
+            {{-- Contact Details --}}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Contact Details</p>
+                <div class="row g-3">
+                    <div>
+                        <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
+
+                        <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
+                            @foreach ($users as $user)
+                                <option
+                                    value="{{ json_encode(['id' => $user['root_user_id'], 'Full_Name' => $user['name']]) }}"
+                                    selected>
+                                    {{ $user['name']}}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault01" class="form-label nplabelText">First Name</label>
+                        <input type="text" name="first_name" value="{{ $contact['first_name'] }}"
+                            placeholder="Enter First name" class="form-control npinputinfo" id="validationDefault01">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
+                        <input type="text" value="{{ $contact['last_name'] }}" name="last_name"
+                            onkeyup="showValidation(this)" placeholder="Enter Last name"
+                            class="form-control npinputinfo" id="last_name">
+                        <div id="last_name_error_message" class="text-danger"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Mobile</label>
+                        <input type="text" value="{{ $contact['mobile'] }}" name="mobile"
+                            class="form-control npinputinfo" placeholder="Enter Mobile Number" id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Phone</label>
+                        <input type="text" value="{{ $contact['phone'] }}" name="phone" class="form-control npinputinfo"
+                            placeholder="Enter Phone Number" id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Email</label>
+                        <input type="text" value="{{ $contact['email'] }}" name="email" class="form-control npinputinfo"
+                            placeholder="Enter Email" id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Market Area</label>
+                        <input type="text" value="{{ $contact['market_area'] }}" name="market_area"
+                            class="form-control npinputinfo" placeholder="Downtown Chicago" id="validationDefault03">
                     </div>
                 </div>
-                
-                {{-- Contact Details --}}
-                <div class="col-md-6 col-sm-12"
-                    style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Contact Details</p>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="validationDefault01" class="form-label nplabelText">First Name</label>
-                            <input type="text" name="first_name" value="{{ $contact['first_name'] }}"
-                                placeholder="Enter First name" class="form-control npinputinfo" id="validationDefault01">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
-                            <input type="text" value="{{ $contact['last_name'] }}" name="last_name"
-                                onkeyup="showValidation(this)" placeholder="Enter Last name"
-                                class="form-control npinputinfo" id="last_name">
-                            <div id="last_name_error_message" class="text-danger"></div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Mobile</label>
-                            <input type="text" value="{{ $contact['mobile'] }}" name="mobile"
-                                class="form-control npinputinfo" placeholder="Enter Mobile Number"
-                                id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Phone</label>
-                            <input type="text" value="{{ $contact['phone'] }}" name="phone"
-                                class="form-control npinputinfo" placeholder="Enter Phone Number"
-                                id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                            <input type="text" value="{{ $contact['email'] }}" name="email"
-                                class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Market Area</label>
-                            <input type="text" value="{{ $contact['market_area'] }}" name="market_area"
-                                class="form-control npinputinfo" placeholder="Downtown Chicago" id="validationDefault03">
-                        </div>
+            </div>
+            {{-- Contact Preferences --}}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Contact Preferences</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="validationDefault01" class="form-label nplabelText">Relationship Type</label>
+                        <select name="relationship_type" class="form-select npinputinfo" id="validationDefault04">
+                            <option disabled value="">-None-</option>
+                            <option value="Primary" {{ $contact->relationship_type === 'Primary' ? 'selected' : '' }}>
+                                Primary</option>
+                            <option value="Secondary" {{ $contact->relationship_type === 'Secondary' ? 'selected' : '' }}>
+                                Secondary</option>
+                        </select>
                     </div>
-                </div>
-                {{-- Contact Preferences --}}
-                <div class="col-md-6 col-sm-12"
-                    style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Contact Preferences</p>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="validationDefault01" class="form-label nplabelText">Relationship Type</label>
-                            <select name="relationship_type" class="form-select npinputinfo" id="validationDefault04">
-                                <option disabled value="">-None-</option>
-                                <option value="Primary" {{ $contact->relationship_type === 'Primary' ? 'selected' : '' }}>
-                                    Primary</option>
-                                <option value="Secondary"
-                                    {{ $contact->relationship_type === 'Secondary' ? 'selected' : '' }}>
-                                    Secondary</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault02" class="form-label nplabelText">Referred By</label>
-                            <select name="reffered_by" type="text" placeholder="Louis Rinmbaud"
-                                class="form-select npinputinfo" id="validationDefault02">
-                                @php
-                                    $referred_id = $contact['referred_id'];
-                                @endphp
-                                <option value="">-None-</option>
-                                @if (!empty($contacts))
-                                    @foreach ($contacts as $contactRef)
-                                        <option
-                                            value="{{ json_encode(['id' => $contactRef['zoho_contact_id'], 'Full_Name' => $contactRef['first_name'] . ' ' . $contactRef['last_name']]) }}"
-                                            {{ $contactRef['zoho_contact_id'] == $referred_id ? 'selected' : '' }}>
-                                            {{ $contactRef['first_name'] }} {{ $contactRef['last_name'] }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
+                    <div class="col-md-6">
+                        <label for="validationDefault02" class="form-label nplabelText">Referred By</label>
+                        <select name="reffered_by" type="text" placeholder="Louis Rinmbaud"
+                            class="form-select npinputinfo" id="validationDefault02">
                             @php
-                                $leadSources = [
-                                    'Activity',
-                                    'CHR Lead',
-                                    'Class',
-                                    'Client Reviews',
-                                    'Event',
-                                    'Family',
-                                    'Farm',
-                                    'Friend',
-                                    'Networking Group',
-                                    'Office Walk In',
-                                    'Online Lead',
-                                    'Open House',
-                                    'Past Client',
-                                    'Referral Agent',
-                                    'Referral Business Partner',
-                                    'Referral Client',
-                                    'Referral - Family/Friend',
-                                    'Sign Call',
-                                    'Social Media',
-                                    'Sphere',
-                                ];
+                                $referred_id = $contact['referred_id'];
                             @endphp
-                            <label for="validationDefault03" class="form-label nplabelText">Lead Source</label>
-                            <select name="lead_source" type="text" class="form-select npinputinfo"
-                                placeholder="Peter Hunt" id="validationDefault03">
-                                <option value="">-None-</option>
-                                @foreach ($leadSources as $leadSource)
-                                    <option value="{{ $leadSource }}"
-                                        {{ $contact['Lead_Source'] == $leadSource ? 'selected' : '' }}>{{ $leadSource }}
+                            <option value="">-None-</option>
+                            @if (!empty($contacts))
+                                @foreach ($contacts as $contactRef)
+                                    <option
+                                        value="{{ json_encode(['id' => $contactRef['zoho_contact_id'], 'Full_Name' => $contactRef['first_name'] . ' ' . $contactRef['last_name']]) }}"
+                                        {{ $contactRef['zoho_contact_id'] == $referred_id ? 'selected' : '' }}>
+                                        {{ $contactRef['first_name'] }} {{ $contactRef['last_name'] }}
                                     </option>
                                 @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Lead source details</label>
-                            <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
-                                class="form-control npinputinfo" placeholder="Raoul P Associate"
-                                id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Envelope Salutation</label>
-                            <input type="text" value="{{ $contact['envelope_salutation'] }}"
-                                name="envelope_salutation" class="form-control npinputinfo" placeholder="Mr."
-                                id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-
-                            <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
-                            <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                                placeholder="Mary Long" id="validationDefault03">
-                                @php
-                                    $spause_partner = $contact['spouse_partner'];
-                                @endphp
-                                <option value="">-None-</option>
-                                @if (!empty($contacts))
-                                    @foreach ($contacts as $contactrefs)
-                                        <option
-                                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                            {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
-                                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}</option>
-                                    @endforeach
-                                @endif
-
-                            </select>
-                        </div>
+                            @endif
+                        </select>
                     </div>
-                </div>
-                {{-- Business Information --}}
-                <div class="col-md-6 col-sm-12"
-                    style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Business Information</p>
-                    <div class="row g-3">
-                        <div>
-                            <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
-                            <input type="text" value="{{ $contact['business_name'] }}" name="business_name"
-                                placeholder="Burn Co." class="form-control npinputinfo" id="validationDefault02">
-                        </div>
-                        <div>
+
+                    <div class="col-md-6">
+                        @php
+                            $leadSources = [
+                                'Activity',
+                                'CHR Lead',
+                                'Class',
+                                'Client Reviews',
+                                'Event',
+                                'Family',
+                                'Farm',
+                                'Friend',
+                                'Networking Group',
+                                'Office Walk In',
+                                'Online Lead',
+                                'Open House',
+                                'Past Client',
+                                'Referral Agent',
+                                'Referral Business Partner',
+                                'Referral Client',
+                                'Referral - Family/Friend',
+                                'Sign Call',
+                                'Social Media',
+                                'Sphere',
+                            ];
+                        @endphp
+                        <label for="validationDefault03" class="form-label nplabelText">Lead Source</label>
+                        <select name="lead_source" type="text" class="form-select npinputinfo" placeholder="Peter Hunt"
+                            id="validationDefault03">
+                            <option value="">-None-</option>
+                            @foreach ($leadSources as $leadSource)
+                                <option value="{{ $leadSource }}" {{ $contact['Lead_Source'] == $leadSource ? 'selected' : '' }}>{{ $leadSource }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Lead source details</label>
+                        <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
+                            class="form-control npinputinfo" placeholder="Raoul P Associate" id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Envelope Salutation</label>
+                        <input type="text" value="{{ $contact['envelope_salutation'] }}" name="envelope_salutation"
+                            class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+
+                        <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
+                        <select type="text" name="spouse_partner" class="form-select npinputinfo"
+                            placeholder="Mary Long" id="validationDefault03">
                             @php
-                                $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                                $spause_partner = $contact['spouse_partner'];
                             @endphp
-                            <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
-                            <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
-                                <option selected disabled value="">-None-</option>
-                                @foreach ($abcd as $abcdIndex)
-                                    <option value="{{ $abcdIndex }}"
-                                        {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>{{ $abcdIndex }}
+                            <option value="">-None-</option>
+                            @if (!empty($contacts))
+                                @foreach ($contacts as $contactrefs)
+                                    <option
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                        {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
+                                        {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
                                     </option>
                                 @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="validationDefault02" class="form-label nplabelText">Business
-                                Information{{ $contact['business_information'] }}</label>
-                            <textarea name="business_information" type="text" rows="4" class="form-control nctextarea"
-                                id="validationDefault02">{{ $contact['business_information'] }}</textarea>
-                        </div>
+                            @endif
 
+                        </select>
                     </div>
                 </div>
+            </div>
+            {{-- Business Information --}}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Business Information</p>
+                <div class="row g-3">
+                    <div>
+                        <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
+                        <input type="text" value="{{ $contact['business_name'] }}" name="business_name"
+                            placeholder="Burn Co." class="form-control npinputinfo" id="validationDefault02">
+                    </div>
+                    <div>
+                        @php
+                            $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                        @endphp
+                        <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
+                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
+                            <option selected disabled value="">-None-</option>
+                            @foreach ($abcd as $abcdIndex)
+                                <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>
+                                    {{ $abcdIndex }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="validationDefault02" class="form-label nplabelText">Business
+                            Information</label>
+                        <textarea name="business_information" type="text" rows="4" class="form-control nctextarea"
+                            id="validationDefault02">{{ $contact['business_information'] }}</textarea>
+                    </div>
 
-                {{-- Primary Contact’s Address --}}
-                <div class="col-md-6 col-sm-12"
-                    style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Primary Contact’s Address</p>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
-                            <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
-                                class="form-control npinputinfo" placeholder="22 Smith St." id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault02" class="form-label nplabelText">Address line 2</label>
-                            <input type="text" name="address_line2" placeholder="Dane Sq."
-                                class="form-control npinputinfo" id="validationDefault02">
-                        </div>
+                </div>
+            </div>
 
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">City</label>
-                            <input type="text" value="{{ $contact['mailing_city'] }}" name="city"
-                                class="form-control npinputinfo" placeholder="Enter City" id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">State</label>
-                            <input type="text" value="{{ $contact['mailing_state'] }}" name="state"
-                                class="form-control npinputinfo" placeholder="Enter State" id="validationDefault04">
-                            {{-- <select name="state" class="form-select npinputinfo" id="validationDefault04" >
+            {{-- Primary Contact’s Address --}}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Primary Contact’s Address</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
+                        <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
+                            class="form-control npinputinfo" placeholder="22 Smith St." id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault02" class="form-label nplabelText">Address line 2</label>
+                        <input type="text" name="address_line2" placeholder="Dane Sq." class="form-control npinputinfo"
+                            id="validationDefault02">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">City</label>
+                        <input type="text" value="{{ $contact['mailing_city'] }}" name="city"
+                            class="form-control npinputinfo" placeholder="Enter City" id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">State</label>
+                        <input type="text" value="{{ $contact['mailing_state'] }}" name="state"
+                            class="form-control npinputinfo" placeholder="Enter State" id="validationDefault04">
+                        {{-- <select name="state" class="form-select npinputinfo" id="validationDefault04">
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select> --}}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">ZIP code</label>
-                            <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
-                                class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                            <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
-                                class="form-control npinputinfo" placeholder="Mary Long" id="validationDefault03">
-                        </div>
-                        {{-- <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">ZIP code</label>
+                        <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
+                            class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Email</label>
+                        <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
+                            class="form-control npinputinfo" placeholder="Mary Long" id="validationDefault03">
+                    </div>
+                    {{-- <div class="col-md-6">
                         <input class="form-check-input" name="primary_address" type="checkbox" value="false"
                             id="primary_address">
                         <label class="form-check-label nplabelText" for="flexCheckChecked">
@@ -289,109 +299,58 @@
                             Secondary Address
                         </label>
                     </div> --}}
-                    </div>
                 </div>
-                <div>
-                    <button class="submit_button btn btn-primary" id="submit_button" type="button"
-                        onclick="validateContactForm()">Submit</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div>
+                <button class="submit_button btn btn-primary" id="submit_button" type="button"
+                    onclick="validateContactForm()">Submit</button>
+            </div>
+        </form>
     </div>
-    <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{$contact['id']}}">
-        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
-    </div>
+</div>
+<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
+    data-bs-target="#staticBackdropforNote_{{$contact['id']}}">
+    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+</div>
 
-    {{-- view group secton --}}
-    <div class="modal fade" id="staticBackdropforViewGroup" data-bs-backdrop="static" data-bs-keyboard="false"
-        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content noteModal">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Groups</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+{{-- view group secton --}}
+<div class="modal fade" id="staticBackdropforViewGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-content noteModal">
+            <div class="modal-header border-0">
+                <p class="modal-title dHeaderText">Groups</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body dtaskbody">
+                <p class="ddetailsText">Assign the Groups...</p>
+                <div class="checkBox-Design">
+                    <input type="checkbox" />
+                    <p class="mb-0">GroupOne</p>
+
+
                 </div>
-
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Assign the Groups...</p>
-                    <div class="checkBox-Design">
-                        <input type="checkbox" />
-                        <p class="mb-0">GroupOne</p>
-
-
-                    </div>
-                    <div id="related_to_error" class="text-danger"></div>
-                </div>
-                <div class="modal-footer dNoteFooter border-0">
-                    <button type="button" id="validate-button" onclick="validateFormc()"
-                        class="btn btn-secondary dNoteModalmarkBtn">
-                        <i class="fas fa-save saveIcon"></i> Save
-                    </button>
-                </div>
+                <div id="related_to_error" class="text-danger"></div>
+            </div>
+            <div class="modal-footer dNoteFooter border-0">
+                <button type="button" id="validate-button" onclick="validateFormc()"
+                    class="btn btn-secondary dNoteModalmarkBtn">
+                    <i class="fas fa-save saveIcon"></i> Save
+                </button>
             </div>
         </div>
     </div>
-    {{-- Note Modal --}}
-    @include('common.notes.create',['contact'=>$contact])
-    {{-- task modal --}}
-    <div class="modal fade" id="newTaskContactModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextarea();" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" onchange="selectedElement(this)" id="who_id"
-                            name="who_id" aria-label="Select Transaction">
-                            @php
-                                $encounteredIds = []; // Array to store encountered IDs
-                            @endphp
-
-                            @foreach ($getdealsTransaction as $item)
-                                @php
-                                    $contactId = $item['userData']['zoho_id'];
-                                @endphp
-
-                                {{-- Check if the current ID has been encountered before --}}
-                                @if (!in_array($contactId, $encounteredIds))
-                                    Add the current ID to the encountered IDs array
-                                    @php
-                                        $encounteredIds[] = $contactId;
-                                    @endphp
-
-                                    <option value="{{ $contactId }}"
-                                        @if (old('related_to') == $item['userData']['name']) selected @endif>
-                                        {{ $item['userData']['name'] }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                    </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addTaskforContact('{{ $contact['zoho_contact_id'] }}')"
-                        class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+</div>
+{{-- Note Modal --}}
+@include('common.notes.create', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])
+{{-- task modal --}}
+@include('common.tasks.create', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])
 
 @endsection
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('#primary_address').change(function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#primary_address').change(function () {
             if ($(this).is(':checked')) {
                 $(this).val(true);
             } else {
@@ -400,7 +359,7 @@
         });
 
         // Secondary Address Checkbox
-        $('#secondry_address').change(function() {
+        $('#secondry_address').change(function () {
             if ($(this).is(':checked')) {
                 $(this).val(true);
             } else {
@@ -482,7 +441,7 @@
         console.log(checkboxes, 'checkboxes')
         // Add event listener to checkboxes
         checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
+            checkbox.addEventListener('change', function () {
                 // Check if any checkbox is checked
                 const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
                 // Toggle delete button visibility
@@ -548,7 +507,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify(formData),
-            success: function(response) {
+            success: function (response) {
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
@@ -558,7 +517,7 @@
                     alert("Response or message not found");
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error response
                 console.error(xhr.responseText);
             }
@@ -580,7 +539,7 @@
             method: "GET",
             dataType: "json",
 
-            success: function(response) {
+            success: function (response) {
                 // Handle successful response
                 var tasks = response;
                 // Assuming you have another select element with id 'taskSelect'
@@ -588,7 +547,7 @@
                 // Clear existing options
                 taskSelect.empty();
                 // Populate select options with tasks
-                $.each(tasks, function(index, task) {
+                $.each(tasks, function (index, task) {
                     console.log(task, 'task');
                     if (selectedText === "Tasks") {
                         taskSelect.append($('<option>', {
@@ -612,7 +571,7 @@
                 taskSelect.show();
                 // Do whatever you want with the response data here
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error
                 console.error("Ajax Error:", error);
             }
@@ -633,12 +592,12 @@
             method: "GET",
             dataType: "json",
 
-            success: function(response) {
+            success: function (response) {
                 // Handle successful response
                 console.log(response);
 
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error
                 console.error("Ajax Error:", error);
             }
@@ -669,13 +628,13 @@
                 // Add CSRF token for Laravel security
                 _token: '{{ csrf_token() }}'
             },
-            success: function(response) {
+            success: function (response) {
                 if (response?.mark_as_done === 1) {
                     window.location.reload();
                 }
                 // Handle success response if needed
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error if needed
             }
         });
@@ -692,10 +651,10 @@
         document.getElementById("related_to_error").innerText = "";
 
         // Validate note text length
-        if (noteText.trim().length > 50) {
+        /* if (noteText.trim().length > 50) {
             document.getElementById("note_text_error").innerText = "Note text must be 10 characters or less";
             isValid = false;
-        }
+        } */
         // Validate note text
         if (noteText.trim() === "") {
             document.getElementById("note_text_error").innerText = "Note text is required";

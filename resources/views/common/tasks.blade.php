@@ -1,7 +1,7 @@
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>
-            <tr class="dFont700 dFont10">
+            <tr class="dFont700 dFont10 dtableHeaderTr">
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
@@ -74,47 +74,10 @@
                             </div>
                             {{-- delete Modal --}}
                             {{-- <div class="modal fade" id="deleteModalId{{$task['zoho_task_id']}}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                                        <div class="modal-content">
-                                            <div class="modal-header border-0">
-                                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                            {{-- <button type="button" class="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p class="deleteModalBodyText">Please confirm you’d
-                                                    like to<br />
-                                                    delete this item.</p>
-                                            </div>
-                                            <div class="modal-footer justify-content-evenly border-0">
-                                                <div class="d-grid gap-2 col-5">
-                                                    <button onclick="deleteTask('{{$task['zoho_task_id']}}')" type="button"
-                                                        class="btn btn-secondary deleteModalBtn"
-                                                        data-bs-dismiss="">
-                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes,
-                                                        delete
-                                                    </button>
-                                                </div>
-                                                <div class="d-grid gap-2 col-5">
-                                                    <button type="button"
-                                                        class="btn btn-primary goBackModalBtn">
-                                                        <i class="fas fa-arrow-left goBackIcon"></i>
-                                                        No, go back
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div> --}}
-                            {{-- </div>  --}}
-                            {{-- delete Modal --}}
-                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
-                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            {{-- <h5 class="modal-title">Modal title</h5> 
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -126,8 +89,7 @@
                                         </div>
                                         <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
                                             <div class="d-grid gap-2 col-5">
-                                                <button type="button"
-                                                    onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                     class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
                                                     <i class="fas fa-trash-alt trashIcon"></i> Yes,
                                                     delete
@@ -136,8 +98,8 @@
                                             <div class="d-grid gap-2 col-5">
                                                 <button type="button" data-bs-dismiss="modal"
                                                     class="btn btn-primary goBackModalBtn">
-                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
-                                                        data-bs-dismiss="modal" alt="R">No,
+                                                    <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal"
+                                                        alt="R">No,
                                                     go
                                                     back
                                                 </button>
@@ -152,7 +114,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
                                             {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -172,7 +134,7 @@
 
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
@@ -222,7 +184,7 @@
                     <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
                         onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableTextCard{{ $task['id'] }}')">
                         {{ $task['subject'] ?? 'N/A' }}
-                        {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
+                       
                     </p>
                     <div class="btn-group dcardsselectdiv">
                         <p class="dcardsTransactionText">Transaction Related</p>
@@ -244,8 +206,7 @@
                         </select>
                         <select class="form-select dmodaltaskSelect" id="taskSelectcard{{ $task['id'] }}"
                             onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                            style="display: none;">
+                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction" style="display: none;">
                             <option value="">Please Select</option>
                         </select>
                     </div>
@@ -258,10 +219,8 @@
                     </div>
                 </div>
                 <div class="dcardsbtnsDiv">
-                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
-                        data-bs-toggle="modal"
-                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
-                        data-bs-target="#saveModalId">
+                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon" data-bs-toggle="modal"
+                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
                         <i class="fas fa-hdd plusicon"></i>
                         Save
                     </div>
@@ -279,20 +238,21 @@
             </div>
         @endif
     </div>
-    @if (count($tasks) > 0)
-        <div class="dpagination">
-            <div onclick="deleteTask('{{ $task['zoho_task_id'] }}',true)"
-                class="input-group-text text-white justify-content-center removebtn dFont400 dFont13" id="removeBtn">
-                <i class="fas fa-trash-alt plusicon"></i>
-                Remove Selected
-            </div>
-            @include('common.pagination', ['module' => $tasks])
+</div>
+@if (count($tasks) > 0)
+    <div class="dpagination">
+        <div onclick="deleteTask('{{ $task['zoho_task_id'] }}',true)"
+            class="input-group-text text-white justify-content-center removebtn dFont400 dFont13" id="removeBtn">
+            <i class="fas fa-trash-alt plusicon"></i>
+            Delete Selected
         </div>
-    @endif
+        @include('common.pagination', ['module' => $tasks])
+    </div>
+@endif
 </div>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'taskbladetab is here')
         localStorage.setItem('status', defaultTab);
@@ -322,7 +282,7 @@
         // Remove active class from all tabs
         var tabs = document.querySelectorAll('.nav-link');
         console.log(tabs, 'tabssss')
-        tabs.forEach(function(tab) {
+        tabs.forEach(function (tab) {
             tab.classList.remove('active');
         });
 
@@ -367,7 +327,7 @@
 
         // Change the flag to indicate that it's no longer the first click
         isFirstClick = false;
-        selectElement.addEventListener('change', function() {
+        selectElement.addEventListener('change', function () {
             // Remove the onclick attribute 
             selectElement.removeAttribute("onclick");
             // Set the onchange attribute to call moduleSelected function passing this as a parameter
@@ -379,12 +339,12 @@
     function testFun(id, textfield, zohoID) {
         if (textfield === "deals") {
             var related_to_rem = document.getElementsByName("related_to_rem" + id)[0].value;
-            if(!related_to_rem){
+            if (!related_to_rem) {
                 var related_to_rem1 = document.getElementsByName("related_to_rem" + id)[1].value;
                 related_to_rem = related_to_rem1;
             }
             var WhatSelectoneid = document.getElementsByName("related_to_parent" + id)[0].value;
-            if(!WhatSelectoneid){
+            if (!WhatSelectoneid) {
                 var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
                 WhatSelectoneid = WhatSelectoneid1;
             }
@@ -405,7 +365,7 @@
 
             let inputElementmake = document.getElementById('editableInput' + textid + id);
             inputElementmake.focus();
-            inputElementmake.addEventListener('change', function() {
+            inputElementmake.addEventListener('change', function () {
                 textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
                     inputElementmake.value + '</p>';
                 updateText(inputElementmake.value, textfield, zohoID);
@@ -464,7 +424,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify(formData),
-            success: function(response) {
+            success: function (response) {
                 // Handle success response
                 if (response?.data[0]?.status == "success") {
                     if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
@@ -478,7 +438,7 @@
 
                 }
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error response
                 showToastError(error);
                 console.error(xhr.responseText, 'errrorroororooro');
@@ -499,7 +459,7 @@
             url: '/task/get-' + selectedText,
             method: "GET",
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 console.log(response, 'resoponse')
                 // Handle successful response
                 var tasks = response;
@@ -507,24 +467,24 @@
                 // Assuming you have another select element with id 'taskSelect'
                 var taskSelectid = ""; // Initialize id variable
                 if ($(window).innerWidth() <= 767) {
-                     taskSelect = $("#taskSelect"+id);
+                    taskSelect = $("#taskSelect" + id);
                     taskSelect.removeAttr('id');
-                    taskSelectcard = $("#taskSelectcard"+id);
+                    taskSelectcard = $("#taskSelectcard" + id);
                     taskSelect = taskSelectcard;
-                    console.log(taskSelect,'taskSelect'+id)
+                    console.log(taskSelect, 'taskSelect' + id)
 
                 } else {
-                    taskSelectcard = $("#taskSelectcard"+id);
-                    console.log(taskSelectcard,'taskSelectcard')
+                    taskSelectcard = $("#taskSelectcard" + id);
+                    console.log(taskSelectcard, 'taskSelectcard')
                     taskSelectcard.removeAttr('id');
-                    taskSelect = $("#taskSelect"+id);
+                    taskSelect = $("#taskSelect" + id);
                     taskSelect = taskSelect;
-                    console.log(taskSelect,'taskSelect')
+                    console.log(taskSelect, 'taskSelect')
                 }
                 // Clear existing options
                 taskSelect.empty();
                 // Populate select options with tasks
-                $.each(tasks, function(index, task) {
+                $.each(tasks, function (index, task) {
                     if (selectedText === "Tasks") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_task_id,
@@ -550,7 +510,7 @@
                 taskSelect.next(".select2-container").addClass("form-select");
                 // Do whatever you want with the response data here
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 // Handle error
                 console.error("Ajax Error:", error);
             }

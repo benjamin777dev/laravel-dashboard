@@ -165,7 +165,10 @@
     background-color: #6f6f6f !important;
 }
 
-
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #4f4f4f !important;
+}
 
 .dnotesUl {
     max-height: 325px;
@@ -211,9 +214,9 @@
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
     color: #fff;
-    background-color: #3B3B3B;
 }
-.dtabsbtn:hover{
+
+.dtabsbtn:hover {
     color: #fff;
 }
 
@@ -318,13 +321,7 @@
     align-items: center;
     margin-bottom: 24px;
 }
-.pdealName{
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.paddressName{
- font-size: 12px;
-}
+
 .notesAsignedText {
     color: #222;
     font-family: Avenir;
@@ -385,16 +382,6 @@
     outline: none;
 }
 
-.select2-container--default .select2-selection--single {
-   border: none !important;
-
-}
-.select2-container--open .select2-dropdown--below {
-   font-size: 12px !important;
-}
-.select2-selection__arrow{
-    display: none !important;
-}
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
@@ -806,7 +793,7 @@
         font-weight: 800;
         line-height: 17px;
     }
-   
+
     .porText {
         text-align: center;
     }
@@ -973,6 +960,9 @@
     color: #fff;
 }
 
+.database-filter-div{
+    margin-inline: 0;
+}
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1677,7 +1667,7 @@
 
 /* / database component / */
 .dataCardDiv {
-    min-height: 245px;
+    min-height: 260px;
     cursor: pointer;
 }
 
@@ -1718,6 +1708,7 @@
     position: absolute;
     right: 0px;
     border-radius: 4px;
+    top: 0;
 }
 
 .dataPhoneDiv,
@@ -2314,37 +2305,4 @@ body[data-sidebar="dark"] .vertical-menu {
 
 body[data-sidebar="dark"] .navbar-brand-box {
     background: #000;
-}
-.ts-control{
-    border: none !important;
-    padding: 0 !important;
-}
-.custom-save-button{
-    background-color: #222;
-}
-.btnTaskSelects{
-    display: flex;
-    gap: 10px;
-    width: 100%;
-}
-.dealTaskSelect{
-    width: auto;
-}
-.select2-container{
-    width: 106px;
-}
-.noteCardForContact{
-    background-color: #dfdfdf;
-    padding: 12px;
-    border-radius: 12px;
-
-}
-@media (max-width: 992px) {
-    .vertical-menu {
-        display: none;
-    }
-
-    .vertical-menu.show {
-        display: block;
-    }
 }

@@ -12,7 +12,7 @@
                 Add Group
             </div>
         </div>
-        <div class="row" style="gap: 24px">
+        {{-- <div class="row" style="gap: 24px">
             <div class="col-md-6 col-sm-12 dbgSelectDiv">
                 <div class="dropdown gdropdown-div dbgSelectinfo">
                     <div class="dropdown-toggle gdropdown-select " type="button" id="dropdownMenuButton1"
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <div class="table-responsive dbgTable">
             <table class="table dbgHeaderTable">
                 <thead>
@@ -361,7 +361,7 @@
                     success: function(response) {
                         // Handle successful API response
                         // if (response?.status == "success") {
-                        window.location.href = '/group';
+                        // window.location.href = '/group';
                         // }
                     },
                     error: function(xhr, status, error) {

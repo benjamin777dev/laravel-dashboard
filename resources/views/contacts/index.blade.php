@@ -788,6 +788,7 @@
             error: function(xhr, status, error) {
                if(xhr?.responseJSON?.status===401){
                    showToastError(xhr?.responseJSON?.error);
+
                }
                 // Handle error response
 

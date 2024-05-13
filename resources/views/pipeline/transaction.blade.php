@@ -1,190 +1,221 @@
 <div class="table-responsive">
-    <div class="npcontactsTable">
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Transaction</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon"
-                    id="pipelineSort" onclick="toggleSort('deal_name')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Client Name</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('client_name_primary')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Status </p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Status icon" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('stage')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex" style="width: 75px;">
-                <p class="mb-0">Rep</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Rep icon" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('representing')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Price</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Price icon" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('sale_price')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Close Date</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Close icon" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('closing_date')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Commission</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('commission')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Potential GCI</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('potential_gci')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Probability</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability" class="ppiplineSwapIcon"
-                    id="pipelineSort" onclick="toggleSort('probability')">
-            </div>
-        </div>
-        <div>
-            <div class="commonFlex">
-                <p class="mb-0">Probable GCI</p>
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI" class="ppiplineSwapIcon"
-                    id="pipelineSort">
-            </div>
-        </div>
-        <div></div>
-    </div>
-    <div class="psearchandsort">
-        @if (count($deals) > 0)
-            @foreach ($deals as $deal)
-                <div class="npcontactsBody">
-                    <div class="commonTextEllipsis">
-                        <p class="pdealName" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')"
-                            id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</p>
-                        <p class="paddressName" onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','address','{{$deal['id']}}')"
-                            id="address{{ $deal['zoho_deal_id'] }}">{{ $deal['address'] ?? '' }}</p>
-                    </div>
-                    <div class="commonTextEllipsis"
-                        onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{$deal['id']}}')"
-                        id="client_name_primary{{ $deal['zoho_deal_id'] }}">{{ $deal->client_name_primary ?? 'N/A' }}</div>
-                    <div>
-                        <div class="commonFlex pipelinestatusdiv">
-                            <select class="form-select pstatusText"
-                                style="background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
-                                id="stage{{ $deal['zoho_deal_id'] }}" required
-                                onchange="updateDealData('stage','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
-                                @foreach($allstages as $stage)
-                                    <option value="{{$stage}}" {{$deal['stage'] == $stage ? 'selected' : ''}}>{{$stage}}</option>
-                                @endforeach 
-                            </select>
+    {{-- <div class="npcontactsTable"> --}}
+        <table style="width: 100%">
+            <thead>
+                <tr class="npcontacts-Table">
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Transaction</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
+                                alt="Transaction icon" id="pipelineSort" onclick="toggleSort('deal_name')">
                         </div>
-                    </div>
-                    <div class="" style="width: 75px;">
-                        <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}" required
-                            onchange="updateDealData('representing','{{$deal['id']}}','{{ $deal['zoho_deal_id'] }}',this.value)">
-                            <option value="Buyer" {{$deal['representing'] == 'Buyer' ? 'selected' : ''}}>Buyer</option>
-                            <option value="Seller" {{$deal['representing'] == 'Seller' ? 'selected' : ''}}>Seller</option>
-                        </select>
-                    </div>
-                    <div class="commonTextEllipsis"
-                        onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{$deal['id']}}')"
-                        id="sale_price{{ $deal['zoho_deal_id'] }}">$
-                        {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}
-                    </div>
-                    <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}',null,'{{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}')"
-                        id="closing_date{{ $deal['zoho_deal_id'] }}">
-                        {{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}
-                    </div>
-                    <div>
-                        <div class="commonTextEllipsis"
-                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{$deal['id']}}')"
-                            id="commission{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['commission'] ?? '0', 2) }}%</div>
-                    </div>
-                    <div>
-                        <div class="commonTextEllipsis"
-                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','potential_gci','{{$deal['id']}}')"
-                            id="potential_gci{{ $deal['zoho_deal_id'] }}">
-                            ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}</div>
-                    </div>
-                    <div>
-                        <div class="commonTextEllipsis"
-                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','pipeline_probability','{{$deal['id']}}')"
-                            id="pipeline_probability{{ $deal['zoho_deal_id'] }}">
-                            {{ number_format($deal['pipeline_probability'] ?? '0', 2) }}%
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Client Name</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('client_name_primary')">
                         </div>
-                    </div>
-                    <div>
-                        <div class="commonTextEllipsis">
-                            ${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0) / 100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Status </p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Status icon"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('stage')">
                         </div>
-                    </div>
-                    <div>
-                        <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                            <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon">
-                        </a>
-                        <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                            data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
-                        <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                            data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}">
-                        <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
-                            data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
-                    </div>
-                </div>
-                {{-- Create New Task Modal --}}
-                @include('common.tasks.create', ['deal' => $deal])
-                {{-- Notes Modal --}}
-                @include('common.notes.create', ['deal' => $deal])
-                {{-- Update Notification--}}
-                <div class="modal fade" id="savemakeModalId{{ $deal['zoho_deal_id'] }}" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                        <div class="modal-content">
-                            <div class="modal-header saveModalHeaderDiv border-0">
-                                {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body saveModalBodyDiv">
-                                <p class="saveModalBodyText" id="updated_message_make">
-                                    Changes have been saved</p>
-                            </div>
-                            <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                <div class="d-grid col-12">
-                                    <button type="button" class="btn btn-secondary saveModalBtn" data-bs-dismiss="modal">
-                                        <i class="fas fa-check trashIcon"></i>
-                                        Understood
-                                    </button>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Rep</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Rep icon" class="ppiplineSwapIcon"
+                                id="pipelineSort" onclick="toggleSort('representing')">
+                        </div>
+                    </th>
+
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Price</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Price icon"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('sale_price')">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Close Date</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Close icon"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Commission</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Potential GCI</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Probability</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
+                        </div>
+                    </th>
+                    <th>
+                        <div class="commonFlex">
+                            <p class="mb-0">Probable GCI</p>
+                            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI"
+                                class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
+                        </div>
+                    </th>
+                    <th>
+                        <div></div>
+                    </th>
+            </thead>
+            <div class="psearchandsort">
+                @if (count($deals) > 0)
+                    @foreach ($deals as $deal)
+                        {{-- <div class="npcontactsBody"> --}}
+                            <tbody>
+                                <tr class="npcontacts-Body">
+                                    <td class="commonTextEllipsis">
+                                        <p class="pdealName"
+                                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{$deal['id']}}')"
+                                            id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</p>
+                                        <p class="paddressName"
+                                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','address','{{$deal['id']}}')"
+                                            id="address{{ $deal['zoho_deal_id'] }}">{{ $deal['address'] ?? '' }}</p>
+                                    </td>
+                                    <td class="commonTextEllipsis"
+                                        onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{ $deal['id'] }}')"
+                                        id="client_name_primary{{ $deal['zoho_deal_id'] }}">
+                                        {{ $deal->client_name_primary ?? 'N/A' }}
+                                    </td>
+                                    <td>
+                                        <div class="commonFlex pipelinestatusdiv">
+                                            <select class="form-select pstatusText"
+                                                style="background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
+                                                id="stage{{ $deal['zoho_deal_id'] }}" required
+                                                onchange="updateDealData('stage','{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                                                @foreach ($allstages as $stage)
+                                                    <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
+                                                        {{ $stage }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select npinputinfo" id="representing{{ $deal['zoho_deal_id'] }}"
+                                            required
+                                            onchange="updateDealData('representing','{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                                            <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>
+                                                Buyer
+                                            </option>
+                                            <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>
+                                                Seller
+                                            </option>
+                                        </select>
+                                    </td>
+
+                                    <td class="commonTextEllipsis"
+                                        onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','sale_price','{{ $deal['id'] }}')"
+                                        id="sale_price{{ $deal['zoho_deal_id'] }}">$
+                                        {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}
+                                    </td>
+                                    <td onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{ $deal['id'] }}')"
+                                        id="closing_date{{ $deal['zoho_deal_id'] }}">
+                                        {{ \Carbon\Carbon::parse($deal['closing_date'])->format('m/d/Y') ?? 'N/A' }}
+                                    </td>
+                                    <td>
+                                        <div class="commonTextEllipsis"
+                                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{ $deal['id'] }}')"
+                                            id="commission{{ $deal['zoho_deal_id'] }}">
+                                            {{ number_format($deal['commission'] ?? '0', 2) }}%
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="commonTextEllipsis">
+                                            ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="commonTextEllipsis"
+                                            onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','pipeline_probability','{{ $deal['id'] }}')"
+                                            id="pipeline_probability{{ $deal['zoho_deal_id'] }}">
+                                            {{ number_format($deal['pipeline_probability'] ?? '0', 2) }}%
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="commonTextEllipsis">
+                                            ${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0) / 100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                            <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
+                                                class="ppiplinecommonIcon">
+                                        </a>
+                                        <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon"
+                                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                                            data-bs-target="#newTaskModalId{{ $deal['id'] }}">
+                                        <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon"
+                                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                                            data-bs-target="#newTaskModalId{{ $deal['id'] }}">
+                                        <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
+                                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                                            data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+                                    </td>
+                                    {{--
+                        </div> --}}
+                        {{-- Create New Task Modal --}}
+                        @include('common.tasks.create', ['deal' => $deal, 'type' => 'Deals'])
+                        {{-- Notes Modal --}}
+                        @include('common.notes.create', ['deal' => $deal, 'type' => 'Deals'])
+                        {{-- Update Notification --}}
+                        <div class="modal fade" id="savemakeModalId{{ $deal['zoho_deal_id'] }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered deleteModal">
+                                <div class="modal-content">
+                                    <div class="modal-header saveModalHeaderDiv border-0">
+                                        {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body saveModalBodyDiv">
+                                        <p class="saveModalBodyText" id="updated_message_make">
+                                            Changes have been saved</p>
+                                    </div>
+                                    <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                        <div class="d-grid col-12">
+                                            <button type="button" class="btn btn-secondary saveModalBtn"
+                                                data-bs-dismiss="modal">
+                                                <i class="fas fa-check trashIcon"></i>
+                                                Understood
+                                            </button>
+                                        </div>
+
+                                    </div>
+
                                 </div>
-
                             </div>
-
                         </div>
+                        </tr>
+                        </tbody>
+                    @endforeach
+                @else
+                    <div class="pnofound">
+                        <p>No records found</p>
                     </div>
-                </div>
-            @endforeach
-
-        @else
-            <div class="pnofound">
-                <p>No records found</p>
+                @endif
             </div>
-        @endif
+        </table>
     </div>
+
     <div class="ptableCardDiv">
         @if (count($deals) > 0)
             @foreach ($deals as $deal)
@@ -209,7 +240,7 @@
                         </div>
                         <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{$deal['id']}}','card','{{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}')"
                             id="card_closing_date{{ $deal['zoho_deal_id'] }}">
-                            {{ \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') ?? 'N/A' }}
+                            {{ \Carbon\Carbon::parse($deal['closing_date'])->format('m/d/Y') ?? 'N/A' }}
                         </div>
                     </div>
                     <div class="" style="width: 75px;">
@@ -237,8 +268,7 @@
                         <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{$deal['id']}}','card')"
                             id="card_commission{{ $deal['zoho_deal_id'] }}">{{ number_format($deal['commission'] ?? '0', 2) }}%
                         </div>
-                        <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','potential_gci','{{$deal['id']}}','card')"
-                            id="card_potential_gci{{ $deal['zoho_deal_id'] }}">
+                        <div>
                             ${{ number_format($deal['potential_gci'] ?? '0', 0, '.', ',') }}</div>
                     </div>
 
@@ -307,7 +337,8 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.contactData?.zoho_contact_id,
-                            text: task?.contactData?.first_name + ' ' + task?.contactData?.last_name
+                            text: task?.contactData?.first_name + ' ' + task
+                                ?.contactData?.last_name
                         }));
                     }
                 });

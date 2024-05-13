@@ -23,25 +23,26 @@
             </div>
         </div>
     </div>
+
     <div class="pipeline-cards-container">
-        <div class="alert alert-secondary text-center">
-            <strong>Sales Volume</strong><br>
+        <div class="progressCardsContainer">
+            <p class="proCardsText">Sales Volume</p>
             ${{ number_format($totalSalesVolume, 0, '.', ',') }}
         </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Avg Commission</strong><br>
+        <div class="progressCardsContainer">
+            <p class="proCardsText">Avg Commission</p>
             {{ number_format($averageCommission, 2) }}%
         </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Potential GCI</strong><br>
+        <div class="progressCardsContainer">
+            <p class="proCardsText">Potential GCI</p>
             ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
         </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Avg Probability</strong><br>
+        <div class="progressCardsContainer">
+            <p class="proCardsText">Avg Probability</p>
             {{ number_format($averageProbability, 2) }}%
         </div>
-        <div class="alert alert-secondary text-center">
-            <strong>Probable GCI</strong><br>
+        <div class="progressCardsContainer">
+            <p class="proCardsText">Probable GCI</p>
             ${{ number_format($totalProbableGCI, 0, '.', ',') }}
         </div>
 
@@ -56,13 +57,14 @@
         <div class="psortingFilterDiv">
             <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                 aria-label="Select Transaction" onchange="fetchDeal()">
-                <option value="">Please select one</option>
+                <option value="">Sort Pipelines by...</option>
                 @foreach ($allstages as $item)
                     <option value="{{ $item }}">{{ $item }}</option>
                 @endforeach
             </select>
             {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
-            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon"> --}}
+            <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
+            --}}
         </div>
         <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
             Filter
@@ -70,11 +72,9 @@
 
     </div>
 
-</div>
-
-<div class="transaction-container">
-    @include('pipeline.transaction')
-</div>
+    <div class="transaction-container">
+        @include('pipeline.transaction')
+    </div>
 </div>
 @vite(['resources/js/pipeline.js'])
 
