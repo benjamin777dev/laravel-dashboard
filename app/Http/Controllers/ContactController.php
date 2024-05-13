@@ -63,7 +63,45 @@ class ContactController extends Controller
         $zoho->access_token = $accessToken;
         $frontData = $request->all();
         if(!empty($frontData['data'])){
+            $first_name;
+            $last_name;
             $contactInstanceforJson = Contact::where('zoho_contact_id', $id)->first();
+            if(isset($frontData['data'][0]['First_Name'])){
+            if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
+                $parts = explode(' ', $frontData['data'][0]['First_Name']);
+                if (count($parts) == 2) {
+                $first_name = $parts[0];
+                // The last part will be the last name
+                $last_name = end($parts);
+                $frontData['data'][0]['First_Name'] = $first_name;
+                $frontData['data'][0]['Last_Name'] = $last_name;
+                }else{
+                    return response()->json(['error' => 'Use Only One Space','status'=>401], 500);
+                }
+            }
+        }
+        $mobile;
+        if(isset($frontData['data'][0]['Mobile'])){
+                $mobile = $frontData['data'][0]['Mobile'];
+                if (!ctype_digit($mobile)) {
+                    // If mobile contains non-numeric characters, return an error
+                    return response()->json(['error' => 'Mobile must contain only numbers','status'=>401], 500);
+                }
+            }
+                $validEmail;
+                if(isset($frontData['data'][0]['Email'])){
+              
+                    $email = $frontData['data'][0]['Email'];
+                    
+                    // Validate email address
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        // Email is valid, assign it to the contact instance
+                        $validEmail = $email;
+                    } else {
+                        // Email is not valid, handle the error (return an error response, log it, etc.)
+                        return response()->json(['error' => 'Invalid email address','status'=>401], 500);
+                    }
+                }
             $responseFromZoho = $zoho->createContactData($frontData,$id);
             if (!$responseFromZoho->successful()) {
                 Log::error("Error creating contacts:");
@@ -77,15 +115,18 @@ class ContactController extends Controller
                 $createdByName = $data['details']['Created_By']['name'];
                 $createdById = $data['details']['Created_By']['id'];
                 $contactInstanceforJson->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
-                if(!empty($frontData['data'][0]['First_Name'])){
-                    $contactInstanceforJson->first_name = $frontData['data'][0]['First_Name'] ?? null;
+                if(!empty($first_name)){
+                    $contactInstanceforJson->first_name = $first_name ?? null;
                 }
-                if(!empty($frontData['data'][0]['Mobile'])){
-                    $contactInstanceforJson->mobile =  $frontData['data'][0]['Mobile']  ?? null;
+                if(!empty($last_name)){
+                    $contactInstanceforJson->last_name = $last_name ?? null;
+                }
+                if(!empty($mobile)){
+                    $contactInstanceforJson->mobile =  $mobile  ?? null;
 
                 }
-                if(!empty($frontData['data'][0]['Email'])){
-                    $contactInstanceforJson->email = $frontData['data'][0]['Email'] ?? null;
+                if(!empty($validEmai)){
+                    $contactInstanceforJson->email = $validEmail ?? null;
 
                 }
                 $contactInstanceforJson->zoho_contact_id =$id ?? null;

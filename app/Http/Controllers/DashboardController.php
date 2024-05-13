@@ -590,19 +590,22 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
+
         Log::info("JSON TASK INPUT".json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
+        $task = Task::where('id', $id)->first();
         try {
-                $response = $zoho->updateTask($jsonData,$id);
+                $response = $zoho->updateTask($jsonData,$task['zoho_task_id']);
                 if (!$response->successful()) {
-                    return "error somthing".$response;
+                      return "error".$response;
                 }
-                $task = Task::where('zoho_task_id', $id)->first();
-                $requestData = json_decode($request->getContent(), true);
-                $data = $requestData['data'][0];
-                $subject = $requestData['data'][0]['Subject'] ?? null;
-                $dueDate = $requestData['data'][0]['Due_Date'] ?? null;
+                $requestData = $request->json()->all(); // Get JSON data from request
+                $data = $requestData['data'][0]; // Access the 'data' array
+                $subject = $data['Subject'] ?? null; // Get 'Subject' from data
+                $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
+                $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
+                $seModule = $data['$se_module'] ?? null;
                 if($task){
                     if($dueDate !== null){
                         $task->due_date = $dueDate ?? $task->due_date;
@@ -610,15 +613,21 @@ class DashboardController extends Controller
                     if($subject !== null){
                         $task->subject = $subject;
                     }
+                    if($whatId!==null){
+                        $task->what_id = $whatId;
+                    }
+                    if($seModule!==null){
+                        $task->related_to = $seModule;
+                    }
                     $task->status=$status ?? $task->status;
                     $task->save();
                 }
 
-                Log::info("Successful notes update... ".$response);
+                Log::info("Successful task update... ".$response);
                 return $response;
             } catch (\Exception $e) {
-                Log::error("Error creating notes: " . $e->getMessage());
-                return "somthing went wrong".$e->getMessage();
+                Log::error("Error creating task: " . $e->getMessage());
+                return  $e->getMessage();
             }
 
     }

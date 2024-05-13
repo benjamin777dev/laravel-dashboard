@@ -97,8 +97,8 @@
                             <div class="card dataCardDiv">
                                 <div class="card-body dacBodyDiv">
                                     <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <div class="d-flex gap-2" style="max-width: 83%;"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name')">
+                                        <div class="d-flex gap-2" 
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name','{{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}')">
                                             <h5 class="card-title" id="first_name{{ $contact['zoho_contact_id'] }}">
                                                 {{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}</h5>
                                         </div>
@@ -111,7 +111,7 @@
                                             class="dataphoneicon">
 
                                         <div class="d-flex gap-2"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile')">
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile','{{ $contact['mobile'] ?? 'N/A' }}')">
                                             <p id="mobile{{ $contact['zoho_contact_id'] }}" class="card-text">
                                                 {{ $contact['mobile'] ?? 'N/A' }}</p>
                                         </div>
@@ -120,7 +120,7 @@
                                         <img src="{{ URL::asset('/images/mail.svg') }}" alt=""
                                             class="datamailicon">
                                         <div class="d-flex gap-2 overflow-hidden"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','email')">
+                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','email','{{ $contact['email'] ?? 'N/A' }}')">
                                             <p id="email{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
                                                 {{ $contact['email'] ?? 'N/A' }}</p>
 
@@ -251,6 +251,7 @@
     </div>
 
 @endsection
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
     window.onload = function() {
         @foreach ($contacts as $contact)
@@ -372,15 +373,14 @@
                 let noteContainer = $("#notesContainer");
                 console.log(noteContainer, 'noteContainer')
                 // Clear previous contents of note containe
-                // noteContainer.empty();
+                noteContainer.empty();
                 // Loop through each note in the response array
                 response?.forEach(function(note) {
-                    console.log(note,'note')
+                    // console.log(note, 'note')
                     // Create HTML to display note content and creation time
-                    let data = `<div class="note">
-                        <h1 id="${note.id}">Note ID: ${note.id}</h1>
-                        <p>Note Content: ${note.note_content}</p>
-                        <p>Created Time: ${note.created_time}</p>
+                    let data = `<div class="noteCardForContact">
+                        <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
+                        <p>Note Content: ${note?.note_content}</p>
                     </div>`;
                     // Append the HTML to noteContainer
                     noteContainer.append(data);
@@ -393,6 +393,7 @@
             },
             error: function(xhr, status, error) {
                 // Handle error
+                showToastError(error);
                 console.error("Ajax Error:", error);
             }
         });
@@ -698,16 +699,17 @@
         })
     }
 
-    function editText(zohoID, name) {
+    function editText(zohoID, name, value) {
         event.preventDefault();
         let firstNameElement = document.getElementById(name + zohoID);
         var text = firstNameElement.textContent.trim();
+        text === "" ? text = value : text;
         firstNameElement.innerHTML =
-            '<input type="text" class="inputDesign" onclick="event.preventDefault(),textUpdate(' + name + zohoID +
-            ')" id="edit' + name + zohoID +
-            '" value="' + text + '" />';
+            '<input type="text" class="inputDesign" id="edit' + name + zohoID +
+            '" value="' + value + '" >';
         let inputElementmake = document.getElementById('edit' + name + zohoID);
         inputElementmake.focus();
+        inputElementmake.selectionStart = firstNameElement.selectionEnd = text.length;
         inputElementmake.addEventListener('change', function() {
             firstNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
                 .value + '</h5>';
@@ -721,10 +723,6 @@
         });
     }
 
-    function textUpdate(name){
-        console.log(name,'sdhfjksjkdfhskdhf');
-    }
-
     function formatSentence(sentence) {
         // Convert the first character to uppercase and the rest to lowercase
         return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
@@ -732,7 +730,6 @@
 
     function updateContact(zohoID, name) {
         let elementId = document.getElementById(name + zohoID);
-        console.log(name, 'eleme');
         let formData = {
             "data": [{
                 "Missing_ABCD": true,
@@ -789,8 +786,10 @@
                 }
             },
             error: function(xhr, status, error) {
+               if(xhr?.responseJSON?.status===401){
+                   showToastError(xhr?.responseJSON?.error);
+               }
                 // Handle error response
-                console.error(xhr.responseText, 'errrorroororooro');
 
 
             }

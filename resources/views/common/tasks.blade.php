@@ -173,7 +173,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal fade" id="savemakeModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
@@ -388,7 +388,8 @@
                 var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
                 WhatSelectoneid = WhatSelectoneid1;
             }
-            updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
+
+            updateText(related_to_rem, textfield, id, WhatSelectoneid);
         }
     }
 
@@ -449,7 +450,7 @@
                 "What_Id": WhatSelectoneid ? {
                     "id": WhatSelectoneid
                 } : undefined,
-                "$se_module": textfield === "deals" ? newText : undefined
+                "$se_module": textfield === "deals" ? newText : undefined,
             }]
         };
         // Filter out undefined values
@@ -479,6 +480,7 @@
             },
             error: function(xhr, status, error) {
                 // Handle error response
+                showToastError(error);
                 console.error(xhr.responseText, 'errrorroororooro');
             }
         })
