@@ -621,7 +621,7 @@ class DashboardController extends Controller
         try {
             $response = $zoho->updateTask($jsonData, $id);
             if (!$response->successful()) {
-                return "error somthing" . $response;
+                return response()->json(['error' => $response->getMessage()], 500);
             }
             $task = Task::where('zoho_task_id', $id)->first();
             $requestData = json_decode($request->getContent(), true);

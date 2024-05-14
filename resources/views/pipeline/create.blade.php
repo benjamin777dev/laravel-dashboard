@@ -400,7 +400,7 @@
         <div class="commonFlex ppipeDiv">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
+                    data-bs-toggle="modal" onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
                     <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
                     Save
                 </div>
@@ -1073,7 +1073,7 @@
                 })
             } --}}
 
-           window.updateDataDeal = function(dealId) {
+            window.updateDataDeal = function(dealId) {
                 console.log(dealId);
                 // Retrieve values from form fields
                 var client_name_primary = $('#validationDefault01').val();
@@ -1147,12 +1147,6 @@
                     }
                 })
             }
-
-
-        
-        
-
-
     </script>
 @section('pipelineScript')
 
