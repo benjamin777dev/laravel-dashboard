@@ -212,7 +212,7 @@ class DB
             // Update or create the deal
             Task::updateOrCreate(['zoho_task_id' => $task['id']], [
                 "closed_time" => isset($task['Closed_Time']) ? $helper->convertToUTC($task['Closed_Time']) : null,
-                "who_id" => isset($contact['id']) ? $contact['id'] : null,
+                "who_id" => isset($task['Who_id']) ? $task['Who_id']['id'] : null,
                 "created_by" => isset($contact['id']) ? $contact['id'] : null,
                 "description" => isset($task['Description']) ? $task['Description'] : null,
                 "due_date" => isset($task['Due_Date']) ? $helper->convertToUTC($task['Due_Date']) : null,
@@ -320,7 +320,11 @@ class DB
             if ($dateFilter && $dateFilter != '') {
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
-                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek]);
+                $startOfNext30Days  = Carbon::now()->startOfDay();
+                $endOfNext30Days  = Carbon::now()->addDays(30)->endOfDay();
+                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek])->orWhere(function($query) use ($startOfNext30Days, $endOfNext30Days) {
+                    $query->whereBetween('closing_date', [$startOfNext30Days, $endOfNext30Days])->where('stage','!=','Under Contract');
+                });
             }
             if ($filter) {
                 $conditions[] = ['stage', $filter];
@@ -480,7 +484,7 @@ class DB
                 $condition[] = ['what_id', $dealId];
             }
             if ($contactId) {
-                $condition[] = ['what_id', $contactId];
+                $condition[] = ['who_id', $contactId];
             }
             $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
@@ -583,8 +587,8 @@ class DB
         try {
 
             Log::info("DealIDS" . $dealId);
-            $contactTask = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('what_id')
-                ->where('what_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
+            $contactTask = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('who_id')
+                ->where('who_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['contactTask' => $contactTask]);
             return $contactTask;
         } catch (\Exception $e) {

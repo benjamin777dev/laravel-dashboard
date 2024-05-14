@@ -513,7 +513,7 @@ class DashboardController extends Controller
 
         // Access the 'Subject' field
         $subject = $data['Subject'];
-        // $whoid = $data['Who_Id']['id'] ?? null;
+        $whoid = $data['Who_Id']['id'] ?? null;
         $status = $data['Status'] ?? null;
         $Due_Date = $data['Due_Date'] ?? null;
         $What_Id = $data['What_Id']['id'] ?? null;
@@ -621,7 +621,7 @@ class DashboardController extends Controller
         try {
             $response = $zoho->updateTask($jsonData, $id);
             if (!$response->successful()) {
-                return "error somthing" . $response;
+                return response()->json(['error' => $response->getMessage()], 500);
             }
             $task = Task::where('zoho_task_id', $id)->first();
             $requestData = json_decode($request->getContent(), true);
