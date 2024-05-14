@@ -77,7 +77,7 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
-                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            {{-- <h5 class="modal-title">Modal title</h5> 
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -114,7 +114,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
                                             {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -134,8 +134,8 @@
 
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal fade" id="savemakeModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                            </div> --}}
+                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
@@ -184,7 +184,7 @@
                     <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
                         onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableTextCard{{ $task['id'] }}')">
                         {{ $task['subject'] ?? 'N/A' }}
-                        {{-- <i class="fas fa-pencil-alt pencilIcon "></i> --}}
+                       
                     </p>
                     <div class="btn-group dcardsselectdiv">
                         <p class="dcardsTransactionText">Transaction Related</p>
@@ -425,6 +425,7 @@
                 var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
                 WhatSelectoneid = WhatSelectoneid1;
             }
+
             updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
         }
     }
@@ -585,7 +586,7 @@
                 "What_Id": WhatSelectoneid ? {
                     "id": WhatSelectoneid
                 } : undefined,
-                "$se_module": textfield === "deals" ? newText : undefined
+                "$se_module": textfield === "deals" ? newText : undefined,
             }]
         };
         // Filter out undefined values
@@ -615,6 +616,7 @@
             },
             error: function (xhr, status, error) {
                 // Handle error response
+                showToastError(error);
                 console.error(xhr.responseText, 'errrorroororooro');
             }
         })

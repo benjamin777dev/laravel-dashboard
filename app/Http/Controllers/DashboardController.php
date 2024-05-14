@@ -513,7 +513,7 @@ class DashboardController extends Controller
 
         // Access the 'Subject' field
         $subject = $data['Subject'];
-        // $whoid = $data['Who_Id']['id'] ?? null;
+        $whoid = $data['Who_Id']['id'] ?? null;
         $status = $data['Status'] ?? null;
         $Due_Date = $data['Due_Date'] ?? null;
         $What_Id = $data['What_Id']['id'] ?? null;

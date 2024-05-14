@@ -32,254 +32,15 @@
 
     }
 
-    function updateTask(id, indexid) {
-        // console.log(id, indexid, 'chekcdhfsjkdh')
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        var inputElement = document.getElementById('editableText' + indexid);
-        var taskDate = document.getElementById('date_val' + id);
-        let formattedDateTime = convertDateTime(taskDate.value);
-        console.log(formattedDateTime);
-        /*  alert(formattedDateTime);
-         return; */
-        if (!inputElement) {
-            console.error("Input element not found for indexid:", indexid);
-            return;
-        }
-        var elementValue = inputElement.textContent;
-        // return;
-        if (elementValue.trim() === "") {
-            // console.log("chkockdsjkfjksdh")
-            return alert("Please enter subject value first");
-        }
-        // console.log("inputElementval",elementValue!==undefined,elementValue)
-        if (elementValue !== undefined) { // return;
-            var formData = {
-                "data": [{
-                    "Subject": elementValue,
-                    "Due_Date": formattedDateTime
-                }]
-            };
-            // console.log("ys check ot")
-            $.ajax({
-                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-                method: 'PUT',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    // Handle success response
+    
 
-                    if (response?.data[0]?.status == "success") {
-                        // console.log(response?.data[0], 'sdfjkshdjkfshd')
-                        // Get the button element by its ID
-                        if (!document.getElementById('saveModalId').classList.contains('show')) {
-                            var button = document.getElementById('update_changes');
-                            var update_message = document.getElementById('updated_message');
-                            // Get the modal target element by its ID
-                            var modalTarget = document.getElementById('saveModalId');
-                            console.log(modalTarget, 'modalTarget')
-                            // Set the data-bs-target attribute of the button to the ID of the modal
-                            button.setAttribute('data-bs-target', '#' + modalTarget.id);
-                            update_message.textContent = response?.data[0]?.message;
-                            // Trigger a click event on the button to open the modal
-                            button.click();
-                            // alert("updated success", response)
-                            // window.location.reload();
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText, 'errrorroororooro');
+    
+
+    
 
 
-                }
-            })
-        }
-    }
-
-    function convertDateTime(dateTimeString) {
-        // Assuming dateTimeString is in a format like 'YYYY-MM-DDTHH:MM:SS'
-        var date = new Date(dateTimeString);
-        // Format the date into a desired format
-        var formattedDateTime = date.toLocaleString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        // Split the dateTimeString into date and time parts
-        var parts = formattedDateTime.split(', ');
-        var datePart = parts[0]; // "04/19/2024"
-        var timePart = parts[1]; // "06:27 AM"
-
-        // Split the date part into month, day, and year
-        var dateParts = datePart.split('/');
-        var month = dateParts[0]; // months are zero-based (0 - 11)
-        var day = dateParts[1];
-        var year = dateParts[2];
-
-        // Split the time part into hour, minute, and AM/PM
-        var timeParts = timePart.split(' ');
-        var time = timeParts[0]; // "06:27"
-        var ampm = timeParts[1]; // "AM"
-
-        // Split the time into hour and minute
-        var timeComponents = time.split(':');
-        var hour = parseInt(timeComponents[0]);
-        var minute = timeComponents[1];
-
-        // Adjust hour if it's PM
-        if (ampm === 'PM' && hour < 12) {
-            hour += 12;
-        }
-        console.log("month", month.length);
-        // Zero-pad month and day if necessary
-        if (month.length === 1) {
-            month = '0' + month;
-        }
-        if (day.length === 1) {
-            day = '0' + day;
-        }
-
-        // Construct the date string in "YYYY-MM-DD" format
-        var formattedDate = year + '-' + month + '-' + day;
-
-        return formattedDate;
-    }
-
-    function deleteTask(id) {
-        let updateids = removeAllSelected();
-        if (updateids === "" && id === undefined) {
-            return;
-        }
-        if (updateids !== "") {
-            if (showConfirmation()) {
-
-            } else {
-                return;
-            }
-        }
-        if (id === undefined) {
-            id = updateids;
-        }
-        //remove duplicate ids
-        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    success: function (response) {
-                        // Handle success response
-                        alert("deleted successfully", response);
-                        window.location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        alert(xhr.responseText)
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
-    }
-
-    function removeAllSelected() {
-        // Select all checkboxes
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-        var ids = ""; // Initialize ids variable to store concatenated IDs
-        // Iterate through each checkbox
-        checkboxes.forEach(function (checkbox) {
-            // console.log(checkboxes,'checkboxes')
-            // Check if the checkbox is checked
-            if (checkbox.checked) {
-                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
-                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
-                    "checkbox_all") {
-                    // Concatenate the checkbox ID with a comma
-                    ids += checkbox.id + ",";
-                    document.getElementById("removeBtn").style.backgroundColor = "rgb(37, 60, 91);"
-                    }
-                }
-            });
-
-            // Remove the trailing comma
-            if (ids !== "") {
-                ids = ids.replace(/,+(?=,|$)/g, "");
-            }
-
-            return ids;
-        }
-        function toggleAllCheckboxes() {
-            // console.log("yes it")
-            let state = false;
-            let updateColor = document.getElementById("removeBtn");
-            var allCheckbox = document.getElementById('checkbox_all');
-            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-
-            checkboxes.forEach(function(checkbox) {
-                // Set the state of each checkbox based on the state of the "checkbox_all"
-                checkbox.checked = allCheckbox.checked;
-                if (checkbox.checked) {
-
-                    state = true;
-
-                } else {
-                    state = false;
-                }
-            });
-            if (state) {
-                updateColor.style.backgroundColor = "rgb(37, 60, 91)";
-            } else {
-
-                updateColor.style.backgroundColor = "rgb(192 207 227)";
-            }
-        }
-        function triggerCheckbox(checkboxid) {
-            let updateColor = document.getElementById("removeBtn");
-            var allCheckbox = document.getElementById('checkbox_all');
-            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-            var allChecked = true;
-            var anyUnchecked = false; // Flag to track if any checkbox is unchecked
-            var anyChecked = false;
-            checkboxes.forEach(function(checkbox) {
-                if (!checkbox.checked) {
-                    anyUnchecked = true; // Set flag to true if any checkbox is unchecked
-                    // updateColor.style.backgroundColor = "rgb(192 207 227)";
-                } else {
-                    // updateColor.style.backgroundColor = "rgb(37, 60, 91)";
-                    anyChecked = true;
-                }
-            });
-
-            if (anyChecked) {
-                updateColor.style.backgroundColor = "rgb(37, 60, 91)"; // Checked color
-            } else {
-                updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
-            }
-            allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
-        }
+        
+        
         function resetFormAndHideSelect() {
             document.getElementById('noteForm').reset();
             document.getElementById('taskSelect').style.display = 'none';
@@ -400,7 +161,7 @@
         <div class="commonFlex ppipeDiv">
             <div>
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
+                    data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
                     <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
                     Save
                 </div>
@@ -1073,7 +834,7 @@
                 })
             } --}}
 
-            window.updateDataDeal = function(dealId) {
+           window.updateDataDeal = function(dealId) {
                 console.log(dealId);
                 // Retrieve values from form fields
                 var client_name_primary = $('#validationDefault01').val();
@@ -1147,6 +908,12 @@
                     }
                 })
             }
+
+
+        
+        
+
+
     </script>
 @section('pipelineScript')
 

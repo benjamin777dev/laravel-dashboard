@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\ZohoCRM;
-use Illuminate\Support\Facades\Artisan;
+use App\Jobs\RunScheduledTasks;
 
 class RegisterController extends Controller
 {
@@ -192,8 +192,8 @@ class RegisterController extends Controller
 
         Auth::login($user);
         Log::info('User registered and logged in.');
+        RunScheduledTasks::dispatch()->afterResponse();
         
         return redirect($this->redirectTo);
-        Artisan::call('schedule:run');
     }
 }

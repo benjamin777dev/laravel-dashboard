@@ -6,10 +6,28 @@
 @vite(['resources/css/pipeline.css'])
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
-    function updateText(newText) {
-        //  textElement = document.getElementById('editableText');
-        console.log("newText", newText);
-        textElement.innerHTML = newText;
+    function editText(zohoID, name, value) {
+        event.preventDefault();
+        let dealNameElement = document.getElementById(name + zohoID);
+        var text = dealNameElement.textContent.trim();
+        text === "" ? text = value : text;
+        dealNameElement.innerHTML =
+            '<input type="text" class="inputDesign" id="edit' + name + zohoID +
+            '" value="' + value + '" >';
+        let inputElementmake = document.getElementById('edit' + name + zohoID);
+        inputElementmake.focus();
+        inputElementmake.selectionStart = dealNameElement.selectionEnd = text.length;
+        inputElementmake.addEventListener('change', function() {
+            dealNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
+                .value + '</h5>';
+            updateContact(zohoID, name);
+
+        });
+        // Prevent default action when clicking on container
+        let container = document.getElementById("contactlist");
+        container?.addEventListener("click", function(event) {
+            event.preventDefault();
+        });
     }
 
     
@@ -76,10 +94,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Deal Updated Successfully");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function(xhr, status, error) {
@@ -90,7 +106,7 @@
     }
 </script>
 <div class="container-fluid">
-    <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
+    <div class="commonFlex ppipeDiv">
         <p class="pText">{{ $deal['deal_name'] }}</p>
         <div class="npbtnsDiv">
             {{--<div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
@@ -193,7 +209,7 @@
                 <div class="col-md-6">
                     <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
                     <input type="date" class="form-control npinputinfo" id="validationDefault06" required
-                        value="{{ $deal['closing_date'] }}">
+                        value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault07" class="form-label nplabelText">Address</label>
@@ -274,16 +290,16 @@
                 </div>
                 <div class="col-md-6">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked01" <?php if ($deal['personal_transaction']) {
-    echo 'checked';
-} ?>>
+                        echo 'checked';
+                    } ?>>
                     <label class="form-check-label nplabelText" for="flexCheckChecked01">
                         Personal Transaction
                     </label>
                 </div>
                 <div class="col-md-6">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked02" <?php if ($deal['double_ended']) {
-    echo 'checked';
-} ?>>
+                        echo 'checked';
+                    } ?>>
                     <label class="form-check-label nplabelText" for="flexCheckChecked02">
                         Double ended
                     </label>
