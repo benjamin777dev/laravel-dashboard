@@ -1,4 +1,4 @@
-@if(isset($type) && $type == 'Deals')
+@if (isset($type) && $type == 'Deals')
     <div class="modal fade" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
@@ -9,9 +9,9 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask('{{$deal->id}}');" id="darea{{$deal['id']}}"
+                    <textarea name="subject" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="darea{{ $deal['id'] }}"
                         rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error{{$deal['id']}}" class="text-danger"></div>
+                    <div id="subject_error{{ $deal['id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
@@ -35,7 +35,6 @@
         </div>
     </div>
 @elseif(isset($type) && $type == 'Contacts')
-
     <div class="modal fade" id="newTaskModalId{{ $contact['id'] }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
@@ -46,9 +45,9 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask();" id="darea{{$contact['id']}}" rows="4"
+                    <textarea name="subject" onkeyup="validateTextareaTask();" id="darea{{ $contact['id'] }}" rows="4"
                         class="dtextarea"></textarea>
-                    <div id="subject_error{{$contact['id']}}" class="text-danger"></div>
+                    <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
@@ -72,7 +71,8 @@
         </div>
     </div>
 @else
-    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
@@ -82,8 +82,7 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask()" id="subject" rows="4"
-                        class="dtextarea"></textarea>
+                    <textarea name="subject" onkeyup="validateTextareaTask()" id="subject" rows="4" class="dtextarea"></textarea>
                     <div id="task_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
@@ -98,8 +97,9 @@
                             @endforeach
                         </select>
                         <select class="form-select dmodaltaskSelect" id="taskSelectForTask"
-                            name="related_to_parent_dashboard" aria-label="Select Transaction" style="display: none;">
-                            <option value="">Please Select one</option>
+                            name="related_to_parent_dashboard" aria-label="Select Transaction"
+                            style="display: none;">
+
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -118,7 +118,7 @@
 @endif
 
 <script>
-    window.resetValidationTask = function (id) {
+    window.resetValidationTask = function(id) {
         if (id) {
             document.getElementById("subject_error" + id).innerHTML = "";
             document.getElementById('darea' + id).value = "";
@@ -129,7 +129,7 @@
 
     }
 
-    window.validateTextareaTask = function (id) {
+    window.validateTextareaTask = function(id) {
         if (id) {
             var textarea = document.getElementById('darea' + id);
             var textareaValue = textarea.value.trim();
@@ -154,7 +154,7 @@
 
     }
 
-    window.addCommonTask = function (id, type) {
+    window.addCommonTask = function(id, type) {
         if (id) {
             var subject = document.getElementsByName("subject")[0].value;
             if (subject.trim() === "") {
@@ -226,7 +226,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify(formData),
-            success: function (response) {
+            success: function(response) {
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
@@ -236,13 +236,13 @@
                     alert("Response or message not found");
                 }
             },
-            error: function (xhr, status, error) {
+            error: function(xhr, status, error) {
                 // Handle error response
                 console.error(xhr.responseText);
             }
         })
     }
-    window.taskModuleSelected = function (selectedModule) {
+    window.taskModuleSelected = function(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
         var selectedText = selectedOption.text;
@@ -255,15 +255,14 @@
             url: '/task/get-' + selectedText,
             method: "GET",
             dataType: "json",
-            success: function (response) {
+            success: function(response) {
                 // Handle successful response
                 var tasks = response;
                 // Assuming you have another select element with id 'taskSelect'
                 var taskSelect = $('#taskSelectForTask');
-                console.log("main yhi hu", taskSelect);
                 // Clear existing options
                 taskSelect.empty();
-                $.each(tasks, function (index, task) {
+                $.each(tasks, function(index, task) {
                     if (selectedText === "Tasks") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_task_id,
@@ -279,16 +278,21 @@
                     if (selectedText === "Contacts") {
                         taskSelect.append($('<option>', {
                             value: task?.zoho_contact_id,
-                            text: (task?.first_name ?? '') + ' ' + (task?.last_name ??
+                            text: (task?.first_name ?? '') + ' ' + (task
+                                ?.last_name ??
                                 '')
                         }));
                     }
                 });
-                
                 taskSelect.show();
+                taskSelect.select2({
+                    theme: 'bootstrap-5',
+                    dropdownParent: $(this).parent(),
+                });
+                taskSelect.next(".select2-container").addClass("form-select");
                 // Do whatever you want with the response data here
             },
-            error: function (xhr, status, error) {
+            error: function(xhr, status, error) {
                 // Handle error
                 console.error("Ajax Error:", error);
             }

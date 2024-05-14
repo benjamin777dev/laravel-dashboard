@@ -1001,12 +1001,9 @@ class DashboardController extends Controller
             }
         // Find the Note instance by its ID
         $note = Note::where('zoho_note_id', $id)->firstOrFail();
-
-
         // Update the Note attributes
         // $note->related_to = $validatedData['related_to'];
         $note->note_content = $validatedData['note_text'];
-
         // Save the updated Note to the database
         $note->save();
         return redirect()->back()->with('success', 'Note Updated successfully!');
