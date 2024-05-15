@@ -582,7 +582,7 @@ $abcd = ['A+', 'A', 'B', 'C', 'D'];
                 "What_Id": {
                     "id": conID
                 },
-                "$se_module": "Activity"
+                "$se_module": "Contacts"
             }],
             "_token": '{{ csrf_token() }}'
         };

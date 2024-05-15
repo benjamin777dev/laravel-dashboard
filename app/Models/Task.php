@@ -57,7 +57,7 @@ class Task extends Model
 
     public function contactData()
     {
-        return $this->belongsTo(Contact::class, 'what_id','zoho_contact_id');
+        return $this->belongsTo(Contact::class, 'who_id','zoho_contact_id');
     }
 
     public function owner()

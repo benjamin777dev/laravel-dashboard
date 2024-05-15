@@ -120,15 +120,15 @@
                                 <div class="stacked-bar-chart w-100 stacked-contain">
 
                                     @php
-// Extracting the 'gci' values from the nested arrays
-$gcis = array_column($allMonths, 'gci');
-// Finding the maximum 'gci' value
-$maxGCI = max($gcis);
+                                        // Extracting the 'gci' values from the nested arrays
+                                        $gcis = array_column($allMonths, 'gci');
+                                        // Finding the maximum 'gci' value
+                                        $maxGCI = max($gcis);
                                     @endphp
 
                                     @foreach ($allMonths as $month => $data)
                                         @php
-    $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
+                                        $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
                                         @endphp
                                         <div class="row">
                                             <div class="col-md-1 align-self-center dmonth-design">
@@ -136,12 +136,12 @@ $maxGCI = max($gcis);
                                             <div class="col-md-11 dashchartImg">
                                                 <div class="row dgraph-strip justify-content-between">
                                                     @php
-    // Remove the currency symbol ('$') and commas from the formatted value
-    $formattedGCI = str_replace(
-        ['$', ','],
-        '',
-        number_format($data['gci'], 0),
-    );
+                                                        // Remove the currency symbol ('$') and commas from the formatted value
+                                                        $formattedGCI = str_replace(
+                                                            ['$', ','],
+                                                            '',
+                                                            number_format($data['gci'], 0),
+                                                        );
                                                     @endphp
                                                     <div class="col-md-10 text-end bar-a" {{-- style="width: {{ $widthPercentage }}%"
                                                   --}}
@@ -164,9 +164,9 @@ $maxGCI = max($gcis);
                     </div>
                 </div>
                 @include('common.notes.view', [
-    'notesInfo' => $notesInfo,
-    'retrieveModuleData' => $retrieveModuleData,
-])
+                    'notesInfo' => $notesInfo,
+                    'retrieveModuleData' => $retrieveModuleData,
+                ])
             </div>
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
@@ -197,9 +197,9 @@ $maxGCI = max($gcis);
                         </div>
                     </nav>
                     @include('common.tasks', [
-    'tasks' => $tasks,
-    'retrieveModuleData' => $retrieveModuleData,
-])
+                        'tasks' => $tasks,
+                        'retrieveModuleData' => $retrieveModuleData,
+                    ])
                 </div>
 
             </div>
@@ -394,11 +394,6 @@ $maxGCI = max($gcis);
 
     });
     
-    function triggerDateRangePicker() {
-        // Trigger click event on the input element
-        $('.ddaterangepicker').click();
-    }
-
     window.createTransaction = function() {
         console.log("Onclick");
         var formData = {
@@ -553,65 +548,5 @@ $maxGCI = max($gcis);
             }
         }
     };
-
-    function calculateStageData(e) {
-        var dateRangeString = e.value; // Assuming e.value contains the date range string
-        var dates = dateRangeString.split(' - ');
-        var startDate = dates[0];
-        var endDate = dates[1];
-
-        // Convert start date to "year-month-day" format
-        // var startDateComponents = startDate.split('-');
-        // var endDateComponents = endDate.split('-');
-        // var formattedStartDate = startDateComponents[2] + '-' + startDateComponents[0] + '-' + startDateComponents[1];
-        // var formattedEndtDate = endDateComponents[2] + '-' + endDateComponents[0] + '-' + endDateComponents[1];
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: `get-stages?start_date=${startDate}&end_date=${endDate}`,
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                // Handle successful response
-                randomScalingFactor(response?.calculateProgress);
-                data = randomData();
-                value = randomValue(response?.calculateProgress);
-                console.log(data, value, 'datavalue')
-                // Update gauge chart data and value
-                config.data.datasets[0].data = data;
-                config.data.datasets[0].value = value;
-                // Update gauge chart with new data
-                window.myGauge.update();
-                var ctx = document.getElementById('chart').getContext('2d');
-                window.myGauge = new Chart(ctx, config);
-                Object.keys(response).forEach(function(stage) {
-                    if (response.hasOwnProperty(stage)) {
-                        console.log(stage, 'stage is here')
-                        // Find the corresponding card element using data-stage attribute
-                        var cardElement = $('.dCardsCols[data-stage="' + stage + '"]');
-                        // Update data in the card
-                        var data = response[stage];
-                        cardElement.find('.dSumValue').text('$' + data.sum);
-                        // cardElement.find('.dpercentage').text(data.stageProgressExpr + data
-                        //     .stageProgress + '%');
-                        // cardElement.find('.dpercentage').removeClass().addClass('dpercentage ' +
-                        //     data.stageProgressClass);
-                        // cardElement.find('.mdi').removeClass().addClass(data.stageProgressIcon);
-                        cardElement.find('.dcountText').text(data.count + ' Transactions');
-                    }
-                });
-
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-
-    }
 </script>
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>

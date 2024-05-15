@@ -390,11 +390,13 @@ class ZohoCRM
                 'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
                 'Content-Type' => 'application/json',
             ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
+            Log::info('Zoho Task updation response: ' . print_r($response->json(), true));
+            return $response;
         } catch (\Exception $e) {
-            return "something went wrong" . $e->getMessage();
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-        //Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
-        return $response;
+        
+        
     }
 
     public function deleteTask($inputJson, $id)

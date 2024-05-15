@@ -6,423 +6,121 @@
 @vite(['resources/css/pipeline.css'])
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
-    function updateText(newText) {
-        //  textElement = document.getElementById('editableText');
-        console.log("newText", newText);
-        textElement.innerHTML = newText;
-    }
+    function editText(zohoID, name, value) {
+        event.preventDefault();
+        let dealNameElement = document.getElementById(name + zohoID);
+        var text = dealNameElement.textContent.trim();
+        text === "" ? text = value : text;
+        dealNameElement.innerHTML =
+            '<input type="text" class="inputDesign" id="edit' + name + zohoID +
+            '" value="' + value + '" >';
+        let inputElementmake = document.getElementById('edit' + name + zohoID);
+        inputElementmake.focus();
+        inputElementmake.selectionStart = dealNameElement.selectionEnd = text.length;
+        inputElementmake.addEventListener('change', function() {
+            dealNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
+                .value + '</h5>';
+            updateContact(zohoID, name);
 
-    function makeEditable(id) {
-        textElement = document.getElementById('editableText' + id);
-        textElementCard = document.getElementById('editableTextCard' + id);
-        //For Table data                
-        var text = textElement.textContent.trim();
-        textElement.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
-
-        //For card data
-        var text = textElementCard.textContent.trim();
-        textElementCard.innerHTML = '<input type="text" id="editableInput' + id + '" value="' + text + '" />';
-
-        var inputElement = document.getElementById('editableInput' + id);
-        inputElement.focus();
-        inputElement.addEventListener('change', function () {
-            updateText(inputElement.value);
         });
-
-
+        // Prevent default action when clicking on container
+        let container = document.getElementById("contactlist");
+        container?.addEventListener("click", function(event) {
+            event.preventDefault();
+        });
     }
 
-    function updateTask(id, indexid) {
-        // console.log(id, indexid, 'chekcdhfsjkdh')
-        $.ajaxSetup({
+    
+
+    function updateDataDeal(dealId) {
+        console.log(dealId);
+        // Retrieve values from form fields
+        var client_name_primary = $('#validationDefault01').val();
+        var representing = $('#validationDefault02').val();
+        var deal_name = $('#validationDefault03').val();
+        var stage = $('#validationDefault04').val();
+        var sale_price = $('#validationDefault05').val();
+        var closing_date = $('#validationDefault06').val();
+        var address = $('#validationDefault07').val();
+        var city = $('#validationDefault08').val();
+        var state = $('#validationDefault09').val();
+        var zip = $('#validationDefault10').val();
+        var commission = $('#validationDefault11').val();
+        var property_type = $('#validationDefault12').val();
+        var ownership_type = $('#validationDefault13').val();
+        var potential_gci = $('#validationDefault14').val();
+        var pipeline_probability = $('#validationDefault15').val();
+        var probable_gci = $('#validationDefault16').val();
+        var personal_transaction = $('#flexCheckChecked01').prop('checked');
+        var double_ended = $('#flexCheckChecked02').prop('checked');
+
+        // Create formData object
+        var formData = {
+            "data": [{
+                "Client_Name_Primary": client_name_primary,
+                "Representing": representing,
+                "Deal_Name": deal_name,
+                "Stage": stage,
+                "Sale_Price": sale_price,
+                "Closing_Date": closing_date,
+                "Address": address,
+                "City": city,
+                "State": state,
+                "Zip": zip,
+                "Commission": commission,
+                "Property_Type": property_type,
+                "Ownership_Type": ownership_type,
+                "Potential_GCI": potential_gci,
+                "Pipeline_Probability": pipeline_probability,
+                "Pipeline1": probable_gci,
+                "Personal_Transaction": personal_transaction,
+                "Double_Ended": double_ended
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        console.log("formData", formData, dealId);
+
+        // Send AJAX request
+        $.ajax({
+            url: "{{ route('pipeline.update', ['dealId' => ':id']) }}".replace(':id', dealId),
+            type: 'PUT',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        var inputElement = document.getElementById('editableText' + indexid);
-        var taskDate = document.getElementById('date_val' + id);
-        let formattedDateTime = convertDateTime(taskDate.value);
-        console.log(formattedDateTime);
-        /*  alert(formattedDateTime);
-         return; */
-        if (!inputElement) {
-            console.error("Input element not found for indexid:", indexid);
-            return;
-        }
-        var elementValue = inputElement.textContent;
-        // return;
-        if (elementValue.trim() === "") {
-            // console.log("chkockdsjkfjksdh")
-            return alert("Please enter subject value first");
-        }
-        // console.log("inputElementval",elementValue!==undefined,elementValue)
-        if (elementValue !== undefined) { // return;
-            var formData = {
-                "data": [{
-                    "Subject": elementValue,
-                    "Due_Date": formattedDateTime
-                }]
-            };
-            // console.log("ys check ot")
-            $.ajax({
-                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-                method: 'PUT',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    // Handle success response
-
-                    if (response?.data[0]?.status == "success") {
-                        // console.log(response?.data[0], 'sdfjkshdjkfshd')
-                        // Get the button element by its ID
-                        if (!document.getElementById('saveModalId').classList.contains('show')) {
-                            var button = document.getElementById('update_changes');
-                            var update_message = document.getElementById('updated_message');
-                            // Get the modal target element by its ID
-                            var modalTarget = document.getElementById('saveModalId');
-                            console.log(modalTarget, 'modalTarget')
-                            // Set the data-bs-target attribute of the button to the ID of the modal
-                            button.setAttribute('data-bs-target', '#' + modalTarget.id);
-                            update_message.textContent = response?.data[0]?.message;
-                            // Trigger a click event on the button to open the modal
-                            button.click();
-                            // alert("updated success", response)
-                            // window.location.reload();
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText, 'errrorroororooro');
-
-
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
-            })
-        }
-    }
-
-    function convertDateTime(dateTimeString) {
-        // Assuming dateTimeString is in a format like 'YYYY-MM-DDTHH:MM:SS'
-        var date = new Date(dateTimeString);
-        // Format the date into a desired format
-        var formattedDateTime = date.toLocaleString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        // Split the dateTimeString into date and time parts
-        var parts = formattedDateTime.split(', ');
-        var datePart = parts[0]; // "04/19/2024"
-        var timePart = parts[1]; // "06:27 AM"
-
-        // Split the date part into month, day, and year
-        var dateParts = datePart.split('/');
-        var month = dateParts[0]; // months are zero-based (0 - 11)
-        var day = dateParts[1];
-        var year = dateParts[2];
-
-        // Split the time part into hour, minute, and AM/PM
-        var timeParts = timePart.split(' ');
-        var time = timeParts[0]; // "06:27"
-        var ampm = timeParts[1]; // "AM"
-
-        // Split the time into hour and minute
-        var timeComponents = time.split(':');
-        var hour = parseInt(timeComponents[0]);
-        var minute = timeComponents[1];
-
-        // Adjust hour if it's PM
-        if (ampm === 'PM' && hour < 12) {
-            hour += 12;
-        }
-        console.log("month", month.length);
-        // Zero-pad month and day if necessary
-        if (month.length === 1) {
-            month = '0' + month;
-        }
-        if (day.length === 1) {
-            day = '0' + day;
-        }
-
-        // Construct the date string in "YYYY-MM-DD" format
-        var formattedDate = year + '-' + month + '-' + day;
-
-        return formattedDate;
-    }
-
-    function deleteTask(id) {
-        let updateids = removeAllSelected();
-        if (updateids === "" && id === undefined) {
-            return;
-        }
-        if (updateids !== "") {
-            if (confirm("Are you sure you want to delete selected task?")) {
-
-            } else {
-                return;
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
             }
-        }
-        if (id === undefined) {
-            id = updateids;
-        }
-        //remove duplicate ids
-        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    success: function (response) {
-                        // Handle success response
-                        showToast("deleted successfully");
-                        window.location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        alert(xhr.responseText)
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
-    }
-
-    function removeAllSelected() {
-        // Select all checkboxes
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-        var ids = ""; // Initialize ids variable to store concatenated IDs
-        // Iterate through each checkbox
-        checkboxes.forEach(function (checkbox) {
-            // console.log(checkboxes,'checkboxes')
-            // Check if the checkbox is checked
-            if (checkbox.checked) {
-                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
-                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
-                    "checkbox_all") {
-                    // Concatenate the checkbox ID with a comma
-                    ids += checkbox.id + ",";
-                    document.getElementById("removeBtn").style.backgroundColor = "#222;"
-                }
-            }
-        });
-
-        // Remove the trailing comma
-        if (ids !== "") {
-            ids = ids.replace(/,+(?=,|$)/g, "");
-        }
-
-        return ids;
-    }
-
-    function toggleAllCheckboxes() {
-        // console.log("yes it")
-        let state = false;
-        let updateColor = document.getElementById("removeBtn");
-        var allCheckbox = document.getElementById('checkbox_all');
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-
-        checkboxes.forEach(function (checkbox) {
-            // Set the state of each checkbox based on the state of the "checkbox_all"
-            checkbox.checked = allCheckbox.checked;
-            if (checkbox.checked) {
-
-                state = true;
-
-<<<<<<< HEAD
-=======
-            // Split the time into hour and minute
-            var timeComponents = time.split(':');
-            var hour = parseInt(timeComponents[0]);
-            var minute = timeComponents[1];
-
-            // Adjust hour if it's PM
-            if (ampm === 'PM' && hour < 12) {
-                hour += 12;
-            }
-            console.log("month", month.length);
-            // Zero-pad month and day if necessary
-            if (month.length === 1) {
-                month = '0' + month;
-            }
-            if (day.length === 1) {
-                day = '0' + day;
-            }
-
-            // Construct the date string in "YYYY-MM-DD" format
-            var formattedDate = year + '-' + month + '-' + day;
-
-            return formattedDate;
-        }
-
-        function deleteTask(id) {
-            let updateids = removeAllSelected();
-            if (updateids === "" && id === undefined) {
-                return;
-            }
-            if (updateids !== "") {
-                if (showConfirmation()) {
-
-                } else {
-                    return;
-                }
-            }
-            if (id === undefined) {
-                id = updateids;
-            }
-            //remove duplicate ids
-            ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            try {
-                if (id) {
-                    $.ajax({
-                        url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                        method: 'DELETE', // Change to DELETE method
-                        contentType: 'application/json',
-                        dataType: 'JSON',
-                        data: {
-                            'id': id,
-                            '_token': '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            // Handle success response
-                            showToast("deleted successfully");
-                            window.location.reload();
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle error response
-                            showToastError("something went wrong");
-                            console.error(xhr.responseText);
-                        }
-                    })
-
-                }
-            } catch (err) {
-                console.error("error", err);
-                showToastError("error");
-            }
-        }
-
-        function removeAllSelected() {
-            // Select all checkboxes
-            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-            var ids = ""; // Initialize ids variable to store concatenated IDs
-            // Iterate through each checkbox
-            checkboxes.forEach(function(checkbox) {
-                // console.log(checkboxes,'checkboxes')
-                // Check if the checkbox is checked
-                if (checkbox.checked) {
-                    if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
-                        .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
-                        "checkbox_all") {
-                        // Concatenate the checkbox ID with a comma
-                        ids += checkbox.id + ",";
-                        document.getElementById("removeBtn").style.backgroundColor = "#222;"
-                    }
-                }
-            });
-
-            // Remove the trailing comma
-            if (ids !== "") {
-                ids = ids.replace(/,+(?=,|$)/g, "");
-            }
-
-            return ids;
-        }
-
-        function toggleAllCheckboxes() {
-            // console.log("yes it")
-            let state = false;
-            let updateColor = document.getElementById("removeBtn");
-            var allCheckbox = document.getElementById('checkbox_all');
-            var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-
-            checkboxes.forEach(function(checkbox) {
-                // Set the state of each checkbox based on the state of the "checkbox_all"
-                checkbox.checked = allCheckbox.checked;
-                if (checkbox.checked) {
-
-                    state = true;
-
-                } else {
-                    state = false;
-                }
-            });
-            if (state) {
-                updateColor.style.backgroundColor = "#222";
->>>>>>> 005ee8853e64b16a9b556bca96d7eaa14a71c032
-            } else {
-                state = false;
-            }
-        });
-        if (state) {
-            updateColor.style.backgroundColor = "#222";
-        } else {
-
-            updateColor.style.backgroundColor = "#dfdfdf";
-        }
-    }
-
-    function triggerCheckbox(checkboxid) {
-        let updateColor = document.getElementById("removeBtn");
-        var allCheckbox = document.getElementById('checkbox_all');
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-        var allChecked = true;
-        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
-        var anyChecked = false;
-        checkboxes.forEach(function (checkbox) {
-            if (!checkbox.checked) {
-                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
-            } else {
-                anyChecked = true;
-            }
-        });
-
-        if (anyChecked) {
-            updateColor.style.backgroundColor = "#222"; // Checked color
-        } else {
-            updateColor.style.backgroundColor = "#dfdfdf"; // Unchecked color
-        }
-        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+        })
     }
 </script>
 <div class="container-fluid">
-    <div class="commonFlex ppipeDiv" onclick="editText('{{ $deal['zoho_deal_id'] }}','deal_name')">
+    <div class="commonFlex ppipeDiv">
         <p class="pText">{{ $deal['deal_name'] }}</p>
         <div class="npbtnsDiv">
-            <div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
+            {{--<div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
                 data-bs-toggle="modal" data-bs-target="#">
                 <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                 Delete
-            </div>
-            <a href="{{ url('/pipeline-update/' . $deal['id']) }}">
+            </div>--}}
+            
                 <div class="input-group-text text-white justify-content-center npeditBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#">
+                    data-bs-toggle="modal" data-bs-target="#" onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
                     <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
-                    Edit
+                    Update
                 </div>
-            </a>
+            
         </div>
     </div>
     <div class="row">
@@ -454,22 +152,17 @@
                                 aria-selected="false">Overdue</button></a>
                     </div>
                 </nav>
-
                 @include('common.tasks', [
-    'tasks' => $tasks,
-    'retrieveModuleData' => $retrieveModuleData,
-])
-
-
+                    'tasks' => $tasks,
+                    'retrieveModuleData' => $retrieveModuleData,
+                ])
             </div>
-
         </div>
-        @include('common.notes.view', [
-    'notesInfo' => $notesInfo,
-    'retrieveModuleData' => $retrieveModuleData,
-    'module' => 'Deals',
-])
-
+         @include('common.notes.view', [
+            'notesInfo' => $notesInfo,
+            'retrieveModuleData' => $retrieveModuleData,
+            'module' => 'Deals',
+        ])
     </div>
     {{-- information form --}}
     <div class="row">
@@ -516,7 +209,7 @@
                 <div class="col-md-6">
                     <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
                     <input type="date" class="form-control npinputinfo" id="validationDefault06" required
-                        value="{{ $deal['closing_date'] }}">
+                        value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault07" class="form-label nplabelText">Address</label>
@@ -597,16 +290,16 @@
                 </div>
                 <div class="col-md-6">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked01" <?php if ($deal['personal_transaction']) {
-    echo 'checked';
-} ?>>
+                        echo 'checked';
+                    } ?>>
                     <label class="form-check-label nplabelText" for="flexCheckChecked01">
                         Personal Transaction
                     </label>
                 </div>
                 <div class="col-md-6">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked02" <?php if ($deal['double_ended']) {
-    echo 'checked';
-} ?>>
+                        echo 'checked';
+                    } ?>>
                     <label class="form-check-label nplabelText" for="flexCheckChecked02">
                         Double ended
                     </label>
@@ -1074,19 +767,6 @@
 
 
     });
-    document.addEventListener("DOMContentLoaded", function () {
-        $.ajax({
-            url: '{{ url('/pipeline-view') }}',
-            method: 'GET',
-            data: {},
-            dataType: 'json',
-            success: function (data) { },
-            error: function (xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    });
-
     // Function to populate client information
     window.addTask = function (deal) {
         var subject = document.getElementsByName("subject")[0].value;
@@ -1142,65 +822,6 @@
                 console.error(xhr.responseText);
             }
         })
-    }
-
-    {
-        {
-            --window.updateNote= function(noteId) {
-                var subject = document.getElementsByName("subject")[0].value;
-                if (subject.trim() === "") {
-                    document.getElementById("subject_error").innerHTML = "please enter details";
-                }
-                var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-                var whoId = window.selectedTransation
-                if (whoId === undefined) {
-                    whoId = whoSelectoneid
-                }
-                var dueDate = document.getElementsByName("due_date")[0].value;
-
-                var formData = {
-                    "data": [{
-                        "Subject": subject,
-                        "Who_Id": {
-                            "id": whoId
-                        },
-                        "Status": "In Progress",
-                        "Due_Date": dueDate,
-                        // "Created_Time":new Date()
-                        "Priority": "High",
-                        "What_Id": {
-                            "id": deal
-                        },
-                        "$se_module": "Deals"
-                    }],
-                    "_token": '{{ csrf_token() }}'
-                };
-                console.log("formData", formData);
-                $.ajax({
-                    url: '{{ route('update.note') }}',
-                    type: 'PUT',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    data: JSON.stringify(formData),
-                    success: function (response) {
-                        if (response?.data && response.data[0]?.message) {
-                            // Convert message to uppercase and then display
-                            const upperCaseMessage = response.data[0].message.toUpperCase();
-                            alert(upperCaseMessage);
-                            window.location.reload();
-                        } else {
-                            alert("Response or message not found");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                })
-            } --}
     }
 
     window.updateDeal = function (dealId) {
