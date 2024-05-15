@@ -35,20 +35,22 @@ jobs:
     # Add any additional steps for building/testing your application here
     - name: Copy Files to Web Directory
       run: |
-        sudo rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/bitnami/htdocs/
+        sudo rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/jpcwcfpmsv/public_html
 
     - name: Laravel Specific Commands
       run: |
-        cd /home/bitnami/htdocs
+        cd /home/master/applications/jpcwcfpmsv/public_html
         php artisan migrate --force # Run migrations
         php artisan cache:clear # Clear cache
         php artisan config:clear # Clear Configuration Cache
         php artisan config:cache # Cache configuration
-        sudo sh /home/bitnami/htdocs/clearCache.sh
+        sudo sh /home/master/applications/jpcwcfpmsv/public_html/clearCache.sh
     
     - name: Set Permissions
       run: |
         sudo chown -R bitnami:daemon /home/bitnami/htdocs
-        sudo find /home/bitnami/htdocs -type f -exec chmod 644 {} \;
-        sudo find /home/bitnami/htdocs -type d -exec chmod 755 {} \;
+        sudo find /home/master/applications/jpcwcfpmsv/public_html -type f -exec chmod 644 {} \;
+        sudo find /home/master/applications/jpcwcfpmsv/public_html -type d -exec chmod 755 {} \;
+        sudo chmod -R 775 /home/master/applications/jpcwcfpmsv/public_html/storage
+        sudo chmod -R 775 /home/master/applications/jpcwcfpmsv/public_html/bootstrap/cache
         
