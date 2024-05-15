@@ -182,24 +182,27 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/dashboard?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
+                            <button class="nav-link dtabsbtn active" id="nav-home-tab"
                                     data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                    role="tab" aria-controls="nav-home" aria-selected="true">In
-                                    Progress</button></a>
-                            <a href="/dashboard?tab=Not Started"> <button class="nav-link dtabsbtn"
+                                    role="tab" aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
+                                    Progress</button>
+                            <button class="nav-link dtabsbtn"
                                     data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab"
-                                    aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                            <a href="/dashboard?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
+                                    aria-controls="nav-profile" aria-selected="false" onclick="fetchData('Not Started')">Upcoming</button>
+                            <button class="nav-link dtabsbtn" data-tab='Completed'
                                     id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
                                     type="button" role="tab" aria-controls="nav-contact"
-                                    aria-selected="false">Overdue</button></a>
+                                    aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
                         </div>
                     </nav>
-                    @include('common.tasks', [
-                        'tasks' => $tasks,
-                        'retrieveModuleData' => $retrieveModuleData,
-                    ])
+                    <div class= "task-container">
+                        @include('common.tasks', [
+                            'tasks' => $tasks,
+                            'retrieveModuleData' => $retrieveModuleData,
+                        ])
+                    </div>
+                    
                 </div>
 
             </div>
@@ -343,6 +346,24 @@
 @endsection
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
+     window.fetchData = function(tab = null) {
+        // Make AJAX call
+        $.ajax({
+            url: '{{ url('/get/tasks/for/dashboard') }}',
+            method: 'GET',
+            data: {
+                tab: tab,
+            },
+            success: function(data) {
+                $('.task-container').html(data)
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+
+    }
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')

@@ -14,12 +14,12 @@ use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Models\Groups; // Import the Deal model
-use App\Models\ContactGroups; // Import the Deal model
-use App\Models\Attachment; // Import the Deal model
-use App\Models\NonTm; // Import the Deal model
-use App\Models\Submittals; // Import the Deal model
-
+use App\Models\Groups; 
+use App\Models\ContactGroups; 
+use App\Models\Attachment; 
+use App\Models\NonTm; 
+use App\Models\Submittals; 
+use App\Models\BulkJob; 
 
 class DB
 {
@@ -455,11 +455,11 @@ class DB
             $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
             if ($tab == 'Completed') {
-                $tasks->where('status', $tab)
-                    ->orWhereDate('due_date', '<', now());
+                $tasks
+                    ->where('due_date', '<', now());
             } elseif ($tab == 'Not Started') {
-                $tasks->where('status', $tab)
-                    ->orWhereDate('due_date', '>', now());
+                $tasks
+                    ->where('due_date', '>=', now());
             } else {
                 $tasks->where('status', $tab);
             }
@@ -950,7 +950,7 @@ class DB
                     });
                 })
                 ->when($sort, function ($query, $sort) {
-                    $query->orderBy('created_at', $sort);
+                    $query->orderBy('first_name', $sort);
                 })
                 ->get();
 
@@ -1175,6 +1175,21 @@ class DB
             return $Submittals;
         } catch (\Exception $e) {
             Log::error("Error retrieving Submittals: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function saveBulkJobInDB($fileId,$userId,$jobId)
+    {
+        try {
+            $bulkJob = BulkJob::create([
+                'userId' => $userId,
+                'jobId' => $jobId,
+                'fileId' => $fileId,
+            ]);
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
     }

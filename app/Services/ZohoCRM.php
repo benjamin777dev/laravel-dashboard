@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Http;
 class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
-    private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
+    private $contentURL = 'https://content.zohoapis.com/crm/v3/';
+    private $apiNoteUrl = 'https://www.zohoa0p0i00s.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
     private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
@@ -36,7 +37,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -727,6 +728,106 @@ class ZohoCRM
             return $response;
         } catch (\Throwable $e) {
             Log::error("Error retrieving Update Group: " . $e->getMessage());
+        }
+
+    }
+
+    public function uploadZipFile($zipFilepath)
+    {
+        try {
+            Log::info('Upload Zip file to ZOHO');
+            $getOrgIdResponse = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->get($this->apiUrl . 'org');
+
+            $orgId = $getOrgIdResponse->json()['org'][0]['zgid'];
+            
+            $headers = [
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'X-CRM-ORG' => $orgId,
+                'feature' => 'bulk-write',
+            ];
+            
+            // Upload zip file
+            $response = Http::withHeaders($headers)
+                ->attach('file', file_get_contents($zipFilepath), basename($zipFilepath))
+                ->post($this->contentURL . 'upload');
+            
+            // Log response
+            Log::info('Response after uploading ZIP file to Zoho', ['response' => $response->json()]);
+            
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error uploading ZIP file to Zoho: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function bulkWriteJob($fileId)
+    {
+        try {
+            Log::info('Bulk Write Job In ZOHO');
+            // Define the JSON input for the bulk write job
+            $inputJSON = [
+                "operation" => "insert",
+                "ignore_empty" => true,
+                "callback"=> [
+                    "url"=> "https://8121-122-161-192-36.ngrok-free.app/bulkJob/update",
+                    "method"=> "post"
+                ],
+                "resource" => [
+                    [
+                        "type" => "data",
+                        "module" => [ 
+                            "api_name" => "Contacts_X_Groups" 
+                        ],   
+                        "file_id" => $fileId,
+                        "field_mappings" => [
+                            [
+                                "api_name" => "Contacts",
+                                "find_by" => "id",
+                                "index" => 1
+                            ],
+                            [
+                                "api_name" => "Groups",
+                                "find_by" => "id",
+                                "index" => 0
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+            // Send a POST request to Zoho API
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->post('https://www.zohoapis.com/crm/bulk/v3/write', $inputJSON);
+            
+            // Log response
+            Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
+            
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getJobDetail($id)
+    {
+        try {
+            Log::info('Get Job Details' . json_encode($id));
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->get('https://www.zohoapis.com/crm/bulk/v3/write/' . $id);
+            return $response;
+        } catch (\Throwable $e) {
+            Log::error("Error retrieving Job Details: " . $e->getMessage());
         }
 
     }

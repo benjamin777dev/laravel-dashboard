@@ -24,7 +24,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
-Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('logout', [LoginController::class, 'logout']);
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 Route::get('reset', [RegisterController::class, 'showResetForm'])->name('reset');
@@ -41,12 +41,12 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+Route::get('/get/tasks/for/dashboard', [DashboardController::class, 'getTasksForDashboard'])->name('dashboard.tasks')->middleware('auth');
 //create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
 Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
-Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 
 //task actions
 Route::post('/create-task', [DashboardController::class, 'createTaskaction'])->name('create.task')->middleware('auth');
@@ -75,9 +75,9 @@ Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForConta
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
-Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.create');
-Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->name('pipeline.create')->middleware('auth');
-Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm'])->name('pipeline.update');
+Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
+Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');
+Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 
 //Groups
@@ -86,6 +86,7 @@ Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middlew
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');
 Route::get('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
+Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 

@@ -30,17 +30,7 @@
         });
 
 
-    }
-
-    
-
-    
-
-    
-
-
-        
-        
+    } 
         function resetFormAndHideSelect() {
             document.getElementById('noteForm').reset();
             document.getElementById('taskSelect').style.display = 'none';
