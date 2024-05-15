@@ -34,9 +34,3 @@ jobs:
         php artisan config:cache # Cache configuration
         php artisan cache:clear # Clear cache
         php artisan migrate --force # Run migrations
-
-    - name: Set Permissions
-      run: |
-        chmod -R 775 /home/master/applications/jpcwcfpmsv/public_html/storage
-        chmod -R 775 /home/master/applications/jpcwcfpmsv/public_html/bootstrap/cache
-        
