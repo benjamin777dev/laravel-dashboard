@@ -20,11 +20,13 @@ jobs:
     - name: Install JavaScript Dependencies
       run: |
         npm install
+        rm -rf ./public/build/*
         npm run build
 
     # Add any additional steps for building/testing your application here
     - name: Copy Files to Web Directory
       run: |
+        rm -rf /home/master/applications/jpcwcfpmsv/public_html/public/build/*
         rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/jpcwcfpmsv/public_html
 
     - name: Laravel Specific Commands
