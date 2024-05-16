@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import {laravel} from 'laravel-vite-plugin';
+import laravel from 'laravel-vite-plugin';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
@@ -29,6 +29,7 @@ export default defineConfig({
                 'resources/scss/app.scss',
                 'resources/sass/app.scss',
                 'resources/js/app.js',
+                'resources/css/custom.css',
                 'resources/js/custom.js',
                 'resources/js/dashboard.js',
                 'resources/css/dashboard.css',
@@ -36,7 +37,6 @@ export default defineConfig({
                 'resources/css/pipeline.css',
                 'resources/js/contacts.js',
                 'resources/css/contacts.css',
-                'resources/css/custom.css',
                 'resources/css/app.css'
             ],
             refresh: true,
