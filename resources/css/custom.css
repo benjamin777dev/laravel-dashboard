@@ -1066,7 +1066,7 @@
     text-transform: uppercase;
 }
 
-.ppipeBtn {
+/* .ppipeBtn {
     padding: 6px 11px;
     border-radius: 5px;
     border: 1px solid #222;
@@ -1074,7 +1074,7 @@
     cursor: pointer;
     color: #fff;
     font-size: 16px;
-}
+} */
 
 .ppipeaText {
     color: #fff;
@@ -1088,7 +1088,7 @@
     gap: 24px;
 }
 .pcontactBtn,
-.pTransactionBtn {
+.pTransactionBtn,.ppipeBtn {
     display: flex;
     padding: 12px;
     justify-content: center;
@@ -1884,6 +1884,7 @@
     position: absolute;
     right: 0px;
     border-radius: 4px;
+    top: 0;
 }
 
 .dataPhoneDiv,
@@ -2331,7 +2332,9 @@
 
 .psortFilterDiv {
     display: flex;
-    padding: 7.52px 12px;
+    /* padding: 7.52px 12px; */
+    padding-block: 0;
+    padding-inline:6px ;
     justify-content: space-between;
     align-items: center;
     border-radius: 5px;
@@ -2418,6 +2421,7 @@ body {
 
 .dgraph-strip {
     align-items: center;
+    justify-content: space-between;
 }
 
 .dmonth-design {

@@ -323,7 +323,7 @@
                     }
                 });
                 taskSelect.show();
-                  taskSelect.each(function () {
+                taskSelect.each(function () {
                     $(this).select2({
                         theme: 'bootstrap-5',
                         dropdownParent: $(this).parent(),
