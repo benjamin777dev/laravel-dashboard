@@ -14,6 +14,7 @@ use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use App\Services\DB;
 use League\Csv\Writer;
+
 use League\Csv\CannotInsertRecord;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
@@ -141,10 +142,12 @@ class GroupController extends Controller
             $csvData = [];
             $jsonInput = $request->input('laravelData');
             $keyValueArray = json_decode($jsonInput, true);
+            // Define CSV headers
+            $csvHeaders = ["Contacts", "Groups"];
             foreach ($keyValueArray as $record) {
                 $csvData[] = [
-                    "Contacts" => ['id' => $record['contactId']],
-                    "Groups" => ['id' => $record['groupId']]
+                    "Contacts" =>$record['contactId'],
+                    "Groups" =>$record['groupId']
                 ];
             }
 
@@ -154,8 +157,9 @@ class GroupController extends Controller
             // Write CSV data to file
             $csvFilepath = storage_path('app/' . $csvFilename);
             $csv = Writer::createFromPath($csvFilepath, 'w+');
+            $csv->insertOne($csvHeaders);
             foreach ($csvData as $row) {
-                $csv->insertOne([$row['Contacts']['id'], $row['Groups']['id']]);
+                $csv->insertOne([$row['Contacts'], $row['Groups']]);
             }
 
             // Create a zip archive
@@ -188,8 +192,11 @@ class GroupController extends Controller
     {
         // Process the webhook payload here
         $payload = $request->all();
+        $db = new DB();
+        $getUser = $db->getBulkJob($payload['id']);
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $helper = new Helper();
+        $user = $getUser;
         if (!$user) {
             return redirect('/login');
         }
@@ -197,14 +204,32 @@ class GroupController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
 
-
         // Example: Log the payload
         \Log::info('Webhook received:', $payload);
         $jobID = $payload['id'];
         $getJobDetail = $zoho->getJobDetail($jobID);
-         \Log::info('getJobDetail:', ['response' => $getJobDetail->json()]);
-        // Respond to the webhook
-        return response()->json(['status' => 'success'], 200);
+        \Log::info('getJobDetail:', ['response' => $getJobDetail->json()]);
+        $zipFile = $getJobDetail['result']['download_url'];
+        Log::info('ZIPFILE:', ['ZIPFILE' => $zipFile]);
+        
+        $extractZipFile = $helper->extractZipFile($zipFile,$zoho);
+        $extractedFilesJSON = $helper->csvToJson($extractZipFile);
+        for ($i=0; $i < count($extractedFilesJSON); $i++) { 
+            $curr = $extractedFilesJSON[$i];
+            $contact = Contact::where('zoho_contact_id', $curr['Contacts'])->first();
+            
+            $group = Groups::where('zoho_group_id', $curr['Groups'])->first();
+            $contactGroup = ContactGroups::create(
+                [
+                    'ownerId' => $user->id,
+                    "contactId" => $contact['id'] ?? null,
+                    "groupId" => $group['id'] ?? null,
+                    "zoho_contact_group_id" => $curr['RECORD_ID'] ?? null
+                ]
+            );
+        }
+       
+        return response()->json(['status' => 'success', 'extracted_files' => $extractedFilesJSON], 200);
     }
 
 }

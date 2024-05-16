@@ -773,7 +773,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback"=> [
-                    "url"=> "https://8121-122-161-192-36.ngrok-free.app/bulkJob/update",
+                    "url"=> "https://7ece-122-161-192-36.ngrok-free.app/bulkJob/update",
                     "method"=> "post"
                 ],
                 "resource" => [
@@ -787,12 +787,14 @@ class ZohoCRM
                             [
                                 "api_name" => "Contacts",
                                 "find_by" => "id",
-                                "index" => 1
+                                "parent_column_index"=>0,
+                                "index" => 0
                             ],
                             [
                                 "api_name" => "Groups",
                                 "find_by" => "id",
-                                "index" => 0
+                                "parent_column_index"=>0,
+                                "index" => 1
                             ]
                         ]
                     ]

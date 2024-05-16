@@ -1194,4 +1194,24 @@ class DB
         }
     }
 
+    public function getBulkJob($jobId)
+    {
+        try {
+            // Retrieve bulk job with user data eagerly loaded
+            $bulkJob = BulkJob::where('jobId', $jobId)->with('userData')->firstOrFail();
+            
+            // Log retrieved bulk job
+            Log::info("Bulk job retrieved from the database", ['bulkJob' => $bulkJob->toArray()]);
+            
+            // Return user data associated with the bulk job
+            return $bulkJob->userData;
+        } catch (\Exception $e) {
+            // Log error if any exception occurs
+            Log::error("Error retrieving bulk job: " . $e->getMessage());
+            
+            // Rethrow the exception to handle it elsewhere
+            throw $e;
+        }
+    }
+
 }

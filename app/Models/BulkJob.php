@@ -17,6 +17,6 @@ class BulkJob extends Model
 
     public function userData()
     {
-        return $this->belongsTo(User::class, 'userID');
+        return $this->belongsTo(User::class, 'userId');
     }
 }

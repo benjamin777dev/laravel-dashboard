@@ -52,26 +52,25 @@
         </thead>
         <tbody class="text-center dbgBodyTable">
             @foreach ($contacts as $contact)
-                    <tr>
-                        <td class="text-start">
-                            @if($contact->relationship_type == 'Secondary')
-                                <i class="fa fa-caret-right"></i>
-                            @endif
-                            {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}
-                        </td>
+                <tr>
+                    <td class="text-start">
+                        @if($contact->relationship_type == 'Secondary')
+                            <i class="fa fa-caret-right"></i>
+                        @endif
+                        {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}
+                    </td>
 
-                        @foreach ($shownGroups as $index => $shownGroup)
-                                    @php
-        $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
-                                    @endphp
-                                    <td>
-                                        <input type="checkbox" data-id="{{$contact['zoho_contact_id']}}"
-                                            onclick="contactGroupUpdate('{{ $contact ? $contact : 'null' }}', '{{ $shownGroup }}', this.checked,'{{$group}}')"
-                                            class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
-
-                                    </td>
-                        @endforeach
-                    </tr>
+                    @foreach ($shownGroups as $index => $shownGroup)
+                                @php
+                                $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
+                                @endphp
+                                <td>
+                                    <input type="checkbox" data-id="{{$contact['zoho_contact_id']}}" data-group-id="{{$group}}"
+                                        onclick="contactGroupUpdate('{{ $contact ? $contact : 'null' }}', '{{ $shownGroup }}', this.checked,'{{$group}}')"
+                                        class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
+                                </td>
+                    @endforeach
+                </tr>
             @endforeach
         </tbody>
     </table>
@@ -207,50 +206,80 @@
         const buttonElement = document.querySelector('.deleteModalBtn');
         const elementInnerText = buttonElement
             .innerText; // Retrieves visible text content, ignoring hidden elements
-
-
-
         checkboxes.forEach(function (checkbox) {
             var contactId = checkbox.getAttribute('data-id');
+            var contactgroupId = checkbox.getAttribute('data-group-id');
+            if(contactgroupId){
+
+                contactgroupId = JSON.parse(contactgroupId);
+            }
             if (elementInnerText == "Select All" && !(checkbox.checked)) {
                 checkedGroup.push({ groupId: groupId, contactId: contactId })
                 checkbox.checked = true;
             }
             if (elementInnerText == "Deselect All" && checkbox.checked) {
-                checkedGroup.push({ groupId: groupId, contactId: contactId })
+                checkedGroup.push({ contactGroupId: contactgroupId.zoho_contact_group_id })
                 checkbox.checked = false;
             }
         })
-        console.log(checkedGroup);
-        var jsonString = JSON.stringify(checkedGroup);
+        if(elementInnerText == "Select All"){
+            console.log(checkedGroup);
+            var jsonString = JSON.stringify(checkedGroup);
 
-        var formData = {
-            "data": jsonString,
-        };
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/contact/group/create/CSVfile',
-            method: 'GET',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: {
-                "laravelData": jsonString,
-            },
-            success: function (response) {
-                // Handle successful API response
-                // if (response?.status == "success") {
-                window.location.href = '/group';
-                // }
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
+            var formData = {
+                "data": jsonString,
+            };
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/contact/group/create/CSVfile',
+                method: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: {
+                    "laravelData": jsonString,
+                },
+                success: function (response) {
+                    showToast('Contacts add successfully')
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
 
+        }else{
+            console.log(checkedGroup);
+            var jsonString = JSON.stringify(checkedGroup);
+
+            var formData = {
+                "data": jsonString,
+            };
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: '/contact/group/bulk/remove',
+                method: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: {
+                    "laravelData": jsonString,
+                },
+                success: function (response) {
+                    showToast('Contacts remove successfully')
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
+        
     }
 </script>
