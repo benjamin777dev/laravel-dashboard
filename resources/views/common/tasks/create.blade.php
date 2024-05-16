@@ -285,9 +285,11 @@
                     }
                 });
                 taskSelect.show();
-                taskSelect.select2({
-                    theme: 'bootstrap-5',
-                    dropdownParent: $(this).parent(),
+                taskSelect.each(function () {
+                    $(this).select2({
+                        theme: 'bootstrap-5',
+                        dropdownParent: $(this).parent(),
+                    });
                 });
                 taskSelect.next(".select2-container").addClass("form-select");
                 // Do whatever you want with the response data here

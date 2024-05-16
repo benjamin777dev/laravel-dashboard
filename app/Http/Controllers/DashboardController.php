@@ -181,6 +181,7 @@ class DashboardController extends Controller
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
          $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+         $retreiveModulesdata = $this->retriveModules();
          $dealFordash = $this->getDealsForDash();
          $contactInfo = Contact::getZohoContactInfo();
         //  fetch notes
@@ -222,7 +223,7 @@ class DashboardController extends Controller
             compact('deals', 'progress', 'goal',
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',
-                'projectedIncome', 'beyond12MonthsData',
+                'projectedIncome', 'beyond12MonthsData','retreiveModulesdata',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
                 'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
@@ -605,6 +606,7 @@ class DashboardController extends Controller
                 $subject = $data['Subject'] ?? null; // Get 'Subject' from data
                 $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
                 $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
+                $whoId = $data['Who_Id']['id'] ?? null; // Get 'What_Id' from data
                 $seModule = $data['$se_module'] ?? null;
                 if($task){
                     if($dueDate !== null){
@@ -618,6 +620,9 @@ class DashboardController extends Controller
                     }
                     if($seModule!==null){
                         $task->related_to = $seModule;
+                    }
+                    if($whoId!==null){
+                        $task->who_id = $whoId;
                     }
                     $task->status=$status ?? $task->status;
                     $task->save();
@@ -715,6 +720,75 @@ class DashboardController extends Controller
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
     }
+    
+    public function retriveModules()
+    { 
+        $db = new DB();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        
+        $accessToken = $user->getAccessToken();
+        // if (!$accessToken) {
+        //     throw new \Exception("Invalid user token");
+        // }
+        $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
+        $data = [];
+    
+        // Initialize data arrays for each module
+        $data['contacts'] = [];
+        $data['deals'] = [];
+    
+        // Search query
+        $searchQuery = request()->query('search');
+    
+        foreach ($filteredModules as $module) {
+            if ($module->api_name === 'Deals') {
+                // Retrieve Deals data based on search query if provided
+                $dealsQuery = Deal::query();
+                if ($searchQuery) {
+                    $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
+                }
+                $dealsData = $dealsQuery->get();
+                if ($searchQuery || $dealsData->isNotEmpty()) {
+                    $data['deals'] = $dealsData;
+                }
+            } elseif ($module->api_name === 'Contacts') {
+                // Retrieve Contacts data based on search query if provided
+                $contactsQuery = Contact::query();
+                if ($searchQuery) {
+                    $contactsQuery->where('first_name', 'like', "%$searchQuery%")
+                                 ->orWhere('last_name', 'like', "%$searchQuery%");
+                }
+                $contactsData = $contactsQuery->get();
+                if ($searchQuery || $contactsData->isNotEmpty()) {
+                    $data['contacts'] = $contactsData;
+                }
+            }
+        }
+    
+        // Add objects for Contacts and Deals with their respective data arrays
+        $responseData = [];
+    
+        if (!empty($data['contacts'])) {
+            $responseData[] = [
+                'label' => 'Contacts',
+                'data' => $data['contacts']
+            ];
+        }
+    
+        if (!empty($data['deals'])) {
+            $responseData[] = [
+                'label' => 'Deals',
+                'data' => $data['deals']
+            ];
+        }
+    
+        return $responseData;
+    }
+    
+
 
     public function getDealsForDash()
     { 
