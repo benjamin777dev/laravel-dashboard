@@ -26,10 +26,10 @@ class ContactController extends Controller
         $contacts = $db->retreiveContacts($user, $accessToken, $search);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-
+        $retreiveModulesdata = $db->retriveModules($user,$accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
 
-        return view('contacts.index', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
+        return view('contacts.index', compact('contacts', 'getdealsTransaction', 'retrieveModuleData','retreiveModulesdata', 'groups'));
     }
 
     public function getContact(Request $request)
@@ -528,7 +528,8 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.detail', compact('contact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+        $retreiveModulesdata = $db->retriveModules($user,$accessToken);
+        return view('contacts.detail', compact('contact', 'user_id','retreiveModulesdata', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
     }
 
 
@@ -565,7 +566,8 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId'));
+        $retreiveModulesdata = $db->retriveModules($user,$accessToken);
+        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData','retreiveModulesdata', 'dealContacts', 'contactId'));
 
     }
 

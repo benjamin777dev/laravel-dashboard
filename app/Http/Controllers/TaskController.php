@@ -20,9 +20,10 @@ class TaskController extends Controller
         $tasks = $db->retreiveTasks($user, $accessToken,$tab);
         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        $retreiveModulesdata = $db->retriveModules($user,$accessToken);
 
        return view('task.index',
-            compact('tasks','getdealsTransaction','retrieveModuleData','tab'));
+            compact('tasks','getdealsTransaction','retrieveModuleData','retreiveModulesdata','tab'));
     }
 
 }
