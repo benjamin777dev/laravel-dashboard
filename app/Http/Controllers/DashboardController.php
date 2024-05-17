@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
@@ -21,8 +20,7 @@ use App\Services\Helper;
 
 class DashboardController extends Controller
 {
-    private function masterFilter($deal)
-    {
+    private function masterFilter($deal) {
         $helper = new Helper();
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $startOfYear = Carbon::now()->startOfYear();
@@ -53,7 +51,7 @@ class DashboardController extends Controller
 
         // Retrieve deals from Zoho CRM
         $deals = $db->retrieveDeals($user, $accessToken);
-        $closedDeals = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "closedDeals");
+        $closedDeals = $db->retrieveDeals($user, $accessToken, $search = null, $sortField=null, $sortType=null,"closedDeals");
         Log::info("Deals: " . print_r($deals, true));
         // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
@@ -65,10 +63,10 @@ class DashboardController extends Controller
         // master filter will exclude anything that is beyond 12 months
         // anything that is a bad date (less than today)
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $startDate, $endDate) {
-            $filteredDeals = $deals->filter(function ($deal) use ($stage, $startDate, $endDate) {
-                $closingDate = Carbon::parse($deal['closing_date']);
-                return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($startDate) && $closingDate->lte($endDate);
+        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals,$goal,$startDate,$endDate) {
+            $filteredDeals = $deals->filter(function ($deal) use ($stage,$startDate,$endDate) {
+               $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($startDate) && $closingDate->lte($endDate);
             });
             $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
             $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
@@ -81,13 +79,13 @@ class DashboardController extends Controller
                     'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
                     'asum' => $filteredDeals->sum('pipeline1'),
                     'stageProgress' => $stageProgress,
-                    "stageProgressClass" => $stageProgressClass,
-                    'stageProgressIcon' => $stageProgressIcon,
-                    'stageProgressExpr' => $stageProgressExpr
+                    "stageProgressClass"=>$stageProgressClass,
+                    'stageProgressIcon'=>$stageProgressIcon,
+                    'stageProgressExpr'=>$stageProgressExpr
                 ],
             ];
         });
-
+   
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
         });
@@ -116,22 +114,22 @@ class DashboardController extends Controller
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) use ($helper) {
             return Carbon::parse($helper->convertToMST($deal['closing_date']))->lt(now())
-                && !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
 
         $needsNewDateData = [
-            'sum' => $this->formatNumber($needsNewDate->sum('pipeline1')),
+            'sum' =>$this->formatNumber($needsNewDate->sum('pipeline1')),
             'asum' => $needsNewDate->sum('pipeline1'),
             'count' => $needsNewDate->count(),
         ];
 
         $filteredDeals = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                && !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         });
-
+        
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
             return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
@@ -140,15 +138,15 @@ class DashboardController extends Controller
 
         $averagePipelineProbability = $deals->filter(function ($deal) {
             return $this->masterFilter($deal)
-                && !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold';
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->avg('Pipeline_Probability');
 
         $newDealsLast30Days = $deals->filter(function ($deal) use ($helper) {
             return now()->diffInDays(Carbon::parse($helper->convertToMST($deal['zoho_deal_createdTime']))) <= 30
-                && $this->masterFilter($deal)
-                && !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold';
+                   && $this->masterFilter($deal)
+                   && !Str::startsWith($deal['stage'], 'Dead')
+                   && $deal['stage'] !== 'Sold';
         })->count();
         // Ensure all months of the year are represented, fill missing months with 0
         $startOfYear = Carbon::now()->startOfYear();
@@ -157,57 +155,58 @@ class DashboardController extends Controller
         while ($startOfYear->lessThanOrEqualTo($endOfYear)) {
             $month = $startOfYear->format('Y-m');
             $gci = $monthlyGCI->get($month, 0);
-
+            
             // Get the count of deals for this month
             $dealCount = $filteredDeals->filter(function ($deal) use ($month, $helper) {
                 return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m') === $month;
             })->count();
-
+        
             $allMonths[$month] = [
                 'gci' => $gci,
                 'deal_count' => $dealCount
             ];
-
+            
             $startOfYear->addMonth();
         }
-
+        
         $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
         $contactData = $this->retrieveAndCheckContacts($rootUserId, $accessToken);
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
         $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $db->retreiveTasks($user, $accessToken, $tab);
-        Log::info("Task Details: " . print_r($tasks, true));
+        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
+        Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
-        $notesInfo = $db->retrieveNotes($user, $accessToken);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $dealFordash = $this->getDealsForDash();
-        $contactInfo = Contact::getZohoContactInfo();
+         $notesInfo = $db->retrieveNotes($user,$accessToken);
+         $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
+         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+         $retreiveModulesdata = $db->retriveModules($user,$accessToken);
+         $dealFordash = $this->getDealsForDash();
+         $contactInfo = Contact::getZohoContactInfo();
         //  fetch notes
         //   print("<pre/>");
         //   print_r(json_encode($dealFordash));
         //   die;
-        $notes = $this->fetchNotes();
+         $notes = $this->fetchNotes();
         $totalaci = $aciInfo->filter(function ($aci) {
-            return isset ($aci['Total'], $aci['Closing_Date'])
-                && $aci['Total'] > 0
-                && (!isset ($aci['Stage']) || $aci['Stage'] == 'Sold')
-                && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
+            return isset($aci['Total'], $aci['Closing_Date'])
+                   && $aci['Total'] > 0
+                   && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
+                   && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Total');
 
         $totalAgentCheck = $aciInfo->filter(function ($aci) {
-            return isset ($aci['Agent_Check_Amount'], $aci['Closing_Date'])
+            return isset($aci['Agent_Check_Amount'], $aci['Closing_Date'])
                 && $aci['Agent_Check_Amount'] > 0
-                && (!isset ($aci['Stage']) || $aci['Stage'] == 'Sold')
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
                 && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('Agent_Check_Amount');
 
         $totalIRS1099 = $aciInfo->filter(function ($aci) {
-            return isset ($aci['IRS_Reported_1099_Income_For_This_Transaction'], $aci['Closing_Date'])
+            return isset($aci['IRS_Reported_1099_Income_For_This_Transaction'], $aci['Closing_Date'])
                 && $aci['IRS_Reported_1099_Income_For_This_Transaction'] > 0
-                && (!isset ($aci['Stage']) || $aci['Stage'] == 'Sold')
+                && (!isset($aci['Stage']) || $aci['Stage'] == 'Sold')
                 && $this->masterFilter(['Closing_Date' => $aci['Closing_Date']]);
         })->sum('IRS_Reported_1099_Income_For_This_Transaction');
 
@@ -217,50 +216,22 @@ class DashboardController extends Controller
             'totalIRS1099' => $this->formatNumber($totalIRS1099 ?? 0),
         ];
 
-        Log::Info("ACI Data: " . print_r($aciData, true));
-
+        Log::Info("ACI Data: ". print_r($aciData, true));
+      
         // Pass data to the view
-        return view(
-            'dashboard.index',
-            compact(
-                'deals',
-                'progress',
-                'goal',
-                'progressClass',
-                'progressTextColor',
-                'stageData',
-                'currentPipelineValue',
-                'projectedIncome',
-                'beyond12MonthsData',
-                'needsNewDateData',
-                'allMonths',
-                'contactData',
-                'newContactsLast30Days',
-                'newDealsLast30Days',
-                'averagePipelineProbability',
-                'tasks',
-                'aciData',
-                'tab',
-                'dealFordash',
-                'getdealsTransaction',
-                'notes',
-                'startDate',
-                'endDate',
-                'user',
-                'notesInfo',
-                'closedDeals',
-                'retrieveModuleData',
-                'accessToken',
-                'contactInfo',
-                'totalGciForDah'
-            )
-        );
+        return view('dashboard.index',
+            compact('deals', 'progress', 'goal',
+                'progressClass', 'progressTextColor',
+                'stageData', 'currentPipelineValue',
+                'projectedIncome', 'beyond12MonthsData','retreiveModulesdata',
+                'needsNewDateData', 'allMonths', 'contactData',
+                'newContactsLast30Days', 'newDealsLast30Days',
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
     }
 
-    private function formatNumber($number)
-    {
+    private function formatNumber($number) {
         if ($number < 1000) {
-            return (string) $number; // Less than 1,000
+            return (string)$number; // Less than 1,000
         } elseif ($number < 1000000) {
             return round($number / 1000, 2) . 'k'; // Less than 1 million
         } elseif ($number < 1000000000) {
@@ -308,7 +279,7 @@ class DashboardController extends Controller
             return $allACI;
         }
 
-        Log::info("Total aci records: " . $allACI->count());
+        Log::info("Total aci records: ". $allACI->count());
         Log::info("Aci Records: ", $allACI->toArray());
         return $allACI;
     }
@@ -331,7 +302,7 @@ class DashboardController extends Controller
 
         try {
             while ($hasMorePages) {
-                $response = $zoho->getNotesData($criteria, $fields, $page, 200);
+                $response = $zoho->getNotesData($criteria,$fields, $page, 200);
                 if (!$response->successful()) {
                     Log::error("Error retrieving notes: " . $response->body());
                     // Handle unsuccessful response
@@ -352,7 +323,7 @@ class DashboardController extends Controller
             return $allNotes;
         }
 
-        Log::info("Total notes records: " . $allNotes->count());
+        Log::info("Total notes records: ". $allNotes->count());
         Log::info("notes Records: ", $allNotes->toArray());
         return $allNotes;
     }
@@ -364,8 +335,8 @@ class DashboardController extends Controller
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
             return !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold'
-                && $this->masterFilter($deal); // Correct usage within the method
+                   && $deal['stage'] !== 'Sold'
+                   && $this->masterFilter($deal); // Correct usage within the method
         });
 
         // Sum the 'Pipeline1' values of the filtered deals.
@@ -387,13 +358,13 @@ class DashboardController extends Controller
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
             return !Str::startsWith($deal['stage'], 'Dead')
-                && $deal['stage'] !== 'Sold'
-                && $this->masterFilter($deal); // Correct usage within the method
+                   && $deal['stage'] !== 'Sold'
+                   && $this->masterFilter($deal); // Correct usage within the method
         });
 
         // Sum the 'Pipeline1' values of the filtered deals.
         $totalGCI = $filteredDeals->sum('pipeline1');
-
+       
         return $totalGCI;
     }
 
@@ -417,27 +388,27 @@ class DashboardController extends Controller
         $allContacts = $this->retrieveContactsFromZoho($rootUserId, $accessToken);
 
         $abcContacts = $allContacts->filter(function ($contact) {
-            return (!empty ($contact['ABCD']) && $contact['ABCD'] !== 'D');
+            return (!empty($contact['ABCD']) && $contact['ABCD'] !== 'D');
         })->count();
         Log::info("ABC Contacts: $abcContacts");
 
         $needsEmail = $allContacts->filter(function ($contact) {
-            return empty ($contact['Email']);
+            return empty($contact['Email']);
         })->count();
         Log::info("Needs Email: $needsEmail");
 
         $needsAddress = $allContacts->filter(function ($contact) {
-            return empty ($contact['Mailing_Address']) || empty ($contact['Mailing_City']) || empty ($contact['Mailing_State']) || empty ($contact['Mailing_Zip']);
+            return empty($contact['Mailing_Address']) || empty($contact['Mailing_City']) || empty($contact['Mailing_State']) || empty($contact['Mailing_Zip']);
         })->count();
         Log::info("Needs Address: $needsAddress");
 
         $needsPhone = $allContacts->filter(function ($contact) {
-            return empty ($contact['Phone']);
+            return empty($contact['Phone']);
         })->count();
         Log::info("Needs Phone: $needsPhone");
 
         $missingAbcd = $allContacts->filter(function ($contact) {
-            return empty ($contact['ABCD']);
+            return empty($contact['ABCD']);
         })->count();
         Log::info("Missing ABCD: $missingAbcd");
 
@@ -446,12 +417,12 @@ class DashboardController extends Controller
         })->count();
 
         return [
-            'abcContacts' => $abcContacts,
-            'needsEmail' => $needsEmail,
-            'needsAddress' => $needsAddress,
-            'needsPhone' => $needsPhone,
-            'missingAbcd' => $missingAbcd,
-            'contactsLast30Days' => $contactsLast30Days
+            'abcContacts'=>$abcContacts,
+            'needsEmail'=>$needsEmail,
+            'needsAddress'=>$needsAddress,
+            'needsPhone'=>$needsPhone,
+            'missingAbcd'=>$missingAbcd,
+            'contactsLast30Days'=>$contactsLast30Days
         ];
     }
 
@@ -492,13 +463,13 @@ class DashboardController extends Controller
             Log::error("Error retrieving contacts: " . $e->getMessage());
             return $allContacts;
         }
-        Log::info("Retrieved contacts: " . $allContacts->count());
+        Log::info("Retrieved contacts: ". $allContacts->count());
 
         return $allContacts;
     }
 
 
-    public function createTaskaction(Request $request, User $user)
+    public function createTaskaction(Request $request,User $user)
     {
         $user = auth()->user();
         if (!$user) {
@@ -517,56 +488,62 @@ class DashboardController extends Controller
         $status = $data['Status'] ?? null;
         $Due_Date = $data['Due_Date'] ?? null;
         $What_Id = $data['What_Id']['id'] ?? null;
-        $priority = $data['Priority'] ?? null;
+        $priority = $data['Priority']??null;
         $created_time = Carbon::now();
-        $closed_time = $data['Closed_Time'] ?? null;
-        $related_to = $data['$se_module'] ?? null;
-
+        $closed_time = $data['Closed_Time']??null;
+        $related_to = $data['$se_module']??null;
+        
 
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
         // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
         Log::info("Retrieving notes for criteria: $criteria");
         // $response;
-
+       
 
         try {
-            $response = $zoho->createTask($jsonData);
+                $response = $zoho->createTask($jsonData);
 
 
-            if (!$response->successful()) {
-                Log::error("Zoho Error " . $response['data'][0]['message']);
-            }
-            $responseArray = json_decode($response, true);
-            $data = $responseArray['data'][0]['details'];
-            $zoho_id = $data['id'];
-            $modifiedTime = $data['Modified_Time'];
-            $Modified_By = $data['Modified_By']['name'];
-            $Modified_Id = $data['Modified_By']['id'];
-            // Create a new Task record using the Task model
-            $task = Task::create([
-                'subject' => $subject,
-                'zoho_task_id' => $zoho_id,
-                'owner' => "1",
-                'status' => $status ?? "Not Started",
-                'who_id' => $whoid ?? null,
-                'due_date' => $Due_Date ?? null,
-                'what_id' => $What_Id ?? null,
-                'closed_time' => $closed_time ?? null,
-                'created_by' => $user->id,
-                'priority' => $priority ?? null,
-                'created_time' => $created_time ?? null,
-                'related_to' => $related_to
-            ]);
-            return response()->json($responseArray, 201);
+                if (!$response->successful()) {
+                     return "error something".$response;
+                }
+                $responseArray = json_decode($response, true);
+                $data = $responseArray['data'][0]['details']; 
+                $zoho_id = $data['id'];
+                $modifiedTime = $data['Modified_Time'];
+                $Modified_By = $data['Modified_By']['name'];
+                $Modified_Id = $data['Modified_By']['id'];
+                // Create a new Task record using the Task model
+                $task = Task::create([
+                    'subject' => $subject,
+                    'zoho_task_id'=>$zoho_id,
+                    'owner' => "1",
+                    'status'=>$status ?? "Not Started",
+                    'who_id'=>$whoid ?? null,
+                    'due_date'=>$Due_Date ?? null,
+                    'what_id'=>$What_Id ?? null,
+                    'closed_time'=>$closed_time??null,
+                    'created_by'=>$user->id,
+                    'priority'=>$priority??null,
+                    'created_time'=>$created_time??null,
+                    'related_to'=>$related_to
+                ]);
+                return response()->json($responseArray, 201);
+
+                // $task->modified_by_name = $modifiedByName;
+                // $task->modified_by_id = $modifiedById;
+                return $data;
+                Log::info("Successful notes create... ".$response);
+
+
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return "somthing went wrong". $e->getMessage();
         }
     }
 
-    public function deleteTaskaction(Request $request, User $user, $id)
-    {
+    public function deleteTaskaction(Request $request,User $user,$id)  {
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -577,9 +554,9 @@ class DashboardController extends Controller
         $zoho->access_token = $accessToken;
         try {
             if (strpos($id, ',') === false) {
-                $response = $zoho->deleteTask($jsonData, $id);
+                $response = $zoho->deleteTask($jsonData,$id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                     return "error somthing".$response;
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 if (!$task) {
@@ -588,63 +565,75 @@ class DashboardController extends Controller
                 $task->delete();
             } else {
                 // Multiple IDs provided
-                $response = $zoho->deleteTaskSelected($jsonData, $id);
+                $response = $zoho->deleteTaskSelected($jsonData,$id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                     return "error somthing".$response;
                 }
                 $idArray = explode(',', $id);
-                $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
+               $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
                 if (!$tasks) {
                     return "Task not found";
                 }
             }
-            Log::info("Successful notes delete... " . $response);
+            Log::info("Successful notes delete... ".$response);
 
-
+            
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return "somthing went wrong". $e->getMessage();
         }
         return $response;
     }
-    public function updateTaskaction(Request $request, User $user, $id)
-    {
+    public function updateTaskaction(Request $request,User $user,$id){
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
-        Log::info("JSON TASK INPUT" . json_encode($jsonData));
+
+        Log::info("JSON TASK INPUT".json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
+        $task = Task::where('id', $id)->first();
         try {
-            $response = $zoho->updateTask($jsonData, $id);
-            if (!$response->successful()) {
-                return response()->json(['error' => $response->getMessage()], 500);
-            }
-            $task = Task::where('zoho_task_id', $id)->first();
-            $requestData = json_decode($request->getContent(), true);
-            $data = $requestData['data'][0];
-            $subject = $requestData['data'][0]['Subject'] ?? null;
-            $dueDate = $requestData['data'][0]['Due_Date'] ?? null;
-            if ($task) {
-                if ($dueDate !== null) {
-                    $task->due_date = $dueDate ?? $task->due_date;
+                $response = $zoho->updateTask($jsonData,$task['zoho_task_id']);
+                if (!$response->successful()) {
+                      return "error".$response;
                 }
-                if ($subject !== null) {
-                    $task->subject = $subject;
+                $requestData = $request->json()->all(); // Get JSON data from request
+                $data = $requestData['data'][0]; // Access the 'data' array
+                $subject = $data['Subject'] ?? null; // Get 'Subject' from data
+                $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
+                $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
+                $whoId = $data['Who_Id']['id'] ?? null; // Get 'What_Id' from data
+                $seModule = $data['$se_module'] ?? null;
+                if($task){
+                    if($dueDate !== null){
+                        $task->due_date = $dueDate ?? $task->due_date;
+                    }
+                    if($subject !== null){
+                        $task->subject = $subject;
+                    }
+                    if($whatId!==null){
+                        $task->what_id = $whatId;
+                    }
+                    if($seModule!==null){
+                        $task->related_to = $seModule;
+                    }
+                    if($whoId!==null){
+                        $task->who_id = $whoId;
+                    }
+                    $task->status=$status ?? $task->status;
+                    $task->save();
                 }
-                $task->status = $status ?? $task->status;
-                $task->save();
-            }
 
-            Log::info("Successful notes update... " . $response);
-            return $response;
-        } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+                Log::info("Successful task update... ".$response);
+                return $response;
+            } catch (\Exception $e) {
+                Log::error("Error creating task: " . $e->getMessage());
+                return  $e->getMessage();
+            }
 
     }
 
@@ -684,12 +673,12 @@ class DashboardController extends Controller
             }
         } catch (\Exception $e) {
             Log::error("Error retrieving deal: " . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $allDeals;
         }
         return $allDeals;
+        
 
-
-        Log::info("Total deals records: " . $allDeals->count());
+        Log::info("Total deals records: ". $allDeals->count());
         Log::info("deals Records: ", $allDeals->toArray());
         return $allDeals;
     }
@@ -697,7 +686,7 @@ class DashboardController extends Controller
 
 
     public function getTasks(Request $request)
-    {
+    { 
         $db = new DB();
         $user = auth()->user();
         if (!$user) {
@@ -708,14 +697,14 @@ class DashboardController extends Controller
         $search = "";
         $dealId = request()->query('dealId');
         $contactId = request()->query('contactId');
-        // Pass the search parameters to the retrieveTasks method
-        $tasks = $db->retreiveTasksJson($user, $accessToken, $dealId, $contactId);
+            // Pass the search parameters to the retrieveTasks method
+        $tasks = $db->retreiveTasksJson($user, $accessToken,$dealId,$contactId);
         return response()->json($tasks);
         // return view('pipeline.index', compact('deals'));
     }
 
     public function getDeals(Request $request)
-    {
+    { 
         $db = new DB();
         $user = auth()->user();
         if (!$user) {
@@ -723,17 +712,20 @@ class DashboardController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
-        $dealId = request()->query('dealId');
-        $contactId = request()->query('contactId');
+         $dealId = request()->query('dealId');
+         $contactId = request()->query('contactId');
         // Pass the search parameters to the retrieveTasks method
-        $deals = $db->retreiveDealsJson($user, $accessToken, $dealId, $contactId);
-
+        $deals = $db->retreiveDealsJson($user, $accessToken,$dealId,$contactId);
+        
         return response()->json($deals);
         // return view('pipeline.index', compact('deals'));
     }
+    
+
+
 
     public function getDealsForDash()
-    {
+    { 
         $db = new DB();
         $user = auth()->user();
         if (!$user) {
@@ -743,13 +735,13 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         // Pass the search parameters to the retrieveTasks method
         $deals = $db->retreiveDealsJson($user, $accessToken);
-
+        
         return $deals;
         // return view('pipeline.index', compact('deals'));
     }
 
     public function getContacts(Request $request)
-    {
+    { 
         $db = new DB();
         $user = auth()->user();
         if (!$user) {
@@ -759,59 +751,59 @@ class DashboardController extends Controller
         // Pass the search parameters to the retrieveTasks method
         $dealId = request()->query('dealId');
         $contactId = request()->query('contactId');
-        if ($dealId) {
-            $contacts = $db->retrieveDealContactFordeal($user, $accessToken, $dealId);
-        } else if ($contactId) {
-            $contacts = $db->retrieveDealContactForContact($user, $accessToken, $contactId);
-        } else {
-            $contacts = $db->retreiveContactsJson($user, $accessToken);
+        if($dealId){
+            $contacts = $db->retrieveDealContactFordeal($user, $accessToken,$dealId);
+        }else if($contactId){
+            $contacts = $db->retrieveDealContactForContact($user, $accessToken,$contactId);
         }
-
+        else{
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        }
+        
         return response()->json($contacts);
         // return view('pipeline.index', compact('deals'));
     }
 
-    public function getStagesData()
-    {
-        $start_date = request()->query('start_date') ?? ''; // Start date of the range
+    public function getStagesData(){
+        $start_date =  request()->query('start_date') ?? ''; // Start date of the range
         $end_date = request()->query('end_date') ?? '';   // End date of the range
-
+       
         $user = auth()->user();
         $db = new DB();
         $accessToken = $user->getAccessToken();
         if (!$user) {
             return redirect('/login');
         }
-        // Set default goal or use user-defined goal
-        $goal = $user->goal ?? 250000;
-        Log::info("Goal: $goal");
-
-        // Retrieve deals from Zoho CRM
-        $deals = $db->retrieveDeals($user, $accessToken);
-        $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
+           // Set default goal or use user-defined goal
+           $goal = $user->goal ?? 250000;
+           Log::info("Goal: $goal");
+   
+           // Retrieve deals from Zoho CRM
+           $deals = $db->retrieveDeals($user, $accessToken);
+       $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
 
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {
-            $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
-                $closingDate = Carbon::parse($deal['closing_date']);
-                return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
-            });
-            $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
-            $stageProgressCal = $this->calculateProgress($filteredDeals, $goal);
-            $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
-            $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
-            $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
-            return [
-                $stage => [
-                    'count' => $this->formatNumber($filteredDeals->count()),
-                    'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
-                    'asum' => $filteredDeals->sum('pipeline1'),
-                    'stageProgress' => $stageProgress,
-                    "stageProgressClass" => $stageProgressClass,
-                    'stageProgressIcon' => $stageProgressIcon,
-                    'stageProgressExpr' => $stageProgressExpr,
-                    'stageProgressCal' => $stageProgressCal,
-                ],
-            ];
+        $filteredDeals = $deals->filter(function ($deal) use ($stage, $start_date, $end_date) {
+            $closingDate = Carbon::parse($deal['closing_date']);
+            return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($start_date) && $closingDate->lte($end_date);
+        });
+        $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
+        $stageProgressCal = $this->calculateProgress($filteredDeals, $goal);
+        $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+        $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
+        $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
+        return [
+            $stage => [
+                'count' => $this->formatNumber($filteredDeals->count()),
+                'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
+                'asum' => $filteredDeals->sum('pipeline1'),
+                'stageProgress' => $stageProgress,
+                "stageProgressClass" => $stageProgressClass,
+                'stageProgressIcon' => $stageProgressIcon,
+                'stageProgressExpr' => $stageProgressExpr,
+                'stageProgressCal'  => $stageProgressCal,
+            ],
+        ];
         });
         Log::info("STAGE DATA: $stageData");
         $sums = [];
@@ -824,54 +816,54 @@ class DashboardController extends Controller
 
     }
 
-    public function deleteNote(Request $request, $id)
+    public function deleteNote(Request $request,$id)
     {
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $accessToken = $user->getAccessToken();
-        // $jsonData = $request->json()->all();
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-        try {
-            // if (strpos($id, ',') === false) {
-            //     $response = $zoho->deleteTask($jsonData,$id);
-            //     if (!$response->successful()) {
-            //          return "error somthing".$response;
-            //     }
-            //     $task = Task::where('zoho_task_id', $id)->first();
-            //     if (!$task) {
-            //         return "Task not found";
-            //     }
-            //     $task->delete();
-            // } else {
-            // Multiple IDs provided
-            $response = $zoho->deleteNote($id);
-            if (!$response->successful()) {
-                return "error somthing" . $response;
+            $user = auth()->user();
+            if (!$user) {
+                return redirect('/login');
             }
-            // $idArray = explode(',', $id);
-            $tasks = Note::where('zoho_note_id', $id)->delete();
-            if (!$tasks) {
-                return "Note not found";
+            $accessToken = $user->getAccessToken();
+            // $jsonData = $request->json()->all();
+            $zoho = new ZohoCRM();
+            $zoho->access_token = $accessToken;
+            try {
+                // if (strpos($id, ',') === false) {
+                //     $response = $zoho->deleteTask($jsonData,$id);
+                //     if (!$response->successful()) {
+                //          return "error somthing".$response;
+                //     }
+                //     $task = Task::where('zoho_task_id', $id)->first();
+                //     if (!$task) {
+                //         return "Task not found";
+                //     }
+                //     $task->delete();
+                // } else {
+                    // Multiple IDs provided
+                    $response = $zoho->deleteNote($id);
+                    if (!$response->successful()) {
+                         return "error somthing".$response;
+                    }
+                    // $idArray = explode(',', $id);
+                   $tasks = Note::where('zoho_note_id', $id)->delete();
+                    if (!$tasks) {
+                        return "Note not found";
+                    }
+                // }
+                Log::info("Successful notes delete... ".$response);
+                return $response;
+    
+                
+            } catch (\Exception $e) {
+                Log::error("Error creating notes: " . $e->getMessage());
+                return "somthing went wrong". $e->getMessage();
             }
-            // }
-            Log::info("Successful notes delete... " . $response);
-            return $response;
 
-
-        } catch (\Exception $e) {
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong" . $e->getMessage();
-        }
-
-
+       
     }
-
+    
     public function saveNote(Request $request)
     {
-
+      
         $relatedToObject = json_decode($request->related_to);
 
         $contactId = $request->query('conID');
@@ -880,13 +872,13 @@ class DashboardController extends Controller
             'zoho_module_id' => 'required|string|max:255',
             'api_name' => 'required|string|max:255',
         ])->validate();
-
+        
         // Validate the second set of data
         $validatedData2 = $request->validate([
             'related_to_parent' => 'required|string|max:255',
             'note_text' => 'required|string',
         ]);
-
+        
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -913,54 +905,53 @@ class DashboardController extends Controller
         $recordId = $validatedData2['related_to_parent'];
         $apiName = $validatedData1['api_name'];
         try {
-            $response = $zoho->createNoteData($jsonData, $recordId, $apiName);
+        $response = $zoho->createNoteData($jsonData,$recordId,$apiName);
 
-            if (!$response->successful()) {
-                Log::error("Error creating notes:");
-                return "error somthing" . $response;
-            }
-            $data = json_decode($response, true);
-            $zoho_node_id = $data['data'][0]['details']['id'];
-            $deal = $db->retrieveDealByZohoId($user, $accessToken, $validatedData2['related_to_parent']);
-            // dd($deal);
-            $contact = $db->retrieveContactByZohoId($user, $accessToken, $validatedData2['related_to_parent']);
-            // Create a new Note instance
-            $note = new Note();
-            // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
-            $note->related_to_module_id = $validatedData1['zoho_module_id'];
-            $note->zoho_note_id = $zoho_node_id;
-            $note->owner = $user->id;
-            $note->related_to = $deal->id ?? $contact->id ?? null;
-            $note->created_time = Carbon::now();
-            $note->related_to_type = $validatedData1['api_name'];
-            $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
-            $note->note_content = $validatedData2['note_text'];
-            // Save the Note to the database
-            $note->save();
-            // Redirect back with a success message
-            return redirect()->back()->with('success', 'Note saved successfully!');
-        } catch (\Exception $e) {
-            Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error', 'Note Not saved successfully!');
-            return "somthing went wrong" . $e->getMessage();
+        if (!$response->successful()) {
+            Log::error("Error creating notes:");
+            return "error somthing".$response;
+        }
+        $data = json_decode($response, true);
+        $zoho_node_id = $data['data'][0]['details']['id'];
+        $deal = $db->retrieveDealByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
+        // dd($deal);
+        $contact = $db->retrieveContactByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
+        // Create a new Note instance
+        $note = new Note();
+        // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
+        $note->related_to_module_id = $validatedData1['zoho_module_id'];
+        $note->zoho_note_id = $zoho_node_id;
+        $note->owner = $user->id;
+        $note->related_to = $deal->id ?? $contact->id ?? null;
+        $note->created_time = Carbon::now();
+        $note->related_to_type = $validatedData1['api_name'];
+        $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
+        $note->note_content = $validatedData2['note_text'];
+        // Save the Note to the database
+        $note->save();
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Note saved successfully!');
+     } catch (\Exception $e) {
+         Log::error("Error creating notes:new " . $e->getMessage());
+         return redirect()->back()->with('error', 'Note Not saved successfully!');
+            return "somthing went wrong".$e->getMessage();
         }
     }
-    public function markAsDone(Request $request)
-    {
+    public function markAsDone(Request $request){
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-        // Retrieve the note ID from the request
-        $noteId = $request->input('note_id');
+          // Retrieve the note ID from the request
+            $noteId = $request->input('note_id');
 
-        // Assuming you have a Note model
-        $note = Note::find($noteId);
+            // Assuming you have a Note model
+            $note = Note::find($noteId);
 
-        // Update the note as done in the database
-        $note->mark_as_done = 1;
-        $note->save();
-        return $note;
+            // Update the note as done in the database
+            $note->mark_as_done = 1;
+            $note->save();
+            return $note;
     }
     public function fetchNotes()
     {
@@ -970,20 +961,20 @@ class DashboardController extends Controller
         // Pass notes data to the Blade file
         return $notes;
     }
-    //fetch specific note
+  //fetch specific note
     public function fetchNote(Request $request, $id)
     {
 
-        $note = Note::find($id);
+    $note = Note::find($id);
 
-        // Check if the note exists
-        if (!$note) {
-            // If the note is not found, return a 404 response
-            return response()->json(['error' => 'Note not found'], 404);
-        }
+    // Check if the note exists
+    if (!$note) {
+        // If the note is not found, return a 404 response
+        return response()->json(['error' => 'Note not found'], 404);
+    }
 
-        // Return the note details as a JSON response
-        return response()->json($note);
+    // Return the note details as a JSON response
+    return response()->json($note);
     }
 
 
@@ -1003,35 +994,32 @@ class DashboardController extends Controller
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
         try {
-            $jsonData = [
-                "data" => [
-                    [
+        $jsonData =   [
+                "data"=>[
+                [
                         // "Note_Title" => "Contacted",
-                        "Note_Content" => $validatedData['note_text']
-                    ]
+                        "Note_Content"=> $validatedData['note_text']
                 ]
-            ];
-            $response = $zoho->updateNoteData($jsonData, $id);
+                ]
+                ];
+            $response = $zoho->updateNoteData($jsonData,$id);
             if (!$response->successful()) {
                 Log::error("Error creating notes:");
-                return "error somthing" . $response;
+                return "error somthing".$response;
             }
-            // Find the Note instance by its ID
-            $note = Note::where('zoho_note_id', $id)->firstOrFail();
-
-
-            // Update the Note attributes
-            // $note->related_to = $validatedData['related_to'];
-            $note->note_content = $validatedData['note_text'];
-
-            // Save the updated Note to the database
-            $note->save();
-            return redirect()->back()->with('success', 'Note Updated successfully!');
-        } catch (\Exception $e) {
+        // Find the Note instance by its ID
+        $note = Note::where('zoho_note_id', $id)->firstOrFail();
+        // Update the Note attributes
+        // $note->related_to = $validatedData['related_to'];
+        $note->note_content = $validatedData['note_text'];
+        // Save the updated Note to the database
+        $note->save();
+        return redirect()->back()->with('success', 'Note Updated successfully!');
+        }catch (\Exception $e) {
             return redirect()->back()->with('error', 'Note Not updated successfully!');
-            Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong" . $e->getMessage();
-        }
+                Log::error("Error creating notes: " . $e->getMessage());
+                return "somthing went wrong".$e->getMessage();
+            }
         // Redirect back with a success message
         return redirect()->back()->with('success', 'Note updated successfully!');
     }

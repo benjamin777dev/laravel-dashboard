@@ -1,3 +1,5 @@
+@import"https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap";
+
 .bg-black {
     background-color: #000000 !important;
 }
@@ -12,7 +14,6 @@
     border-radius: 16px;
     border: 1px solid #222;
     background: #222;
-    /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
@@ -1066,7 +1067,7 @@
     text-transform: uppercase;
 }
 
-.ppipeBtn {
+/* .ppipeBtn {
     padding: 6px 11px;
     border-radius: 5px;
     border: 1px solid #222;
@@ -1074,7 +1075,7 @@
     cursor: pointer;
     color: #fff;
     font-size: 16px;
-}
+} */
 
 .ppipeaText {
     color: #fff;
@@ -1088,7 +1089,7 @@
     gap: 24px;
 }
 .pcontactBtn,
-.pTransactionBtn {
+.pTransactionBtn,.ppipeBtn {
     display: flex;
     padding: 12px;
     justify-content: center;
@@ -1884,6 +1885,7 @@
     position: absolute;
     right: 0px;
     border-radius: 4px;
+    top: 0;
 }
 
 .dataPhoneDiv,
@@ -2331,7 +2333,9 @@
 
 .psortFilterDiv {
     display: flex;
-    padding: 7.52px 12px;
+    /* padding: 7.52px 12px; */
+    padding-block: 0;
+    padding-inline:6px ;
     justify-content: space-between;
     align-items: center;
     border-radius: 5px;
@@ -2418,6 +2422,7 @@ body {
 
 .dgraph-strip {
     align-items: center;
+    justify-content: space-between;
 }
 
 .dmonth-design {

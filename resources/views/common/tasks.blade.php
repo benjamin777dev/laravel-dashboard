@@ -26,24 +26,27 @@
                             </p>
                         </td>
                         <td>
-                            <div class="btn-group btnTaskSelects">
-                                <select class="form-select dealTaskSelect" id="related_to_rem{{ $task['id'] }}"
+                            <div class="btn-group btnTaskSelects dealTaskfordropdown">
+                                <select class="form-select dealTaskSelect  related_to_rem{{ $task['id'] }}"
+                                    id="related_to_rem{{ $task['id'] }}"
                                     onclick="getModule('{{ $task['id'] }}','related_to_rem{{ $task['id'] }}')"
                                     name="related_to_rem{{ $task['id'] }}">
                                     @if ($task['related_to'] == 'Contacts')
-                                        <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
+                                        <option value="{{ $task['id'] }}"
+                                            {{ empty($task['contactData']) ? 'selected' : '' }}>
                                             {{ $task['contactData']['first_name'] ?? '' }}
                                             {{ $task['contactData']['last_name'] ?? 'Please select' }}
                                         </option>
                                     @elseif ($task['related_to'] == 'Deals')
-                                        <option value="" {{ empty($task['dealData']) ? 'selected' : '' }}>
+                                        <option value="{{ $task['id'] }}"
+                                            {{ empty($task['dealData']) ? 'selected' : '' }}>
                                             {{ $task['dealData']['deal_name'] ?? 'Please select' }}
                                         </option>
                                     @else
                                         <option value="" selected>Please select</option>
                                     @endif
                                 </select>
-                                <select class="form-select dmodaltaskSelect" id="taskSelect{{ $task['id'] }}"
+                                <select class="form-select dmodaltaskSelect" id="taskSelect"
                                     onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
                                     name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
                                     style="display: none;">
@@ -114,7 +117,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
                                             {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -184,7 +187,6 @@
                     <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
                         onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableTextCard{{ $task['id'] }}')">
                         {{ $task['subject'] ?? 'N/A' }}
-                       
                     </p>
                     <div class="btn-group dcardsselectdiv">
                         <p class="dcardsTransactionText">Transaction Related</p>
@@ -206,7 +208,8 @@
                         </select>
                         <select class="form-select dmodaltaskSelect" id="taskSelectcard{{ $task['id'] }}"
                             onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction" style="display: none;">
+                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
+                            style="display: none;">
                             <option value="">Please Select</option>
                         </select>
                     </div>
@@ -219,8 +222,10 @@
                     </div>
                 </div>
                 <div class="dcardsbtnsDiv">
-                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon" data-bs-toggle="modal"
-                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')" data-bs-target="#saveModalId">
+                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
+                        data-bs-toggle="modal"
+                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
+                        data-bs-target="#saveModalId">
                         <i class="fas fa-hdd plusicon"></i>
                         Save
                     </div>
@@ -251,7 +256,7 @@
 @endif
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'taskbladetab is here')
         localStorage.setItem('status', defaultTab);
@@ -281,7 +286,7 @@
         // Remove active class from all tabs
         var tabs = document.querySelectorAll('.nav-link');
         console.log(tabs, 'tabssss')
-        tabs.forEach(function (tab) {
+        tabs.forEach(function(tab) {
             tab.classList.remove('active');
         });
 
@@ -295,122 +300,149 @@
             activeTab.style.borderRadius = "4px";
         }
 
-    });
+        var taskArr = [];
+        var task = [];
+        @if ($retreiveModulesdata)
+            @foreach ($retreiveModulesdata as $module)
+                var modu = "{{ $module['label'] }}";
+                var data = {!! json_encode($module['data']) !!}; // Use json_encode to convert PHP array to JavaScript object
 
-    function toggleAllCheckboxes() {
-        // console.log("yes it")
-        let state = false;
-        let updateColor = document.getElementById("removeBtn");
-        var allCheckbox = document.getElementById('checkbox_all');
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-
-        checkboxes.forEach(function(checkbox) {
-            // Set the state of each checkbox based on the state of the "checkbox_all"
-            checkbox.checked = allCheckbox.checked;
-            if (checkbox.checked) {
-
-                state = true;
-
-            } else {
-                state = false;
-            }
-        });
-        if (state) {
-            updateColor.style.backgroundColor = "rgb(37, 60, 91)";
-        } else {
-
-            updateColor.style.backgroundColor = "rgb(192 207 227)";
-        }
-    }
-
-    function triggerCheckbox(checkboxid) {
-        let updateColor = document.getElementById("removeBtn");
-        var allCheckbox = document.getElementById('checkbox_all');
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-        var allChecked = true;
-        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
-        var anyChecked = false;
-        checkboxes.forEach(function(checkbox) {
-            if (!checkbox.checked) {
-                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
-                // updateColor.style.backgroundColor = "rgb(192 207 227)";
-            } else {
-                // updateColor.style.backgroundColor = "rgb(37, 60, 91)";
-                anyChecked = true;
-            }
-        });
-
-        if (anyChecked) {
-            updateColor.style.backgroundColor = "rgb(37, 60, 91)"; // Checked color
-        } else {
-            updateColor.style.backgroundColor = "rgb(192, 207, 227)"; // Unchecked color
-        }
-        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
-    }
-
-    var textElement;
-    
-    function makeEditable(id, textfield, zohoID, textid) {
-        if (textfield === "subject") {
-            textElement = document.getElementById(textid);
-            //For Table data                
-            var text = textElement.textContent.trim();
-            textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
-
-            let inputElementmake = document.getElementById('editableInput' + textid + id);
-            inputElementmake.focus();
-            inputElementmake.addEventListener('change', function () {
-                textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
-                    inputElementmake.value + '</p>';
-                updateText(inputElementmake.value, textfield, zohoID);
-            });
-        }
-        if (textfield === "date") {
-            let dateLocal = document.getElementById(textid);
-            console.log(textid, 'dateLocal')
-            var text = dateLocal.value.trim();
-            updateText(text, textfield, zohoID);
-        }
-
-
-    }
-
-    function getModule(id, elementID) {
-        console.log(elementID + id, 'yes triggerwed')
-        // Get the select element
-        var selectElement = document.getElementById(elementID);
-        console.log(selectElement, 'selectElement');
-        // Check if it's the first click
-        // Remove the existing option
-        selectElement.innerHTML = "";
-        // Add a default option
-        var option1 = document.createElement("option");
-        option1.value = "";
-        option1.text = "Please select";
-        selectElement.appendChild(option1);
-        // Populate select with new options
-        @if (!empty($retrieveModuleData))
-            @foreach ($retrieveModuleData as $item)
-                @if (!empty($item['api_name']) && in_array($item['api_name'], ['Deals', 'Contacts']))
-                    var option = document.createElement("option");
-                    option.id = "{{ $item['zoho_module_id'] }}";
-                    option.value = "{{ $item['api_name'] }}";
-                    option.text = "{{ $item['api_name'] }}";
-                    selectElement.appendChild(option);
-                @endif
+                taskArr.push({
+                    label: modu,
+                    data: data
+                });
             @endforeach
         @endif
+        var selectElement;
+        var ids = [];
+        @if ($tasks)
+            @foreach ($tasks as $task)
+                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to JavaScript object
+                ids.push(idsss);
+            @endforeach
+        @endif
+        $(document).on('customAjaxResponse', function(event, response) {
+            // Handle the response here, you can also pass it to another function if needed
+            console.log("Custom event triggered with response:", response);
+            taskArr = response;
 
-
-        // Change the flag to indicate that it's no longer the first click
-        isFirstClick = false;
-        selectElement.addEventListener('change', function () {
-            // Remove the onclick attribute 
-            selectElement.removeAttribute("onclick");
-            // Set the onchange attribute to call moduleSelected function passing this as a parameter
         });
-        selectElement.setAttribute("onchange", `moduleSelected(this,${id})`);
+        ids.forEach((id) => {
+            selectElement = $("#related_to_rem" + id);
+            let selectedval = selectElement.val();
+            var selectedText = selectElement.find('option:selected').text();
+            // selectElement.empty();
+            // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
+            taskArr.forEach(function(state) {
+                var optgroup = selectElement.find('optgroup[label="' + state.label + '"]');
+                if (optgroup.length === 0) {
+                    optgroup = $('<optgroup>', {
+                        label: state.label
+                    });
+                    selectElement.append(optgroup);
+                }
 
+                var count = 0; // Counter to track the number of records appended for each label
+
+                if (state.label === "Contacts") {
+                    state.data.forEach(function(contact) {
+                        if (count < 5) { // Limit the number of records appended to 5
+                            optgroup.append($('<option>', {
+                                value: contact.zoho_contact_id,
+                                text: (contact.first_name) + " " + (
+                                    contact.last_name ?? "")
+                            }));
+                            if (selectedText && contact.first_name + ' ' + contact
+                                .last_name === selectedText) {
+                                console.log(selectedText, contact.first_name + contact
+                                    .last_name, 'jjjjjjj++++++++++++')
+                                option.attr('selected');
+                            }
+                            count++;
+                        }
+                    });
+                }
+
+                if (state.label === "Deals") {
+                    state.data.forEach(function(deal) {
+                        if (count < 5) { // Limit the number of records appended to 5
+                            optgroup.append($('<option>', {
+                                value: deal.zoho_deal_id,
+                                text: deal.deal_name,
+                            }));
+                            if (selectedText && deal.deal_name === selectedText) {
+                                console.log(selectedText, contact.first_name + contact
+                                    .last_name, 'jjjjjjj++++++++++++')
+                                option.attr('selected');
+                            }
+                            count++;
+                        }
+                    });
+                }
+            });
+
+
+            selectElement.select2({
+                theme: 'bootstrap-5',
+            });
+
+            selectElement.next(".select2-container").addClass("form-select");
+            $(selectElement).on("change", function() {
+                console.log(this, 'vthisthisthisthisthis')
+                var selectedValue = $(this).val();
+                var selectedText = $(this).find(':selected').text();
+                var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
+                console.log("Selected value:", selectedValue);
+                console.log("Selected text:", selectedText);
+                console.log("Optgroup label:", id, optgroupLabel);
+                var WhoID;
+                var WhatSelectoneID;
+                if (optgroupLabel === "Contacts") {
+                    WhoID = selectedValue;
+                }
+                if (optgroupLabel === "Deals") {
+                    WhatSelectoneID = selectedValue;
+                }
+                updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
+
+            });
+            $(selectElement).on("select2:open", function() {
+                $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
+                    function(e) {
+                        // This function will be triggered when the user types into the Select2 input
+                        console.log("User is typing:", $(this).val());
+                        let search = $(this).val();
+                        updateTaskArr(search);
+
+                        // Perform any actions you need here
+                    });
+            });
+
+        })
+    });
+
+
+    function updateTaskArr(search) {
+
+        // Populate select with new options
+        $.ajax({
+            url: '/task/get-Modules?search=' + search,
+            method: "GET",
+            dataType: "json",
+            success: function(response) {
+                $(document).trigger('customAjaxResponse', [response]);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error("Ajax Error:", error);
+            }
+        });
+    }
+
+
+    function format(state) {
+        if (!state.id) return state.text; // optgroup
+        return state.text + " <i class='info'>link</i>";
     }
 
     function testFun(id, textfield, zohoID) {
@@ -426,31 +458,27 @@
                 WhatSelectoneid = WhatSelectoneid1;
             }
 
-            updateText(related_to_rem, textfield, zohoID, WhatSelectoneid);
+            updateText(related_to_rem, textfield, id, WhatSelectoneid);
         }
     }
 
-    function formatSentence(sentence) {
-        // Convert the first character to uppercase and the rest to lowercase
-        return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
-    }
-    
-    function updateTask(id, indexid) {
-        // console.log(id, indexid, 'chekcdhfsjkdh')
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        var inputElement = document.getElementById('editableText' + indexid);
-        var taskDate = document.getElementById('date_val' + id);
-        let formattedDateTime = convertDateTime(taskDate.value);
-        console.log(formattedDateTime);
-        /*  alert(formattedDateTime);
-         return; */
-        if (!inputElement) {
-            console.error("Input element not found for indexid:", indexid);
-            return;
+    var textElement;
+
+    function makeEditable(id, textfield, zohoID, textid) {
+
+        if (textfield === "subject") {
+            textElement = document.getElementById(textid);
+            //For Table data                
+            var text = textElement.textContent.trim();
+            textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
+
+            let inputElementmake = document.getElementById('editableInput' + textid + id);
+            inputElementmake.focus();
+            inputElementmake.addEventListener('change', function() {
+                textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
+                    inputElementmake.value + '</p>';
+                updateText(inputElementmake.value, textfield, zohoID);
+            });
         }
         var elementValue = inputElement.textContent;
         // return;
@@ -557,7 +585,7 @@
         return formattedDate;
     }
 
-    function updateText(newText, textfield, id, WhatSelectoneid = "") {
+    function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
         let inputElementtext;
         let dateLocal;
         if (textfield === "subject") {
@@ -586,7 +614,11 @@
                 "What_Id": WhatSelectoneid ? {
                     "id": WhatSelectoneid
                 } : undefined,
-                "$se_module": textfield === "deals" ? newText : undefined,
+                "Who_Id": whoID ? {
+                    "id": whoID
+                } : undefined,
+                "$se_module": textfield === "deals" || newText === "Deals" || newText === "Contacts" ?
+                    newText : undefined,
             }]
         };
         // Filter out undefined values
@@ -600,7 +632,7 @@
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify(formData),
-            success: function (response) {
+            success: function(response) {
                 // Handle success response
                 if (response?.data[0]?.status == "success") {
                     if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
@@ -614,7 +646,7 @@
 
                 }
             },
-            error: function (xhr, status, error) {
+            error: function(xhr, status, error) {
                 // Handle error response
                 showToastError(error);
                 console.error(xhr.responseText, 'errrorroororooro');
@@ -622,155 +654,75 @@
         })
     }
 
-    function moduleSelected(selectedModule, id = "") {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-            success: function (response) {
-                console.log(response, 'resoponse')
-                // Handle successful response
-                var tasks = response;
-                var taskSelect;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelectid = ""; // Initialize id variable
-                if ($(window).innerWidth() <= 767) {
-                    taskSelect = $("#taskSelect" + id);
-                    taskSelect.removeAttr('id');
-                    taskSelectcard = $("#taskSelectcard" + id);
-                    taskSelect = taskSelectcard;
-                    console.log(taskSelect, 'taskSelect' + id)
+    // function moduleSelected(selectedModule, id = "") {
+    //     // console.log(accessToken,'accessToken')
+    //     var selectedOption = selectedModule.options[selectedModule.selectedIndex];
+    //     var selectedText = selectedOption.text;
+    //     $.ajaxSetup({
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         }
+    //     });
+    //     $.ajax({
+    //         url: '/task/get-' + selectedText,
+    //         method: "GET",
+    //         dataType: "json",
+    //         success: function(response) {
+    //             console.log(response, 'resoponse')
+    //             // Handle successful response
+    //             var tasks = response;
+    //             var taskSelect;
+    //             // Assuming you have another select element with id 'taskSelect'
+    //             var taskSelectid = ""; // Initialize id variable
+    //             if ($(window).innerWidth() <= 767) {
+    //                 taskSelect = $("#taskSelect" + id);
+    //                 taskSelect.removeAttr('id');
+    //                 taskSelectcard = $("#taskSelectcard" + id);
+    //                 taskSelect = taskSelectcard;
+    //                 console.log(taskSelect, 'taskSelect' + id)
 
-                } else {
-                    taskSelectcard = $("#taskSelectcard" + id);
-                    console.log(taskSelectcard, 'taskSelectcard')
-                    taskSelectcard.removeAttr('id');
-                    taskSelect = $("#taskSelect" + id);
-                    taskSelect = taskSelect;
-                    console.log(taskSelect, 'taskSelect')
-                }
-                // Clear existing options
-                taskSelect.empty();
-                // Populate select options with tasks
-                $.each(tasks, function (index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? ""
-                        }));
-                    }
-                });
+    //             } else {
+    //                 taskSelectcard = $("#taskSelectcard" + id);
+    //                 console.log(taskSelectcard, 'taskSelectcard')
+    //                 taskSelectcard.removeAttr('id');
+    //                 taskSelect = $("#taskSelect" + id);
+    //                 taskSelect = taskSelect;
+    //                 console.log(taskSelect, 'taskSelect')
+    //             }
+    //             // Clear existing options
+    //             taskSelect.empty();
+    //             // Populate select options with tasks
+    //             $.each(tasks, function(index, task) {
+    //                 if (selectedText === "Tasks") {
+    //                     taskSelect.append($('<option>', {
+    //                         value: task?.zoho_task_id,
+    //                         text: task?.subject
+    //                     }));
+    //                 }
+    //                 if (selectedText === "Deals") {
+    //                     taskSelect.append($('<option>', {
+    //                         value: task?.zoho_deal_id,
+    //                         text: task?.deal_name
+    //                     }));
+    //                 }
+    //                 if (selectedText === "Contacts") {
+    //                     taskSelect.append($('<option>', {
+    //                         value: task?.zoho_contact_id,
+    //                         text: task?.first_name ?? "" + ' ' + task?.last_name ?? ""
+    //                     }));
+    //                 }
+    //             });
 
-                taskSelect.select2();
-                taskSelect.show();
-                taskSelect.next(".select2-container").addClass("form-select");
-                // Do whatever you want with the response data here
-            },
-            error: function (xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
+    //             taskSelect.select2();
+    //             taskSelect.show();
+    //             taskSelect.next(".select2-container").addClass("form-select");
+    //             // Do whatever you want with the response data here
+    //         },
+    //         error: function(xhr, status, error) {
+    //             // Handle error
+    //             console.error("Ajax Error:", error);
+    //         }
+    //     });
 
-    }
-
-    function deleteTask(id) {
-        let updateids = removeAllSelected();
-        if (updateids === "" && id === undefined) {
-            return;
-        }
-        if (updateids !== "") {
-            if (showConfirmation()) {
-
-            } else {
-                return;
-            }
-        }
-        if (id === undefined) {
-            id = updateids;
-        }
-        //remove duplicate ids
-        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    success: function (response) {
-                        // Handle success response
-                        showToast("deleted successfully");
-                        // window.location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        showToastError(xhr.responseText)
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
-    }
-    
-    function removeAllSelected() {
-        // Select all checkboxes
-        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
-        var ids = ""; // Initialize ids variable to store concatenated IDs
-        // Iterate through each checkbox
-        checkboxes.forEach(function (checkbox) {
-            // console.log(checkboxes,'checkboxes')
-            // Check if the checkbox is checked
-            if (checkbox.checked) {
-                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
-                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
-                    "checkbox_all") {
-                    // Concatenate the checkbox ID with a comma
-                    ids += checkbox.id + ",";
-                    document.getElementById("removeBtn").style.backgroundColor = "rgb(37, 60, 91);"
-                    }
-                }
-            });
-
-            // Remove the trailing comma
-            if (ids !== "") {
-                ids = ids.replace(/,+(?=,|$)/g, "");
-            }
-
-            return ids;
-    }
-
-    
+    // }
 </script>

@@ -13,42 +13,26 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1' 
-
     - name: Install PHP Dependencies
       run: |
         composer install --no-interaction --prefer-dist --optimize-autoloader
-
-    - name: Install Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18' 
     
     - name: Install JavaScript Dependencies
       run: |
         npm install
+        rm -rf ./public/build/*
         npm run build
 
     # Add any additional steps for building/testing your application here
     - name: Copy Files to Web Directory
       run: |
-        sudo rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/bitnami/htdocs/
+        rm -rf /home/master/applications/jpcwcfpmsv/public_html/public/build/*
+        rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/jpcwcfpmsv/public_html
 
     - name: Laravel Specific Commands
       run: |
-        cd /home/bitnami/htdocs
-        php artisan migrate --force # Run migrations
-        php artisan cache:clear # Clear cache
+        cd /home/master/applications/jpcwcfpmsv/public_html
         php artisan config:clear # Clear Configuration Cache
         php artisan config:cache # Cache configuration
-        sudo sh /home/bitnami/htdocs/clearCache.sh
-    
-    - name: Set Permissions
-      run: |
-        sudo chown -R bitnami:daemon /home/bitnami/htdocs
-        sudo find /home/bitnami/htdocs -type f -exec chmod 644 {} \;
-        sudo find /home/bitnami/htdocs -type d -exec chmod 755 {} \;
-        
+        php artisan cache:clear # Clear cache
+        php artisan migrate --force # Run migrations

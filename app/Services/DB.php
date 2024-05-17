@@ -1224,4 +1224,70 @@ class DB
             throw $e;
         }
     }
+    public function retriveModules(User $user,$accessToken)
+    { 
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        
+        $accessToken = $user->getAccessToken();
+        // if (!$accessToken) {
+        //     throw new \Exception("Invalid user token");
+        // }
+        $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
+        $data = [];
+    
+        // Initialize data arrays for each module
+        $data['contacts'] = [];
+        $data['deals'] = [];
+    
+        // Search query
+        $searchQuery = request()->query('search');
+    
+        foreach ($filteredModules as $module) {
+            if ($module->api_name === 'Deals') {
+                // Retrieve Deals data based on search query if provided
+                $dealsQuery = Deal::query();
+                if ($searchQuery) {
+                    $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
+                }
+                $dealsData = $dealsQuery->get();
+                if ($searchQuery || $dealsData->isNotEmpty()) {
+                    $data['deals'] = $dealsData;
+                }
+            } elseif ($module->api_name === 'Contacts') {
+                // Retrieve Contacts data based on search query if provided
+                $contactsQuery = Contact::query();
+                if ($searchQuery) {
+                    $contactsQuery->where('first_name', 'like', "%$searchQuery%")
+                                 ->orWhere('last_name', 'like', "%$searchQuery%");
+                }
+                $contactsData = $contactsQuery->get();
+                if ($searchQuery || $contactsData->isNotEmpty()) {
+                    $data['contacts'] = $contactsData;
+                }
+            }
+        }
+    
+        // Add objects for Contacts and Deals with their respective data arrays
+        $responseData = [];
+    
+        if (!empty($data['contacts'])) {
+            $responseData[] = [
+                'label' => 'Contacts',
+                'data' => $data['contacts']
+            ];
+        }
+    
+        if (!empty($data['deals'])) {
+            $responseData[] = [
+                'label' => 'Deals',
+                'data' => $data['deals']
+            ];
+        }
+    
+        return $responseData;
+    }
+
 }

@@ -17,7 +17,7 @@
         </div>
     @endif
     <div class="container-fluid">
-        <div class="dbtnsCardsRow mt-4 text-center">
+        <div class="row mt-4 text-center">
             {{-- <div class="col-lg-3 col-md-3 col-sm-6 text-start">
                 <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
                     <span class="dFont400 dFont13">{{ date('l, F j, Y') }}</span>
@@ -31,9 +31,9 @@
                 </div>
 
             </div> --}}
-            <div class="text-start dcontactbtns-div">
+            <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
 
-                <div class="row g-2">
+                <div class="row g-1">
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#"
                             onclick="createContact();"><i class="fas fa-plus plusicon">
@@ -52,7 +52,7 @@
                 </div>
 
             </div>
-            <div>
+            <div class="col-ld-9 col-md-9 col-sm-12">
                 <div class="row dashboard-cards-resp">
                     @foreach ($stageData as $stage => $data)
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
@@ -101,9 +101,7 @@
                                     <div class="gauge-center"></div>
                                 </div>
                             </div> --}}
-                            <p class="dFont13 dMb5 dRangeText">
-                                {{ '$' . number_format($totalGciForDah, 0) . ' of $' . number_format($goal, 0) . ' Goal' }}
-                            </p>
+                            <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
                             <div>
                                 {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
@@ -134,7 +132,7 @@
                                             <div class="col-md-1 align-self-center dmonth-design">
                                                 {{ Carbon\Carbon::parse($month)->format('M') }}</div>
                                             <div class="col-md-11 dashchartImg">
-                                                <div class="row dgraph-strip justify-content-between">
+                                                <div class="row dgraph-strip">
                                                     @php
                                                         // Remove the currency symbol ('$') and commas from the formatted value
                                                         $formattedGCI = str_replace(
@@ -254,7 +252,7 @@
                             <div class="col-md-2 npcommontableBodytext ">
                                 <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
                                         alt="E">
-                                    {{ date('m/d/Y', strtotime($deal['closing_date'])) }}
+                                    {{  date('m/d/Y', strtotime($deal['closing_date'])); }}
                                 </div>
                             </div>
                         </div>
@@ -344,7 +342,7 @@
 
 @endsection
 @endsection
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+
 <script>
      window.fetchData = function(tab = null) {
         // Make AJAX call
@@ -403,7 +401,7 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#222"
+            activeTab.style.backgroundColor = "#253C5B"
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
@@ -414,6 +412,133 @@
 
 
     });
+    // var selectedNoteIds = [];
+
+    function handleDeleteCheckbox(id) {
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton' + id);
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Toggle delete button visibility
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                // if (deleteButton.style.display === 'block') {
+                //     selectedNoteIds.push(id)
+                // }
+            });
+        });
+
+    }
+    window.selectedTransation;
+    // Get the select element
+
+    function selectedElement(element) {
+        var selectedValue = element.value;
+        window.selectedTransation = selectedValue;
+        //    console.log(selectedTransation);
+    }
+
+    function resetValidation() {
+        document.getElementById("task_error").innerHTML = "";
+
+    }
+
+    function validateTextarea() {
+        var textarea = document.getElementById('subject');
+        var textareaValue = textarea.value;
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("task_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("task_error").innerHTML = "";
+        }
+    }
+
+    function addTask() {
+        var subject = document.getElementsByName("subject")[0].value;
+        if (subject.trim() === "") {
+            document.getElementById("task_error").innerHTML = "please enter details";
+            return;
+        }
+        var seModule = document.getElementsByName("related_to_task")[0].value;
+        var WhatSelectoneid = document.getElementsByName("related_to_parent")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
+        var dueDate = document.getElementsByName("due_date")[0].value;
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status": "Not Started",
+                "Due_Date": dueDate,
+                "Priority": "High",
+                "What_Id": {
+                    "id": WhatSelectoneid
+                },
+                "$se_module": seModule
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+
+        $.ajax({
+            url: '{{ route('create.task') }}',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+    }
+
+
+    function convertDateTime(inputDateTime) {
+
+        // Parse the input date string
+        let dateObj = new Date(inputDateTime);
+
+        // Format the date components
+        let year = dateObj.getFullYear();
+        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+        let day = dateObj.getDate().toString().padStart(2, '0');
+        let hours = dateObj.getHours().toString().padStart(2, '0');
+        let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+        let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+
+        // Format the timezone offset
+        let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+        let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+        let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+
+        // Construct the formatted datetime string
+        let formattedDateTime =
+            `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+
+        return formattedDateTime;
+    }
     
     window.createTransaction = function() {
         console.log("Onclick");
@@ -534,12 +659,12 @@
             },
             needle: {
                 radiusPercentage: 2,
-                widthPercentage: 4.2,
+                widthPercentage: 3.2,
                 lengthPercentage: 80,
-                color: '#000'
+                color: '#fff'
             },
             valueLabel: {
-                fontSize: 20,
+                fontSize: "24px", // Change font size here
                 formatter: function(value) {
                     return Math.round(value) + "%";
                 }
@@ -562,7 +687,7 @@
                             var labelText = Math.round(dataset.data[i]) + "%";
                             ctx.fillStyle = '#000'; // set font color
                             ctx.fillText(labelText, model.x, model.y -
-                                5); // adjust Y position for label
+                            5); // adjust Y position for label
                         }
                     });
                 }
