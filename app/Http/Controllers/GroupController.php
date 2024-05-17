@@ -246,7 +246,7 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'extracted_files' => $extractedFilesJSON], 200);
     }
 
-    public function createRemoveCsv(Request $request)
+    public function bulkRemove(Request $request)
     {
         try {
             $zoho = new ZohoCRM();
@@ -263,40 +263,7 @@ class GroupController extends Controller
             $csvData = [];
             $jsonInput = $request->getContent();
             $records = json_decode($jsonInput, true);
-            /* // Define CSV headers
-            $csvHeaders = ["Contacts_X_Groups"];
-            foreach ($keyValueArray as $record) {
-                $csvData[] = [
-                    "Contacts_X_Groups" =>$record['contactGroupId'],
-                ];
-            }
-
-            // Generate a unique filename for the CSV
-            $csvFilename = 'example_' . uniqid() . '.csv';
-
-            // Write CSV data to file
-            $csvFilepath = storage_path('app/' . $csvFilename);
-            $csv = Writer::createFromPath($csvFilepath, 'w+');
-            $csv->insertOne($csvHeaders);
-            foreach ($csvData as $row) {
-                $csv->insertOne([$row['Contacts_X_Groups']]);
-            }
-
-            // Create a zip archive
-            $zip = new ZipArchive;
-            $zipFilename = 'example_' . uniqid() . '.zip';
-            $zipFilepath = storage_path('app/' . $zipFilename);
-            if ($zip->open($zipFilepath, ZipArchive::CREATE) === true) {
-                $zip->addFile($csvFilepath, $csvFilename);
-                $zip->close();
-            } else {
-                throw new \Exception('Failed to create zip archive');
-            }
-
-            // Upload zip file to Zoho
-            $response = $zoho->uploadZipFile($zipFilepath);
-            $fileId = $response['details']['file_id']; */
-            //Bulk Write
+            
             $bulkJob = $zoho->bulkWriteJobToRemove($records);
             $removeContactGroupFromDB = $db->removeContactGroupFromDB($records);
             // Return download response for the zip file

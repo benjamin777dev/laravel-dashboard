@@ -32,8 +32,8 @@
                         <span key="t-database">@lang('Database')</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-                        {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('Contacts Database')</a></li> --}}
-                         <li><a href="{{ route('contacts.index') }}" key="t-database">@lang('Contacts Database')</a></li> 
+                        {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('Contacts')</a></li> --}}
+                         <li><a href="{{ route('contacts.index') }}" key="t-database">@lang('Contacts')</a></li> 
                         {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('testing route')</a></li> --}}
                          <li><a href="{{ route('groups.index') }}" key="t-database">@lang('Groups')</a></li>
 

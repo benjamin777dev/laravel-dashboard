@@ -162,7 +162,7 @@
         <div class="row">
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                <p class="npinfoText">Client Information</p>
+                <p class="npinfoText">Transaction Information</p>
                 <form class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
@@ -182,7 +182,7 @@
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
                         <input type="text" class="form-control npinputinfo" placeholder="Transaction Name"
-                            id="validationDefault03" required value = "{{$deal['deal_name']}}">
+                            id="validationDefault03" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault04" class="form-label nplabelText">Stage</label>
@@ -220,23 +220,12 @@
                             <option>...</option>
                         </select> --}}
                         <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
-                            id="validationDefault09" required value = "{{$deal['state']}}">
+                            id="validationDefault09" required value = "{{$deal['state']?$deal['state']:'CO'}}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
                         <input type="text" class="form-control npinputinfo" placeholder="80129"
                             id="validationDefault10" required value = "{{$deal['zip']}}">
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-6 col-sm-12"
-                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-
-                <p class="npinfoText">Earnings Information</p>
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
-                        <input type="text" class="form-control npinputinfo" id="validationDefault11" required value = "{{$deal['commission']}}">
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
@@ -259,6 +248,18 @@
                             <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
                         </select>
                     </div>
+                </form>
+            </div>
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+
+                <p class="npinfoText">Earnings Information</p>
+                <form class="row g-3">
+                    <div class="col-md-6">
+                        <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
+                        <input type="text" class="form-control npinputinfo" id="validationDefault11" required value = "{{$deal['commission']}}">
+                    </div>
+                    
                     
                     <div class="col-md-6">
                         <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>

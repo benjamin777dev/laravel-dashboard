@@ -197,7 +197,7 @@
                     <div class= "task-container">
                         @include('common.tasks', [
                             'tasks' => $tasks,
-                            'retrieveModuleData' => $retrieveModuleData,
+                            'retreiveModulesdata' => $retreiveModulesdata,
                         ])
                     </div>
                     

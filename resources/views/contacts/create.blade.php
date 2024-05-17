@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
-                        <input type="text" value="{{ $contact['last_name'] }}" name="last_name"
+                        <input type="text" value="{{ $contact['last_name'] == 'CHR' ? '' : $contact['last_name'] }}" name="last_name"
                             onkeyup="showValidation(this)" placeholder="Enter Last name"
                             class="form-control npinputinfo" id="last_name">
                         <div id="last_name_error_message" class="text-danger"></div>
@@ -103,8 +103,28 @@
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Market Area</label>
-                        <input type="text" value="{{ $contact['market_area'] }}" name="market_area"
-                            class="form-control npinputinfo" placeholder="Downtown Chicago" id="validationDefault03">
+                        <select name="market_area" class="form-select npinputinfo" id="validationDefault03">
+                            <option disabled value="">-None-</option>
+                            <option value="Denver" {{ $contact->market_area === 'Denver' ? 'selected' : '' }}>
+                                Denver</option>
+                            <option value="Colorado Springs" {{ $contact->market_area === 'Colorado Springs' ? 'selected' : '' }}>
+                                Colorado Springs</option>
+                        </select>
+                                               
+                    </div>
+                    <div>
+                        @php
+                            $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                        @endphp
+                        <label for="validationDefault02" class="form-label nplabelText">ABCD Status</label>
+                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
+                            <option selected disabled value="">-None-</option>
+                            @foreach ($abcd as $abcdIndex)
+                                <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>
+                                    {{ $abcdIndex }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </div>
@@ -211,44 +231,10 @@
                     </div>
                 </div>
             </div>
-            {{-- Business Information --}}
-            <div class="col-md-6 col-sm-12"
-                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                <p class="npinfoText">Business Information</p>
-                <div class="row g-3">
-                    <div>
-                        <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
-                        <input type="text" value="{{ $contact['business_name'] }}" name="business_name"
-                            placeholder="Burn Co." class="form-control npinputinfo" id="validationDefault02">
-                    </div>
-                    <div>
-                        @php
-                            $abcd = ['A+', 'A', 'B', 'C', 'D'];
-                        @endphp
-                        <label for="validationDefault02" class="form-label nplabelText">ABCD Class</label>
-                        <select name="abcd_class" class="form-select npinputinfo" id="validationDefault04">
-                            <option selected disabled value="">-None-</option>
-                            @foreach ($abcd as $abcdIndex)
-                                <option value="{{ $abcdIndex }}" {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>
-                                    {{ $abcdIndex }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label for="validationDefault02" class="form-label nplabelText">Business
-                            Information</label>
-                        <textarea name="business_information" type="text" rows="4" class="form-control nctextarea"
-                            id="validationDefault02">{{ $contact['business_information'] }}</textarea>
-                    </div>
-
-                </div>
-            </div>
-
             {{-- Primary Contact’s Address --}}
             <div class="col-md-6 col-sm-12"
                 style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                <p class="npinfoText">Primary Contact’s Address</p>
+                <p class="npinfoText">Mailing Address</p>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
@@ -301,6 +287,29 @@
                     </div> --}}
                 </div>
             </div>
+            
+            {{-- Business Information --}}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Business Information</p>
+                <div class="row g-3">
+                    <div>
+                        <label for="validationDefault01" class="form-label nplabelText">Business Name</label>
+                        <input type="text" value="{{ $contact['business_name'] }}" name="business_name"
+                            placeholder="Burn Co." class="form-control npinputinfo" id="validationDefault02">
+                    </div>
+                    
+                    <div>
+                        <label for="validationDefault02" class="form-label nplabelText">Business
+                            Information</label>
+                        <textarea name="business_information" type="text" rows="4" class="form-control nctextarea"
+                            id="validationDefault02">{{ $contact['business_information'] }}</textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            
             <div>
                 <button class="submit_button btn btn-primary" id="submit_button" type="button"
                     onclick="validateContactForm()">Submit</button>

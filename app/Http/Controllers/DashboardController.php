@@ -1037,8 +1037,9 @@ class DashboardController extends Controller
         try {
             $tab = request()->query('tab') ?? 'In Progress';
             $tasks = $db->retreiveTasks($user, $accessToken, $tab);
+            $retreiveModulesdata = $db->retriveModules($user,$accessToken);
             Log::info("Task Details: " . print_r($tasks, true));
-            return view('common.tasks', compact('tasks','tab'))->render();
+            return view('common.tasks', compact('tasks','tab','retreiveModulesdata'))->render();
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw $e;
