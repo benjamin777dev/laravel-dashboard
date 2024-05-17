@@ -82,24 +82,12 @@
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask()" id="subject" rows="4" class="dtextarea"></textarea>
-                    <div id="task_error" class="text-danger"></div>
+                    <textarea name="subject" onkeyup="validateTextareaTask()" id="darea" rows="4" class="dtextarea"></textarea>
+                    <div id="subject_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" id="related_to_task"
-                            onchange="taskModuleSelected(this)" name="related_to_task_dashboard"
-                            aria-label="Select Transaction">
-                            <option value="">Please select one</option>
-                            @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                    <option value="{{ $item['api_name'] }}">{{ $item['api_name'] }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <select class="form-select dmodaltaskSelect" id="taskSelectForTask"
-                            name="related_to_parent_dashboard" aria-label="Select Transaction"
-                            style="display: none;">
-
+                        <select class="form-select dmodaltaskSelect" id="related_to_rem_create"
+                            name="related_to_task_dashboard" aria-label="Select Transaction">
                         </select>
                     </div>
                     <p class="dDueText">Date due</p>
@@ -116,8 +104,41 @@
         </div>
     </div>
 @endif
-
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
+    window.onload = function() {
+        var taskArrTask = [];
+        @if ($retreiveModulesdata)
+            @foreach ($retreiveModulesdata as $module)
+                var modu = "{{ $module['label'] }}";
+                var data = {!! json_encode($module['data']) !!}; // Use json_encode to convert PHP array to JavaScript object
+
+                taskArrTask.push({
+                    label: modu,
+                    data: data
+                });
+            @endforeach
+        @endif
+        const modalSelectMap = [{
+                modalID: 'staticBackdropforTask',
+                selectElementId: 'related_to_rem_create'
+            },
+            {
+                modalID: 'staticBackdropforNote',
+                selectElementId: 'related_to_note'
+            }
+        ];
+     
+        modalSelectMap.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdown(modalID, selectElement, taskArrTask);
+        });
+
+    }
     window.resetValidationTask = function(id) {
         if (id) {
             document.getElementById("subject_error" + id).innerHTML = "";
@@ -154,132 +175,7 @@
 
     }
 
-    window.addCommonTask = function(id, type) {
-        if (id) {
-            var subject = document.getElementsByName("subject")[0].value;
-            if (subject.trim() === "") {
-                document.getElementById("subject_error" + id).innerHTML = "Please enter details";
-                return;
-            }
-            // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-            // var whoId = window.selectedTransation
-            // if (whoId === undefined) {
-            //     whoId = whoSelectoneid
-            // }
-            var dueDate = document.getElementsByName("due_date")[0].value;
-            if(type=="Contacts"){
-                var formData = {
-                "data": [{
-                    "Subject": subject,
-                    // "Who_Id": {
-                    //     "id": whoId
-                    // },
-                    "Status": "Not Started",
-                    "Due_Date": dueDate,
-                    // "Created_Time":new Date()
-                    "Priority": "High",
-                    "Who_Id": {
-                        "id": id
-                    },
-                    "$se_module": type
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-            }else if(type =="Deals"){
-            var formData = {
-                "data": [{
-                    "Subject": subject,
-                    // "Who_Id": {
-                    //     "id": whoId
-                    // },
-                    "Status": "Not Started",
-                    "Due_Date": dueDate,
-                    // "Created_Time":new Date()
-                    "Priority": "High",
-                    "What_Id": {
-                        "id": id
-                    },
-                    "$se_module": type
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-        }
-            console.log("formData", formData);
-        } else {
-            var subject = document.getElementsByName("subject")[0].value;
-            if (subject.trim() === "") {
-                document.getElementById("subject_error").innerHTML = "Please enter details";
-                return;
-            }
-            var seModule = document.getElementsByName("related_to_task_dashboard")[0].value;
-            var WhatSelectoneid = document.getElementsByName("related_to_parent_dashboard")[0].value;
-            console.log("WHAT ID", WhatSelectoneid);
-            var dueDate = document.getElementsByName("due_date")[0].value;
-            if(seModule == "Deals"){
-            var formData = {
-                "data": [{
-                    "Subject": subject,
-                    // "Who_Id": {
-                    //     "id": whoId
-                    // },
-                    "Status": "Not Started",
-                    "Due_Date": dueDate,
-                    // "Created_Time":new Date()
-                    "Priority": "High",
-                    "What_Id": {
-                        "id": WhatSelectoneid
-                    },
-                    "$se_module": seModule
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-        }else{
-            var formData = {
-                "data": [{
-                    "Subject": subject,
-                    // "Who_Id": {
-                    //     "id": whoId
-                    // },
-                    "Status": "Not Started",
-                    "Due_Date": dueDate,
-                    // "Created_Time":new Date()
-                    "Priority": "High",
-                    "Who_Id": {
-                        "id": WhatSelectoneid
-                    },
-                    "$se_module": seModule
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-        }
-            console.log("formData", formData);
-        }
 
-        $.ajax({
-            url: '{{ route('create.task') }}',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response?.data && response.data[0]?.message) {
-                    // Convert message to uppercase and then display
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        })
-    }
     window.taskModuleSelected = function(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];
@@ -323,7 +219,7 @@
                     }
                 });
                 taskSelect.show();
-                taskSelect.each(function () {
+                taskSelect.each(function() {
                     $(this).select2({
                         theme: 'bootstrap-5',
                         dropdownParent: $(this).parent(),

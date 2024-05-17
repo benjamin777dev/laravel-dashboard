@@ -599,7 +599,7 @@ class DashboardController extends Controller
         try {
                 $response = $zoho->updateTask($jsonData,$task['zoho_task_id']);
                 if (!$response->successful()) {
-                      return "error".$response;
+                      throw $response;
                 }
                 $requestData = $request->json()->all(); // Get JSON data from request
                 $data = $requestData['data'][0]; // Access the 'data' array
@@ -683,7 +683,18 @@ class DashboardController extends Controller
         return $allDeals;
     }
 
-
+   public function retriveModulesDB(){
+    $db = new DB();
+    $user = auth()->user();
+    if (!$user) {
+        return redirect('/login');
+    }
+     // Search query
+     $searchQuery = request()->query('search');
+    $accessToken = $user->getAccessToken();
+    $tasks = $db->retriveModules($user, $accessToken,$searchQuery);
+     return $tasks;
+   }
 
     public function getTasks(Request $request)
     { 
@@ -864,21 +875,26 @@ class DashboardController extends Controller
     public function saveNote(Request $request)
     {
       
-        $relatedToObject = json_decode($request->related_to);
-
         $contactId = $request->query('conID');
         // Validate the incoming request data
-        $validatedData1 = validator()->make((array) $relatedToObject, [
-            'zoho_module_id' => 'required|string|max:255',
-            'api_name' => 'required|string|max:255',
-        ])->validate();
-        
-        // Validate the second set of data
-        $validatedData2 = $request->validate([
-            'related_to_parent' => 'required|string|max:255',
+        $request->validate([
             'note_text' => 'required|string',
+            'merged_data' => 'required|string'
         ]);
-        
+        $mergedData = json_decode($request->input('merged_data'), true);
+        $note_text = $request->input('note_text');
+
+        // Access individual components
+        $groupLabel = $mergedData['groupLabel'] ?? null;
+        $whoid = $mergedData['whoid'] ?? null;
+        $relatedTo = $mergedData['relatedTo'] ?? null;
+        $moduleId = $mergedData['moduleId'] ?? null;
+        if($groupLabel==="Contacts"){
+             $contactId = $relatedTo;
+        }
+        if($groupLabel==="Deals"){
+            $dealId = $relatedTo;
+       }
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -893,17 +909,17 @@ class DashboardController extends Controller
                 [
                     "Parent_Id" => [
                         "module" => [
-                            "api_name" => $validatedData1['api_name'],
-                            "id" => $validatedData1['zoho_module_id'],
+                            "api_name" =>$groupLabel,
+                            "id" => $moduleId,
                         ],
-                        "id" => $validatedData2['related_to_parent'],
+                        "id" => $relatedTo,
                     ],
-                    "Note_Content" => $validatedData2['note_text'],
+                    "Note_Content" => $note_text,
                 ]
             ]
         ];
-        $recordId = $validatedData2['related_to_parent'];
-        $apiName = $validatedData1['api_name'];
+        $recordId = $relatedTo;
+        $apiName = $groupLabel;
         try {
         $response = $zoho->createNoteData($jsonData,$recordId,$apiName);
 
@@ -913,20 +929,20 @@ class DashboardController extends Controller
         }
         $data = json_decode($response, true);
         $zoho_node_id = $data['data'][0]['details']['id'];
-        $deal = $db->retrieveDealByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
+        $deal = $db->retrieveDealByZohoId($user,$accessToken,$relatedTo);
         // dd($deal);
-        $contact = $db->retrieveContactByZohoId($user,$accessToken,$validatedData2['related_to_parent']);
+        $contact = $db->retrieveContactByZohoId($user,$accessToken,$relatedTo);
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
-        $note->related_to_module_id = $validatedData1['zoho_module_id'];
+        $note->related_to_module_id = $moduleId;
         $note->zoho_note_id = $zoho_node_id;
         $note->owner = $user->id;
         $note->related_to = $deal->id ?? $contact->id ?? null;
         $note->created_time = Carbon::now();
-        $note->related_to_type = $validatedData1['api_name'];
-        $note->related_to_parent_record_id = $validatedData2['related_to_parent'];
-        $note->note_content = $validatedData2['note_text'];
+        $note->related_to_type = $groupLabel;
+        $note->related_to_parent_record_id = $relatedTo;
+        $note->note_content = $note_text;
         // Save the Note to the database
         $note->save();
         // Redirect back with a success message

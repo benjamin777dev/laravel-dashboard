@@ -1178,8 +1178,8 @@ class DB
             throw $e;
         }
     }
-
-    public function retriveModules(User $user,$accessToken)
+    
+    public function retriveModules(User $user, $accessToken, $searchQuery = "")
     { 
         $user = auth()->user();
         if (!$user) {
@@ -1192,13 +1192,12 @@ class DB
         // }
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
         $data = [];
+        $moduleIds = [];
     
-        // Initialize data arrays for each module
-        $data['contacts'] = [];
-        $data['deals'] = [];
-    
-        // Search query
-        $searchQuery = request()->query('search');
+        foreach ($filteredModules as $module) {
+            $moduleIds[$module->api_name] = $module->zoho_module_id;
+            $data[$module->api_name] = [];
+        }
     
         foreach ($filteredModules as $module) {
             if ($module->api_name === 'Deals') {
@@ -1209,7 +1208,10 @@ class DB
                 }
                 $dealsData = $dealsQuery->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
-                    $data['deals'] = $dealsData;
+                    $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
+                        $deal['zoho_module_id'] = $moduleIds['Deals'];
+                        return $deal;
+                    });
                 }
             } elseif ($module->api_name === 'Contacts') {
                 // Retrieve Contacts data based on search query if provided
@@ -1220,7 +1222,10 @@ class DB
                 }
                 $contactsData = $contactsQuery->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {
-                    $data['contacts'] = $contactsData;
+                    $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
+                        $contact['zoho_module_id'] = $moduleIds['Contacts'];
+                        return $contact;
+                    });
                 }
             }
         }
@@ -1228,21 +1233,17 @@ class DB
         // Add objects for Contacts and Deals with their respective data arrays
         $responseData = [];
     
-        if (!empty($data['contacts'])) {
-            $responseData[] = [
-                'label' => 'Contacts',
-                'data' => $data['contacts']
-            ];
-        }
-    
-        if (!empty($data['deals'])) {
-            $responseData[] = [
-                'label' => 'Deals',
-                'data' => $data['deals']
-            ];
+        foreach ($data as $moduleName => $moduleData) {
+            if (!empty($moduleData)) {
+                $responseData[] = [
+                    'label' => $moduleName,
+                    'data' => $moduleData
+                ];
+            }
         }
     
         return $responseData;
     }
+    
 
 }

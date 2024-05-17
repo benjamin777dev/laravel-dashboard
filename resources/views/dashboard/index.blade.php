@@ -169,7 +169,7 @@
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
-                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
+                    <div  class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                         id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i
                             class="fas fa-plus plusicon">
                         </i>
