@@ -166,7 +166,7 @@
                                             data-bs-target="#newTaskModalId{{ $deal['id'] }}">
                                         <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Open icon"
                                             class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                            data-bs-target="#newTaskModalId{{ $deal['id'] }}">
+                                            data-bs-target="#">
                                         <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
                                             class="ppiplinecommonIcon" data-bs-toggle="modal"
                                             data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
@@ -299,6 +299,9 @@
                 <p>No records found</p>
             </div>
         @endif
+    </div>
+    <div class="datapagination">
+        @include('common.pagination', ['module' => $deals])
     </div>
 
 </div>
