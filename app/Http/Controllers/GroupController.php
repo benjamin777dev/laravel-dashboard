@@ -181,7 +181,7 @@ class GroupController extends Controller
             $jobID = $bulkJob['details']['id'];
             $saveBulkJobInDB = $db->saveBulkJobInDB($fileId,$user->id,$jobID);
             // Return download response for the zip file
-            return response()->download($zipFilepath);
+            return response()->json($saveBulkJobInDB);
         } catch (\Exception $e) {
             Log::error("Error creating CSV and uploading to Zoho: " . $e->getMessage());
             return response()->json(['error' => 'Failed to create CSV or upload to Zoho'], 500);
@@ -193,7 +193,8 @@ class GroupController extends Controller
         // Process the webhook payload here
         $payload = $request->all();
         $db = new DB();
-        $getUser = $db->getBulkJob($payload['id']);
+        $getBulkJob = $db->getBulkJob($payload['id']);
+        $getUser = $getBulkJob->userData;
         $zoho = new ZohoCRM();
         $helper = new Helper();
         $user = $getUser;
@@ -205,31 +206,104 @@ class GroupController extends Controller
         $zoho->access_token = $accessToken;
 
         // Example: Log the payload
-        \Log::info('Webhook received:', $payload);
+        Log::info('Webhook received:', $payload);
         $jobID = $payload['id'];
         $getJobDetail = $zoho->getJobDetail($jobID);
-        \Log::info('getJobDetail:', ['response' => $getJobDetail->json()]);
+        Log::info('getJobDetail:', ['response' => $getJobDetail->json()]);
         $zipFile = $getJobDetail['result']['download_url'];
         Log::info('ZIPFILE:', ['ZIPFILE' => $zipFile]);
-        
+        $getBulkJob->file = $zipFile;
         $extractZipFile = $helper->extractZipFile($zipFile,$zoho);
         $extractedFilesJSON = $helper->csvToJson($extractZipFile);
+
+        $statusToFind = 'ADDED';
+        $recordByStatus = $helper->array_find($extractedFilesJSON, function($item) use ($statusToFind) {
+            return $item['STATUS'] !== $statusToFind;
+        });
+        if ($recordByStatus) {
+            $getBulkJob->jobStatus = 'cancelled';
+        }else{
+            $getBulkJob->jobStatus = 'completed';
+        }
         for ($i=0; $i < count($extractedFilesJSON); $i++) { 
             $curr = $extractedFilesJSON[$i];
-            $contact = Contact::where('zoho_contact_id', $curr['Contacts'])->first();
+            if ($curr['STATUS']=='ADDED') {
+                $contact = Contact::where('zoho_contact_id', $curr['Contacts'])->first();
+                $group = Groups::where('zoho_group_id', $curr['Groups'])->first();
+                $contactGroup = ContactGroups::create(
+                    [
+                        'ownerId' => $user->id,
+                        "contactId" => $contact['id'] ?? null,
+                        "groupId" => $group['id'] ?? null,
+                        "zoho_contact_group_id" => $curr['RECORD_ID'] ?? null
+                    ]
+                );
+                
+            }
             
-            $group = Groups::where('zoho_group_id', $curr['Groups'])->first();
-            $contactGroup = ContactGroups::create(
-                [
-                    'ownerId' => $user->id,
-                    "contactId" => $contact['id'] ?? null,
-                    "groupId" => $group['id'] ?? null,
-                    "zoho_contact_group_id" => $curr['RECORD_ID'] ?? null
-                ]
-            );
         }
-       
+       $getBulkJob->save();
         return response()->json(['status' => 'success', 'extracted_files' => $extractedFilesJSON], 200);
     }
 
+    public function createRemoveCsv(Request $request)
+    {
+        try {
+            $zoho = new ZohoCRM();
+            $db = new DB();
+            $user = auth()->user();
+            if (!$user) {
+                return redirect('/login');
+            }
+
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+
+            // Create CSV data
+            $csvData = [];
+            $jsonInput = $request->getContent();
+            $records = json_decode($jsonInput, true);
+            /* // Define CSV headers
+            $csvHeaders = ["Contacts_X_Groups"];
+            foreach ($keyValueArray as $record) {
+                $csvData[] = [
+                    "Contacts_X_Groups" =>$record['contactGroupId'],
+                ];
+            }
+
+            // Generate a unique filename for the CSV
+            $csvFilename = 'example_' . uniqid() . '.csv';
+
+            // Write CSV data to file
+            $csvFilepath = storage_path('app/' . $csvFilename);
+            $csv = Writer::createFromPath($csvFilepath, 'w+');
+            $csv->insertOne($csvHeaders);
+            foreach ($csvData as $row) {
+                $csv->insertOne([$row['Contacts_X_Groups']]);
+            }
+
+            // Create a zip archive
+            $zip = new ZipArchive;
+            $zipFilename = 'example_' . uniqid() . '.zip';
+            $zipFilepath = storage_path('app/' . $zipFilename);
+            if ($zip->open($zipFilepath, ZipArchive::CREATE) === true) {
+                $zip->addFile($csvFilepath, $csvFilename);
+                $zip->close();
+            } else {
+                throw new \Exception('Failed to create zip archive');
+            }
+
+            // Upload zip file to Zoho
+            $response = $zoho->uploadZipFile($zipFilepath);
+            $fileId = $response['details']['file_id']; */
+            //Bulk Write
+            $bulkJob = $zoho->bulkWriteJobToRemove($records);
+            $removeContactGroupFromDB = $db->removeContactGroupFromDB($records);
+            // Return download response for the zip file
+            return response()->json($removeContactGroupFromDB);
+        } catch (\Exception $e) {
+            Log::error("Error creating CSV and uploading to Zoho: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to create CSV or upload to Zoho'], 500);
+        }
+    }
 }

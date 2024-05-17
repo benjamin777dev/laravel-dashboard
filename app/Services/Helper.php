@@ -147,14 +147,23 @@ class Helper
             }
 
             // Convert the associative array to JSON
-            $jsonString = json_encode($jsonArray);
+            $jsonString = $jsonArray;
             Log::info('JSON DATA ', [$jsonString]);
-            return json_decode($jsonString);
+            return $jsonString;
         } catch (\Exception $e) {
             // Log the exception
             \Log::error('Exception occurred while converting CSV to JSON: ' . $e->getMessage());
             return false;
         }
     }
+
+    public function array_find(array $array, callable $callback) {
+    foreach ($array as $item) {
+        if ($callback($item)) {
+            return $item;
+        }
+    }
+    return null;
+}
 
 }

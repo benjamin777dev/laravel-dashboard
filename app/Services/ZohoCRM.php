@@ -37,7 +37,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL,ZohoCRM.mass_delete.custom.DELETE',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -773,7 +773,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback"=> [
-                    "url"=> "https://7ece-122-161-192-36.ngrok-free.app/bulkJob/update",
+                    "url"=> "https://e39a-2405-201-5023-403c-2c5e-4e86-4ee9-de0.ngrok-free.app/bulkJob/update",
                     "method"=> "post"
                 ],
                 "resource" => [
@@ -832,6 +832,31 @@ class ZohoCRM
             Log::error("Error retrieving Job Details: " . $e->getMessage());
         }
 
+    }
+
+    public function bulkWriteJobToRemove($fileId)
+    {
+        try {
+            Log::info('Bulk Write Job In ZOHO');
+            // Define the JSON input for the bulk write job
+            $inputJSON = [
+                "ids" => $fileId
+            ];
+            Log::info('IDS', ['inputJSON' => $inputJSON]);
+            // Send a POST request to Zoho API
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->post('https://www.zohoapis.com/crm/v2/Contacts_X_Groups/actions/mass_delete', $inputJSON);
+            
+            // Log response
+            Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
+            
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
+            throw $e;
+        }
     }
 
 }

@@ -86,6 +86,7 @@ Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middlew
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');
 Route::get('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
+Route::post('/contact/group/bulk/remove', [GroupController::class, 'createRemoveCsv'])->middleware('auth');
 Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);

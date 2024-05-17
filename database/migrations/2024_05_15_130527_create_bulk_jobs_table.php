@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('userId')->nullable();
             $table->string('jobId')->nullable();
             $table->string('fileId')->nullable();
+            $table->string('jobStatus')->default('pending');
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

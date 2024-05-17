@@ -16,7 +16,7 @@
                             <p class="mb-0">{{ count($shownGroup['contacts']) }}</p>
                             <div class="checkboxText">
                                 <p class="mb-0 text-end">{{ $shownGroup['name'] }}</p>
-                                <input type="checkbox" class="headerCheckbox" id="headerCheckbox{{ $loop->index }}"
+                                <input type="checkbox" class="headerCheckbox" data-group-id="{{ $shownGroup['id'] }}" id="headerCheckbox{{ $loop->index }}"
                                     data-bs-toggle="modal" data-bs-target="#confirmModel{{ $shownGroup['id'] }}"
                                     data-index="{{ $loop->index }}" />
                             </div>
@@ -26,15 +26,15 @@
                             <div class="modal-dialog modal-dialog-centered deleteModal">
                                 <div class="modal-content">
                                     <div class="modal-header border-0 deleteModalHeaderDiv">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeModel{{ $shownGroup['zoho_group_id'] }}" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body deletemodalBodyDiv">
-                                        <p class="deleteModalBodyText">Are you sure you want to add all your contacts to this group?</p>
+                                        <p class="deleteModalBodyText popuptext{{ $shownGroup['id'] }}">Are you sure you want to add all your contacts to this group?</p>
                                     </div>
                                     <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
                                         <div class="d-grid gap-2 col-5">
-                                            <button type="button" class="btn btn-secondary deleteModalBtn"
-                                                    onclick="selectAllCheckboxes('{{ $loop->index }}','{{ $shownGroup['zoho_group_id'] }}','confirmModel{{ $shownGroup['id'] }}')">
+                                            <button type="button" class="btn btn-secondary deleteModalBtn popupButton{{ $shownGroup['id'] }}"
+                                                    onclick="selectAllCheckboxes('{{ $loop->index }}','{{ $shownGroup['zoho_group_id'] }}','confirmModel{{ $shownGroup['id'] }}','{{ $shownGroup['id'] }}')">
                                                 Select All
                                             </button>
                                         </div>
@@ -102,8 +102,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         headerCheckboxes.forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
-                const targetModalElement = document.querySelector('.deleteModalBodyText');
-                const buttonElement = document.querySelector('.deleteModalBtn');
+                const shownGroupId = checkbox.dataset.groupId;
+                const targetModalElement = document.querySelector(".popuptext"+shownGroupId);
+                const buttonElement = document.querySelector(".popupButton"+shownGroupId);
                 console.log(targetModalElement,buttonElement);
                 if (checkbox.checked) {
                     targetModalElement.innerHTML =
@@ -116,6 +117,13 @@
                 }
             });
         });
+        document.querySelectorAll('.groupCheckbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            checkAllCheckboxes();
+        });
+    });
+
+    checkAllCheckboxes(); // Initial check on page load
     });
     window.fetchData = function (sortField = null) {
         const filterSelect = document.getElementById('validationDefault05');
@@ -130,6 +138,7 @@
             },
             success: function (data) {
                 $('.dbgTable').html(data)
+                checkAllCheckboxes();
             },
             error: function (xhr, status, error) {
                 // Handle errors
@@ -175,6 +184,8 @@
                 data: JSON.stringify(formData),
                 success: function(response) {
                     showToast('Contact add successfully')
+                    fetchData();
+
                 },
                 error: function(xhr, status, error) {
                     showToastError(error)
@@ -190,7 +201,8 @@
                 contentType: 'application/json',
 
                 success: function (response) {
-                   showToast('Contact remove successfully')
+                   showToast('Contact remove successfully');
+                   fetchData();
                 },
                 error: function(xhr, status, error) {
                     showToastError(error)
@@ -198,12 +210,14 @@
             });
         }
     }
-    window.selectAllCheckboxes = function (columnIndex, groupId, targetModalId) {
-        console.log("Select ALl Inbox", targetModalId);
+    window.selectAllCheckboxes = function (columnIndex, groupId, targetModalId,dbGroupId = null) {
+        console.log("Select ALL Inbox", targetModalId);
         let checkedGroup = []
         var checkboxes = document.querySelectorAll('.groupCheckbox[data-index="' + columnIndex + '"]');
         // Get the elements to update
-        const buttonElement = document.querySelector('.deleteModalBtn');
+        const buttonElement = document.querySelector(".popupButton"+dbGroupId);
+        const closeId = document.getElementById('closeModel'+groupId);
+        console.log(closeId,"closeId");
         const elementInnerText = buttonElement
             .innerText; // Retrieves visible text content, ignoring hidden elements
         checkboxes.forEach(function (checkbox) {
@@ -218,8 +232,10 @@
                 checkbox.checked = true;
             }
             if (elementInnerText == "Deselect All" && checkbox.checked) {
-                checkedGroup.push({ contactGroupId: contactgroupId.zoho_contact_group_id })
-                checkbox.checked = false;
+                if(contactgroupId.zoho_contact_group_id){
+                checkedGroup.push(contactgroupId.zoho_contact_group_id)
+            }
+            checkbox.checked = false;
             }
         })
         if(elementInnerText == "Select All"){
@@ -244,6 +260,7 @@
                 },
                 success: function (response) {
                     showToast('Contacts add successfully')
+                    fetchData();
                 },
                 error: function (xhr, status, error) {
                     // Handle errors
@@ -252,12 +269,8 @@
             });
 
         }else{
-            console.log(checkedGroup);
             var jsonString = JSON.stringify(checkedGroup);
-
-            var formData = {
-                "data": jsonString,
-            };
+            console.log(jsonString);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -265,14 +278,13 @@
             });
             $.ajax({
                 url: '/contact/group/bulk/remove',
-                method: 'GET',
+                method: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
-                data: {
-                    "laravelData": jsonString,
-                },
+                data: jsonString,
                 success: function (response) {
                     showToast('Contacts remove successfully')
+                    fetchData();
                 },
                 error: function (xhr, status, error) {
                     // Handle errors
@@ -280,6 +292,28 @@
                 }
             });
         }
-        
+        closeId.click();
+        checkAllCheckboxes();
     }
+    window.checkAllCheckboxes = function() {
+        // Loop through each header checkbox to handle them individually
+        document.querySelectorAll('.headerCheckbox').forEach(function(headerCheckbox) {
+            var groupId = headerCheckbox.getAttribute('data-group-id');
+            var columnIndex = headerCheckbox.getAttribute('data-index');
+            var allChecked = true;
+
+            // Select all checkboxes in the current column
+            var checkboxes = document.querySelectorAll('.groupCheckbox[data-index="' + columnIndex + '"]');
+
+            checkboxes.forEach(function(checkbox) {
+                if (!checkbox.checked) {
+                    allChecked = false;
+                }
+            });
+
+            headerCheckbox.checked = allChecked;
+        });
+    };
+
+
 </script>

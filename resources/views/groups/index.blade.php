@@ -104,6 +104,7 @@
                 },
                 success: function(data) {
                     $('.group-container').html(data)
+                    checkAllCheckboxes()
                 },
                 error: function(xhr, status, error) {
                     // Handle errors
@@ -112,6 +113,25 @@
             });
 
         }
+        window.checkAllCheckboxes = function() {
+            // Loop through each header checkbox to handle them individually
+            document.querySelectorAll('.headerCheckbox').forEach(function(headerCheckbox) {
+                var groupId = headerCheckbox.getAttribute('data-group-id');
+                var columnIndex = headerCheckbox.getAttribute('data-index');
+                var allChecked = true;
+
+                // Select all checkboxes in the current column
+                var checkboxes = document.querySelectorAll('.groupCheckbox[data-index="' + columnIndex + '"]');
+
+                checkboxes.forEach(function(checkbox) {
+                    if (!checkbox.checked) {
+                        allChecked = false;
+                    }
+                });
+
+                headerCheckbox.checked = allChecked;
+            });
+        };
     </script>
 
 @endsection

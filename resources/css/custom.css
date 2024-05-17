@@ -2222,7 +2222,7 @@
 }
 .headerCheckbox {
     /* Set default background color to black */
-    --checkbox-bg-color: black;
+    accent-color: black;
 }
 
 /* Tab Card */

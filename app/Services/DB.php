@@ -1204,7 +1204,7 @@ class DB
             Log::info("Bulk job retrieved from the database", ['bulkJob' => $bulkJob->toArray()]);
             
             // Return user data associated with the bulk job
-            return $bulkJob->userData;
+            return $bulkJob;
         } catch (\Exception $e) {
             // Log error if any exception occurs
             Log::error("Error retrieving bulk job: " . $e->getMessage());
@@ -1214,4 +1214,14 @@ class DB
         }
     }
 
+    public function removeContactGroupFromDB($ids)
+    {
+        try {
+            $bulkJob = ContactGroups::whereIn('zoho_contact_group_id', $ids)->delete();
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

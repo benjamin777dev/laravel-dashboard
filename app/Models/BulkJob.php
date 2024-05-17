@@ -12,7 +12,9 @@ class BulkJob extends Model
     protected $fillable = [
         'userId',
         'jobId',
-        'fileId'
+        'fileId',
+        'jobStatus',
+        'file'
     ];
 
     public function userData()
