@@ -68,6 +68,7 @@
     font-style: normal;
     font-weight: 800;
     line-height: 18.4px;
+    cursor: pointer
 }
 
 .plusicon {
@@ -2224,7 +2225,7 @@
 }
 .headerCheckbox {
     /* Set default background color to black */
-    --checkbox-bg-color: black;
+    accent-color: black;
 }
 
 /* Tab Card */

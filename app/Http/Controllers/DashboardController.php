@@ -1024,4 +1024,26 @@ class DashboardController extends Controller
         return redirect()->back()->with('success', 'Note updated successfully!');
     }
 
+     public function getTasksForDashboard(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $db = new DB();
+        $zoho->access_token = $accessToken;
+        try {
+            $tab = request()->query('tab') ?? 'In Progress';
+            $tasks = $db->retreiveTasks($user, $accessToken, $tab);
+            $retreiveModulesdata = $db->retriveModules($user,$accessToken);
+            Log::info("Task Details: " . print_r($tasks, true));
+            return view('common.tasks', compact('tasks','tab','retreiveModulesdata'))->render();
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

@@ -14,12 +14,12 @@ use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Models\Groups; // Import the Deal model
-use App\Models\ContactGroups; // Import the Deal model
-use App\Models\Attachment; // Import the Deal model
-use App\Models\NonTm; // Import the Deal model
-use App\Models\Submittals; // Import the Deal model
-
+use App\Models\Groups; 
+use App\Models\ContactGroups; 
+use App\Models\Attachment; 
+use App\Models\NonTm; 
+use App\Models\Submittals; 
+use App\Models\BulkJob; 
 
 class DB
 {
@@ -455,11 +455,11 @@ class DB
             $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
             if ($tab == 'Completed') {
-                $tasks->where('status', $tab)
-                    ->orWhereDate('due_date', '<', now());
+                $tasks
+                    ->where('due_date', '<', now());
             } elseif ($tab == 'Not Started') {
-                $tasks->where('status', $tab)
-                    ->orWhereDate('due_date', '>', now());
+                $tasks
+                    ->where('due_date', '>=', now());
             } else {
                 $tasks->where('status', $tab);
             }
@@ -950,7 +950,7 @@ class DB
                     });
                 })
                 ->when($sort, function ($query, $sort) {
-                    $query->orderBy('created_at', $sort);
+                    $query->orderBy('first_name', $sort);
                 })
                 ->get();
 
@@ -1179,6 +1179,51 @@ class DB
         }
     }
 
+    public function saveBulkJobInDB($fileId,$userId,$jobId)
+    {
+        try {
+            $bulkJob = BulkJob::create([
+                'userId' => $userId,
+                'jobId' => $jobId,
+                'fileId' => $fileId,
+            ]);
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getBulkJob($jobId)
+    {
+        try {
+            // Retrieve bulk job with user data eagerly loaded
+            $bulkJob = BulkJob::where('jobId', $jobId)->with('userData')->firstOrFail();
+            
+            // Log retrieved bulk job
+            Log::info("Bulk job retrieved from the database", ['bulkJob' => $bulkJob->toArray()]);
+            
+            // Return user data associated with the bulk job
+            return $bulkJob;
+        } catch (\Exception $e) {
+            // Log error if any exception occurs
+            Log::error("Error retrieving bulk job: " . $e->getMessage());
+            
+            // Rethrow the exception to handle it elsewhere
+            throw $e;
+        }
+    }
+
+    public function removeContactGroupFromDB($ids)
+    {
+        try {
+            $bulkJob = ContactGroups::whereIn('zoho_contact_group_id', $ids)->delete();
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
     public function retriveModules(User $user,$accessToken)
     { 
         $user = auth()->user();

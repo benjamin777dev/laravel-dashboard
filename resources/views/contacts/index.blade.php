@@ -43,7 +43,7 @@
             <div class="col-md-4">
                 <div class="row align-items-center" style="gap:12px">
                     <div class="col-md-10 pcommonFilterDiv">
-                        <input placeholder="Search" class="psearchInput" id="contactSearch" />
+                        <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact()" />
                         <i class="fas fa-search search-icon"></i>
                     </div>
                     <p class="col-md-1 porText">or</p>
