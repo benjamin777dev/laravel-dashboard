@@ -1,3 +1,27 @@
+<script>
+    // Store tasks data in a JavaScript variable
+    var taskIDSS = [];
+    var selectElement;
+    var tasks = @json($tasks);
+     tasks?.data?.forEach((task)=>{
+        taskIDSS.push(task?.id)
+     })
+     var modalSelectMaptsk = []
+     taskIDSS.forEach((id) => {
+        modalSelectMaptsk.push({
+                modalID: '',
+                selectElementId: 'related_to_rem' + id
+            })
+        });
+        modalSelectMaptsk.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdownForId(modalID, selectElement);
+        });
+        console.log(modalSelectMaptsk, 'ids')
+</script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>
@@ -27,25 +51,21 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select class="form-select dealTaskSelect  related_to_rem{{ $task['id'] }}"
-                                    id="related_to_rem{{ $task['id'] }}"
-                                    onclick="getModule('{{ $task['id'] }}','related_to_rem{{ $task['id'] }}')"
-                                    name="related_to_rem{{ $task['id'] }}">
-                                    @if ($task['related_to'] == 'Contacts')
-                                        <option value="{{ $task['id'] }}"
-                                            {{ empty($task['contactData']) ? 'selected' : '' }}>
-                                            {{ $task['contactData']['first_name'] ?? '' }}
-                                            {{ $task['contactData']['last_name'] ?? 'Please select' }}
-                                        </option>
-                                    @elseif ($task['related_to'] == 'Deals')
-                                        <option value="{{ $task['id'] }}"
-                                            {{ empty($task['dealData']) ? 'selected' : '' }}>
-                                            {{ $task['dealData']['deal_name'] ?? 'Please select' }}
-                                        </option>
-                                    @else
-                                        <option value="" selected>Please select</option>
-                                    @endif
-                                </select>
+                                <select class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
+                                id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
+                            @if ($task['related_to'] == 'Contacts')
+                                <option value="{{ $task['contactData']['zoho_contact_id'] ?? '' }}" selected>
+                                    {{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? 'Please select' }}
+                                </option>
+                            @elseif ($task['related_to'] == 'Deals')
+                                <option value="{{ $task['dealData']['zoho_deal_id'] ?? '' }}" selected>
+                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
+                                </option>
+                            @else
+                                <option value="" selected>Please select</option>
+                            @endif
+                        </select>
+
                                 <select class="form-select dmodaltaskSelect" id="taskSelect"
                                     onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
                                     name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
@@ -61,7 +81,7 @@
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                         </td>
                         <td>
-                            <div class="d-flex ">
+                            <div class="d-flex btn-save-del">
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                     id="btnGroupAddon" data-bs-toggle="modal"
                                     onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
@@ -76,7 +96,7 @@
                                 </div>
                             </div>
                             {{-- delete Modal --}}
-                            <div class="modal fade" id="deleteModalId{{$task['zoho_task_id']}}" tabindex="-1">
+                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
@@ -117,7 +137,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
                                             {{-- <h5 class="modal-title">Modal title</h5> --}}
-                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -138,32 +158,35 @@
                                     </div>
                                 </div>
                             </div> --}}
-                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                    <div class="modal-content">
-                                        <div class="modal-header saveModalHeaderDiv border-0">
-                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body saveModalBodyDiv">
-                                            <p class="saveModalBodyText" id="updated_message_make">
-                                                Changes have been saved</p>
-                                        </div>
-                                        <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                            <div class="d-grid col-12">
-                                                <button type="button" class="btn btn-secondary saveModalBtn"
-                                                    data-bs-dismiss="modal">
-                                                    <i class="fas fa-check trashIcon"></i>
-                                                    Understood
-                                                </button>
+                                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}"
+                                                tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header saveModalHeaderDiv border-0">
+                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body saveModalBodyDiv">
+                                                            <p class="saveModalBodyText" id="updated_message_make">
+                                                                Changes have been saved</p>
+                                                        </div>
+                                                        <div
+                                                            class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                                            <div class="d-grid col-12">
+                                                                <button type="button"
+                                                                    class="btn btn-secondary saveModalBtn"
+                                                                    data-bs-dismiss="modal">
+                                                                    <i class="fas fa-check trashIcon"></i>
+                                                                    Understood
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
                                             </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
                         </td>
 
                     </tr>
@@ -255,6 +278,7 @@
     </div>
 @endif
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+<script  src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -300,129 +324,189 @@
             activeTab.style.borderRadius = "4px";
         }
 
-        var taskArr = [];
-        var task = [];
-        @if ($retreiveModulesdata)
-            @foreach ($retreiveModulesdata as $module)
-                var modu = "{{ $module['label'] }}";
-                var data = {!! json_encode($module['data']) !!}; // Use json_encode to convert PHP array to JavaScript object
-
-                taskArr.push({
-                    label: modu,
-                    data: data
-                });
-            @endforeach
-        @endif
         var selectElement;
         var ids = [];
         @if ($tasks)
             @foreach ($tasks as $task)
-                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to JavaScript object
+                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to 
                 ids.push(idsss);
             @endforeach
         @endif
-        $(document).on('customAjaxResponse', function(event, response) {
-            // Handle the response here, you can also pass it to another function if needed
-            console.log("Custom event triggered with response:", response);
-            taskArr = response;
-
-        });
+        const modalSelectMap = []
         ids.forEach((id) => {
-            selectElement = $("#related_to_rem" + id);
-            let selectedval = selectElement.val();
-            var selectedText = selectElement.find('option:selected').text();
-            // selectElement.empty();
-            // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
-            taskArr.forEach(function(state) {
-                var optgroup = selectElement.find('optgroup[label="' + state.label + '"]');
-                if (optgroup.length === 0) {
-                    optgroup = $('<optgroup>', {
-                        label: state.label
-                    });
-                    selectElement.append(optgroup);
-                }
+            modalSelectMap.push({
+                modalID: '',
+                selectElementId: 'related_to_rem' + id
+            })
+        });
+        modalSelectMap.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdownForId(modalID, selectElement);
+        });
+        console.log(ids, 'ids')
+        //     let selectedval = selectElement.val();
+        //     var selectedText = selectElement.find('option:selected').text();
+        //     // selectElement.empty();
+        //     // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
+        //     taskArr.forEach(function(state) {
+        //         var optgroup = selectElement.find('optgroup[label="' + state.text + '"]');
+        //         if (optgroup.length === 0) {
+        //             optgroup = $('<optgroup>', {
+        //                 label: state.text
+        //             });
+        //             selectElement.append(optgroup);
+        //         }
 
-                var count = 0; // Counter to track the number of records appended for each label
+        //         var count = 0; // Counter to track the number of records appended for each label
 
-                if (state.label === "Contacts") {
-                    state.data.forEach(function(contact) {
-                        if (count < 5) { // Limit the number of records appended to 5
-                            optgroup.append($('<option>', {
-                                value: contact.zoho_contact_id,
-                                text: (contact.first_name) + " " + (
-                                    contact.last_name ?? "")
-                            }));
-                            if (selectedText && contact.first_name + ' ' + contact
-                                .last_name === selectedText) {
-                                console.log(selectedText, contact.first_name + contact
-                                    .last_name, 'jjjjjjj++++++++++++')
-                                option.attr('selected');
-                            }
-                            count++;
-                        }
-                    });
-                }
+        //         if (state.text === "Contacts") {
+        //             state.children.forEach(function(contact) {
+        //                 if (count < 5) { // Limit the number of records appended to 5
+        //                     optgroup.append($('<option>', {
+        //                         value: contact.zoho_contact_id,
+        //                         text: (contact.first_name) + " " + (
+        //                             contact.last_name ?? "")
+        //                     }));
+        //                     if (selectedText && contact.first_name + ' ' + contact
+        //                         .last_name === selectedText) {
+        //                         console.log(selectedText, contact.first_name + contact
+        //                             .last_name, 'jjjjjjj++++++++++++')
+        //                         option.attr('selected');
+        //                     }
+        //                     count++;
+        //                 }
+        //             });
+        //         }
 
-                if (state.label === "Deals") {
-                    state.data.forEach(function(deal) {
-                        if (count < 5) { // Limit the number of records appended to 5
-                            optgroup.append($('<option>', {
-                                value: deal.zoho_deal_id,
-                                text: deal.deal_name,
-                            }));
-                            if (selectedText && deal.deal_name === selectedText) {
-                                console.log(selectedText, contact.first_name + contact
-                                    .last_name, 'jjjjjjj++++++++++++')
-                                option.attr('selected');
-                            }
-                            count++;
-                        }
-                    });
-                }
-            });
+        //         if (state.text === "Deals") {
+        //             state.children.forEach(function(deal) {
+        //                 if (count < 5) { // Limit the number of records appended to 5
+        //                     optgroup.append($('<option>', {
+        //                         value: deal.zoho_deal_id,
+        //                         text: deal.deal_name,
+        //                     }));
+        //                     if (selectedText && deal.deal_name === selectedText) {
+        //                         console.log(selectedText, contact.first_name + contact
+        //                             .last_name, 'jjjjjjj++++++++++++')
+        //                         option.attr('selected');
+        //                     }
+        //                     count++;
+        //                 }
+        //             });
+        //         }
+        //     });
 
 
-            selectElement.select2({
-                theme: 'bootstrap-5',
-            });
+        //     selectElement.select2({
+        //         theme: 'bootstrap-5',
+        //     });
 
-            selectElement.next(".select2-container").addClass("form-select");
-            $(selectElement).on("change", function() {
-                console.log(this, 'vthisthisthisthisthis')
-                var selectedValue = $(this).val();
-                var selectedText = $(this).find(':selected').text();
-                var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
-                console.log("Selected value:", selectedValue);
-                console.log("Selected text:", selectedText);
-                console.log("Optgroup label:", id, optgroupLabel);
-                var WhoID;
-                var WhatSelectoneID;
-                if (optgroupLabel === "Contacts") {
-                    WhoID = selectedValue;
-                }
-                if (optgroupLabel === "Deals") {
-                    WhatSelectoneID = selectedValue;
-                }
-                updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
+        //     selectElement.next(".select2-container").addClass("form-select");
+        //     $(selectElement).on("change", function() {
+        //         console.log(this, 'vthisthisthisthisthis')
+        //         var selectedValue = $(this).val();
+        //         var selectedText = $(this).find(':selected').text();
+        //         var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
+        //         console.log("Selected value:", selectedValue);
+        //         console.log("Selected text:", selectedText);
+        //         console.log("Optgroup label:", id, optgroupLabel);
+        //         var WhoID;
+        //         var WhatSelectoneID;
+        //         if (optgroupLabel === "Contacts") {
+        //             WhoID = selectedValue;
+        //         }
+        //         if (optgroupLabel === "Deals") {
+        //             WhatSelectoneID = selectedValue;
+        //         }
+        //         updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
 
-            });
-            $(selectElement).on("select2:open", function() {
-                $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
-                    function(e) {
-                        // This function will be triggered when the user types into the Select2 input
-                        console.log("User is typing:", $(this).val());
-                        let search = $(this).val();
-                        updateTaskArr(search);
+        //     });
+        //     $(selectElement).on("select2:open", function() {
+        //         let timer; // Variable to hold the timer
 
-                        // Perform any actions you need here
-                    });
-            });
+        //         $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
+        //             function(e) {
+        //                 // This function will be triggered when the user types into the Select2 input
+        //                 clearTimeout(timer); // Clear the previous timer
+        //                 let search = $(this).val();
+        //                 timer = setTimeout(() => {
+        //                     console.log("User has finished typing:", $(this).val());
+        //                     updateTaskArr(id, search, selectedText);
+        //                     // Perform any actions you need here
+        //                 }, 250); // Set timer to execute after 250ms
+        //             });
+        //     });
 
-        })
+
+        // })
     });
 
+    function updateSelectOptions(id, taskArr, selectedText) {
+        var selectElement = $("#related_to_rem" + id);
+        let selecttext = selectedText;
+        // Clear existing options
+        selectElement.empty();
 
-    function updateTaskArr(search) {
+        var selectedFound = false; // Flag to track if the selected item has been found and added
+
+        taskArr.forEach(function(state) {
+            var optgroup = $('<optgroup>', {
+                label: state.text
+            });
+            selectElement.append(optgroup);
+
+            var count = 0; // Counter to track the number of records appended for each label
+
+            if (state.text === "Contacts") {
+                state.children.forEach(function(contact) {
+                    if (count < 5 || (selecttext && contact.first_name + ' ' + contact.last_name ===
+                            selecttext)) {
+
+                        var option = $('<option>', {
+                            value: contact.zoho_contact_id,
+                            text: (contact.first_name || "") + " " + (contact.last_name || "")
+                        });
+                        optgroup.append(option);
+                        if (selecttext && contact.first_name + ' ' + contact.last_name ===
+                            selecttext) {
+                            option.prop('selected', true);
+                            selectedFound = true;
+                        }
+                        count++;
+                    }
+                });
+            }
+
+            if (state.text === "Deals") {
+                state.children.forEach(function(deal) {
+                    if (count < 5 || (selecttext && deal.deal_name === selecttext)) {
+                        var option = $('<option>', {
+                            value: deal.zoho_deal_id,
+                            text: deal.deal_name,
+                        });
+                        optgroup.append(option);
+                        if (selecttext && deal.deal_name === selecttext) {
+                            option.prop('selected', true);
+                            selectedFound = true;
+                        }
+                        count++;
+                    }
+                });
+            }
+        });
+
+        // Reinitialize Select2 after updating options
+        // selectElement.trigger('select2:updated');
+        var search = $("#inputhidden input.select2-input");
+        search.trigger("input");
+    }
+
+
+
+    function updateTaskArr(id, search, selectedText) {
 
         // Populate select with new options
         $.ajax({
@@ -430,7 +514,7 @@
             method: "GET",
             dataType: "json",
             success: function(response) {
-                $(document).trigger('customAjaxResponse', [response]);
+                $(document).trigger('customAjaxResponse', [id, response, selectedText]);
             },
             error: function(xhr, status, error) {
                 // Handle error
@@ -468,7 +552,7 @@
 
         if (textfield === "subject") {
             textElement = document.getElementById(textid);
-            //For Table data                
+            //For Table data                
             var text = textElement.textContent.trim();
             textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
 
@@ -480,59 +564,14 @@
                 updateText(inputElementmake.value, textfield, zohoID);
             });
         }
-        var elementValue = inputElement.textContent;
-        // return;
-        if (elementValue.trim() === "") {
-            // console.log("chkockdsjkfjksdh")
-            return alert("Please enter subject value first");
-        }
-        // console.log("inputElementval",elementValue!==undefined,elementValue)
-        if (elementValue !== undefined) { // return;
-            var formData = {
-                "data": [{
-                    "Subject": elementValue,
-                    "Due_Date": formattedDateTime
-                }]
-            };
-            // console.log("ys check ot")
-            $.ajax({
-                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-                method: 'PUT',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    // Handle success response
-
-                    if (response?.data[0]?.status == "success") {
-                        // console.log(response?.data[0], 'sdfjkshdjkfshd')
-                        // Get the button element by its ID
-                        if (!document.getElementById('saveModalId').classList.contains('show')) {
-                            var button = document.getElementById('update_changes');
-                            var update_message = document.getElementById('updated_message');
-                            // Get the modal target element by its ID
-                            var modalTarget = document.getElementById('saveModalId');
-                            console.log(modalTarget, 'modalTarget')
-                            // Set the data-bs-target attribute of the button to the ID of the modal
-                            button.setAttribute('data-bs-target', '#' + modalTarget.id);
-                            update_message.textContent = response?.data[0]?.message;
-                            // Trigger a click event on the button to open the modal
-                            button.click();
-                            // alert("updated success", response)
-                            // window.location.reload();
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText, 'errrorroororooro');
-
-
-                }
-            })
+        if (textfield === "date") {
+            let dateLocal = document.getElementById(textid);
+            console.log(textid, 'dateLocal')
+            var text = dateLocal.value.trim();
+            updateText(text, textfield, zohoID);
         }
     }
-    
+
     function convertDateTime(dateTimeString) {
         // Assuming dateTimeString is in a format like 'YYYY-MM-DDTHH:MM:SS'
         var date = new Date(dateTimeString);
@@ -634,17 +673,7 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 // Handle success response
-                if (response?.data[0]?.status == "success") {
-                    if (!document.getElementById('savemakeModalId' + id).classList.contains('show')) {
-                        var modalTarget = document.getElementById('savemakeModalId' + id);
-                        var update_message = document.getElementById('updated_message_make');
-                        update_message.textContent = formatSentence(response?.data[0]?.message);
-                        // Show the modal
-                        $(modalTarget).modal('show');
-                        // window.location.reload();
-                    }
-
-                }
+                showToast(response?.data[0]?.message.toUpperCase());
             },
             error: function(xhr, status, error) {
                 // Handle error response

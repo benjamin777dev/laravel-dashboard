@@ -509,7 +509,7 @@ class DB
             if ($contactId) {
                 $condition[] = ['zoho_deal_id', $contactId];
             }
-            $Deals = Deal::where($condition)->get();
+            $Deals = Deal::where($condition)->orderBy('updated_at','desc')->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
         } catch (\Exception $e) {
@@ -558,7 +558,7 @@ class DB
         try {
 
             Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->id)->get();
+            $Contacts = Contact::where('contact_owner', $user->id)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
             return $Contacts;
         } catch (\Exception $e) {
@@ -805,13 +805,22 @@ class DB
     {
         try {
             Log::info("User Deatils" . json_encode($zohoDeal));
+             if ($zohoDeal['Client_Name_Only']) {
+                $clientId = explode("||", $zohoDeal['Client_Name_Only']);
+                Log::info("clientId: " . implode(", ", $clientId));
+
+                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
                 'userID' => $user->id,
                 'isInZoho' => true,
                 'zoho_deal_id' => $zohoDeal['id'],
-                'stage' => "Potential"
+                'client_name_primary'=>$zohoDeal['Client_Name_Primary'],
+                'client_name_only'=>$zohoDeal['Client_Name_Only'],
+                'stage' => "Potential",
+                'contactId'=>$contact->id
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -845,6 +854,12 @@ class DB
         try {
             $helper = new Helper();
             Log::info("User Details" . $user);
+            if ($deal['Client_Name_Only']) {
+                $clientId = explode("||", $deal['Client_Name_Only']);
+                Log::info("clientId: " . implode(", ", $clientId));
+
+                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
             $deal = Deal::updateOrCreate(['zoho_deal_id' => $id], [
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
@@ -864,7 +879,10 @@ class DB
                 'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
                 'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
-                'isDealCompleted' => true
+                'commission_flat_free'=>isset($deal['Commission_Flat_Free']) ? $deal['Commission_Flat_Free'] : null,
+                'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : null,
+                'isDealCompleted' => true,
+                'contactId' => isset($contact) ? $contact->id : null,
             ]);
 
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
@@ -1224,26 +1242,32 @@ class DB
             throw $e;
         }
     }
-    public function retriveModules(User $user,$accessToken)
+    public function retriveModules($request,$user, $accessToken)
     { 
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-        
+    
         $accessToken = $user->getAccessToken();
         // if (!$accessToken) {
         //     throw new \Exception("Invalid user token");
         // }
+    
+        // Retrieve query parameters
+        $searchQuery = $request->input('q', '');
+        $page = $request->input('page', 1);
+        $limit = $request->input('limit', 5);
+        $offset = ($page - 1) * $limit;
+    
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
         $data = [];
+        $moduleIds = [];
     
-        // Initialize data arrays for each module
-        $data['contacts'] = [];
-        $data['deals'] = [];
-    
-        // Search query
-        $searchQuery = request()->query('search');
+        foreach ($filteredModules as $module) {
+            $moduleIds[$module->api_name] = $module->zoho_module_id;
+            $data[$module->api_name] = [];
+        }
     
         foreach ($filteredModules as $module) {
             if ($module->api_name === 'Deals') {
@@ -1252,42 +1276,52 @@ class DB
                 if ($searchQuery) {
                     $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
                 }
-                $dealsData = $dealsQuery->get();
+                $totalDeals = $dealsQuery->count();
+                $dealsData = $dealsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
-                    $data['deals'] = $dealsData;
+                    $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
+                        $deal['zoho_module_id'] = $moduleIds['Deals'];
+                        return $deal;
+                    });
                 }
             } elseif ($module->api_name === 'Contacts') {
                 // Retrieve Contacts data based on search query if provided
                 $contactsQuery = Contact::query();
                 if ($searchQuery) {
-                    $contactsQuery->where('first_name', 'like', "%$searchQuery%")
-                                 ->orWhere('last_name', 'like', "%$searchQuery%");
+                    $contactsQuery->where(function($query) use ($searchQuery) {
+                        $query->where('first_name', 'like', "%$searchQuery%")
+                              ->orWhere('last_name', 'like', "%$searchQuery%");
+                    });
                 }
-                $contactsData = $contactsQuery->get();
+                $totalContacts = $contactsQuery->count();
+                $contactsData = $contactsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {
-                    $data['contacts'] = $contactsData;
+                    $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
+                        $contact['zoho_module_id'] = $moduleIds['Contacts'];
+                        return $contact;
+                    });
                 }
             }
         }
     
         // Add objects for Contacts and Deals with their respective data arrays
         $responseData = [];
-    
-        if (!empty($data['contacts'])) {
-            $responseData[] = [
-                'label' => 'Contacts',
-                'data' => $data['contacts']
-            ];
+        foreach ($data as $moduleName => $moduleData) {
+            if (!empty($moduleData)) {
+                $responseData[] = [
+                    'text' => $moduleName,
+                    'children' => $moduleData
+                ];
+            }
         }
     
-        if (!empty($data['deals'])) {
-            $responseData[] = [
-                'label' => 'Deals',
-                'data' => $data['deals']
-            ];
-        }
-    
-        return $responseData;
+        // Return response with total count for pagination
+        return response()->json([
+            'items' => $responseData,
+            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0)
+        ]);
     }
+    
+    
 
 }

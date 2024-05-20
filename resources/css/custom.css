@@ -214,7 +214,7 @@
 .deletebtn,
 .dcardsdeletebtn {
     display: flex;
-    padding: 6px 8px;
+    padding: 6px 12px;
     justify-content: center;
     align-items: center;
     gap: 4px;
@@ -471,12 +471,21 @@
 .select2-container--open .select2-dropdown--below {
    font-size: 12px !important;
 }
-.select2-selection__arrow{
-    display: none !important;
+.select2-dropdown{
+    max-height: 200px;
+    overflow: auto;
 }
+
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btn-save-del{
+    gap: 12px;
 }
 
 .dDueText {
@@ -1084,7 +1093,8 @@
 
 .database-filter-div {
     margin-inline: 0;
-}
+    flex-wrap: unset !important;
+} 
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1111,6 +1121,7 @@
     font-weight: 800;
     line-height: 16.1px;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .pipeline-cards-container {
@@ -1241,6 +1252,32 @@
     padding-inline: 0px;
 }
 
+.filterClosebtn{
+    display: flex;
+    width: 226px;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #5e5959;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+}
+.filter_model{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.d-con{
+    display: contents;
+}
 .pfilterBtn {
     display: flex;
     width: 226px;
@@ -1259,21 +1296,7 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    /* flex: 1;
-    display: flex;
-    padding: 8.52px 12px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    border: 1px solid #222;
-    background: #222;
-    color: #fff;
-    text-align: center;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 400;
-    cursor: pointer;
-    height: 37px; */
+ cursor: pointer;
 }
 
 .ptransactionTable th {
@@ -2515,11 +2538,20 @@ body[data-sidebar="dark"] .navbar-brand-box {
 }
 .dealTaskSelect{
     width: 100% !important;
+    border: none !important;
+}
+.dealTaskSelect:focus-visible{
+    outline: 0 !important;
+
 }
 .select2-container{
     width: 100% !important;
+    border: none !important;
 }
+.select2-container:focus-visible{
+    outline: 0 !important;
 
+}
 @media (max-width: 992px) {
     .vertical-menu {
         display: none;
@@ -2531,22 +2563,41 @@ body[data-sidebar="dark"] .navbar-brand-box {
 }
 
 .select2-container {
-    z-index: 9999!important; 
+    z-index: 9999 !important;
 }
-.select2-selection{
-border: 0;
+
+.select2-selection {
+    border: 0;
 
 }
- .select2-selection__arrow{
+
+.select2-selection__arrow {
     display: none;
-} 
-.select2{
+}
+
+.select2 {
     height: 33px;
-    padding: 0 30px 0 0;
+    padding: 0;
 }
-.select2-selection.select2-selection--single{
-    border: 0!important;
+
+.select2-selection.select2-selection--single {
+    border: 0 !important;
 }
-.select2-results__option{
-font-size: 12px;
+
+.select2-results__option {
+    font-size: 12px;
+}
+.dealTaskfordropdown{
+    display: flex;
+    height: 40px;
+}
+.dealTaskfordropdown .select2-container {
+    z-index: 0 !important;
+    height:40px !important;    
+}
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.5em;
+    display: none;
 }

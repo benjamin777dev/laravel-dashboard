@@ -859,4 +859,31 @@ class ZohoCRM
         }
     }
 
+    
+    public function storeDealContactIntoZOHO($dealContacts, $dealId)
+    {
+        try {
+            Log::info('Store Deal Contact In ZOHO');
+            // Define the JSON input for the bulk write job
+            $inputJSON = [
+                "ids" => $fileId
+            ];
+            Log::info('IDS', ['inputJSON' => $inputJSON]);
+            // Send a POST request to Zoho API
+           $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                ])->put($this->apiUrl . "Deals/$dealId/Contact_Roles", [
+                'fields' => 'Email,Department,First_Name,Last_Name'
+            ]);
+            
+            // Log response
+            Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
+            
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

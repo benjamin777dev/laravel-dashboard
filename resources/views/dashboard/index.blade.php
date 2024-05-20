@@ -169,7 +169,7 @@
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
-                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
+                    <div  class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                         id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i
                             class="fas fa-plus plusicon">
                         </i>
@@ -197,7 +197,6 @@
                     <div class= "task-container">
                         @include('common.tasks', [
                             'tasks' => $tasks,
-                            'retreiveModulesdata' => $retreiveModulesdata,
                         ])
                     </div>
                     
@@ -295,7 +294,7 @@
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
-        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
@@ -353,7 +352,8 @@
                 tab: tab,
             },
             success: function(data) {
-                $('.task-container').html(data)
+                $('.task-container').html(data);
+              
             },
             error: function(xhr, status, error) {
                 // Handle errors
