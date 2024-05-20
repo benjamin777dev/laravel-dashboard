@@ -475,9 +475,7 @@
     max-height: 200px;
     overflow: auto;
 }
-.select2-selection__arrow{
-    display: none !important;
-}
+
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
@@ -1095,7 +1093,8 @@
 
 .database-filter-div {
     margin-inline: 0;
-}
+    flex-wrap: unset !important;
+} 
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
@@ -1122,6 +1121,7 @@
     font-weight: 800;
     line-height: 16.1px;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .pipeline-cards-container {
@@ -1252,6 +1252,32 @@
     padding-inline: 0px;
 }
 
+.filterClosebtn{
+    display: flex;
+    width: 226px;
+    height: 40px;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    border: 1px solid #5e5959;
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-align: center;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 800;
+}
+.filter_model{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.d-con{
+    display: contents;
+}
 .pfilterBtn {
     display: flex;
     width: 226px;
@@ -1270,21 +1296,7 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    /* flex: 1;
-    display: flex;
-    padding: 8.52px 12px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    border: 1px solid #222;
-    background: #222;
-    color: #fff;
-    text-align: center;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 400;
-    cursor: pointer;
-    height: 37px; */
+ cursor: pointer;
 }
 
 .ptransactionTable th {
@@ -2565,7 +2577,7 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 .select2 {
     height: 33px;
-    padding: 0 30px 0 0;
+    padding: 0;
 }
 
 .select2-selection.select2-selection--single {
@@ -2582,4 +2594,10 @@ body[data-sidebar="dark"] .navbar-brand-box {
 .dealTaskfordropdown .select2-container {
     z-index: 0 !important;
     height:40px !important;    
+}
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.5em;
+    display: none;
 }
