@@ -19,9 +19,7 @@ function showDropdown(showDropdown, selectElement) {
                     };
                 },
                 processResults: function (data, params) {
-                    console.log(data, 'data is here')
                     params.page = params.page || 1;
-                    selectElement.empty();
                     return {
                         results: data.items,
                     };
@@ -38,7 +36,7 @@ function showDropdown(showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return $('<span data-module="' + state?.zoho_module_id + '" id="' + state?.zoho_contact_id + '">' + state?.first_name ?? "" + ' ' + state?.last_name ?? "" + '</span>');
+                    return $('<span data-module="' + state?.zoho_module_id + '" id="' + state?.zoho_contact_id + '">' + state?.first_name  + ' ' + state?.last_name  + '</span>');
                 }
 
                 return $('<span id="' + state?.zoho_deal_id + '">' + state?.deal_name + '</span>');
@@ -49,7 +47,7 @@ function showDropdown(showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return state.first_name ?? "" + ' ' + state.last_name ?? "";
+                    return state.first_name  + ' ' + state.last_name ;
                 }
 
                 return state.deal_name;
@@ -84,9 +82,11 @@ function showDropdownForId(modalID, selectElement) {
     var selectedText1 = selectElement.find('option:selected').text();
     console.log(selectedval);
     console.log(selectedText1);
+    console.log("i am also hitting for task creation timing");
 
     selectElement.each(function () {
         $(this).select2({
+            
             theme: 'bootstrap-5',
             width: 'resolve',
             ajax: {
@@ -159,7 +159,7 @@ function showDropdownForId(modalID, selectElement) {
             }
         });
 
-
+        $(this).select2().val("0").trigger("change");
     });
 }
 
