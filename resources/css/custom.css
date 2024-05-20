@@ -214,7 +214,7 @@
 .deletebtn,
 .dcardsdeletebtn {
     display: flex;
-    padding: 6px 8px;
+    padding: 6px 12px;
     justify-content: center;
     align-items: center;
     gap: 4px;
@@ -471,12 +471,23 @@
 .select2-container--open .select2-dropdown--below {
    font-size: 12px !important;
 }
+.select2-dropdown{
+    max-height: 200px;
+    overflow: auto;
+}
 .select2-selection__arrow{
     display: none !important;
 }
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btn-save-del{
+    gap: 12px;
 }
 
 .dDueText {
@@ -2515,11 +2526,20 @@ body[data-sidebar="dark"] .navbar-brand-box {
 }
 .dealTaskSelect{
     width: 100% !important;
+    border: none !important;
+}
+.dealTaskSelect:focus-visible{
+    outline: 0 !important;
+
 }
 .select2-container{
     width: 100% !important;
+    border: none !important;
 }
+.select2-container:focus-visible{
+    outline: 0 !important;
 
+}
 @media (max-width: 992px) {
     .vertical-menu {
         display: none;
@@ -2531,22 +2551,35 @@ body[data-sidebar="dark"] .navbar-brand-box {
 }
 
 .select2-container {
-    z-index: 9999!important; 
+    z-index: 9999 !important;
 }
-.select2-selection{
-border: 0;
+
+.select2-selection {
+    border: 0;
 
 }
- .select2-selection__arrow{
+
+.select2-selection__arrow {
     display: none;
-} 
-.select2{
+}
+
+.select2 {
     height: 33px;
     padding: 0 30px 0 0;
 }
-.select2-selection.select2-selection--single{
-    border: 0!important;
+
+.select2-selection.select2-selection--single {
+    border: 0 !important;
 }
-.select2-results__option{
-font-size: 12px;
+
+.select2-results__option {
+    font-size: 12px;
+}
+.dealTaskfordropdown{
+    display: flex;
+    height: 40px;
+}
+.dealTaskfordropdown .select2-container {
+    z-index: 0 !important;
+    height:40px !important;    
 }

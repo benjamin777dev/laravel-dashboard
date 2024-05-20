@@ -7,7 +7,7 @@
             @foreach ($notesInfo as $note)
                 <li
                     class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
+                        data-bs-target="#staticBackdropnoteview{{ $note['zoho_note_id'] }}">
                     <div class="text-start"
                         class="form-check-input checkbox{{ $note['id'] }}"
                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
@@ -40,7 +40,7 @@
                     </div>
                 </li>
                 {{-- note view modal --}}
-                <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                <div class="modal fade" id="staticBackdropnoteview{{ $note['zoho_note_id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered deleteModal">
                         <div class="modal-content noteModal">
@@ -58,7 +58,7 @@
                                 <p class="dRelatedText">Related to...</p>
                                 <div class="btn-group dmodalTaskDiv">
 
-                                    @if($note['related_to_type'] === 'Deals')                                         <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
+                                    @if($note['related_to_type'] === 'Deals')                                         <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
                                             aria-label="Select Transaction">
                                             @foreach ($retrieveModuleData as $item)
                                                 @if (in_array($item['api_name'], ['Deals']))
@@ -72,7 +72,7 @@
                                             </option>
                                         </select>
                                     @elseif($note['related_to_type'] === 'Contacts')
-                                        <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
+                                        <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
                                             aria-label="Select Transaction">
                                             @foreach ($retrieveModuleData as $item)
                                                 @if (in_array($item['api_name'], ['Contacts']))
@@ -87,7 +87,7 @@
                                         </select>
                                     @else
                                         <div class="btn-group dmodalTaskDiv">
-                                            <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
+                                            <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
                                                 aria-label="Select Transaction">
                                                 <option value="">Global</option>
                                             </select>
@@ -135,28 +135,18 @@
                                                 aria-label="Select Transaction">
                                                 @foreach ($retrieveModuleData as $item)
                                                     @if (in_array($item['api_name'], ['Deals']))
-                                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                                        <option value="{{ $item }}" selected>{{ $item['api_name'] }}</option>
                                                     @endif
                                                 @endforeach
-                                            </select>
-                                            <select class="form-select dmodaltaskSelect" id="noteSelect_{{ $note['id'] }}"
-                                                name="related_to_parent" aria-label="Select Transaction">
-                                                <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}
-                                                </option>
                                             </select>
                                         @elseif($note['related_to_type'] === 'Contacts')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
                                                 aria-label="Select Transaction">
                                                 @foreach ($retrieveModuleData as $item)
                                                     @if (in_array($item['api_name'], ['Contacts']))
-                                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                                        <option value="{{ $item }}" selected>{{ $item['api_name'] }}</option>
                                                     @endif
                                                 @endforeach
-                                            </select>
-                                            <select class="form-select dmodaltaskSelect" id="noteSelect_{{ $note['id'] }}"
-                                                name="related_to_parent" aria-label="Select Transaction">
-                                                <option value="{{ $note->contactData['zoho_deal_id'] }}">
-                                                    {{ $note->contactData['first_name'] }} {{ $note->contactData['last_name'] }}</option>
                                             </select>
                                         @else
                                             <div class="btn-group dmodalTaskDiv">
@@ -191,6 +181,7 @@
 </div>
 
 <script>
+ 
     // Function to open the confirmation modal
     function openConfirmationModal(id) {
         var modal = document.getElementById(id);
