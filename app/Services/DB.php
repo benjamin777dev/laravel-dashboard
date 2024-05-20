@@ -1224,7 +1224,7 @@ class DB
             throw $e;
         }
     }
-    public function retriveModules(User $user,$accessToken)
+    public function retriveModules($request,$user, $accessToken)
     { 
         $user = auth()->user();
         if (!$user) {
