@@ -16,6 +16,7 @@
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
+            <div class="commonFlex cpbutton">
             <a onclick="createContact();">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
@@ -23,32 +24,21 @@
                     New Contact
                 </div>
             </a>
+            <a onclick="createTransaction();">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
+                    </i>
+                    New Transaction
+                </div>
+            </a>
+            </div>
         </div>
-        {{-- <div class="pfilterDiv">
+        <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
+                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact()"/>
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
-            <div class="pcommonFilterDiv">
-                <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" />
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
-            </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter"></i>
-                Filter
-            </div>
-        </div> --}}
-
-        <div class="row g-4 database-filter-div">
-            <div class="col-md-4">
-                <div class="row align-items-center" style="gap:12px">
-                    <div class="col-md-10 pcommonFilterDiv">
-                        <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact()" />
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
-                    <p class="col-md-1 porText">or</p>
-                </div>
-            </div>
             <div class="col-md-5">
                 @php
                     $abcd = ['A+', 'A', 'B', 'C', 'D'];
@@ -65,27 +55,12 @@
                         {{-- <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
                             class="ppipelinesorticon"> --}}
                     </div>
-
-                    <div class="input-group-text pfilterBtn col-md-6" onclick="fetchContact()" id="btnGroupAddon"> <i
-                            class="fas fa-filter"></i>
-                        Filter
-                    </div>
                 </div>
+                
             </div>
-
-            {{-- <div class="col-md-3 cardsTab">
-                <div class="viewCards">
-                    <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
-
-                    <p class="viewCardsP">View as Cards</p>
-                </div>
-                <div class="viewMap">
-                    <img src="{{ URL::asset('/images/universal_local.svg') }}" class="viewMapImg" alt="">
-                    <p class="viewMapP">View on Map
-
-                    </p>
-                </div>
-            </div> --}}
+            <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter" onclick="fetchContact()"></i>
+                Filter
+            </div>
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -107,7 +82,7 @@
                                             {{ $contact['abcd'] ?? '-' }}</p>
                                     </div>
                                     <div class="dataPhoneDiv">
-                                        <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
+                                        <img src="{{ URL::asset('/images/phoneb.svg') }}" alt=""
                                             class="dataphoneicon">
 
                                         <div class="d-flex gap-2"
@@ -137,15 +112,15 @@
 
                                         <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
                                             class="datadiversityicon" data-bs-toggle="modal"
-                                            data-bs-target="#newTaskModalId{{ $contact['id'] }}">
+                                            data-bs-target="#newTaskModalId{{ $contact['id'] }}" title ="Add Task">
                                         <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
                                             class="datadiversityicon"
-                                            onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
+                                            onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')" title ="View Notes">
                                     </div>
                                     <div onclick="event.preventDefault();" data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
                                         <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                                            class="datadiversityicon">
+                                            class="datadiversityicon" title ="Add Note">
                                     </div>
                                 </div>
                             </div>
@@ -758,5 +733,42 @@
 
 
 
+    }
+
+     function createTransaction() {
+        console.log("Onclick");
+        var formData = {
+            "data": [{
+                "Deal_Name": "{{ config('variables.dealName') }}",
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Stage": "Potential",
+                // "Client_Primary_Name":,
+                // "Client_Name_Only":
+                // "Contact":{
+                //     "Name":,
+                //     "id"
+                // }
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/pipeline/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     }
 </script>

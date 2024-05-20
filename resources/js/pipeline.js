@@ -9,7 +9,7 @@ window.updateDeal = function (dealID, field, Id, card, date) {
         updateElement = document.getElementById(field + dealID);
 
     }
-    
+
     if (!updateElement) {
         console.log("not found");
         return;
@@ -98,12 +98,14 @@ window.updateDealData = function (field, id, dealID, value = null) {
     let formData = {
         "data": [{
             "Deal_Name": field == "deal_name" ? elementId?.textContent : undefined,
+            "Client_Name_Primary": field == "client_name_primary" ? elementId?.textContent : undefined,
             "Stage": field == "stage" ? value : undefined,
             // "ABCD": "",
-            "Client_Name_Primary": field == "client_name_primary" ? elementId?.textContent : undefined,
             "Representing": field == "representing" ? value : undefined,
-            "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
             "Sale_Price": field == "sale_price" ? elementId?.textContent : undefined,
+            "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
+            "Commission": field == "commission" ? elementId?.textContent : undefined,
+            "Pipeline_Probability": field == "pipeline_probability" ? elementId?.textContent : undefined
         }],
         "skip_mandatory": true
     }

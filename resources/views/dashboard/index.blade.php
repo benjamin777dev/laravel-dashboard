@@ -294,7 +294,7 @@
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
-        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}

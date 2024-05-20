@@ -42,7 +42,9 @@ class Deal extends Model
         'contractId',
         'userID',
         'isDealCompleted',
-        'isInZoho'
+        'isInZoho',
+        'review_gen_opt_out',
+        'commission_flat_free'
     ];
 
     public function userData()

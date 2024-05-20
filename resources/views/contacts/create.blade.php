@@ -203,11 +203,11 @@
                         <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
                             class="form-control npinputinfo" placeholder="Raoul P Associate" id="validationDefault03">
                     </div>
-                    <div class="col-md-6">
+                    {{--<div class="col-md-6">
                         <label for="validationDefault03" class="form-label nplabelText">Envelope Salutation</label>
                         <input type="text" value="{{ $contact['envelope_salutation'] }}" name="envelope_salutation"
                             class="form-control npinputinfo" placeholder="Mr." id="validationDefault03">
-                    </div>
+                    </div>--}}
                     <div class="col-md-6">
 
                         <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
@@ -319,7 +319,7 @@
 </div>
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
     data-bs-target="#staticBackdropforNote_{{$contact['id']}}">
-    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
 </div>
 
 {{-- view group secton --}}
