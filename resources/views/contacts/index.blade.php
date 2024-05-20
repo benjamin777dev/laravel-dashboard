@@ -24,26 +24,11 @@
                 </div>
             </a>
         </div>
-        {{-- <div class="pfilterDiv">
-            <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="pipelineSearch" />
-                <i class="fas fa-search search-icon"></i>
-            </div>
-            <p class="porText">or</p>
-            <div class="pcommonFilterDiv">
-                <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" />
-                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
-            </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon"> <i class="fas fa-filter"></i>
-                Filter
-            </div>
-        </div> --}}
-
         <div class="row g-4 database-filter-div">
             <div class="col-md-4">
                 <div class="row align-items-center" style="gap:12px">
                     <div class="col-md-10 pcommonFilterDiv">
-                        <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact()" />
+                        <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
                         <i class="fas fa-search search-icon"></i>
                     </div>
                     <p class="col-md-1 porText">or</p>
@@ -53,9 +38,9 @@
                 @php
                     $abcd = ['A+', 'A', 'B', 'C', 'D'];
                 @endphp
-                <div class="row" style="gap:24px">
+                <div class="row" style="gap:24px;flex-wrap:nowrap;">
                     <div class="psortFilterDiv col-md-6">
-                        <select name="abcd_class" onchange="fetchContact()" class="psearchInput" id="contactSort">
+                        <select name="abcd_class" onchange="fetchContact(event)" class="psearchInput" id="contactSort">
                             <option selected value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
                                 <option value="{{ $abcdIndex }}">{{ $abcdIndex }}</option>
@@ -66,143 +51,48 @@
                             class="ppipelinesorticon"> --}}
                     </div>
 
-                    <div class="input-group-text pfilterBtn col-md-6" onclick="fetchContact()" id="btnGroupAddon"> <i
-                            class="fas fa-filter"></i>
+                    <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
                         Filter
                     </div>
+
                 </div>
             </div>
-
-            {{-- <div class="col-md-3 cardsTab">
-                <div class="viewCards">
-                    <img src="{{ URL::asset('/images/person_pin.svg') }}" class="viewCardsImg" alt="">
-
-                    <p class="viewCardsP">View as Cards</p>
-                </div>
-                <div class="viewMap">
-                    <img src="{{ URL::asset('/images/universal_local.svg') }}" class="viewMapImg" alt="">
-                    <p class="viewMapP">View on Map
-
-                    </p>
-                </div>
-            </div> --}}
         </div>
 
         <div class="contactlist" id="contactlist">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
+            @include('contacts.contact', ['contacts' => $contacts])
+            <!-- Filter Modal -->
+            <div class="modal fade" id="filterModal" id="staticBackdrop" data-bs-backdrop="static"
+                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
+                            <button type="button" onclick="resetFilters()"
+                                class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
 
-                @foreach ($contacts as $contact)
-                    <a id="taskRoute" href="{{ route('contacts.show', $contact['id']) }}">
-                        <div class="col">
-                            <div class="card dataCardDiv">
-                                <div class="card-body dacBodyDiv">
-                                    <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                                        <div class="d-flex gap-2" 
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name','{{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}')">
-                                            <h5 class="card-title" id="first_name{{ $contact['zoho_contact_id'] }}">
-                                                {{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}</h5>
-                                        </div>
-
-                                        <p class="databaseCardWord">
-                                            {{ $contact['abcd'] ?? '-' }}</p>
-                                    </div>
-                                    <div class="dataPhoneDiv">
-                                        <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
-                                            class="dataphoneicon">
-
-                                        <div class="d-flex gap-2"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile','{{ $contact['mobile'] ?? 'N/A' }}')">
-                                            <p id="mobile{{ $contact['zoho_contact_id'] }}" class="card-text">
-                                                {{ $contact['mobile'] ?? 'N/A' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="datamailDiv">
-                                        <img src="{{ URL::asset('/images/mail.svg') }}" alt=""
-                                            class="datamailicon">
-                                        <div class="d-flex gap-2 overflow-hidden"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','email','{{ $contact['email'] ?? 'N/A' }}')">
-                                            <p id="email{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
-                                                {{ $contact['email'] ?? 'N/A' }}</p>
-
-                                        </div>
-                                    </div>
-                                    <div class="datadiversityDiv">
-                                        <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""
-                                            class="datadiversityicon">
-                                        <p class="datadiversitytext">2nd</p>
-                                    </div>
-                                </div>
-                                <div class="card-footer dataCardFooter">
-                                    <div class="datafootericondiv" onclick="event.preventDefault();">
-
-                                        <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                                            class="datadiversityicon" data-bs-toggle="modal"
-                                            data-bs-target="#newTaskModalId{{ $contact['id'] }}">
-                                        <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                                            class="datadiversityicon"
-                                            onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
-                                    </div>
-                                    <div onclick="event.preventDefault();" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
-                                        <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                                            class="datadiversityicon">
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="modal-body filter_model">
+                            <div class="fil_email d-con">
+                                <input type="checkbox" value="Email" id="filterEmail" />Email
+                            </div>
+                            <div class="fil_mobile d-con">
+                                <input type="checkbox" value="Mobile" id="filterMobile" />Mobile
+                            </div>
+                            <div class="fil_ABCD d-con">
+                                <input type="checkbox" value="ABCD" id="filterABCD" />ABCD
                             </div>
                         </div>
-
-                        {{-- task create model --}}
-                       @include('common.tasks.create',['contact'=>$contact,'type'=>"Contacts"])
-
-                        {{-- fetch details notes related 0 --}}
-                        <div class="modal fade testing" onclick="event.preventDefault();"
-                            id="notefetchrelatedContact{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
-                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                <div class="modal-content dtaskmodalContent">
-                                    <div class="modal-header border-0">
-                                        <p class="modal-title dHeaderText">Notes</p>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            onclick="resetValidation()" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body dtaskbody" id="notesContainer">
-
-                                    </div>
-
-
-                                </div>
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary w-auto filterClosebtn"
+                                data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="pfilterBtn w-auto" onclick="applyFilter()">Filter</button>
                         </div>
-                        <div class="modal fade" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                <div class="modal-content">
-                                    <div class="modal-header saveModalHeaderDiv border-0">
-                                        {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body saveModalBodyDiv">
-                                        <p class="saveModalBodyText" id="updated_message_make">
-                                            Changes have been saved</p>
-                                    </div>
-                                    <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                        <div class="d-grid col-12">
-                                            <button type="button" class="btn btn-secondary saveModalBtn"
-                                                data-bs-dismiss="modal">
-                                                <i class="fas fa-check trashIcon"></i>
-                                                Understood
-                                            </button>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        @include('common.notes.create', ['contact' => $contact,'type'=>"Contacts"])
-                    </a>
-                @endforeach
+                    </div>
+                </div>
             </div>
             <div class="datapagination">
                 @include('common.pagination', ['module' => $contacts])
@@ -228,6 +118,20 @@
                 console.log("One or both elements not found for contact ID {{ $contact['zoho_contact_id'] }}");
             }
         @endforeach
+    }
+
+    function applyFilter() {
+        let email = document.getElementById('filterEmail').checked;
+        let mobile = document.getElementById('filterMobile').checked;
+        let abcd = document.getElementById('filterABCD').checked;
+        console.log("Filter applied with Email: " + email + ", Mobile: " + mobile + ", ABCD: " + abcd);
+        let filter = {
+            email: email,
+            mobile: mobile,
+            abcd: abcd
+        }
+
+
     }
 
     function createContact() {
@@ -374,7 +278,7 @@
             dataType: 'json',
             success: function(data) {
                 // Select the contact list container
-                const contactList = $('.contactlist .row');
+                const contactList = $('.contactlist');
 
                 // Clear existing contact cards
                 contactList.empty();
@@ -383,128 +287,7 @@
                 } else {
                     // Iterate over each contact
                     data?.data?.forEach(function(contact) {
-                        // Generate HTML for the contact card using the template
-                        const cardHtml = `
-            <a href="{{ route('contacts.show', $contact['id']) }}">
-                <div class="col">
-                    <div class="card dataCardDiv">
-                        <div class="card-body dacBodyDiv">
-                        <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                            <h5 class="card-title" id="first_name${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','first_name')">${contact.first_name ?? 'N/A'}</h5>
-                            <p class="databaseCardWord" style="background-color: ${getColorByAbcd(contact.abcd)};">${contact.abcd ?? '-'}</p>
-                        </div>
-                        <div class="dataPhoneDiv">
-                            <img src="{{ URL::asset('/images/phone.svg') }}" alt="" class="dataphoneicon">
-                            <p id="mobile${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','mobile')" class="card-text">${contact.mobile ?? 'N/A'}</p>
-                        </div>
-                        <div class="datamailDiv">
-                            <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
-                            <p id="email${contact.zoho_contact_id}" onclick="editText('${contact.zoho_contact_id}','email')"  class="dataEmailtext">${contact.email ?? 'N/A'}</p>
-                        </div>
-                        <div class="datadiversityDiv">
-                            <img src="{{ URL::asset('/images/diversity.svg') }}" alt="" class="datadiversityicon">
-                            <p class="datadiversitytext">2nd</p>
-                        </div>
-                    </div>
-                    <div class="card-footer dataCardFooter">
-                        <div class="datafootericondiv">
-                            <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt="" class="datadiversityicon">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="datadiversityicon">
-                        </div>
-                        <div>
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon" onclick="event.preventDefault(),showPopup(${contact?.id});" data-bs-target=#newTaskNoteModalId${contact?.id}>
-                        </div>
-
-                        <div class="modal fade" id="savemakeModalId${contact.zoho_contact_id}" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                <div class="modal-content">
-                                    <div class="modal-header saveModalHeaderDiv border-0">
-                                        {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body saveModalBodyDiv">
-                                        <p class="saveModalBodyText" id="updated_message_make">
-                                            Changes have been saved</p>
-                                    </div>
-                                    <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                        <div class="d-grid col-12">
-                                            <button type="button" class="btn btn-secondary saveModalBtn"
-                                                data-bs-dismiss="modal">
-                                                <i class="fas fa-check trashIcon"></i>
-                                                Understood
-                                            </button>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div> 
-        <div class="modal fade" onclick="event.preventDefault();"
-                            id=newTaskNoteModalId${contact?.id} data-bs-backdrop="static"
-                            data-bs-keyboard="false" data-custom="noteModal" tabindex="-1"
-                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered deleteModal">
-                                <div class="modal-content noteModal">
-                                    <div class="modal-header border-0">
-                                        <p class="modal-title dHeaderText">Note</p>
-                                        <button type="button"
-                                            onclick="resetFormAndHideSelect(${contact.zoho_contact_id});"
-                                            class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form id="noteForm${contact.zoho_contact_id}"
-                                    action="{{ route('save.note') }}?conId=${Number(contact?.id)}" method="post">
-                                        @csrf
-                                        <div class="modal-body dtaskbody">
-                                            <p class="ddetailsText">Details</p>
-                                            <textarea name="note_text" id="note_text${contact.zoho_contact_id}" rows="4" class="dtextarea"></textarea>
-                                            <div id="note_text_error${contact.zoho_contact_id}"
-                                                class="text-danger"></div>
-                                            <p class="dRelatedText">Related to...</p>
-                                            <div class="btn-group dmodalTaskDiv">
-                                                <select class="form-select dmodaltaskSelect"
-                                                    id="related_to${contact.zoho_contact_id}"
-                                                    onchange="moduleSelectedforContact(this,'${contact.zoho_contact_id}')"
-                                                    name="related_to" aria-label="Select Transaction">
-                                                    <option value="">Please select one</option>
-                                                    @foreach ($retrieveModuleData as $item)
-                                                        @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                                            <option value="{{ $item }}">{{ $item['api_name'] }}
-                                                            </option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
-                                                <select class="form-select dmodaltaskSelect"
-                                                    id="taskSelect${contact.zoho_contact_id}"
-                                                    name="related_to_parent" aria-label="Select Transaction"
-                                                    style="display: none;">
-                                                    <option value="">Please Select one</option>
-                                                </select>
-                                            </div>
-                                            <div id="related_to_error${contact.zoho_contact_id}"
-                                                class="text-danger"></div>
-                                        </div>
-                                        <div class="modal-footer dNoteFooter border-0">
-                                            <button type="button" id="validate-button${contact.zoho_contact_id}"
-                                                onclick="validateFormc('submit','${contact.zoho_contact_id}')"
-                                                class="btn btn-secondary dNoteModalmarkBtn">
-                                                <i class="fas fa-save saveIcon"></i> Add Note
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-            </div>
-        </div>
-
-            </a>
-            
-        `;
-                        // Append the contact card HTML to the contact list container
-                        contactList.append(cardHtml);
+                        contactList.html(data);
                     });
                 }
             },
@@ -573,10 +356,22 @@
         new bootstrap.Modal(document.getElementById('newTaskNoteModalId' + contact)).show();
     }
 
-    function fetchContact(sortField, sortDirection) {
+    function fetchContact(e, sortField, sortDirection) {
         const searchInput = $('#contactSearch');
         var csearch = $('#contactSort');
         var filterVal = csearch.val();
+        if (e.target.id === "contactSearch") {
+            if (searchInput.val().trim() !== "") {
+                csearch.val("");
+            }
+        }
+        if (e.target.id === "contactSort") {
+            if (csearch.val().trim() !== "") {
+                searchInput.val("");
+            }
+        }
+
+
         // var filterVal = selectedModule.val();
         // Call fetchData with the updated parameters
         filterContactData(sortField, sortDirection, searchInput, filterVal);
@@ -585,6 +380,12 @@
     function resetValidation() {
         document.getElementById("subject_error").innerHTML = "";
         document.getElementById('darea').value = "";
+    }
+
+    function resetFilters() {
+        document.getElementById('filterEmail').checked = false;
+        document.getElementById('filterMobile').checked = false;
+        document.getElementById('filterABCD').checked = false;
     }
 
     function validateTextarea() {
@@ -746,10 +547,10 @@
                 }
             },
             error: function(xhr, status, error) {
-               if(xhr?.responseJSON?.status===401){
-                   showToastError(xhr?.responseJSON?.error);
+                if (xhr?.responseJSON?.status === 401) {
+                    showToastError(xhr?.responseJSON?.error);
 
-               }
+                }
                 // Handle error response
 
 

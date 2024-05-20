@@ -352,7 +352,8 @@
                 tab: tab,
             },
             success: function(data) {
-                $('.task-container').html(data)
+                $('.task-container').html(data);
+              
             },
             error: function(xhr, status, error) {
                 // Handle errors

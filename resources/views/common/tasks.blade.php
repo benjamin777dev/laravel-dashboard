@@ -1,3 +1,27 @@
+<script>
+    // Store tasks data in a JavaScript variable
+    var taskIDSS = [];
+    var selectElement;
+    var tasks = @json($tasks);
+     tasks?.data?.forEach((task)=>{
+        taskIDSS.push(task?.id)
+     })
+     var modalSelectMaptsk = []
+     taskIDSS.forEach((id) => {
+        modalSelectMaptsk.push({
+                modalID: '',
+                selectElementId: 'related_to_rem' + id
+            })
+        });
+        modalSelectMaptsk.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdownForId(modalID, selectElement);
+        });
+        console.log(modalSelectMaptsk, 'ids')
+</script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>
@@ -254,6 +278,7 @@
     </div>
 @endif
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+<script  src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -303,7 +328,7 @@
         var ids = [];
         @if ($tasks)
             @foreach ($tasks as $task)
-                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to JavaScript object
+                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to 
                 ids.push(idsss);
             @endforeach
         @endif
@@ -313,7 +338,7 @@
                 modalID: '',
                 selectElementId: 'related_to_rem' + id
             })
-        })
+        });
         modalSelectMap.forEach(({
             modalID,
             selectElementId
@@ -321,7 +346,7 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdownForId(modalID, selectElement);
         });
-        console.log(modalSelectMap, 'modalSelectMap')
+        console.log(ids, 'ids')
         //     let selectedval = selectElement.val();
         //     var selectedText = selectElement.find('option:selected').text();
         //     // selectElement.empty();
