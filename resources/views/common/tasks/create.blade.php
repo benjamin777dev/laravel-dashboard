@@ -108,18 +108,6 @@
 <script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
     window.onload = function() {
-        var taskArrTask = [];
-        @if ($retreiveModulesdata)
-            @foreach ($retreiveModulesdata as $module)
-                var modu = "{{ $module['label'] }}";
-                var data = {!! json_encode($module['data']) !!}; // Use json_encode to convert PHP array to JavaScript object
-
-                taskArrTask.push({
-                    label: modu,
-                    data: data
-                });
-            @endforeach
-        @endif
         const modalSelectMap = [{
                 modalID: 'staticBackdropforTask',
                 selectElementId: 'related_to_rem_create'
@@ -135,7 +123,7 @@
             selectElementId
         }) => {
             const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement, taskArrTask);
+            showDropdown(modalID, selectElement);
         });
 
     }

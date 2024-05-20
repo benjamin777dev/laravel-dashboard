@@ -113,7 +113,7 @@
                                 <option value="">Please select one</option>
                                 @foreach ($retrieveModuleData as $item)
                                     @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                        <option value="{{ $item }}">{{ $item['api_name'] }}</option>
+                                        <option value="{{ $item['zoho_module_id'] }}">{{ $item['api_name'] }}</option>
                                     @endif
                                 @endforeach
                             </select>
@@ -222,7 +222,7 @@
                 const mergedData = {
                     groupLabel: window.groupLabel,
                     whoid: window.whoid,
-                    relatedTo: relatedTo,
+                    relatedTo: window.relatedTo,
                     moduleId: window.moduelID
                 };
                 // Serialize the array to a JSON string

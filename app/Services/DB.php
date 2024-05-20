@@ -1179,17 +1179,24 @@ class DB
         }
     }
     
-    public function retriveModules(User $user, $accessToken, $searchQuery = "")
-    { 
+    public function retriveModules($request, $user, $accessToken)
+    {
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-        
+    
         $accessToken = $user->getAccessToken();
         // if (!$accessToken) {
         //     throw new \Exception("Invalid user token");
         // }
+    
+        // Retrieve query parameters
+        $searchQuery = $request->input('q', '');
+        $page = $request->input('page', 1);
+        $limit = $request->input('limit', 5);
+        $offset = ($page - 1) * $limit;
+    
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
         $data = [];
         $moduleIds = [];
@@ -1206,7 +1213,8 @@ class DB
                 if ($searchQuery) {
                     $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
                 }
-                $dealsData = $dealsQuery->get();
+                $totalDeals = $dealsQuery->count();
+                $dealsData = $dealsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
                     $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
                         $deal['zoho_module_id'] = $moduleIds['Deals'];
@@ -1217,10 +1225,13 @@ class DB
                 // Retrieve Contacts data based on search query if provided
                 $contactsQuery = Contact::query();
                 if ($searchQuery) {
-                    $contactsQuery->where('first_name', 'like', "%$searchQuery%")
-                                 ->orWhere('last_name', 'like', "%$searchQuery%");
+                    $contactsQuery->where(function($query) use ($searchQuery) {
+                        $query->where('first_name', 'like', "%$searchQuery%")
+                              ->orWhere('last_name', 'like', "%$searchQuery%");
+                    });
                 }
-                $contactsData = $contactsQuery->get();
+                $totalContacts = $contactsQuery->count();
+                $contactsData = $contactsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {
                     $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
                         $contact['zoho_module_id'] = $moduleIds['Contacts'];
@@ -1232,18 +1243,22 @@ class DB
     
         // Add objects for Contacts and Deals with their respective data arrays
         $responseData = [];
-    
         foreach ($data as $moduleName => $moduleData) {
             if (!empty($moduleData)) {
                 $responseData[] = [
-                    'label' => $moduleName,
-                    'data' => $moduleData
+                    'text' => $moduleName,
+                    'children' => $moduleData
                 ];
             }
         }
     
-        return $responseData;
+        // Return response with total count for pagination
+        return response()->json([
+            'items' => $responseData,
+            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0)
+        ]);
     }
+    
     
 
 }

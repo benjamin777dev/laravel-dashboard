@@ -1,112 +1,166 @@
-function showDropdown(showDropdown,selectElement, taskArr) {
+function showDropdown(showDropdown,selectElement) {
     selectElement.empty();
-    console.log(selectElement,'selectElement')
-    // Add default "Please select" option
-    selectElement.append($('<option>', {
-        value: "",
-        text: "Please select"
-    }));
-
-    taskArr.forEach(function (state) {
-        var optgroup = selectElement.find('optgroup[label="' + state.label + '"]');
-        if (optgroup.length === 0) {
-            optgroup = $('<optgroup>', {
-                label: state.label
-            });
-            selectElement.append(optgroup);
-        }
-
-        var count = 0; // Counter to track the number of records appended for each label
-
-        if (state.label === "Contacts") {
-            state.data.forEach(function (contact) {
-                if (count < 5) { // Limit the number of records appended to 5
-                    optgroup.append($('<option>', {
-                        value: contact.zoho_contact_id,
-                        text: (contact.first_name) + " " + (
-                            contact.last_name ?? "")
-                    }).attr('data-module', contact.zoho_module_id));
-
-                    count++;
-                }
-            });
-        }
-
-        if (state.label === "Deals") {
-            state.data.forEach(function (deal) {
-                if (count < 5) { // Limit the number of records appended to 5
-                    optgroup.append($('<option>', {
-                        value: deal.zoho_deal_id,
-                        text: deal.deal_name,
-                    }).attr('data-module', deal.zoho_module_id));
-                    count++;
-                }
-            });
-        }
-    });
-
 
     selectElement.each(function() {
         $(this).select2({
             theme: 'bootstrap-5',
             dropdownParent: $(this).parent(),
+            placeholder: 'Please select',
+            width: 'resolve',
+            ajax: {
+                url: '/task/get-Modules',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page || 1,
+                        limit: 5 // number of records to fetch initially
+                    };
+                },
+                processResults: function(data, params) {
+                    console.log(data,'data is here')
+                    params.page = params.page || 1;
+                    selectElement.empty();
+                    return {
+                        results: data.items,
+                    };
+                },
+                cache: true
+            },
+            templateResult: function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+    
+                if (state.children) {
+                    return $('<span id="'+ state.text +'">' + state.text + '</span>');
+                }
+    
+                if (state.first_name && state.last_name) {
+                    return $('<span data-module="'+state.zoho_module_id+'" id="'+state.zoho_contact_id+'">' + state.first_name + ' ' + state.last_name + '</span>');
+                }
+    
+                return $('<span id="'+state.zoho_deal_id+'">' + state.deal_name + '</span>');
+            },
+            templateSelection: function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+    
+                if (state.first_name && state.last_name) {
+                    return state.first_name + ' ' + state.last_name;
+                }
+    
+                return state.deal_name;
+            }
+        }).on('select2:select', function(e) {
+            var selectedData = e.params.data;
+            console.log('Selected Data:', selectedData);
+    
+            var selectedText;
+            if (selectedData.first_name && selectedData.last_name) {
+                selectedText = selectedData.first_name + ' ' + selectedData.last_name;
+                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_contact_id:', selectedData.zoho_contact_id);
+                window.groupLabel = "Contacts";
+                window.moduelID = selectedData.zoho_module_id;
+                window.relatedTo = selectedData.zoho_contact_id;
+            } else {
+                selectedText = selectedData.deal_name;
+                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_deal_id:', selectedData.zoho_deal_id);
+                window.groupLabel = "Deals";
+                window.moduelID = selectedData.zoho_module_id;
+                window.relatedTo = selectedData.zoho_deal_id;
+            }
         });
     });
 
-    $(document).on('customAjaxResponseTask', function (event, selectElement, response) {
-        // Handle the response here, you can also pass it to another function if needed
-        console.log("Custom event triggered with response:", response);
-        updateSelectOptionsTask(selectElement, response);
+}
 
+function showDropdownForId(modalID, selectElement){
+    var selectedval = selectElement.val();
+    var selectedText1 = selectElement.find('option:selected').text();
+    console.log(selectedval);
+    console.log(selectedText1);
+
+    selectElement.each(function() {
+        $(this).select2({
+            theme: 'bootstrap-5',
+            width: 'resolve',
+            ajax: {
+                url: '/task/get-Modules',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page || 1,
+                        limit: 5 // number of records to fetch initially
+                    };
+                },
+                processResults: function(data, params) {
+                    console.log(data,'data is here')
+                    params.page = params.page || 1;
+                    selectElement.empty();
+                    return {
+                        results: data.items,
+                    };
+                },
+                cache: true
+            },
+            templateResult: function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+              
+                if (state.children) {
+                    return $('<span id="'+ state.text +'">' + state.text + '</span>');
+                }
+    
+                if (state.first_name && state.last_name) {
+                    return $('<span data-module="'+state.zoho_module_id+'" id="'+state.zoho_contact_id+'">' + state.first_name + ' ' + state.last_name + '</span>');
+                }
+    
+                return $('<span id="'+state.zoho_deal_id+'">' + state.deal_name + '</span>');
+            },
+            templateSelection: function(state) {
+                if (!state.id) {
+                    return state.text;
+                }
+    
+                if (state.first_name && state.last_name) {
+                    return state.first_name + ' ' + state.last_name;
+                }
+    
+                return state.deal_name;
+            }
+            
+        }).on('select2:select', function(e) {
+            var selectedData = e.params.data;
+            console.log('Selected Data:', selectedData);
+    
+            var selectedText;
+            if (selectedData.first_name && selectedData.last_name) {
+                selectedText = selectedData.first_name + ' ' + selectedData.last_name;
+                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_contact_id:', selectedData.zoho_contact_id);
+                window.groupLabel = "Contacts";
+                window.moduelID = selectedData.zoho_module_id;
+                window.relatedTo = selectedData.zoho_contact_id;
+            } else {
+                selectedText = selectedData.deal_name;
+                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_deal_id:', selectedData.zoho_deal_id);
+                window.groupLabel = "Deals";
+                window.moduelID = selectedData.zoho_module_id;
+                window.relatedTo = selectedData.zoho_deal_id;
+            }
+        });
+        
+        
     });
-
-    $(document).on('customSendData', function (event, optgroupLabel, WhatSelectoneID, WhoID) {
-        // Handle the response here, you can also pass it to another function if needed
-        console.log("Custom event triggered with response:", optgroupLabel, WhatSelectoneID, WhoID);
-        window.groupLabel = optgroupLabel;
-        window.WhatiD = WhatSelectoneID;
-        window.whoid = WhoID;
-
-    });
-
-    selectElement.next(".select2-container").addClass("form-select");
-    $(selectElement).on("change", function () {
-        console.log(this, 'vthisthisthisthisthis')
-        var selectedValue = $(this).val();
-        var selectedText = $(this).find(':selected').text();
-        var moduleId = $(this).find(':selected').data('module');
-        var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
-        console.log("Selected value:", selectedValue);
-        console.log("Selected text:", selectedText);
-        console.log("Optgroup label:", optgroupLabel);
-        var WhoID;
-        var WhatSelectoneID;
-        if (optgroupLabel === "Contacts") {
-            WhoID = selectedValue;
-        }
-        if (optgroupLabel === "Deals") {
-            WhatSelectoneID = selectedValue;
-        }
-        window.moduelID = moduleId;
-        $(document).trigger('customSendData', [optgroupLabel, WhatSelectoneID, WhoID]);
-
-    });
-    $(selectElement).on("select2:open", function () {
-        let timer; // Variable to hold the timer
-
-        $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
-            function (e) {
-                // This function will be triggered when the user types into the Select2 input
-                clearTimeout(timer); // Clear the previous timer
-                let search = $(this).val();
-                timer = setTimeout(() => {
-                    console.log("User has finished typing:", $(this).val());
-                    updateTaskArrTask(selectElement, search);
-                    // Perform any actions you need here
-                }, 250); // Set timer to execute after 250ms
-            });
-    });
-
 }
 
 function updateSelectOptionsTask(selectElement, taskArr) {
@@ -115,14 +169,14 @@ function updateSelectOptionsTask(selectElement, taskArr) {
 
     taskArr.forEach(function (state) {
         var optgroup = $('<optgroup>', {
-            label: state.label
+            label: state.text
         });
         selectElement.append(optgroup);
 
         var count = 0; // Counter to track the number of records appended for each label
 
-        if (state.label === "Contacts") {
-            state.data.forEach(function (contact) {
+        if (state.text === "Contacts") {
+            state.children.forEach(function (contact) {
                 if (count < 5) {
 
                     var option = $('<option>', {
@@ -135,8 +189,8 @@ function updateSelectOptionsTask(selectElement, taskArr) {
                 }
             });
         }
-        if (state.label === "Deals") {
-            state.data.forEach(function (deal) {
+        if (state.text === "Deals") {
+            state.children.forEach(function (deal) {
                 if (count < 5) {
                     var option = $('<option>', {
                         value: deal.zoho_deal_id,
@@ -164,7 +218,8 @@ function updateTaskArrTask(selectElement, search) {
         method: "GET",
         dataType: "json",
         success: function (response) {
-            $(document).trigger('customAjaxResponseTask', [selectElement, response]);
+            console.log(response,'response')
+            // $(document).trigger('customAjaxResponseTask', [selectElement, response]);
         },
         error: function (xhr, status, error) {
             // Handle error
@@ -174,14 +229,15 @@ function updateTaskArrTask(selectElement, search) {
 }
 
 window.addCommonTask = function (id, type) {
+    console.log(window.groupLabel,type,'selction type is here');
     var selectionId;
     if (window.groupLabel === "Contacts") {
         type = window.groupLabel;
-        selectionId = window.whoid;
+        selectionId = window.relatedTo;
     }
     if (window.groupLabel === "Deals") {
         type = window.groupLabel;
-        selectionId = window.WhatiD;
+        selectionId = window.relatedTo;
     }
 
     if (id) {

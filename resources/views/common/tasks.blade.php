@@ -27,25 +27,21 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select class="form-select dealTaskSelect  related_to_rem{{ $task['id'] }}"
-                                    id="related_to_rem{{ $task['id'] }}"
-                                    onclick="getModule('{{ $task['id'] }}','related_to_rem{{ $task['id'] }}')"
-                                    name="related_to_rem{{ $task['id'] }}">
-                                    @if ($task['related_to'] == 'Contacts')
-                                        <option value="{{ $task['id'] }}"
-                                            {{ empty($task['contactData']) ? 'selected' : '' }}>
-                                            {{ $task['contactData']['first_name'] ?? '' }}
-                                            {{ $task['contactData']['last_name'] ?? 'Please select' }}
-                                        </option>
-                                    @elseif ($task['related_to'] == 'Deals')
-                                        <option value="{{ $task['id'] }}"
-                                            {{ empty($task['dealData']) ? 'selected' : '' }}>
-                                            {{ $task['dealData']['deal_name'] ?? 'Please select' }}
-                                        </option>
-                                    @else
-                                        <option value="" selected>Please select</option>
-                                    @endif
-                                </select>
+                                <select class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
+                                id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
+                            @if ($task['related_to'] == 'Contacts')
+                                <option value="{{ $task['contactData']['zoho_contact_id'] ?? '' }}" selected>
+                                    {{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? 'Please select' }}
+                                </option>
+                            @elseif ($task['related_to'] == 'Deals')
+                                <option value="{{ $task['dealData']['zoho_deal_id'] ?? '' }}" selected>
+                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
+                                </option>
+                            @else
+                                <option value="" selected>Please select</option>
+                            @endif
+                        </select>
+
                                 <select class="form-select dmodaltaskSelect" id="taskSelect"
                                     onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
                                     name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
@@ -303,19 +299,6 @@
             activeTab.style.borderRadius = "4px";
         }
 
-        var taskArr = [];
-        var task = [];
-        @if ($retreiveModulesdata)
-            @foreach ($retreiveModulesdata as $module)
-                var modu = "{{ $module['label'] }}";
-                var data = {!! json_encode($module['data']) !!}; // Use json_encode to convert PHP array to JavaScript object
-
-                taskArr.push({
-                    label: modu,
-                    data: data
-                });
-            @endforeach
-        @endif
         var selectElement;
         var ids = [];
         @if ($tasks)
@@ -324,109 +307,116 @@
                 ids.push(idsss);
             @endforeach
         @endif
-        $(document).on('customAjaxResponse', function(event, id, response, selectedText) {
-            // Handle the response here, you can also pass it to another function if needed
-            console.log("Custom event triggered with response:", id, response);
-            updateSelectOptions(id, response, selectedText);
-
-        });
+        const modalSelectMap = []
         ids.forEach((id) => {
-            selectElement = $("#related_to_rem" + id);
-            let selectedval = selectElement.val();
-            var selectedText = selectElement.find('option:selected').text();
-            // selectElement.empty();
-            // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
-            taskArr.forEach(function(state) {
-                var optgroup = selectElement.find('optgroup[label="' + state.label + '"]');
-                if (optgroup.length === 0) {
-                    optgroup = $('<optgroup>', {
-                        label: state.label
-                    });
-                    selectElement.append(optgroup);
-                }
-
-                var count = 0; // Counter to track the number of records appended for each label
-
-                if (state.label === "Contacts") {
-                    state.data.forEach(function(contact) {
-                        if (count < 5) { // Limit the number of records appended to 5
-                            optgroup.append($('<option>', {
-                                value: contact.zoho_contact_id,
-                                text: (contact.first_name) + " " + (
-                                    contact.last_name ?? "")
-                            }));
-                            if (selectedText && contact.first_name + ' ' + contact
-                                .last_name === selectedText) {
-                                console.log(selectedText, contact.first_name + contact
-                                    .last_name, 'jjjjjjj++++++++++++')
-                                option.attr('selected');
-                            }
-                            count++;
-                        }
-                    });
-                }
-
-                if (state.label === "Deals") {
-                    state.data.forEach(function(deal) {
-                        if (count < 5) { // Limit the number of records appended to 5
-                            optgroup.append($('<option>', {
-                                value: deal.zoho_deal_id,
-                                text: deal.deal_name,
-                            }));
-                            if (selectedText && deal.deal_name === selectedText) {
-                                console.log(selectedText, contact.first_name + contact
-                                    .last_name, 'jjjjjjj++++++++++++')
-                                option.attr('selected');
-                            }
-                            count++;
-                        }
-                    });
-                }
-            });
-
-
-            selectElement.select2({
-                theme: 'bootstrap-5',
-            });
-
-            selectElement.next(".select2-container").addClass("form-select");
-            $(selectElement).on("change", function() {
-                console.log(this, 'vthisthisthisthisthis')
-                var selectedValue = $(this).val();
-                var selectedText = $(this).find(':selected').text();
-                var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
-                console.log("Selected value:", selectedValue);
-                console.log("Selected text:", selectedText);
-                console.log("Optgroup label:", id, optgroupLabel);
-                var WhoID;
-                var WhatSelectoneID;
-                if (optgroupLabel === "Contacts") {
-                    WhoID = selectedValue;
-                }
-                if (optgroupLabel === "Deals") {
-                    WhatSelectoneID = selectedValue;
-                }
-                updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
-
-            });
-            $(selectElement).on("select2:open", function() {
-                let timer; // Variable to hold the timer
-
-                $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
-                    function(e) {
-                        // This function will be triggered when the user types into the Select2 input
-                        clearTimeout(timer); // Clear the previous timer
-                        let search = $(this).val();
-                        timer = setTimeout(() => {
-                            console.log("User has finished typing:", $(this).val());
-                            updateTaskArr(id, search, selectedText);
-                            // Perform any actions you need here
-                        }, 250); // Set timer to execute after 250ms
-                    });
-            });
-
-
+            modalSelectMap.push({
+                modalID: '',
+                selectElementId: 'related_to_rem' + id
+            })
         })
+        modalSelectMap.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdownForId(modalID, selectElement);
+        });
+        console.log(modalSelectMap, 'modalSelectMap')
+        //     let selectedval = selectElement.val();
+        //     var selectedText = selectElement.find('option:selected').text();
+        //     // selectElement.empty();
+        //     // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
+        //     taskArr.forEach(function(state) {
+        //         var optgroup = selectElement.find('optgroup[label="' + state.text + '"]');
+        //         if (optgroup.length === 0) {
+        //             optgroup = $('<optgroup>', {
+        //                 label: state.text
+        //             });
+        //             selectElement.append(optgroup);
+        //         }
+
+        //         var count = 0; // Counter to track the number of records appended for each label
+
+        //         if (state.text === "Contacts") {
+        //             state.children.forEach(function(contact) {
+        //                 if (count < 5) { // Limit the number of records appended to 5
+        //                     optgroup.append($('<option>', {
+        //                         value: contact.zoho_contact_id,
+        //                         text: (contact.first_name) + " " + (
+        //                             contact.last_name ?? "")
+        //                     }));
+        //                     if (selectedText && contact.first_name + ' ' + contact
+        //                         .last_name === selectedText) {
+        //                         console.log(selectedText, contact.first_name + contact
+        //                             .last_name, 'jjjjjjj++++++++++++')
+        //                         option.attr('selected');
+        //                     }
+        //                     count++;
+        //                 }
+        //             });
+        //         }
+
+        //         if (state.text === "Deals") {
+        //             state.children.forEach(function(deal) {
+        //                 if (count < 5) { // Limit the number of records appended to 5
+        //                     optgroup.append($('<option>', {
+        //                         value: deal.zoho_deal_id,
+        //                         text: deal.deal_name,
+        //                     }));
+        //                     if (selectedText && deal.deal_name === selectedText) {
+        //                         console.log(selectedText, contact.first_name + contact
+        //                             .last_name, 'jjjjjjj++++++++++++')
+        //                         option.attr('selected');
+        //                     }
+        //                     count++;
+        //                 }
+        //             });
+        //         }
+        //     });
+
+
+        //     selectElement.select2({
+        //         theme: 'bootstrap-5',
+        //     });
+
+        //     selectElement.next(".select2-container").addClass("form-select");
+        //     $(selectElement).on("change", function() {
+        //         console.log(this, 'vthisthisthisthisthis')
+        //         var selectedValue = $(this).val();
+        //         var selectedText = $(this).find(':selected').text();
+        //         var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
+        //         console.log("Selected value:", selectedValue);
+        //         console.log("Selected text:", selectedText);
+        //         console.log("Optgroup label:", id, optgroupLabel);
+        //         var WhoID;
+        //         var WhatSelectoneID;
+        //         if (optgroupLabel === "Contacts") {
+        //             WhoID = selectedValue;
+        //         }
+        //         if (optgroupLabel === "Deals") {
+        //             WhatSelectoneID = selectedValue;
+        //         }
+        //         updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
+
+        //     });
+        //     $(selectElement).on("select2:open", function() {
+        //         let timer; // Variable to hold the timer
+
+        //         $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
+        //             function(e) {
+        //                 // This function will be triggered when the user types into the Select2 input
+        //                 clearTimeout(timer); // Clear the previous timer
+        //                 let search = $(this).val();
+        //                 timer = setTimeout(() => {
+        //                     console.log("User has finished typing:", $(this).val());
+        //                     updateTaskArr(id, search, selectedText);
+        //                     // Perform any actions you need here
+        //                 }, 250); // Set timer to execute after 250ms
+        //             });
+        //     });
+
+
+        // })
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {
@@ -439,14 +429,14 @@
 
         taskArr.forEach(function(state) {
             var optgroup = $('<optgroup>', {
-                label: state.label
+                label: state.text
             });
             selectElement.append(optgroup);
 
             var count = 0; // Counter to track the number of records appended for each label
 
-            if (state.label === "Contacts") {
-                state.data.forEach(function(contact) {
+            if (state.text === "Contacts") {
+                state.children.forEach(function(contact) {
                     if (count < 5 || (selecttext && contact.first_name + ' ' + contact.last_name ===
                             selecttext)) {
 
@@ -465,8 +455,8 @@
                 });
             }
 
-            if (state.label === "Deals") {
-                state.data.forEach(function(deal) {
+            if (state.text === "Deals") {
+                state.children.forEach(function(deal) {
                     if (count < 5 || (selecttext && deal.deal_name === selecttext)) {
                         var option = $('<option>', {
                             value: deal.zoho_deal_id,

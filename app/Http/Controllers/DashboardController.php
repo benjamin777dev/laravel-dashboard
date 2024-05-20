@@ -181,7 +181,7 @@ class DashboardController extends Controller
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
          $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
-         $retreiveModulesdata = $db->retriveModules($user,$accessToken);
+        //  $retreiveModulesdata = $db->retriveModules($request="",$user,$accessToken);
          $dealFordash = $this->getDealsForDash();
          $contactInfo = Contact::getZohoContactInfo();
         //  fetch notes
@@ -223,7 +223,8 @@ class DashboardController extends Controller
             compact('deals', 'progress', 'goal',
                 'progressClass', 'progressTextColor',
                 'stageData', 'currentPipelineValue',
-                'projectedIncome', 'beyond12MonthsData','retreiveModulesdata',
+                'projectedIncome', 'beyond12MonthsData',
+                // 'retreiveModulesdata',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
                 'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
@@ -683,7 +684,7 @@ class DashboardController extends Controller
         return $allDeals;
     }
 
-   public function retriveModulesDB(){
+   public function retriveModulesDB(Request $request){
     $db = new DB();
     $user = auth()->user();
     if (!$user) {
@@ -692,7 +693,7 @@ class DashboardController extends Controller
      // Search query
      $searchQuery = request()->query('search');
     $accessToken = $user->getAccessToken();
-    $tasks = $db->retriveModules($user, $accessToken,$searchQuery);
+    $tasks = $db->retriveModules($request,$user, $accessToken);
      return $tasks;
    }
 
