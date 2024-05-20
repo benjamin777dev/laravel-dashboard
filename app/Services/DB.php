@@ -1230,20 +1230,26 @@ class DB
         if (!$user) {
             return redirect('/login');
         }
-        
+    
         $accessToken = $user->getAccessToken();
         // if (!$accessToken) {
         //     throw new \Exception("Invalid user token");
         // }
+    
+        // Retrieve query parameters
+        $searchQuery = $request->input('q', '');
+        $page = $request->input('page', 1);
+        $limit = $request->input('limit', 5);
+        $offset = ($page - 1) * $limit;
+    
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
         $data = [];
+        $moduleIds = [];
     
-        // Initialize data arrays for each module
-        $data['contacts'] = [];
-        $data['deals'] = [];
-    
-        // Search query
-        $searchQuery = request()->query('search');
+        foreach ($filteredModules as $module) {
+            $moduleIds[$module->api_name] = $module->zoho_module_id;
+            $data[$module->api_name] = [];
+        }
     
         foreach ($filteredModules as $module) {
             if ($module->api_name === 'Deals') {
@@ -1252,42 +1258,52 @@ class DB
                 if ($searchQuery) {
                     $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
                 }
-                $dealsData = $dealsQuery->get();
+                $totalDeals = $dealsQuery->count();
+                $dealsData = $dealsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
-                    $data['deals'] = $dealsData;
+                    $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
+                        $deal['zoho_module_id'] = $moduleIds['Deals'];
+                        return $deal;
+                    });
                 }
             } elseif ($module->api_name === 'Contacts') {
                 // Retrieve Contacts data based on search query if provided
                 $contactsQuery = Contact::query();
                 if ($searchQuery) {
-                    $contactsQuery->where('first_name', 'like', "%$searchQuery%")
-                                 ->orWhere('last_name', 'like', "%$searchQuery%");
+                    $contactsQuery->where(function($query) use ($searchQuery) {
+                        $query->where('first_name', 'like', "%$searchQuery%")
+                              ->orWhere('last_name', 'like', "%$searchQuery%");
+                    });
                 }
-                $contactsData = $contactsQuery->get();
+                $totalContacts = $contactsQuery->count();
+                $contactsData = $contactsQuery->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {
-                    $data['contacts'] = $contactsData;
+                    $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
+                        $contact['zoho_module_id'] = $moduleIds['Contacts'];
+                        return $contact;
+                    });
                 }
             }
         }
     
         // Add objects for Contacts and Deals with their respective data arrays
         $responseData = [];
-    
-        if (!empty($data['contacts'])) {
-            $responseData[] = [
-                'label' => 'Contacts',
-                'data' => $data['contacts']
-            ];
+        foreach ($data as $moduleName => $moduleData) {
+            if (!empty($moduleData)) {
+                $responseData[] = [
+                    'text' => $moduleName,
+                    'children' => $moduleData
+                ];
+            }
         }
     
-        if (!empty($data['deals'])) {
-            $responseData[] = [
-                'label' => 'Deals',
-                'data' => $data['deals']
-            ];
-        }
-    
-        return $responseData;
+        // Return response with total count for pagination
+        return response()->json([
+            'items' => $responseData,
+            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0)
+        ]);
     }
+    
+    
 
 }
