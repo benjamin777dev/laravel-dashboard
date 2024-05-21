@@ -16,6 +16,9 @@
             {{ session('error') }}
         </div>
     @endif
+    <div id="loader" style="display: none;">
+        <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
+    </div>
     <div class="container-fluid">
         <div class="row mt-4 text-center">
             {{-- <div class="col-lg-3 col-md-3 col-sm-6 text-start">
@@ -501,10 +504,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function(xhr, status, error) {
@@ -541,6 +542,7 @@
     }
     
     window.createTransaction = function() {
+        $('#loader').show();
         console.log("Onclick");
         var formData = {
             "data": [{
@@ -561,11 +563,13 @@
             data: JSON.stringify(formData),
             dataType: 'json',
             success: function(data) {
+                $('#loader').hide();
                 console.log(data);
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
+                $('#loader').hide();
                 console.error('Error:', error);
             }
         });

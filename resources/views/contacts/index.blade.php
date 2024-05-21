@@ -451,10 +451,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function(xhr, status, error) {

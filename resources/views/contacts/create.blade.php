@@ -4,6 +4,7 @@
 
 @section('content')
 @vite(['resources/css/custom.css'])
+<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -531,10 +532,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function (xhr, status, error) {

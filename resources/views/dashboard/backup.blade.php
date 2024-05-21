@@ -811,11 +811,10 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 // Handle success response
-                alert("success")
                 console.log(response);
                 // Optionally, update the UI or close the modal
                 $('#newTaskModalId').modal('hide');
-                window.location.reload();
+                // window.location.reload();
             },
             error: function(xhr, status, error) {
                 // Handle error response
@@ -903,7 +902,7 @@
                     contentType: 'application/json',
                     success: function(response) {
                         // Handle success response
-                        alert("deleted successfully")
+                        showToast("deleted successfully")
                         // console.log(response);
                         // Optionally, update the UI or close the modal
                         // $('#newTaskModalId').modal('hide');
@@ -912,7 +911,7 @@
                     error: function(xhr, status, error) {
                         // Handle error response
                         console.error(xhr.responseText);
-                        alert(xhr.responseText)
+                        showToast(xhr.responseText)
                     }
                 })
             }
