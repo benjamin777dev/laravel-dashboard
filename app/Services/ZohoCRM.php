@@ -24,6 +24,7 @@ class ZohoCRM
         $this->client_id = config('services.zoho.client_id');
         $this->client_secret = config('services.zoho.client_secret');
         $this->redirect_uri = route('auth.callback');
+        $this->serverUrl = env('SERVER_URL');
 
         Log::info('Zoho CRM initialized');
     }
@@ -806,7 +807,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback"=> [
-                    "url"=> "https://e39a-2405-201-5023-403c-2c5e-4e86-4ee9-de0.ngrok-free.app/bulkJob/update",
+                    "url"=> $serverUrl."/bulkJob/update",
                     "method"=> "post"
                 ],
                 "resource" => [

@@ -733,29 +733,29 @@ class DB
         Log::info("Storing ACI Into Database");
 
         foreach ($acis as $aci) {
-            $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
-            $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+            if (is_array($aci)) {
+                if (isset($aci['CHR_Agent'])) {
+                    $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
+                }
+                if (isset($aci['Transaction'])) {
+                    $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+                }
 
-            // if (!$user) {
-            //     // Log an error if the user is not found
-            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
-            //     continue; // Skip to the next deal
-            // }
-
-            // Update or create the deal
-            Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
-                "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
-                "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
-                "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
-                "userId" => isset($user['id']) ? $user['id'] : null,
-                "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
-                "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
-                "total" => isset($aci['Total']) ? $aci['Total'] : null,
-                "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
-                'dealId' => isset($deal['id']) ? $deal['id'] : null,
-                'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
-                'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
-            ]);
+                // Update or create the deal
+                Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+                    "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+                    "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+                    "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+                    "userId" => isset($user['id']) ? $user['id'] : null,
+                    "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+                    "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+                    "total" => isset($aci['Total']) ? $aci['Total'] : null,
+                    "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                    'dealId' => isset($deal['id']) ? $deal['id'] : null,
+                    'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+                    'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+                ]);
+            }
         }
 
         Log::info("ACI stored into database successfully.");
