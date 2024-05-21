@@ -149,15 +149,15 @@
     </script>
     <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
-            <div>
-                <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13" id="savebutton"
-                    data-bs-toggle="modal"onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')"><i
+            <p class="pText"></p>
+            <a onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton"
+                    data-bs-toggle="modal" data-bs-target="#"><i
                         class="fas fa-save">
                     </i>
                     Save
                 </div>
-                
-            </div>
+            </a>
         </div>
          
         {{-- information form --}}
@@ -212,24 +212,24 @@
 
                     <div class="col-md-6">
                         <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="$ 725,000.00"
+                        <input type="text" class="form-control npinputinfo" 
                             id="validationDefault05" required value = "{{$deal['sale_price']}}">
                             <div class="error-message" id="error-message-5">Please enter sale price.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
-                        <input type="date" class="form-control npinputinfo" id="validationDefault06" required value = "{{$deal['closing_date']}}">
+                        <input type="date" class="form-control npinputinfo" id="validationDefault06" required  value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                         <div class="error-message" id="error-message-6">Please select closing date.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault07" class="form-label nplabelText">Address</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="52 Realand Road"
+                        <input type="text" class="form-control npinputinfo" 
                             id="validationDefault07" required value = "{{$deal['address']}}">
                             <div class="error-message" id="error-message-12">Please enter address.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault08" class="form-label nplabelText">City</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
+                        <input type="text" class="form-control npinputinfo"
                             id="validationDefault08" required value = "{{$deal['city']}}">
                              <div class="error-message" id="error-message-11">Please enter city.</div>
                     </div>
@@ -239,20 +239,20 @@
                             <option selected disabled value=""></option>
                             <option>...</option>
                         </select> --}}
-                        <input type="text" class="form-control npinputinfo" placeholder="Highlands Ranch"
+                        <input type="text" class="form-control npinputinfo" 
                             id="validationDefault09" required value = "{{$deal['state']?$deal['state']:'CO'}}">
                             <div class="error-message" id="error-message-10">Please enter state.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="80129"
+                        <input type="text" class="form-control npinputinfo" 
                             id="validationDefault10" required value = "{{$deal['zip']}}">
                             <div class="error-message" id="error-message-9">Please enter zip code.</div>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
                         <select class="form-select npinputinfo" id="validationDefault12" required >
-                            <option selected disabled value=""></option>
+                            <option selected disabled value="">--None--</option>
                             <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>Residential</option>
                             <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
                             <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
@@ -265,7 +265,7 @@
                     <div class="col-md-6">
                         <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
                         <select class="form-select npinputinfo" id="validationDefault13" required >
-                            <option selected disabled value=""></option>
+                            <option selected disabled value="">--None--</option>
                             <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
                             <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second Home</option>
                             <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
@@ -283,26 +283,41 @@
                         <input type="text" class="form-control npinputinfo" id="validationDefault11" required value = "{{$deal['commission']}}">
                         <div class="error-message" id="error-message-7">Please enter commission.</div>
                     </div>
-                    
-                    
                     <div class="col-md-6">
-                        <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
-                        <input type="text" class="form-control npinputinfo" placeholder="15" id="validationDefault15"
-                            required value = "{{$deal['pipeline_probability']}}">
+                        <label for="commissionflat" class="form-label nplabelText">Commission_Flat_Fee</label>
+                        <input type="text" class="form-control npinputinfo" id="commissionflat" required
+                            value="{{ $deal['commission_flat_free'] }}">
                     </div>
                     
                     <div class="col-md-6">
+                        <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
+                        <input type="text" class="form-control npinputinfo"  id="validationDefault15"
+                            required value = "{{$deal['pipeline_probability']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault11" class="form-label nplabelText"></label>
+                        
+                    </div>
+                    <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
-    echo 'checked'; ?>>
+                        echo 'checked'; ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked01">
                             Personal Transaction
                         </label>
                     </div>
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02" <?php if ($deal['double_ended'])
-    echo 'checked'; ?>>
+                        echo 'checked'; ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked02">
                             Double ended
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if ($deal['review_gen_opt_out']) {
+                            echo 'checked';
+                        } ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked03">
+                            Review Gen Opt Out
                         </label>
                     </div>
                 </form>
@@ -1034,8 +1049,9 @@
                             "Name":(client_name_primary.first_name || "") + " " + (client_name_primary.last_name || ""),
                             "id":client_name_primary.zoho_contact_id
                         },
-                        "Double_Ended": double_ended
-                        "Review_Gen_Opt_Out":review_gen_opt_out
+                        "Double_Ended": double_ended,
+                        "Review_Gen_Opt_Out":review_gen_opt_out,
+                        "Commission_Flat_Free":commission_flat_free
                     }],
                     "_token": '{{ csrf_token() }}',
                 };
