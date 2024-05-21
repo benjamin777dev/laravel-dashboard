@@ -522,7 +522,7 @@ class ContactController extends Controller
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         $groups = $db->retrieveGroups($user, $accessToken);
         $tab = request()->query('tab') ?? 'In Progress';
-        $users = User::getUsersByname();
+        $users =  $user;
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null, $sort = null, $contactId);
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
@@ -559,7 +559,7 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        $users = User::getUsersByname();
+        $users =$user;
         $tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);

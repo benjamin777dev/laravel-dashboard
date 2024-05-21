@@ -22,7 +22,7 @@ class DashboardController extends Controller
 {
     private function masterFilter($deal) {
         $helper = new Helper();
-        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $closingDate = Carbon::parse($helper->convertToMST(isset($deal['closing_date'])?$deal['closing_date']:null));
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();
 
