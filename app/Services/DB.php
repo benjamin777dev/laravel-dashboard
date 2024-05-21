@@ -853,7 +853,7 @@ class DB
     {
         try {
             $helper = new Helper();
-            Log::info("User Details" . [$deal]);
+            Log::info("User Details" ,$deal);
             if ($deal['Client_Name_Only']) {
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
