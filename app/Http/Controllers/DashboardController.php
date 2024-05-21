@@ -873,27 +873,36 @@ class DashboardController extends Controller
     
     public function saveNote(Request $request)
     {
-      
+      Log::info("CHECK NOTES", $request->all());
         $contactId = $request->query('conID');
+        $related_to_ = json_decode($request->input('related_to'), true);
         // Validate the incoming request data
-        $request->validate([
-            'note_text' => 'required|string',
-            'merged_data' => 'required|string'
-        ]);
+        // $request->validate([
+        //     'note_text' => 'required|string',
+        //     'merged_data' => 'required|string'
+        // ]);
         $mergedData = json_decode($request->input('merged_data'), true);
         $note_text = $request->input('note_text');
+        $related_to;
+        $related_to_parent;
+        if(empty($mergedData)){
+            $related_to = $related_to_['api_name'] ?? null;
+            $related_to_parent = $request->input('related_to_parent');
+            $moduleId = $related_to_['zoho_module_id'] ?? null;
+        }else{
 
-        // Access individual components
-        $groupLabel = $mergedData['groupLabel'] ?? null;
-        $whoid = $mergedData['whoid'] ?? null;
-        $relatedTo = $mergedData['relatedTo'] ?? null;
-        $moduleId = $mergedData['moduleId'] ?? null;
-        if($groupLabel==="Contacts"){
-             $contactId = $relatedTo;
+            $related_to = $mergedData['groupLabel'] ?? null;
+            $whoid = $mergedData['whoid'] ?? null;
+            $related_to_parent = $mergedData['relatedTo'] ?? null;
+            $moduleId = $mergedData['moduleId'] ?? null;
+            if($groupLabel==="Contacts"){
+                $contactId = $relatedTo;
+            }
+            if($groupLabel==="Deals"){
+                $dealId = $relatedTo;
+            }
+
         }
-        if($groupLabel==="Deals"){
-            $dealId = $relatedTo;
-       }
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -908,17 +917,18 @@ class DashboardController extends Controller
                 [
                     "Parent_Id" => [
                         "module" => [
-                            "api_name" =>$groupLabel,
+                            "api_name" =>$related_to,
                             "id" => $moduleId,
                         ],
-                        "id" => $relatedTo,
+                        "id" => $related_to_parent,
                     ],
                     "Note_Content" => $note_text,
                 ]
             ]
         ];
-        $recordId = $relatedTo;
-        $apiName = $groupLabel;
+        $recordId = $related_to_parent;
+        $apiName = $related_to;
+        Log::info("CHECK nOTES",$jsonData,$recordId,$apiName);
         try {
         $response = $zoho->createNoteData($jsonData,$recordId,$apiName);
 
@@ -928,9 +938,9 @@ class DashboardController extends Controller
         }
         $data = json_decode($response, true);
         $zoho_node_id = $data['data'][0]['details']['id'];
-        $deal = $db->retrieveDealByZohoId($user,$accessToken,$relatedTo);
+        $deal = $db->retrieveDealByZohoId($user,$accessToken,$recordId);
         // dd($deal);
-        $contact = $db->retrieveContactByZohoId($user,$accessToken,$relatedTo);
+        $contact = $db->retrieveContactByZohoId($user,$accessToken,$recordId);
         // Create a new Note instance
         $note = new Note();
         // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
@@ -939,8 +949,8 @@ class DashboardController extends Controller
         $note->owner = $user->id;
         $note->related_to = $deal->id ?? $contact->id ?? null;
         $note->created_time = Carbon::now();
-        $note->related_to_type = $groupLabel;
-        $note->related_to_parent_record_id = $relatedTo;
+        $note->related_to_type = $apiName;
+        $note->related_to_parent_record_id = $recordId;
         $note->note_content = $note_text;
         // Save the Note to the database
         $note->save();

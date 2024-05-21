@@ -114,4 +114,73 @@
             </a>
         @endforeach
     </div>
+    <script>
+        function editText(zohoID, name, value) {
+            event.preventDefault();
+            let firstNameElement = document.getElementById(name + zohoID);
+            var text = firstNameElement.textContent.trim();
+            text === "" ? text = value : text;
+            firstNameElement.innerHTML =
+                '<input type="text" class="inputDesign" id="edit' + name + zohoID +
+                '" value="' + value + '" >';
+            let inputElementmake = document.getElementById('edit' + name + zohoID);
+            inputElementmake.focus();
+            inputElementmake.selectionStart = firstNameElement.selectionEnd = text.length;
+            inputElementmake.addEventListener('change', function () {
+                firstNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
+                    .value + '</h5>';
+                updateContact(zohoID, name);
+
+            });
+            // Prevent default action when clicking on container
+            let container = document.getElementById("contactlist");
+            container?.addEventListener("click", function (event) {
+                event.preventDefault();
+            });
+        }
+
+        function fetchNotesForContact(id, conId) {
+            event.preventDefault();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{ route('notes.fetch', ['contactId' => ':contactId']) }}".replace(':contactId', id),
+                method: "GET",
+                dataType: "json",
+
+                success: function (response) {
+                    // $('#notesContainer').append('<p>New Note Content</p>');
+                    let noteContainer = $("#notesContainer");
+                    console.log(noteContainer, 'noteContainer')
+                    // Clear previous contents of note containe
+                    noteContainer.empty();
+                    // Loop through each note in the response array
+                    response?.forEach(function (note) {
+                        // console.log(note, 'note')
+                        // Create HTML to display note content and creation time
+                        let data = `<div class="noteCardForContact">
+                                <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
+                                <p>Note Content: ${note?.note_content}</p>
+                            </div>`;
+                        // Append the HTML to noteContainer
+                        noteContainer.append(data);
+                        console.log("testing", noteContainer)
+                    });
+                    // Show the modal after appending notes
+                    $("#notefetchrelatedContact" + conId).modal('show');
+
+
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    showToastError(error);
+                    console.error("Ajax Error:", error);
+                }
+            });
+
+        }
+    </script>
 

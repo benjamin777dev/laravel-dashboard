@@ -26,7 +26,7 @@
                 </a>
             </div>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            <button class="navbar-toggler" onclick="addressNavbar()" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 
             <i class="fa fa-fw fa-bars"></i>
@@ -451,4 +451,58 @@
             sidebar.classList.toggle('show');
         });
     });
+
+    function addressNavbar() {
+    let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
+    let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
+    let main_content = document.getElementsByClassName("main-content")[0];
+    
+    // Toggle the width of navbar-brand-box
+    if (navbarBox.style.width === "0%") {
+        navbarBox.style.width = "250px"; // Change this to the desired width
+    } else {
+        navbarBox.style.width = "0%";
+    }
+
+    // Toggle the width of vertical-menu
+    if (verticalMenu.style.width === "0%") {
+        verticalMenu.style.width = "250px"; // Change this to the desired width
+    } else {
+        verticalMenu.style.width = "0%";
+    }
+
+    const containerClasses = [
+        "container",
+        "container-lg",
+        "container-md",
+        "container-sm",
+        "container-xl",
+        "container-xxl"
+    ];
+
+    // Default and toggled max-width values
+    const defaultMaxWidth = "";
+    const toggledMaxWidth = "1500px";
+    let marginleft = "margin-left:unset;";
+    let defaultMleft = "margin-left:250px;";
+
+    // Loop through each class and toggle the max-width
+    containerClasses.forEach(containerClass => {
+        let elements = document.getElementsByClassName(containerClass);
+        for (let i = 0; i < elements.length; i++) {
+            let element = elements[i];
+            if (element.style.maxWidth === toggledMaxWidth) {
+                element.style.maxWidth = defaultMaxWidth;
+                main_content.style = defaultMleft;
+            } else {
+                element.style.maxWidth = toggledMaxWidth;
+                main_content.style = marginleft;
+            }
+        }
+    });
+
+
+    console.log(navbarBox.style.width, verticalMenu.style.width);
+}
+
 </script>

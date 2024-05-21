@@ -44,11 +44,12 @@ class ContactController extends Controller
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
-        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter);
+        $missingFeild = $request->input('missingFeild');
+        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter,$missingFeild);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
-        return view('contacts.contact.blade',  compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'))->render();
+        return view('contacts.contact',  compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'))->render();
         // return view('pipeline.index', compact('deals'));
     }
 

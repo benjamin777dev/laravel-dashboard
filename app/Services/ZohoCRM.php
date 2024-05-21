@@ -9,7 +9,7 @@ class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
     private $contentURL = 'https://content.zohoapis.com/crm/v3/';
-    private $apiNoteUrl = 'https://www.zohoa0p0i00s.com/crm/v5/';
+    private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
     private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
@@ -24,7 +24,7 @@ class ZohoCRM
         $this->client_id = config('services.zoho.client_id');
         $this->client_secret = config('services.zoho.client_secret');
         $this->redirect_uri = route('auth.callback');
-        $this->serverUrl = env('SERVER_URL');
+        $this->serverUrl = env('APP_URL');
 
         Log::info('Zoho CRM initialized');
     }
@@ -342,7 +342,7 @@ class ZohoCRM
 
     public function createNoteData($inputJson, $id, $apiName)
     {
-        Log::info('Creating Zoho Task');
+        Log::info('Creating Zoho Notes');
         // trigger workflows
         $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
@@ -351,7 +351,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
 
-        Log::info('Zoho Task creation response: ' . print_r($response->json(), true));
+        Log::info('Zoho Notes creation response: ' . print_r($response->json(), true));
         return $response;
     }
 
@@ -807,7 +807,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback"=> [
-                    "url"=> $serverUrl."/bulkJob/update",
+                    "url"=> $this->serverUrl."/bulkJob/update",
                     "method"=> "post"
                 ],
                 "resource" => [
