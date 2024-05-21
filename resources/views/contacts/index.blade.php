@@ -63,39 +63,38 @@
         <div class="contactlist" id="contactlist">
             @include('contacts.contact', ['contacts' => $contacts])
             <!-- Filter Modal -->
-            <div class="modal fade" id="filterModal" id="staticBackdrop" data-bs-backdrop="static"
-                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
-                            <button type="button" onclick="resetFilters()"
-                                class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-
-                        </div>
-                        <div class="modal-body filter_model">
-                            <div class="fil_email d-con">
-                                <input type="checkbox" value="Email" id="filterEmail" />Email
-                            </div>
-                            <div class="fil_mobile d-con">
-                                <input type="checkbox" value="Mobile" id="filterMobile" />Mobile
-                            </div>
-                            <div class="fil_ABCD d-con">
-                                <input type="checkbox" value="ABCD" id="filterABCD" />ABCD
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary w-auto filterClosebtn"
-                                data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="pfilterBtn w-auto" onclick="applyFilter()">Filter</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="datapagination">
                 @include('common.pagination', ['module' => $contacts])
+            </div>
+        </div>
+        <div class="modal fade" id="filterModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
+                        <button type="button" onclick="resetFilters()"
+                            class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
+                        <button id="close_btn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    </div>
+                    <div class="modal-body filter_model">
+                        <div class="fil_email d-con">
+                            <input type="checkbox" value="Email" id="filterEmail" />Email
+                        </div>
+                        <div class="fil_mobile d-con">
+                            <input type="checkbox" value="Mobile" id="filterMobile" />Mobile
+                        </div>
+                        <div class="fil_ABCD d-con">
+                            <input type="checkbox" value="ABCD" id="filterABCD" />ABCD
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary w-auto filterClosebtn"
+                            data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="pfilterBtn w-auto" onclick="applyFilter()">Filter</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -125,11 +124,13 @@
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;
         console.log("Filter applied with Email: " + email + ", Mobile: " + mobile + ", ABCD: " + abcd);
-        let filter = {
+        let missingFeild = {
             email: email,
             mobile: mobile,
             abcd: abcd
         }
+
+        filterContactData("", "", "", "", missingFeild);
 
 
     }
@@ -265,31 +266,23 @@
     }
 
 
-    function filterContactData(sortField, sortDirection, searchInput, filterVal) {
-        const searchValue = searchInput.val().trim();
+    function filterContactData(sortField="", sortDirection="", searchInput="", filterVal="",missingFeild="") {
+        var searchValuetrim="";
+        if(searchInput){
+            searchValuetrim = searchInput?.val().trim();
+        }
         $.ajax({
             url: '{{ url('/contacts/fetch-contact') }}',
             method: 'GET',
             data: {
-                search: encodeURIComponent(searchValue),
+                search: encodeURIComponent(searchValuetrim),
                 filter: filterVal,
+                missingFeild:missingFeild,
 
             },
-            dataType: 'json',
             success: function(data) {
                 // Select the contact list container
-                const contactList = $('.contactlist');
-
-                // Clear existing contact cards
-                contactList.empty();
-                if (data?.data?.length === 0) {
-                    contactList.append('<p class="text-center">No records found.</p>');
-                } else {
-                    // Iterate over each contact
-                    data?.data?.forEach(function(contact) {
-                        contactList.html(data);
-                    });
-                }
+                const card = $('.contactlist').html(data);
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
@@ -371,7 +364,7 @@
             }
         }
 
-
+        console.log(sortField, sortDirection, searchInput, filterVal, 'testignnnnnnnnn')
         // var filterVal = selectedModule.val();
         // Call fetchData with the updated parameters
         filterContactData(sortField, sortDirection, searchInput, filterVal);
