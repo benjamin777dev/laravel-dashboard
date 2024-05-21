@@ -16,6 +16,7 @@
     <div class="container">
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
+            <div class="commonFlex cpbutton">
             <a onclick="createContact();">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
@@ -23,17 +24,21 @@
                     New Contact
                 </div>
             </a>
-        </div>
-        <div class="row g-4 database-filter-div">
-            <div class="col-md-4">
-                <div class="row align-items-center" style="gap:12px">
-                    <div class="col-md-10 pcommonFilterDiv">
-                        <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
-                    <p class="col-md-1 porText">or</p>
+            <a onclick="createTransaction();">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
+                    </i>
+                    New Transaction
                 </div>
+            </a>
             </div>
+        </div>
+        <div class="pfilterDiv">
+            <div class="pcommonFilterDiv">
+                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)"/>
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <p class="porText">or</p>
             <div class="col-md-5">
                 @php
                     $abcd = ['A+', 'A', 'B', 'C', 'D'];
@@ -50,13 +55,12 @@
                         {{-- <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon"
                             class="ppipelinesorticon"> --}}
                     </div>
-
-                    <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon"
-                        data-bs-toggle="modal" data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
-                        Filter
-                    </div>
-
                 </div>
+                
+            </div>
+            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
+                Filter
             </div>
         </div>
 
@@ -552,5 +556,42 @@
 
 
 
+    }
+
+     function createTransaction() {
+        console.log("Onclick");
+        var formData = {
+            "data": [{
+                "Deal_Name": "{{ config('variables.dealName') }}",
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Stage": "Potential",
+                // "Client_Primary_Name":,
+                // "Client_Name_Only":
+                // "Contact":{
+                //     "Name":,
+                //     "id"
+                // }
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/pipeline/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     }
 </script>

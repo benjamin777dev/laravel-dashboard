@@ -1121,6 +1121,7 @@
     font-weight: 800;
     line-height: 16.1px;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .pipeline-cards-container {
@@ -2593,4 +2594,10 @@ body[data-sidebar="dark"] .navbar-brand-box {
 .dealTaskfordropdown .select2-container {
     z-index: 0 !important;
     height:40px !important;    
+}
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.5em;
+    display: none;
 }

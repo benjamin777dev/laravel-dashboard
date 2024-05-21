@@ -108,10 +108,11 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
 
     }
 
@@ -141,10 +142,11 @@ class PipelineController extends Controller
         $attachments = $db->retreiveAttachment($dealId);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealStages');
-        return view('pipeline.create', compact('tasks', 'tab', 'notesInfo', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        return view('pipeline.create', compact('tasks', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
     }
 
     public function getDeal(Request $request)

@@ -509,7 +509,7 @@ class DB
             if ($contactId) {
                 $condition[] = ['zoho_deal_id', $contactId];
             }
-            $Deals = Deal::where($condition)->get();
+            $Deals = Deal::where($condition)->orderBy('updated_at','desc')->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
         } catch (\Exception $e) {
@@ -580,7 +580,7 @@ class DB
         try {
 
             Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->id)->get();
+            $Contacts = Contact::where('contact_owner', $user->id)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
             return $Contacts;
         } catch (\Exception $e) {
@@ -827,13 +827,22 @@ class DB
     {
         try {
             Log::info("User Deatils" . json_encode($zohoDeal));
+             if ($zohoDeal['Client_Name_Only']) {
+                $clientId = explode("||", $zohoDeal['Client_Name_Only']);
+                Log::info("clientId: " . implode(", ", $clientId));
+
+                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
                 'userID' => $user->id,
                 'isInZoho' => true,
                 'zoho_deal_id' => $zohoDeal['id'],
-                'stage' => "Potential"
+                'client_name_primary'=>$zohoDeal['Client_Name_Primary'],
+                'client_name_only'=>$zohoDeal['Client_Name_Only'],
+                'stage' => "Potential",
+                'contactId'=>$contact->id
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -867,6 +876,12 @@ class DB
         try {
             $helper = new Helper();
             Log::info("User Details" . $user);
+            if ($deal['Client_Name_Only']) {
+                $clientId = explode("||", $deal['Client_Name_Only']);
+                Log::info("clientId: " . implode(", ", $clientId));
+
+                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+            }
             $deal = Deal::updateOrCreate(['zoho_deal_id' => $id], [
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
@@ -886,7 +901,10 @@ class DB
                 'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
                 'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
-                'isDealCompleted' => true
+                'commission_flat_free'=>isset($deal['Commission_Flat_Free']) ? $deal['Commission_Flat_Free'] : null,
+                'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : null,
+                'isDealCompleted' => true,
+                'contactId' => isset($contact) ? $contact->id : null,
             ]);
 
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
