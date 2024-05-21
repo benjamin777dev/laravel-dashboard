@@ -188,9 +188,7 @@
     }
 
 
-    function getColorByAbcd(abcd) {
-        return '#b5b5b5';
-    }
+    
 
     function validateFormc(submitClick = '', modId = "") {
         let noteText = document.getElementById("note_text" + modId).value;
@@ -228,49 +226,7 @@
     }
 
 
-    function fetchNotesForContact(id, conId) {
-        event.preventDefault();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: "{{ route('notes.fetch', ['contactId' => ':contactId']) }}".replace(':contactId', id),
-            method: "GET",
-            dataType: "json",
-
-            success: function(response) {
-                // $('#notesContainer').append('<p>New Note Content</p>');
-                let noteContainer = $("#notesContainer");
-                console.log(noteContainer, 'noteContainer')
-                // Clear previous contents of note containe
-                noteContainer.empty();
-                // Loop through each note in the response array
-                response?.forEach(function(note) {
-                    // console.log(note, 'note')
-                    // Create HTML to display note content and creation time
-                    let data = `<div class="noteCardForContact">
-                        <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
-                        <p>Note Content: ${note?.note_content}</p>
-                    </div>`;
-                    // Append the HTML to noteContainer
-                    noteContainer.append(data);
-                    console.log("testing", noteContainer)
-                });
-                // Show the modal after appending notes
-                $("#notefetchrelatedContact" + conId).modal('show');
-
-
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                showToastError(error);
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
+    
 
 
     function filterContactData(sortField="", sortDirection="", searchInput="", filterVal="",missingFeild="") {
@@ -297,64 +253,9 @@
         });
     }
 
-    function moduleSelectedforContact(selectedModule, conId) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        //    var id = '{{ request()->route('id') }}'; 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText + '?contactId=' + conId,
-            method: "GET",
-            dataType: "json",
+    
 
-            success: function(response) {
-                // Handle successful response
-                var tasks = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect' + conId);
-                // Clear existing options
-                taskSelect.empty();
-                // Populate select options with tasks
-                $.each(tasks, function(index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        console.log(task);
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: task?.first_name ?? "" + ' ' + task?.last_name ?? "",
-                        }));
-                    }
-                });
-                taskSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
-
-    function showPopup(contact) {
-        new bootstrap.Modal(document.getElementById('newTaskNoteModalId' + contact)).show();
-    }
+    
 
     function fetchContact(e, sortField, sortDirection) {
         const searchInput = $('#contactSearch');
@@ -377,10 +278,7 @@
         filterContactData(sortField, sortDirection, searchInput, filterVal);
     }
 
-    function resetValidation() {
-        document.getElementById("subject_error").innerHTML = "";
-        document.getElementById('darea').value = "";
-    }
+    
 
     function resetFilters() {
         document.getElementById('filterEmail').checked = false;
@@ -389,176 +287,21 @@
         applyFilter();
     }
 
-    function validateTextarea() {
-        var textarea = document.getElementById('darea');
-        var textareaValue = textarea.value.trim();
-        // Check if textarea value is empty
-        if (textareaValue === '') {
-            // Show error message or perform validation logic
-            document.getElementById("subject_error").innerHTML = "please enter details";
-        } else {
-            document.getElementById("subject_error").innerHTML = "";
-        }
-    }
+    
 
     // function taskCreate(event,conId){
     //     event.preventDefault(); // Prevent the default action  
     // }
-    function addTaskforContact(conID) {
-        var subject = document.getElementsByName("subject")[0].value;
-        if (subject.trim() === "") {
-            document.getElementById("subject_error").innerHTML = "please enter details";
-            return;
-        }
-        // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        // var whoId = window.selectedTransation
-        // if (whoId === undefined) {
-        //     whoId = whoSelectoneid
-        // }
-        var dueDate = document.getElementsByName("due_date")[0].value;
+   
 
-        var formData = {
-            "data": [{
-                "Subject": subject,
-                // "Who_Id": {
-                //     "id": whoId
-                // },
-                "Status": "In Progress",
-                "Due_Date": dueDate,
-                // "Created_Time":new Date()
-                // "Priority": "High",
-                "What_Id": {
-                    "id": conID
-                },
-                "$se_module": "Contacts"
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        console.log("formData", formData);
-        $.ajax({
-            url: '{{ route('create.task') }}',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response?.data && response.data[0]?.message) {
-                    // Convert message to uppercase and then display
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    // window.location.reload();
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        })
-    }
-
-    function editText(zohoID, name, value) {
-        event.preventDefault();
-        let firstNameElement = document.getElementById(name + zohoID);
-        var text = firstNameElement.textContent.trim();
-        text === "" ? text = value : text;
-        firstNameElement.innerHTML =
-            '<input type="text" class="inputDesign" id="edit' + name + zohoID +
-            '" value="' + value + '" >';
-        let inputElementmake = document.getElementById('edit' + name + zohoID);
-        inputElementmake.focus();
-        inputElementmake.selectionStart = firstNameElement.selectionEnd = text.length;
-        inputElementmake.addEventListener('change', function() {
-            firstNameElement.innerHTML = '<h5 class="card-title" id="' + name + zohoID + '">' + inputElementmake
-                .value + '</h5>';
-            updateContact(zohoID, name);
-
-        });
-        // Prevent default action when clicking on container
-        let container = document.getElementById("contactlist");
-        container?.addEventListener("click", function(event) {
-            event.preventDefault();
-        });
-    }
+    
 
     function formatSentence(sentence) {
         // Convert the first character to uppercase and the rest to lowercase
         return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
     }
 
-    function updateContact(zohoID, name) {
-        let elementId = document.getElementById(name + zohoID);
-        let formData = {
-            "data": [{
-                "Missing_ABCD": true,
-                "Owner": {
-                    "id": '{{ auth()->user()->root_user_id }}',
-                    "full_name": '{{ auth()->user()->name }}'
-                },
-                "Unsubscribe_From_Reviews": false,
-                "Currency": "USD",
-                "First_Name": name == "first_name" ? elementId.textContent : undefined,
-                "Mobile": name == "mobile" ? elementId.textContent : undefined,
-                // "ABCD": "",
-                "Email": name == "email" ? elementId.textContent : undefined,
-                "zia_suggested_users": []
-            }],
-            "skip_mandatory": true
-        }
-        // Iterate through the data array
-        formData?.data?.forEach(obj => {
-            // Iterate through the keys of each object
-            Object.keys(obj).forEach(key => {
-                // Check if the value is undefined and delete the key
-                if (obj[key] === undefined) {
-                    delete obj[key];
-                }
-            });
-        });
-        //ajax call hitting here
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $.ajax({
-            url: "{{ route('update.contact', ['id' => ':id']) }}".replace(':id', zohoID),
-            method: 'PUT',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                console.log(response)
-                // Handle success response
-                if (response?.data[0]?.status == "success") {
-                    if (!document.getElementById('savemakeModalId' + zohoID).classList.contains('show')) {
-                        var modalTarget = document.getElementById('savemakeModalId' + zohoID);
-                        var update_message = document.getElementById('updated_message_make');
-                        update_message.textContent = formatSentence(response?.data[0]?.message);
-                        // Show the modal
-                        $(modalTarget).modal('show');
-                        window.location.reload();
-                    }
-
-                }
-            },
-            error: function(xhr, status, error) {
-                if (xhr?.responseJSON?.status === 401) {
-                    showToastError(xhr?.responseJSON?.error);
-
-                }
-                // Handle error response
-
-
-            }
-        })
-
-
-
-    }
+    
 
      function createTransaction() {
         console.log("Onclick");

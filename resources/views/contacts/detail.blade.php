@@ -42,15 +42,15 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/contacts-show/{{$contact['id']}}?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
+                            <a href="/contacts-view/{{$contact['id']}}?tab=In Progress"> <button class="nav-link dtabsbtn" id="nav-home-tab"
                                     data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
                                     role="tab" aria-controls="nav-home" aria-selected="true">In
                                     Progress</button></a>
-                            <a href="/contacts-show/{{$contact['id']}}?tab=Not Started"> <button class="nav-link dtabsbtn"
+                            <a href="/contacts-view/{{$contact['id']}}?tab=Not Started"> <button class="nav-link dtabsbtn"
                                     data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
                                     aria-selected="false">Upcoming</button></a>
-                            <a href="/contacts-show/{{$contact['id']}}?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
+                            <a href="/contacts-view/{{$contact['id']}}?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
                                     id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
                                     role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
                         </div>
