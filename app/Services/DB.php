@@ -801,12 +801,12 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken, $zohoDeal)
+    public function createDeal(User $user, $accessToken, $zohoDeal,$dealData)
     {
         try {
             Log::info("User Deatils" . json_encode($zohoDeal));
-             if ($zohoDeal['Client_Name_Only']) {
-                $clientId = explode("||", $zohoDeal['Client_Name_Only']);
+             if (isset($dealData['Client_Name_Only'])) {
+                $clientId = explode("||", $dealData['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
 
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
@@ -817,10 +817,10 @@ class DB
                 'userID' => $user->id,
                 'isInZoho' => true,
                 'zoho_deal_id' => $zohoDeal['id'],
-                'client_name_primary'=>$zohoDeal['Client_Name_Primary'],
-                'client_name_only'=>$zohoDeal['Client_Name_Only'],
+                'client_name_primary'=>isset($dealData['Client_Name_Primary'])?$dealData['Client_Name_Primary']:null,
+                'client_name_only'=>isset($dealData['Client_Name_Only'])?$dealData['Client_Name_Only']:null,
                 'stage' => "Potential",
-                'contactId'=>$contact->id
+                'contactId'=>isset($contact->id)?$contact->id:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -853,7 +853,7 @@ class DB
     {
         try {
             $helper = new Helper();
-            Log::info("User Details" . $user);
+            Log::info("User Details" . [$deal]);
             if ($deal['Client_Name_Only']) {
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));

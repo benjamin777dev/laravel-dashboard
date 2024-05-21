@@ -82,13 +82,31 @@ class ZohoCRM
         Log::info('Zoho refresh token headers: ' . print_r($headers, true));
 
         $response = Http::asForm()->post($this->authUrl . 'token', $headers);
-        Log::info('Zoho refresh token response: ' . print_r($response, true));
 
-        // if refresh token fails, redirect to Zoho for authentication
+        // Log the full Zoho refresh token response
+        Log::info('Zoho refresh token response: ' . $response->body(),$response->successful());
+
+        // Check if the response is successful
         if (!$response->successful()) {
-            Log::error('Failed to refresh Zoho access token', ['response' => $response->body()]);
+            // Log the error with detailed information
+            Log::error('Failed to refresh Zoho access token', [
+                'status' => $response->status(),
+                'response_body' => $response->body(),
+            ]);
+
+            // Handle specific response codes if necessary
+            if ($response->status() === 401) {
+                Log::error('Unauthorized: Invalid refresh token or client credentials.');
+            } elseif ($response->status() === 400) {
+                Log::error('Bad Request: Possibly incorrect request parameters.');
+            } else {
+                Log::error('An unexpected error occurred.');
+            }
+
+            // Redirect to Zoho for authentication if the refresh token fails
             return $this->redirectToZoho();
         }
+
 
         return $response;
     }

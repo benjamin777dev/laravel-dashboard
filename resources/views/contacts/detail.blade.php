@@ -229,7 +229,7 @@ $leadSources = [
                                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                                         placeholder="Mary Long" id="validationDefault03">
                                         @php
-$spause_partner = $contact['spouse_partner'];
+                                        $spause_partner = $contact['spouse_partner'];
                                         @endphp
                                         <option value="">-None-</option>
                                         @if (!empty($contacts))
