@@ -41,13 +41,13 @@
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Tasks</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        onclick="resetValidationTask('{{ $contact['id'] }}')" aria-label="Close"></button>
+                        onclick="resetValidationTask('{{ $contact['zoho_contact_id'] }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask();" id="darea{{ $contact['id'] }}" rows="4"
+                    <textarea name="subject" onkeyup="validateTextareaTask('{{ $contact['zoho_contact_id'] }}');" id="darea{{ $contact['zoho_contact_id'] }}" rows="4"
                         class="dtextarea"></textarea>
-                    <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
+                    <div id="subject_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
@@ -162,8 +162,7 @@
         }
 
     }
-
-
+    
     window.taskModuleSelected = function(selectedModule) {
         // console.log(accessToken,'accessToken')
         var selectedOption = selectedModule.options[selectedModule.selectedIndex];

@@ -50,7 +50,7 @@ window.updateDeal = function (dealID, field, Id, card, date) {
         inputElementmake.addEventListener('click', function () {
             // Create a date input element
             var dateInput = document.createElement('input');
-            dateInput.type = 'text'; // Change type to text for Bootstrap Datepicker compatibility
+            dateInput.type = 'date'; // Change type to text for Bootstrap Datepicker compatibility
             dateInput.classList.add('form-control', 'npinputinfo');
             dateInput.id = 'edit' + field + dealID;
             dateInput.required = true;

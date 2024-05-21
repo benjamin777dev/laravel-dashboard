@@ -16,7 +16,12 @@
             {{ session('error') }}
         </div>
     @endif
+    <div id="loader" style="display: none;">
+        <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
+    </div>
     <div class="container-fluid">
+        <div class="loader" id="loaderfor" style="display: none;"></div>
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="row mt-4 text-center">
             {{-- <div class="col-lg-3 col-md-3 col-sm-6 text-start">
                 <p class="dFont900 dFont15 dMb10">Welcome Back, {{ $user['name'] }} <br />
@@ -32,11 +37,10 @@
 
             </div> --}}
             <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
-
                 <div class="row g-1">
                     <div>
-                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#"
-                            onclick="createContact();"><i class="fas fa-plus plusicon">
+                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" onclick="createContact();"><i
+                                class="fas fa-plus plusicon">
                             </i>
                             New Contact
                         </div>
@@ -101,7 +105,7 @@
                                     <div class="gauge-center"></div>
                                 </div>
                             </div> --}}
-                            <p class="dFont13 dMb5 dRangeText">{{'$'.$totalGciForDah.' of 250,000 Goal'}}</p>
+                            <p class="dFont13 dMb5 dRangeText">{{ '$' . $totalGciForDah . ' of 250,000 Goal' }}</p>
                             <div>
                                 {{-- <div class="d-flex justify-content-between align-items-center dCalander">
                                     <input class="dFont400 dFont13 mb-0 ddaterangepicker" type="text" name="daterange"
@@ -126,7 +130,7 @@
 
                                     @foreach ($allMonths as $month => $data)
                                         @php
-                                        $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
+                                            $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
                                         @endphp
                                         <div class="row">
                                             <div class="col-md-1 align-self-center dmonth-design">
@@ -169,7 +173,7 @@
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
-                    <div  class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
+                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                         id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i
                             class="fas fa-plus plusicon">
                         </i>
@@ -180,18 +184,17 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link dtabsbtn active" id="nav-home-tab"
-                                    data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                    role="tab" aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
-                                    Progress</button>
-                            <button class="nav-link dtabsbtn"
-                                    data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
-                                    data-bs-target="#nav-profile" type="button" role="tab"
-                                    aria-controls="nav-profile" aria-selected="false" onclick="fetchData('Not Started')">Upcoming</button>
-                            <button class="nav-link dtabsbtn" data-tab='Completed'
-                                    id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
-                                    type="button" role="tab" aria-controls="nav-contact"
-                                    aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
+                            <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
+                                aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
+                                Progress</button>
+                            <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
+                                data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
+                                aria-controls="nav-profile" aria-selected="false"
+                                onclick="fetchData('Not Started')">Upcoming</button>
+                            <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                                aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
                         </div>
                     </nav>
                     <div class= "task-container">
@@ -199,7 +202,7 @@
                             'tasks' => $tasks,
                         ])
                     </div>
-                    
+
                 </div>
 
             </div>
@@ -215,7 +218,7 @@
                 </div>
                 @if (count($closedDeals) === 0)
                     <div>
-                        <p class="text-center" colspan="5">No records found</p>
+                        <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
                     @foreach ($closedDeals as $deal)
@@ -251,7 +254,7 @@
                             <div class="col-md-2 npcommontableBodytext ">
                                 <div class="dTContactName"><img src="{{ URL::asset('/images/event_busy.svg') }}"
                                         alt="E">
-                                    {{  date('m/d/Y', strtotime($deal['closing_date'])); }}
+                                    {{ date('m/d/Y', strtotime($deal['closing_date'])) }}
                                 </div>
                             </div>
                         </div>
@@ -343,7 +346,7 @@
 @endsection
 
 <script>
-     window.fetchData = function(tab = null) {
+    window.fetchData = function(tab = null) {
         // Make AJAX call
         $.ajax({
             url: '{{ url('/get/tasks/for/dashboard') }}',
@@ -353,7 +356,7 @@
             },
             success: function(data) {
                 $('.task-container').html(data);
-              
+
             },
             error: function(xhr, status, error) {
                 // Handle errors
@@ -501,10 +504,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function(xhr, status, error) {
@@ -539,9 +540,10 @@
 
         return formattedDateTime;
     }
-    
+
     window.createTransaction = function() {
-        console.log("Onclick");
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
         var formData = {
             "data": [{
                 "Deal_Name": "{{ config('variables.dealName') }}",
@@ -561,18 +563,22 @@
             data: JSON.stringify(formData),
             dataType: 'json',
             success: function(data) {
-                console.log(data);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
                 console.error('Error:', error);
             }
         });
     }
 
     function createContact() {
-        console.log("Onclick");
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -606,12 +612,15 @@
             data: JSON.stringify(formData),
             dataType: 'json',
             success: function(data) {
-                console.log(data);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
             }
         });
     }
@@ -687,7 +696,7 @@
                             var labelText = Math.round(dataset.data[i]) + "%";
                             ctx.fillStyle = '#000'; // set font color
                             ctx.fillText(labelText, model.x, model.y -
-                            5); // adjust Y position for label
+                                5); // adjust Y position for label
                         }
                     });
                 }

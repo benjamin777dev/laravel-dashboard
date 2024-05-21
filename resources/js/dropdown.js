@@ -229,7 +229,7 @@ function updateTaskArrTask(selectElement, search) {
 }
 
 window.addCommonTask = function (id, type) {
-    console.log(window.groupLabel, type, 'selction type is here');
+    console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
     if (window.groupLabel === "Contacts") {
         type = window.groupLabel;
