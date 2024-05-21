@@ -187,7 +187,8 @@ class PipelineController extends Controller
             }
             $zohoDealArray = json_decode($zohoDeal, true);
             $data = $zohoDealArray['data'][0]['details'];
-            $deal = $db->createDeal($user, $accessToken, $data);
+            $dealData = $jsonData['data'][0];
+            $deal = $db->createDeal($user, $accessToken, $data,$dealData);
             return response()->json($deal);
         }
 

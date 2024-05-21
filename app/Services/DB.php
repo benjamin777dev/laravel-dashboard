@@ -239,7 +239,7 @@ class DB
             // Update or create the Module
             Module::updateOrCreate(['zoho_module_id' => $module['id']], [
                 "api_name" => isset($module['api_name']) ? $module['api_name'] : null,
-                "modified_time" => isset($module['modified_time']) ? $module['modified_time'] : null,
+                "modified_time" => isset($module['modified_time']) ? $helper->convertToUTC($module['modified_time']) : null,
                 "zoho_module_id" => isset($module['id']) ? $module['id'] : null
             ]);
         }
@@ -733,29 +733,29 @@ class DB
         Log::info("Storing ACI Into Database");
 
         foreach ($acis as $aci) {
-            $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
-            $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+            if (is_array($aci)) {
+                if (isset($aci['CHR_Agent'])) {
+                    $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
+                }
+                if (isset($aci['Transaction'])) {
+                    $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+                }
 
-            // if (!$user) {
-            //     // Log an error if the user is not found
-            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
-            //     continue; // Skip to the next deal
-            // }
-
-            // Update or create the deal
-            Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
-                "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
-                "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
-                "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
-                "userId" => isset($user['id']) ? $user['id'] : null,
-                "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
-                "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
-                "total" => isset($aci['Total']) ? $aci['Total'] : null,
-                "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
-                'dealId' => isset($deal['id']) ? $deal['id'] : null,
-                'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
-                'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
-            ]);
+                // Update or create the deal
+                Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+                    "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+                    "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+                    "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+                    "userId" => isset($user['id']) ? $user['id'] : null,
+                    "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+                    "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+                    "total" => isset($aci['Total']) ? $aci['Total'] : null,
+                    "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                    'dealId' => isset($deal['id']) ? $deal['id'] : null,
+                    'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+                    'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+                ]);
+            }
         }
 
         Log::info("ACI stored into database successfully.");
@@ -801,12 +801,12 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken, $zohoDeal)
+    public function createDeal(User $user, $accessToken, $zohoDeal,$dealData)
     {
         try {
             Log::info("User Deatils" . json_encode($zohoDeal));
-             if ($zohoDeal['Client_Name_Only']) {
-                $clientId = explode("||", $zohoDeal['Client_Name_Only']);
+             if (isset($dealData['Client_Name_Only'])) {
+                $clientId = explode("||", $dealData['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
 
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
@@ -817,10 +817,10 @@ class DB
                 'userID' => $user->id,
                 'isInZoho' => true,
                 'zoho_deal_id' => $zohoDeal['id'],
-                'client_name_primary'=>$zohoDeal['Client_Name_Primary'],
-                'client_name_only'=>$zohoDeal['Client_Name_Only'],
+                'client_name_primary'=>isset($dealData['Client_Name_Primary'])?$dealData['Client_Name_Primary']:null,
+                'client_name_only'=>isset($dealData['Client_Name_Only'])?$dealData['Client_Name_Only']:null,
                 'stage' => "Potential",
-                'contactId'=>$contact->id
+                'contactId'=>isset($contact->id)?$contact->id:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -853,7 +853,7 @@ class DB
     {
         try {
             $helper = new Helper();
-            Log::info("User Details" . $user);
+            Log::info("User Details" ,$deal);
             if ($deal['Client_Name_Only']) {
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));

@@ -24,6 +24,7 @@ class ZohoCRM
         $this->client_id = config('services.zoho.client_id');
         $this->client_secret = config('services.zoho.client_secret');
         $this->redirect_uri = route('auth.callback');
+        $this->serverUrl = env('SERVER_URL');
 
         Log::info('Zoho CRM initialized');
     }
@@ -81,17 +82,50 @@ class ZohoCRM
 
         Log::info('Zoho refresh token headers: ' . print_r($headers, true));
 
-        $response = Http::asForm()->post($this->authUrl . 'token', $headers);
-        Log::info('Zoho refresh token response: ' . print_r($response, true));
+        try {
+            $response = Http::asForm()->post($this->authUrl . 'token', $headers);
 
-        // if refresh token fails, redirect to Zoho for authentication
-        if (!$response->successful()) {
-            Log::error('Failed to refresh Zoho access token', ['response' => $response->body()]);
+            // Log the full Zoho refresh token response
+            Log::info('Zoho refresh token response:', [
+                'response_body' => $response->body(),
+                'successful' => $response->successful()
+            ]);
+
+            // Check if the response is successful
+            if (!$response->successful() || isset($response->json()['error'])) {
+                // Log the error with detailed information
+                Log::error('Failed to refresh Zoho access token', [
+                    'status' => $response->status(),
+                    'response_body' => $response->body(),
+                ]);
+
+                // Handle specific response codes if necessary
+                if ($response->status() === 401 || $response->json()['error'] === 'invalid_code') {
+                    Log::error('Unauthorized: Invalid refresh token or client credentials.');
+                } elseif ($response->status() === 400) {
+                    Log::error('Bad Request: Possibly incorrect request parameters.');
+                } else {
+                    Log::error('An unexpected error occurred.');
+                }
+
+                // Redirect to Zoho for authentication if the refresh token fails
+                return $this->redirectToZoho();
+            }
+
+            return $response;
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Exception occurred while refreshing Zoho access token', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Redirect to Zoho for authentication if an exception occurs
             return $this->redirectToZoho();
         }
-
-        return $response;
     }
+
+
 
     // get the access token
     public function getAccessToken()
@@ -477,7 +511,7 @@ class ZohoCRM
 
     public function updateZohoDeal($inputJson, $id)
     {
-        Log::info('Creating Zoho Deal');
+        Log::info('Creating Zoho Deal',$inputJson);
         // trigger workflows
         $inputJson['trigger'] = 'workflow';
         $response = Http::withHeaders([
@@ -773,7 +807,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback"=> [
-                    "url"=> "https://e39a-2405-201-5023-403c-2c5e-4e86-4ee9-de0.ngrok-free.app/bulkJob/update",
+                    "url"=> $serverUrl."/bulkJob/update",
                     "method"=> "post"
                 ],
                 "resource" => [

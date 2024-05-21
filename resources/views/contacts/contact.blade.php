@@ -17,7 +17,7 @@
                                     {{ $contact['abcd'] ?? '-' }}</p>
                             </div>
                             <div class="dataPhoneDiv">
-                                <img src="{{ URL::asset('/images/phone.svg') }}" alt=""
+                                <img src="{{ URL::asset('/images/phoneb.svg') }}" alt=""
                                     class="dataphoneicon">
 
                                 <div class="d-flex gap-2"
