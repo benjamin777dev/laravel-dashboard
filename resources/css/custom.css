@@ -2552,15 +2552,15 @@ body[data-sidebar="dark"] .navbar-brand-box {
     outline: 0 !important;
 
 }
-@media (max-width: 992px) {
-    .vertical-menu {
+/* @media (max-width: 992px) { */
+    /* .vertical-menu {
         display: none;
-    }
+    } */
 
     .vertical-menu.show {
         display: block;
     }
-}
+/* } */
 
 .select2-container {
     z-index: 9999 !important;

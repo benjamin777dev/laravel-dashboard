@@ -518,40 +518,62 @@ class DB
         }
     }
 
-    public function retreiveContacts(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null)
+    public function retreiveContacts(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $missingField = null)
     {
         try {
             Log::info("Retrieve Contact From Database");
-
+    
             $conditions = [['contact_owner', $user->id]];
-
-            // Adjust query to include contactName table using join
-            $contacts = Contact::where($conditions); // Select only fields from the contacts table
-
-            if ($search !== "" || $filter) {
+            $contacts = Contact::where($conditions); // Initialize the query with basic conditions
+    
+            if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
                 $contacts->where(function ($query) use ($searchTerms) {
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('email', 'like', '%' . $searchTerms . '%');
-                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
-                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
-                    // Add more OR conditions as needed
+                          ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
-
+    
             if ($filter) {
                 $conditions[] = ['abcd', $filter];
             }
-            // Retrieve deals based on the conditions
-            $contacts = $contacts->where($conditions)->orderBy('updated_at', 'desc')->paginate(10);
+    
+            // Apply missing field conditions
+            if ($missingField) {
+                if (!empty($missingField['email'])) {
+                    $contacts->whereNull('email');
+                }
+                if (!empty($missingField['mobile'])) {
+                    $contacts->whereNull('phone');
+                }
+                if (!empty($missingField['abcd'])) {
+                    $contacts->whereNull('abcd');
+                }
+            }
+    
+            // Apply additional filter conditions
+            if ($filter) {
+                $contacts->where($conditions);
+            }
+    
+            // Apply sorting if specified
+            if ($sortValue && $sortType) {
+                $contacts->orderBy($sortValue, $sortType);
+            } else {
+                $contacts->orderBy('updated_at', 'desc');
+            }
+    
+            // Paginate the results
+            $contacts = $contacts->paginate(10);
+    
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {
-            Log::error("Error retrieving deals: " . $e->getMessage());
+            Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
-
     }
+    
 
     public function retreiveContactsJson(User $user, $accessToken)
     {

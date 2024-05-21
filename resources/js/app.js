@@ -321,68 +321,6 @@ File: Main Js File
         });
     }
 
-    function dateRangePicker() {
-        var dateRangeValue = $('input[name="daterange"]').val();
-        // Split the value into start date and end date
-        var dates = dateRangeValue.split(' - ');
-        var startDateString = dates[0];
-        var endDateString = dates[1];
-        // Parse start date and end date strings to moment objects
-        var startDate = moment(startDateString, 'DD/MM/YYYY');
-        var endDate = moment(endDateString, 'DD/MM/YYYY');
-        // Example: Subtract one year from the start date
-        startDate.subtract(1, 'year');
-        $('input[name="daterange"]')?.daterangepicker({
-            startDate: startDate, // Start date: One year ago, beginning of the month
-            endDate: endDate, // End date: Today, end of the month
-            minDate: moment().subtract(1, 'year').startOf('day'), // Set minDate to one year ago, beginning of the month
-            // maxDate: moment(), // Set maxDate to today
-            ranges: {
-                'Last 12 Months': [moment().subtract(1, 'year').startOf('month'), moment().endOf('month')],
-                // 'This Month': [moment().startOf('month'), moment().endOf('month')],
-                // 'Next Month': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
-            },
-            showDropdowns: true, // Show month and year dropdowns
-            showWeekNumbers: true, // Show week numbers
-            showCustomRangeLabel: false, // Hide custom range label
-            autoApply: true,
-            locale: {
-                format: 'DD-MM-YYYY', // Specify the date format
-                applyLabel: 'Apply', // Apply button text
-                cancelLabel: 'Cancel', // Cancel button text
-                customRangeLabel: 'Custom Range', // Custom range label
-                daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'], // Days of the week
-                monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], // Month names
-                firstDay: 1 // Start week on Monday
-            },
-            ranges: {
-                'Last 12 Months': [moment().subtract(1, 'year').startOf('day'), moment().endOf('day')],
-                'This Month': [moment().startOf('day'), moment().add(1, 'month').endOf('day')],
-                // 'Next Month': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')]
-            },
-            alwaysShowCalendars: true // Always show calendars
-        }, function (start, end, label) {
-            console.log(start, end, label, 'checkout');
-            // Callback function to handle date range selection
-            // You can add custom logic here if needed
-        });
-        $('.daterangepicker.ltr .calendar.right').css('margin-right', '25px');
-        $('.daterangepicker.ltr .calendar.left').css('margin-right', '25px');
-
-        $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
-            // Update input value with selected date range
-            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' - ' + picker.endDate.format('DD-MM-YYYY'));
-            if (!$(this).attr('onchange')) {
-                // Add onchange attribute to call calculateStageData function
-                $(this).attr('onchange', 'calculateStageData(this)');
-                
-                // Trigger the change event only if it's the first time
-                $(this).trigger('change');
-            }
-        });
-    }
-
-
     function init() {
         initMetisMenu();
         initLeftMenuCollapse();
@@ -396,7 +334,6 @@ File: Main Js File
         initSettings();
         initLanguage();
         initPreloader();
-        dateRangePicker();
         Waves.init();
         initCheckAll();
     }
