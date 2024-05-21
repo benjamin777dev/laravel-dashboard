@@ -215,7 +215,7 @@
                 </div>
                 @if (count($closedDeals) === 0)
                     <div>
-                        <p class="text-center" colspan="5">No records found</p>
+                        <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
                     @foreach ($closedDeals as $deal)

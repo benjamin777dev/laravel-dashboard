@@ -875,6 +875,7 @@ class DashboardController extends Controller
     {
       
         $contactId = $request->query('conID');
+        $related_to_ = json_decode($request->input('related_to'), true);
         // Validate the incoming request data
         $request->validate([
             'note_text' => 'required|string',
@@ -882,8 +883,13 @@ class DashboardController extends Controller
         ]);
         $mergedData = json_decode($request->input('merged_data'), true);
         $note_text = $request->input('note_text');
+        $related_to;
+        $related_to_parent;
+        if(empty($mergedData)){
+            $related_to = $related_to_['groupLabel'] ?? null;
+            $related_to_parent = $request->input('related_to_parent');
+        }else{
 
-        // Access individual components
         $groupLabel = $mergedData['groupLabel'] ?? null;
         $whoid = $mergedData['whoid'] ?? null;
         $relatedTo = $mergedData['relatedTo'] ?? null;
@@ -894,6 +900,8 @@ class DashboardController extends Controller
         if($groupLabel==="Deals"){
             $dealId = $relatedTo;
        }
+
+        }
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -908,8 +916,8 @@ class DashboardController extends Controller
                 [
                     "Parent_Id" => [
                         "module" => [
-                            "api_name" =>$groupLabel,
-                            "id" => $moduleId,
+                            "api_name" =>$related_to,
+                            "id" => $related_to,
                         ],
                         "id" => $relatedTo,
                     ],

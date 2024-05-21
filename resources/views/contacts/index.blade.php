@@ -127,7 +127,9 @@
         let email = document.getElementById('filterEmail').checked;
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;
-        console.log("Filter applied with Email: " + email + ", Mobile: " + mobile + ", ABCD: " + abcd);
+        let count = 1;
+        if(!email && !mobile && !abcd &&count>2 ) return;
+         
         let missingFeild = {
             email: email,
             mobile: mobile,
@@ -135,6 +137,7 @@
         }
 
         filterContactData("", "", "", "", missingFeild);
+        count++;
 
 
     }
@@ -383,6 +386,7 @@
         document.getElementById('filterEmail').checked = false;
         document.getElementById('filterMobile').checked = false;
         document.getElementById('filterABCD').checked = false;
+        applyFilter();
     }
 
     function validateTextarea() {
