@@ -239,7 +239,7 @@ class DB
             // Update or create the Module
             Module::updateOrCreate(['zoho_module_id' => $module['id']], [
                 "api_name" => isset($module['api_name']) ? $module['api_name'] : null,
-                "modified_time" => isset($module['modified_time']) ? $module['modified_time'] : null,
+                "modified_time" => isset($module['modified_time']) ? $helper->convertToUTC($module['modified_time']) : null,
                 "zoho_module_id" => isset($module['id']) ? $module['id'] : null
             ]);
         }

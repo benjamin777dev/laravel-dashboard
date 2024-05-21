@@ -15,8 +15,18 @@
     </div>
 @endif
 <div class="container">
-    <div class="commonFlex">
+    <div class="commonFlex ppipeDiv">
         <p class="ncText">Create new contact</p>
+        <div class="commonFlex ppipeDiv">
+            <p class="pText"></p>
+            <a onclick="createTransaction({{$contact}});">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
+                    </i>
+                    New Transaction
+                </div>
+            </a>
+        </div>
     </div>
     <div class="row">
         <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
@@ -682,5 +692,42 @@
             changeButton.type = "submit";
         }
         return isValid;
+    }
+
+    function createTransaction(contact) {
+        console.log("Onclick");
+        var formData = {
+            "data": [{
+                "Deal_Name": "{{ config('variables.dealName') }}",
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Stage": "Potential",
+                "Client_Name_Primary":contact.first_name+" "+contact.last_name,
+                "Client_Name_Only":contact.first_name+" "+contact.last_name+" || "+contact.zoho_contact_id,
+                "Contact":{
+                    "Name":contact.first_name+" "+contact.last_name,
+                    "id":contact.zoho_contact_id
+                }
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/pipeline/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
     }
 </script>
