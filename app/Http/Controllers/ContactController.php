@@ -407,9 +407,10 @@ class ContactController extends Controller
                 $contactInstance->save();
             }
             // Redirect back with a success message
-            return $contactInstance;
+            return redirect()->back()->with('success','Contact Updated Successfully');
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
+            return redirect()->back()->with('error','!',$e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
 
@@ -502,7 +503,7 @@ class ContactController extends Controller
         $sortType = $request->input('sortType');
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null, $sortType, $contactId, $sortField);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType,  $sortField);
         return response()->json($contactsGroups);
 
     }
@@ -524,14 +525,13 @@ class ContactController extends Controller
         $groups = $db->retrieveGroups($user, $accessToken);
         $tab = request()->query('tab') ?? 'In Progress';
         $users =  $user;
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $filter = null, $sort = null, $contactId);
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.detail', compact('contact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+        return view('contacts.detail', compact('contact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups'));
     }
 
 

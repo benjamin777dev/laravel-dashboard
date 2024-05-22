@@ -1004,14 +1004,14 @@ class DB
         }
     }
 
-    public function retrieveContactGroupsData(User $user, $accessToken, $filter = null, $sortType = null, $contactId, $sortValue = null, $sort = null)
+    public function retrieveContactGroupsData(User $user, $accessToken, $contactId, $filter = null, $sortType = null, $sortValue = null, $sort = null)
     {
         try {
             Log::info("Retrieve Tasks From Database");
             $tasks = ContactGroups::where('ownerId', $user->id)
                 ->with([
                     'groups' => function ($query) use ($contactId, $sortValue, $sortType) {
-                        // Sort the groups only if contact ID is provided
+                        // Sort the groups only if sort value and type are provided
                         if ($sortValue && $sortType) {
                             $query->join('groups', 'contact_groups.groupId', '=', 'groups.id')
                                 ->orderBy('groups.' . $sortValue, $sortType);
@@ -1044,6 +1044,7 @@ class DB
             throw $e;
         }
     }
+
 
 
     public function updateGroups(User $user, $accessToken, $data)
