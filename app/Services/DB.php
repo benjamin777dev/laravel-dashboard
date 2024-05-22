@@ -1184,7 +1184,7 @@ class DB
     public function storeSubmittalsIntoDB($allSubmittals, $userInstance)
     {
         $helper = new Helper();
-        Log::info("Storing NonTm Into Database" . $userInstance['root_user_id']);
+        Log::info("Storing Submittals Into Database" . $userInstance['root_user_id']);
         $filteredsubmittals = $allSubmittals->filter(function ($value, $key) use ($userInstance) {
             return $value['Owner']['id'] == $userInstance['root_user_id'];
         });
@@ -1201,7 +1201,7 @@ class DB
 
         }
 
-        Log::info("NonTm stored into database successfully.");
+        Log::info("Submittals stored into database successfully.");
     }
 
     public function retreiveSubmittals($dealId)

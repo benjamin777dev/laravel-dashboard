@@ -16,6 +16,9 @@
             {{ session('error') }}
         </div>
     @endif
+    <div id="loader" style="display: none;">
+        <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
+    </div>
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
@@ -503,10 +506,8 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    alert(upperCaseMessage);
-                    window.location.reload();
-                } else {
-                    alert("Response or message not found");
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
                 }
             },
             error: function(xhr, status, error) {
