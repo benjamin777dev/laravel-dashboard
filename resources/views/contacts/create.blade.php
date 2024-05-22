@@ -4,7 +4,6 @@
 
 @section('content')
 @vite(['resources/css/custom.css'])
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -16,21 +15,11 @@
     </div>
 @endif
 <div class="container">
-    <div class="commonFlex ppipeDiv">
+    <div class="commonFlex">
         <p class="ncText">Create new contact</p>
-        <div class="commonFlex ppipeDiv">
-            <p class="pText"></p>
-            <a onclick="createTransaction({{$contact}});">
-                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                    </i>
-                    New Transaction
-                </div>
-            </a>
-        </div>
     </div>
     <div class="row">
-        <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
+        <form class="row" action="{{ route('update.contact', ['id' => $contact->zoho_contact_id]) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="col-md-6 col-sm-12"
@@ -532,8 +521,10 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    // window.location.reload();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
                 }
             },
             error: function (xhr, status, error) {
@@ -693,40 +684,4 @@
         return isValid;
     }
 
-    function createTransaction(contact) {
-        console.log("Onclick");
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Stage": "Potential",
-                "Client_Name_Primary":contact.first_name+" "+contact.last_name,
-                "Client_Name_Only":contact.first_name+" "+contact.last_name+" || "+contact.zoho_contact_id,
-                "Contact":{
-                    "Name":contact.first_name+" "+contact.last_name,
-                    "id":contact.zoho_contact_id
-                }
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                console.log(data);
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
 </script>

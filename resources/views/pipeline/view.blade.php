@@ -4,7 +4,7 @@
 
 @section('content')
 @vite(['resources/css/pipeline.css'])
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 <script>
     function editText(zohoID, name, value) {
         event.preventDefault();
