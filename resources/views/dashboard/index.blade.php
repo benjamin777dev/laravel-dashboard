@@ -344,6 +344,7 @@
 
 <script>
     window.fetchData = function(tab = null) {
+        $('#spinner').show();
         // Make AJAX call
         $.ajax({
             url: '{{ url('/get/tasks/for/dashboard') }}',
@@ -352,6 +353,7 @@
                 tab: tab,
             },
             success: function(data) {
+                $('#spinner').hide();
                 $('.task-container').html(data);
 
             },

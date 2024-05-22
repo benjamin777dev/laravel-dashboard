@@ -35,7 +35,6 @@
             </tr>
         </thead>
         <tbody>
-
             @if (count($tasks) > 0)
                 @foreach ($tasks as $task)
                     <tr class="dresponsivetableTr">
