@@ -14,28 +14,30 @@
         </div>
     @endif
     <div class="container">
+        <div class="loader" id="loaderfor" style="display: none;"></div>
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
             <p class="pText">Database</p>
             <div class="commonFlex cpbutton">
-            <a onclick="createContact();">
-                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                    </i>
-                    New Contact
-                </div>
-            </a>
-            <a onclick="createTransaction();">
-                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                    </i>
-                    New Transaction
-                </div>
-            </a>
+                <a onclick="createContact();">
+                    <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
+                        </i>
+                        New Contact
+                    </div>
+                </a>
+                <a onclick="createTransaction();">
+                    <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
+                        </i>
+                        New Transaction
+                    </div>
+                </a>
             </div>
         </div>
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)"/>
+                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
@@ -56,10 +58,10 @@
                             class="ppipelinesorticon"> --}}
                     </div>
                 </div>
-                
+
             </div>
-            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon"
-                        data-bs-toggle="modal" data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
+            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
+                data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
                 Filter
             </div>
         </div>
@@ -79,7 +81,8 @@
                         <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
                         <button type="button" onclick="resetFilters()"
                             class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
-                        <button id="close_btn" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button id="close_btn" type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
 
                     </div>
                     <div class="modal-body filter_model">
@@ -128,8 +131,8 @@
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;
         let count = 1;
-        if(!email && !mobile && !abcd &&count>2 ) return;
-         
+        if (!email && !mobile && !abcd && count > 2) return;
+
         let missingFeild = {
             email: email,
             mobile: mobile,
@@ -143,7 +146,8 @@
     }
 
     function createContact() {
-        console.log("Onclick");
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -178,17 +182,21 @@
             dataType: 'json',
             success: function(data) {
                 console.log(data);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
                 console.error('Error:', error);
             }
         });
     }
 
 
-    
+
 
     function validateFormc(submitClick = '', modId = "") {
         let noteText = document.getElementById("note_text" + modId).value;
@@ -226,36 +234,54 @@
     }
 
 
-    
 
 
-    function filterContactData(sortField="", sortDirection="", searchInput="", filterVal="",missingFeild="") {
-        var searchValuetrim="";
-        if(searchInput){
+
+    function filterContactData(sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
+        "") {
+        var searchValuetrim = "";
+        if (searchInput) {
             searchValuetrim = searchInput?.val().trim();
         }
+        var load = true;
+        setTimeout(() => {
+            document.getElementById("loaderOverlay").style.display = "block";
+            document.getElementById('loaderfor').style.display = "block";
+            load = false;
+            
+        }, 500);
         $.ajax({
             url: '{{ url('/contacts/fetch-contact') }}',
             method: 'GET',
             data: {
                 search: encodeURIComponent(searchValuetrim),
                 filter: filterVal,
-                missingFeild:missingFeild,
+                missingFeild: missingFeild,
 
             },
             success: function(data) {
                 // Select the contact list container
+                if(!load){
+                    document.getElementById("loaderOverlay").style.display = "none";
+                    document.getElementById('loaderfor').style.display = "none";
+
+                }
                 const card = $('.contactlist').html(data);
             },
             error: function(xhr, status, error) {
+                if(!load){
+                    document.getElementById("loaderOverlay").style.display = "none";
+                    document.getElementById('loaderfor').style.display = "none";
+
+                }
                 console.error('Error:', error);
             }
         });
     }
 
-    
 
-    
+
+
 
     function fetchContact(e, sortField, sortDirection) {
         const searchInput = $('#contactSearch');
@@ -278,7 +304,7 @@
         filterContactData(sortField, sortDirection, searchInput, filterVal);
     }
 
-    
+
 
     function resetFilters() {
         document.getElementById('filterEmail').checked = false;
@@ -287,24 +313,25 @@
         applyFilter();
     }
 
-    
+
 
     // function taskCreate(event,conId){
     //     event.preventDefault(); // Prevent the default action  
     // }
-   
 
-    
+
+
 
     function formatSentence(sentence) {
         // Convert the first character to uppercase and the rest to lowercase
         return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
     }
 
-    
 
-     function createTransaction() {
-        console.log("Onclick");
+
+    function createTransaction() {
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
         var formData = {
             "data": [{
                 "Deal_Name": "{{ config('variables.dealName') }}",
@@ -331,10 +358,14 @@
             dataType: 'json',
             success: function(data) {
                 console.log(data);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
                 console.error('Error:', error);
             }
         });

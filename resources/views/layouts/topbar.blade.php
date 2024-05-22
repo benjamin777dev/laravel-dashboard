@@ -456,6 +456,7 @@
     let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
     let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
     let main_content = document.getElementsByClassName("main-content")[0];
+    console.log(main_content,'main_content')
     
     // Toggle the width of navbar-brand-box
     if (navbarBox.style.width === "0%") {

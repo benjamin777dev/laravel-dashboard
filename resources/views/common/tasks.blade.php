@@ -9,7 +9,7 @@
      var modalSelectMaptsk = []
      taskIDSS.forEach((id) => {
         modalSelectMaptsk.push({
-                modalID: '',
+                modalID: id,
                 selectElementId: 'related_to_rem' + id
             })
         });
@@ -20,7 +20,6 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdownForId(modalID, selectElement);
         });
-        console.log(modalSelectMaptsk, 'ids')
 </script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
@@ -35,6 +34,7 @@
             </tr>
         </thead>
         <tbody>
+          
             @if (count($tasks) > 0)
                 @foreach ($tasks as $task)
                     <tr class="dresponsivetableTr">
@@ -50,27 +50,20 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
+                                <select onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')" class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
                                 id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
                             @if ($task['related_to'] == 'Contacts')
-                                <option value="{{ $task['contactData']['zoho_contact_id'] ?? '' }}" selected>
-                                    {{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? 'Please select' }}
+                                <option value="{{ $task->contactData->zoho_contact_id ?? '' }}" selected>
+                                    {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'Please Select' }}
                                 </option>
                             @elseif ($task['related_to'] == 'Deals')
-                                <option value="{{ $task['dealData']['zoho_deal_id'] ?? '' }}" selected>
-                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
+                                <option value="{{ $task->dealData->zoho_deal_id ?? '' }}" selected>
+                                    {{ $task->dealData->deal_name ?? 'Please select' }}
                                 </option>
                             @else
                                 <option value="" selected>Please select</option>
                             @endif
                         </select>
-
-                                <select class="form-select dmodaltaskSelect" id="taskSelect"
-                                    onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                                    name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                                    style="display: none;">
-                                    <option value="">Please Select</option>
-                                </select>
                             </div>
                         </td>
                         <td>
@@ -99,7 +92,7 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
-                                            {{-- <h5 class="modal-title">Modal title</h5> 
+                                             <h5 class="modal-title">Modal title</h5> 
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -135,8 +128,8 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
-                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            <h5 class="modal-title">Modal title</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -156,7 +149,7 @@
 
                                     </div>
                                 </div>
-                            </div> --}}
+                            </div>
                                             <div class="modal fade" id="savemakeModalId{{ $task['id'] }}"
                                                 tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -192,7 +185,11 @@
                 @endforeach
             @else
                 <tr>
-                    <td class="text-center" colspan="12">No records found</td>
+                    
+                    <td class="text-center" colspan="12">No records found
+                        <div id="spinner" class="spinner_task" style="display: none;">
+                        </div>
+                    </td>
                 </tr>
             @endif
 
@@ -213,7 +210,7 @@
                     <div class="btn-group dcardsselectdiv">
                         <p class="dcardsTransactionText">Transaction Related</p>
                         <select class="form-select" id="related_to_rem_card{{ $task['id'] }}"
-                            onclick="getModule('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
+                            onclick="testFun('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
                             name="related_to_rem{{ $task['id'] }}">
                             @if ($task['related_to'] == 'Contacts')
                                 <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
@@ -227,12 +224,6 @@
                             @else
                                 <option value="" selected>Please select</option>
                             @endif
-                        </select>
-                        <select class="form-select dmodaltaskSelect" id="taskSelectcard{{ $task['id'] }}"
-                            onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                            style="display: none;">
-                            <option value="">Please Select</option>
                         </select>
                     </div>
                     <div class="dcardsdateinput">
@@ -322,125 +313,6 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
-
-        var selectElement;
-        var ids = [];
-        @if ($tasks)
-            @foreach ($tasks as $task)
-                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to 
-                ids.push(idsss);
-            @endforeach
-        @endif
-        const modalSelectMap = []
-        ids.forEach((id) => {
-            modalSelectMap.push({
-                modalID: '',
-                selectElementId: 'related_to_rem' + id
-            })
-        });
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdownForId(modalID, selectElement);
-        });
-        console.log(ids, 'ids')
-        //     let selectedval = selectElement.val();
-        //     var selectedText = selectElement.find('option:selected').text();
-        //     // selectElement.empty();
-        //     // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
-        //     taskArr.forEach(function(state) {
-        //         var optgroup = selectElement.find('optgroup[label="' + state.text + '"]');
-        //         if (optgroup.length === 0) {
-        //             optgroup = $('<optgroup>', {
-        //                 label: state.text
-        //             });
-        //             selectElement.append(optgroup);
-        //         }
-
-        //         var count = 0; // Counter to track the number of records appended for each label
-
-        //         if (state.text === "Contacts") {
-        //             state.children.forEach(function(contact) {
-        //                 if (count < 5) { // Limit the number of records appended to 5
-        //                     optgroup.append($('<option>', {
-        //                         value: contact.zoho_contact_id,
-        //                         text: (contact.first_name) + " " + (
-        //                             contact.last_name ?? "")
-        //                     }));
-        //                     if (selectedText && contact.first_name + ' ' + contact
-        //                         .last_name === selectedText) {
-        //                         console.log(selectedText, contact.first_name + contact
-        //                             .last_name, 'jjjjjjj++++++++++++')
-        //                         option.attr('selected');
-        //                     }
-        //                     count++;
-        //                 }
-        //             });
-        //         }
-
-        //         if (state.text === "Deals") {
-        //             state.children.forEach(function(deal) {
-        //                 if (count < 5) { // Limit the number of records appended to 5
-        //                     optgroup.append($('<option>', {
-        //                         value: deal.zoho_deal_id,
-        //                         text: deal.deal_name,
-        //                     }));
-        //                     if (selectedText && deal.deal_name === selectedText) {
-        //                         console.log(selectedText, contact.first_name + contact
-        //                             .last_name, 'jjjjjjj++++++++++++')
-        //                         option.attr('selected');
-        //                     }
-        //                     count++;
-        //                 }
-        //             });
-        //         }
-        //     });
-
-
-        //     selectElement.select2({
-        //         theme: 'bootstrap-5',
-        //     });
-
-        //     selectElement.next(".select2-container").addClass("form-select");
-        //     $(selectElement).on("change", function() {
-        //         console.log(this, 'vthisthisthisthisthis')
-        //         var selectedValue = $(this).val();
-        //         var selectedText = $(this).find(':selected').text();
-        //         var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
-        //         console.log("Selected value:", selectedValue);
-        //         console.log("Selected text:", selectedText);
-        //         console.log("Optgroup label:", id, optgroupLabel);
-        //         var WhoID;
-        //         var WhatSelectoneID;
-        //         if (optgroupLabel === "Contacts") {
-        //             WhoID = selectedValue;
-        //         }
-        //         if (optgroupLabel === "Deals") {
-        //             WhatSelectoneID = selectedValue;
-        //         }
-        //         updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
-
-        //     });
-        //     $(selectElement).on("select2:open", function() {
-        //         let timer; // Variable to hold the timer
-
-        //         $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
-        //             function(e) {
-        //                 // This function will be triggered when the user types into the Select2 input
-        //                 clearTimeout(timer); // Clear the previous timer
-        //                 let search = $(this).val();
-        //                 timer = setTimeout(() => {
-        //                     console.log("User has finished typing:", $(this).val());
-        //                     updateTaskArr(id, search, selectedText);
-        //                     // Perform any actions you need here
-        //                 }, 250); // Set timer to execute after 250ms
-        //             });
-        //     });
-
-
-        // })
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {
@@ -522,6 +394,142 @@
         });
     }
 
+    function triggerCheckbox(checkboxid) {
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var allChecked = true;
+        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+        var anyChecked = false;
+        checkboxes.forEach(function(checkbox) {
+            if (!checkbox.checked) {
+                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+            } else {
+                anyChecked = true;
+            }
+        });
+
+        if (anyChecked) {
+            updateColor.style.backgroundColor = "#222"; // Checked color
+        } else {
+            updateColor.style.backgroundColor = "#dfdfdf"; // Unchecked color
+        }
+        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+    }
+
+    function removeAllSelected() {
+        // Select all checkboxes
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var ids = ""; // Initialize ids variable to store concatenated IDs
+        // Iterate through each checkbox
+        checkboxes.forEach(function(checkbox) {
+            // console.log(checkboxes,'checkboxes')
+            // Check if the checkbox is checked
+            if (checkbox.checked) {
+                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
+                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
+                    "checkbox_all") {
+                    // Concatenate the checkbox ID with a comma
+                    ids += checkbox.id + ",";
+                    document.getElementById("removeBtn").style.backgroundColor = "#222;"
+                }
+            }
+        });
+
+        // Remove the trailing comma
+        if (ids !== "") {
+            ids = ids.replace(/,+(?=,|$)/g, "");
+        }
+
+        return ids;
+    }
+
+                     
+
+    function deleteTask(id, isremoveselected = false) {
+        let updateids = removeAllSelected();
+        if (updateids === "" && id === 'remove_selected') {
+            return;
+        }
+        if (isremoveselected) {
+            id = undefined;
+        }
+       
+        if (updateids !== "") {
+            if (saveDataaaa()) {
+                console.log("yes delete");
+
+            } else {
+                console.log("dfshdfjkshd")
+                return;
+            }
+        }
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        console.log(ids,'idssssss');
+        return;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText)
+                    }
+                })
+
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+    }
+  
+    function toggleAllCheckboxes() {
+        // console.log("yes it")
+        let state = false;
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            // Set the state of each checkbox based on the state of the "checkbox_all"
+            checkbox.checked = allCheckbox.checked;
+            if (checkbox.checked) {
+
+                state = true;
+
+            } else {
+                state = false;
+            }
+        });
+        if (state) {
+            updateColor.style.backgroundColor = "#222";
+        } else {
+
+            updateColor.style.backgroundColor = "#dfdfdf";
+        }
+    }
 
     function format(state) {
         if (!state.id) return state.text; // optgroup
@@ -535,13 +543,9 @@
                 var related_to_rem1 = document.getElementsByName("related_to_rem" + id)[1].value;
                 related_to_rem = related_to_rem1;
             }
-            var WhatSelectoneid = document.getElementsByName("related_to_parent" + id)[0].value;
-            if (!WhatSelectoneid) {
-                var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
-                WhatSelectoneid = WhatSelectoneid1;
-            }
+            console.log(window.groupLabel,'window.groupLabelwindow.groupLabel')
 
-            updateText(related_to_rem, textfield, id, WhatSelectoneid);
+            updateText(related_to_rem, textfield, id, WhatSelectoneid="");
         }
     }
 
@@ -553,13 +557,24 @@
             textElement = document.getElementById(textid);
             //For Table data                
             var text = textElement.textContent.trim();
-            textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
+            let isEditable=true;
+           
+            var newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.id = 'editableInput'+ id;
+            newInput.value = text;
+            textElement.parentNode.replaceChild(newInput, textElement);
 
-            let inputElementmake = document.getElementById('editableInput' + textid + id);
+            let inputElementmake = document.getElementById('editableInput' + id);
             inputElementmake.focus();
-            inputElementmake.addEventListener('change', function() {
-                textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
-                    inputElementmake.value + '</p>';
+            inputElementmake.addEventListener('blur', function() {
+                    var newParagraph = document.createElement('p');
+                    newParagraph.id = 'editableText' + id;
+                    newParagraph.textContent = inputElementmake.value;
+
+                // Replace textElement with the new paragraph element
+                inputElementmake.parentNode.replaceChild(newParagraph, inputElementmake);
+               
                 updateText(inputElementmake.value, textfield, zohoID);
             });
         }
@@ -569,6 +584,11 @@
             var text = dateLocal.value.trim();
             updateText(text, textfield, zohoID);
         }
+        if(textfield==="relatedTo"){
+            let relatedTO = document.getElementById("related_to_rem"+id);
+
+            
+        } 
     }
 
     function convertDateTime(dateTimeString) {
@@ -623,64 +643,66 @@
         return formattedDate;
     }
 
-    function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
-        let inputElementtext;
-        let dateLocal;
-        if (textfield === "subject") {
-            inputElementtext = document.getElementById('editableText' + id);
-        } else if (textfield === "date") {
-            dateLocal = document.getElementById('date_local' + id);
-            console.log(dateLocal, newText, 'checlout');
-            dateLocal = dateLocal?.substring(0, 10);
-            newText = newText?.substring(0, 10);
-        } else {
 
-        }
-        if (newText == "") {
-            showToastError("Empty text feild");
-            return;
-        }
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        var formData = {
-            "data": [{
-                "Subject": textfield === "subject" ? newText : inputElementtext?.value,
-                "Due_Date": textfield === "date" ? newText : dateLocal?.value,
-                "What_Id": WhatSelectoneid ? {
-                    "id": WhatSelectoneid
-                } : undefined,
-                "Who_Id": whoID ? {
-                    "id": whoID
-                } : undefined,
-                "$se_module": textfield === "deals" || newText === "Deals" || newText === "Contacts" ?
-                    newText : undefined,
-            }]
-        };
-        // Filter out undefined values
-        formData.data[0] = Object.fromEntries(
-            Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
-        );
-        // console.log("ys check ot")
-        $.ajax({
-            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-            method: 'PUT',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                // Handle success response
-                showToast(response?.data[0]?.message.toUpperCase());
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                showToastError(error);
-                console.error(xhr.responseText, 'errrorroororooro');
-            }
-        })
+    function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
+    let inputElementtext;
+    let dateLocal;
+    if (textfield === "subject") {
+        inputElementtext = document.getElementById('editableText' + id);
+    } else if (textfield === "date") {
+        dateLocal = document.getElementById('date_local' + id);
+        console.log(dateLocal, newText, 'checlout');
+        dateLocal = dateLocal?.substring(0, 10);
+        newText = newText?.substring(0, 10);
+    } else {
+        
     }
+ 
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+   console.log(newText,'sjdhfjksdgfk')
+    var formData = {
+        "data": [{
+            "Subject": textfield === "subject" ? newText : inputElementtext?.value,
+            "Due_Date": textfield === "date" ? newText : dateLocal?.value,
+            "What_Id": WhatSelectoneid ? {
+                "id": WhatSelectoneid
+            } : undefined,
+            "Who_Id": whoID ? {
+                "id": whoID
+            } : undefined,
+            "$se_module": textfield === "Deals" || newText === "Deals" || newText === "Contacts" ?
+                newText : undefined,
+        }]
+    };
+    // Filter out undefined values
+    formData.data[0] = Object.fromEntries(
+        Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+    );
+    // console.log("ys check ot")
+    $.ajax({
+        url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+        method: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            // Handle success response
+            showToast(response?.data[0]?.message.toUpperCase());
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            showToastError(error);
+            console.error(xhr.responseText, 'errrorroororooro');
+        }
+    })
+}
+
+    
 
     // function moduleSelected(selectedModule, id = "") {
     //     // console.log(accessToken,'accessToken')

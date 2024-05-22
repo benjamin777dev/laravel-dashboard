@@ -8,7 +8,7 @@
             <div class="d-flex justify-content-between">
                 <p class="dFont800 dFont15">Tasks</p>
                 <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"><i class="fas fa-plus plusicon">
+                    data-bs-toggle="modal" data-bs-target="#staticBackdropforTask"><i class="fas fa-plus plusicon">
                     </i>
                     New Task
                 </div>
@@ -17,16 +17,17 @@
             <div class="row">
                 <nav class="dtabs">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a href="/task?tab=In Progress"> <button class="nav-link dtabsbtn active" id="nav-home-tab"
-                                data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress' type="button"
-                                role="tab" aria-controls="nav-home" aria-selected="true">In
-                                Progress</button></a>
-                        <a href="/task?tab=Not Started"> <button class="nav-link dtabsbtn" data-tab='Not Started'
-                                id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button"
-                                role="tab" aria-controls="nav-profile" aria-selected="false">Upcoming</button></a>
-                        <a href="/task?tab=Completed"><button class="nav-link dtabsbtn" data-tab='Completed'
-                                id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button"
-                                role="tab" aria-controls="nav-contact" aria-selected="false">Overdue</button></a>
+                        <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
+                            aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
+                            Progress</button>
+                        <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
+                            data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
+                            aria-controls="nav-profile" aria-selected="false"
+                            onclick="fetchData('Not Started')">Upcoming</button>
+                        <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                            aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
                     </div>
                 </nav>
                 @include('common.tasks', ['tasks' => $tasks, 'retrieveModuleData' => $retrieveModuleData])
@@ -70,49 +71,7 @@
         </div> --}}
     </div>
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" id="subject" rows="4" class="dtextarea"></textarea>
-                    <div id="task_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-
-                        <select class="form-select dmodaltaskSelect" id="related_to" onchange="moduleSelected(this)"
-                            name="related_to" aria-label="Select Transaction">
-                            <option value="">Please select one</option>
-                            @foreach ($retrieveModuleData as $item)
-                                @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                    <option value="{{ $item['api_name'] }}">{{ $item['api_name'] }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <input type="text" id="searchInput" placeholder="Search..." style="display: none;">
-                        <select class="form-select dmodaltaskSelect" id="taskSelect" name="related_to_parent"
-                            aria-label="Select Transaction" style="display: none;">
-                            <option value="">Please Select one</option>
-                        </select>
-                    </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addTask()" class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('common.tasks.create')
     {{-- save Modal --}}
     <div class="modal fade" id="saveModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -161,7 +120,7 @@
                 localStorage.setItem('activeTab', this.getAttribute('href'));
             });
         });
-    });
+        });
 
     window.selectedTransation;
 
@@ -258,6 +217,28 @@
         }
     }
 
+    window.fetchData = function(tab = null) {
+        $('#spinner').show();
+        // Make AJAX call
+        $.ajax({
+            url: '{{ url('/get/tasks/for/dashboard') }}',
+            method: 'GET',
+            data: {
+                tab: tab,
+            },
+            success: function(data) {
+                $('#spinner').hide();
+                $('.dresponsivetable').html(data);
+
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+
+    }
+
     function triggerCheckbox(checkboxid) {
         let updateColor = document.getElementById("removeBtn");
         var allCheckbox = document.getElementById('checkbox_all');
@@ -294,6 +275,9 @@
         }
     }
 
+    const ui = {
+  confirm: async (message) => createConfirm(message)
+}
     function deleteTask(id, isremoveselected = false) {
         let updateids = removeAllSelected();
         if (updateids === "" && id === 'remove_selected') {
@@ -304,7 +288,7 @@
         }
 
         if (updateids !== "") {
-            if (showConfirmation()) {
+            if (save()) {
 
             } else {
                 return;
@@ -315,6 +299,7 @@
         }
         //remove duplicate ids
         ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        return;
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -497,69 +482,5 @@
         inputElement.addEventListener('blur', function() {
             updateText(inputElement.value);
         });
-    }
-
-    function moduleSelected(selectedModule, accessToken) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        //    var id = '{{ request()->route('id') }}'; 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-
-            success: function(response) {
-                // Handle successful response
-                console.log("task");
-                var tasks = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelect');
-                // Clear existing options
-                taskSelect.empty();
-                // Populate select options with tasks
-                $.each(tasks, function(index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
-                    }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: task?.first_name ?? '' + ' ' + task?.last_name ?? ''
-                        }));
-                    }
-                });
-
-                new TomSelect("#taskSelect", {
-                    create: false,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    }
-                });
-                
-                taskSelect.show();
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
     }
 </script>
