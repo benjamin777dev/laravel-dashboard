@@ -4,7 +4,7 @@
 
 @section('content')
     @vite(['resources/css/pipeline.css'])
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 <script>
     function updateText(newText) {
         //  textElement = document.getElementById('editableText');
@@ -271,6 +271,29 @@
                             <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
                         </select>
                     </div>
+
+                    <div class="col-md-6">
+                        <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="transactionOwner" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="tmPreference" required value = "{{$deal['tm_preference']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tmName" class="form-label nplabelText">TM Name</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="tmName" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="contactName" class="form-label nplabelText">Contact Name</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="contactName" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+
+
                 </form>
             </div>
             <div class="col-md-6 col-sm-12"
@@ -284,7 +307,7 @@
                         <div class="error-message" id="error-message-7">Please enter commission.</div>
                     </div>
                     <div class="col-md-6">
-                        <label for="commissionflat" class="form-label nplabelText">Commission_Flat_Fee</label>
+                        <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
                         <input type="text" class="form-control npinputinfo" id="commissionflat" required
                             value="{{ $deal['commission_flat_free'] }}">
                     </div>

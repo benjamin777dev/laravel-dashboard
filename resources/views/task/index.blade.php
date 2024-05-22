@@ -138,7 +138,7 @@
         </div>
     </div>
 @endsection
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.nav-link');

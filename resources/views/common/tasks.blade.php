@@ -277,8 +277,8 @@
         @include('common.pagination', ['module' => $tasks])
     </div>
 @endif
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
-<script  src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
+@vite(['resources/js/toast.js'])
+@vite(['resources/js/dropdown.js'])
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
