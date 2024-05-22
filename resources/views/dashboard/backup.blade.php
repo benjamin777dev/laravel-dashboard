@@ -934,4 +934,4 @@
         });
     }
 </script>
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
+@vite(['resources/js/dashboard.js'])

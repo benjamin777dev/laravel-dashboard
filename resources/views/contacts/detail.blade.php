@@ -4,7 +4,7 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 
     @if (session('success'))
         <div class="alert alert-success">

@@ -407,10 +407,9 @@ class ContactController extends Controller
                 $contactInstance->save();
             }
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Contact Updated successfully!');
+            return $contactInstance;
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error', '!' . $e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
 
@@ -520,6 +519,7 @@ class ContactController extends Controller
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
+        Log::info('CONTACTIDDATA'.$contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         $groups = $db->retrieveGroups($user, $accessToken);
         $tab = request()->query('tab') ?? 'In Progress';
