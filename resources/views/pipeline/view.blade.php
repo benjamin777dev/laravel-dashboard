@@ -30,161 +30,6 @@
         });
     }
 
-    
-
-    function updateDataDeal(dealId) {
-        console.log(dealId);
-        let isValid =true
-        // Retrieve values from form fields
-        var client_name_primary = $('#validationDefault01').val();
-        var representing = $('#validationDefault02').val();
-        var deal_name = $('#validationDefault03').val();
-        var stage = $('#validationDefault04').val();
-        var sale_price = $('#validationDefault05').val();
-        var closing_date = $('#validationDefault06').val();
-        var address = $('#validationDefault07').val();
-        var city = $('#validationDefault08').val();
-        var state = $('#validationDefault09').val();
-        var zip = $('#validationDefault10').val();
-        var commission = $('#validationDefault11').val();
-        var commission_flat_free = $('#commissionflat').val();
-        var property_type = $('#validationDefault12').val();
-        var ownership_type = $('#validationDefault13').val();
-        var potential_gci = $('#validationDefault14').val();
-        var pipeline_probability = $('#validationDefault15').val();
-        var probable_gci = $('#validationDefault16').val();
-        var personal_transaction = $('#flexCheckChecked01').prop('checked');
-        var double_ended = $('#flexCheckChecked02').prop('checked');
-        var review_gen_opt_out = $('#flexCheckChecked03').prop('checked');
-         if (client_name_primary === '') {
-                console.log("Client name value",client_name_primary);
-                document.getElementById('error-message-1').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-1').style.display = 'none';
-            }
-            if (representing === '') {
-                document.getElementById('error-message-2').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-2').style.display = 'none';
-            } 
-            if (deal_name === '') {
-                document.getElementById('error-message-3').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-3').style.display = 'none';
-            } 
-            if (stage === '') {
-                document.getElementById('error-message-4').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-4').style.display = 'none';
-            } 
-            if (sale_price === '') {
-                document.getElementById('error-message-5').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-5').style.display = 'none';
-            } 
-            if (closing_date === '') {
-                document.getElementById('error-message-6').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-6').style.display = 'none';
-            } 
-            if (commission === '') {
-                document.getElementById('error-message-7').style.display = 'block';
-                isValid = false
-            }else {
-                document.getElementById('error-message-7').style.display = 'none';
-            } 
-            if(stage === 'Under Contract'){
-                if (address === '') {
-                    document.getElementById('error-message-12').style.display = 'block';
-                    isValid = false
-                }else {
-                document.getElementById('error-message-12').style.display = 'none';
-            }
-                if (city === '') {
-                    document.getElementById('error-message-11').style.display = 'block';
-                    isValid = false
-                }else {
-                document.getElementById('error-message-11').style.display = 'none';
-            } 
-                if (state === '') {
-                    document.getElementById('error-message-10').style.display = 'block';
-                    isValid = false
-                }else {
-                document.getElementById('error-message-10').style.display = 'none';
-            } 
-                if (zip === '') {
-                    document.getElementById('error-message-9').style.display = 'block';
-                    isValid = false
-                }else {
-                document.getElementById('error-message-9').style.display = 'none';
-            } 
-                if (property_type === '') {
-                    document.getElementById('error-message-8').style.display = 'block';
-                    isValid = false
-                }else {
-                document.getElementById('error-message-8').style.display = 'none';
-            } 
-            }
-        if(isValid == true){
-        // Create formData object
-        var formData = {
-            "data": [{
-                "Client_Name_Primary": client_name_primary,
-                "Representing": representing,
-                "Deal_Name": deal_name,
-                "Stage": stage,
-                "Sale_Price": sale_price,
-                "Closing_Date": closing_date,
-                "Address": address,
-                "City": city,
-                "State": state,
-                "Zip": zip,
-                "Commission": commission,
-                "Commission_Flat_Free":commission_flat_free
-                "Property_Type": property_type,
-                "Ownership_Type": ownership_type,
-                "Potential_GCI": potential_gci,
-                "Pipeline_Probability": pipeline_probability,
-                "Pipeline1": probable_gci,
-                "Personal_Transaction": personal_transaction,
-                "Double_Ended": double_ended
-                "Review_Gen_Opt_Out":review_gen_opt_out
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        console.log("formData", formData, dealId);
-
-        // Send AJAX request
-        $.ajax({
-            url: "{{ route('pipeline.update', ['dealId' => ':id']) }}".replace(':id', dealId),
-            type: 'PUT',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response?.data && response.data[0]?.message) {
-                    // Convert message to uppercase and then display
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    // window.location.reload();
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        })
-    }
-    }
 </script>
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
@@ -195,14 +40,14 @@
                 <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                 Delete
             </div>--}}
-            
-                <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#" onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
-                    <img src="{{ URL::asset('/images/edit.svg') }}" alt="Edit">
+            <a onclick="updateDataDeal('{{$deal['zoho_deal_id']}}')">
+                <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton"
+                    data-bs-toggle="modal" data-bs-target="#"><i
+                        class="fas fa-edit">
+                    </i>
                     Update
                 </div>
-                
-            
+            </a>
         </div>
     </div>
     <div class="row">
@@ -256,38 +101,32 @@
                     <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                     {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
                         id="validationDefault01" required value="{{ $deal['client_name_primary'] }}">--}}
-                    <select type="text"  placeholder="Enter Client’s name" class="form-select npinputinfo" id="validationDefault01" required>
-                            <option value="">Select</option>
-                            @foreach($contacts as $contact)
-                                <option value="{{$contact}}" 
-                                    {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
-                                    {{$contact['first_name']}} {{$contact['last_name']}}
-                                </option>
-
-                            @endforeach
-                        </select>
-                        <div class="error-message" id="error-message-1">Please select a client name.</div>
+                    <select type="text" placeholder="Enter Client’s name" class="form-select npinputinfo validate" id="validationDefault01" required>
+                                @foreach($contacts as $contact)
+                                    <option value="{{$contact}}" {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
+                                        {{$contact['first_name']}} {{$contact['last_name']}}
+                                    </option>
+                                @endforeach
+                            </select>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault02" class="form-label nplabelText">Representing</label>
-                    <select class="form-select npinputinfo" id="validationDefault02" required>
+                    <select class="form-select npinputinfo validate" id="validationDefault02" required>
                         <option value="">Select</option>
                         <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
                         <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
                         </option>
                     </select>
-                    <div class="error-message" id="error-message-2">Please select a representing.</div>
                 </div>
 
                 <div class="col-md-6">
                     <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
-                    <input type="text" class="form-control npinputinfo" placeholder="Transaction Name"
+                    <input type="text" class="form-control npinputinfo validate" placeholder="Transaction Name"
                         id="validationDefault03" required value="{{ $deal['deal_name'] }}">
-                         <div class="error-message" id="error-message-3">Please enter transaction name.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault04" class="form-label nplabelText">Stage</label>
-                    <select class="form-select npinputinfo" id="validationDefault04" required>
+                    <select class="form-select npinputinfo validate" id="validationDefault04" required onchange="checkValidate()">
                         <option value="">Select</option>
                         @foreach ($allStages as $stage)
                             <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
@@ -295,31 +134,26 @@
                             </option>
                         @endforeach
                     </select>
-                    <div class="error-message" id="error-message-4">Please select stage.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
-                    <input type="text" class="form-control npinputinfo"
+                    <input type="text" class="form-control npinputinfo validate"
                         id="validationDefault05" required value="{{ $deal['sale_price'] }}">
-                        <div class="error-message" id="error-message-5">Please enter sale price.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
-                    <input type="date" class="form-control npinputinfo" id="validationDefault06" required
+                    <input type="date" class="form-control npinputinfo validate" id="validationDefault06" required
                         value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
-                        <div class="error-message" id="error-message-6">Please select closing date.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault07" class="form-label nplabelText">Address</label>
                     <input type="text" class="form-control npinputinfo" 
                         id="validationDefault07" required value="{{ $deal['address'] }}">
-                        <div class="error-message" id="error-message-12">Please enter address.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault08" class="form-label nplabelText">City</label>
                     <input type="text" class="form-control npinputinfo" 
                         id="validationDefault08" required value="{{ $deal['city'] }}">
-                        <div class="error-message" id="error-message-11">Please enter city.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault09" class="form-label nplabelText">State</label>
@@ -329,13 +163,11 @@
                     </select> --}}
                     <input type="text" class="form-control npinputinfo" 
                         id="validationDefault09" required value="{{ $deal['state'] }}">
-                        <div class="error-message" id="error-message-10">Please enter state.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
                     <input type="text" class="form-control npinputinfo" id="validationDefault10"
                         required value="{{ $deal['zip'] }}">
-                        <div class="error-message" id="error-message-9">Please enter zip code.</div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
@@ -349,7 +181,6 @@
                         </option>
                         <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
                     </select>
-                    <div class="error-message" id="error-message-8">Please select property type.</div>
                 </div>
 
                 <div class="col-md-6">
@@ -371,12 +202,11 @@
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
-                    <input type="text" class="form-control npinputinfo" id="validationDefault11" required
+                    <input type="text" class="form-control npinputinfo validate" id="validationDefault11" required
                         value="{{ $deal['commission'] }}">
-                        <div class="error-message" id="error-message-7">Please select property type.</div>
                 </div>
                 <div class="col-md-6">
-                    <label for="commissionflat" class="form-label nplabelText">Commission_Flat_Fee</label>
+                    <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
                     <input type="text" class="form-control npinputinfo" id="commissionflat" required
                         value="{{ $deal['commission_flat_free'] }}">
                 </div>

@@ -116,7 +116,7 @@ class User extends Authenticatable
         } else {
             Log::error("Error refreshing access token: " . $response);
             // redirect back to oauth process
-            redirect('/auth/callback');
+            return redirect('/auth/callback');
         }
 
         // Handle failed refresh here, like logging and redirecting to OAuth flow

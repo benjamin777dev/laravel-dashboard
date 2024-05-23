@@ -407,10 +407,10 @@ class ContactController extends Controller
                 $contactInstance->save();
             }
             // Redirect back with a success message
-            return redirect()->back()->with('success','Contact Updated Successfully');
+            return redirect()->back()->with('success', 'Contact Updated successfully!');
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error','!',$e->getMessage());
+            return redirect()->back()->with('error', '!' . $e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
 

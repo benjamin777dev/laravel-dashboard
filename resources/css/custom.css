@@ -2595,12 +2595,10 @@ body[data-sidebar="dark"] .navbar-brand-box {
     z-index: 0 !important;
     height:40px !important;    
 }
-.error-message {
-    color: red;
-    font-size: 0.875em;
-    margin-top: 0.5em;
-    display: none;
+.validate {
+    border-left: 4px solid red;
 }
+
 
 .loader-overlay {
     position: fixed;
