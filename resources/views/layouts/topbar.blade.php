@@ -456,8 +456,7 @@
     let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
     let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
     let main_content = document.getElementsByClassName("main-content")[0];
-    
-    // Toggle the width of navbar-brand-box
+       // Toggle the width of navbar-brand-box
     if (navbarBox.style.width === "0%") {
         navbarBox.style.width = "250px"; // Change this to the desired width
     } else {
@@ -470,39 +469,16 @@
     } else {
         verticalMenu.style.width = "0%";
     }
+    if (main_content.classList.contains("margin-class")) {
+        main_content.style.marginLeft = "250px";
+        main_content.classList.remove("margin-class");
+    } else {
+        main_content.style.marginLeft = "unset";
+        main_content.classList.add("margin-class");
+    }
 
-    const containerClasses = [
-        "container",
-        "container-lg",
-        "container-md",
-        "container-sm",
-        "container-xl",
-        "container-xxl"
-    ];
-
-    // Default and toggled max-width values
-    const defaultMaxWidth = "";
-    const toggledMaxWidth = "1500px";
-    let marginleft = "margin-left:unset;";
-    let defaultMleft = "margin-left:250px;";
-
-    // Loop through each class and toggle the max-width
-    containerClasses.forEach(containerClass => {
-        let elements = document.getElementsByClassName(containerClass);
-        for (let i = 0; i < elements.length; i++) {
-            let element = elements[i];
-            if (element.style.maxWidth === toggledMaxWidth) {
-                element.style.maxWidth = defaultMaxWidth;
-                main_content.style = defaultMleft;
-            } else {
-                element.style.maxWidth = toggledMaxWidth;
-                main_content.style = marginleft;
-            }
-        }
-    });
-
-
-    console.log(navbarBox.style.width, verticalMenu.style.width);
+    console.log(main_content, 'main content');
 }
+
 
 </script>

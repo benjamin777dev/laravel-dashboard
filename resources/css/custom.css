@@ -525,6 +525,59 @@
     border-radius: 50%;
     /* cursor: pointer; */
 }
+/* Tooltip container */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin: 5px;
+}
+
+/* Tooltip text */
+.tooltip-wrapper .tooltiptext {
+    visibility: hidden;
+    width: max-content; /* Adjust as needed */
+    max-width: 200px; /* Maximum width for responsiveness */
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: calc(100% + 5px); /* Adjust vertical position */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0s linear 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip-wrapper .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when hovering over the tooltip container */
+.tooltip-wrapper:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s, visibility 0s;
+}
+
+/* Style for the images */
+.datadiversityicon {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
+}
+
+
 
 /* / / / Note Modal / / / */
 .noteModal {
@@ -1329,6 +1382,8 @@
 
 .ppiplinecommonIcon {
     cursor: pointer;
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
 }
 
 .pstatusText {
@@ -2595,12 +2650,10 @@ body[data-sidebar="dark"] .navbar-brand-box {
     z-index: 0 !important;
     height:40px !important;    
 }
-.error-message {
-    color: red;
-    font-size: 0.875em;
-    margin-top: 0.5em;
-    display: none;
+.validate {
+    border-left: 4px solid red;
 }
+
 
 .loader-overlay {
     position: fixed;
@@ -2619,8 +2672,8 @@ body[data-sidebar="dark"] .navbar-brand-box {
     left: 50%;
     top: 50%;
     z-index: 1001; /* ensure it's above the overlay */
-    width: 120px;
-    height: 120px;
+    width: 90px;
+    height: 90px;
     margin: -60px 0 0 -60px; /* adjust margin to center correctly */
     border: 16px solid #f3f3f3;
     border-radius: 50%;
@@ -2682,4 +2735,38 @@ body[data-sidebar="dark"] .navbar-brand-box {
     display: none;
     text-align: center;
   }
+  .spinner_task {
+    width: 30px;
+    height: 30px;
+  
+    border: 9px solid #0000001a;
+    border-radius: 50%;
+    border-right-color: #222;
+  
+    animation: spin 1s ease infinite;
+  }
+
+  .form-question {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 0 3rem;
+    min-height: 3rem;
+  }
+  .input-container {
+    border-bottom: solid 2px #333333;
+  }
+  .input-container input {
+    border: none;
+    box-sizing: border-box;
+    outline: 0;
+    padding: .75rem;
+    width: 100%;
+  }
+
+
+
+  
+
+
   

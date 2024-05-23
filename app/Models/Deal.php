@@ -25,6 +25,7 @@ class Deal extends Model
         'needs_new_date2',
         'deal_name',
         'tm_preference',
+        'tm_name',
         'stage',
         'sale_price',
         'zoho_deal_id',
@@ -44,7 +45,9 @@ class Deal extends Model
         'isDealCompleted',
         'isInZoho',
         'review_gen_opt_out',
-        'commission_flat_free'
+        'commission_flat_free',
+        'deadline_em_opt_out',
+        'status_rpt_opt_out',
     ];
 
     public function userData()
