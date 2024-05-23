@@ -482,12 +482,32 @@ class DashboardController extends Controller
         $data = $jsonData['data'][0];
 
         // Access the 'Subject' field
-        $subject = $data['Subject'];
-        $whoid = $data['Who_Id']['id'] ?? null;
-        $status = $data['Status'] ?? null;
-        $Due_Date = $data['Due_Date'] ?? null;
-        $What_Id = $data['What_Id']['id'] ?? null;
-        $priority = $data['Priority']??null;
+        if(!empty($data['Subject'])){
+            $subject = $data['Subject'] ?? null;
+
+        }
+        if(!empty($data['Who_Id']['id'])){
+            $whoid = $data['Who_Id']['id'] ?? null;
+
+        }
+        if(!empty($data['Status'])){
+            $status = $data['Status'] ?? null;
+
+        }
+        if(!empty($data['Due_Date'])){
+            $Due_Date = $data['Due_Date'] ?? null;
+
+        }
+        if(!empty($data['What_Id']['id'])){
+            $What_Id = $data['What_Id']['id'] ?? null;
+
+        }
+        if(!empty($data['Priority'])){
+            $What_Id = $data['What_Id']['id'] ?? null;
+            $priority = $data['Priority']??null;
+
+        }
+
         $created_time = Carbon::now();
         $closed_time = $data['Closed_Time']??null;
         $related_to = $data['$se_module']??null;
@@ -538,7 +558,7 @@ class DashboardController extends Controller
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong". $e->getMessage();
+            return "somthing went wrong". $e;
         }
     }
 
@@ -590,11 +610,14 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
-
+        
         Log::info("JSON TASK INPUT".json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
+        $task = Task::where('zoho_task_id', $id)->first();
+        if(empty($task)){
         $task = Task::where('id', $id)->first();
+        }
         try {
                 $response = $zoho->updateTask($jsonData,$task['zoho_task_id']);
                 if (!$response->successful()) {

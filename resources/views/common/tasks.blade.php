@@ -3,24 +3,23 @@
     var taskIDSS = [];
     var selectElement;
     var tasks = @json($tasks);
-     tasks?.data?.forEach((task)=>{
+    tasks?.data?.forEach((task) => {
         taskIDSS.push(task?.id)
-     })
-     var modalSelectMaptsk = []
-     taskIDSS.forEach((id) => {
+    })
+    var modalSelectMaptsk = []
+    taskIDSS.forEach((id) => {
         modalSelectMaptsk.push({
-                modalID: '',
-                selectElementId: 'related_to_rem' + id
-            })
-        });
-        modalSelectMaptsk.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdownForId(modalID, selectElement);
-        });
-        console.log(modalSelectMaptsk, 'ids')
+            modalID: id,
+            selectElementId: 'related_to_rem' + id
+        })
+    });
+    modalSelectMaptsk.forEach(({
+        modalID,
+        selectElementId
+    }) => {
+        const selectElement = $(`#${selectElementId}`);
+        showDropdownForId(modalID, selectElement);
+    });
 </script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
@@ -51,26 +50,22 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
-                                id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
-                            @if ($task['related_to'] == 'Contacts')
-                                <option value="{{ $task['contactData']['zoho_contact_id'] ?? '' }}" selected>
-                                    {{ $task['contactData']['first_name'] ?? '' }} {{ $task['contactData']['last_name'] ?? 'Please select' }}
-                                </option>
-                            @elseif ($task['related_to'] == 'Deals')
-                                <option value="{{ $task['dealData']['zoho_deal_id'] ?? '' }}" selected>
-                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
-                                </option>
-                            @else
-                                <option value="" selected>Please select</option>
-                            @endif
-                        </select>
-
-                                <select class="form-select dmodaltaskSelect" id="taskSelect"
-                                    onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                                    name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                                    style="display: none;">
-                                    <option value="">Please Select</option>
+                                <select
+                                    onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')"
+                                    class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
+                                    id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
+                                    @if ($task['related_to'] == 'Contacts')
+                                        <option value="{{ $task->contactData->zoho_contact_id ?? '' }}" selected>
+                                            {{ $task->contactData->first_name ?? '' }}
+                                            {{ $task->contactData->last_name ?? 'Please Select' }}
+                                        </option>
+                                    @elseif ($task['related_to'] == 'Deals')
+                                        <option value="{{ $task->dealData->zoho_deal_id ?? '' }}" selected>
+                                            {{ $task->dealData->deal_name ?? 'Please select' }}
+                                        </option>
+                                    @else
+                                        <option value="" selected>Please select</option>
+                                    @endif
                                 </select>
                             </div>
                         </td>
@@ -100,7 +95,6 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
-                                            {{-- <h5 class="modal-title">Modal title</h5> 
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -112,7 +106,8 @@
                                         </div>
                                         <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
                                             <div class="d-grid gap-2 col-5">
-                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                <button type="button"
+                                                    onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                     class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
                                                     <i class="fas fa-trash-alt trashIcon"></i> Yes,
                                                     delete
@@ -121,8 +116,8 @@
                                             <div class="d-grid gap-2 col-5">
                                                 <button type="button" data-bs-dismiss="modal"
                                                     class="btn btn-primary goBackModalBtn">
-                                                    <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal"
-                                                        alt="R">No,
+                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
+                                                        data-bs-dismiss="modal" alt="R">No,
                                                     go
                                                     back
                                                 </button>
@@ -136,8 +131,7 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
-                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body saveModalBodyDiv">
@@ -157,43 +151,44 @@
 
                                     </div>
                                 </div>
-                            </div> --}}
-                                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}"
-                                                tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header saveModalHeaderDiv border-0">
-                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body saveModalBodyDiv">
-                                                            <p class="saveModalBodyText" id="updated_message_make">
-                                                                Changes have been saved</p>
-                                                        </div>
-                                                        <div
-                                                            class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                                            <div class="d-grid col-12">
-                                                                <button type="button"
-                                                                    class="btn btn-secondary saveModalBtn"
-                                                                    data-bs-dismiss="modal">
-                                                                    <i class="fas fa-check trashIcon"></i>
-                                                                    Understood
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-                                                </div>
+                            </div>
+                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header saveModalHeaderDiv border-0">
+                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body saveModalBodyDiv">
+                                            <p class="saveModalBodyText" id="updated_message_make">
+                                                Changes have been saved</p>
+                                        </div>
+                                        <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid col-12">
+                                                <button type="button" class="btn btn-secondary saveModalBtn"
+                                                    data-bs-dismiss="modal">
+                                                    <i class="fas fa-check trashIcon"></i>
+                                                    Understood
+                                                </button>
                                             </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                         </td>
 
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <td class="text-center" colspan="12">No records found</td>
+
+                    <td class="text-center" colspan="12">No records found
+                        {{-- <div id="spinner" class="spinner_task" style="display: none;">
+                        </div> --}}
+                    </td>
                 </tr>
             @endif
 
@@ -214,7 +209,7 @@
                     <div class="btn-group dcardsselectdiv">
                         <p class="dcardsTransactionText">Transaction Related</p>
                         <select class="form-select" id="related_to_rem_card{{ $task['id'] }}"
-                            onclick="getModule('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
+                            onclick="testFun('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
                             name="related_to_rem{{ $task['id'] }}">
                             @if ($task['related_to'] == 'Contacts')
                                 <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
@@ -228,12 +223,6 @@
                             @else
                                 <option value="" selected>Please select</option>
                             @endif
-                        </select>
-                        <select class="form-select dmodaltaskSelect" id="taskSelectcard{{ $task['id'] }}"
-                            onchange="testFun('{{ $task['id'] }}','deals','{{ $task['zoho_task_id'] }}')"
-                            name="related_to_parent{{ $task['id'] }}" aria-label="Select Transaction"
-                            style="display: none;">
-                            <option value="">Please Select</option>
                         </select>
                     </div>
                     <div class="dcardsdateinput">
@@ -277,8 +266,6 @@
         @include('common.pagination', ['module' => $tasks])
     </div>
 @endif
-@vite(['resources/js/toast.js'])
-@vite(['resources/js/dropdown.js'])
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -323,125 +310,6 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
-
-        var selectElement;
-        var ids = [];
-        @if ($tasks)
-            @foreach ($tasks as $task)
-                var idsss = "{{ $task['id'] }}"; // Use json_encode to convert PHP array to 
-                ids.push(idsss);
-            @endforeach
-        @endif
-        const modalSelectMap = []
-        ids.forEach((id) => {
-            modalSelectMap.push({
-                modalID: '',
-                selectElementId: 'related_to_rem' + id
-            })
-        });
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdownForId(modalID, selectElement);
-        });
-        console.log(ids, 'ids')
-        //     let selectedval = selectElement.val();
-        //     var selectedText = selectElement.find('option:selected').text();
-        //     // selectElement.empty();
-        //     // console.log("selectedval---->",selectedval,"selectedText",selectedText,"id",id)
-        //     taskArr.forEach(function(state) {
-        //         var optgroup = selectElement.find('optgroup[label="' + state.text + '"]');
-        //         if (optgroup.length === 0) {
-        //             optgroup = $('<optgroup>', {
-        //                 label: state.text
-        //             });
-        //             selectElement.append(optgroup);
-        //         }
-
-        //         var count = 0; // Counter to track the number of records appended for each label
-
-        //         if (state.text === "Contacts") {
-        //             state.children.forEach(function(contact) {
-        //                 if (count < 5) { // Limit the number of records appended to 5
-        //                     optgroup.append($('<option>', {
-        //                         value: contact.zoho_contact_id,
-        //                         text: (contact.first_name) + " " + (
-        //                             contact.last_name ?? "")
-        //                     }));
-        //                     if (selectedText && contact.first_name + ' ' + contact
-        //                         .last_name === selectedText) {
-        //                         console.log(selectedText, contact.first_name + contact
-        //                             .last_name, 'jjjjjjj++++++++++++')
-        //                         option.attr('selected');
-        //                     }
-        //                     count++;
-        //                 }
-        //             });
-        //         }
-
-        //         if (state.text === "Deals") {
-        //             state.children.forEach(function(deal) {
-        //                 if (count < 5) { // Limit the number of records appended to 5
-        //                     optgroup.append($('<option>', {
-        //                         value: deal.zoho_deal_id,
-        //                         text: deal.deal_name,
-        //                     }));
-        //                     if (selectedText && deal.deal_name === selectedText) {
-        //                         console.log(selectedText, contact.first_name + contact
-        //                             .last_name, 'jjjjjjj++++++++++++')
-        //                         option.attr('selected');
-        //                     }
-        //                     count++;
-        //                 }
-        //             });
-        //         }
-        //     });
-
-
-        //     selectElement.select2({
-        //         theme: 'bootstrap-5',
-        //     });
-
-        //     selectElement.next(".select2-container").addClass("form-select");
-        //     $(selectElement).on("change", function() {
-        //         console.log(this, 'vthisthisthisthisthis')
-        //         var selectedValue = $(this).val();
-        //         var selectedText = $(this).find(':selected').text();
-        //         var optgroupLabel = $(this).find(':selected').closest('optgroup').attr('label');
-        //         console.log("Selected value:", selectedValue);
-        //         console.log("Selected text:", selectedText);
-        //         console.log("Optgroup label:", id, optgroupLabel);
-        //         var WhoID;
-        //         var WhatSelectoneID;
-        //         if (optgroupLabel === "Contacts") {
-        //             WhoID = selectedValue;
-        //         }
-        //         if (optgroupLabel === "Deals") {
-        //             WhatSelectoneID = selectedValue;
-        //         }
-        //         updateText(optgroupLabel, textfield = "", id, WhatSelectoneID, WhoID)
-
-        //     });
-        //     $(selectElement).on("select2:open", function() {
-        //         let timer; // Variable to hold the timer
-
-        //         $(this).data('select2').$dropdown.find('.select2-search__field').on('input',
-        //             function(e) {
-        //                 // This function will be triggered when the user types into the Select2 input
-        //                 clearTimeout(timer); // Clear the previous timer
-        //                 let search = $(this).val();
-        //                 timer = setTimeout(() => {
-        //                     console.log("User has finished typing:", $(this).val());
-        //                     updateTaskArr(id, search, selectedText);
-        //                     // Perform any actions you need here
-        //                 }, 250); // Set timer to execute after 250ms
-        //             });
-        //     });
-
-
-        // })
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {
@@ -523,6 +391,142 @@
         });
     }
 
+    function triggerCheckbox(checkboxid) {
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var allChecked = true;
+        var anyUnchecked = false; // Flag to track if any checkbox is unchecked
+        var anyChecked = false;
+        checkboxes.forEach(function(checkbox) {
+            if (!checkbox.checked) {
+                anyUnchecked = true; // Set flag to true if any checkbox is unchecked
+            } else {
+                anyChecked = true;
+            }
+        });
+
+        if (anyChecked) {
+            updateColor.style.backgroundColor = "#222"; // Checked color
+        } else {
+            updateColor.style.backgroundColor = "#dfdfdf"; // Unchecked color
+        }
+        allCheckbox.checked = !anyUnchecked; // Update "Select All" checkbox based on the flag
+    }
+
+    function removeAllSelected() {
+        // Select all checkboxes
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        var ids = ""; // Initialize ids variable to store concatenated IDs
+        // Iterate through each checkbox
+        checkboxes.forEach(function(checkbox) {
+            // console.log(checkboxes,'checkboxes')
+            // Check if the checkbox is checked
+            if (checkbox.checked) {
+                if (checkbox.id !== "light-mode-switch" && checkbox.id !== "dark-rtl-mode-switch" && checkbox
+                    .id !== "rtl-mode-switch" && checkbox.id !== "dark-mode-switch" && checkbox.id !==
+                    "checkbox_all") {
+                    // Concatenate the checkbox ID with a comma
+                    ids += checkbox.id + ",";
+                    document.getElementById("removeBtn").style.backgroundColor = "#222;"
+                }
+            }
+        });
+
+        // Remove the trailing comma
+        if (ids !== "") {
+            ids = ids.replace(/,+(?=,|$)/g, "");
+        }
+
+        return ids;
+    }
+
+
+
+    function deleteTask(id, isremoveselected = false) {
+        let updateids = removeAllSelected();
+        if (updateids === "" && id === 'remove_selected') {
+            return;
+        }
+        if (isremoveselected) {
+            id = undefined;
+        }
+
+        if (updateids !== "") {
+            if (confirm("are you sure to delete this?")) {
+                console.log("yes delete");
+
+            } else {
+                console.log("dfshdfjkshd")
+                return;
+            }
+        }
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        console.log(ids, 'idssssss');
+        return;
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText)
+                    }
+                })
+
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+    }
+
+    function toggleAllCheckboxes() {
+        // console.log("yes it")
+        let state = false;
+        let updateColor = document.getElementById("removeBtn");
+        var allCheckbox = document.getElementById('checkbox_all');
+        var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            // Set the state of each checkbox based on the state of the "checkbox_all"
+            checkbox.checked = allCheckbox.checked;
+            if (checkbox.checked) {
+
+                state = true;
+
+            } else {
+                state = false;
+            }
+        });
+        if (state) {
+            updateColor.style.backgroundColor = "#222";
+        } else {
+
+            updateColor.style.backgroundColor = "#dfdfdf";
+        }
+    }
 
     function format(state) {
         if (!state.id) return state.text; // optgroup
@@ -536,13 +540,9 @@
                 var related_to_rem1 = document.getElementsByName("related_to_rem" + id)[1].value;
                 related_to_rem = related_to_rem1;
             }
-            var WhatSelectoneid = document.getElementsByName("related_to_parent" + id)[0].value;
-            if (!WhatSelectoneid) {
-                var WhatSelectoneid1 = document.getElementsByName("related_to_parent" + id)[1].value;
-                WhatSelectoneid = WhatSelectoneid1;
-            }
+            console.log(window.groupLabel, 'window.groupLabelwindow.groupLabel')
 
-            updateText(related_to_rem, textfield, id, WhatSelectoneid);
+            updateText(related_to_rem, textfield, id, WhatSelectoneid = "");
         }
     }
 
@@ -551,24 +551,69 @@
     function makeEditable(id, textfield, zohoID, textid) {
 
         if (textfield === "subject") {
-            textElement = document.getElementById(textid);
-            //For Table data                
-            var text = textElement.textContent.trim();
-            textElement.innerHTML = '<input type="text" id="editableInput' + textid + id + '" value="' + text + '" />';
+        const textElement = document.getElementById(textid);
+        const originalText = textElement.textContent.trim();
 
-            let inputElementmake = document.getElementById('editableInput' + textid + id);
-            inputElementmake.focus();
-            inputElementmake.addEventListener('change', function() {
-                textElement.innerHTML = '<p id="editableText' + id + '" value="' + text + '">' +
-                    inputElementmake.value + '</p>';
-                updateText(inputElementmake.value, textfield, zohoID);
-            });
+        // Function to create a new paragraph element
+        function createParagraph(id, text) {
+            const newParagraph = document.createElement('p');
+            newParagraph.id = 'editableText' + id;
+            newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
+            newParagraph.textContent = text;
+
+            // Create the pencil icon element
+            const pencilIcon = document.createElement('i');
+            pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
+            pencilIcon.onclick = function() {
+                makeEditable(id, textfield, zohoID, newParagraph.id);
+            };
+
+            // Append the pencil icon to the new paragraph
+            newParagraph.appendChild(pencilIcon);
+
+            return newParagraph;
         }
+
+        // Create a new input element
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.id = 'editableInput' + id;
+        newInput.value = originalText;
+        textElement.parentNode.replaceChild(newInput, textElement);
+
+        const inputElement = document.getElementById('editableInput' + id);
+        inputElement.focus();
+
+        // Handler function for replacing input with paragraph
+        function replaceInputWithParagraph() {
+            const newParagraph = createParagraph(id, inputElement.value);
+            inputElement.parentNode.replaceChild(newParagraph, inputElement);
+        }
+
+        inputElement.addEventListener('blur', function() {
+            const newText = inputElement.value.trim();
+            replaceInputWithParagraph();
+        });
+
+        inputElement.addEventListener('change', function() {
+            const newText = inputElement.value.trim();
+            if (newText !== originalText) {
+                updateText(newText, textfield, zohoID);
+            }
+            replaceInputWithParagraph();
+        });
+    }
+
         if (textfield === "date") {
             let dateLocal = document.getElementById(textid);
             console.log(textid, 'dateLocal')
             var text = dateLocal.value.trim();
             updateText(text, textfield, zohoID);
+        }
+        if (textfield === "relatedTo") {
+            let relatedTO = document.getElementById("related_to_rem" + id);
+
+
         }
     }
 
@@ -624,7 +669,9 @@
         return formattedDate;
     }
 
+
     function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
+        console.log(newText, textfield, id, WhatSelectoneid, whoID,'sdjkfhjksdhfjksdhfk' )
         let inputElementtext;
         let dateLocal;
         if (textfield === "subject") {
@@ -637,15 +684,14 @@
         } else {
 
         }
-        if (newText == "") {
-            showToastError("Empty text feild");
-            return;
-        }
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        console.log(newText, 'sjdhfjksdgfk')
         var formData = {
             "data": [{
                 "Subject": textfield === "subject" ? newText : inputElementtext?.value,
@@ -656,8 +702,8 @@
                 "Who_Id": whoID ? {
                     "id": whoID
                 } : undefined,
-                "$se_module": textfield === "deals" || newText === "Deals" || newText === "Contacts" ?
-                    newText : undefined,
+                "$se_module": textfield === "Deals" || textfield === "Contacts" || newText === "Contacts" || newText ==="Deals" ?
+                    textfield : undefined,
             }]
         };
         // Filter out undefined values
@@ -683,75 +729,4 @@
         })
     }
 
-    // function moduleSelected(selectedModule, id = "") {
-    //     // console.log(accessToken,'accessToken')
-    //     var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-    //     var selectedText = selectedOption.text;
-    //     $.ajaxSetup({
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //         }
-    //     });
-    //     $.ajax({
-    //         url: '/task/get-' + selectedText,
-    //         method: "GET",
-    //         dataType: "json",
-    //         success: function(response) {
-    //             console.log(response, 'resoponse')
-    //             // Handle successful response
-    //             var tasks = response;
-    //             var taskSelect;
-    //             // Assuming you have another select element with id 'taskSelect'
-    //             var taskSelectid = ""; // Initialize id variable
-    //             if ($(window).innerWidth() <= 767) {
-    //                 taskSelect = $("#taskSelect" + id);
-    //                 taskSelect.removeAttr('id');
-    //                 taskSelectcard = $("#taskSelectcard" + id);
-    //                 taskSelect = taskSelectcard;
-    //                 console.log(taskSelect, 'taskSelect' + id)
-
-    //             } else {
-    //                 taskSelectcard = $("#taskSelectcard" + id);
-    //                 console.log(taskSelectcard, 'taskSelectcard')
-    //                 taskSelectcard.removeAttr('id');
-    //                 taskSelect = $("#taskSelect" + id);
-    //                 taskSelect = taskSelect;
-    //                 console.log(taskSelect, 'taskSelect')
-    //             }
-    //             // Clear existing options
-    //             taskSelect.empty();
-    //             // Populate select options with tasks
-    //             $.each(tasks, function(index, task) {
-    //                 if (selectedText === "Tasks") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_task_id,
-    //                         text: task?.subject
-    //                     }));
-    //                 }
-    //                 if (selectedText === "Deals") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_deal_id,
-    //                         text: task?.deal_name
-    //                     }));
-    //                 }
-    //                 if (selectedText === "Contacts") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_contact_id,
-    //                         text: task?.first_name ?? "" + ' ' + task?.last_name ?? ""
-    //                     }));
-    //                 }
-    //             });
-
-    //             taskSelect.select2();
-    //             taskSelect.show();
-    //             taskSelect.next(".select2-container").addClass("form-select");
-    //             // Do whatever you want with the response data here
-    //         },
-    //         error: function(xhr, status, error) {
-    //             // Handle error
-    //             console.error("Ajax Error:", error);
-    //         }
-    //     });
-
-    // }
 </script>

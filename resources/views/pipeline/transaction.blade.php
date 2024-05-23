@@ -129,10 +129,14 @@
                                 id="sale_price{{ $deal['zoho_deal_id'] }}">$
                                 {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}
                             </td>
-                            <td onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{ $deal['id'] }}')"
-                                id="closing_date{{ $deal['zoho_deal_id'] }}">
-                                {{ \Carbon\Carbon::parse($deal['closing_date'])->format('m/d/Y') ?? 'N/A' }}
-                            </td>
+                            <td>
+                                
+                                <input type="date" 
+                                onchange="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{ $deal['id'] }}')" 
+                                id="closing_date{{ $deal['zoho_deal_id'] }}" 
+                                value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
+                         
+                            </td> 
                             <td>
                                 <div class="commonTextEllipsis"
                                     onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{ $deal['id'] }}')"
@@ -156,6 +160,7 @@
                                     ${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0) / 100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
                                 </div>
                             </td>
+
                             <td>
                                 <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
                                     <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"

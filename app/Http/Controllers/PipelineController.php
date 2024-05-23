@@ -10,6 +10,9 @@ use App\Services\DB;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use App\Services\Helper;
+use Illuminate\Http\Response;
+
+
 
 class PipelineController extends Controller
 {
@@ -94,7 +97,6 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        Log::info("accessToken: " . print_r($accessToken, true));
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
@@ -128,7 +130,6 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        Log::info("accessToken: " . print_r($accessToken, true));
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
 
@@ -173,14 +174,17 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken);
+        $zoho->access_token = $accessToken;
+        $jsonData = $request->json()->all();
+        $contact = null;
+        if(isset($jsonData['data'][0]['Client_Name_Primary'])){
+            $contact = $jsonData['data'][0]['Client_Name_Primary'];
+        }
+        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken,$contact);
         if ($isIncompleteDeal) {
             return response()->json($isIncompleteDeal);
         } else {
-            $zoho->access_token = $accessToken;
-
-            $jsonData = $request->json()->all();
-
+            
             $zohoDeal = $zoho->createZohoDeal($jsonData);
             if (!$zohoDeal->successful()) {
                 return "error somthing" . $zohoDeal;
@@ -195,34 +199,46 @@ class PipelineController extends Controller
 
     }
 
-    public function updatePipeline(Request $request, $id)
+    public function updatePipeline(Request $request, $id, DB $db, ZohoCRM $zoho)
     {
-        $db = new DB();
-        $zoho = new ZohoCRM();
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
+        try {
+            $user = auth()->user();
+        
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            }
+            
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
 
-        $jsonData = $request->json()->all();
-        $zohoDeal = $zoho->updateZohoDeal($jsonData, $id);
-        if (!$zohoDeal->successful()) {
-            return "error something" . $zohoDeal;
+            $jsonData = $request->json()->all();
+            $zohoDeal = $zoho->updateZohoDeal($jsonData, $id);
+            
+            if (!$zohoDeal->successful()) {
+                return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            
+            $zohoDealArray = json_decode($zohoDeal, true);
+            $zohoDealData = $zohoDealArray['data'][0]['details'];
+            $resp = $zoho->getZohoDeal($zohoDealData['id']);
+            
+            if (!$resp->successful()) {
+                return response()->json(['error' => 'Zoho Deal retrieval failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            
+            $zohoDeal_Array = json_decode($resp, true);
+            $zohoDealValues = $zohoDeal_Array['data'][0];
+            $data = $jsonData['data'];
+            $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
+            
+            return response()->json($zohoDealArray);
+        } catch (\Throwable $th) {
+            // Handle the exception here
+            return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $zohoDealArray = json_decode($zohoDeal, true);
-        $zohoDealData = $zohoDealArray['data'][0]['details'];
-        $resp = $zoho->getZohoDeal($zohoDealData['id']);
-        if (!$resp->successful()) {
-            return "error something" . $resp;
-        }
-        $zohoDeal_Array = json_decode($resp, true);
-        $zohoDealValues = $zohoDeal_Array['data'][0];
-        $data = $jsonData['data'];
-        $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
-        return response()->json($zohoDealArray);
     }
+
+    
 
     public function getClosedDeals(Request $request)
     {

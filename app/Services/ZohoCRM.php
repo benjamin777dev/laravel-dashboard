@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\RequestException;
 
 class ZohoCRM
 {
@@ -194,11 +195,10 @@ class ZohoCRM
     public function createContactData($inputJson, $id)
     {
         try {
-            Log::info('Creating Zoho contacts');
+            Log::info('Creating Zoho contacts',[$inputJson]);
 
             // Trigger workflows
             $inputJson['trigger'] = 'workflow';
-
             // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
@@ -511,22 +511,31 @@ class ZohoCRM
 
     public function updateZohoDeal($inputJson, $id)
     {
-        Log::info('Creating Zoho Deal',$inputJson);
-        // trigger workflows
-        $inputJson['trigger'] = 'workflow';
-        $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-            'Content-Type' => 'application/json',
-        ])->put($this->apiUrl . 'Deals/' . $id, $inputJson);
+        try {
+            Log::info('Creating Zoho Deal', $inputJson);
 
-        //Log::info('Zoho deals data response: ' . print_r($response, true));
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Content-Type' => 'application/json',
+            ])->put($this->apiUrl . 'Deals/' . $id, $inputJson);
 
-        return $response;
+            // Log::info('Zoho deals data response: ' . print_r($response, true));
+
+            return $response;
+        } catch (RequestException $exception) {
+            // Log the exception
+            Log::error('Error updating Zoho Deal: ' . $exception->getMessage());
+
+            // Return a default error response or rethrow the exception
+            throw $exception;
+        }
     }
 
     public function getZohoDeal($id)
     {
-        Log::info('Creating Zoho Deal');
+        Log::info('Creating Zoho Deal'.$id);
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),

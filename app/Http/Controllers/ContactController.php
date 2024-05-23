@@ -73,7 +73,7 @@ class ContactController extends Controller
             if(isset($frontData['data'][0]['First_Name'])){
             if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
                 $parts = explode(' ', $frontData['data'][0]['First_Name']);
-                if (count($parts) == 2) {
+                if (count($parts) == 5) {
                 $first_name = $parts[0];
                 // The last part will be the last name
                 $last_name = end($parts);
@@ -407,10 +407,10 @@ class ContactController extends Controller
                 $contactInstance->save();
             }
             // Redirect back with a success message
-            return redirect()->back()->with('success','Contact Updated Successfully');
+            return redirect()->back()->with('success', 'Contact Updated successfully!');
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error','!',$e->getMessage());
+            return redirect()->back()->with('error', '!' . $e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
 

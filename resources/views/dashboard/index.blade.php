@@ -297,7 +297,10 @@
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
-        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+        <div class="tooltip-wrapper">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <span class="tooltiptext">Add Notes</span>
+        </div>
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
@@ -339,14 +342,13 @@
     <!-- Include Date Range Picker -->
 
 @section('dashboardScript')
-
-
-
 @endsection
 @endsection
 
 <script>
     window.fetchData = function(tab = null) {
+        $('#spinner').show();
+         loading = true;
         // Make AJAX call
         $.ajax({
             url: '{{ url('/get/tasks/for/dashboard') }}',
@@ -355,11 +357,15 @@
                 tab: tab,
             },
             success: function(data) {
+                $('#spinner').hide();
+                loading = false;
                 $('.task-container').html(data);
+
 
             },
             error: function(xhr, status, error) {
                 // Handle errors
+                loading = false;
                 console.error('Error:', error);
             }
         });
