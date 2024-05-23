@@ -80,13 +80,10 @@ function showDropdown(showDropdown, selectElement) {
 function showDropdownForId(modalID, selectElement) {
     var selectedval = selectElement.val();
     var selectedText1 = selectElement.find('option:selected').text();
-    console.log(selectedval);
-    console.log(selectedText1);
-    console.log("i am also hitting for task creation timing");
-
+    console.log(selectedval,'selectedText1');
+    console.log(selectedText1,'selectedText1');
     selectElement.each(function () {
         $(this).select2({
-            
             theme: 'bootstrap-5',
             width: 'resolve',
             ajax: {
@@ -103,7 +100,7 @@ function showDropdownForId(modalID, selectElement) {
                 processResults: function (data, params) {
                     console.log(data, 'data is here')
                     params.page = params.page || 1;
-                    selectElement.empty();
+                    
                     return {
                         results: data.items,
                     };
@@ -144,23 +141,29 @@ function showDropdownForId(modalID, selectElement) {
             var selectedText;
             if (selectedData.first_name && selectedData.last_name) {
                 selectedText = selectedData.first_name + ' ' + selectedData.last_name;
-                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_module_idddd:', selectedData.zoho_module_id);
                 console.log('zoho_contact_id:', selectedData.zoho_contact_id);
                 window.groupLabel = "Contacts";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_contact_id;
+                updateText(newText="", groupLabel, modalID, "",window.relatedTo);
             } else {
                 selectedText = selectedData.deal_name;
-                console.log('zoho_module_id:', selectedData.zoho_module_id);
+                console.log('zoho_module_idddddd:', selectedData.zoho_module_id);
                 console.log('zoho_deal_id:', selectedData.zoho_deal_id);
                 window.groupLabel = "Deals";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_deal_id;
+                updateText(newText="", groupLabel, modalID, window.relatedTo, "");
             }
         });
-
-        $(this).select2().val("0").trigger("change");
     });
+    let select2data = document.getElementsByClassName("select2-selection__rendered");
+    Array.from(select2data).forEach(element => {
+        element.innerHTML = element.title;
+    });
+
+   
 }
 
 function updateSelectOptionsTask(selectElement, taskArr) {
@@ -228,14 +231,14 @@ function updateTaskArrTask(selectElement, search) {
     });
 }
 
-window.addCommonTask = function (id, type) {
-    console.log(window.groupLabel, type,id, 'selction type is here');
+function addCommonTask(id="", type="") {
+    // console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
-    if (window.groupLabel === "Contacts") {
+    if (window?.groupLabel === "Contacts") {
         type = window.groupLabel;
         selectionId = window.relatedTo;
     }
-    if (window.groupLabel === "Deals") {
+    if (window?.groupLabel === "Deals") {
         type = window.groupLabel;
         selectionId = window.relatedTo;
     }
@@ -287,7 +290,6 @@ window.addCommonTask = function (id, type) {
                 }],
             };
         }
-        console.log("formData", formData);
     } else {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
@@ -365,4 +367,5 @@ window.addCommonTask = function (id, type) {
         }
     })
 }
+
 

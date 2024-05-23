@@ -537,16 +537,15 @@ class DB
             if ($filter) {
                 $conditions[] = ['abcd', $filter];
             }
-    
             // Apply missing field conditions
             if ($missingField) {
-                if (!empty($missingField['email'])) {
+                if (isset($missingField['email']) && $missingField['email'] !== false) {
                     $contacts->whereNull('email');
                 }
-                if (!empty($missingField['mobile'])) {
+                if (isset($missingField['mobile']) && $missingField['mobile'] !== false) {
                     $contacts->whereNull('phone');
                 }
-                if (!empty($missingField['abcd'])) {
+                if (isset($missingField['abcd']) && $missingField['abcd'] !== false) {
                     $contacts->whereNull('abcd');
                 }
             }

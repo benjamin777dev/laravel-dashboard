@@ -2682,4 +2682,18 @@ body[data-sidebar="dark"] .navbar-brand-box {
     display: none;
     text-align: center;
   }
+  .spinner_task {
+    width: 30px;
+    height: 30px;
+  
+    border: 9px solid #0000001a;
+    border-radius: 50%;
+    border-right-color: #222;
+  
+    animation: spin 1s ease infinite;
+  }
+
+  
+
+
   
