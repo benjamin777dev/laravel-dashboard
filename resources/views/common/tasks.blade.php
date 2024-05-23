@@ -3,23 +3,23 @@
     var taskIDSS = [];
     var selectElement;
     var tasks = @json($tasks);
-     tasks?.data?.forEach((task)=>{
+    tasks?.data?.forEach((task) => {
         taskIDSS.push(task?.id)
-     })
-     var modalSelectMaptsk = []
-     taskIDSS.forEach((id) => {
+    })
+    var modalSelectMaptsk = []
+    taskIDSS.forEach((id) => {
         modalSelectMaptsk.push({
-                modalID: id,
-                selectElementId: 'related_to_rem' + id
-            })
-        });
-        modalSelectMaptsk.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdownForId(modalID, selectElement);
-        });
+            modalID: id,
+            selectElementId: 'related_to_rem' + id
+        })
+    });
+    modalSelectMaptsk.forEach(({
+        modalID,
+        selectElementId
+    }) => {
+        const selectElement = $(`#${selectElementId}`);
+        showDropdownForId(modalID, selectElement);
+    });
 </script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
@@ -34,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-          
+
             @if (count($tasks) > 0)
                 @foreach ($tasks as $task)
                     <tr class="dresponsivetableTr">
@@ -50,20 +50,23 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')" class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
-                                id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
-                            @if ($task['related_to'] == 'Contacts')
-                                <option value="{{ $task->contactData->zoho_contact_id ?? '' }}" selected>
-                                    {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'Please Select' }}
-                                </option>
-                            @elseif ($task['related_to'] == 'Deals')
-                                <option value="{{ $task->dealData->zoho_deal_id ?? '' }}" selected>
-                                    {{ $task->dealData->deal_name ?? 'Please select' }}
-                                </option>
-                            @else
-                                <option value="" selected>Please select</option>
-                            @endif
-                        </select>
+                                <select
+                                    onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')"
+                                    class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
+                                    id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
+                                    @if ($task['related_to'] == 'Contacts')
+                                        <option value="{{ $task->contactData->zoho_contact_id ?? '' }}" selected>
+                                            {{ $task->contactData->first_name ?? '' }}
+                                            {{ $task->contactData->last_name ?? 'Please Select' }}
+                                        </option>
+                                    @elseif ($task['related_to'] == 'Deals')
+                                        <option value="{{ $task->dealData->zoho_deal_id ?? '' }}" selected>
+                                            {{ $task->dealData->deal_name ?? 'Please select' }}
+                                        </option>
+                                    @else
+                                        <option value="" selected>Please select</option>
+                                    @endif
+                                </select>
                             </div>
                         </td>
                         <td>
@@ -92,7 +95,6 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
-                                             <h5 class="modal-title">Modal title</h5> 
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -104,7 +106,8 @@
                                         </div>
                                         <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
                                             <div class="d-grid gap-2 col-5">
-                                                <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
+                                                <button type="button"
+                                                    onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
                                                     class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
                                                     <i class="fas fa-trash-alt trashIcon"></i> Yes,
                                                     delete
@@ -113,8 +116,8 @@
                                             <div class="d-grid gap-2 col-5">
                                                 <button type="button" data-bs-dismiss="modal"
                                                     class="btn btn-primary goBackModalBtn">
-                                                    <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal"
-                                                        alt="R">No,
+                                                    <img src="{{ URL::asset('/images/reply.svg') }}"
+                                                        data-bs-dismiss="modal" alt="R">No,
                                                     go
                                                     back
                                                 </button>
@@ -128,7 +131,6 @@
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
-                                            <h5 class="modal-title">Modal title</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -150,45 +152,42 @@
                                     </div>
                                 </div>
                             </div>
-                                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}"
-                                                tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered deleteModal">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header saveModalHeaderDiv border-0">
-                                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body saveModalBodyDiv">
-                                                            <p class="saveModalBodyText" id="updated_message_make">
-                                                                Changes have been saved</p>
-                                                        </div>
-                                                        <div
-                                                            class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
-                                                            <div class="d-grid col-12">
-                                                                <button type="button"
-                                                                    class="btn btn-secondary saveModalBtn"
-                                                                    data-bs-dismiss="modal">
-                                                                    <i class="fas fa-check trashIcon"></i>
-                                                                    Understood
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-                                                </div>
+                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content">
+                                        <div class="modal-header saveModalHeaderDiv border-0">
+                                            {{-- <h5 class="modal-title">Modal title</h5> --}}
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body saveModalBodyDiv">
+                                            <p class="saveModalBodyText" id="updated_message_make">
+                                                Changes have been saved</p>
+                                        </div>
+                                        <div class="modal-footer saveModalFooterDiv justify-content-evenly border-0">
+                                            <div class="d-grid col-12">
+                                                <button type="button" class="btn btn-secondary saveModalBtn"
+                                                    data-bs-dismiss="modal">
+                                                    <i class="fas fa-check trashIcon"></i>
+                                                    Understood
+                                                </button>
                                             </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
                         </td>
 
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    
+
                     <td class="text-center" colspan="12">No records found
-                        <div id="spinner" class="spinner_task" style="display: none;">
-                        </div>
+                        {{-- <div id="spinner" class="spinner_task" style="display: none;">
+                        </div> --}}
                     </td>
                 </tr>
             @endif
@@ -442,7 +441,7 @@
         return ids;
     }
 
-                     
+
 
     function deleteTask(id, isremoveselected = false) {
         let updateids = removeAllSelected();
@@ -452,9 +451,9 @@
         if (isremoveselected) {
             id = undefined;
         }
-       
+
         if (updateids !== "") {
-            if (saveDataaaa()) {
+            if (confirm("are you sure to delete this?")) {
                 console.log("yes delete");
 
             } else {
@@ -467,7 +466,7 @@
         }
         //remove duplicate ids
         ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        console.log(ids,'idssssss');
+        console.log(ids, 'idssssss');
         return;
         $.ajaxSetup({
             headers: {
@@ -502,7 +501,7 @@
             console.error("error", err);
         }
     }
-  
+
     function toggleAllCheckboxes() {
         // console.log("yes it")
         let state = false;
@@ -541,9 +540,9 @@
                 var related_to_rem1 = document.getElementsByName("related_to_rem" + id)[1].value;
                 related_to_rem = related_to_rem1;
             }
-            console.log(window.groupLabel,'window.groupLabelwindow.groupLabel')
+            console.log(window.groupLabel, 'window.groupLabelwindow.groupLabel')
 
-            updateText(related_to_rem, textfield, id, WhatSelectoneid="");
+            updateText(related_to_rem, textfield, id, WhatSelectoneid = "");
         }
     }
 
@@ -552,42 +551,70 @@
     function makeEditable(id, textfield, zohoID, textid) {
 
         if (textfield === "subject") {
-            textElement = document.getElementById(textid);
-            //For Table data                
-            var text = textElement.textContent.trim();
-            let isEditable=true;
-           
-            var newInput = document.createElement('input');
-            newInput.type = 'text';
-            newInput.id = 'editableInput'+ id;
-            newInput.value = text;
-            textElement.parentNode.replaceChild(newInput, textElement);
+        const textElement = document.getElementById(textid);
+        const originalText = textElement.textContent.trim();
 
-            let inputElementmake = document.getElementById('editableInput' + id);
-            inputElementmake.focus();
-            inputElementmake.addEventListener('blur', function() {
-                    var newParagraph = document.createElement('p');
-                    newParagraph.id = 'editableText' + id;
-                    newParagraph.classList = "dSubjectText dFont900 dFont14 dMt16 justify-content-between"
-                    newParagraph.textContent = inputElementmake.value;
+        // Function to create a new paragraph element
+        function createParagraph(id, text) {
+            const newParagraph = document.createElement('p');
+            newParagraph.id = 'editableText' + id;
+            newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
+            newParagraph.textContent = text;
 
-                // Replace textElement with the new paragraph element
-                inputElementmake.parentNode.replaceChild(newParagraph, inputElementmake);
-               
-                updateText(inputElementmake.value, textfield, zohoID);
-            });
+            // Create the pencil icon element
+            const pencilIcon = document.createElement('i');
+            pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
+            pencilIcon.onclick = function() {
+                makeEditable(id, textfield, zohoID, newParagraph.id);
+            };
+
+            // Append the pencil icon to the new paragraph
+            newParagraph.appendChild(pencilIcon);
+
+            return newParagraph;
         }
+
+        // Create a new input element
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.id = 'editableInput' + id;
+        newInput.value = originalText;
+        textElement.parentNode.replaceChild(newInput, textElement);
+
+        const inputElement = document.getElementById('editableInput' + id);
+        inputElement.focus();
+
+        // Handler function for replacing input with paragraph
+        function replaceInputWithParagraph() {
+            const newParagraph = createParagraph(id, inputElement.value);
+            inputElement.parentNode.replaceChild(newParagraph, inputElement);
+        }
+
+        inputElement.addEventListener('blur', function() {
+            const newText = inputElement.value.trim();
+            replaceInputWithParagraph();
+        });
+
+        inputElement.addEventListener('change', function() {
+            const newText = inputElement.value.trim();
+            if (newText !== originalText) {
+                updateText(newText, textfield, zohoID);
+            }
+            replaceInputWithParagraph();
+        });
+    }
+
         if (textfield === "date") {
             let dateLocal = document.getElementById(textid);
             console.log(textid, 'dateLocal')
             var text = dateLocal.value.trim();
             updateText(text, textfield, zohoID);
         }
-        if(textfield==="relatedTo"){
-            let relatedTO = document.getElementById("related_to_rem"+id);
+        if (textfield === "relatedTo") {
+            let relatedTO = document.getElementById("related_to_rem" + id);
 
-            
-        } 
+
+        }
     }
 
     function convertDateTime(dateTimeString) {
@@ -644,134 +671,62 @@
 
 
     function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
-    let inputElementtext;
-    let dateLocal;
-    if (textfield === "subject") {
-        inputElementtext = document.getElementById('editableText' + id);
-    } else if (textfield === "date") {
-        dateLocal = document.getElementById('date_local' + id);
-        console.log(dateLocal, newText, 'checlout');
-        dateLocal = dateLocal?.substring(0, 10);
-        newText = newText?.substring(0, 10);
-    } else {
-        
+        console.log(newText, textfield, id, WhatSelectoneid, whoID,'sdjkfhjksdhfjksdhfk' )
+        let inputElementtext;
+        let dateLocal;
+        if (textfield === "subject") {
+            inputElementtext = document.getElementById('editableText' + id);
+        } else if (textfield === "date") {
+            dateLocal = document.getElementById('date_local' + id);
+            console.log(dateLocal, newText, 'checlout');
+            dateLocal = dateLocal?.substring(0, 10);
+            newText = newText?.substring(0, 10);
+        } else {
+
+        }
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        console.log(newText, 'sjdhfjksdgfk')
+        var formData = {
+            "data": [{
+                "Subject": textfield === "subject" ? newText : inputElementtext?.value,
+                "Due_Date": textfield === "date" ? newText : dateLocal?.value,
+                "What_Id": WhatSelectoneid ? {
+                    "id": WhatSelectoneid
+                } : undefined,
+                "Who_Id": whoID ? {
+                    "id": whoID
+                } : undefined,
+                "$se_module": textfield === "Deals" || textfield === "Contacts" || newText === "Contacts" || newText ==="Deals" ?
+                    textfield : undefined,
+            }]
+        };
+        // Filter out undefined values
+        formData.data[0] = Object.fromEntries(
+            Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+        );
+        // console.log("ys check ot")
+        $.ajax({
+            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                // Handle success response
+                showToast(response?.data[0]?.message.toUpperCase());
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                showToastError(error);
+                console.error(xhr.responseText, 'errrorroororooro');
+            }
+        })
     }
- 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    
-   console.log(newText,'sjdhfjksdgfk')
-    var formData = {
-        "data": [{
-            "Subject": textfield === "subject" ? newText : inputElementtext?.value,
-            "Due_Date": textfield === "date" ? newText : dateLocal?.value,
-            "What_Id": WhatSelectoneid ? {
-                "id": WhatSelectoneid
-            } : undefined,
-            "Who_Id": whoID ? {
-                "id": whoID
-            } : undefined,
-            "$se_module": textfield === "Deals" || newText === "Deals" || newText === "Contacts" ?
-                newText : undefined,
-        }]
-    };
-    // Filter out undefined values
-    formData.data[0] = Object.fromEntries(
-        Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
-    );
-    // console.log("ys check ot")
-    $.ajax({
-        url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-        method: 'PUT',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-            // Handle success response
-            showToast(response?.data[0]?.message.toUpperCase());
-        },
-        error: function(xhr, status, error) {
-            // Handle error response
-            showToastError(error);
-            console.error(xhr.responseText, 'errrorroororooro');
-        }
-    })
-}
 
-    
-
-    // function moduleSelected(selectedModule, id = "") {
-    //     // console.log(accessToken,'accessToken')
-    //     var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-    //     var selectedText = selectedOption.text;
-    //     $.ajaxSetup({
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //         }
-    //     });
-    //     $.ajax({
-    //         url: '/task/get-' + selectedText,
-    //         method: "GET",
-    //         dataType: "json",
-    //         success: function(response) {
-    //             console.log(response, 'resoponse')
-    //             // Handle successful response
-    //             var tasks = response;
-    //             var taskSelect;
-    //             // Assuming you have another select element with id 'taskSelect'
-    //             var taskSelectid = ""; // Initialize id variable
-    //             if ($(window).innerWidth() <= 767) {
-    //                 taskSelect = $("#taskSelect" + id);
-    //                 taskSelect.removeAttr('id');
-    //                 taskSelectcard = $("#taskSelectcard" + id);
-    //                 taskSelect = taskSelectcard;
-    //                 console.log(taskSelect, 'taskSelect' + id)
-
-    //             } else {
-    //                 taskSelectcard = $("#taskSelectcard" + id);
-    //                 console.log(taskSelectcard, 'taskSelectcard')
-    //                 taskSelectcard.removeAttr('id');
-    //                 taskSelect = $("#taskSelect" + id);
-    //                 taskSelect = taskSelect;
-    //                 console.log(taskSelect, 'taskSelect')
-    //             }
-    //             // Clear existing options
-    //             taskSelect.empty();
-    //             // Populate select options with tasks
-    //             $.each(tasks, function(index, task) {
-    //                 if (selectedText === "Tasks") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_task_id,
-    //                         text: task?.subject
-    //                     }));
-    //                 }
-    //                 if (selectedText === "Deals") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_deal_id,
-    //                         text: task?.deal_name
-    //                     }));
-    //                 }
-    //                 if (selectedText === "Contacts") {
-    //                     taskSelect.append($('<option>', {
-    //                         value: task?.zoho_contact_id,
-    //                         text: task?.first_name ?? "" + ' ' + task?.last_name ?? ""
-    //                     }));
-    //                 }
-    //             });
-
-    //             taskSelect.select2();
-    //             taskSelect.show();
-    //             taskSelect.next(".select2-container").addClass("form-select");
-    //             // Do whatever you want with the response data here
-    //         },
-    //         error: function(xhr, status, error) {
-    //             // Handle error
-    //             console.error("Ajax Error:", error);
-    //         }
-    //     });
-
-    // }
 </script>

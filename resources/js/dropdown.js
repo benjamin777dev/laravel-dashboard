@@ -146,7 +146,7 @@ window.showDropdownForId = function (modalID, selectElement) {
                 window.groupLabel = "Contacts";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_contact_id;
-                updateText(newText = "", groupLabel, modalID, "", window.relatedTo);
+                updateText("", groupLabel, modalID, "", window.relatedTo);
             } else {
                 selectedText = selectedData.deal_name;
                 console.log('zoho_module_idddddd:', selectedData.zoho_module_id);
@@ -154,7 +154,7 @@ window.showDropdownForId = function (modalID, selectElement) {
                 window.groupLabel = "Deals";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_deal_id;
-                updateText(newText = "", groupLabel, modalID, window.relatedTo, "");
+                updateText("", groupLabel, modalID, window.relatedTo, "");
             }
         });
     });
