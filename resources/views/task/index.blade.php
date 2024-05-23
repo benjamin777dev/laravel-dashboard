@@ -97,7 +97,6 @@
         </div>
     </div>
 @endsection
-@vite(['resources/js/toast.js'])
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const tabs = document.querySelectorAll('.nav-link');

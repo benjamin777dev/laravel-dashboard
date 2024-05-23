@@ -1,4 +1,4 @@
-function showDropdown(showDropdown, selectElement) {
+window.showDropdown = function (showDropdown, selectElement) {
     selectElement.empty();
 
     selectElement.each(function () {
@@ -77,7 +77,7 @@ function showDropdown(showDropdown, selectElement) {
 
 }
 
-function showDropdownForId(modalID, selectElement) {
+window.showDropdownForId = function (modalID, selectElement) {
     var selectedval = selectElement.val();
     var selectedText1 = selectElement.find('option:selected').text();
     console.log(selectedval, 'selectedText1');
@@ -166,7 +166,7 @@ function showDropdownForId(modalID, selectElement) {
 
 }
 
-function updateSelectOptionsTask(selectElement, taskArr) {
+window.updateSelectOptionsTask = function (selectElement, taskArr) {
     // Clear existing options
     selectElement.empty();
 
@@ -213,7 +213,7 @@ function updateSelectOptionsTask(selectElement, taskArr) {
     // search.trigger("input");
 }
 
-function updateTaskArrTask(selectElement, search) {
+window.updateTaskArrTask = function (selectElement, search) {
 
     // Populate select with new options
     $.ajax({
@@ -231,7 +231,7 @@ function updateTaskArrTask(selectElement, search) {
     });
 }
 
-function addCommonTask(id = "", type = "") {
+window.addCommonTask = function (id = "", type = "") {
     // console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
     if (window?.groupLabel === "Contacts") {

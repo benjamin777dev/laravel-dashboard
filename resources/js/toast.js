@@ -1,4 +1,4 @@
-function showToast(message, duration = 3000, backgroundColor = "#222", stopOnFocus = true) {
+ window.showToast=function(message, duration = 3000, backgroundColor = "#222", stopOnFocus = true) {
     Toastify({
         text: message,
         duration: duration,
@@ -7,7 +7,7 @@ function showToast(message, duration = 3000, backgroundColor = "#222", stopOnFoc
     }).showToast();
 }
 
-function showToastError(message, duration = 3000, backgroundColor = "red", stopOnFocus = true) {
+window.showToastError=function(message, duration = 3000, backgroundColor = "red", stopOnFocus = true) {
     Toastify({
         text: message,
         duration: duration,

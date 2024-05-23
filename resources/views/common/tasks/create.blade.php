@@ -104,8 +104,6 @@
         </div>
     </div>
 @endif
-@vite(['resources/js/dropdown.js'])
-@vite(['resources/js/toast.js'])
 <script>
     window.onload = function() {
         const modalSelectMap = [{

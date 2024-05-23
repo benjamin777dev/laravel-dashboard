@@ -145,10 +145,16 @@ window.updateDataDeal = function (dealId) {
             }
         })
     }
+}
 
+window.formatDate = function (date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 window.updateDeal = function (dealID, field, Id, card, date) {
-    console.log(dealID, field);
     event.preventDefault();
     let updateElement
     if (card) {
@@ -174,8 +180,10 @@ window.updateDeal = function (dealID, field, Id, card, date) {
 
 
     if (field == "closing_date") {
+        // Assuming date is defined and in a valid format
+        const formattedDate = formatDate(date); // Format date if needed
         updateElement.innerHTML =
-            `<input type="date" class="form-control npinputinfo" id="edit${field}${dealID}" required="" value="${date}">`;
+            `<input type="date" class="form-control npinputinfo" id="edit${field}${dealID}" required value="${formattedDate}">`;
     } else {
         updateElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
@@ -194,39 +202,28 @@ window.updateDeal = function (dealID, field, Id, card, date) {
         }
     });
 
+    let dateInput = document.getElementById('edit' + field + dealID);
     if (field == "closing_date") {
-        inputElementmake.addEventListener('click', function () {
-            // Create a date input element
-            var dateInput = document.createElement('input');
-            dateInput.type = 'date'; // Change type to text for Bootstrap Datepicker compatibility
-            dateInput.classList.add('form-control', 'npinputinfo');
-            dateInput.id = 'edit' + field + dealID;
-            dateInput.required = true;
-
-            // Set the value of the date input element
-            if (inputElementmake.value) {
-                dateInput.value = inputElementmake.value;
-            }
-
-            // Replace the update element with the date input element
-            updateElement.innerHTML = '';
-            updateElement.appendChild(dateInput);
-
-            // Initialize Bootstrap Datepicker
-            $(dateInput).datepicker();
-
-            // Add event listener to update the deal data when the date input loses focus
-            dateInput.addEventListener('blur', function () {
-                updateDealData(field, Id, dealID);
-            });
+        // Create a date input element
+        // Add event listener to update the deal data when the date input loses focus
+        dateInput.addEventListener('blur', function () {
+            updateDealData(field, Id, dealID);
         });
-    }
-    else {
-        inputElementmake.addEventListener('change', function () {
-            // Update the update element with the input element's value
-            updateElement.innerHTML = '<div class="commonTextEllipsis" id="' + field + dealID + '">' + inputElementmake.value + '</div>';
 
-            // Update the deal data
+        dateInput.focus(); // Set focus to the new date input
+    } else {
+
+        dateInput.focus(); // Set focus to the new text input
+
+        dateInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                updateDealData(field, Id, dealID);
+            }
+        });
+
+        dateInput.addEventListener('change', function () {
+            updateElement.innerHTML = '<div class="commonTextEllipsis" id="' + field + dealID + '">' + dateInput.value + '</div>';
             updateDealData(field, Id, dealID);
         });
     }
@@ -306,5 +303,4 @@ window.updateDealData = function (field, id, dealID, value = null) {
 
 
 }
-
 

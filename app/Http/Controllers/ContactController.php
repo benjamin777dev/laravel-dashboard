@@ -73,7 +73,7 @@ class ContactController extends Controller
             if(isset($frontData['data'][0]['First_Name'])){
             if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
                 $parts = explode(' ', $frontData['data'][0]['First_Name']);
-                if (count($parts) == 2) {
+                if (count($parts) == 5) {
                 $first_name = $parts[0];
                 // The last part will be the last name
                 $last_name = end($parts);
