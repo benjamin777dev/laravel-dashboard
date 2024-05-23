@@ -110,41 +110,48 @@
     @endforeach
 </div>
 <script>
-    function editText(zohoID, name, value) {
-        event.preventDefault();
-        let firstNameElement = document.getElementById(name + zohoID);
-        let text = firstNameElement.textContent.trim();
-        text === "" ? text = value : text;
+  function editText(zohoID, name, value) {
+    event.preventDefault();
+    let elementId = name + zohoID;
+    let element = document.getElementById(elementId);
+    let text = element.textContent.trim();
+    text = text === "" ? value : text;
 
-        let newInput = document.createElement('input');
-        newInput.type = 'text';
-        newInput.id = name + zohoID;
-        newInput.value = value;
-        firstNameElement.parentNode.replaceChild(newInput, firstNameElement);
-        let inputElementContact = document.getElementById(name + zohoID);
-        inputElementContact.setAttribute("onclick", "event.preventDefault()");
-        inputElementContact.focus();
-        // Prevent clicks inside the input from triggering the container's click event
-        inputElementContact.addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-        inputElementContact.addEventListener('blur', function() {
-            let newParagraph = document.createElement('p');
-            newParagraph.id = name + zohoID;
-            newParagraph.classList = name == 'first_name' ? "card-title" : "card-text"
-            newParagraph.textContent = inputElementContact.value;
+    let newInput = document.createElement('input');
+    newInput.type = 'text';
+    newInput.id = elementId;
+    newInput.value = value;
+    element.parentNode.replaceChild(newInput, element);
+    newInput.setAttribute("onclick", "event.preventDefault()");
+    newInput.focus();
 
-            // Replace textElement with the new paragraph element
-            inputElementContact.parentNode.replaceChild(newParagraph, inputElementContact);
-            updateContact(zohoID, name);
+    // Prevent clicks inside the input from triggering the container's click event
+    newInput.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
 
-        });
-        // Prevent default action when clicking on container
-        let container = document.getElementById("contactlist");
-        container?.addEventListener("click", function(event) {
-            event.preventDefault();
-        });
+    function replaceWithParagraph() {
+        let newParagraph = document.createElement('p');
+        newParagraph.id = elementId;
+        newParagraph.classList = name == 'first_name' ? "card-title" : "card-text";
+        newParagraph.textContent = newInput.value;
+        newInput.parentNode.replaceChild(newParagraph, newInput);
     }
+
+    newInput.addEventListener('blur', replaceWithParagraph);
+
+    newInput.addEventListener('change', function() {
+        replaceWithParagraph();
+        updateContact(zohoID, name);
+    });
+
+    // Prevent default action when clicking on container
+    let container = document.getElementById("contactlist");
+    container?.addEventListener("click", function(event) {
+        event.preventDefault();
+    });
+}
+
 
     function fetchNotesForContact(id, conId) {
         event.preventDefault();
@@ -191,7 +198,9 @@
     }
 
     function updateContact(zohoID, name) {
+        console.log(name,zohoID,'tresdkjfklshdlfhsldf');
         let elementId = document.getElementById(name + zohoID);
+        console.log(elementId,'sdjfhsdjkfgshd')
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
         let formData = {

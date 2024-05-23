@@ -345,6 +345,7 @@
 <script>
     window.fetchData = function(tab = null) {
         $('#spinner').show();
+         loading = true;
         // Make AJAX call
         $.ajax({
             url: '{{ url('/get/tasks/for/dashboard') }}',
@@ -354,11 +355,14 @@
             },
             success: function(data) {
                 $('#spinner').hide();
+                loading = false;
                 $('.task-container').html(data);
+
 
             },
             error: function(xhr, status, error) {
                 // Handle errors
+                loading = false;
                 console.error('Error:', error);
             }
         });

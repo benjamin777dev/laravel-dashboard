@@ -32,9 +32,7 @@ window.updateDeal = function (dealID, field, Id, card, date) {
 
     if (field == "closing_date") {
         // Assuming date is defined and in a valid format
-        const formattedDate = formatDate(date); // Format date if needed
-        updateElement.innerHTML =
-            `<input type="date" class="form-control npinputinfo" id="edit${field}${dealID}" required value="${formattedDate}">`;
+         var closingdate = date;
     } else {
         updateElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
