@@ -615,6 +615,9 @@ class DashboardController extends Controller
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
         $task = Task::where('zoho_task_id', $id)->first();
+        if(empty($task)){
+        $task = Task::where('id', $id)->first();
+        }
         try {
                 $response = $zoho->updateTask($jsonData,$task['zoho_task_id']);
                 if (!$response->successful()) {

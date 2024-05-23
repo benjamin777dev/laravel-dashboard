@@ -339,9 +339,6 @@
     <!-- Include Date Range Picker -->
 
 @section('dashboardScript')
-
-
-
 @endsection
 @endsection
 

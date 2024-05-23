@@ -104,8 +104,6 @@
         </div>
     </div>
 @endif
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 <script>
     window.onload = function() {
         const modalSelectMap = [{

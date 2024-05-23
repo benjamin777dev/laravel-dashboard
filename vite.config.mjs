@@ -37,7 +37,9 @@ export default defineConfig({
                 'resources/css/pipeline.css',
                 'resources/js/contacts.js',
                 'resources/css/contacts.css',
-                'resources/css/app.css'
+                'resources/css/app.css',
+                'resources/js/toast.js',
+                'resources/js/dropdown.js'
             ],
             refresh: true,
         }),

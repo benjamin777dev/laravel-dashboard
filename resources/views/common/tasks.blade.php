@@ -267,8 +267,6 @@
         @include('common.pagination', ['module' => $tasks])
     </div>
 @endif
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
-<script  src="{{ URL::asset('http://[::1]:5173/resources/js/dropdown.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -570,6 +568,7 @@
             inputElementmake.addEventListener('blur', function() {
                     var newParagraph = document.createElement('p');
                     newParagraph.id = 'editableText' + id;
+                    newParagraph.classList = "dSubjectText dFont900 dFont14 dMt16 justify-content-between"
                     newParagraph.textContent = inputElementmake.value;
 
                 // Replace textElement with the new paragraph element
