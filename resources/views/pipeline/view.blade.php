@@ -102,6 +102,7 @@
                     {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
                         id="validationDefault01" required value="{{ $deal['client_name_primary'] }}">--}}
                     <select type="text" placeholder="Enter Client’s name" class="form-select npinputinfo validate" id="validationDefault01" required>
+                        <option value="" disabled {{ empty($deal['client_name_primary']) ? 'selected' : '' }}>Please select</option>
                                 @foreach($contacts as $contact)
                                     <option value="{{$contact}}" {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
                                         {{$contact['first_name']}} {{$contact['last_name']}}
@@ -112,7 +113,7 @@
                 <div class="col-md-6">
                     <label for="validationDefault02" class="form-label nplabelText">Representing</label>
                     <select class="form-select npinputinfo validate" id="validationDefault02" required>
-                        <option value="">Select</option>
+                        <option value="" disabled {{ empty($deal['representing']) ? 'selected' : '' }}>Please select</option>
                         <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
                         <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
                         </option>
@@ -122,12 +123,12 @@
                 <div class="col-md-6">
                     <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
                     <input type="text" class="form-control npinputinfo validate" placeholder="Transaction Name"
-                        id="validationDefault03" required value="{{ $deal['deal_name'] }}">
+                        id="validationDefault03" required value="{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault04" class="form-label nplabelText">Stage</label>
                     <select class="form-select npinputinfo validate" id="validationDefault04" required onchange="checkValidate()">
-                        <option value="">Select</option>
+                        <option value="" disabled {{ empty($deal['stage']) ? 'selected' : '' }}>Please select</option>
                         @foreach ($allStages as $stage)
                             <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
                                 {{ $stage }}
@@ -199,66 +200,87 @@
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
             <p class="npinfoText">Earnings Information</p>
-            <form class="row g-3">
-                <div class="col-md-6">
-                    <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
-                    <input type="text" class="form-control npinputinfo validate" id="validationDefault11" required
-                        value="{{ $deal['commission'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
-                    <input type="text" class="form-control npinputinfo" id="commissionflat" required
-                        value="{{ $deal['commission_flat_free'] }}">
-                </div>
-                
-                <div class="col-md-6">
-                    <label for="validationDefault14" class="form-label nplabelText">Potential GCI</label>
-                    <p class="form-control-plaintext npinputinfo" id="validationDefault16">
-                        {{ $deal['potential_gci'] }}
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
-                    <input type="text" class="form-control npinputinfo"  id="validationDefault15"
-                        required value="{{ $deal['pipeline_probability'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault16" class="form-label nplabelText">Probable GCI</label>
-                    <p class="form-control-plaintext npinputinfo" id="validationDefault16">
-                        {{ $deal['pipeline1'] }}
-                    </p>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault11" class="form-label nplabelText"></label>
+                <form class="row g-3">
+                    <div class="col-md-6">
+                        <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
+                        <input type="text" class="form-control npinputinfo validate" id="validationDefault11" required value = "{{$deal['commission']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
+                        <input type="text" class="form-control npinputinfo" id="commissionflat" required
+                            value="{{ $deal['commission_flat_free'] }}">
+                    </div>
                     
-                </div>
-                <div class="col-md-6">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked01" <?php if ($deal['personal_transaction']) {
-                        echo 'checked';
-                    } ?>>
-                    <label class="form-check-label nplabelText" for="flexCheckChecked01">
-                        Personal Transaction
-                    </label>
-                </div>
-                <div class="col-md-6">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked02" <?php if ($deal['double_ended']) {
-                        echo 'checked';
-                    } ?>>
-                    <label class="form-check-label nplabelText" for="flexCheckChecked02">
-                        Double ended
-                    </label>
-                </div>
-                <div class="col-md-6">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if ($deal['review_gen_opt_out']) {
-                        echo 'checked';
-                    } ?>>
-                    <label class="form-check-label nplabelText" for="flexCheckChecked03">
-                        Review Gen Opt Out
-                    </label>
-                </div>
-                
-                
-            </form>
+                    <div class="col-md-6">
+                        <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
+                        <input type="text" class="form-control npinputinfo"  id="validationDefault15"
+                            required value = "{{$deal['pipeline_probability']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault11" class="form-label nplabelText"></label>
+                        
+                    </div>
+
+                    <p class="npinfoText">Settings</p>
+                    <div class="col-md-6">
+                        <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="transactionOwner" required value = "{{$deal['userData']['name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="tmPreference" required value = "{{$deal['tm_preference']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tmName" class="form-label nplabelText">TM Name</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="tmName" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="contactName" class="form-label nplabelText">Contact Name</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="contactName" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
+                        echo 'checked'; ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked01">
+                            Personal Transaction
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02" <?php if ($deal['double_ended'])
+                        echo 'checked'; ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked02">
+                            Double ended
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if ($deal['review_gen_opt_out']) {
+                            echo 'checked';
+                        } ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked03">
+                            Review Gen Opt Out
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked04" <?php if ($deal['status_rpt_opt_out']) {
+                            echo 'checked';
+                        } ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked04">
+                            Status Rpt Opt out
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked05" <?php if ($deal['deadline_em_opt_out']) {
+                            echo 'checked';
+                        } ?>>
+                        <label class="form-check-label nplabelText" for="flexCheckChecked05">
+                            Deadline EM Opt Out
+                        </label>
+                    </div>
+                </form>
         </div>
     </div>
 
@@ -666,7 +688,10 @@
 </div>
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
     data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
-    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+    <div class="tooltip-wrapper">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <span class="tooltiptext">Add Notes</span>
+        </div>
 </div>
 {{-- Create New Task Modal --}}
 @include('common.tasks.create', ['deal' => $deal, 'type' => 'Deals'])

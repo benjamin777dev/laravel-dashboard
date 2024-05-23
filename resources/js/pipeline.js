@@ -45,6 +45,12 @@ window.updateDataDeal = function (dealId) {
     var personal_transaction = $('#flexCheckChecked01').prop('checked');
     var double_ended = $('#flexCheckChecked02').prop('checked');
     var review_gen_opt_out = $('#flexCheckChecked03').prop('checked');
+    var deadline_em_opt_out = $('#flexCheckChecked05').prop('checked');
+    var status_rpt_opt_out = $('#flexCheckChecked04').prop('checked');
+    var tm_preference = $('#tmPreference').val();
+    var tm_name = $('#tmName').val();
+    var contact_name = $('#contactName').val();
+    var transaction_owner = $('#transactionOwner').val();
 
 
     if (client_name_primary === '') {
@@ -114,7 +120,13 @@ window.updateDataDeal = function (dealId) {
                 },
                 "Double_Ended": double_ended,
                 "Review_Gen_Opt_Out": review_gen_opt_out,
-                "Commission_Flat_Free": commission_flat_free
+                "Commission_Flat_Free": commission_flat_free,
+                "TM_Preference": tm_preference,
+                "TM_Name": tm_name,
+                "Transaction_Owner": transaction_owner,
+                "Contact_Name": contact_name,
+                "Status_pt_out_out": status_rpt_opt_out,
+                "Deadline_EM_Opt_Out": deadline_em_opt_out,
             }],
         };
 

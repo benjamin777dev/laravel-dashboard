@@ -319,7 +319,10 @@
 </div>
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
     data-bs-target="#staticBackdropforNote_{{$contact['id']}}">
-    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+    <div class="tooltip-wrapper">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <span class="tooltiptext">Add Notes</span>
+        </div>
 </div>
 
 {{-- view group secton --}}

@@ -40,19 +40,19 @@
                         </div>
                     </div>
                     <div class="card-footer dataCardFooter">
-                        <div class="datafootericondiv" onclick="event.preventDefault();">
-
-                            <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                                class="datadiversityicon" data-bs-toggle="modal"
-                                data-bs-target="#newTaskModalId{{ $contact['id'] }}">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                                class="datadiversityicon"
-                                onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
+                        <div class="datafootericondiv">
+                            <div class="tooltip-wrapper" onclick="event.preventDefault();">
+                                <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt="" class="datadiversityicon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $contact['id'] }}">
+                                <span class="tooltiptext">Add Task</span>
+                            </div>
+                            <div class="tooltip-wrapper">
+                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="datadiversityicon" onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
+                                <span class="tooltiptext">Fetch Notes</span>
+                            </div>
                         </div>
-                        <div onclick="event.preventDefault();" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                                class="datadiversityicon">
+                        <div class="tooltip-wrapper" onclick="event.preventDefault();" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="" class="datadiversityicon">
+                            <span class="tooltiptext">Add Note</span>
                         </div>
                     </div>
                 </div>

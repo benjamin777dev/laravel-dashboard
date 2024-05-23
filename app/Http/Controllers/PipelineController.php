@@ -97,7 +97,6 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        Log::info("accessToken: " . print_r($accessToken, true));
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
@@ -131,7 +130,6 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        Log::info("accessToken: " . print_r($accessToken, true));
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
 
@@ -176,14 +174,17 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken);
+        $zoho->access_token = $accessToken;
+        $jsonData = $request->json()->all();
+        $contact = null;
+        if(isset($jsonData['data'][0]['Client_Name_Primary'])){
+            $contact = $jsonData['data'][0]['Client_Name_Primary'];
+        }
+        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken,$contact);
         if ($isIncompleteDeal) {
             return response()->json($isIncompleteDeal);
         } else {
-            $zoho->access_token = $accessToken;
-
-            $jsonData = $request->json()->all();
-
+            
             $zohoDeal = $zoho->createZohoDeal($jsonData);
             if (!$zohoDeal->successful()) {
                 return "error somthing" . $zohoDeal;

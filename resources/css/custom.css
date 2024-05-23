@@ -525,6 +525,59 @@
     border-radius: 50%;
     /* cursor: pointer; */
 }
+/* Tooltip container */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin: 5px;
+}
+
+/* Tooltip text */
+.tooltip-wrapper .tooltiptext {
+    visibility: hidden;
+    width: max-content; /* Adjust as needed */
+    max-width: 200px; /* Maximum width for responsiveness */
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: calc(100% + 5px); /* Adjust vertical position */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0s linear 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip-wrapper .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when hovering over the tooltip container */
+.tooltip-wrapper:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s, visibility 0s;
+}
+
+/* Style for the images */
+.datadiversityicon {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
+}
+
+
 
 /* / / / Note Modal / / / */
 .noteModal {
@@ -1329,6 +1382,8 @@
 
 .ppiplinecommonIcon {
     cursor: pointer;
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
 }
 
 .pstatusText {
@@ -2708,6 +2763,8 @@ body[data-sidebar="dark"] .navbar-brand-box {
     padding: .75rem;
     width: 100%;
   }
+
+
 
   
 
