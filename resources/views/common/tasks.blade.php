@@ -1,25 +1,6 @@
 <script>
     // Store tasks data in a JavaScript variable
-    var taskIDSS = [];
-    var selectElement;
-    var tasks = @json($tasks);
-    tasks?.data?.forEach((task) => {
-        taskIDSS.push(task?.id)
-    })
-    var modalSelectMaptsk = []
-    taskIDSS.forEach((id) => {
-        modalSelectMaptsk.push({
-            modalID: id,
-            selectElementId: 'related_to_rem' + id
-        })
-    });
-    modalSelectMaptsk.forEach(({
-        modalID,
-        selectElementId
-    }) => {
-        const selectElement = $(`#${selectElementId}`);
-        showDropdownForId(modalID, selectElement);
-    });
+  
 </script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
@@ -310,6 +291,26 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
+          var taskIDSS = [];
+    var selectElement;
+    var tasks = @json($tasks);
+    tasks?.data?.forEach((task) => {
+        taskIDSS.push(task?.id)
+    })
+    var modalSelectMaptsk = []
+    taskIDSS.forEach((id) => {
+        modalSelectMaptsk.push({
+            modalID: id,
+            selectElementId: 'related_to_rem' + id
+        })
+    });
+    modalSelectMaptsk.forEach(({
+        modalID,
+        selectElementId
+    }) => {
+        const selectElement = $(`#${selectElementId}`);
+        showDropdownForId(modalID, selectElement);
+    });
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {
