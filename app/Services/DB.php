@@ -85,6 +85,7 @@ class DB
                 'representing' => $deal['Representing'],
                 'client_name_only' => $deal['Client_Name_Only'],
                 'commission' => $deal['Commission'],
+                'commission_flat_free' => $deal['Commission_Flat_Fee'],
                 'probable_volume' => $deal['Probable_Volume'],
                 'lender_company' => $deal['Lender_Company'],
                 'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
@@ -92,6 +93,7 @@ class DB
                 'needs_new_date2' => $deal['Needs_New_Date2'],
                 'deal_name' => $deal['Deal_Name'],
                 'tm_preference' => $deal['TM_Preference'],
+                'tm_name' => $deal['TM_Name'],
                 'stage' => $deal['Stage'],
                 'sale_price' => $deal['Sale_Price'],
                 'zoho_deal_id' => $deal['id'],
@@ -105,6 +107,9 @@ class DB
                 'client_name_primary' => $deal['Client_Name_Primary'],
                 'lender_name' => $deal['Lender_Name'],
                 'potential_gci' => $deal['Potential_GCI'],
+                'review_gen_opt_out' => $deal['Review_Gen_Opt_Out'],
+                'deadline_em_opt_out' => $deal['Deadline_EM_Opt_Out'],
+                'status_rpt_opt_out' => $deal['Status_Rpt_Opt_Out'],
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
                 'isDealCompleted' => true,
@@ -796,11 +801,12 @@ class DB
         }
     }
 
-    public function getIncompleteDeal(User $user, $accessToken)
+    public function getIncompleteDeal(User $user, $accessToken,$contact=null)
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $deal = Deal::where('isDealCompleted', false)->first();
+            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact]];
+            $deal = Deal::where($condition)->first();
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
         } catch (\Exception $e) {
@@ -882,9 +888,14 @@ class DB
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
             }
             $deal = Deal::updateOrCreate(['zoho_deal_id' => $id], [
-                'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
+                'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
+                'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
                 'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
+                'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
+                'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
+                'commission_flat_free'=>isset($deal['Commission_Flat_Fee']) ? $deal['Commission_Flat_Fee'] : null,
+                'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'client_name_primary' => isset($deal['Client_Name_Primary']) ? $deal['Client_Name_Primary'] : null,
                 'closing_date' => isset($deal['Closing_Date']) ? $helper->convertToUTC($deal['Closing_Date']) : null,
                 'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
@@ -892,16 +903,17 @@ class DB
                 'city' => isset($deal['City']) ? $deal['City'] : null,
                 'state' => isset($deal['State']) ? $deal['State'] : null,
                 'pipeline1' => isset($deal['Pipeline1']) ? $deal['Pipeline1'] : null,
-                'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
-                'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
-                'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
                 'ownership_type' => isset($deal['Ownership_Type']) ? $deal['Ownership_Type'] : null,
                 'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
                 'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
                 'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
-                'commission_flat_free'=>isset($deal['Commission_Flat_Free']) ? $deal['Commission_Flat_Free'] : null,
+                
                 'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : null,
+                'deadline_em_opt_out'=>isset($deal['Deadline_EM_Opt_Out']) ? $deal['Deadline_EM_Opt_Out'] : null,
+                'status_rpt_opt_out'=>isset($deal['Status_Rpt_Opt_Out']) ? $deal['Status_Rpt_Opt_Out'] : null,
+                'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
+                'tm_name'=>isset($deal['TM_Name']) ? $deal['TM_Name'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
             ]);
@@ -1003,14 +1015,14 @@ class DB
         }
     }
 
-    public function retrieveContactGroupsData(User $user, $accessToken, $filter = null, $sortType = null, $contactId, $sortValue = null, $sort = null)
+    public function retrieveContactGroupsData(User $user, $accessToken, $contactId, $filter = null, $sortType = null, $sortValue = null, $sort = null)
     {
         try {
             Log::info("Retrieve Tasks From Database");
             $tasks = ContactGroups::where('ownerId', $user->id)
                 ->with([
                     'groups' => function ($query) use ($contactId, $sortValue, $sortType) {
-                        // Sort the groups only if contact ID is provided
+                        // Sort the groups only if sort value and type are provided
                         if ($sortValue && $sortType) {
                             $query->join('groups', 'contact_groups.groupId', '=', 'groups.id')
                                 ->orderBy('groups.' . $sortValue, $sortType);
@@ -1043,6 +1055,7 @@ class DB
             throw $e;
         }
     }
+
 
 
     public function updateGroups(User $user, $accessToken, $data)

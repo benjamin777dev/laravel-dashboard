@@ -297,7 +297,10 @@
         </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
-        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+        <div class="tooltip-wrapper">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <span class="tooltiptext">Add Notes</span>
+        </div>
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
@@ -707,4 +710,4 @@
         }
     };
 </script>
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/dashboard.js') }}"></script>
+@vite(['resources/js/dashboard.js'])

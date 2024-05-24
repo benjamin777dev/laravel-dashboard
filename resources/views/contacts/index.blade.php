@@ -107,7 +107,7 @@
     </div>
 
 @endsection
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 <script>
     window.onload = function() {
         @foreach ($contacts as $contact)

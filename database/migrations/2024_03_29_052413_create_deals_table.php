@@ -25,6 +25,7 @@ class CreatedealsTable extends Migration
             $table->boolean('needs_new_date2')->default(false);
             $table->string('deal_name')->nullable();
             $table->string('tm_preference')->nullable();
+             $table->string('tm_name')->nullable();
             $table->string('stage')->nullable();
             $table->decimal('sale_price', 15, 2)->nullable(); // Adjusted decimal precision
             $table->string('zoho_deal_id')->nullable();
@@ -43,6 +44,8 @@ class CreatedealsTable extends Migration
             $table->unsignedBigInteger('contactId')->nullable(); // Modified to unsignedBigInteger
             $table->boolean('review_gen_opt_out')->default(false); // Modified to unsignedBigInteger
             $table->string('commission_flat_free')->nullable(); // Modified to unsignedBigInteger
+            $table->boolean('deadline_em_opt_out')->default(false);
+            $table->boolean('status_rpt_opt_out')->default(false);
             $table->boolean('isDealCompleted')->default(true);
             $table->boolean('isInZoho')->default(true);
             $table->foreign('userID')->references('id')->on('users')->onDelete('set null');

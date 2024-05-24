@@ -1,4 +1,4 @@
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
+@vite(['resources/js/toast.js'])
 <div class="table-responsive dbgTable">
     <table class="table dbgHeaderTable">
         <thead>

@@ -36,7 +36,7 @@ window.showDropdown = function (showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return $('<span data-module="' + state?.zoho_module_id + '" id="' + state?.zoho_contact_id + '">' + state?.first_name  + ' ' + state?.last_name  + '</span>');
+                    return $('<span data-module="' + state?.zoho_module_id + '" id="' + state?.zoho_contact_id + '">' + state?.first_name + ' ' + state?.last_name + '</span>');
                 }
 
                 return $('<span id="' + state?.zoho_deal_id + '">' + state?.deal_name + '</span>');
@@ -47,7 +47,7 @@ window.showDropdown = function (showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return state.first_name  + ' ' + state.last_name ;
+                    return state.first_name + ' ' + state.last_name;
                 }
 
                 return state.deal_name;
@@ -77,11 +77,11 @@ window.showDropdown = function (showDropdown, selectElement) {
 
 }
 
-window.showDropdownForId = function(modalID, selectElement) {
+window.showDropdownForId = function (modalID, selectElement) {
     var selectedval = selectElement.val();
     var selectedText1 = selectElement.find('option:selected').text();
-    console.log(selectedval,'selectedText1');
-    console.log(selectedText1,'selectedText1');
+    console.log(selectedval, 'selectedText1');
+    console.log(selectedText1, 'selectedText1');
     selectElement.each(function () {
         $(this).select2({
             theme: 'bootstrap-5',
@@ -100,7 +100,7 @@ window.showDropdownForId = function(modalID, selectElement) {
                 processResults: function (data, params) {
                     console.log(data, 'data is here')
                     params.page = params.page || 1;
-                    
+
                     return {
                         results: data.items,
                     };
@@ -146,7 +146,7 @@ window.showDropdownForId = function(modalID, selectElement) {
                 window.groupLabel = "Contacts";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_contact_id;
-                updateText("", groupLabel, modalID, "",window.relatedTo);
+                updateText("", groupLabel, modalID, "", window.relatedTo);
             } else {
                 selectedText = selectedData.deal_name;
                 console.log('zoho_module_idddddd:', selectedData.zoho_module_id);
@@ -163,10 +163,10 @@ window.showDropdownForId = function(modalID, selectElement) {
         element.innerHTML = element.title;
     });
 
-   
+
 }
 
-window.updateSelectOptionsTask=function(selectElement, taskArr) {
+window.updateSelectOptionsTask = function (selectElement, taskArr) {
     // Clear existing options
     selectElement.empty();
 
@@ -213,7 +213,7 @@ window.updateSelectOptionsTask=function(selectElement, taskArr) {
     // search.trigger("input");
 }
 
-window.updateTaskArrTask=function(selectElement, search) {
+window.updateTaskArrTask = function (selectElement, search) {
 
     // Populate select with new options
     $.ajax({
@@ -231,7 +231,7 @@ window.updateTaskArrTask=function(selectElement, search) {
     });
 }
 
-window.addCommonTask=function(id="", type="") {
+window.addCommonTask = function (id = "", type = "") {
     // console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
     if (window?.groupLabel === "Contacts") {

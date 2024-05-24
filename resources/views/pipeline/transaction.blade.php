@@ -160,6 +160,7 @@
                                     ${{ number_format(($deal->sale_price ?? 0) * (($deal->commission ?? 0) / 100) * (($deal->pipeline_probability ?? 0) / 100), 0, '.', ',') }}
                                 </div>
                             </td>
+
                             <td>
                                 <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
                                     <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"

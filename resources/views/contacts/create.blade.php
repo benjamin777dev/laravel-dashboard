@@ -4,7 +4,6 @@
 
 @section('content')
 @vite(['resources/css/custom.css'])
-<script src="{{ URL::asset('http://[::1]:5173/resources/js/toast.js') }}"></script>
 @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -16,18 +15,8 @@
     </div>
 @endif
 <div class="container">
-    <div class="commonFlex ppipeDiv">
+    <div class="commonFlex">
         <p class="ncText">Create new contact</p>
-        <div class="commonFlex ppipeDiv">
-            <p class="pText"></p>
-            <a onclick="createTransaction({{$contact}});">
-                <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                    </i>
-                    New Transaction
-                </div>
-            </a>
-        </div>
     </div>
     <div class="row">
         <form class="row" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
@@ -80,9 +69,8 @@
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Last Name</label>
                         <input type="text" value="{{ $contact['last_name'] == 'CHR' ? '' : $contact['last_name'] }}" name="last_name"
-                            onkeyup="showValidation(this)" placeholder="Enter Last name"
-                            class="form-control npinputinfo" id="last_name">
-                        <div id="last_name_error_message" class="text-danger"></div>
+                            placeholder="Enter Last name"
+                            class="form-control npinputinfo validate" id="last_name">
                     </div>
 
                     <div class="col-md-6">
@@ -331,7 +319,10 @@
 </div>
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
     data-bs-target="#staticBackdropforNote_{{$contact['id']}}">
-    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+    <div class="tooltip-wrapper">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <span class="tooltiptext">Add Notes</span>
+        </div>
 </div>
 
 {{-- view group secton --}}
@@ -393,26 +384,13 @@
 
     })
 
-    function showValidation(e) {
-        let lastName = e.value;
-        let regex = /^[a-zA-Z ]{1,20}$/; // Regular expression to match only letters and spaces up to 20 characters
-
-        if (lastName.trim() === "" || !regex.test(lastName)) {
-            $("#last_name_error_message").text(
-                "Last name must be between 1 and 20 characters long and contain only letters and spaces").show();
-        } else {
-            $("#last_name_error_message").hide(); // Hide the error message if the last name is valid
-        }
-    }
+    
 
     function validateContactForm() {
         let last_name = $("#last_name").val();
         // let regex = /^[a-zA-Z ]{1,20}$/;
         if (last_name.trim() === "") {
-            $("#last_name_error_message").text("Last name cannot be empty").show();
             return false;
-        } else {
-            $("#last_name_error_message").hide(); // Hide the error message if the last name is not empty
         }
         let submitbtn = $("#submit_button");
         submitbtn.attr("type", "submit");
@@ -532,8 +510,10 @@
                 if (response?.data && response.data[0]?.message) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    // window.location.reload();
+                    alert(upperCaseMessage);
+                    window.location.reload();
+                } else {
+                    alert("Response or message not found");
                 }
             },
             error: function (xhr, status, error) {
@@ -693,40 +673,4 @@
         return isValid;
     }
 
-    function createTransaction(contact) {
-        console.log("Onclick");
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Stage": "Potential",
-                "Client_Name_Primary":contact.first_name+" "+contact.last_name,
-                "Client_Name_Only":contact.first_name+" "+contact.last_name+" || "+contact.zoho_contact_id,
-                "Contact":{
-                    "Name":contact.first_name+" "+contact.last_name,
-                    "id":contact.zoho_contact_id
-                }
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                console.log(data);
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
 </script>
