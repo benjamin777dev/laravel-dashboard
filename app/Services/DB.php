@@ -108,8 +108,8 @@ class DB
                 'lender_name' => isset($deal['Lender_Name']) ? $deal['Lender_Name'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
                 'review_gen_opt_out' => isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
-                'deadline_em_opt_out'=>isset($deal['Deadline_EM_Opt_Out']) ? $deal['Deadline_EM_Opt_Out'] : false,
-                'status_rpt_opt_out'=>isset($deal['Status_Rpt_Opt_Out']) ? $deal['Status_Rpt_Opt_Out'] : false,
+                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
                 'isDealCompleted' => true,
@@ -910,8 +910,8 @@ class DB
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
                 
                 'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
-                'deadline_em_opt_out'=>isset($deal['Deadline_EM_Opt_Out']) ? $deal['Deadline_EM_Opt_Out'] : false,
-                'status_rpt_opt_out'=>isset($deal['Status_Rpt_Opt_Out']) ? $deal['Status_Rpt_Opt_Out'] : false,
+                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
                 'tm_name'=>isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
                 'isDealCompleted' => true,
@@ -933,20 +933,20 @@ class DB
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
 
-        Log::info("Storing Groups Into Database");
+        Log::info("Storing Groups Into Database only group");
 
         foreach ($allGroups as $groupData) {
             $group = Groups::updateOrCreate(
                 ['zoho_group_id' => $groupData['id']],
                 [
-                    'ownerId' => $user->id,
-                    "name" => $groupData['Name'] ?? null,
-                    "isPublic" => $groupData['Is_Public'] ?? false,
-                    "isABCD" => $groupData['isABC'] ?? false,
-                    "zoho_group_id" => $groupData['id'] ?? null
+                    'ownerId' => $groupData['Owner']['id'],
+                    'name' => $groupData['Name'] ?? null,
+                    'isPublic' => $groupData['Is_Public'] ?? false,
+                    'isABCD' => $groupData['isABC'] ?? false
                 ]
             );
         }
+
 
         Log::info("Groups stored into database successfully.");
     }
@@ -1099,7 +1099,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $condition = [['ownerId', $user->id]];
+            $condition = [];
             if ($isShown) {
                 $condition[] = ['isShow', true];
             }

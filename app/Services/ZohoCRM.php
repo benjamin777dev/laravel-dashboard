@@ -12,7 +12,7 @@ class ZohoCRM
     private $contentURL = 'https://content.zohoapis.com/crm/v3/';
     private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
-    private $apidealsurl = 'https://crm.zoho.com/crm/v6/';
+    private $bulkUrl = 'https://crm.zoho.com/crm/v6/';
     private $client_id;
     private $client_secret;
     public $redirect_uri;
@@ -166,7 +166,7 @@ class ZohoCRM
         Log::info('Getting Zoho user data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'users?type=CurrentUser');
 
         //Log::info('Zoho user data response: ' . print_r($response, true));
@@ -180,7 +180,7 @@ class ZohoCRM
         Log::info('Getting Zoho contact data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'Contacts/search', [
                     'page' => $page,
                     'per_page' => $per_page,
@@ -201,9 +201,9 @@ class ZohoCRM
             $inputJson['trigger'] = 'workflow';
             // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->patch($this->apidealsurl . "Contacts/$id?affected_data=true", $inputJson);
+            ])->patch($this->bulkUrl . "Contacts/$id?affected_data=true", $inputJson);
 
             $responseData = $response->json();
 
@@ -233,9 +233,9 @@ class ZohoCRM
 
             // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->post($this->apidealsurl . "Contacts", $inputJson);
+            ])->post($this->bulkUrl . "Contacts", $inputJson);
 
             $responseData = $response->json();
 
@@ -262,7 +262,7 @@ class ZohoCRM
         Log::info('Getting Zoho deals data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'Deals/search', [
                     'page' => $page,
                     'per_page' => $per_page,
@@ -280,7 +280,7 @@ class ZohoCRM
         Log::info('Getting Zoho Module data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'settings/modules');
 
         Log::info('Zoho Module data response: ' . print_r($response, true));
@@ -293,7 +293,7 @@ class ZohoCRM
         Log::info('Getting Zoho tasks data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'Tasks/search', [
                     'page' => $page,
                     'per_page' => $per_page,
@@ -311,7 +311,7 @@ class ZohoCRM
         Log::info('Getting Zoho Agent_Commission_Incomes data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'Agent_Commission_Incomes/search', [
                     'page' => $page,
                     'per_page' => $per_page,
@@ -328,7 +328,7 @@ class ZohoCRM
         Log::info('Getting Zoho notes data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . 'Notes/search', [
                     'page' => $page,
                     'per_page' => $per_page,
@@ -347,7 +347,7 @@ class ZohoCRM
         $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
 
@@ -363,7 +363,7 @@ class ZohoCRM
         // return $inputJson;
         try {        // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->put($this->apiNoteUrl . "Notes/" . $id, $inputJson);
         } catch (\Exception $e) {
@@ -378,8 +378,8 @@ class ZohoCRM
         Log::info('Getting Zoho TransactionData data');
         $fields = "approval,Contact_Name,Deal_Name,Address,Owner,TM_Name,Closing_Date";
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
-        ])->post($this->apidealsurl . "Deals/bulk?fields=$fields");
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+        ])->post($this->bulkUrl . "Deals/bulk?fields=$fields");
         //Log::info('Zoho getDealTransactionData data response: ' . print_r($response, true));
         return $response;
     }
@@ -394,7 +394,7 @@ class ZohoCRM
 
             // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post($this->apiUrl . "Tasks", $inputJson);
 
@@ -422,7 +422,7 @@ class ZohoCRM
         // return $inputJson;
         try {        // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->put($this->apiUrl . "Tasks/" . $id, $inputJson);
             Log::info('Zoho Task updation response: ' . print_r($response->json(), true));
@@ -441,7 +441,7 @@ class ZohoCRM
         $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Tasks/" . $id);
 
@@ -456,7 +456,7 @@ class ZohoCRM
         $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Notes/" . $id);
 
@@ -471,7 +471,7 @@ class ZohoCRM
         $inputJson['trigger'] = 'workflow';
         // Adjust the URL and HTTP method based on your Zoho API requirements
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->delete($this->apiUrl . "Tasks?ids=" . $ids);
 
@@ -485,7 +485,7 @@ class ZohoCRM
         Log::info('Getting Zoho Deal contact data');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
         ])->get($this->apiUrl . "Deals/$dealId/Contact_Roles", [
                     'fields' => 'Email,Department,First_Name,Last_Name'
                 ]);
@@ -500,7 +500,7 @@ class ZohoCRM
         // trigger workflows
         $inputJson['trigger'] = 'workflow';
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . 'Deals', $inputJson);
 
@@ -517,7 +517,7 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->put($this->apiUrl . 'Deals/' . $id, $inputJson);
 
@@ -538,7 +538,7 @@ class ZohoCRM
         Log::info('Creating Zoho Deal'.$id);
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Deals/' . $id);
 
@@ -552,7 +552,7 @@ class ZohoCRM
         Log::info('Creating Contact Zoho Deal');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Contacts_X_Groups/search', [
                     'page' => $page,
@@ -569,13 +569,13 @@ class ZohoCRM
         Log::info('Creating Group Zoho ');
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Groups', [
                     'page' => $page,
                     'per_page' => $per_page,
                     'criteria' => $criteria,
-                    'fields' => $fields
+                    'fields'=>$fields
                 ]);
 
         Log::info('Response Zoho Group');
@@ -588,7 +588,7 @@ class ZohoCRM
             Log::info('Creating Composite API Zoho ');
 
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             ])->post($this->apiUrl . '__composite_requests', [
                         "rollback_on_fail" => true,
                         "parallel_execution" => false,
@@ -663,7 +663,7 @@ class ZohoCRM
             Log::info('Creating Attachment Zoho ');
 
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000000003819&fields=Owner,Modified_Time,Size,File_Name,Parent_Id,Record_Status__s");
 
             Log::info('Response Zoho Attachments');
@@ -682,7 +682,7 @@ class ZohoCRM
             Log::info('Creating nonTm Zoho ');
 
             $nonTm = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             ])->post($this->apiUrl . "Deals/bulk?relatedId=$dealId&relationId=5141697000005296186&fields=Name,Close_Date,Owner");
 
             Log::info('Response Zoho nonTm');
@@ -701,7 +701,7 @@ class ZohoCRM
             Log::info('Creating Submittals Zoho ');
 
             $submittals = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             ])->post($this->apiUrl . "Listing_Submittals/bulk?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria", [
                         'page' => $page,
                         'per_page' => $per_page,
@@ -725,7 +725,7 @@ class ZohoCRM
             Log::info('Creating stages Zoho ');
 
             $stages = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             ])->get($this->apiUrl . "Stages?page=$page&fields=$fields&per_page=$per_page&criteria=$criteria", [
                         'page' => $page,
                         'per_page' => $per_page,
@@ -748,7 +748,7 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post($this->apiUrl . 'Contacts_X_Groups', $inputJSON);
             return $response;
@@ -765,7 +765,7 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->delete($this->apiUrl . 'Contacts_X_Groups' . $id);
             return $response;
@@ -780,14 +780,14 @@ class ZohoCRM
         try {
             Log::info('Upload Zip file to ZOHO');
             $getOrgIdResponse = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->get($this->apiUrl . 'org');
 
             $orgId = $getOrgIdResponse->json()['org'][0]['zgid'];
             
             $headers = [
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'X-CRM-ORG' => $orgId,
                 'feature' => 'bulk-write',
             ];
@@ -846,7 +846,7 @@ class ZohoCRM
 
             // Send a POST request to Zoho API
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post('https://www.zohoapis.com/crm/bulk/v3/write', $inputJSON);
             
@@ -867,7 +867,7 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->get('https://www.zohoapis.com/crm/bulk/v3/write/' . $id);
             return $response;
@@ -888,7 +888,7 @@ class ZohoCRM
             Log::info('IDS', ['inputJSON' => $inputJSON]);
             // Send a POST request to Zoho API
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post('https://www.zohoapis.com/crm/v2/Contacts_X_Groups/actions/mass_delete', $inputJSON);
             
@@ -914,7 +914,7 @@ class ZohoCRM
             Log::info('IDS', ['inputJSON' => $inputJSON]);
             // Send a POST request to Zoho API
            $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 ])->put($this->apiUrl . "Deals/$dealId/Contact_Roles", [
                 'fields' => 'Email,Department,First_Name,Last_Name'
             ]);
