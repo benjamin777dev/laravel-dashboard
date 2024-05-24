@@ -29,10 +29,10 @@ window.updateDeal = function (dealID, field, Id, card, date) {
     var text = updateElement.textContent.trim();
     text = text.replace(/\$\s*/, '').trim();  // Remove dollar sign and extra spaces
 
-
+   var dateInput;
     if (field == "closing_date") {
         // Assuming date is defined and in a valid format
-         var closingdate = date;
+         dateInput =   document.getElementById(field+dealID);
     } else {
         updateElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
@@ -40,8 +40,8 @@ window.updateDeal = function (dealID, field, Id, card, date) {
     }
 
     let inputElementmake = document.getElementById('edit' + field + dealID);
-    inputElementmake.focus();
-    inputElementmake.addEventListener('keydown', function (event) {
+    inputElementmake?.focus();
+    inputElementmake?.addEventListener('keydown', function (event) {
         // Check if the key pressed is Enter
         if (event.key === 'Enter') {
             // Prevent the default form submission behavior
@@ -51,9 +51,9 @@ window.updateDeal = function (dealID, field, Id, card, date) {
         }
     });
 
-    let dateInput =   document.getElementById('edit' + field + dealID);
+    
     if (field == "closing_date") {
-        // Create a date input element
+      // Create a date input element
         // Add event listener to update the deal data when the date input loses focus
         dateInput.addEventListener('blur', function () {
             updateDealData(field, Id, dealID);
