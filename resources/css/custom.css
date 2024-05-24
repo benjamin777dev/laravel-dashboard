@@ -31,9 +31,15 @@
     grid-template-columns: 2.5fr 9.5fr;
     gap: 24px;
 }
+.navbar-toggler{
+    margin-left: 15px;
+}
 /* Tasks */
 .dSelect-container {
     display: flex;
+}
+.no-records-found{
+    font-weight: 500;
 }
 .dtransaction-Select {
     border: none;
@@ -249,6 +255,7 @@
 .dnotesUl {
     max-height: 325px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .dnotesUl::-webkit-scrollbar {
@@ -1495,7 +1502,7 @@
     line-height: 16.8px;
 }
 .npcontacts-Table th {
-    flex: 1;
+   white-space: nowrap;
 }
 
 .npAttachmentTable,
@@ -1528,7 +1535,20 @@
     padding: 16px 12px;
     background: #fff;
 }
+.groups-view th{
+    color: #000;
+    flex: 1;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: -0.28px;
+    white-space:nowrap;
 
+}
+.table-data td {
+    white-space:nowrap;
+}
 .npcontacts-Body td {
     color: #000;
     flex: 1;
@@ -1537,6 +1557,7 @@
     font-style: normal;
     font-weight: 400;
     letter-spacing: -0.28px;
+    white-space: nowrap;
 }
 
 .npAttachmentBody,
@@ -2232,6 +2253,7 @@
     display: flex;
     padding: 20px;
     align-items: center;
+    gap: 24px;
     flex: 1 0 0;
     align-self: stretch;
     border-radius: 8px;
@@ -2746,23 +2768,51 @@ body[data-sidebar="dark"] .navbar-brand-box {
     animation: spin 1s ease infinite;
   }
 
-  .form-question {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0 0 3rem;
-    min-height: 3rem;
+  input[type=button] {
+    padding: 5px 10px;
+    margin: 10px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #ddd;
+    border: 1px solid #ccc;
   }
-  .input-container {
-    border-bottom: solid 2px #333333;
+  input[type=button]:hover {
+    background: #ccc;
   }
-  .input-container input {
-    border: none;
-    box-sizing: border-box;
-    outline: 0;
-    padding: .75rem;
+  
+  .confirm {
+    display: none;
+    height: 200px;
+  }
+  .confirm > div:first-of-type {
+    position: fixed;
     width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0px;
+    left: 0px;
   }
+  .confirm > div:last-of-type {
+    padding: 10px 20px;
+    background: white;
+    position: absolute;
+    width: auto;
+    height: auto;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+    border: 1px solid #333;
+  }
+  .confirm > div:last-of-type div:first-of-type {
+    min-width: 150px;
+    padding: 10px;
+  }
+  .confirm > div:last-of-type div:last-of-type {
+    text-align: right;
+  }
+
+
 
 
 
