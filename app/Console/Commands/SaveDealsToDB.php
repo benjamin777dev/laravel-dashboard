@@ -79,7 +79,7 @@ class SaveDealsToDB extends Command
                 } catch (\Exception $e) {
                     // Log error
                     Log::error("Error retrieving deals: " . $e->getMessage());
-                    return;
+                    // return;
                 }
                
                 // Store retrieved deals into the database
