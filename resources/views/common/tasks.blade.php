@@ -1,7 +1,3 @@
-<script>
-    // Store tasks data in a JavaScript variable
-  
-</script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>

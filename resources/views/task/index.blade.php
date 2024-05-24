@@ -30,7 +30,11 @@
                             aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
                     </div>
                 </nav>
-                @include('common.tasks', ['tasks' => $tasks, 'retrieveModuleData' => $retrieveModuleData])
+               <div class= "task-container">
+                        @include('common.tasks', [
+                            'tasks' => $tasks,
+                        ])
+                </div>
 
             </div>
 
@@ -227,7 +231,7 @@
             },
             success: function(data) {
                 $('#spinner').hide();
-                $('.dresponsivetable').html(data);
+                $('.task-container').html(data);
 
             },
             error: function(xhr, status, error) {

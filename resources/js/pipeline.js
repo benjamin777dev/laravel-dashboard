@@ -126,7 +126,7 @@ window.updateDataDeal = function (dealId) {
                 "Transaction_Owner": transaction_owner,
                 "Contact_Name": contact_name,
                 "Status_pt_out_out": status_rpt_opt_out,
-                "Deadline_EM_Opt_Out": deadline_em_opt_out,
+                "Deadline_Emails": deadline_em_opt_out,
             }],
         };
 
@@ -193,7 +193,7 @@ window.updateDeal = function (dealID, field, Id, card, date) {
 
     if (field == "closing_date") {
         // Assuming date is defined and in a valid format
-         var closingdate = date;
+        var closingdate = date;
     } else {
         updateElement.innerHTML =
             '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
