@@ -2,7 +2,7 @@
 <div class="table-responsive dbgTable">
     <table class="table dbgHeaderTable">
         <thead>
-            <tr class="dFont700 dFont10">
+            <tr class="dFont700 dFont10 groups-view">
                 <th scope="col">
                     <div class="dbgcommonFlex">
                         <p class="mb-0">Name</p>
@@ -52,7 +52,7 @@
         </thead>
         <tbody class="text-center dbgBodyTable">
             @foreach ($contacts as $contact)
-                <tr>
+                <tr class="table-data">
                     <td class="text-start">
                         @if($contact->relationship_type == 'Secondary')
                             <i class="fa fa-caret-right"></i>

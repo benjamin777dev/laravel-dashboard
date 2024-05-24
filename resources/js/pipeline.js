@@ -1,24 +1,3 @@
-window.checkValidate = function () {
-    var stage = document.getElementById('validationDefault04');
-    var address = document.getElementById('validationDefault07');
-    var city = document.getElementById('validationDefault08');
-    var state = document.getElementById('validationDefault09');
-    var zip = document.getElementById('validationDefault10');
-    var property_type = document.getElementById('validationDefault12');
-    if (stage.value === 'Under Contract') {
-        address.classList.add('validate');
-        city.classList.add('validate');
-        state.classList.add('validate');
-        zip.classList.add('validate');
-        property_type.classList.add('validate');
-    } else {
-        address.classList.remove('validate');
-        city.classList.remove('validate');
-        state.classList.remove('validate');
-        zip.classList.remove('validate');
-        property_type.classList.remove('validate');
-    }
-}
 
 window.updateDataDeal = function (dealId) {
     let isValid = true
@@ -168,12 +147,11 @@ window.formatDate = function (date) {
 }
 window.updateDeal = function (dealID, field, Id, card, date) {
     event.preventDefault();
-    let updateElement
+    let updateElement;
     if (card) {
         updateElement = document.getElementById("card_" + field + dealID);
     } else {
         updateElement = document.getElementById(field + dealID);
-
     }
 
     if (!updateElement) {
@@ -188,56 +166,42 @@ window.updateDeal = function (dealID, field, Id, card, date) {
 
     // Extract and clean the text value
     var text = updateElement.textContent.trim();
-    text = text.replace(/\$\s*/, '').trim();  // Remove dollar sign and extra spaces
+    text = text.replace(/\$\s*/, '').trim(); // Remove dollar sign and extra spaces
 
-
-    if (field == "closing_date") {
+    if (field === "closing_date") {
         // Assuming date is defined and in a valid format
-        var closingdate = date;
-    } else {
-        updateElement.innerHTML =
-            '<input type="text" class="inputDesign" onclick="event.preventDefault();" id="edit' + field + dealID +
-            '" value="' + text + '" />';
-    }
+        let dateInput = document.getElementById(field + dealID);
+        console.log(dateInput, 'dateInputksdjfklhs')
 
-    let inputElementmake = document.getElementById('edit' + field + dealID);
-    inputElementmake.focus();
-    inputElementmake.addEventListener('keydown', function (event) {
-        // Check if the key pressed is Enter
-        if (event.key === 'Enter') {
-            // Prevent the default form submission behavior
-            event.preventDefault();
-            // Call the function to update the element
-            updateDealData(field, Id, dealID);
-        }
-    });
-
-    let dateInput = document.getElementById('edit' + field + dealID);
-    if (field == "closing_date") {
-        // Create a date input element
-        // Add event listener to update the deal data when the date input loses focus
         dateInput.addEventListener('blur', function () {
-            updateDealData(field, Id, dealID);
+            updateDealData(field, Id, dealID, dateInput.value);
         });
-
-        dateInput.focus(); // Set focus to the new date input
     } else {
+        var inputElement = document.createElement('input');
+        inputElement.type = 'text';
+        inputElement.className = 'inputDesign';
+        inputElement.value = text;
+        inputElement.id = 'edit' + field + dealID;
+        updateElement.innerHTML = '';
+        updateElement.appendChild(inputElement);
+        inputElement.focus();
 
-        dateInput.focus(); // Set focus to the new text input
-
-        dateInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                updateDealData(field, Id, dealID);
+        inputElement.addEventListener('blur', function () {
+            if (inputElement.value !== text) {
+                updateDealData(field, Id, dealID, inputElement.value);
+                updateElement.innerHTML = inputElement.value;
+            } else {
+                updateElement.innerHTML = text;
             }
         });
 
-        dateInput.addEventListener('change', function () {
-            updateElement.innerHTML = '<div class="commonTextEllipsis" id="' + field + dealID + '">' + dateInput.value + '</div>';
-            updateDealData(field, Id, dealID);
+        inputElement.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                inputElement.blur(); // Trigger blur event
+            }
         });
     }
-
 
     // Prevent default action when clicking on container
     let container = document.getElementById("contactlist");
@@ -246,71 +210,79 @@ window.updateDeal = function (dealID, field, Id, card, date) {
     });
 }
 
-
-window.updateDealData = function (field, id, dealID, value = null) {
-    let elementId = document.getElementById(field + dealID);
-    console.log(field, dealID, elementId?.textContent ? elementId?.textContent : elementId.value, 'eleme');
-    let formData = {
-        "data": [{
-            "Deal_Name": field == "deal_name" ? elementId?.textContent : undefined,
-            "Client_Name_Primary": field == "client_name_primary" ? elementId?.textContent : undefined,
-            "Stage": field == "stage" ? value : undefined,
-            // "ABCD": "",
-            "Representing": field == "representing" ? value : undefined,
-            "Sale_Price": field == "sale_price" ? elementId?.textContent : undefined,
-            "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
-            "Commission": field == "commission" ? elementId?.textContent : undefined,
-            "Pipeline_Probability": field == "pipeline_probability" ? elementId?.textContent : undefined
-        }],
-        "skip_mandatory": true
-    }
-    // Iterate through the data array
-    formData?.data?.forEach(obj => {
-        // Iterate through the keys of each object
-        Object.keys(obj).forEach(key => {
-            // Check if the value is undefined and delete the key
-            if (obj[key] === undefined) {
-                delete obj[key];
+window.addEventListener('DOMContentLoaded', function () {
+    window.updateDealData = async function (field, id, dealID, value = null) {
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
+        let elementId = await document.getElementById(field + dealID);
+        let formData = {
+            "data": [{
+                "Deal_Name": field == "deal_name" ? elementId?.textContent : undefined,
+                "Client_Name_Primary": field == "client_name_primary" ? elementId?.textContent : undefined,
+                "Stage": field == "stage" ? value : undefined,
+                // "ABCD": "",
+                "Representing": field == "representing" ? value : undefined,
+                "Sale_Price": field == "sale_price" ? elementId?.textContent : undefined,
+                "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
+                "Commission": field == "commission" ? elementId?.textContent : undefined,
+                "Pipeline_Probability": field == "pipeline_probability" ? elementId?.textContent : undefined
+            }],
+            "skip_mandatory": true
+        }
+        // Iterate through the data array
+        formData?.data?.forEach(obj => {
+            // Iterate through the keys of each object
+            Object.keys(obj).forEach(key => {
+                // Check if the value is undefined and delete the key
+                if (obj[key] === undefined) {
+                    delete obj[key];
+                }
+            });
+        });
+        //ajax call hitting here
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-    });
-    //ajax call hitting here
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
 
-    $.ajax({
-        url: `/pipeline/update/${dealID}`,
-        method: 'PUT',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function (response) {
-            console.log("LJHJLDKGFLHDSGFKDHSGF", response)
-            // Handle success response
-            if (response?.data[0]?.status == "success") {
-                if (!document.getElementById('savemakeModalId' + dealID).classList.contains('show')) {
-                    var modalTarget = document.getElementById('savemakeModalId' + dealID);
-                    var update_message = document.getElementById('updated_message_make');
-                    update_message.textContent = response?.data[0]?.message;
-                    // Show the modal
-                    $(modalTarget).modal('show');
-                    window.location.reload();
+        $.ajax({
+            url: `/pipeline/update/${dealID}`,
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                console.log("LJHJLDKGFLHDSGFKDHSGF", response)
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
+                // Handle success response
+                if (response?.data[0]?.status == "success") {
+                    if (!document.getElementById('savemakeModalId' + dealID).classList.contains('show')) {
+                        var modalTarget = document.getElementById('savemakeModalId' + dealID);
+                        var update_message = document.getElementById('updated_message_make');
+                        update_message.textContent = response?.data[0]?.message;
+                        // Show the modal
+                        $(modalTarget).modal('show');
+                        window.location.reload();
+                    }
+
                 }
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
+                console.error(xhr.responseText, 'errrorroororooro');
+
 
             }
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText, 'errrorroororooro');
-
-
-        }
-    })
+        })
 
 
 
-}
+    }
+});
+
+
 

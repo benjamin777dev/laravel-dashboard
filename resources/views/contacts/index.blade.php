@@ -73,7 +73,7 @@
                 @include('common.pagination', ['module' => $contacts])
             </div>
         </div>
-        <div class="modal fade" id="filterModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+        <div class="modal fade" id="filterModal"  data-bs-backdrop="static" data-bs-keyboard="false"
             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -138,6 +138,9 @@
             mobile: mobile,
             abcd: abcd
         }
+        if(!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd){
+            missingFeild = "";
+        }  
 
         filterContactData("", "", "", "", missingFeild);
         count++;
@@ -266,6 +269,7 @@
                     document.getElementById('loaderfor').style.display = "none";
 
                 }
+                document.getElementById('close_btn').click();
                 const card = $('.contactlist').html(data);
             },
             error: function(xhr, status, error) {

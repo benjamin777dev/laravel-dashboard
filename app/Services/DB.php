@@ -568,7 +568,7 @@ class DB
             }
     
             // Paginate the results
-            $contacts = $contacts->paginate(10);
+            $contacts = $contacts->paginate(12);
     
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;

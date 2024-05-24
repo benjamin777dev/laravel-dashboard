@@ -42,6 +42,10 @@ window.showDropdown = function (showDropdown, selectElement) {
                 return $('<span id="' + state?.zoho_deal_id + '">' + state?.deal_name + '</span>');
             },
             templateSelection: function (state) {
+                var NoRecord = "No Records Found";
+                if (state?.children?.length === 0 && state.text === 'Contacts' || state?.children?.length === 0 && state.text === 'Deals') {
+                    return $('<span id="' + state.text + '">' + state.text + '</span>' + '<br><span class="no-records-found">' + NoRecord + '</span>');
+                }
                 if (!state.id) {
                     return state.text;
                 }
@@ -98,9 +102,8 @@ window.showDropdownForId = function (modalID, selectElement) {
                     };
                 },
                 processResults: function (data, params) {
-                    console.log(data, 'data is here')
+                    console.log(data.items.length, 'showdropidddd')
                     params.page = params.page || 1;
-
                     return {
                         results: data.items,
                     };
@@ -108,10 +111,13 @@ window.showDropdownForId = function (modalID, selectElement) {
                 cache: true
             },
             templateResult: function (state) {
+                var NoRecord = "No Records Found";
+                if (state?.children?.length === 0 && state.text === 'Contacts' || state?.children?.length === 0 && state.text === 'Deals') {
+                    return $('<span id="' + state.text + '">' + state.text + '</span>' + '<br><span class="no-records-found">' + NoRecord + '</span>');
+                }
                 if (!state.id) {
                     return state.text;
                 }
-
                 if (state.children) {
                     return $('<span id="' + state.text + '">' + state.text + '</span>');
                 }
@@ -164,71 +170,6 @@ window.showDropdownForId = function (modalID, selectElement) {
     });
 
 
-}
-
-window.updateSelectOptionsTask = function (selectElement, taskArr) {
-    // Clear existing options
-    selectElement.empty();
-
-    taskArr.forEach(function (state) {
-        var optgroup = $('<optgroup>', {
-            label: state.text
-        });
-        selectElement.append(optgroup);
-
-        var count = 0; // Counter to track the number of records appended for each label
-
-        if (state.text === "Contacts") {
-            state.children.forEach(function (contact) {
-                if (count < 5) {
-
-                    var option = $('<option>', {
-                        value: contact.zoho_contact_id,
-                        text: (contact.first_name || "") + " " + (contact.last_name || "")
-                    });
-                    optgroup.append(option);
-
-                    count++;
-                }
-            });
-        }
-        if (state.text === "Deals") {
-            state.children.forEach(function (deal) {
-                if (count < 5) {
-                    var option = $('<option>', {
-                        value: deal.zoho_deal_id,
-                        text: deal.deal_name,
-                    });
-                    optgroup.append(option);
-
-                    count++;
-                }
-            });
-        }
-    });
-
-    // Reinitialize Select2 after updating options
-    selectElement.trigger('select2:updated');
-    // var search = $("#inputhidden input.select2-input");
-    // search.trigger("input");
-}
-
-window.updateTaskArrTask = function (selectElement, search) {
-
-    // Populate select with new options
-    $.ajax({
-        url: '/task/get-Modules?search=' + search,
-        method: "GET",
-        dataType: "json",
-        success: function (response) {
-            console.log(response, 'response')
-            // $(document).trigger('customAjaxResponseTask', [selectElement, response]);
-        },
-        error: function (xhr, status, error) {
-            // Handle error
-            console.error("Ajax Error:", error);
-        }
-    });
 }
 
 window.addCommonTask = function (id = "", type = "") {
