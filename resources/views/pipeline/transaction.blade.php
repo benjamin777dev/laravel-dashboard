@@ -306,12 +306,12 @@
                     <div class="pCardFooter">
                         <div class="pfootericondiv">
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="pdiversityicon"
-                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" title = "Add Task">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="pdiversityicon" title = "Open Notes View">
+                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" >
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="pdiversityicon">
                         </div>
                         <div>
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="pdiversityicon"
-                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}" title = "Add Note">
+                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}" >
                         </div>
                     </div>
                 </div>

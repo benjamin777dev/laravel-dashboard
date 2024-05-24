@@ -56,7 +56,7 @@ class User extends Authenticatable
         Log::info('getAccessToken');
         if ($this->isAccessTokenValid()) {
             Log::info('getAccessToken: valid');
-            Crypt::decryptString($this->access_token);
+           return Crypt::decryptString($this->access_token);
         }
 
         Log::info('getAccessToken: expired');
