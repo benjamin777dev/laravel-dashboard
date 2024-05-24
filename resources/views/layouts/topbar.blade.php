@@ -442,6 +442,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var button = document.querySelector('.navbar-toggler');

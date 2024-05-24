@@ -1,3 +1,25 @@
+<script>
+    var taskIDSS = [];
+    var selectElement;
+    var tasks = @json($tasks);
+    tasks?.data?.forEach((task) => {
+        taskIDSS.push(task?.id)
+    })
+    var modalSelectMaptsk = []
+    taskIDSS.forEach((id) => {
+        modalSelectMaptsk.push({
+            modalID: id,
+            selectElementId: 'related_to_rem' + id
+        })
+    });
+    modalSelectMaptsk.forEach(({
+        modalID,
+        selectElementId
+    }) => {
+        const selectElement = $(`#${selectElementId}`);
+        window.showDropdownForId(modalID, selectElement);
+    });
+</script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp">
         <thead>
@@ -232,17 +254,26 @@
             </div>
         @endif
     </div>
-</div>
-@if (count($tasks) > 0)
     <div class="dpagination">
-        <div onclick="deleteTask('{{ $task['zoho_task_id'] }}',true)"
+        <div onclick="deleteTask('',true)"
             class="input-group-text text-white justify-content-center removebtn dFont400 dFont13" id="removeBtn">
             <i class="fas fa-trash-alt plusicon"></i>
             Delete Selected
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
-@endif
+    <div class="confirm">
+        <div></div>
+        <div>
+            <div id="confirmMessage"></div>
+            <div>
+                <input id="confirmYes" type="button" value="Yes" />
+                <input id="confirmNo" type="button" value="No" />
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -438,9 +469,44 @@
         return ids;
     }
 
+    if (!window.ui) {
+        window.ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+    }
+
+    const createConfirm = (message) => {
+        return new Promise((complete, failed) => {
+            $('#confirmMessage').text(message)
+
+            $('#confirmYes').off('click');
+            $('#confirmNo').off('click');
+
+            $('#confirmYes').on('click', () => {
+                $('.confirm').hide();
+                complete(true);
+            });
+            $('#confirmNo').on('click', () => {
+                $('.confirm').hide();
+                complete(false);
+            });
+
+            $('.confirm').show();
+        });
+    }
+
+    const saveForm = async () => {
+        const confirm = await ui.confirm('Are you sure you want to do this?');
+
+        if (confirm) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
-    function deleteTask(id, isremoveselected = false) {
+    async function deleteTask(id = "", isremoveselected = false) {
         let updateids = removeAllSelected();
         if (updateids === "" && id === 'remove_selected') {
             return;
@@ -450,11 +516,9 @@
         }
 
         if (updateids !== "") {
-            if (confirm("are you sure to delete this?")) {
-                console.log("yes delete");
-
-            } else {
-                console.log("dfshdfjkshd")
+            const shouldDelete = await saveForm();
+            if (!shouldDelete) {
+                console.log("User cancelled delete");
                 return;
             }
         }
@@ -463,8 +527,7 @@
         }
         //remove duplicate ids
         ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        console.log(ids, 'idssssss');
-        return;
+        console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh')
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -548,58 +611,58 @@
     function makeEditable(id, textfield, zohoID, textid) {
 
         if (textfield === "subject") {
-        const textElement = document.getElementById(textid);
-        const originalText = textElement.textContent.trim();
+            const textElement = document.getElementById(textid);
+            const originalText = textElement.textContent.trim();
 
-        // Function to create a new paragraph element
-        function createParagraph(id, text) {
-            const newParagraph = document.createElement('p');
-            newParagraph.id = 'editableText' + id;
-            newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
-            newParagraph.textContent = text;
+            // Function to create a new paragraph element
+            function createParagraph(id, text) {
+                const newParagraph = document.createElement('p');
+                newParagraph.id = 'editableText' + id;
+                newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
+                newParagraph.textContent = text;
 
-            // Create the pencil icon element
-            const pencilIcon = document.createElement('i');
-            pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
-            pencilIcon.onclick = function() {
-                makeEditable(id, textfield, zohoID, newParagraph.id);
-            };
+                // Create the pencil icon element
+                const pencilIcon = document.createElement('i');
+                pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
+                pencilIcon.onclick = function() {
+                    makeEditable(id, textfield, zohoID, newParagraph.id);
+                };
 
-            // Append the pencil icon to the new paragraph
-            newParagraph.appendChild(pencilIcon);
+                // Append the pencil icon to the new paragraph
+                newParagraph.appendChild(pencilIcon);
 
-            return newParagraph;
-        }
-
-        // Create a new input element
-        const newInput = document.createElement('input');
-        newInput.type = 'text';
-        newInput.id = 'editableInput' + id;
-        newInput.value = originalText;
-        textElement.parentNode.replaceChild(newInput, textElement);
-
-        const inputElement = document.getElementById('editableInput' + id);
-        inputElement.focus();
-
-        // Handler function for replacing input with paragraph
-        function replaceInputWithParagraph() {
-            const newParagraph = createParagraph(id, inputElement.value);
-            inputElement.parentNode.replaceChild(newParagraph, inputElement);
-        }
-
-        inputElement.addEventListener('blur', function() {
-            const newText = inputElement.value.trim();
-            replaceInputWithParagraph();
-        });
-
-        inputElement.addEventListener('change', function() {
-            const newText = inputElement.value.trim();
-            if (newText !== originalText) {
-                updateText(newText, textfield, zohoID);
+                return newParagraph;
             }
-            replaceInputWithParagraph();
-        });
-    }
+
+            // Create a new input element
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.id = 'editableInput' + id;
+            newInput.value = originalText;
+            textElement.parentNode.replaceChild(newInput, textElement);
+
+            const inputElement = document.getElementById('editableInput' + id);
+            inputElement.focus();
+
+            // Handler function for replacing input with paragraph
+            function replaceInputWithParagraph() {
+                const newParagraph = createParagraph(id, inputElement.value);
+                inputElement.parentNode.replaceChild(newParagraph, inputElement);
+            }
+
+            inputElement.addEventListener('blur', function() {
+                const newText = inputElement.value.trim();
+                replaceInputWithParagraph();
+            });
+
+            inputElement.addEventListener('change', function() {
+                const newText = inputElement.value.trim();
+                if (newText !== originalText) {
+                    updateText(newText, textfield, zohoID);
+                }
+                replaceInputWithParagraph();
+            });
+        }
 
         if (textfield === "date") {
             let dateLocal = document.getElementById(textid);
@@ -668,7 +731,7 @@
 
 
     function updateText(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
-        console.log(newText, textfield, id, WhatSelectoneid, whoID,'sdjkfhjksdhfjksdhfk' )
+        console.log(newText, textfield, id, WhatSelectoneid, whoID, 'sdjkfhjksdhfjksdhfk')
         let inputElementtext;
         let dateLocal;
         if (textfield === "subject") {
@@ -699,7 +762,8 @@
                 "Who_Id": whoID ? {
                     "id": whoID
                 } : undefined,
-                "$se_module": textfield === "Deals" || textfield === "Contacts" || newText === "Contacts" || newText ==="Deals" ?
+                "$se_module": textfield === "Deals" || textfield === "Contacts" || newText === "Contacts" ||
+                    newText === "Deals" ?
                     textfield : undefined,
             }]
         };
@@ -725,5 +789,4 @@
             }
         })
     }
-
 </script>
