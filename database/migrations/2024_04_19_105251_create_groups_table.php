@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->boolean('isPublic')->default(false);
-            $table->unsignedBigInteger('ownerId')->nullable();
+            $table->string('ownerId')->nullable();
             $table->boolean('isABCD')->default(false);
             $table->boolean('isShow')->default(true);
             $table->string('zoho_group_id')->nullable();

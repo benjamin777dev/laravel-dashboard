@@ -29,7 +29,7 @@ class DB
         $zoho = new ZohoCRM();
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
-        Log::info("Storing Deals Into Database");
+        Log::info("Storing the following deals into the database:", ['deals' => $dealsData]);
         $dealCount = count($dealsData);
         for ($i = 0; $i < $dealCount; $i++) {
             $deal = $dealsData[$i];
@@ -77,39 +77,39 @@ class DB
 
             // Update or create the deal
             Deal::updateOrCreate(['zoho_deal_id' => $deal['id']], [
-                'zip' => $deal['Zip'],
-                'personal_transaction' => $deal['Personal_Transaction'],
-                'double_ended' => $deal['Double_Ended'],
+                'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
+                'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
+                'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
                 'userID' => $userInstance->id,
-                'address' => $deal['Address'],
-                'representing' => $deal['Representing'],
-                'client_name_only' => $deal['Client_Name_Only'],
-                'commission' => $deal['Commission'],
-                'commission_flat_free' => $deal['Commission_Flat_Fee'],
-                'probable_volume' => $deal['Probable_Volume'],
-                'lender_company' => $deal['Lender_Company'],
-                'closing_date' => $helper->convertToUTC($deal['Closing_Date']),
-                'ownership_type' => $deal['Ownership_Type'],
-                'needs_new_date2' => $deal['Needs_New_Date2'],
-                'deal_name' => $deal['Deal_Name'],
-                'tm_preference' => $deal['TM_Preference'],
-                'tm_name' => $deal['TM_Name'],
-                'stage' => $deal['Stage'],
-                'sale_price' => $deal['Sale_Price'],
+                'address' => isset($deal['Address']) ? $deal['Address'] : null,
+                'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
+                'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
+                'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
+                'commission_flat_free' => isset($deal['Commission_Flat_Fee']) ? $deal['Commission_Flat_Fee'] : null,
+                'probable_volume' => isset($deal['Probable_Volume']) ? $deal['Probable_Volume'] : null,
+                'lender_company' => isset($deal['Lender_Company']) ? $deal['Lender_Company'] : null,
+                'closing_date' => isset($deal['Closing_Date']) ? $helper->convertToUTC($deal['Closing_Date']) : null,
+                'ownership_type' => isset($deal['Ownership_Type']) ? $deal['Ownership_Type'] : null,
+                'needs_new_date2' => isset($deal['Needs_New_Date2']) ? $deal['Needs_New_Date2'] : null,
+                'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
+                'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
+                'tm_name' => isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
+                'sale_price' => isset($deal['Sale_Price']) ? $deal['Sale_Price'] : null,
                 'zoho_deal_id' => $deal['id'],
-                'pipeline1' => $deal['Pipeline1'],
-                'pipeline_probability' => $deal['Pipeline_Probability'],
+                'pipeline1' => isset($deal['Pipeline1']) ? $deal['Pipeline1'] : null,
+                'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
                 'zoho_deal_createdTime' => $helper->convertToUTC($deal['Created_Time']),
-                'property_type' => $deal['Property_Type'],
-                'city' => $deal['City'],
-                'state' => $deal['State'],
-                'lender_company_name' => $deal['Lender_Company_Name'],
-                'client_name_primary' => $deal['Client_Name_Primary'],
-                'lender_name' => $deal['Lender_Name'],
-                'potential_gci' => $deal['Potential_GCI'],
-                'review_gen_opt_out' => $deal['Review_Gen_Opt_Out'],
-                'deadline_em_opt_out' => $deal['Deadline_EM_Opt_Out'],
-                'status_rpt_opt_out' => $deal['Status_Rpt_Opt_Out'],
+                'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
+                'city' => isset($deal['City']) ? $deal['City'] : null,
+                'state' => isset($deal['State']) ? $deal['State'] : null,
+                'lender_company_name' => isset($deal['Lender_Company_Name']) ? $deal['Lender_Company_Name'] : null,
+                'client_name_primary' => isset($deal['Client_Name_Primary']) ? $deal['Client_Name_Primary'] : null,
+                'lender_name' => isset($deal['Lender_Name']) ? $deal['Lender_Name'] : null,
+                'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
+                'review_gen_opt_out' => isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
+                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
                 'isDealCompleted' => true,
@@ -568,7 +568,7 @@ class DB
             }
     
             // Paginate the results
-            $contacts = $contacts->paginate(10);
+            $contacts = $contacts->paginate(12);
     
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
@@ -909,11 +909,11 @@ class DB
                 'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
                 
-                'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : null,
-                'deadline_em_opt_out'=>isset($deal['Deadline_EM_Opt_Out']) ? $deal['Deadline_EM_Opt_Out'] : null,
-                'status_rpt_opt_out'=>isset($deal['Status_Rpt_Opt_Out']) ? $deal['Status_Rpt_Opt_Out'] : null,
+                'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
+                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name'=>isset($deal['TM_Name']) ? $deal['TM_Name'] : null,
+                'tm_name'=>isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
             ]);
@@ -933,20 +933,20 @@ class DB
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
 
-        Log::info("Storing Groups Into Database");
+        Log::info("Storing Groups Into Database only group");
 
         foreach ($allGroups as $groupData) {
             $group = Groups::updateOrCreate(
                 ['zoho_group_id' => $groupData['id']],
                 [
-                    'ownerId' => $user->id,
-                    "name" => $groupData['Name'] ?? null,
-                    "isPublic" => $groupData['Is_Public'] ?? false,
-                    "isABCD" => $groupData['isABC'] ?? false,
-                    "zoho_group_id" => $groupData['id'] ?? null
+                    'ownerId' => $groupData['Owner']['id'],
+                    'name' => $groupData['Name'] ?? null,
+                    'isPublic' => $groupData['Is_Public'] ?? false,
+                    'isABCD' => $groupData['isABC'] ?? false
                 ]
             );
         }
+
 
         Log::info("Groups stored into database successfully.");
     }
@@ -1099,7 +1099,7 @@ class DB
         try {
 
             Log::info("Retrieve Tasks From Database");
-            $condition = [['ownerId', $user->id]];
+            $condition = [];
             if ($isShown) {
                 $condition[] = ['isShow', true];
             }

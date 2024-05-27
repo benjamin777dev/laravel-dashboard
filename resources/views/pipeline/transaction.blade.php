@@ -148,19 +148,38 @@
                             </td>
 
                             <td>
-                                <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                                        class="ppiplinecommonIcon" title="Transaciton Details">
-                                </a>
-                                <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon"
-                                    class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                    data-bs-target="#newTaskModalId{{ $deal['id'] }}" title="Add Task">
-                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon"
-                                    class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                    data-bs-target="#" title="View Notes">
-                                <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
-                                    class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                    data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}" title="Add Note">
+                               <table>
+                                    <tr>
+                                        <td>
+                                            <div class="tooltip-wrapper">
+                                                <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
+                                                    <span class="tooltiptext">Transaction Details</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tooltip-wrapper">
+                                                <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" title="Add Task">
+                                                <span class="tooltiptext">Add Task</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="tooltip-wrapper">
+                                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#">
+                                                <span class="tooltiptext">Add Sticky Note</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="tooltip-wrapper">
+                                                <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+                                                <span class="tooltiptext">Add Note</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                             {{-- Create New Task Modal --}}
                             @include('common.tasks.create', ['deal' => $deal, 'type' => 'Deals'])
@@ -273,12 +292,12 @@
                     <div class="pCardFooter">
                         <div class="pfootericondiv">
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="pdiversityicon"
-                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" title = "Add Task">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="pdiversityicon" title = "Open Notes View">
+                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" >
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="pdiversityicon">
                         </div>
                         <div>
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="pdiversityicon"
-                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}" title = "Add Note">
+                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}" >
                         </div>
                     </div>
                 </div>

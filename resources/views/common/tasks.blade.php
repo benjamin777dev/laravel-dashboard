@@ -318,12 +318,17 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
-
-        var taskIDSS = [];
-        var selectElement;
-        var tasks = @json($tasks);
-        tasks?.data?.forEach((task) => {
-            taskIDSS.push(task?.id)
+          var taskIDSS = [];
+    var selectElement;
+    var tasks = @json($tasks);
+    tasks?.data?.forEach((task) => {
+        taskIDSS.push(task?.id)
+    })
+    var modalSelectMaptsk = []
+    taskIDSS.forEach((id) => {
+        modalSelectMaptsk.push({
+            modalID: id,
+            selectElementId: 'related_to_rem' + id
         })
         var modalSelectMaptsk = []
         taskIDSS.forEach((id) => {

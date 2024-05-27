@@ -33,6 +33,34 @@
 
                             </div>
                         </div>
+                        <div class="datamailDiv">
+                            <div class="d-flex gap-2 overflow-hidden">
+                                <p id="address{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    @if($contact['mailing_address'])
+                                        {{ $contact['mailing_address'] }}
+                                    @endif
+                                    @if($contact['mailing_city'])
+                                        {{ $contact['mailing_address'] ? ', ' : '' }}
+                                        {{ $contact['mailing_city'] }}
+                                    @endif
+                                    @if($contact['mailing_state'])
+                                        {{ $contact['mailing_city'] || $contact['mailing_address'] ? ', ' : '' }}
+                                        {{ $contact['mailing_state'] }}
+                                    @endif
+                                    @if($contact['mailing_zip'])
+                                        {{ $contact['mailing_city'] || $contact['mailing_address'] || $contact['mailing_state'] ? ', ' : '' }}
+                                        {{ $contact['mailing_zip'] }}
+                                    @endif
+                                   @if(empty($contact['mailing_address']) && empty($contact['mailing_city']) && empty($contact['mailing_state']) && empty($contact['mailing_zip']))
+                                        N/A
+                                    @endif
+
+                                </p>
+                            </div>
+                        </div>
+
+
                         <div class="datadiversityDiv">
                             <img src="{{ URL::asset('/images/diversity.svg') }}" alt=""
                                 class="datadiversityicon">

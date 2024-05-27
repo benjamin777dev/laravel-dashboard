@@ -66,7 +66,7 @@ class SaveACIInDB extends Command
                 }
             } catch (\Exception $e) {
                 Log::error("Error retrieving aci: " . $e->getMessage());
-                return $allACI;
+                // return $allACI;
             }
 
             Log::info("Total aci records: ". $allACI->count());

@@ -298,7 +298,7 @@
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">
-            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" title = "Add Notes">
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" >
             <span class="tooltiptext">Add Notes</span>
         </div>
     </div>

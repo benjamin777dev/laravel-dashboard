@@ -39,6 +39,10 @@ window.showDropdown = function (showDropdown, selectElement) {
                 return $('<span id="' + state.zoho_deal_id + '">' + state.deal_name + '</span>');
             },
             templateSelection: function (state) {
+                var NoRecord = "No Records Found";
+                if (state?.children?.length === 0 && state.text === 'Contacts' || state?.children?.length === 0 && state.text === 'Deals') {
+                    return $('<span id="' + state.text + '">' + state.text + '</span>' + '<br><span class="no-records-found">' + NoRecord + '</span>');
+                }
                 if (!state.id) {
                     return state.text;
                 }
@@ -136,8 +140,9 @@ window.showDropdownForId = function (modalID, selectElement) {
                 if (state.children) {
                     return $('<span id="' + state.text + '">' + state.text + '</span>');
                 }
-                if (state.first_name && state.last_name) {
-                    return $('<span data-module="' + state.zoho_module_id + '" id="' + state.zoho_contact_id + '">' + state.first_name + ' ' + state.last_name + '</span>');
+
+                if (state.first_name || state.last_name) {
+                    return $('<span data-module="' + state.zoho_module_id + '" id="' + state.zoho_contact_id + '">' + (state.first_name ?? "") + ' ' + (state.last_name ?? "") + '</span>');
                 }
 
                 return $('<span id="' + state.zoho_deal_id + '">' + state.deal_name + '</span>');
@@ -147,8 +152,8 @@ window.showDropdownForId = function (modalID, selectElement) {
                     return state.text;
                 }
 
-                if (state.first_name && state.last_name) {
-                    return state.first_name + ' ' + state.last_name;
+                if (state.first_name || state.last_name) {
+                    return (state.first_name ?? "") + ' ' + (state.last_name ?? "");
                 }
 
                 return state.deal_name;
