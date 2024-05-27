@@ -72,7 +72,7 @@
                 Filter
             </div>
             <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal('','','reset_all')"> <i
-                    class="fas fa-filter"></i>
+                    class="fas fa-sync"></i>
                 Reset All
             </div>
 

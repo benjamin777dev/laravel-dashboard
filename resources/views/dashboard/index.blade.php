@@ -351,7 +351,7 @@
          loading = true;
         // Make AJAX call
         $.ajax({
-            url: '{{ url('/get/tasks/for/dashboard') }}',
+            url: '{{ url('/dashboard') }}',
             method: 'GET',
             data: {
                 tab: tab,

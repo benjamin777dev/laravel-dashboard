@@ -1,12 +1,9 @@
 window.showDropdown = function (showDropdown, selectElement) {
     selectElement.empty();
-
     selectElement.each(function () {
-        $(this).select2({
+        const options = {
             theme: 'bootstrap-5',
             dropdownParent: $(this).parent(),
-            placeholder: 'Please select',
-            width: 'resolve',
             ajax: {
                 url: '/task/get-Modules',
                 dataType: 'json',
@@ -36,10 +33,10 @@ window.showDropdown = function (showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return $('<span data-module="' + state?.zoho_module_id + '" id="' + state?.zoho_contact_id + '">' + state?.first_name + ' ' + state?.last_name + '</span>');
+                    return $('<span data-module="' + state.zoho_module_id + '" id="' + state.zoho_contact_id + '">' + state.first_name + ' ' + state.last_name + '</span>');
                 }
 
-                return $('<span id="' + state?.zoho_deal_id + '">' + state?.deal_name + '</span>');
+                return $('<span id="' + state.zoho_deal_id + '">' + state.deal_name + '</span>');
             },
             templateSelection: function (state) {
                 var NoRecord = "No Records Found";
@@ -56,7 +53,21 @@ window.showDropdown = function (showDropdown, selectElement) {
 
                 return state.deal_name;
             }
-        }).on('select2:select', function (e) {
+        };
+
+        if (showDropdown === "global-search") {
+            options.allowClear = true;
+            options.multiple = true;
+            options.maximumSelectionLength = 1; // Use `maximumSelectionLength` instead of `maximumSelectionSize`
+            options.placeholder = "Searching...";
+            console.log(options,'optionssssssssss')
+           
+        } else {
+            options.placeholder = 'Please select';
+            options.width = 'resolve';
+        }
+
+        $(this).select2(options).on('select2:select', function (e) {
             var selectedData = e.params.data;
             console.log('Selected Data:', selectedData);
 
@@ -68,6 +79,10 @@ window.showDropdown = function (showDropdown, selectElement) {
                 window.groupLabel = "Contacts";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_contact_id;
+                const url = new URL(`/contacts-view/${selectedData.id}`, window.location.origin);
+                if (showDropdown === "global-search") {
+                    window.location.href = url;
+                }
             } else {
                 selectedText = selectedData.deal_name;
                 console.log('zoho_module_id:', selectedData.zoho_module_id);
@@ -75,11 +90,15 @@ window.showDropdown = function (showDropdown, selectElement) {
                 window.groupLabel = "Deals";
                 window.moduelID = selectedData.zoho_module_id;
                 window.relatedTo = selectedData.zoho_deal_id;
+                const url = new URL(`/pipeline-view/${selectedData.id}`, window.location.origin);
+                if (showDropdown === "global-search") {
+                    window.location.href = url;
+                }
             }
         });
     });
+};
 
-}
 
 window.showDropdownForId = function (modalID, selectElement) {
     var selectedval = selectElement.val();
