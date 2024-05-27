@@ -3,76 +3,62 @@
         <table style="width: 100%">
             <thead>
                 <tr class="npcontacts-Table">
-                    <th>
-                        <div class="commonFlex">
+                        <th class="commonFlex">
                             <p class="mb-0">Transaction</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
                                 alt="Transaction icon" id="pipelineSort" onclick="toggleSort('deal_name')">
-                        </div>
-                    </th>
-                    <th>
-                        <div class="commonFlex">
+                        </th>
+                        <th class="commonFlex">
                             <p class="mb-0">Client Name</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('client_name_primary')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                   
+                        <th class="commonFlex">
                             <p class="mb-0">Status </p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Status icon"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('stage')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                   
+                        <th class="commonFlex">
                             <p class="mb-0">Rep</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Rep icon" class="ppiplineSwapIcon"
                                 id="pipelineSort" onclick="toggleSort('representing')">
-                        </div>
                     </th>
 
-                    <th>
-                        <div class="commonFlex">
+                  
+                        <th class="commonFlex">
                             <p class="mb-0">Price</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Price icon"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('sale_price')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                    
+                        <th class="commonFlex">
                             <p class="mb-0">Close Date</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Close icon"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                        <th class="commonFlex">
                             <p class="mb-0">Commission</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                        <th class="commonFlex">
                             <p class="mb-0">Potential GCI</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
-                        </div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                        <th class="commonFlex">
                             <p class="mb-0">Probability</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
-                        </div>
+                     
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                    
+                        <th class="commonFlex">
                             <p class="mb-0">Probable GCI</p>
                             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI"
                                 class="ppiplineSwapIcon" id="pipelineSort" onclick="toggleSort('closing_date')">
-                        </div>
                     </th>
                     <th>
                         <div></div>

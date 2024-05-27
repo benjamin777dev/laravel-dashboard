@@ -174,13 +174,17 @@ class DashboardController extends Controller
 
         $newContactsLast30Days = $contactData['contactsLast30Days'];
         $tab = request()->query('tab') ?? 'In Progress';
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $tasks = $db->retreiveTasks($user, $accessToken,$tab);
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks', compact('tasks','retrieveModuleData','tab'))->render();
+        }
         Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
          $notesInfo = $db->retrieveNotes($user,$accessToken);
          $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
-         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
          $dealFordash = $this->getDealsForDash();
          $contactInfo = Contact::getZohoContactInfo();
         //  fetch notes

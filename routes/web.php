@@ -41,8 +41,6 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
-Route::get('/get/tasks/for/dashboard', [DashboardController::class, 'getTasksForDashboard'])->name('dashboard.tasks')->middleware('auth');
-//create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');

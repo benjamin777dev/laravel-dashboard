@@ -74,12 +74,10 @@
         <div class="contactlist" id="contactlist">
             @include('contacts.contact', ['contacts' => $contacts])
             <!-- Filter Modal -->
-            <div class="datapagination">
-                @include('common.pagination', ['module' => $contacts])
-            </div>
+          
         </div>
-        <div class="modal fade" id="filterModal"  data-bs-backdrop="static" data-bs-keyboard="false"
-            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -129,6 +127,7 @@
                 console.log("One or both elements not found for contact ID {{ $contact['zoho_contact_id'] }}");
             }
         @endforeach
+
     }
 
     function applyFilter(reset) {
@@ -145,7 +144,7 @@
             mobile: mobile,
             abcd: abcd
         }
-        if(!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd){
+        if (!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd) {
             missingFeild = "";
         }  
          if (reset) {
@@ -278,7 +277,7 @@
             },
             success: function(data) {
                 // Select the contact list container
-                if(!load){
+                if (!load) {
                     document.getElementById("loaderOverlay").style.display = "none";
                     document.getElementById('loaderfor').style.display = "none";
 
@@ -287,7 +286,7 @@
                 const card = $('.contactlist').html(data);
             },
             error: function(xhr, status, error) {
-                if(!load){
+                if (!load) {
                     document.getElementById("loaderOverlay").style.display = "none";
                     document.getElementById('loaderfor').style.display = "none";
 

@@ -137,7 +137,28 @@
         </a>
     @endforeach
 </div>
+<div class="datapagination">
+           
+    @include('common.pagination', ['module' => $contacts])
+</div>
 <script>
+    window.onload=function(){
+        $(document).on('click','.datapagination a', function(e){
+        console.log(e,'eeeeeee')
+      e.preventDefault();
+      let page = $(this).attr('href').split('page=')[1]
+      record(page)
+    })
+
+    function record(page){
+        $.ajax({
+            url:"/contacts/fetch-contact?page="+page,
+            success:function(res){
+                $('.contactlist').html(res);
+            }
+        })
+    }
+    }
   function editText(zohoID, name, value) {
     event.preventDefault();
     let elementId = name + zohoID;

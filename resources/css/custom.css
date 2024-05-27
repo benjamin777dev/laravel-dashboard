@@ -21,7 +21,8 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    line-height: 16.1px; /* 115% */
+    line-height: 16.1px;
+    /* 115% */
     cursor: pointer;
 }
 
@@ -31,30 +32,38 @@
     grid-template-columns: 2.5fr 9.5fr;
     gap: 24px;
 }
-.navbar-toggler{
+
+.navbar-toggler {
     margin-left: 15px;
 }
+
 /* Tasks */
 .dSelect-container {
     display: flex;
 }
-.no-records-found{
+
+.no-records-found {
     font-weight: 500;
 }
+
 .dtransaction-Select {
     border: none;
     word-break: break-all;
     text-overflow: ellipsis;
 }
+
 .dtransaction-Select:focus-visible {
     outline: 0;
 }
+
 .ddateInput {
     border: none;
 }
+
 .ddateInput:focus-visible {
     outline: 0;
 }
+
 .dcontactBtns {
     display: flex;
     height: 52px;
@@ -128,6 +137,7 @@
     padding-block: 5px;
     padding-inline: 12px;
 }
+
 .closeIcon {
     margin-top: 5px;
 }
@@ -185,11 +195,13 @@
     background: rgba(255, 255, 255, 1);
     padding: 20px;
 }
+
 .dtableHeaderTr {
     padding: 8px 12px;
     border-bottom: 0.667px solid #f2f2f2;
     background: #f2f2f2;
 }
+
 .dtableHeaderTr th {
     color: #333;
     font-family: Montserrat;
@@ -197,6 +209,7 @@
     font-style: normal;
     font-weight: 900;
 }
+
 .savebtn,
 .dcardssavebtn {
     display: flex;
@@ -245,7 +258,7 @@
 }
 
 .page-link.active,
-.active > .page-link {
+.active>.page-link {
     background-color: #222 !important;
     border: 1px solid #222;
 }
@@ -299,7 +312,8 @@
     color: #fff;
     background-color: #3B3B3B;
 }
-.dtabsbtn:hover{
+
+.dtabsbtn:hover {
     color: #fff;
 }
 
@@ -404,13 +418,16 @@
     align-items: center;
     margin-bottom: 24px;
 }
-.pdealName{
+
+.pdealName {
     margin-top: 0;
     margin-bottom: 0;
 }
-.paddressName{
- font-size: 12px;
+
+.paddressName {
+    font-size: 12px;
 }
+
 .notesAsignedText {
     color: #222;
     font-family: Montserrat;
@@ -472,13 +489,15 @@
 }
 
 .select2-container--default .select2-selection--single {
-   border: none !important;
+    border: none !important;
 
 }
+
 .select2-container--open .select2-dropdown--below {
-   font-size: 12px !important;
+    font-size: 12px !important;
 }
-.select2-dropdown{
+
+.select2-dropdown {
     max-height: 200px;
     overflow: auto;
 }
@@ -491,7 +510,7 @@
     gap: 20px;
 }
 
-.btn-save-del{
+.btn-save-del {
     gap: 12px;
 }
 
@@ -532,6 +551,7 @@
     border-radius: 50%;
     /* cursor: pointer; */
 }
+
 /* Tooltip container */
 .tooltip-wrapper {
     position: relative;
@@ -543,8 +563,10 @@
 /* Tooltip text */
 .tooltip-wrapper .tooltiptext {
     visibility: hidden;
-    width: max-content; /* Adjust as needed */
-    max-width: 200px; /* Maximum width for responsiveness */
+    width: max-content;
+    /* Adjust as needed */
+    max-width: 200px;
+    /* Maximum width for responsiveness */
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -552,7 +574,8 @@
     padding: 5px 10px;
     position: absolute;
     z-index: 1;
-    bottom: calc(100% + 5px); /* Adjust vertical position */
+    bottom: calc(100% + 5px);
+    /* Adjust vertical position */
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
@@ -580,7 +603,8 @@
 
 /* Style for the images */
 .datadiversityicon {
-    width: 24px; /* Adjust the size as needed */
+    width: 24px;
+    /* Adjust the size as needed */
     height: 24px;
 }
 
@@ -1088,7 +1112,8 @@
 }
 
 .ppipeDiv {
-    background-color: #f8f9fa; /* Example background color */
+    background-color: #f8f9fa;
+    /* Example background color */
     /* margin: 20px; */
     border-radius: 5px;
     /* padding: 15px; */
@@ -1116,6 +1141,7 @@
     font-weight: 900;
     line-height: 34.5px;
 }
+
 .proCardsText {
     align-self: stretch;
     color: #000;
@@ -1128,6 +1154,7 @@
     letter-spacing: -0.28px;
     margin-bottom: 0;
 }
+
 .pText {
     color: #222;
     font-size: 16px;
@@ -1154,13 +1181,16 @@
 .database-filter-div {
     margin-inline: 0;
     flex-wrap: unset !important;
-} 
+}
+
 .pipeline-btns-container {
     display: flex;
     gap: 24px;
 }
+
 .pcontactBtn,
-.pTransactionBtn,.ppipeBtn {
+.pTransactionBtn,
+.ppipeBtn {
     display: flex;
     padding: 12px;
     justify-content: center;
@@ -1190,6 +1220,7 @@
     gap: 24px;
     margin-bottom: 24px;
 }
+
 .pcDeleteBtn {
     display: flex;
     height: 40px;
@@ -1206,7 +1237,8 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    line-height: 16.1px; /* 115% */
+    line-height: 16.1px;
+    /* 115% */
 }
 
 .pcEditBtn {
@@ -1228,18 +1260,24 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    line-height: 16.1px; /* 115% */
+    line-height: 16.1px;
+    /* 115% */
 }
+
 /* Media query for screens smaller than 768px */
 @media (max-width: 768px) {
     .commonFlex {
-        flex-direction: column; /* Stack flex children vertically on small screens */
+        flex-direction: column;
+        /* Stack flex children vertically on small screens */
     }
 
     .alert {
-        width: 100%; /* Make alert boxes full width on small screens */
-        flex: 1 1 70px; /* Allows flex items to grow and shrink but not smaller than 200px */
+        width: 100%;
+        /* Make alert boxes full width on small screens */
+        flex: 1 1 70px;
+        /* Allows flex items to grow and shrink but not smaller than 200px */
     }
+
     .pipeline-cards-container {
         display: grid;
         grid-template-columns: 1fr;
@@ -1312,7 +1350,7 @@
     padding-inline: 0px;
 }
 
-.filterClosebtn{
+.filterClosebtn {
     display: flex;
     width: 226px;
     height: 40px;
@@ -1330,14 +1368,17 @@
     font-style: normal;
     font-weight: 800;
 }
-.filter_model{
+
+.filter_model {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
-.d-con{
+
+.d-con {
     display: contents;
 }
+
 .pfilterBtn {
     display: flex;
     width: 226px;
@@ -1356,7 +1397,7 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
- cursor: pointer;
+    cursor: pointer;
 }
 
 .ptransactionTable th {
@@ -1389,7 +1430,8 @@
 
 .ppiplinecommonIcon {
     cursor: pointer;
-    width: 24px; /* Adjust the size as needed */
+    width: 24px;
+    /* Adjust the size as needed */
     height: 24px;
 }
 
@@ -1501,8 +1543,9 @@
     font-weight: 900;
     line-height: 16.8px;
 }
+
 .npcontacts-Table th {
-   white-space: nowrap;
+    white-space: nowrap;
 }
 
 .npAttachmentTable,
@@ -1535,7 +1578,8 @@
     padding: 16px 12px;
     background: #fff;
 }
-.groups-view th{
+
+.groups-view th {
     color: #000;
     flex: 1;
     font-family: Montserrat;
@@ -1543,12 +1587,14 @@
     font-style: normal;
     font-weight: 400;
     letter-spacing: -0.28px;
-    white-space:nowrap;
+    white-space: nowrap;
 
 }
+
 .table-data td {
-    white-space:nowrap;
+    white-space: nowrap;
 }
+
 .npcontacts-Body td {
     color: #000;
     flex: 1;
@@ -1574,6 +1620,7 @@
 }
 
 @media (max-width: 767px) {
+
     .ppipelineTable,
     .dtabletranstion,
     .npcontacts-Table,
@@ -1746,9 +1793,11 @@
     .psellDiv {
         padding-block: 10px 20px;
     }
+
     .psellDivnew {
         gap: 20px;
     }
+
     .pTableTransText {
         color: #8f8f8f;
         font-family: Montserrat;
@@ -1782,13 +1831,16 @@
         margin-bottom: 24px;
         flex: 100%;
     }
+
     .pfilterDiv {
         display: block;
     }
+
     .psortingFilterDiv {
         padding: 0;
         margin-block: 24px;
     }
+
     /* .pfilterDiv {
         justify-content: center;
     } */
@@ -1932,6 +1984,7 @@
     .npNom-TMRoles {
         display: block !important;
     }
+
     .dnewContactBtn {
         margin-bottom: 24px;
     }
@@ -2072,23 +2125,29 @@
     align-items: center;
     margin-bottom: 24px;
 }
+
 @media (min-width: 320px) and (max-width: 475px) {
+
     .dbgroupsFlex,
     .pipeline-btns-container {
         display: block;
     }
+
     .pcontactBtn,
     .pTransactionBtn {
         width: 100%;
     }
+
     .pcDeleteBtn {
         width: 100%;
     }
+
     .pcontactBtn,
     .pcDeleteBtn {
         margin-bottom: 24px;
     }
 }
+
 .ngText {
     color: #000;
     font-family: Montserrat;
@@ -2098,6 +2157,7 @@
     line-height: 19.2px;
     text-transform: uppercase;
 }
+
 .dbNewGroups {
     display: flex;
     height: 40px;
@@ -2117,18 +2177,22 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    line-height: 16.1px; /* 115% */
+    line-height: 16.1px;
+    /* 115% */
 }
+
 .dbgheaderFlex {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+
 .checkboxText {
     display: flex;
     gap: 4px;
 }
+
 .ncGroupTable {
     display: flex;
     padding: 14px 12px 15px 12px;
@@ -2222,11 +2286,13 @@
     /* layoutCardsShadow */
     box-shadow: 0px 2px 10px 0px #cecece;
 }
+
 .gdropdown-select {
     display: flex;
     align-items: center;
     flex: 1;
 }
+
 .gdropdown-btn {
     flex: 1 0 0;
     color: #848484;
@@ -2238,17 +2304,21 @@
     border: none;
     cursor: pointer;
 }
+
 .gdropdown-btn:focus-visible {
     outline: none;
 }
+
 .gdropdown {
     display: flex;
     justify-content: space-between;
 }
+
 .gdropdownMax {
     max-height: 250px;
     overflow-y: auto;
 }
+
 .dbgSortDiv {
     display: flex;
     padding: 20px;
@@ -2306,8 +2376,10 @@
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
-    line-height: 16.1px; /* 115% */
+    line-height: 16.1px;
+    /* 115% */
 }
+
 .groupCheckbox {
     accent-color: black;
 }
@@ -2316,13 +2388,16 @@
     .dbgSortDiv {
         display: block;
     }
+
     .dbgGroupDiv {
         margin-bottom: 24px;
     }
+
     .dbgSelectDiv {
         margin-right: 12px;
     }
 }
+
 .headerCheckbox {
     /* Set default background color to black */
     accent-color: black;
@@ -2436,7 +2511,7 @@
     display: flex;
     /* padding: 7.52px 12px; */
     padding-block: 0;
-    padding-inline:6px ;
+    padding-inline: 6px;
     justify-content: space-between;
     align-items: center;
     border-radius: 5px;
@@ -2488,6 +2563,7 @@
     line-height: 16px;
     text-align: center;
 }
+
 /* stacked chart css */
 .dgraphdiv {
     margin-bottom: 24px;
@@ -2501,6 +2577,7 @@ body {
 }
 
 .stacked-bar-chart {
+
     /* [class*="bar-"] {
         /* padding: 5px; */
     /* } */
@@ -2594,6 +2671,7 @@ canvas {
 .gdropdown-btn {
     width: 100% !important;
 }
+
 .gdropdown {
     padding: 10px;
 }
@@ -2605,38 +2683,46 @@ body[data-sidebar="dark"] .vertical-menu {
 body[data-sidebar="dark"] .navbar-brand-box {
     background: #000;
 }
-.ts-control{
+
+.ts-control {
     border: none !important;
     padding: 0 !important;
 }
-.btnTaskSelects{
+
+.btnTaskSelects {
     display: flex;
     gap: 10px;
 }
-.dealTaskSelect{
+
+.dealTaskSelect {
     width: 100% !important;
     border: none !important;
 }
-.dealTaskSelect:focus-visible{
+
+.dealTaskSelect:focus-visible {
     outline: 0 !important;
 
 }
-.select2-container{
+
+.select2-container {
     width: 100% !important;
     border: none !important;
 }
-.select2-container:focus-visible{
+
+.select2-container:focus-visible {
     outline: 0 !important;
 
 }
+
 /* @media (max-width: 992px) { */
-    /* .vertical-menu {
+/* .vertical-menu {
         display: none;
     } */
 
-    .vertical-menu.show {
-        display: block;
-    }
+.vertical-menu.show {
+    display: block;
+}
+
 /* } */
 
 .select2-container {
@@ -2664,14 +2750,17 @@ body[data-sidebar="dark"] .navbar-brand-box {
 .select2-results__option {
     font-size: 12px;
 }
-.dealTaskfordropdown{
+
+.dealTaskfordropdown {
     display: flex;
     height: 40px;
 }
+
 .dealTaskfordropdown .select2-container {
     z-index: 0 !important;
-    height:40px !important;    
+    height: 40px !important;
 }
+
 .validate {
     border-left: 4px solid red;
 }
@@ -2683,116 +2772,132 @@ body[data-sidebar="dark"] .navbar-brand-box {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.7); /* semi-transparent background */
-    backdrop-filter: blur(5px); /* apply blur effect */
-    z-index: 1000; /* ensure it's above other content but below the loader */
-    display: none; /* initially hidden */
-  }
+    background: rgba(255, 255, 255, 0.7);
+    /* semi-transparent background */
+    backdrop-filter: blur(5px);
+    /* apply blur effect */
+    z-index: 1000;
+    /* ensure it's above other content but below the loader */
+    display: none;
+    /* initially hidden */
+}
+
 /* Center the loader */
 .loader {
-    position: fixed; /* change from absolute to fixed */
+    position: fixed;
+    /* change from absolute to fixed */
     left: 50%;
     top: 50%;
-    z-index: 1001; /* ensure it's above the overlay */
+    z-index: 1001;
+    /* ensure it's above the overlay */
     width: 90px;
     height: 90px;
-    margin: -60px 0 0 -60px; /* adjust margin to center correctly */
+    margin: -60px 0 0 -60px;
+    /* adjust margin to center correctly */
     border: 16px solid #f3f3f3;
     border-radius: 50%;
     border-top: 16px solid #222;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
-  }
-  
-  @-webkit-keyframes spin {
+}
+
+@-webkit-keyframes spin {
     0% {
-      -webkit-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
     }
+
     100% {
-      -webkit-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
     }
-  }
-  
-  @keyframes spin {
+}
+
+@keyframes spin {
     0% {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
+
     100% {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
-  
-  /* Add animation to "page content" */
-  .animate-bottom {
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
     position: relative;
     animation-name: animate-bottom;
     -webkit-animation-name: animate-bottom;
     animation-duration: 1s;
     -webkit-animation-duration: 1s;
-  }
-  
-  @-webkit-keyframes animate-bottom {
+}
+
+@-webkit-keyframes animate-bottom {
     from {
-      bottom: -100px;
-      opacity: 0;
+        bottom: -100px;
+        opacity: 0;
     }
+
     to {
-      bottom: 0px;
-      opacity: 1;
+        bottom: 0px;
+        opacity: 1;
     }
-  }
-  
-  @keyframes animate-bottom {
+}
+
+@keyframes animate-bottom {
     from {
-      bottom: -100px;
-      opacity: 0;
+        bottom: -100px;
+        opacity: 0;
     }
+
     to {
-      bottom: 0;
-      opacity: 1;
+        bottom: 0;
+        opacity: 1;
     }
-  }
-  
-  #loaderDIV {
+}
+
+#loaderDIV {
     display: none;
     text-align: center;
-  }
-  .spinner_task {
+}
+
+.spinner_task {
     width: 30px;
     height: 30px;
-  
+
     border: 9px solid #0000001a;
     border-radius: 50%;
     border-right-color: #222;
-  
-    animation: spin 1s ease infinite;
-  }
 
-  input[type=button] {
+    animation: spin 1s ease infinite;
+}
+
+input[type=button] {
     padding: 5px 10px;
     margin: 10px 5px;
     border-radius: 5px;
     cursor: pointer;
     background: #ddd;
     border: 1px solid #ccc;
-  }
-  input[type=button]:hover {
+}
+
+input[type=button]:hover {
     background: #ccc;
-  }
-  
-  .confirm {
+}
+
+.confirm {
     display: none;
     height: 200px;
-  }
-  .confirm > div:first-of-type {
+}
+
+.confirm>div:first-of-type {
     position: fixed;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     top: 0px;
     left: 0px;
-  }
-  .confirm > div:last-of-type {
+}
+
+.confirm>div:last-of-type {
     padding: 10px 20px;
     background: white;
     position: absolute;
@@ -2803,20 +2908,45 @@ body[data-sidebar="dark"] .navbar-brand-box {
     transform: translate(-50%, -50%);
     border-radius: 5px;
     border: 1px solid #333;
-  }
-  .confirm > div:last-of-type div:first-of-type {
+}
+
+.confirm>div:last-of-type div:first-of-type {
     min-width: 150px;
     padding: 10px;
-  }
-  .confirm > div:last-of-type div:last-of-type {
+}
+
+.confirm>div:last-of-type div:last-of-type {
     text-align: right;
-  }
+}
+.search-input-design{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.search-input-design .select2-container .select2-selection--multiple {
+    border-radius: 10px;
+    min-height: 0 !important;
+}
+
+.search-input-design input {
+    width: 250px !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+
+}
+.search-input-design .select2-container .select2-selection--multiple {
+    padding: 0 !important;
+}
+.search-input-design .select2-container .select2-selection--multiple .select2-search__field{
+    margin: 0 !important;
+}
 
 
+.search-input-design input:focus {
+    outline: none !important;
+}
 
-
-
-  
-
-
-  
+.search-input-design .select2-selection__rendered{
+    margin-bottom: 0 !important;
+}
