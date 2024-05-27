@@ -929,4 +929,22 @@ class ZohoCRM
         }
     }
 
+    public function getContactRoles()
+    {
+        try {
+           $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                ])->get($this->apiUrl . "Contacts/roles", [
+            ]);
+            
+            // Log response
+            Log::info('Contact Roles', ['response' => $response->json()]);
+            
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

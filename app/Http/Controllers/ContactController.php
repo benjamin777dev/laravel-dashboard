@@ -27,6 +27,10 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
+        if ($request->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('contacts.index', compact('contacts'))->render();
+        }
 
         return view('contacts.index', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
     }
@@ -44,7 +48,7 @@ class ContactController extends Controller
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
-        $missingFeild = $request->input('missingFeild');
+        $missingFeild = $request->input('missingField');
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter,$missingFeild);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
@@ -535,7 +539,7 @@ class ContactController extends Controller
     }
 
 
-    public function retriveNotesForContactFun()
+    public function retriveNotesForContact()
     {
         $user = auth()->user();
         if (!$user) {
@@ -544,8 +548,10 @@ class ContactController extends Controller
         $db = new DB();
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
-        $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
-        return response()->json($notes);
+        $notesInfo = $db->retrieveNotesForContact($user, $accessToken, $contactId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','contact'))->render();
     }
 
     public function showCreateContactForm()

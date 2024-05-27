@@ -41,8 +41,6 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
-Route::get('/get/tasks/for/dashboard', [DashboardController::class, 'getTasksForDashboard'])->name('dashboard.tasks')->middleware('auth');
-//create note
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
@@ -69,8 +67,10 @@ Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])-
 Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
 //notes fetch in json for contact
-Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContactFun'])->name('notes.fetch')->middleware('auth');
+Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');
+Route::get('/deal/note/{dealId}', [PipelineController::class, 'retriveNotesForDeal'])->name('notes.fetch.deal')->middleware('auth');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');

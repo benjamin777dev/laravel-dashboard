@@ -314,7 +314,7 @@
                                 <div>
                                     <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
                                 
-                                    <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
+                                    <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04" disabled>
                                        <option
                                         value="{{ json_encode(['id' => $users['root_user_id'], 'Full_Name' => $users['name']]) }}"
                                         selected>

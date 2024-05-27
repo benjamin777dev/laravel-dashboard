@@ -330,14 +330,53 @@
             modalID: id,
             selectElementId: 'related_to_rem' + id
         })
+        var modalSelectMaptsk = []
+        taskIDSS.forEach((id) => {
+            modalSelectMaptsk.push({
+                modalID: id,
+                selectElementId: 'related_to_rem' + id
+            })
+        });
+        modalSelectMaptsk.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            window.showDropdownForId(modalID, selectElement);
+        });
+
+        $(document).on('click','.dpagination a', function(e){
+        console.log(e,'eeeeeee')
+      e.preventDefault();
+      let page = $(this).attr('href').split('page=')[1]
+      record(page)
+    })
+
+    document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Add active class to the clicked tab
+            this.classList.add('active');
+
+            // Update the active tab status
+            activeTab = this.getAttribute('data-tab');
+            console.log("Active tab updated to:", activeTab);
+        });
     });
-    modalSelectMaptsk.forEach(({
-        modalID,
-        selectElementId
-    }) => {
-        const selectElement = $(`#${selectElementId}`);
-        showDropdownForId(modalID, selectElement);
-    });
+
+    function record(page){
+        $.ajax({
+            url:"/dashboard?page="+page+'&tab='+activeTab,
+            success:function(res){
+                $('.task-container').html(res);
+            }
+        })
+    }
+         
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {

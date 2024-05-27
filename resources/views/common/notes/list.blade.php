@@ -210,7 +210,8 @@
         </ul>
     @endif
 </div>
-@elseif(isset($contact)) 
+@elseif(isset($contact))
+
 <div class="col-md-4">
     <h4 class="text-start dFont600 mb-4">Notes</h4>
     @if ($notesInfo->isEmpty())
@@ -420,6 +421,7 @@
         </ul>
     @endif
 </div>
+
 @else
 <div class="col-md-4">
     <h4 class="text-start dFont600 mb-4">Notes</h4>
@@ -676,6 +678,28 @@
         } catch (err) {
             console.error("error", err);
         }
+
+    }
+
+     function handleDeleteCheckbox(id) {
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton' + id);
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Toggle delete button visibility
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                // if (deleteButton.style.display === 'block') {
+                //     selectedNoteIds.push(id)
+                // }
+            });
+        });
 
     }
     
