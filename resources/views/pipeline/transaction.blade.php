@@ -182,8 +182,8 @@
                                     <tr>
                                         <td>
                                             <div class="tooltip-wrapper">
-                                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#">
-                                                <span class="tooltiptext">Add Sticky Note</span>
+                                                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#" onclick="fetchNotesForDeal('{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}')">
+                                                <span class="tooltiptext">View Notes</span>
                                             </div>
                                         </td>
                                         <td>
@@ -222,6 +222,25 @@
                                             </div>
 
                                         </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                             {{-- fetch details notes related 0 --}}
+                            <div class="modal fade testing" onclick="event.preventDefault();"
+                                id="notefetchrelatedDeal{{ $deal['zoho_deal_id'] }}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content dtaskmodalContent">
+                                        <div class="modal-header border-0">
+                                            <p class="modal-title dHeaderText">Notes</p>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="notesContainer{{ $deal['zoho_deal_id'] }}">
+
+                                        </div>
+
 
                                     </div>
                                 </div>
@@ -307,7 +326,7 @@
                         <div class="pfootericondiv">
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Open icon" class="pdiversityicon"
                                 data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}" >
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="" class="pdiversityicon">
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" onclick="fetchNotesForDeal('{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}')" alt="" class="pdiversityicon">
                         </div>
                         <div>
                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="pdiversityicon"
@@ -328,6 +347,32 @@
 
 </div>
 <script>
+    window.fetchNotesForDeal=function(id, dealId) {
+        event.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('notes.fetch.deal', ['dealId' => ':dealId']) }}".replace(':dealId', id),
+            method: "GET",
+            success: function(response) {
+                console.log(response);
+                // $('#notesContainer').append('<p>New Note Content</p>');
+                let noteContainer = $("#notesContainer"+dealId);
+                const card = noteContainer.html(response);
+                console.log(card, 'card')
+                $("#notefetchrelatedDeal" + dealId).modal('show');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                showToastError(error);
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
     window.moduleSelected = function (selectedModule, deal) {
         console.log("dealId", deal);
         deal = JSON.parse(deal)

@@ -35,18 +35,19 @@
                 </a>
             </div>
         </div>
+      
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
                 <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
-            <div class="col-md-5">
+            <div class="psortingFilterDiv">
                 @php
                     $abcd = ['A+', 'A', 'B', 'C', 'D'];
                 @endphp
                 <div class="row" style="gap:24px;flex-wrap:nowrap;">
-                    <div class="psortFilterDiv col-md-6">
+                    <div class="psortFilterDiv">
                         <select name="abcd_class" onchange="fetchContact(event)" class="psearchInput" id="contactSort">
                             <option selected value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
@@ -63,6 +64,10 @@
             <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
                 data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
                 Filter
+            </div>
+            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
+                data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
+                Reset All
             </div>
         </div>
 
@@ -126,10 +131,12 @@
         @endforeach
     }
 
-    function applyFilter() {
+    function applyFilter(reset) {
         let email = document.getElementById('filterEmail').checked;
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;
+        var searchInput = $('#contactSearch');
+        var csearch = $('#contactSort');
         let count = 1;
         if (!email && !mobile && !abcd && count > 2) return;
 
@@ -141,8 +148,16 @@
         if(!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd){
             missingFeild = "";
         }  
+         if (reset) {
+            if (searchInput.val().trim() !== "") {
+                searchInput.val("");
+            }
+            if (csearch.val().trim() !== "") {
+                csearch.val("");
+            }
+        }
 
-        filterContactData("", "", "", "", missingFeild);
+        filterContactData("", "", "", "", missingFeild,reset);
         count++;
 
 
@@ -241,25 +256,24 @@
 
 
     function filterContactData(sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
-        "") {
+        "",reset) {
         var searchValuetrim = "";
         if (searchInput) {
             searchValuetrim = searchInput?.val().trim();
         }
+        if(reset){
+          sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
+        ""  
+        }
         var load = true;
-        setTimeout(() => {
-            document.getElementById("loaderOverlay").style.display = "block";
-            document.getElementById('loaderfor').style.display = "block";
-            load = false;
-            
-        }, 500);
+        
         $.ajax({
             url: '{{ url('/contacts/fetch-contact') }}',
             method: 'GET',
             data: {
                 search: encodeURIComponent(searchValuetrim),
                 filter: filterVal,
-                missingFeild: missingFeild,
+                missingField: missingFeild,
 
             },
             success: function(data) {
@@ -291,17 +305,6 @@
         const searchInput = $('#contactSearch');
         var csearch = $('#contactSort');
         var filterVal = csearch.val();
-        if (e.target.id === "contactSearch") {
-            if (searchInput.val().trim() !== "") {
-                csearch.val("");
-            }
-        }
-        if (e.target.id === "contactSort") {
-            if (csearch.val().trim() !== "") {
-                searchInput.val("");
-            }
-        }
-
         console.log(sortField, sortDirection, searchInput, filterVal, 'testignnnnnnnnn')
         // var filterVal = selectedModule.val();
         // Call fetchData with the updated parameters

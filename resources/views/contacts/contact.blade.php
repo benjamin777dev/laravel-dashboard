@@ -34,9 +34,9 @@
                             </div>
                         </div>
                         <div class="datamailDiv">
+                            <i class="fas fa-map-marker-alt"></i>
                             <div class="d-flex gap-2 overflow-hidden">
                                 <p id="address{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
-                                    <i class="fas fa-map-marker-alt"></i>
                                     @if($contact['mailing_address'])
                                         {{ $contact['mailing_address'] }}
                                     @endif
@@ -100,7 +100,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidation()"
                                 aria-label="Close"></button>
                         </div>
-                        <div class="modal-body dtaskbody" id="notesContainer">
+                        <div class="modal-body dtaskbody" id="notesContainer{{ $contact['zoho_contact_id'] }}">
 
                         </div>
 
@@ -191,30 +191,27 @@
         $.ajax({
             url: "{{ route('notes.fetch', ['contactId' => ':contactId']) }}".replace(':contactId', id),
             method: "GET",
-            dataType: "json",
-
             success: function(response) {
                 // $('#notesContainer').append('<p>New Note Content</p>');
-                let noteContainer = $("#notesContainer");
+                let noteContainer = $("#notesContainer"+conId);
                 console.log(noteContainer, 'noteContainer')
                 // Clear previous contents of note containe
                 noteContainer.empty();
+                const card = noteContainer.html(response);
                 // Loop through each note in the response array
-                response?.forEach(function(note) {
-                    // console.log(note, 'note')
-                    // Create HTML to display note content and creation time
-                    let data = `<div class="noteCardForContact">
-                                <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
-                                <p>Note Content: ${note?.note_content}</p>
-                            </div>`;
-                    // Append the HTML to noteContainer
-                    noteContainer.append(data);
-                    console.log("testing", noteContainer)
-                });
-                // Show the modal after appending notes
+                // response?.forEach(function(note) {
+                //     // console.log(note, 'note')
+                //     // Create HTML to display note content and creation time
+                //     let data = `<div class="noteCardForContact">
+                //                 <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
+                //                 <p>Note Content: ${note?.note_content}</p>
+                //             </div>`;
+                //     // Append the HTML to noteContainer
+                //     noteContainer.append(data);
+                //     console.log("testing", noteContainer)
+                // });
+                // // Show the modal after appending notes
                 $("#notefetchrelatedContact" + conId).modal('show');
-
-
             },
             error: function(xhr, status, error) {
                 // Handle error

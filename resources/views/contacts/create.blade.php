@@ -296,7 +296,7 @@
                     <div>
                         <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
 
-                        <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
+                        <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04" disabled>
                             
                                 <option
                                     value="{{ json_encode(['id' => $users['root_user_id'], 'Full_Name' => $users['name']]) }}"
@@ -431,27 +431,7 @@
     }
 
 
-    function handleDeleteCheckbox(id) {
-        // Get all checkboxes
-        const checkboxes = document.querySelectorAll('.checkbox' + id);
-        // Get delete button
-        const deleteButton = document.getElementById('deleteButton' + id);
-        const editButton = document.getElementById('editButton' + id);
-        console.log(checkboxes, 'checkboxes')
-        // Add event listener to checkboxes
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                // Check if any checkbox is checked
-                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-                // Toggle delete button visibility
-                editButton.style.display = anyChecked ? 'block' : 'none';
-                // if (deleteButton.style.display === 'block') {
-                //     selectedNoteIds.push(id)
-                // }
-            });
-        });
-
-    }
+   
 
 
     function validateTextarea() {

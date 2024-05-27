@@ -288,7 +288,7 @@
     <div class="table-responsive dtranstiontable mt-3">
         <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
             <p class="nproletext">Contact Roles</p>
-            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#contactRoleModal{{$deal['id']}}">
                 <i class="fas fa-plus plusicon">
                 </i>
                 Add Contact Role
@@ -377,7 +377,7 @@
                 </ul>
             </nav>
         </div>
-
+         @include('contactRole.create')               
 
     </div>
 
