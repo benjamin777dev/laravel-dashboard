@@ -26,19 +26,19 @@
                 </a>
             </div>
 
-            <button class="navbar-toggler" onclick="addressNavbar()" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" onclick="addressNavbar()" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
 
-            <i class="fa fa-fw fa-bars"></i>
-        </button>
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
 
             <!-- App Search-->
-            <form class="app-search d-none d-lg-block">
-                {{-- <div class="position-relative">
-                    <input type="text" class="form-control" placeholder="@lang('Search')">
-                    <span class="bx bx-search-alt"></span>
-                </div> --}}
-            </form>
+            <div class="search-input-design">
+            <div class="app-search d-none d-lg-block" id="global-search" >
+                
+            </div>
+        </div> 
 
             <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
                 <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown"
@@ -106,16 +106,13 @@
                                     <h5 class="font-size-14 mt-0" key="t-extra-pages">@lang('Extra_Pages')</h5>
                                     <ul class="list-unstyled megamenu-list">
                                         <li>
-                                            <a href="javascript:void(0);"
-                                                key="t-light-sidebar">@lang('Light_Sidebar')</a>
+                                            <a href="javascript:void(0);" key="t-light-sidebar">@lang('Light_Sidebar')</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);"
-                                                key="t-compact-sidebar">@lang('Compact_Sidebar')</a>
+                                            <a href="javascript:void(0);" key="t-compact-sidebar">@lang('Compact_Sidebar')</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);"
-                                                key="t-horizontal">@lang('Horizontal_layout')</a>
+                                            <a href="javascript:void(0);" key="t-horizontal">@lang('Horizontal_layout')</a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);" key="t-maintenance">@lang('Maintenance')</a>
@@ -180,8 +177,9 @@
         <div class="d-flex">
 
             <div class="dropdown d-inline-block d-lg-none ms-2">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn header-item noti-icon waves-effect"
+                    id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
                     <i class="mdi mdi-magnify"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
@@ -193,7 +191,8 @@
                                 <input type="text" class="form-control" placeholder="@lang('Search')"
                                     aria-label="Search input">
 
-                                <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                <button class="btn btn-primary" type="submit"><i
+                                        class="mdi mdi-magnify"></i></button>
                             </div>
                         </div>
                     </form>
@@ -237,7 +236,8 @@
                             </div>
                             <div class="col">
                                 <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/mail_chimp.png') }}" alt="mail_chimp">
+                                    <img src="{{ URL::asset('build/images/brands/mail_chimp.png') }}"
+                                        alt="mail_chimp">
                                     <span>Mail Chimp</span>
                                 </a>
                             </div>
@@ -283,17 +283,17 @@
                                 <div class="flex-grow-1">
                                     <h6>Notification Not Found..</h6>
                                     {{-- <h6 class="mt-0 mb-1" key="t-your-order">@lang('empty notificaton')</h6> --}}
-                                    {{-- <div class="font-size-12 text-muted">
+            {{-- <div class="font-size-12 text-muted">
                                         <p class="mb-1" key="t-grammer">
                                             @lang('If_several_languages_coalesce_the_grammar')</p>
                                         <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span
                                                 key="t-min-ago">@lang('3_min_ago')</span></p>
                                     </div> --}}
-                                    {{--
+            {{--
                                 </div>
                             </div>
                         </a> --}}
-                        {{-- <a href="" class="text-reset notification-item">
+            {{-- <a href="" class="text-reset notification-item">
                             <div class="d-flex">
                                 <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}"
                                     class="me-3 rounded-circle avatar-xs" alt="user-pic">
@@ -309,7 +309,7 @@
                                 </div>
                             </div>
                         </a> --}}
-                        {{-- <a href="" class="text-reset notification-item">
+            {{-- <a href="" class="text-reset notification-item">
                             <div class="d-flex">
                                 <div class="avatar-xs me-3">
                                     <span class="avatar-title bg-success rounded-circle font-size-16">
@@ -343,7 +343,7 @@
                                 </div>
                             </div>
                         </a> --}}
-                        {{--
+            {{--
                     </div>
                     <div class="p-2 border-top d-grid">
                         <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
@@ -352,7 +352,7 @@
                         </a>
                     </div>
                 </div> --}}
-                {{--
+            {{--
             </div> --}}
 
             <div class="dropdown d-inline-block">
@@ -361,7 +361,8 @@
                     <img class="rounded-circle header-profile-user"
                         src="{{ isset(Auth::user()->avatar) ? asset(Auth::user()->avatar) : asset('build/images/users/avatar-1.jpg') }}"
                         alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{ucfirst(Auth::user()->name)}}</span>
+                    <span class="d-none d-xl-inline-block ms-1"
+                        key="t-henry">{{ ucfirst(Auth::user()->name) }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
@@ -412,10 +413,11 @@
                     <div class="mb-3">
                         <label for="current_password">Current Password <span class="text-danger">*</span></label>
                         <input id="current-password" type="password"
-                            class="form-control @error('current_password') is-invalid @enderror" name="current_password"
-                            autocomplete="current_password" placeholder="Enter Current Password"
-                            value="{{ old('current_password') }}">
-                        <div class="text-danger" id="current_passwordError" data-ajax-feedback="current_password"></div>
+                            class="form-control @error('current_password') is-invalid @enderror"
+                            name="current_password" autocomplete="current_password"
+                            placeholder="Enter Current Password" value="{{ old('current_password') }}">
+                        <div class="text-danger" id="current_passwordError" data-ajax-feedback="current_password">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -428,9 +430,11 @@
 
                     <div class="mb-3">
                         <label for="userpassword">Confirm Password <span class="text-danger">*</span></label>
-                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation"
-                            autocomplete="new_password" placeholder="Enter New Confirm password">
-                        <div class="text-danger" id="password_confirmError" data-ajax-feedback="password-confirm"></div>
+                        <input id="password-confirm" type="password" class="form-control"
+                            name="password_confirmation" autocomplete="new_password"
+                            placeholder="Enter New Confirm password">
+                        <div class="text-danger" id="password_confirmError" data-ajax-feedback="password-confirm">
+                        </div>
                     </div>
 
                     <div class="mt-3 d-grid">
@@ -451,35 +455,46 @@
         button.addEventListener('click', function() {
             sidebar.classList.toggle('show');
         });
+
+        const modalSelectMap = [{
+            modalID: 'global-search',
+            selectElementId: 'global-search'
+        }, ];
+
+        modalSelectMap.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdown(modalID, selectElement);
+        });
+
     });
 
     function addressNavbar() {
-    let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
-    let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
-    let main_content = document.getElementsByClassName("main-content")[0];
-       // Toggle the width of navbar-brand-box
-    if (navbarBox.style.width === "0%") {
-        navbarBox.style.width = "250px"; // Change this to the desired width
-    } else {
-        navbarBox.style.width = "0%";
+        let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
+        let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
+        let main_content = document.getElementsByClassName("main-content")[0];
+        // Toggle the width of navbar-brand-box
+        if (navbarBox.style.width === "0%") {
+            navbarBox.style.width = "250px"; // Change this to the desired width
+        } else {
+            navbarBox.style.width = "0%";
+        }
+
+        // Toggle the width of vertical-menu
+        if (verticalMenu.style.width === "0%") {
+            verticalMenu.style.width = "250px"; // Change this to the desired width
+        } else {
+            verticalMenu.style.width = "0%";
+        }
+        if (main_content.classList.contains("margin-class")) {
+            main_content.style.marginLeft = "250px";
+            main_content.classList.remove("margin-class");
+        } else {
+            main_content.style.marginLeft = "unset";
+            main_content.classList.add("margin-class");
+        }
+
     }
-
-    // Toggle the width of vertical-menu
-    if (verticalMenu.style.width === "0%") {
-        verticalMenu.style.width = "250px"; // Change this to the desired width
-    } else {
-        verticalMenu.style.width = "0%";
-    }
-    if (main_content.classList.contains("margin-class")) {
-        main_content.style.marginLeft = "250px";
-        main_content.classList.remove("margin-class");
-    } else {
-        main_content.style.marginLeft = "unset";
-        main_content.classList.add("margin-class");
-    }
-
-    console.log(main_content, 'main content');
-}
-
-
 </script>

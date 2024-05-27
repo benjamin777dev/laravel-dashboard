@@ -27,6 +27,10 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
+        if ($request->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('contacts.index', compact('contacts'))->render();
+        }
 
         return view('contacts.index', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
     }

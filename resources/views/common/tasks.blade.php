@@ -339,6 +339,39 @@
             const selectElement = $(`#${selectElementId}`);
             window.showDropdownForId(modalID, selectElement);
         });
+
+        $(document).on('click','.dpagination a', function(e){
+        console.log(e,'eeeeeee')
+      e.preventDefault();
+      let page = $(this).attr('href').split('page=')[1]
+      record(page)
+    })
+
+    document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Add active class to the clicked tab
+            this.classList.add('active');
+
+            // Update the active tab status
+            activeTab = this.getAttribute('data-tab');
+            console.log("Active tab updated to:", activeTab);
+        });
+    });
+
+    function record(page){
+        $.ajax({
+            url:"/dashboard?page="+page+'&tab='+activeTab,
+            success:function(res){
+                $('.task-container').html(res);
+            }
+        })
+    }
+         
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {
