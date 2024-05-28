@@ -20,6 +20,7 @@ use App\Models\Attachment;
 use App\Models\NonTm; 
 use App\Models\Submittals; 
 use App\Models\BulkJob; 
+use App\Models\ContactRole;
 
 class DB
 {
@@ -584,7 +585,7 @@ class DB
         try {
 
             Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->id)->orderBy('updated_at', 'desc')->get();
+            $Contacts = Contact::where('contact_owner', $user->id)->with('userData')->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
             return $Contacts;
         } catch (\Exception $e) {
@@ -1356,6 +1357,33 @@ class DB
         ]);
     }
     
-    
+    public function storeRolesIntoDB($contactRoles,$user)
+    {
+        Log::info("Storing Contact Roles Into Database");
+        foreach ($contactRoles as $contactRole) {
+            Log::info("contactRoles", $contactRole);
+
+            ContactRole::updateOrCreate([
+                'zoho_role_id' => $contactRole['id'],
+            ], [
+                'zoho_role_id' => $contactRole['id'],
+                'name' => $contactRole['name'],
+                'userId' => $user ? $user->id : null,
+                'sequence_no' => $contactRole['sequence_number']
+            ]);
+        }
+
+        Log::info("Contact Role stored into database successfully.");
+    }
+
+    public function retrieveRoles($user)
+    {
+        Log::info("Get Contact Roles Into Database");
+            $roles = ContactRole::where([
+                'userId' => $user['id'],
+            ])->get();
+            return $roles;
+        Log::info("Contact Role retrived from database successfully.");
+    }
 
 }

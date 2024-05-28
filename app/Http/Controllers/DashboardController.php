@@ -1097,4 +1097,25 @@ class DashboardController extends Controller
         }
     }
 
+    public function getContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $db = new DB();
+        $zoho->access_token = $accessToken;
+        try {
+            $contactRoles = $zoho->getContactRoles($user, $accessToken);
+            $saveInDB = $db->storeRolesInDB($contactRoles->contact_roles);
+            Log::info("contactRoles " . print_r($saveInDB, true));
+            return response()->json($saveInDB, 201);
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 }

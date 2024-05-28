@@ -76,6 +76,7 @@ class PipelineController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
+        LOG::info('Access Token Decrypted'.$accessToken);
         $search = request()->query('search');
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
@@ -100,6 +101,8 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
@@ -114,10 +117,11 @@ class PipelineController extends Controller
         $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contactRoles = $db->retrieveRoles($user);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
 
     }
 
@@ -325,5 +329,19 @@ class PipelineController extends Controller
             Log::error("Exception when fetching deals: {$e->getMessage()}");
             return collect();
         }
+    }
+    public function retriveNotesForDeal()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DB();
+        $dealId = request()->route('dealId');
+        $accessToken = $user->getAccessToken();
+        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','deal'))->render();
     }
 }
