@@ -89,12 +89,12 @@
     <script>
         // Add an event listener to send search term as request
         function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall) {
-           
+
             // console.log("filter",filter);
             let searchValue = searchInput.val().trim();
             if (resetall === "reset_all") {
                 document.getElementById("loaderOverlay").style.display = "block";
-            document.getElementById('loaderfor').style.display = "block";
+                document.getElementById('loaderfor').style.display = "block";
                 $("#pipelineSearch").val("");
                 $("#related_to_stage").val("");
                 searchValue = "";
@@ -113,16 +113,16 @@
 
                 success: function(data) {
                     if (resetall === "reset_all") {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
                     }
                     const card = $('.transaction-container').html(data);
-                   
+
                 },
                 error: function(xhr, status, error) {
                     if (resetall === "reset_all") {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
                     }
                     console.error('Error:', error);
                 }

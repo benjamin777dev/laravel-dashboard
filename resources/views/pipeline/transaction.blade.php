@@ -314,6 +314,26 @@
 
 </div>
 <script>
+
+window.onload = function() {
+            $(document).on('click', '.datapagination a', function(e) {
+                console.log(e, 'eeeeeee')
+                e.preventDefault();
+                let page = $(this).attr('href').split('page=')[1]
+                record(page)
+            })
+
+            function record(page) {
+                $.ajax({
+                    url: "/pipeline?page=" + page,
+                    success: function(res) {
+                        $('.transaction-container').html(res);
+                    }
+                })
+            }
+
+        }
+  
     window.moduleSelected = function (selectedModule, deal) {
         console.log("dealId", deal);
         deal = JSON.parse(deal)
