@@ -131,7 +131,6 @@ class DB
 
             DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
-                'contactRole' => $dealContact['Contact_Role']['name']
             ], [
                 'zoho_deal_id' => $dealId,
                 'contactId' => $contact ? $contact->id : null,
@@ -731,7 +730,7 @@ class DB
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $dealId);
-            $dealContacts = DealContact::with('userData')->with('contactData')->where('zoho_deal_id', $dealId)->get();
+            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
         } catch (\Exception $e) {
@@ -745,7 +744,7 @@ class DB
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $contactId);
-            $dealContact = Contact::with('userData')->with('contactName')->where('zoho_contact_id', $contactId)->get();
+            $dealContact = Contact::with('userData')->with('contactName')->with('roleData')->where('zoho_contact_id', $contactId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContact->toArray()]);
             return $dealContact;
         } catch (\Exception $e) {

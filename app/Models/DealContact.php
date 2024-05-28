@@ -23,4 +23,8 @@ class DealContact extends Model
     {
         return $this->belongsTo(User::class, 'userId');
     }
+    public function roleData()
+    {
+        return $this->belongsTo(ContactRole::class, 'contactRole', 'zoho_role_id');
+    }
 }

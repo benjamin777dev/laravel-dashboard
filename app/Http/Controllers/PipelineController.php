@@ -341,4 +341,30 @@ class PipelineController extends Controller
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','deal'))->render();
     }
+
+    public function addContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $zoho = new ZohoCRM();
+        $dealId = request()->route('dealId');
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        $contactRole = $zoho->addContactRoleForDeal($dealId, $jsonData);
+        foreach ($contactRole as $response) {
+            if (!$response->successful()) {
+                // Log the error for debugging
+                Log::error('Error adding contact role: ' . $response->body());
+                return response()->json(['error' => 'Error adding contact role', 'details' => $response->body()], 500);
+            }
+        }
+
+        $contactRoleArray = json_decode($contactRole, true);
+        return $contactRoleArray;
+    }
 }

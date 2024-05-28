@@ -2950,3 +2950,8 @@ input[type=button]:hover {
 .search-input-design .select2-selection__rendered{
     margin-bottom: 0 !important;
 }
+
+.modal-body {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
