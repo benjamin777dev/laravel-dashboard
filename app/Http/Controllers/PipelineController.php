@@ -56,11 +56,14 @@ class PipelineController extends Controller
         // Calculate averages
         $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
         $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
-
-
+        
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        }
         return view('pipeline.index', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 

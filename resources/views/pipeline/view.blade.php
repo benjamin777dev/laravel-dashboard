@@ -435,11 +435,12 @@
     <div class="table-responsive dtranstiontable mt-3">
         <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
             <p class="nproletext">Agent’s Commissions</p>
-            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
+            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#contactCommission">
                 <i class="fas fa-plus plusicon">
                 </i>
                 Add Agent’s Commissions
             </div>
+            @include('agentCommision.create')
 
         </div>
 

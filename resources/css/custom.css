@@ -89,7 +89,9 @@
 .plusicon {
     margin-right: 4px;
 }
-
+.agent-info{
+    padding: 1rem 1rem;
+}
 .removebtn {
     display: flex;
     height: 40px;
@@ -2763,6 +2765,10 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 .validate {
     border-left: 4px solid red;
+}
+
+.cursor_not_allowed{
+    cursor:not-allowed;
 }
 
 
