@@ -346,7 +346,6 @@
       let page = $(this).attr('href').split('page=')[1]
       record(page)
     })
-
     document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
         tab.addEventListener('click', function() {
             // Remove active class from all tabs
