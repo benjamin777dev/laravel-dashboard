@@ -109,6 +109,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                
                                 <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
                                 <td>
 
