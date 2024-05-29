@@ -21,7 +21,7 @@
     });
 </script>
 <div class="table-responsive dresponsivetable">
-    <table class="table dtableresp">
+    <table class="table dtableresp table-nowrap">
         <thead>
             <tr class="dFont700 dFont10 dtableHeaderTr">
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
@@ -29,6 +29,7 @@
                 <th scope="col">Subject</th>
                 <th scope="col">Transaction Related</th>
                 <th scope="col">Task Date</th>
+                <th scope="col">TimeStamp</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>
@@ -73,6 +74,15 @@
                                 onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_local_web{{ $task['id'] }}')"
                                 id="date_local{{ $task['zoho_task_id'] }}"
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
+                        </td>
+                        <td>
+                            <div class="dcardsdateinput">
+                                @if(!empty($task['updated_at']))
+                                    <p class="dcardsTaskText">{{ $task['updated_at'] }}</p>
+                                @else
+                                    <p class="dcardsTaskText">{{ $task['created_at'] }}</p>
+                                @endif
+                            </div>                            
                         </td>
                         <td>
                             <div class="d-flex btn-save-del">
@@ -231,6 +241,10 @@
                             id="date_val_card{{ $task['zoho_task_id'] }}"
                             value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                     </div>
+                    <div class="dcardsdateinput">
+                        <p class="dcardsTaskText">TaskStamp</p>
+                         <p></p>
+                    </div>
                 </div>
                 <div class="dcardsbtnsDiv">
                     <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
@@ -331,38 +345,38 @@
             window.showDropdownForId(modalID, selectElement);
         });
 
-        $(document).on('click','.dpagination a', function(e){
-        console.log(e,'eeeeeee')
-      e.preventDefault();
-      let page = $(this).attr('href').split('page=')[1]
-      record(page)
-    })
-    
-    document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Remove active class from all tabs
-            document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // Add active class to the clicked tab
-            this.classList.add('active');
-
-            // Update the active tab status
-            activeTab = this.getAttribute('data-tab');
-            console.log("Active tab updated to:", activeTab);
-        });
-    });
-
-    function record(page){
-        $.ajax({
-            url:"/dashboard?page="+page+'&tab='+activeTab,
-            success:function(res){
-                $('.task-container').html(res);
-            }
+        $(document).on('click', '.dpagination a', function(e) {
+            console.log(e, 'eeeeeee')
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1]
+            record(page)
         })
-    }
-         
+
+        document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+
+                // Add active class to the clicked tab
+                this.classList.add('active');
+
+                // Update the active tab status
+                activeTab = this.getAttribute('data-tab');
+                console.log("Active tab updated to:", activeTab);
+            });
+        });
+
+        function record(page) {
+            $.ajax({
+                url: "/dashboard?page=" + page + '&tab=' + activeTab,
+                success: function(res) {
+                    $('.task-container').html(res);
+                }
+            })
+        }
+
     });
 
     function updateSelectOptions(id, taskArr, selectedText) {

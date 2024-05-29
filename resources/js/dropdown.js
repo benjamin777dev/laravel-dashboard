@@ -194,6 +194,7 @@ window.showDropdownForId = function (modalID, selectElement) {
 window.addCommonTask = function (id = "", type = "") {
     // console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
+    console.log(window.groupLabel,window.relatedTo,'testouthereeeeee====>>>>>');
     if (window?.groupLabel === "Contacts") {
         type = window.groupLabel;
         selectionId = window.relatedTo;

@@ -475,6 +475,8 @@
         let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
         let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
         let main_content = document.getElementsByClassName("main-content")[0];
+        let container = document.getElementsByClassName("container")[0];
+        const conlContact = document.querySelectorAll('.col-contact')[0];
         // Toggle the width of navbar-brand-box
         if (navbarBox.style.width === "0%") {
             navbarBox.style.width = "250px"; // Change this to the desired width
@@ -493,6 +495,8 @@
             main_content.classList.remove("margin-class");
         } else {
             main_content.style.marginLeft = "unset";
+            // container.style.maxWidth = "1500px";
+            conlContact.style.width = "100%";
             main_content.classList.add("margin-class");
         }
 

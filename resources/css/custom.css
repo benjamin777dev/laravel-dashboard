@@ -2768,8 +2768,31 @@ body[data-sidebar="dark"] .navbar-brand-box {
 .cursor_not_allowed{
     cursor:not-allowed;
 }
+.dataCardDiv {
+    display: none;
+}
 
+/* Styles for screens smaller than 767px */
+@media (max-width: 767px) {
+    .webResponsiveDiv {
+        display: none;
+    }
 
+    .dataCardDiv {
+        display: block;
+    }
+}
+
+.thead_con_design  th{
+    background-color: #222 !important;
+    color:#fff;
+    
+}
+thead, tbody, tfoot, tr, td, th {
+    border-color: inherit;
+    border-style: none !important;
+    border-width: 0;
+}
 .loader-overlay {
     position: fixed;
     top: 0;
@@ -2926,6 +2949,7 @@ input[type=button]:hover {
     display: flex;
     align-items: center;
     margin-left: 10px;
+    font-size: 14px;
 }
 
 .search-input-design .select2-container .select2-selection--multiple {
