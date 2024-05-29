@@ -456,7 +456,6 @@ class DB
     public function retreiveTasks(User $user, $accessToken, $tab = '')
     {
         try {
-
             Log::info("Retrieve Tasks From Database");
             $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);

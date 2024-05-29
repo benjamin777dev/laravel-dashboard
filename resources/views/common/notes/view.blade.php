@@ -26,6 +26,9 @@
                         <p class="dFont400 fs-4 mb-0">
                             {{ $note['note_content'] }}
                         </p>
+                        <p class="dFont400 fs-4 mb-1">
+                            {{ $note['updated_at'] }}
+                        </p>
                     </div>
 
                     {{-- dynamic edit modal --}}

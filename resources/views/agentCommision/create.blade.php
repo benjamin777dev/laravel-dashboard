@@ -68,7 +68,7 @@
                         <div class="form-group row">
                             <label for="id" class="col-sm-2 col-form-label">Sale Price</label>
                             <div class="col-sm-10">
-                                <input type="password" class="form-control cursor_not_allowed" id="sale_price"
+                                <input type="text" value="{{$deal['sale_price']}}" class="form-control cursor_not_allowed" id="sale_price"
                                     name="sale_price" placeholder="$" readonly />
                                 <div class="invalid-feedback">
                                     Please choose a Sale Price
@@ -95,9 +95,8 @@
                             <label for="id" class="col-sm-2 col-form-label">TM Fees due to CHR</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="due_tm_fee" name="due_tm_fee"
-                                    placeholder="$"/>
+                                    placeholder="$" />
                                 <div style="color: red;" id="due_tm_fee_error">
-                                    
                                 </div>
                             </div>
                         </div>
@@ -169,8 +168,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="agent_check" name="agent_check"
                                     placeholder="$" required />
-                                <div class="invalid-feedback">
-                                    Please choose a Agent Check Amount
+                                <div id="agent_check_error" style="color: red;">
                                 </div>
                             </div>
                         </div>
@@ -230,8 +228,7 @@
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="irs_rep" name="irs_rep"
                                     placeholder="$" required />
-                                <div class="invalid-feedback">
-                                    Please choose a IRS Reported 1099 Income For This Transaction
+                                <div id="irs_rep_error" style="color: red;">
                                 </div>
                             </div>
                         </div>
@@ -287,7 +284,7 @@
                         <div class="form-group row">
                             <label for="id" class="col-sm-2 col-form-label">Representing</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control cursor_not_allowed" id="Representing"
+                                <input type="text" value="{{$deal['representing']}}" class="form-control cursor_not_allowed" id="Representing"
                                     name="Representing" placeholder="" readonly />
                                 <div class="invalid-feedback">
                                     Please choose a Representing
@@ -310,7 +307,7 @@
                         <div class="form-group row">
                             <label for="id" class="col-sm-2 col-form-label">Stage</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control cursor_not_allowed" id="irs_rep"
+                                <input type="text" value="{{$deal['stage']}}" class="form-control cursor_not_allowed" id="irs_rep"
                                     name="irs_rep" placeholder="" readonly />
                                 <div class="invalid-feedback">
                                     Please choose a Stage
@@ -365,7 +362,7 @@
                             </label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="total_gross_comm"
-                                    name="total_gross_comm" placeholder="Enter your Portion percent" required />
+                                    name="total_gross_comm" placeholder="Enter your Total Gross Commission" required />
                                 <div class="invalid-feedback">
                                     Please choose a Total Gross Commission
 
@@ -409,7 +406,7 @@
                             <label for="id" class="col-sm-2 col-form-label">Commission Percent
                             </label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control cursor_not_allowed" id="comm_percent"
+                                <input type="text" value="{{$deal['commission']}}" class="form-control cursor_not_allowed" id="comm_percent"
                                     name="comm_percent" placeholder="" readonly />
                                 <div class="invalid-feedback">
                                     Please choose a Commission Percent
@@ -433,36 +430,74 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         let lessSplit = document.getElementById("less_split");
+        let due_tm_fee = document.getElementById("due_tm_fee");
+        let agentCheck = document.getElementById("agent_check");
         lessSplit.addEventListener("keyup", validateCommision);
+        due_tm_fee.addEventListener("keyup", validateCommision);
+        agentCheck.addEventListener("keyup", validateCommision);
     });
 
     function validateCommision() {
         let lessSplit = document.getElementById("less_split");
         let dueFee = document.getElementById("due_tm_fee");
+        let agentCheck = document.getElementById("agent_check");
+        let irsRep = document.getElementById("irs_rep");
+        
+
         let lessSplitError = document.getElementById("less_split_error");
         let dueFeeError = document.getElementById("due_tm_fee_error");
+        let agentCheckError = document.getElementById("agent_check_error");
+        let irsRepError =  document.getElementById("irs_rep_error");
 
+        let isValid = true;
+
+        // Validate lessSplit
         if (lessSplit.value.trim() === "") {
             lessSplitError.textContent = "Less Split to CHR cannot be empty.";
-            return false;
+            isValid = false;
         } else if (isNaN(lessSplit.value.trim())) {
             lessSplitError.textContent = "Less Split to CHR must be a number.";
-            return false;
+            isValid = false;
         } else {
             lessSplitError.textContent = "";
-            return true;
         }
+
+        // Validate dueFee
         if (dueFee.value.trim() === "") {
-            dueFeeError.textContent = "TM Fees due to CHR cannot be empty..";
-            return false;
+            console.log(dueFee, 'dueFee');
+            dueFeeError.textContent = "TM Fees due to CHR cannot be empty.";
+            isValid = false;
         } else if (isNaN(dueFee.value.trim())) {
             dueFeeError.textContent = "TM Fees due to must be a number.";
-            return false;
+            isValid = false;
         } else {
             dueFeeError.textContent = "";
-            return true;
         }
+
+        // validate agent
+        if (agentCheck.value.trim() === "") {
+            agentCheckError.textContent = "TM Fees due to CHR cannot be empty.";
+            isValid = false;
+        } else if (isNaN(agentCheck.value.trim())) {
+            agentCheckError.textContent = "TM Fees due to must be a number.";
+            isValid = false;
+        } else {
+            agentCheckError.textContent = "";
+        }
+          // validate irsp
+          if (irsRep.value.trim() === "") {
+            irsRepError.textContent = "IRS Reported 1099 Income For This Transaction cannot be empty.";
+            isValid = false;
+        } else if (isNaN(irsRep.value.trim())) {
+            irsRepError.textContent = "IRS Reported 1099 Income For This Transaction must be a number.";
+            isValid = false;
+        } else {
+            irsRepError.textContent = "";
+        }
+
+        return isValid;
     }
+
     function submitAgentCommission(id) {
         if (!validateCommision()) {
             return;

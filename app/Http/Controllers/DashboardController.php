@@ -176,10 +176,6 @@ class DashboardController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $tasks = $db->retreiveTasks($user, $accessToken,$tab);
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('tasks','retrieveModuleData','tab'))->render();
-        }
         Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
@@ -220,6 +216,10 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks', compact('tasks','retrieveModuleData','tab'))->render();
+        }
       
         // Pass data to the view
         return view('dashboard.index',
@@ -919,14 +919,13 @@ class DashboardController extends Controller
         }else{
 
             $related_to = $mergedData['groupLabel'] ?? null;
-            $whoid = $mergedData['whoid'] ?? null;
             $related_to_parent = $mergedData['relatedTo'] ?? null;
             $moduleId = $mergedData['moduleId'] ?? null;
-            if($groupLabel==="Contacts"){
-                $contactId = $relatedTo;
+            if($related_to==="Contacts"){
+                $related_to_parent = $related_to_parent;
             }
-            if($groupLabel==="Deals"){
-                $dealId = $relatedTo;
+            if($related_to==="Deals"){
+                $related_to_parent = $related_to_parent;
             }
 
         }
