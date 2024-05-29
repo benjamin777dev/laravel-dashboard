@@ -20,16 +20,15 @@
                                 @foreach($contacts as $contact)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="contact_{{ $contact['zoho_contact_id'] }}" id="contact_{{ $contact['zoho_contact_id'] }}">
-                                        <label for="contact_{{ $contact['zoho_contact_id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
+                                        <input type="checkbox" name="contact_{{ $contact['id'] }}" id="contact_{{ $contact['id'] }}" onclick="updateContactRoles({{ json_encode($contact)}}, '')">
+                                        <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
                                     </td>
                                     <td>{{ $contact['userData']['name'] }}</td>
                                     <td>
-                                        <select name="role_{{ $contact['zoho_contact_id'] }}" class="form-control">
+                                        <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}" onchange="updateContactRoles({{ json_encode($contact) }}, this.value)">
                                             @foreach($contactRoles as $contactRole)
-                                            <option value="{{$contactRole['id']}}">{{$contactRole['name']}}</option>
+                                                <option value="{{$contactRole['name']}}">{{$contactRole['name']}}</option>
                                             @endforeach
-                                            
                                         </select>
                                     </td>
                                 </tr>
@@ -40,7 +39,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary taskModalSaveBtn" onclick="submitContactRoles('{{ $deal['id'] }}')">
+                <button type="button" class="btn btn-secondary taskModalSaveBtn" onclick="submitContactRoles('{{ $deal['zoho_deal_id'] }}')">
                     <i class="fas fa-save saveIcon"></i> Save Changes
                 </button>
             </div>
@@ -49,119 +48,76 @@
 </div>
 
 <script>
-    window.onload = function() {
-        const modalSelectMap = [{
-                modalID: 'staticBackdropforTask',
-                selectElementId: 'related_to_rem_create'
-            },
-            {
-                modalID: 'staticBackdropforNote',
-                selectElementId: 'related_to_note'
+    document.addEventListener('DOMContentLoaded', function () {
+        var dealContacts = @json($dealContacts);
+        var dealContactRoles = [];
+
+        dealContacts.forEach(function(contact) {
+            var checkbox = document.getElementById('contact_' + contact.contactId);
+            if (checkbox) {
+                checkbox.checked = true;
             }
-        ];
-     
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
+            var roleSelect = document.getElementById('role_' + contact.contactId);
+            if (roleSelect) {
+                roleSelect.value = contact.contactRole;
+            }
+            // dealContactRoles.push({ contactId: contact.contactId, role: contact.contactRole });
         });
 
-    }
-    window.resetValidationTask = function(id) {
-        if (id) {
-            document.getElementById("subject_error" + id).innerHTML = "";
-            document.getElementById('darea' + id).value = "";
-        } else {
-            document.getElementById("subject_error").innerHTML = "";
-            document.getElementById('darea').value = "";
-        }
+        window.updateContactRoles = function(contact, selectedRole) {
+            var role = selectedRole || document.getElementById('role_' + contact.id).value;
+            var checkbox = document.getElementById('contact_' + contact.id);
+            var index = dealContactRoles.findIndex(item => item.contactId === contact.zoho_contact_id);
 
-    }
+            if (checkbox.checked) {
+                if (index === -1) {
+                    dealContactRoles.push({ contactId: contact.zoho_contact_id, role: role });
+                } else {
+                    dealContactRoles[index].role = role;
+                }
+            } else if (!checkbox.checked && index !== -1) {
+                dealContactRoles.splice(index, 1);
+            }
 
-    window.validateTextareaTask = function(id) {
-        if (id) {
-            var textarea = document.getElementById('darea' + id);
-            var textareaValue = textarea.value.trim();
-            // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("subject_error" + id).innerHTML = "Please enter details";
-            } else {
-                document.getElementById("subject_error" + id).innerHTML = "";
-            }
-        } else {
-            var textarea = document.getElementById('darea');
-            var textareaValue = textarea.value.trim();
-            // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("subject_error").innerHTML = "Please enter details";
-            } else {
-                document.getElementById("subject_error").innerHTML = "";
-            }
-        }
+            console.log(dealContactRoles);
+        };
 
-    }
-    
-    window.taskModuleSelected = function(selectedModule) {
-        // console.log(accessToken,'accessToken')
-        var selectedOption = selectedModule.options[selectedModule.selectedIndex];
-        var selectedText = selectedOption.text;
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/task/get-' + selectedText,
-            method: "GET",
-            dataType: "json",
-            success: function(response) {
-                // Handle successful response
-                var tasks = response;
-                // Assuming you have another select element with id 'taskSelect'
-                var taskSelect = $('#taskSelectForTask');
-                // Clear existing options
-                taskSelect.empty();
-                $.each(tasks, function(index, task) {
-                    if (selectedText === "Tasks") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_task_id,
-                            text: task?.subject
-                        }));
+        window.submitContactRoles = function(dealId) {
+
+            let formData = {
+                data: dealContactRoles,
+                skip_mandatory: true
+            };
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: `/add/deal/contact/role/`+dealId,
+                method: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    document.getElementById("loaderOverlay").style.display = "none";
+                    document.getElementById('loaderfor').style.display = "none";
+                    if (response?.data[0]?.status == "success") {
+                        var modalTarget = document.getElementById('savemakeModalId' + dealId);
+                        var updateMessage = document.getElementById('updated_message_make');
+                        updateMessage.textContent = response?.data[0]?.message;
+                        $(modalTarget).modal('show');
+                        window.location.reload();
                     }
-                    if (selectedText === "Deals") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_deal_id,
-                            text: task?.deal_name
-                        }));
-                    }
-                    if (selectedText === "Contacts") {
-                        taskSelect.append($('<option>', {
-                            value: task?.zoho_contact_id,
-                            text: (task?.first_name ?? '') + ' ' + (task
-                                ?.last_name ??
-                                '')
-                        }));
-                    }
-                });
-                taskSelect.show();
-                taskSelect.each(function() {
-                    $(this).select2({
-                        theme: 'bootstrap-5',
-                        dropdownParent: $(this).parent(),
-                    });
-                });
-                taskSelect.next(".select2-container").addClass("form-select");
-                // Do whatever you want with the response data here
-            },
-            error: function(xhr, status, error) {
-                // Handle error
-                console.error("Ajax Error:", error);
-            }
-        });
-
-    }
+                },
+                error: function (xhr) {
+                    document.getElementById("loaderOverlay").style.display = "none";
+                    document.getElementById('loaderfor').style.display = "none";
+                    console.error(xhr.responseText);
+                }
+            });
+        };
+    });
 </script>

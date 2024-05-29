@@ -262,16 +262,7 @@
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
-    <div class="confirm">
-        <div></div>
-        <div>
-            <div id="confirmMessage"></div>
-            <div>
-                <input id="confirmYes" type="button" value="Yes" />
-                <input id="confirmNo" type="button" value="No" />
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 <script>
@@ -318,17 +309,12 @@
             activeTab.style.color = "#fff";
             activeTab.style.borderRadius = "4px";
         }
-          var taskIDSS = [];
-    var selectElement;
-    var tasks = @json($tasks);
-    tasks?.data?.forEach((task) => {
-        taskIDSS.push(task?.id)
-    })
-    var modalSelectMaptsk = []
-    taskIDSS.forEach((id) => {
-        modalSelectMaptsk.push({
-            modalID: id,
-            selectElementId: 'related_to_rem' + id
+
+        var taskIDSS = [];
+        var selectElement;
+        var tasks = @json($tasks);
+        tasks?.data?.forEach((task) => {
+            taskIDSS.push(task?.id)
         })
         var modalSelectMaptsk = []
         taskIDSS.forEach((id) => {
@@ -351,7 +337,7 @@
       let page = $(this).attr('href').split('page=')[1]
       record(page)
     })
-
+    
     document.querySelectorAll('.nav-link.dtabsbtn').forEach(tab => {
         tab.addEventListener('click', function() {
             // Remove active class from all tabs

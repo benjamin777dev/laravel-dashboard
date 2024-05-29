@@ -56,11 +56,14 @@ class PipelineController extends Controller
         // Calculate averages
         $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
         $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
-
-
+        
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        }
         return view('pipeline.index', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 
@@ -150,8 +153,9 @@ class PipelineController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $allStages = config('variables.dealStages');
-        return view('pipeline.create', compact('tasks', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        $allStages = config('variables.dealCreateStages');
+        $contactRoles = $db->retrieveRoles($user);
+        return view('pipeline.create', compact('tasks','contactRoles', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
     }
 
     public function getDeal(Request $request)
@@ -340,5 +344,31 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','deal'))->render();
+    }
+
+    public function addContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $zoho = new ZohoCRM();
+        $dealId = request()->route('dealId');
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        $contactRole = $zoho->addContactRoleForDeal($dealId, $jsonData);
+        foreach ($contactRole as $response) {
+            if (!$response->successful()) {
+                // Log the error for debugging
+                Log::error('Error adding contact role: ' . $response->body());
+                return response()->json(['error' => 'Error adding contact role', 'details' => $response->body()], 500);
+            }
+        }
+
+        $contactRoleArray = json_decode($contactRole, true);
+        return $contactRoleArray;
     }
 }

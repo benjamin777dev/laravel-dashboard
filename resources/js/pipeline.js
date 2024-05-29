@@ -1,3 +1,105 @@
+window.checkValidate = function () {
+    var representing = document.getElementById('validationDefault02');
+    if (representing.value == 'Buyer') {
+        $('#additionalFields').append(`
+                    <div class="col-md-6 additional-field ">
+                        <label for="finance" class="form-label nplabelText">Financing</label>
+                        <input type="text" class="form-control npinputinfo" id="finance" required>
+                    </div>
+                    <div class="col-md-6 additional-field">
+                        <label for="lender_company" class="form-label nplabelText">Lender Company</label>
+                        <input type="text" class="form-control npinputinfo" id="lender_company" required>
+                    </div>
+                    <div class="col-md-6 additional-field">
+                        <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
+                        <input type="text" class="form-control npinputinfo" id="modern_mortgage_lender" required>
+                    </div>
+                `);
+    } else {
+        // If representing is not buyer, remove the additional fields
+        $('#additionalFields').find('.additional-field').remove();
+    }
+
+    var stage = document.getElementById('validationDefault04');
+    var probability = document.getElementById('validationDefault15');
+    if (stage.value == 'Active') {
+        probability.value = "40";
+    } else if (stage.value == 'Potential') {
+        probability.value = "5";
+    } else if (stage.value == 'Pre-Active') {
+        probability.value = "20";
+    } else if (stage.value == 'Under Contract') {
+        probability.value = "60";
+    } else if (stage.value == 'Dead-Lost To Competition') {
+        probability.value = "100";
+    }
+    var address = document.getElementById('validationDefault07');
+    var city = document.getElementById('validationDefault08');
+    var state = document.getElementById('validationDefault09');
+    var zip = document.getElementById('validationDefault10');
+    var property_type = document.getElementById('validationDefault12');
+    var tm_preference = document.getElementById('tmPreference');
+    var finance = document.getElementById('finance');
+    console.log("FINANCE", finance);
+    var contact_name = document.getElementById('contactName');
+
+    // Function to add or remove validation class
+    function toggleValidation(element, addValidation) {
+        console.log(element, addValidation, "Toggle");
+        if (addValidation) {
+            element.classList.add('validate');
+        } else {
+            element.classList.remove('validate');
+        }
+    }
+
+    // Check stage value
+    if (stage.value === 'Under Contract') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(property_type, true);
+    } else {
+        toggleValidation(address, false);
+        toggleValidation(city, false);
+        toggleValidation(state, false);
+        toggleValidation(zip, false);
+        toggleValidation(property_type, false);
+    }
+
+    // Check representing value
+    if (representing.value === 'Seller') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+    } else {
+        toggleValidation(tm_preference, false);
+        toggleValidation(contact_name, false);
+    }
+
+    // Check representing value for Buyer
+    if (representing.value === 'Buyer') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+        if (finance) {
+            toggleValidation(finance, true);
+        }
+    } else {
+        if (finance) {
+            toggleValidation(finance, true);
+        }
+    }
+}
+
+
 
 window.updateDataDeal = function (dealId) {
     let isValid = true
@@ -30,8 +132,10 @@ window.updateDataDeal = function (dealId) {
     var tm_name = $('#tmName').val();
     var contact_name = $('#contactName').val();
     var transaction_owner = $('#transactionOwner').val();
-
-
+    var lead_agent = $('#leadAgent').val();
+    var finance = $('#finance').val();
+    var lender_company = $('#lender_company').val();
+    var modern_mortgage_lender = $('#modern_mortgage_lender').val();
     if (client_name_primary === '') {
         isValid = false
     }
@@ -106,6 +210,10 @@ window.updateDataDeal = function (dealId) {
                 "Contact_Name": contact_name,
                 "Status_pt_out_out": status_rpt_opt_out,
                 "Deadline_Emails": deadline_em_opt_out,
+                "Lead_Agent": lead_agent,
+                'Financing': finance,
+                'Lender_Company': lender_company,
+                'Modern_Mortgage_Lender': modern_mortgage_lender,
             }],
         };
 

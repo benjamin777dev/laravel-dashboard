@@ -947,4 +947,43 @@ class ZohoCRM
         }
     }
 
+    public function addContactRoleForDeal($dealId, $inputData)
+    {
+        Log::info('Getting Zoho Deal contact data' . print_r($inputData, true));
+
+        $arrayResponse = [];
+        foreach ($inputData['data'] as $input) {
+            $contactId = $input['contactId'];
+            $role = $input['role'];
+            $url = $this->apiUrl . "Deals/5141697000062784010/Contact_Roles/5141697000081995001";
+            $formData = [
+                "data" => [
+                    [
+                        "Contact_Role" => "CHR Agent"
+                    ]
+                ],
+                "skip_mandatory" => true
+            ];
+            $formData['trigger'] = 'workflow';
+            $jsonObject = json_encode($formData);
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->put($url, $jsonObject);
+
+            $arrayResponse[] = $response;
+
+            // Check if the response is successful
+            if (!$response->successful()) {
+                Log::error('Zoho API error: ' . $response->body());
+                // Optionally, you can throw an exception here to stop the execution
+                throw new \Exception('Zoho API error: ' . $response->body());
+            }
+        }
+
+        Log::info('Zoho Deal contact data responses: ' . json_encode($arrayResponse, true));
+        return $arrayResponse;
+    }
+
+
 }

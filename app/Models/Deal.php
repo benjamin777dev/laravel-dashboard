@@ -48,6 +48,9 @@ class Deal extends Model
         'commission_flat_free',
         'deadline_em_opt_out',
         'status_rpt_opt_out',
+        'lead_agent',
+        'financing',
+        'modern_mortgage_lender'
     ];
 
     public function userData()

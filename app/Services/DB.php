@@ -113,6 +113,9 @@ class DB
                 'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
+                'lead_agent' => isset($deal['Lead_Agent']) ? $deal['Lead_Agent']['id'] : null,
+                'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
+                'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
                 'isDealCompleted' => true,
                 'isInZoho' => true
             ]);
@@ -131,7 +134,6 @@ class DB
 
             DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
-                'contactRole' => $dealContact['Contact_Role']['name']
             ], [
                 'zoho_deal_id' => $dealId,
                 'contactId' => $contact ? $contact->id : null,
@@ -318,9 +320,11 @@ class DB
                         $deals->orderBy($sortField, 'desc');
                         break;
                     default:
-                        // Handle default sorting logic if needed
+                         
                         break;
                 }
+            }else{
+                $deals->orderBy('updated_at', 'desc');
             }
 
             if ($dateFilter && $dateFilter != '') {
@@ -338,7 +342,7 @@ class DB
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->paginate(10);
+            $deals = $deals->where($conditions)->paginate(5);
             Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]);
             return $deals;
         } catch (\Exception $e) {
@@ -731,7 +735,7 @@ class DB
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $dealId);
-            $dealContacts = DealContact::with('userData')->with('contactData')->where('zoho_deal_id', $dealId)->get();
+            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
         } catch (\Exception $e) {
@@ -745,7 +749,7 @@ class DB
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $contactId);
-            $dealContact = Contact::with('userData')->with('contactName')->where('zoho_contact_id', $contactId)->get();
+            $dealContact = Contact::with('userData')->with('contactName')->with('roleData')->where('zoho_contact_id', $contactId)->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContact->toArray()]);
             return $dealContact;
         } catch (\Exception $e) {
@@ -915,8 +919,12 @@ class DB
                 'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
                 'tm_name'=>isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'lead_agent'=>isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
+                'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
+                'lender_company' => isset($deal['Lender_Company']) ? $deal['Lender_Company'] : null,
+                'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
             ]);
 
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
