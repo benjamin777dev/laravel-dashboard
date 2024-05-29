@@ -113,6 +113,9 @@ class DB
                 'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
                 'contactId' => isset($contact) ? $contact->id : null,
+                'lead_agent' => isset($deal['Lead_Agent']) ? $deal['Lead_Agent']['id'] : null,
+                'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
+                'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
                 'isDealCompleted' => true,
                 'isInZoho' => true
             ]);
@@ -317,9 +320,11 @@ class DB
                         $deals->orderBy($sortField, 'desc');
                         break;
                     default:
-                        // Handle default sorting logic if needed
+                         
                         break;
                 }
+            }else{
+                $deals->orderBy('updated_at', 'desc');
             }
 
             if ($dateFilter && $dateFilter != '') {
@@ -914,8 +919,12 @@ class DB
                 'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
                 'tm_name'=>isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'lead_agent'=>isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
+                'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
+                'lender_company' => isset($deal['Lender_Company']) ? $deal['Lender_Company'] : null,
+                'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
             ]);
 
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);

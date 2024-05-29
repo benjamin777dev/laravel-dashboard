@@ -153,8 +153,9 @@ class PipelineController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $allStages = config('variables.dealStages');
-        return view('pipeline.create', compact('tasks', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        $allStages = config('variables.dealCreateStages');
+        $contactRoles = $db->retrieveRoles($user);
+        return view('pipeline.create', compact('tasks','contactRoles', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
     }
 
     public function getDeal(Request $request)
