@@ -62,6 +62,11 @@ class Contact extends Model
         return $this->hasMany(ContactGroups::class, 'contactId');
     }
 
+    public function dealContact()
+    {
+        return $this->hasMany(DealContact::class, 'contactId');
+    }
+
     public function parentContact()
     {
         return $this->belongsTo(Contact::class, 'referred_id');

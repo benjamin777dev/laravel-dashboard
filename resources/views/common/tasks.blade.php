@@ -276,16 +276,7 @@
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
-    <div class="confirm">
-        <div></div>
-        <div>
-            <div id="confirmMessage"></div>
-            <div>
-                <input id="confirmYes" type="button" value="Yes" />
-                <input id="confirmNo" type="button" value="No" />
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 <script>
