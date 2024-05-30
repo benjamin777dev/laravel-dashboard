@@ -1271,6 +1271,7 @@
 @media (max-width: 768px) {
     .commonFlex {
         flex-direction: column;
+        gap: 15px;
         /* Stack flex children vertically on small screens */
     }
 
@@ -1649,6 +1650,10 @@
         display: unset;
     }
 
+    .table-responsive{
+        display: none;
+    }
+
     .npAgentCard {
         display: flex;
         padding: 20px;
@@ -1959,6 +1964,9 @@
 .npcontactRoles,
 .npNom-TMRoles {
     margin-bottom: 24px;
+}
+.nav-link.active{
+    background-color: #222 !important;
 }
 
 /* CSS (inside your stylesheet or style tag) */
@@ -2780,6 +2788,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
     .dataCardDiv {
         display: block;
+    }
+    .col-contact{
+        flex: 1 !important;
     }
 }
 
