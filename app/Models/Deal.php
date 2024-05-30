@@ -50,7 +50,8 @@ class Deal extends Model
         'status_rpt_opt_out',
         'lead_agent',
         'financing',
-        'modern_mortgage_lender'
+        'modern_mortgage_lender',
+        'contact_name'
     ];
 
     public function userData()
@@ -60,7 +61,7 @@ class Deal extends Model
 
     public function contactName()
     {
-        return $this->belongsTo(Contact::class, 'contactId');
+        return $this->belongsTo(Contact::class, 'contact_name');
     }
 
     public function tasks()
@@ -72,8 +73,14 @@ class Deal extends Model
         return $this->belongsTo(Contract::class, 'contractId');
     } */
 
-    /* public function tmName()
+    public function tmName()
     {
         return $this->belongsTo(User::class, 'tm_name');
-    } */
+    }
+    
+    public function leadAgent()
+    {
+        return $this->belongsTo(User::class, 'lead_agent');
+    }
+
 }

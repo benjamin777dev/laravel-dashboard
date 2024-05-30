@@ -315,10 +315,13 @@
     background-color: #3B3B3B;
 }
 
+.nav-link.active{
+    background-color: #222 !important;
+}
+
 .dtabsbtn:hover {
     color: #fff;
 }
-
 .dresponsivetable {
     margin-top: 12px;
     padding-inline: 0px;
@@ -1965,7 +1968,6 @@
 .commonTextEllipsis {
     font-size: 16px;
     line-height: 18px;
-     white-space: nowrap;
 }
 
 /* .npcontactsTable th,
@@ -2724,7 +2726,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
 }
 
 /* } */
-
+.selectSearch .select2-container{
+    z-index: 0 !important;
+}
 .select2-container {
     z-index: 9999 !important;
 }

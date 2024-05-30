@@ -117,11 +117,12 @@ class PipelineController extends Controller
         $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $users = User::all();
         $contactRoles = $db->retrieveRoles($user);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
 
     }
 

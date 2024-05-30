@@ -269,7 +269,7 @@ class ZohoCRM
                     'criteria' => $search,
                 ]);
 
-        //Log::info('Zoho deals data response: ' . print_r($response, true));
+        Log::info('Zoho deals data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -521,7 +521,7 @@ class ZohoCRM
                 'Content-Type' => 'application/json',
             ])->put($this->apiUrl . 'Deals/' . $id, $inputJson);
 
-            // Log::info('Zoho deals data response: ' . print_r($response, true));
+            Log::info('Zoho deals data response: ' . print_r($response->body(), true));
 
             return $response;
         } catch (RequestException $exception) {
@@ -542,7 +542,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Deals/' . $id);
 
-        //Log::info('Zoho deals data response: ' . print_r($response, true));
+        Log::info('Zoho deals data response: ' . print_r($response->body(), true));
 
         return $response;
     }

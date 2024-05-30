@@ -16,8 +16,8 @@
                         <div id="note_text_error{{ $deal['id'] }}" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to{{ $deal['id'] }}"
-                                name="related_to" aria-label="Select Transaction">
+                            <select class="form-select dmodaltaskSelect"  id="related_to{{ $deal['id'] }}"
+                                name="related_to" style="display:none;" aria-label="Select Transaction" >
                                 @foreach ($retrieveModuleData as $item)
                                     @if (in_array($item['api_name'], ['Deals']))
                                         <option value="{{ $item }}">{{ $item['api_name'] }}</option>
@@ -25,8 +25,8 @@
                                 @endforeach
                             </select>
                             <select class="form-select dmodaltaskSelect" id="noteSelect{{ $deal['id'] }}"
-                                name="related_to_parent" aria-label="Select Transaction">
-                                <option value="{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] }}</option>
+                                name="related_to_parent" aria-label="Select Transaction" disabled>
+                                <option value="{{ $deal['zoho_deal_id'] }}" >{{ $deal['deal_name'] }}</option>
                             </select>
                         </div>
                         <div id="related_to_error{{ $deal['id'] }}" class="text-danger"></div>
@@ -61,7 +61,7 @@
                         <div id="note_text_error{{ $contact['id'] }}" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to{{ $contact['id'] }}"
+                            <select class="form-select dmodaltaskSelect" style="display:none;" id="related_to{{ $contact['id'] }}"
                                 name="related_to" aria-label="Select Transaction">
                                 @foreach ($retrieveModuleData as $item)
                                     @if (in_array($item['api_name'], ['Contacts']))
@@ -70,7 +70,7 @@
                                 @endforeach
                             </select>
                             <select class="form-select dmodaltaskSelect" id="noteSelect{{ $contact['id'] }}"
-                                name="related_to_parent" aria-label="Select Transaction">
+                                name="related_to_parent" aria-label="Select Transaction" disabled>
                                 <option value="{{ $contact['zoho_contact_id'] }}">{{ $contact['first_name'] }}
                                     {{ $contact['last_name'] }}
                                 </option>

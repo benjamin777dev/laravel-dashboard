@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('lead_agent')->nullable();
             $table->string('financing')->nullable();
             $table->string('modern_mortgage_lender')->nullable();
+            $table->string('contact_name')->nullable();
         });
     }
 
