@@ -68,7 +68,7 @@
                 <li>
                     <a href="https://analytics.zoho.com/open-view/2487682000008614470" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
-                        <span key="t-tasks">@lang('CHR Agent Ranks')</span>
+                        <span key="t-tasks">@lang('CHR Rankings')</span>
                     </a>
                 </li>
                 {{-- <li>
@@ -115,7 +115,7 @@
                 <li>
                     <a href="https://analytics.zoho.com/open-view/2487682000008614470" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
-                        <span key="t-tasks">@lang('CHR Agent Rank')</span>
+                        <span key="t-tasks">@lang('CHR Rankings')</span>
                     </a>
                 </li>
                 
