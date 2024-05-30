@@ -4,48 +4,45 @@
             <table id="example" class="table table-striped table-bordered table-nowrap" cellspacing="0" width="100%">
                 <thead class="thead_con_design">
                     <tr>
-
-
-
                         <th>
                             <div class="commonFlex">
                                 <p class="mb-0">First name</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('first_name')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th>
                             <div class="commonFlex">
                                 <p class="mb-0">ABCD</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Mobile</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Email</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Address</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('mailing_address')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Relationship Type</p>
-                                <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('relationship_type')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
@@ -155,8 +152,7 @@
                 <div class="card dataCardDiv">
                     <div class="card-body dacBodyDiv">
                         <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
-                            <div class="d-flex gap-2"
-                                onclick="editText('{{ $contact['zoho_contact_id'] }}','first_name','{{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}')">
+                            <div class="d-flex gap-2">
                                 <h5 class="card-title" id="first_name{{ $contact['zoho_contact_id'] }}">
                                     {{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}</h5>
                             </div>
@@ -318,6 +314,14 @@
             })
         }
     }
+    let sortDirectionContact = 'desc';
+    window.sortContact=function(sort){
+        sortDirectionContact = (sortDirectionContact === 'desc') ? 'asc' : 'desc';
+        // Call fetchDeal with the sortField parameter
+        fetchContact("",sort, sortDirectionContact);
+    }
+
+    
 
     function editText(zohoID, name, value) {
         event.preventDefault();

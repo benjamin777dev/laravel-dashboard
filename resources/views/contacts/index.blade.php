@@ -13,7 +13,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <div class="container">
+    <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
@@ -61,6 +61,7 @@
                 </div>
 
             </div>
+            <div class="d-flex gap-4">
             <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
                 data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
                 Filter
@@ -69,6 +70,7 @@
                 data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
                 Reset All
             </div>
+        </div>
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -271,6 +273,8 @@
             method: 'GET',
             data: {
                 search: encodeURIComponent(searchValuetrim),
+                sort: sortField || "",
+                sortType: sortDirection || "",
                 filter: filterVal,
                 missingField: missingFeild,
 

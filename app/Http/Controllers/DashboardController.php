@@ -129,7 +129,6 @@ class DashboardController extends Controller
                    && !Str::startsWith($deal['stage'], 'Dead')
                    && $deal['stage'] !== 'Sold';
         });
-        
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
             return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
@@ -341,7 +340,6 @@ class DashboardController extends Controller
                    && $deal['stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
-
         // Sum the 'Pipeline1' values of the filtered deals.
         $totalGCI = $filteredDeals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
