@@ -298,7 +298,7 @@
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">
-            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" >
+            <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
             <span class="tooltiptext">Add Notes</span>
         </div>
     </div>
@@ -333,11 +333,6 @@
         </div> --}}
     {{-- </div>` --}}
     {{-- save Modal --}}
-
-
-
-
-
     {{-- @vite(['resources/js/dashboard.js']) --}}
     <!-- Include Date Range Picker -->
 
@@ -348,7 +343,7 @@
 <script>
     window.fetchData = function(tab = null) {
         $('#spinner').show();
-         loading = true;
+        loading = true;
         // Make AJAX call
         $.ajax({
             url: '{{ url('/dashboard') }}',
@@ -356,11 +351,11 @@
             data: {
                 tab: tab,
             },
+            dataType: 'html',
             success: function(data) {
                 $('#spinner').hide();
                 loading = false;
                 $('.task-container').html(data);
-
 
             },
             error: function(xhr, status, error) {
@@ -676,7 +671,6 @@
                 radiusPercentage: 2,
                 widthPercentage: 3.2,
                 lengthPercentage: 80,
-                color: '#fff'
             },
             valueLabel: {
                 fontSize: "24px", // Change font size here

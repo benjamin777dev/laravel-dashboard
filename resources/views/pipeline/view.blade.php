@@ -65,7 +65,7 @@
             <div class="row">
                 <nav class="dtabs">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a href="/pipeline-view/{{ $deal['id'] }}?tab=In Progress"> <button class="nav-link dtabsbtn"
+                        <a href="/pipeline-view/{{ $deal['id'] }}?tab=In Progress"> <button class="nav-link dtabsbtn active"
                                 id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress'
                                 type="button" role="tab" aria-controls="nav-home" aria-selected="true">In
                                 Progress</button></a>

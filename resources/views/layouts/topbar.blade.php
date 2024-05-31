@@ -41,11 +41,7 @@
         </div> 
 
             <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
-                <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown"
-                    aria-haspopup="false" aria-expanded="false">
-                    {{-- <span key="t-megamenu">@lang('Mega_Menu')</span> --}}
-                    {{-- <i class="mdi mdi-chevron-down"></i> --}}
-                </button>
+                
                 <div class="dropdown-menu dropdown-megamenu">
                     <div class="row">
                         <div class="col-sm-8">
@@ -495,8 +491,6 @@
             main_content.classList.remove("margin-class");
         } else {
             main_content.style.marginLeft = "unset";
-            // container.style.maxWidth = "1500px";
-            conlContact.style.width = "100%";
             main_content.classList.add("margin-class");
         }
 
