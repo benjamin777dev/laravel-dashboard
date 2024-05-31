@@ -483,7 +483,7 @@ class DB
                 $tasks
                     ->where('due_date', '>=', now());
             } else {
-                $tasks->where('status', $tab);
+                $tasks->where('due_date', null);
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);

@@ -71,7 +71,7 @@
                                         </select>
                                         <select class="form-select dmodaltaskSelect" id="noteSelect_{{ $note['id'] }}"
                                             name="related_to_parent" aria-label="Select Transaction">
-                                            <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}
+                                            <option value="{{ $note->dealData['zoho_deal_id']??'' }}">{{ $note->dealData['deal_name'] ??''}}
                                             </option>
                                         </select>
                                     @elseif($note['related_to_type'] === 'Contacts')
@@ -85,8 +85,10 @@
                                         </select>
                                         <select class="form-select dmodaltaskSelect" id="noteSelect_{{ $note['id'] }}"
                                             name="related_to_parent" aria-label="Select Transaction">
-                                            <option value="{{ $note->contactData['zoho_deal_id'] }}">{{ $note->contactData['first_name'] }}
-                                                {{ $note->contactData['last_name'] }}</option>
+                                            <option value="{{ $note->contactData['zoho_deal_id'] ?? '' }}">
+                                                {{ $note->contactData['first_name'] ?? '' }} {{ $note->contactData['last_name'] ?? '' }}
+                                            </option>
+
                                         </select>
                                     @else
                                         <div class="btn-group dmodalTaskDiv">

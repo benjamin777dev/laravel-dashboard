@@ -648,6 +648,7 @@
 
     // Function to handle deletion
     function deleteNoteItem(id) {
+        console.log("sdfdsfdsfdsfsdfdfdsfdsfdsfsdfdsfds",id);
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
