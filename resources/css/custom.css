@@ -2921,42 +2921,54 @@ input[type=button] {
 input[type=button]:hover {
     background: #ccc;
 }
-
-.confirm {
-    display: none;
-    height: 200px;
+/* Custom CSS for the confirmation modal */
+.custom-confirm-modal .modal-dialog-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.confirm>div:first-of-type {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    top: 0px;
-    left: 0px;
-}
-
-.confirm>div:last-of-type {
-    padding: 10px 20px;
-    background: white;
-    position: absolute;
-    width: auto;
-    height: auto;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.custom-confirm-modal .modal-content {
+    width: 340px; /* Set the width similar to your custom dialog */
+    margin: auto;
     border-radius: 5px;
     border: 1px solid #333;
 }
 
-.confirm>div:last-of-type div:first-of-type {
-    min-width: 150px;
-    padding: 10px;
+.custom-confirm-modal .modal-header {
+    border-bottom: none;
 }
 
-.confirm>div:last-of-type div:last-of-type {
-    text-align: right;
+.custom-confirm-modal .modal-body {
+    padding: 10px 20px;
+    background: white;
+    text-align: center;
 }
+
+.custom-confirm-modal #confirmMessage {
+    color: #222;
+    text-align: center;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 26px;
+    margin-bottom: 0px;
+}
+
+.custom-confirm-modal .modal-footer {
+    border-top: none;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+}
+
+.custom-confirm-modal .modal-footer .btn {
+    margin: 5px;
+}
+
+
 .search-input-design{
     display: flex;
     align-items: center;

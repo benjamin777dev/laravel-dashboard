@@ -71,8 +71,7 @@
                         </td>
                         <td>
                             <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
-                                onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['id'] }}')"
-                                id="date_local{{ $task['zoho_task_id'] }}"
+                                onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['zoho_task_id'] }}')"
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                         </td>
                         <td>
@@ -204,79 +203,46 @@
         </tbody>
 
     </table>
-    <div class="dprogressCards">
-        @if (count($tasks) > 0)
-            @foreach ($tasks as $task)
-                <div class="dcardscheckbox">
-                    <input type="checkbox" />
-                </div>
-                <div class="dcardssubjectdiv">
-                    <p class="dcardSubject" id="editableTextCard{{ $task['id'] }}"
-                        onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableTextCard{{ $task['id'] }}')">
-                        {{ $task['subject'] ?? 'N/A' }}
-                    </p>
-                    <div class="btn-group dcardsselectdiv">
-                        <p class="dcardsTransactionText">Transaction Related</p>
-                        <select class="form-select" id="related_to_rem_card{{ $task['id'] }}"
-                            onclick="testFun('{{ $task['id'] }}','related_to_rem_card{{ $task['id'] }}')"
-                            name="related_to_rem{{ $task['id'] }}">
-                            @if ($task['related_to'] == 'Contacts')
-                                <option value="" {{ empty($task['contactData']) ? 'selected' : '' }}>
-                                    {{ $task['contactData']['first_name'] ?? '' }}
-                                    {{ $task['contactData']['last_name'] ?? 'Please select' }}
-                                </option>
-                            @elseif ($task['related_to'] == 'Deals')
-                                <option value="" {{ empty($task['dealData']) ? 'selected' : '' }}>
-                                    {{ $task['dealData']['deal_name'] ?? 'Please select' }}
-                                </option>
-                            @else
-                                <option value="" selected>Please select</option>
-                            @endif
-                        </select>
-                    </div>
-                    <div class="dcardsdateinput">
-                        <p class="dcardsTaskText">Task Date</p>
-                        <input type="datetime-local"
-                            onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val_card{{ $task['zoho_task_id'] }}')"
-                            id="date_val_card{{ $task['zoho_task_id'] }}"
-                            value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                    </div>
-                    <div class="dcardsdateinput">
-                        <p class="dcardsTaskText">TaskStamp</p>
-                         <p></p>
-                    </div>
-                </div>
-                <div class="dcardsbtnsDiv">
-                    <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
-                        data-bs-toggle="modal"
-                        onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
-                        data-bs-target="#saveModalId{{ $task['zoho_task_id'] }}">
-                        <i class="fas fa-hdd plusicon"></i>
-                        Save
-                    </div>
-                    <div class="input-group-text dcardsdeletebtn" onclick="deleteTask('{{ $task['zoho_task_id'] }}')"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId">
-                        <i class="fas fa-trash-alt plusicon"></i>
+    
 
-                        Delete
-                    </div>
-                </div>
-            @endforeach
-        @else
-            <div>
-                <div class="text-center">No records found</div>
-            </div>
-        @endif
-    </div>
     <div class="dpagination">
         <div onclick="deleteTask('',true)"
-            class="input-group-text text-white justify-content-center removebtn dFont400 dFont13" id="removeBtn">
+            class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 " id="removeBtn">
             <i class="fas fa-trash-alt plusicon"></i>
             Delete Selected
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
+<!-- Bootstrap Modal with Custom Class -->
+<div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
+            </div>
+            <div class="modal-footer justify-content-evenly border-0">
+                <div class="d-grid gap-2 col-5">
+                    <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-trash-alt"></i> Yes, delete
+                    </button>
+                </div>
+                <div class="d-grid gap-2 col-5">
+                    <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
+                        <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
     
+</div>
 </div>
 
 <script>
@@ -582,98 +548,97 @@
         return ids;
     }
 
-    if (!window.ui) {
-        window.ui = {
-            confirm: async (message) => createConfirm(message)
-        };
-    }
+    const ui = {
+    confirm: async (message) => createConfirm(message)
+};
 
-    const createConfirm = (message) => {
-        return new Promise((complete, failed) => {
-            $('#confirmMessage').text(message)
+const createConfirm = (message) => {
+    console.log("message", message);
+    return new Promise((complete, failed) => {
+        $('#confirmMessage').text(message);
 
-            $('#confirmYes').off('click');
-            $('#confirmNo').off('click');
-
-            $('#confirmYes').on('click', () => {
-                $('.confirm').hide();
-                complete(true);
-            });
-            $('#confirmNo').on('click', () => {
-                $('.confirm').hide();
-                complete(false);
-            });
-
-            $('.confirm').show();
+        $('#confirmYes').off('click').on('click', () => {
+            $('#confirmModal').modal('hide');
+            complete(true);
         });
+
+        $('#confirmNo').off('click').on('click', () => {
+            $('#confirmModal').modal('hide');
+            complete(false);
+        });
+
+        $('#confirmModal').modal('show');
+    });
+};
+
+const saveForm = async () => {
+    console.log(ui);
+    const confirm = await ui.confirm('Are you sure you want to do this?');
+
+    if (confirm) {
+        return true;
+    } else {
+        return false;
     }
+};
 
-    const saveForm = async () => {
-        const confirm = await ui.confirm('Are you sure you want to do this?');
-
-        if (confirm) {
-            return true;
-        } else {
-            return false;
-        }
+async function deleteTask(id = "", isremoveselected = false) {
+    let updateids = removeAllSelected();
+    
+    if (updateids === "" && id === 'remove_selected') {
+        return;
     }
-
-
-    async function deleteTask(id = "", isremoveselected = false) {
-        let updateids = removeAllSelected();
-        if (updateids === "" && id === 'remove_selected') {
+    if (isremoveselected) {
+        id = undefined;
+    }
+    
+    if (updateids !== "") {
+        console.log("id, isremoveselected", updateids, isremoveselected, id);
+        const shouldDelete = await saveForm();
+        if (!shouldDelete) {
+            console.log("User cancelled delete");
             return;
         }
-        if (isremoveselected) {
-            id = undefined;
-        }
-
-        if (updateids !== "") {
-            const shouldDelete = await saveForm();
-            if (!shouldDelete) {
-                console.log("User cancelled delete");
-                return;
-            }
-        }
-        if (id === undefined) {
-            id = updateids;
-        }
-        //remove duplicate ids
-        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh')
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        // Handle success response
-                        showToast("deleted successfully");
-                        window.location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        showToastError(xhr.responseText)
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
     }
+    if (id === undefined) {
+        id = updateids;
+    }
+    //remove duplicate ids
+    ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+    console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    try {
+        if (id) {
+            $.ajax({
+                url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                method: 'DELETE', // Change to DELETE method
+                contentType: 'application/json',
+                dataType: 'JSON',
+                data: {
+                    'id': id,
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response) {
+                    // Handle success response
+                    showToast("deleted successfully");
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                }
+            });
+        }
+    } catch (err) {
+        console.error("error", err);
+    }
+}
+
 
     function toggleAllCheckboxes() {
         // console.log("yes it")
@@ -779,7 +744,7 @@
 
         if (textfield === "date") {
             let dateLocal = document.getElementById(textid);
-            console.log(textid, 'dateLocal')
+            console.log(dateLocal, 'dateLocal')
             var text = dateLocal.value.trim();
             updateText(text, textfield, zohoID);
         }

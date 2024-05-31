@@ -526,9 +526,9 @@ class DashboardController extends Controller
                 $response = $zoho->createTask($jsonData);
 
 
-                if (!$response->successful()) {
-                     return "error something".$response;
-                }
+                // if (!$response->successful()) {
+                //      return "error something".$response;
+                // }
                 $responseArray = json_decode($response, true);
                 $data = $responseArray['data'][0]['details']; 
                 $zoho_id = $data['id'];
@@ -550,12 +550,13 @@ class DashboardController extends Controller
                     'created_time'=>$created_time??null,
                     'related_to'=>$related_to
                 ]);
+                Log::info("Successful notes create... ".$task);
                 return response()->json($responseArray, 201);
 
                 // $task->modified_by_name = $modifiedByName;
                 // $task->modified_by_id = $modifiedById;
                 return $data;
-                Log::info("Successful notes create... ".$response);
+                
 
 
         } catch (\Exception $e) {
