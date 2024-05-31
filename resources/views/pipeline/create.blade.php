@@ -162,214 +162,221 @@
          
         {{-- information form --}}
         <div class="row">
-        <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Client Information</p>
-            <form class="row g-3" id = "additionalFields">
-                <div class="col-md-6">
-                    <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
-                    {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                        id="leadAgent" required value="{{ $deal['client_name_primary'] }}">--}}
-                    <select id="leadAgent" style="display:none;">
-                        <option value="" disabled {{ empty($deal['lead_agent']) ? 'selected' : '' }}>Please select</option>
-                        @foreach($contacts as $contact)
-                            <option value="{{ $contact['zoho_contact_id']}}" {{ $deal['lead_agent'] == $contact['zoho_contact_id'] ? 'selected' : '' }}>
-                                {{ $contact['lead_agent'] }} - {{ $contact['email'] }}
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+                <p class="npinfoText">Client Information</p>
+                <form class="row g-3" id = "additionalFields">
+                    <div class="col-md-6 selectSearch">
+                        <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
+                        {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
+                            id="leadAgent" required value="{{ $deal['client_name_primary'] }}">--}}
+                        <select id="leadAgent" style="display:none;">
+                            <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select</option>
+                            @foreach($users as $user)
+                                <option value="{{ json_encode($user) }}" 
+                                        {{ isset($deal['leadAgent']) && $deal['leadAgent']['id'] == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} - {{ $user->email }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
+                    <div class="col-md-6 selectSearch">
+                        <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
+                        {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
+                            id="validationDefault01" required value="{{ $deal['contactId'] }}">--}}
+                        <select style="display:none;" id="validationDefault01" required>
+                                    @foreach($contacts as $contact)
+                                        <option value="{{$contact}}" {{ $deal['client_name_primary'] == $contact['first_name'] .' '.$contact['last_name']? 'selected' : '' }}>
+                                            {{$contact['first_name']}} {{$contact['last_name']}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault02" class="form-label nplabelText">Representing</label>
+                        <select class="form-select npinputinfo validate" id="validationDefault02" required onchange="checkValidate('{{$deal}}')">
+                            <option value="" {{ empty($deal['representing']) ? 'selected' : '' }}>--None--</option>
+                            <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
+                            <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
                             </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
-                    {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                        id="validationDefault01" required value="{{ $deal['client_name_primary'] }}">--}}
-                    <select style="display:none;" id="validationDefault01" required>
-                                @foreach($contacts as $contact)
-                                    <option value="{{$contact}}" {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
-                                        {{$contact['first_name']}} {{$contact['last_name']}}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
+                        <input type="text" class="form-control npinputinfo validate" placeholder="Transaction Name"
+                            id="validationDefault03" required value="{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault04" class="form-label nplabelText">Stage</label>
+                        <select class="form-select npinputinfo validate" id="validationDefault04" required onchange="checkValidate('{{$deal}}')">
+                            <option value="" disabled {{ empty($deal['stage']) ? 'selected' : '' }}>Please select</option>
+                            @foreach ($allStages as $stage)
+                                <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
+                                    {{ $stage }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
+                        <input type="text" class="form-control npinputinfo validate"
+                            id="validationDefault05" required value="{{ $deal['sale_price'] }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
+                        <input type="date" class="form-control npinputinfo validate" id="validationDefault06" required
+                            value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault07" class="form-label nplabelText">Address</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="validationDefault07" required value="{{ $deal['address'] }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault08" class="form-label nplabelText">City</label>
+                        <input type="text" class="form-control npinputinfo" 
+                            id="validationDefault08" required value="{{ $deal['city'] }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault09" class="form-label nplabelText">State</label>
+                        {{-- <select class="form-select npinputinfo" id="validationDefault09" required>
+                            <option selected disabled value=""></option>
+                            <option>...</option>
+                        </select> --}}
+                        <input type="text" class="form-control npinputinfo" 
+                            id="validationDefault09" required value="{{ $deal['state'] }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
+                        <input type="text" class="form-control npinputinfo" id="validationDefault10"
+                            required value="{{ $deal['zip'] }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
+                        <select class="form-select npinputinfo" id="validationDefault12" required>
+                            <option selected disabled value="">--None--</option>
+                            <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>
+                                Residential</option>
+                            <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
+                            <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
+                            <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial
+                            </option>
+                            <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
+                        <select class="form-select npinputinfo" id="validationDefault13" required>
+                            <option selected disabled value="">--None--</option>
+                            <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
+                            <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second
+                                Home</option>
+                            <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 col-sm-12"
+                style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+
+                <p class="npinfoText">Earnings Information</p>
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
+                            <input type="text" class="form-control npinputinfo validate" id="validationDefault11" required value = "{{$deal['commission']}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
+                            <input type="text" class="form-control npinputinfo" id="commissionflat" required
+                                value="{{ $deal['commission_flat_free'] }}">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
+                            <input type="text" class="form-control npinputinfo"  id="validationDefault15"
+                                required value = "{{$deal['pipeline_probability']}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="validationDefault11" class="form-label nplabelText"></label>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
+                            echo 'checked'; ?>>
+                            <label class="form-check-label nplabelText" for="flexCheckChecked01">
+                                Personal Transaction
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02" <?php if ($deal['double_ended'])
+                            echo 'checked'; ?>>
+                            <label class="form-check-label nplabelText" for="flexCheckChecked02">
+                                Double ended
+                            </label>
+                        </div>
+
+                        <p class="npinfoText">Settings</p>
+                        <div class="col-md-6">
+                            <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
+                            <input type="text" class="form-control npinputinfo" 
+                                id="transactionOwner" required value = "{{$deal['userData']['name']}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
+                            <select class="form-select npinputinfo" id="tmPreference" required>
+                                <option selected value="">--None--</option>
+                                <option value="CHR TM" {{$deal['tm_preference'] == 'CHR TM' ? 'selected' : ''}}>CHR TM</option>
+                                <option value="Non TM" {{$deal['tm_preference'] == 'Non TM' ? 'selected' : ''}}>Non TM</option>
+                            </select>
+                            
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tmName" class="form-label nplabelText">TM Name</label>
+                            <select class="form-select npinputinfo"id="tmName" required disabled>
+                                @foreach($users as $user)
+                                    <option value="{{$user}}" {{ $deal['tm_name'] == $user['root_user_id']? 'selected' : '' }}>
+                                        {{$user['name']}}
                                     </option>
                                 @endforeach
                             </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault02" class="form-label nplabelText">Representing</label>
-                    <select class="form-select npinputinfo validate" id="validationDefault02" required onchange="checkValidate()">
-                        <option value="" {{ empty($deal['representing']) ? 'selected' : '' }}>--None--</option>
-                        <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
-                        <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
-                        </option>
-                    </select>
-                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contactName" class="form-label nplabelText">Contact Name</label>
+                            <input type="hidden" name="contactName" id="contactNameObject" value="{{ json_encode($deal['contactName']) }}">
+                            <input type="text" class="form-control npinputinfo" id="contactName" value="{{ isset($deal['contactName']) ? $deal['contactName']['first_name'] . ' ' . $deal['contactName']['last_name'] : '' }}" disabled/>
 
-                <div class="col-md-6">
-                    <label for="validationDefault03" class="form-label nplabelText">Transaction Name</label>
-                    <input type="text" class="form-control npinputinfo validate" placeholder="Transaction Name"
-                        id="validationDefault03" required value="{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault04" class="form-label nplabelText">Stage</label>
-                    <select class="form-select npinputinfo validate" id="validationDefault04" required onchange="checkValidate()">
-                        <option value="" disabled {{ empty($deal['stage']) ? 'selected' : '' }}>Please select</option>
-                        @foreach ($allStages as $stage)
-                            <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
-                                {{ $stage }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault05" class="form-label nplabelText">Sale Price</label>
-                    <input type="text" class="form-control npinputinfo validate"
-                        id="validationDefault05" required value="{{ $deal['sale_price'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
-                    <input type="date" class="form-control npinputinfo validate" id="validationDefault06" required
-                        value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault07" class="form-label nplabelText">Address</label>
-                    <input type="text" class="form-control npinputinfo" 
-                        id="validationDefault07" required value="{{ $deal['address'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault08" class="form-label nplabelText">City</label>
-                    <input type="text" class="form-control npinputinfo" 
-                        id="validationDefault08" required value="{{ $deal['city'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault09" class="form-label nplabelText">State</label>
-                    {{-- <select class="form-select npinputinfo" id="validationDefault09" required>
-                        <option selected disabled value=""></option>
-                        <option>...</option>
-                    </select> --}}
-                    <input type="text" class="form-control npinputinfo" 
-                        id="validationDefault09" required value="{{ $deal['state'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
-                    <input type="text" class="form-control npinputinfo" id="validationDefault10"
-                        required value="{{ $deal['zip'] }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
-                    <select class="form-select npinputinfo" id="validationDefault12" required>
-                        <option selected disabled value="">--None--</option>
-                        <option value="Residential" {{$deal['property_type'] == 'Residential' ? 'selected' : ''}}>
-                            Residential</option>
-                        <option value="Land" {{$deal['property_type'] == 'Land' ? 'selected' : ''}}>Land</option>
-                        <option value="Farm" {{$deal['property_type'] == 'Farm' ? 'selected' : ''}}>Farm</option>
-                        <option value="Commercial" {{$deal['property_type'] == 'Commercial' ? 'selected' : ''}}>Commercial
-                        </option>
-                        <option value="Lease" {{$deal['property_type'] == 'Lease' ? 'selected' : ''}}>Lease</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="validationDefault13" class="form-label nplabelText">Ownership Type</label>
-                    <select class="form-select npinputinfo" id="validationDefault13" required>
-                        <option selected disabled value="">--None--</option>
-                        <option value="Primary Residence" {{$deal['ownership_type'] == 'Primary Residence' ? 'selected' : ''}}>Primary Residence</option>
-                        <option value="Second Home" {{$deal['ownership_type'] == 'Second Home' ? 'selected' : ''}}>Second
-                            Home</option>
-                        <option value="Investment Property" {{$deal['ownership_type'] == 'Investment Property' ? 'selected' : ''}}>Investment Property</option>
-                    </select>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-
-            <p class="npinfoText">Earnings Information</p>
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="validationDefault11" class="form-label nplabelText">Commission %</label>
-                        <input type="text" class="form-control npinputinfo validate" id="validationDefault11" required value = "{{$deal['commission']}}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
-                        <input type="text" class="form-control npinputinfo" id="commissionflat" required
-                            value="{{ $deal['commission_flat_free'] }}">
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
-                        <input type="text" class="form-control npinputinfo"  id="validationDefault15"
-                            required value = "{{$deal['pipeline_probability']}}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="validationDefault11" class="form-label nplabelText"></label>
+                        </div>
                         
-                    </div>
-                    <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked01" <?php if ($deal['personal_transaction'])
-                        echo 'checked'; ?>>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked01">
-                            Personal Transaction
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value = "" id="flexCheckChecked02" <?php if ($deal['double_ended'])
-                        echo 'checked'; ?>>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked02">
-                            Double ended
-                        </label>
-                    </div>
-
-                    <p class="npinfoText">Settings</p>
-                    <div class="col-md-6">
-                        <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
-                        <input type="text" class="form-control npinputinfo" 
-                            id="transactionOwner" required value = "{{$deal['userData']['name']}}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
-                        <select class="form-select npinputinfo" id="tmPreference" required>
-                            <option selected value="">--None--</option>
-                            <option value="CHR TM" {{$deal['tm_preference'] == 'CHR TM' ? 'selected' : ''}}>CHR TM</option>
-                            <option value="Non TM" {{$deal['tm_preference'] == 'Non TM' ? 'selected' : ''}}>Non TM</option>
-                        </select>
-                        
-                    </div>
-                    <div class="col-md-6">
-                        <label for="tmName" class="form-label nplabelText">TM Name</label>
-                        <input type="text" class="form-control npinputinfo" 
-                            id="tmName" required value = "{{$deal['tm_name']}}" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="contactName" class="form-label nplabelText">Contact Name</label>
-                        <input type="text" class="form-control npinputinfo" 
-                            id="contactName" required value = "{{$deal['deal_name']=='Untitled'?'':$deal['deal_name']}}" disabled>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if ($deal['review_gen_opt_out']) {
-                            echo 'checked';
-                        } ?>>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked03">
-                            Review Gen Opt Out
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked04" <?php if ($deal['status_rpt_opt_out']) {
-                            echo 'checked';
-                        } ?>>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked04">
-                            Status Rpt Opt out
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked05" <?php if ($deal['deadline_em_opt_out']) {
-                            echo 'checked';
-                        } ?>>
-                        <label class="form-check-label nplabelText" for="flexCheckChecked05">
-                            Deadline EM Opt Out
-                        </label>
-                    </div>
-                </form>
+                        <div class="col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if ($deal['review_gen_opt_out']) {
+                                echo 'checked';
+                            } ?>>
+                            <label class="form-check-label nplabelText" for="flexCheckChecked03">
+                                Review Gen Opt Out
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked04" <?php if ($deal['status_rpt_opt_out']) {
+                                echo 'checked';
+                            } ?>>
+                            <label class="form-check-label nplabelText" for="flexCheckChecked04">
+                                Status Rpt Opt out
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked05" <?php if ($deal['deadline_em_opt_out']) {
+                                echo 'checked';
+                            } ?>>
+                            <label class="form-check-label nplabelText" for="flexCheckChecked05">
+                                Deadline EM Opt Out
+                            </label>
+                        </div>
+                    </form>
+            </div>
         </div>
-    </div>
-
         {{-- contact roles --}}
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
@@ -807,104 +814,108 @@
             placeholder: 'Search...',
         });
 
-        var representing = document.getElementById('validationDefault02');
-        if (representing.value == 'Buyer') {
-            $('#additionalFields').append(`
-                        <div class="col-md-6 additional-field ">
-                            <label for="finance" class="form-label nplabelText">Financing</label>
-                            <input type="text" class="form-control npinputinfo" id="finance" required>
-                        </div>
-                        <div class="col-md-6 additional-field">
-                            <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                            <input type="text" class="form-control npinputinfo" id="lender_company" required>
-                        </div>
-                        <div class="col-md-6 additional-field">
-                            <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
-                            <input type="text" class="form-control npinputinfo" id="modern_mortgage_lender" required>
-                        </div>
-                    `);
-        } else {
-            // If representing is not buyer, remove the additional fields
-            $('#additionalFields').find('.additional-field').remove();
-        }
+    var representing = document.getElementById('validationDefault02');
+    var stage = document.getElementById('validationDefault04');
+    if (representing.value == 'Buyer' && stage.value == "Under Contract") {
+        $('#additionalFields').append(`
+                    <div class="col-md-6 additional-field ">
+                        <label for="finance" class="form-label nplabelText">Financing</label>
+                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${deal})'>
+                            <option value="" ${!(deal['financing']) ? 'selected' : ''}>--None--</option>
+                            <option value="Cash" ${deal['financing'] == 'Cash' ? 'selected' : ''}>Cash</option>
+                            <option value="Loan" ${deal['financing'] == 'Loan' ? 'selected' : ''}>Loan
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 additional-field">
+                        <label for="lender_company" class="form-label nplabelText">Lender Company</label>
+                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${deal})'>
+                            <option value="" ${!(deal['lender_company']) ? 'selected' : ''}>--None--</option>
+                            <option value="Modern Mortgage" ${deal['lender_company'] == 'Modern Mortgage' ? 'selected' : ''}>Modern Mortgage</option>
+                            <option value="Other" ${deal['lender_company'] == 'Other' ? 'selected' : ''}>Other
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 additional-field">
+                        <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
+                        <select class="form-select npinputinfo" id="modern_mortgage_lender" required >
+                            <option value="" ${!(deal['modern_mortgage_lender']) ? 'selected' : ''}>--None--</option>
+                            <option value="Joe Biniasz" ${deal['modern_mortgage_lender'] == 'Joe Biniasz' ? 'selected' : ''}>Joe Biniasz</option>
+                            <option value="Laura Berry" ${deal['modern_mortgage_lender'] == 'Laura Berry' ? 'selected' : ''}>Laura Berry
+                            </option>
+                            <option value="Virginia Shank" ${deal['modern_mortgage_lender'] == 'Virginia Shank' ? 'selected' : ''}>Virginia Shank
+                            </option>
+                        </select>
+                    </div>
+                `);
+    } else {
+        // If representing is not buyer, remove the additional fields
+        $('#additionalFields').find('.additional-field').remove();
+    }
 
-        var stage = document.getElementById('validationDefault04');
-        var probability = document.getElementById('validationDefault15');
-        if (stage.value == 'Active') {
-            probability.value = "40";
-        } else if (stage.value == 'Potential') {
-            probability.value = "5";
-        } else if (stage.value == 'Pre-Active') {
-            probability.value = "20";
-        } else if (stage.value == 'Under Contract') {
-            probability.value = "60";
-        } else if (stage.value == 'Dead-Lost To Competition') {
-            probability.value = "100";
-        }
-        var address = document.getElementById('validationDefault07');
-        var city = document.getElementById('validationDefault08');
-        var state = document.getElementById('validationDefault09');
-        var zip = document.getElementById('validationDefault10');
-        var property_type = document.getElementById('validationDefault12');
-        var tm_preference = document.getElementById('tmPreference');
-        var finance = document.getElementById('finance');
-        console.log("FINANCE", finance);
-        var contact_name = document.getElementById('contactName');
 
-        // Function to add or remove validation class
-        function toggleValidation(element, addValidation) {
-            console.log(element, addValidation, "Toggle");
-            if (addValidation) {
-                element.classList.add('validate');
-            } else {
-                element.classList.remove('validate');
-            }
-        }
+    var probability = document.getElementById('validationDefault15');
+    if (stage.value == 'Active') {
+        probability.value = "40";
+    } else if (stage.value == 'Potential') {
+        probability.value = "5";
+    } else if (stage.value == 'Pre-Active') {
+        probability.value = "20";
+    } else if (stage.value == 'Under Contract') {
+        probability.value = "60";
+    } else if (stage.value == 'Dead-Lost To Competition') {
+        probability.value = "100";
+    }
+    var address = document.getElementById('validationDefault07');
+    var city = document.getElementById('validationDefault08');
+    var state = document.getElementById('validationDefault09');
+    var zip = document.getElementById('validationDefault10');
+    var property_type = document.getElementById('validationDefault12');
+    var tm_preference = document.getElementById('tmPreference');
+    var finance = document.getElementById('finance');
+    console.log("FINANCE", finance);
+    var contact_name = document.getElementById('contactName');
 
-        // Check stage value
-        if (stage.value === 'Under Contract') {
-            toggleValidation(address, true);
-            toggleValidation(city, true);
-            toggleValidation(state, true);
-            toggleValidation(zip, true);
-            toggleValidation(property_type, true);
-        } else {
-            toggleValidation(address, false);
-            toggleValidation(city, false);
-            toggleValidation(state, false);
-            toggleValidation(zip, false);
-            toggleValidation(property_type, false);
-        }
 
-        // Check representing value
-        if (representing.value === 'Seller') {
-            toggleValidation(address, true);
-            toggleValidation(city, true);
-            toggleValidation(state, true);
-            toggleValidation(zip, true);
-            toggleValidation(tm_preference, true);
-            toggleValidation(contact_name, true);
-        } else {
-            toggleValidation(tm_preference, false);
-            toggleValidation(contact_name, false);
-        }
 
-        // Check representing value for Buyer
-        if (representing.value === 'Buyer') {
-            toggleValidation(address, true);
-            toggleValidation(city, true);
-            toggleValidation(state, true);
-            toggleValidation(zip, true);
-            toggleValidation(tm_preference, true);
-            toggleValidation(contact_name, true);
-            if (finance) {
-                toggleValidation(finance, true);
-            }
-        } else {
-            if (finance) {
-                toggleValidation(finance, true);
-            }
+    // Check representing value
+    if (stage.value === 'Under Contract' && representing.value === 'Seller') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+        toggleValidation(property_type, true);
+    } else if (stage.value === 'Under Contract' && representing.value === 'Buyer') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+        toggleValidation(property_type, true);
+        if (finance) {
+            toggleValidation(finance, true);
         }
+    } else if (stage.value === 'Under Contract') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(property_type, true);
+    } else {
+        toggleValidation(address, false);
+        toggleValidation(city, false);
+        toggleValidation(state, false);
+        toggleValidation(zip, false);
+        toggleValidation(tm_preference, false);
+        toggleValidation(contact_name, false);
+        toggleValidation(property_type, false);
+        if (finance) {
+            toggleValidation(finance, false);
+        }
+    }
 
     });
             // Function to populate client information

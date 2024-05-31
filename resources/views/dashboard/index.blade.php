@@ -207,7 +207,7 @@
 
             </div>
             <div class="table-responsive dtranstiontable mt-2">
-                <p class="fw-bold">Transactions closing soon</p>
+                <p class="fw-bold">Bad Dates</p>
                 <div class="row dtabletranstion">
                     <div class="col-md-2">Transaction Name</div>
                     <div class="col-md-2">Owner</div>

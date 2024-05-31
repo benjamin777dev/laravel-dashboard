@@ -13,7 +13,7 @@
             <div class="pipeline-btns-container">
 
                 <div class="input-group-text text-white justify-content-center pcontactBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction()">
+                    data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction({{$userContact}})">
                     <i class="fas fa-plus plusicon">
                     </i> New Transaction
                 </div>
@@ -129,7 +129,7 @@
             });
         }
 
-        window.createTransaction = function() {
+        window.createTransaction = function(userContact) {
             console.log("Onclick");
             var formData = {
                 "data": [{
@@ -137,7 +137,11 @@
                     "Owner": {
                         "id": "{{ auth()->user()->root_user_id }}"
                     },
-                    "Stage": "Potential"
+                    "Stage": "Potential",
+                    "Contact_Name":{
+                        "Name":userContact.first_name+" "+userContact.last_name,
+                        "id":userContact.zoho_contact_id
+                    }
                 }],
                 "_token": '{{ csrf_token() }}'
             };

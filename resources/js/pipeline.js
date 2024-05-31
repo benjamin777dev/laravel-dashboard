@@ -1,18 +1,47 @@
-window.checkValidate = function () {
+// Function to add or remove validation class
+window.toggleValidation = function (element, addValidation) {
+    console.log(element, addValidation, "Toggle");
+    if (addValidation) {
+        element.classList.add('validate');
+    } else {
+        element.classList.remove('validate');
+    }
+}
+window.checkValidate = function (deal) {
+    console.log(deal);
+    deal = JSON.parse(JSON.stringify(deal))
     var representing = document.getElementById('validationDefault02');
-    if (representing.value == 'Buyer') {
+    var stage = document.getElementById('validationDefault04');
+    if (representing.value == 'Buyer' && stage.value == "Under Contract") {
         $('#additionalFields').append(`
                     <div class="col-md-6 additional-field ">
                         <label for="finance" class="form-label nplabelText">Financing</label>
-                        <input type="text" class="form-control npinputinfo" id="finance" required>
+                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${deal})'>
+                            <option value="" ${!(deal['financing']) ? 'selected' : ''}>--None--</option>
+                            <option value="Cash" ${deal['financing'] == 'Cash' ? 'selected' : ''}>Cash</option>
+                            <option value="Loan" ${deal['financing'] == 'Loan' ? 'selected' : ''}>Loan
+                            </option>
+                        </select>
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                        <input type="text" class="form-control npinputinfo" id="lender_company" required>
+                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${deal})'>
+                            <option value="" ${!(deal['lender_company']) ? 'selected' : ''}>--None--</option>
+                            <option value="Modern Mortgage" ${deal['lender_company'] == 'Modern Mortgage' ? 'selected' : ''}>Modern Mortgage</option>
+                            <option value="Other" ${deal['lender_company'] == 'Other' ? 'selected' : ''}>Other
+                            </option>
+                        </select>
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
-                        <input type="text" class="form-control npinputinfo" id="modern_mortgage_lender" required>
+                        <select class="form-select npinputinfo" id="modern_mortgage_lender" required >
+                            <option value="" ${!(deal['modern_mortgage_lender']) ? 'selected' : ''}>--None--</option>
+                            <option value="Joe Biniasz" ${deal['modern_mortgage_lender'] == 'Joe Biniasz' ? 'selected' : ''}>Joe Biniasz</option>
+                            <option value="Laura Berry" ${deal['modern_mortgage_lender'] == 'Laura Berry' ? 'selected' : ''}>Laura Berry
+                            </option>
+                            <option value="Virginia Shank" ${deal['modern_mortgage_lender'] == 'Virginia Shank' ? 'selected' : ''}>Virginia Shank
+                            </option>
+                        </select>
                     </div>
                 `);
     } else {
@@ -20,7 +49,7 @@ window.checkValidate = function () {
         $('#additionalFields').find('.additional-field').remove();
     }
 
-    var stage = document.getElementById('validationDefault04');
+
     var probability = document.getElementById('validationDefault15');
     if (stage.value == 'Active') {
         probability.value = "40";
@@ -43,18 +72,29 @@ window.checkValidate = function () {
     console.log("FINANCE", finance);
     var contact_name = document.getElementById('contactName');
 
-    // Function to add or remove validation class
-    function toggleValidation(element, addValidation) {
-        console.log(element, addValidation, "Toggle");
-        if (addValidation) {
-            element.classList.add('validate');
-        } else {
-            element.classList.remove('validate');
-        }
-    }
 
-    // Check stage value
-    if (stage.value === 'Under Contract') {
+
+    // Check representing value
+    if (stage.value === 'Under Contract' && representing.value === 'Seller') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+        toggleValidation(property_type, true);
+    } else if (stage.value === 'Under Contract' && representing.value === 'Buyer') {
+        toggleValidation(address, true);
+        toggleValidation(city, true);
+        toggleValidation(state, true);
+        toggleValidation(zip, true);
+        toggleValidation(tm_preference, true);
+        toggleValidation(contact_name, true);
+        toggleValidation(property_type, true);
+        if (finance) {
+            toggleValidation(finance, true);
+        }
+    } else if (stage.value === 'Under Contract') {
         toggleValidation(address, true);
         toggleValidation(city, true);
         toggleValidation(state, true);
@@ -65,41 +105,54 @@ window.checkValidate = function () {
         toggleValidation(city, false);
         toggleValidation(state, false);
         toggleValidation(zip, false);
-        toggleValidation(property_type, false);
-    }
-
-    // Check representing value
-    if (representing.value === 'Seller') {
-        toggleValidation(address, true);
-        toggleValidation(city, true);
-        toggleValidation(state, true);
-        toggleValidation(zip, true);
-        toggleValidation(tm_preference, true);
-        toggleValidation(contact_name, true);
-    } else {
         toggleValidation(tm_preference, false);
         toggleValidation(contact_name, false);
+        toggleValidation(property_type, false);
+        if (finance) {
+            toggleValidation(finance, false);
+        }
     }
 
-    // Check representing value for Buyer
-    if (representing.value === 'Buyer') {
-        toggleValidation(address, true);
-        toggleValidation(city, true);
-        toggleValidation(state, true);
-        toggleValidation(zip, true);
-        toggleValidation(tm_preference, true);
-        toggleValidation(contact_name, true);
-        if (finance) {
-            toggleValidation(finance, true);
+    if (finance && finance.value == "Loan") {
+        var lender_company = document.getElementById('lender_company');
+        if (lender_company && lender_company.value == "Modern Mortgage") {
+            var modern_mortgage_lender = document.getElementById('modern_mortgage_lender');
+            toggleValidation(modern_mortgage_lender, true);
+        } else if (lender_company && lender_company.value == "Other") {
+            toggleValidation(lender_company, true);
         }
-    } else {
-        if (finance) {
-            toggleValidation(finance, true);
+    }
+
+
+}
+
+window.checkAdditionalValidation = function (deal) {
+    var finance = document.getElementById('finance');
+    var lender_company = document.getElementById('lender_company');
+    var modern_mortgage_lender = document.getElementById('modern_mortgage_lender');
+    if (finance && finance.value == "Loan") {
+        toggleValidation(lender_company, true);
+        if (lender_company && lender_company.value == "Modern Mortgage") {
+            console.log(modern_mortgage_lender);
+            toggleValidation(modern_mortgage_lender, true);
+            $('#additionalFields').find('.additional-field-lender').remove();
+        } else if (lender_company && lender_company.value == "Other") {
+            $('#additionalFields').append(`
+                    <div class="col-md-6 additional-field-lender ">
+                        <label for="lender_company_name" class="form-label nplabelText">Lender Company Name</label>
+                        <input type="text" class="form-control npinputinfo validate"
+                            id="lender_company_name" value = "${deal['lender_company_name'] ? deal['lender_company_name'] : ''}" required>
+                    </div>
+                    <div class="col-md-6 additional-field-lender ">
+                        <label for="lender_name" class="form-label nplabelText">Lender Name</label>
+                        <input type="text" class="form-control npinputinfo validate"
+                            id="lender_name" value = "${deal['lender_name'] ? deal['lender_name'] : ''}" required>
+                    </div>
+                `);
+            toggleValidation(modern_mortgage_lender, false);
         }
     }
 }
-
-
 
 window.updateDataDeal = function (dealId) {
     let isValid = true
@@ -130,9 +183,12 @@ window.updateDataDeal = function (dealId) {
     var status_rpt_opt_out = $('#flexCheckChecked04').prop('checked');
     var tm_preference = $('#tmPreference').val();
     var tm_name = $('#tmName').val();
-    var contact_name = $('#contactName').val();
+    tm_name = JSON.parse(tm_name)
+    var contact_name = $('#contactNameObject').val();
+    contact_name = JSON.parse(contact_name)
     var transaction_owner = $('#transactionOwner').val();
     var lead_agent = $('#leadAgent').val();
+    lead_agent = JSON.parse(lead_agent)
     var finance = $('#finance').val();
     var lender_company = $('#lender_company').val();
     var modern_mortgage_lender = $('#modern_mortgage_lender').val();
@@ -197,25 +253,39 @@ window.updateDataDeal = function (dealId) {
                 "Pipeline1": probable_gci,
                 "Personal_Transaction": personal_transaction,
                 "Double_Ended": double_ended,
-                "Contact": {
-                    "Name": (client_name_primary.first_name || "") + " " + (client_name_primary.last_name || ""),
-                    "id": client_name_primary.zoho_contact_id
+                "Contact_Name": {
+                    "Name": (contact_name.first_name ?? "") + " " + (contact_name.last_name ?? ""),
+                    "id": contact_name.zoho_contact_id
                 },
-                "Double_Ended": double_ended,
                 "Review_Gen_Opt_Out": review_gen_opt_out,
                 "Commission_Flat_Free": commission_flat_free,
                 "TM_Preference": tm_preference,
-                "TM_Name": tm_name,
                 "Transaction_Owner": transaction_owner,
-                "Contact_Name": contact_name,
+                "Contact": contact_name,
                 "Status_pt_out_out": status_rpt_opt_out,
                 "Deadline_Emails": deadline_em_opt_out,
-                "Lead_Agent": lead_agent,
                 'Financing': finance,
                 'Lender_Company': lender_company,
                 'Modern_Mortgage_Lender': modern_mortgage_lender,
-            }],
+            }]
         };
+
+        // Add Lead_Agent if lead_agent is defined
+        if (lead_agent) {
+            formData.data[0].Lead_Agent = {
+                "id": lead_agent.root_user_id ?? '',
+                "full_name": (lead_agent.name ?? '')
+            };
+        }
+
+        // Add TM_Name if tm_name is defined
+        if (tm_name) {
+            formData.data[0].TM_Name = {
+                "full_name": (tm_name.name ?? ''),
+                "id": `${tm_name.root_user_id}` ?? '',
+            };
+        }
+
 
         console.log("formData", formData, dealId);
         $.ajaxSetup({
