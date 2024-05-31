@@ -7,7 +7,7 @@
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="enableSelect({{ $deal['id'] }})">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -32,7 +32,7 @@
                         <div id="related_to_error{{ $deal['id'] }}" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button{{ $deal['id'] }}"
+                        <button type="submit" id="validate-button{{ $deal['id'] }}"
                             onclick="validateNoteDash('{{ $deal['id'] }}')"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
@@ -52,7 +52,7 @@
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="enableSelect({{ $contact['id'] }})">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -79,7 +79,7 @@
                         <div id="related_to_error{{ $contact['id'] }}" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button{{ $contact['id'] }}"
+                        <button  type="submit" id="validate-button{{ $contact['id'] }}"
                             onclick="validateNoteDash('{{ $contact['id'] }}')"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
@@ -133,6 +133,15 @@
     </div>
 @endif
 <script>
+   
+    function enableSelect(id) {
+        // Enable the select element before form submission
+        document.getElementById('noteSelect'+id).removeAttribute('disabled');
+        // Return true to allow form submission
+        return true;
+    }
+
+
     function clearValidationMessages(id) {
         if (id) {
             document.getElementById("note_text_error" + id).innerText = "";

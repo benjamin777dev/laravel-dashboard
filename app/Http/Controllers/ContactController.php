@@ -26,13 +26,14 @@ class ContactController extends Controller
         $contacts = $db->retreiveContacts($user, $accessToken, $search);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $groups = $db->retrieveGroups($user, $accessToken);
         if ($request->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('contacts.index', compact('contacts'))->render();
         }
 
-        return view('contacts.index', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
+        return view('contacts.index', compact('contacts','userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
     }
 
     public function getContact(Request $request)
@@ -534,8 +535,9 @@ class ContactController extends Controller
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.detail', compact('contact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups'));
+        return view('contacts.detail', compact('contact','userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups'));
     }
 
 

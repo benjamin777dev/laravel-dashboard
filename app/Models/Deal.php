@@ -75,12 +75,12 @@ class Deal extends Model
 
     public function tmName()
     {
-        return $this->belongsTo(User::class, 'tm_name');
+        return $this->belongsTo(User::class, 'tm_name','root_user_id');
     }
     
     public function leadAgent()
     {
-        return $this->belongsTo(User::class, 'lead_agent');
+        return $this->belongsTo(User::class, 'lead_agent','root_user_id');
     }
 
 }

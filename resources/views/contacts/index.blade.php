@@ -26,7 +26,7 @@
                         New Contact
                     </div>
                 </a>
-                <a onclick="createTransaction();">
+                <a onclick="createTransaction({{$userContact}});">
                     <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                         data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                         </i>
@@ -339,7 +339,7 @@
 
 
 
-    function createTransaction() {
+    function createTransaction(userContact) {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
         var formData = {
@@ -351,10 +351,10 @@
                 "Stage": "Potential",
                 // "Client_Primary_Name":,
                 // "Client_Name_Only":
-                // "Contact":{
-                //     "Name":,
-                //     "id"
-                // }
+                "Contact_Name":{
+                    "Name":userContact.first_name+" "+userContact.last_name,
+                    "id":userContact.zoho_contact_id
+                }
             }],
             "_token": '{{ csrf_token() }}'
         };

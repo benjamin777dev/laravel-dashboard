@@ -184,7 +184,8 @@ window.updateDataDeal = function (dealId) {
     var tm_preference = $('#tmPreference').val();
     var tm_name = $('#tmName').val();
     tm_name = JSON.parse(tm_name)
-    var contact_name = $('#contactName').val();
+    var contact_name = $('#contactNameObject').val();
+    contact_name = JSON.parse(contact_name)
     var transaction_owner = $('#transactionOwner').val();
     var lead_agent = $('#leadAgent').val();
     lead_agent = JSON.parse(lead_agent)
@@ -229,7 +230,6 @@ window.updateDataDeal = function (dealId) {
             isValid = false
         }
     }
-    console.log("Lead Agent", lead_agent.zoho_contact_id, lead_agent.first_name, lead_agent.last_name);
     if (isValid == true) {
         // Create formData object
         var formData = {
@@ -254,30 +254,38 @@ window.updateDataDeal = function (dealId) {
                 "Personal_Transaction": personal_transaction,
                 "Double_Ended": double_ended,
                 "Contact_Name": {
-                    "Name": (client_name_primary.first_name || "") + " " + (client_name_primary.last_name || ""),
-                    "id": client_name_primary.zoho_contact_id
+                    "Name": (contact_name.first_name ?? "") + " " + (contact_name.last_name ?? ""),
+                    "id": contact_name.zoho_contact_id
                 },
-                "Double_Ended": double_ended,
                 "Review_Gen_Opt_Out": review_gen_opt_out,
                 "Commission_Flat_Free": commission_flat_free,
                 "TM_Preference": tm_preference,
-                "TM_Name": {
-                    "id": tm_name.zoho_contact_id,
-                    "full_name": (tm_name.first_name || "") + " " + (tm_name.last_name || ""),
-                },
                 "Transaction_Owner": transaction_owner,
                 "Contact": contact_name,
                 "Status_pt_out_out": status_rpt_opt_out,
                 "Deadline_Emails": deadline_em_opt_out,
-                "Lead_Agent": {
-                    "id": lead_agent.zoho_contact_id,
-                    "full_name": (lead_agent.first_name || "") + " " + (lead_agent.last_name || ""),
-                },
                 'Financing': finance,
                 'Lender_Company': lender_company,
                 'Modern_Mortgage_Lender': modern_mortgage_lender,
-            }],
+            }]
         };
+
+        // Add Lead_Agent if lead_agent is defined
+        if (lead_agent) {
+            formData.data[0].Lead_Agent = {
+                "id": lead_agent.root_user_id ?? '',
+                "full_name": (lead_agent.name ?? '')
+            };
+        }
+
+        // Add TM_Name if tm_name is defined
+        if (tm_name) {
+            formData.data[0].TM_Name = {
+                "full_name": (tm_name.name ?? ''),
+                "id": `${tm_name.root_user_id}` ?? '',
+            };
+        }
+
 
         console.log("formData", formData, dealId);
         $.ajaxSetup({

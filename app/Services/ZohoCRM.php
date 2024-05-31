@@ -349,7 +349,7 @@ class ZohoCRM
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
-        ])->post($this->apiNoteUrl . "$apiName/$id/Notes", $inputJson);
+        ])->post($this->apiNoteUrl . "Notes", $inputJson);
 
         Log::info('Zoho Notes creation response: ' . print_r($response->json(), true));
         return $response;

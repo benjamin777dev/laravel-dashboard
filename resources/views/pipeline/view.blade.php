@@ -84,12 +84,12 @@
                     'retrieveModuleData' => $retrieveModuleData,
                 ])
             </div>
+            @include('common.notes.view', [
+               'notesInfo' => $notesInfo,
+               'retrieveModuleData' => $retrieveModuleData,
+               'module' => 'Deals',
+           ])
         </div>
-         @include('common.notes.view', [
-            'notesInfo' => $notesInfo,
-            'retrieveModuleData' => $retrieveModuleData,
-            'module' => 'Deals',
-        ])
     </div>
     {{-- information form --}}
     <div class="row">
@@ -104,11 +104,13 @@
                     <select id="leadAgent" style="display:none;">
                         <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select</option>
                         @foreach($users as $user)
-                            <option value="{{ $user}}" {{ $deal['leadAgent']??$deal['leadAgent'][id] == $user['id'] ? 'selected' : '' }}>
-                                {{ $user['name'] }} - {{ $user['email'] }}
+                            <option value="{{ json_encode($user) }}" 
+                                    {{ isset($deal['leadAgent']) && $deal['leadAgent']['id'] == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }} - {{ $user->email }}
                             </option>
                         @endforeach
                     </select>
+
                 </div>
                 <div class="col-md-6 selectSearch">
                     <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
@@ -274,8 +276,9 @@
                     </div>
                     <div class="col-md-6">
                         <label for="contactName" class="form-label nplabelText">Contact Name</label>
+                        <input type="hidden" name="contactName" id="contactNameObject" value="{{ json_encode($deal['contactName']) }}">
                         <input type="text" class="form-control npinputinfo" 
-                            id="contactName" required value = "{{$deal['contact_name']}}">
+                            id="contactName" required value = "{{$deal['contactName']['first_name']}} {{$deal['contactName']['last_name']}}" disabled/>
                     </div>
                     
                     <div class="col-md-6">

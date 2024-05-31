@@ -470,6 +470,32 @@ class DB
 
     }
 
+    public function retrieveContactDetailsByZohoId(User $user, $accessToken, $contactId)
+    {
+
+        try {
+            Log::info("Retrieve Contact From Database");
+
+            $conditions = [['zoho_contact_id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName');
+
+
+            Log::info("Deal Conditions", ['contacts' => $conditions]);
+
+            // Retrieve contacts based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved contacts From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
     public function retreiveTasks(User $user, $accessToken, $tab = '')
     {
         try {
@@ -822,7 +848,7 @@ class DB
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact]];
+            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact],['userID',$user->id]];
             $deal = Deal::where($condition)->first();
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -836,7 +862,7 @@ class DB
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $contact = Contact::where('isContactCompleted', false)->first();
+            $contact = Contact::where([['isContactCompleted', false],['contact_owner',$user->id]])->first();
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
         } catch (\Exception $e) {
