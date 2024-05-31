@@ -41,11 +41,7 @@
         </div> 
 
             <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
-                <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown"
-                    aria-haspopup="false" aria-expanded="false">
-                    {{-- <span key="t-megamenu">@lang('Mega_Menu')</span> --}}
-                    {{-- <i class="mdi mdi-chevron-down"></i> --}}
-                </button>
+                
                 <div class="dropdown-menu dropdown-megamenu">
                     <div class="row">
                         <div class="col-sm-8">
@@ -475,6 +471,8 @@
         let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
         let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
         let main_content = document.getElementsByClassName("main-content")[0];
+        let container = document.getElementsByClassName("container")[0];
+        const conlContact = document.querySelectorAll('.col-contact')[0];
         // Toggle the width of navbar-brand-box
         if (navbarBox.style.width === "0%") {
             navbarBox.style.width = "250px"; // Change this to the desired width

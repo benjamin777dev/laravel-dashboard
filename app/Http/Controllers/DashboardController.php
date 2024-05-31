@@ -129,7 +129,6 @@ class DashboardController extends Controller
                    && !Str::startsWith($deal['stage'], 'Dead')
                    && $deal['stage'] !== 'Sold';
         });
-        
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
             return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
@@ -176,10 +175,6 @@ class DashboardController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
         $tasks = $db->retreiveTasks($user, $accessToken,$tab);
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('tasks','retrieveModuleData','tab'))->render();
-        }
         Log::info("Task Details: ". print_r($tasks, true));
 
         $aciInfo = $this->retrieveACIFromZoho($user, $accessToken);
@@ -220,6 +215,10 @@ class DashboardController extends Controller
         ];
 
         Log::Info("ACI Data: ". print_r($aciData, true));
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks', compact('tasks','retrieveModuleData','tab'))->render();
+        }
       
         // Pass data to the view
         return view('dashboard.index',
@@ -341,7 +340,6 @@ class DashboardController extends Controller
                    && $deal['stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
-
         // Sum the 'Pipeline1' values of the filtered deals.
         $totalGCI = $filteredDeals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
@@ -528,9 +526,9 @@ class DashboardController extends Controller
                 $response = $zoho->createTask($jsonData);
 
 
-                if (!$response->successful()) {
-                     return "error something".$response;
-                }
+                // if (!$response->successful()) {
+                //      return "error something".$response;
+                // }
                 $responseArray = json_decode($response, true);
                 $data = $responseArray['data'][0]['details']; 
                 $zoho_id = $data['id'];
@@ -552,12 +550,13 @@ class DashboardController extends Controller
                     'created_time'=>$created_time??null,
                     'related_to'=>$related_to
                 ]);
+                Log::info("Successful notes create... ".$task);
                 return response()->json($responseArray, 201);
 
                 // $task->modified_by_name = $modifiedByName;
                 // $task->modified_by_id = $modifiedById;
                 return $data;
-                Log::info("Successful notes create... ".$response);
+                
 
 
         } catch (\Exception $e) {
@@ -919,14 +918,13 @@ class DashboardController extends Controller
         }else{
 
             $related_to = $mergedData['groupLabel'] ?? null;
-            $whoid = $mergedData['whoid'] ?? null;
             $related_to_parent = $mergedData['relatedTo'] ?? null;
             $moduleId = $mergedData['moduleId'] ?? null;
-            if($groupLabel==="Contacts"){
-                $contactId = $relatedTo;
+            if($related_to==="Contacts"){
+                $related_to_parent = $related_to_parent;
             }
-            if($groupLabel==="Deals"){
-                $dealId = $relatedTo;
+            if($related_to==="Deals"){
+                $related_to_parent = $related_to_parent;
             }
 
         }

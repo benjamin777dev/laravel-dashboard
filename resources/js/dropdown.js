@@ -2,7 +2,7 @@ window.showDropdown = function (showDropdown, selectElement) {
     selectElement.empty();
     selectElement.each(function () {
         const options = {
-            theme: 'bootstrap-5',
+            theme: "material",
             dropdownParent: $(this).parent(),
             ajax: {
                 url: '/task/get-Modules',
@@ -59,7 +59,7 @@ window.showDropdown = function (showDropdown, selectElement) {
             options.allowClear = true;
             options.multiple = true;
             options.maximumSelectionLength = 1; // Use `maximumSelectionLength` instead of `maximumSelectionSize`
-            options.placeholder = "Searching...";
+            options.placeholder = "Search...";
             console.log(options,'optionssssssssss')
            
         } else {
@@ -98,7 +98,6 @@ window.showDropdown = function (showDropdown, selectElement) {
         });
     });
 };
-
 
 window.showDropdownForId = function (modalID, selectElement) {
     var selectedval = selectElement.val();

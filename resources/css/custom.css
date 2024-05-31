@@ -89,7 +89,9 @@
 .plusicon {
     margin-right: 4px;
 }
-
+.agent-info{
+    padding: 1rem 1rem;
+}
 .removebtn {
     display: flex;
     height: 40px;
@@ -1109,6 +1111,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
 }
 
 .ppipeDiv {
@@ -1268,6 +1271,7 @@
 @media (max-width: 768px) {
     .commonFlex {
         flex-direction: column;
+        gap: 15px;
         /* Stack flex children vertically on small screens */
     }
 
@@ -1646,6 +1650,10 @@
         display: unset;
     }
 
+    .table-responsive{
+        display: none;
+    }
+
     .npAgentCard {
         display: flex;
         padding: 20px;
@@ -1957,15 +1965,16 @@
 .npNom-TMRoles {
     margin-bottom: 24px;
 }
+.nav-link.active{
+    background-color: #222 !important;
+    color:white !important
+}
 
 /* CSS (inside your stylesheet or style tag) */
 .commonTextEllipsis {
-    overflow: hidden;
-    white-space: normal;
-    text-overflow: ellipsis;
-    word-break: break-all;
     font-size: 16px;
     line-height: 18px;
+     white-space: nowrap;
 }
 
 /* .npcontactsTable th,
@@ -2765,7 +2774,37 @@ body[data-sidebar="dark"] .navbar-brand-box {
     border-left: 4px solid red;
 }
 
+.cursor_not_allowed{
+    cursor:not-allowed;
+}
+.dataCardDiv {
+    display: none;
+}
 
+/* Styles for screens smaller than 767px */
+@media (max-width: 767px) {
+    .webResponsiveDiv {
+        display: none;
+    }
+
+    .dataCardDiv {
+        display: block;
+    }
+    .col-contact{
+        flex: 1 !important;
+    }
+}
+
+.thead_con_design  th{
+    background-color: #222 !important;
+    color:#fff;
+    
+}
+thead, tbody, tfoot, tr, td, th {
+    border-color: inherit;
+    border-style: none !important;
+    border-width: 0;
+}
 .loader-overlay {
     position: fixed;
     top: 0;
@@ -2882,46 +2921,59 @@ input[type=button] {
 input[type=button]:hover {
     background: #ccc;
 }
-
-.confirm {
-    display: none;
-    height: 200px;
+/* Custom CSS for the confirmation modal */
+.custom-confirm-modal .modal-dialog-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.confirm>div:first-of-type {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    top: 0px;
-    left: 0px;
-}
-
-.confirm>div:last-of-type {
-    padding: 10px 20px;
-    background: white;
-    position: absolute;
-    width: auto;
-    height: auto;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+.custom-confirm-modal .modal-content {
+    width: 340px; /* Set the width similar to your custom dialog */
+    margin: auto;
     border-radius: 5px;
     border: 1px solid #333;
 }
 
-.confirm>div:last-of-type div:first-of-type {
-    min-width: 150px;
-    padding: 10px;
+.custom-confirm-modal .modal-header {
+    border-bottom: none;
 }
 
-.confirm>div:last-of-type div:last-of-type {
-    text-align: right;
+.custom-confirm-modal .modal-body {
+    padding: 10px 20px;
+    background: white;
+    text-align: center;
 }
+
+.custom-confirm-modal #confirmMessage {
+    color: #222;
+    text-align: center;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 26px;
+    margin-bottom: 0px;
+}
+
+.custom-confirm-modal .modal-footer {
+    border-top: none;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+}
+
+.custom-confirm-modal .modal-footer .btn {
+    margin: 5px;
+}
+
+
 .search-input-design{
     display: flex;
     align-items: center;
     margin-left: 10px;
+    font-size: 14px;
 }
 
 .search-input-design .select2-container .select2-selection--multiple {
@@ -2949,4 +3001,21 @@ input[type=button]:hover {
 
 .search-input-design .select2-selection__rendered{
     margin-bottom: 0 !important;
+}
+
+.modal-body {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+.select2-container--default .select2-selection--single {
+    height: 38px; /* Match the height of Bootstrap's default form-control */
+    padding: 6px 12px; /* Adjust padding to match form-control */
+    
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 24px; /* Adjust line height */
+}
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 200px;
+    overflow-y: hidden;
 }

@@ -38,8 +38,6 @@ class Contact extends Model
         "spouse_partner",
         "last_called",
         "last_emailed",
-
-
     ];
 
     public static function getZohoContactInfo()
@@ -60,6 +58,11 @@ class Contact extends Model
     public function groups()
     {
         return $this->hasMany(ContactGroups::class, 'contactId');
+    }
+
+    public function dealContact()
+    {
+        return $this->hasMany(DealContact::class, 'contactId');
     }
 
     public function parentContact()
