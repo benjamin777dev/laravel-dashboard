@@ -38,8 +38,6 @@ class Contact extends Model
         "spouse_partner",
         "last_called",
         "last_emailed",
-
-
     ];
 
     public static function getZohoContactInfo()

@@ -70,8 +70,8 @@
                             </div>
                         </td>
                         <td>
-                            <input type="datetime-local" id="date_local_web{{ $task['id'] }}"
-                                onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_local_web{{ $task['id'] }}')"
+                            <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
+                                onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['id'] }}')"
                                 id="date_local{{ $task['zoho_task_id'] }}"
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
                         </td>
@@ -250,7 +250,7 @@
                     <div id="update_changes" class="input-group-text dcardssavebtn" id="btnGroupAddon"
                         data-bs-toggle="modal"
                         onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')"
-                        data-bs-target="#saveModalId">
+                        data-bs-target="#saveModalId{{ $task['zoho_task_id'] }}">
                         <i class="fas fa-hdd plusicon"></i>
                         Save
                     </div>
@@ -456,6 +456,80 @@
                 console.error("Ajax Error:", error);
             }
         });
+    }
+
+    function updateTask(id, indexid) {
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        var inputElement = document.getElementById('editableText' + indexid);
+        var taskDate = document.getElementById('date_val' + id);
+        let formattedDateTime = convertDateTime(taskDate.value);
+        // console.log(formattedDateTime);
+        //         alert(formattedDateTime);
+        //         return;
+        if (!inputElement) {
+            console.error("Input element not found for indexid:", indexid);
+            return;
+        }
+        var elementValue = inputElement.textContent;
+        // return;
+        if (elementValue.trim() === "") {
+            // console.log("chkockdsjkfjksdh")
+            return showToastError("Please enter subject value first");
+        }
+        // console.log("inputElementval",elementValue!==undefined,elementValue)
+        if (elementValue !== undefined) { // return;
+            var formData = {
+                "data": [{
+                    "Subject": elementValue,
+                    // "Remind_At": {
+                    //     "ALARM": `FREQ=NONE;ACTION=EMAIL;TRIGGER=DATE-TIME:${taskDate.value}`
+                    // }
+                }]
+            };
+            // console.log("ys check ot")
+            $.ajax({
+                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+                method: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    // Handle success response
+
+                    if (response?.data[0]?.status == "success") {
+                        // console.log(response?.data[0], 'sdfjkshdjkfshd')
+                        // Get the button element by its ID
+                        if (!document.getElementById('saveModalId'+id).classList.contains('show')) {
+                            var button = document.getElementById('update_changes');
+                            var update_message = document.getElementById('updated_message');
+                            // Get the modal target element by its ID
+                            var modalTarget = document.getElementById('saveModalId'+id);
+                            console.log(modalTarget, 'modalTarget')
+                            // Set the data-bs-target attribute of the button to the ID of the modal
+                            button.setAttribute('data-bs-target', '#' + modalTarget.id);
+                            update_message.textContent = response?.data[0]?.message;
+                            // Trigger a click event on the button to open the modal
+                            button.click();
+                            // alert("updated success", response)
+                            window.location.reload();
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    showToastError("Something went wrong");
+                    console.error(xhr.responseText, 'errrorroororooro');
+
+
+
+                }
+            })
+        }
     }
 
     function triggerCheckbox(checkboxid) {

@@ -1967,6 +1967,7 @@
 }
 .nav-link.active{
     background-color: #222 !important;
+    color:white !important
 }
 
 /* CSS (inside your stylesheet or style tag) */
