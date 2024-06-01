@@ -2,10 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Services\ZohoBulkRead;
-use App\Services\DB;
 use App\Models\User;
+use App\Services\DB;
+use App\Services\ZohoBulkRead;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class SyncZohoData extends Command
@@ -30,8 +31,9 @@ class SyncZohoData extends Command
     public function handle()
     {
         $user = User::where('email', 'phillip@coloradohomerealty.com')->first();
-
+        Log::info("Syncing data for user: {$user->email}");
         if (!$user) {
+            Log::error("User not found.");
             $this->error("User not found.");
             return;
         }
@@ -39,7 +41,8 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DB();
 
-        $modules = ['Contacts', 'Deals', 'ContactGroups', 'AgentCommission']; // Add other modules as needed
+        $modules = ['Contacts', 'Deals', 'Contacts_X_Groups', 'Agent_Commission_Incomes']; // Add other modules as needed
+        Log::info("Syncing data for modules: " . implode(', ', $modules));
 
         foreach ($modules as $module) {
             $jobResponse = $zoho->createBulkReadJob($module);
@@ -67,17 +70,19 @@ class SyncZohoData extends Command
 
                     // Extract the CSV and import data to the database
                     $zip = new \ZipArchive();
-                    if ($zip->open(storage_path('app/' . $fileName)) === TRUE) {
-                        $zip->extractTo(storage_path('app/'));
+                    if ($zip->open(storage_path('app/' . $fileName)) === true) {
+                        $zip->extractTo(storage_path('app/zoho_bulk_read/'));
                         $zip->close();
 
-                        $csvFileName = str_replace('.zip', '.csv', $fileName);
-                        $csvFilePath = storage_path('app/' . $csvFileName);
-                        
-                        // Process CSV and import data to the database
-                        $db->importDataFromCSV($csvFilePath, $module);
+                        $extractedFiles = Storage::files('zoho_bulk_read');
 
-                        $this->info("Data imported for module: {$module} from {$csvFileName}");
+                        foreach ($extractedFiles as $csvFilePath) {
+                            if (pathinfo($csvFilePath, PATHINFO_EXTENSION) === 'csv') {
+                                // Process CSV and import data to the database in chunks
+                                $db->importDataFromCSV(storage_path('app/' . $csvFilePath), $module);
+                                $this->info("Data imported for module: {$module} from {$csvFilePath}");
+                            }
+                        }
                     } else {
                         $this->error("Failed to extract {$fileName}");
                     }
@@ -89,4 +94,5 @@ class SyncZohoData extends Command
             }
         }
     }
+
 }

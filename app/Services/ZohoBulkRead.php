@@ -15,46 +15,14 @@ class ZohoBulkRead
     public function __construct(User $user)
     {
         $this->user = $user;
-        $this->validateAndRefreshToken();
-    }
-
-    protected function validateAndRefreshToken()
-    {
-        if (Carbon::now()->gte(Carbon::parse($this->user->token_expires_at))) {
-            $this->refreshAccessToken();
-        }
-    }
-
-    protected function refreshAccessToken()
-    {
-        try {
-            $response = Http::asForm()->post('https://accounts.zoho.com/oauth/v2/token', [
-                'refresh_token' => $this->user->refresh_token,
-                'client_id' => env('ZOHO_CLIENT_ID'),
-                'client_secret' => env('ZOHO_CLIENT_SECRET'),
-                'grant_type' => 'refresh_token',
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $this->user->access_token = $data['access_token'];
-                $this->user->token_expires_at = Carbon::now()->addSeconds($data['expires_in']);
-                $this->user->save();
-
-                Log::info("Access token refreshed successfully for user: {$this->user->email}");
-            } else {
-                Log::error("Failed to refresh access token", ['response' => $response->json()]);
-            }
-        } catch (\Exception $e) {
-            Log::error("Exception while refreshing access token: " . $e->getMessage());
-        }
+        $this->user->getAccessToken();
     }
 
     public function createBulkReadJob($module)
     {
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->user->access_token,
+                'Authorization' => 'Zoho-oauthtoken ' . $this->user->getAccessToken(),
                 'Content-Type' => 'application/json'
             ])->post($this->apiUrl . 'read', [
                 'callback' => [
@@ -85,7 +53,7 @@ class ZohoBulkRead
     {
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->user->access_token
+                'Authorization' => 'Zoho-oauthtoken ' . $this->user->getAccessToken()
             ])->get($this->apiUrl . 'read/' . $jobId);
 
             if ($response->successful()) {
@@ -105,7 +73,7 @@ class ZohoBulkRead
     {
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->user->access_token
+                'Authorization' => 'Zoho-oauthtoken ' . $this->user->getAccessToken()
             ])->get($this->apiUrl . 'read/' . $jobId . '/result');
 
             if ($response->successful()) {
