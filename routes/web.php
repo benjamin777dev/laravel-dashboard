@@ -14,16 +14,14 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\UpdateFromZohoCRMController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
+Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
 
-// Assuming you want to redirect authenticated users to the dashboard,
-// and non-authenticated users to a home or login page:
-// Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
-// Dashboard Route
+
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
-// Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware('auth');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');

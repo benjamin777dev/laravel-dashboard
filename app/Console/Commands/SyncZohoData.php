@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Services\ZohoBulkRead;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -39,7 +39,7 @@ class SyncZohoData extends Command
         }
 
         $zoho = new ZohoBulkRead($user);
-        $db = new DB();
+        $db = new DatabaseService();
 
         $modules = ['Contacts', 'Deals', 'Contacts_X_Groups', 'Agent_Commission_Incomes']; // Add other modules as needed
         Log::info("Syncing data for modules: " . implode(', ', $modules));

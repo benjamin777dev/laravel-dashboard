@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class SaveACIInDB extends Command
 {
@@ -72,7 +72,7 @@ class SaveACIInDB extends Command
             Log::info("Total aci records: ". $allACI->count());
             Log::info("Aci Records: ", $allACI->toArray());
             // Store contacts in the database
-            $saveInDB = new DB();
+            $saveInDB = new DatabaseService();
             $saveInDB->storeACIIntoDB($allACI);
         }
     }
