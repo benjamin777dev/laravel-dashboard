@@ -59,12 +59,13 @@ class PipelineController extends Controller
         
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
         }
-        return view('pipeline.index', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        return view('pipeline.index', compact('deals','userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 
     public function getDeals(Request $request)
@@ -117,11 +118,12 @@ class PipelineController extends Controller
         $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $users = User::all();
         $contactRoles = $db->retrieveRoles($user);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
 
     }
 
@@ -152,10 +154,11 @@ class PipelineController extends Controller
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $users = User::all();
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('tasks','contactRoles', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        return view('pipeline.create', compact('tasks','contactRoles','users', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
     }
 
     public function getDeal(Request $request)

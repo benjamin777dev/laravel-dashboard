@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -90,7 +91,7 @@ class RegisterController extends Controller
             }
            
             $criteria = "((Last_Name:equals:\(CHR\))and(Email:equals:{$userData['email']}))";
-            $fields = "Id,Email,First_Name,Last_Name";
+            $fields = "Id,Email,First_Name,Last_Name,Phone";
             $contactDataResponse = $zoho->getContactData($criteria, $fields);
             if (!($contactDataResponse->getStatusCode() >= 200 && $contactDataResponse->getStatusCode() <= 299)) {
                 Log::error('Failed to retrieve contact data from Zoho', ['response' => (string) $contactDataResponse->getBody()]);
@@ -118,7 +119,8 @@ class RegisterController extends Controller
                 'user_data' => $userData,
                 'token_data' => $tokenData,
                 'contact_id' => $contactId,
-                'root_user_id' => $rootUserId
+                'root_user_id' => $rootUserId,
+                'contact_data'=>$cdrData
             ]);
              $userAlreadyExists = User::where("email", $userData["email"])->first();
             if ($userAlreadyExists) {
@@ -161,6 +163,8 @@ class RegisterController extends Controller
 
         $rootUserId = session('root_user_id');
         Log::info("Root user id: " . print_r($rootUserId, true));
+        $contactData = session('contact_data');
+        Log::info("Contact data: " . print_r($userData, true));
 
         // Encrypt the email, access token, and refresh token
         // Hash the email instead of encrypting
@@ -187,6 +191,18 @@ class RegisterController extends Controller
         $user = User::updateOrCreate(
             $constraint,
             $userDBData
+        );
+
+        
+       Contact::updateOrCreate(
+            ['zoho_contact_id' => $contactId],
+            [
+                'email' => $hashedEmail, // Store hashed email
+                'zoho_contact_id'=>$contactId,
+                'first_name'=>$contactData['First_Name'],
+                "last_name"=>$contactData['Last_Name'],
+                "phone"=>$contactData['Phone'],
+            ]
         );
 
 

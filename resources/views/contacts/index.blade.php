@@ -13,7 +13,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <div class="container">
+    <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
@@ -26,7 +26,7 @@
                         New Contact
                     </div>
                 </a>
-                <a onclick="createTransaction();">
+                <a onclick="createTransaction({{$userContact}});">
                     <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                         data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                         </i>
@@ -61,6 +61,7 @@
                 </div>
 
             </div>
+            <div class="d-flex gap-4">
             <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
                 data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
                 Filter
@@ -69,6 +70,7 @@
                 data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
                 Reset All
             </div>
+        </div>
         </div>
 
         <div class="contactlist" id="contactlist">
@@ -271,6 +273,8 @@
             method: 'GET',
             data: {
                 search: encodeURIComponent(searchValuetrim),
+                sort: sortField || "",
+                sortType: sortDirection || "",
                 filter: filterVal,
                 missingField: missingFeild,
 
@@ -335,7 +339,7 @@
 
 
 
-    function createTransaction() {
+    function createTransaction(userContact) {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
         var formData = {
@@ -347,10 +351,10 @@
                 "Stage": "Potential",
                 // "Client_Primary_Name":,
                 // "Client_Name_Only":
-                // "Contact":{
-                //     "Name":,
-                //     "id"
-                // }
+                "Contact_Name":{
+                    "Name":userContact.first_name+" "+userContact.last_name,
+                    "id":userContact.zoho_contact_id
+                }
             }],
             "_token": '{{ csrf_token() }}'
         };
