@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class SaveContactGroupInDB extends Command
 {
@@ -85,7 +85,7 @@ class SaveContactGroupInDB extends Command
             Log::info("Retrieved contacts groups for user {$user->id}: " . $allContactGroups);
 
             // Store contacts in the database
-            $saveInDB = new DB();
+            $saveInDB = new DatabaseService();
             $saveInDB->storeContactGroupsIntoDB($allContactGroups,$user);
         }
     }

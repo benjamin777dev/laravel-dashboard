@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Models\Note;
-use App\Models\Deal;
 use App\Models\Contact;
 use App\Models\Task;
-use App\Models\Module;
 use App\Services\Helper;
 
 
@@ -36,7 +33,7 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $helper = new Helper();
         $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
         Log::info("Got Access Token: $accessToken");
@@ -709,7 +706,7 @@ class DashboardController extends Controller
     }
 
    public function retriveModulesDB(Request $request){
-    $db = new DB();
+    $db = new DatabaseService();
     $user = auth()->user();
     if (!$user) {
         return redirect('/login');
@@ -723,7 +720,7 @@ class DashboardController extends Controller
 
     public function getTasks(Request $request)
     { 
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -741,7 +738,7 @@ class DashboardController extends Controller
 
     public function getDeals(Request $request)
     { 
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -762,7 +759,7 @@ class DashboardController extends Controller
 
     public function getDealsForDash()
     { 
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -778,7 +775,7 @@ class DashboardController extends Controller
 
     public function getContacts(Request $request)
     { 
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -805,7 +802,7 @@ class DashboardController extends Controller
         $end_date = request()->query('end_date') ?? '';   // End date of the range
        
         $user = auth()->user();
-        $db = new DB();
+        $db = new DatabaseService();
         $accessToken = $user->getAccessToken();
         if (!$user) {
             return redirect('/login');
@@ -934,7 +931,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho->access_token = $accessToken;
 
         $jsonData = [
@@ -1083,7 +1080,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho->access_token = $accessToken;
         try {
             $tab = request()->query('tab') ?? 'In Progress';
@@ -1104,7 +1101,7 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho->access_token = $accessToken;
         try {
             $contactRoles = $zoho->getContactRoles($user, $accessToken);

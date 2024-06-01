@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Http\Controllers\GroupController;
 
 /*

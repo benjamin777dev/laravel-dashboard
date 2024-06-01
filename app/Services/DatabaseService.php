@@ -20,10 +20,11 @@ use App\Models\User;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 
-class DB
+class DatabaseService
 {
     public function storeDealsIntoDB($dealsData, $user)
     {
@@ -1311,7 +1312,7 @@ class DB
             return redirect('/login');
         }
 
-        $accessToken = $user->getAccessToken();
+        $accessToken = $user->access_token;
         // if (!$accessToken) {
         //     throw new \Exception("Invalid user token");
         // }
@@ -1419,39 +1420,48 @@ class DB
         $reader->setHeaderOffset(0);
         $records = $reader->getRecords();
 
-        $batchSize = 1000; // Adjust the batch size based on your memory and performance needs
+        $batchSize = 5000; // Adjust the batch size based on your memory and performance needs
         $dataBatch = [];
 
-        foreach ($records as $record) {
-            $dataBatch[] = $record;
+        DB::beginTransaction();
+        try {
+            foreach ($records as $record) {
+                $dataBatch[] = $record;
 
-            if (count($dataBatch) >= $batchSize) {
-                $this->upsertDataBatch($dataBatch, $module);
-                $dataBatch = [];
+                if (count($dataBatch) >= $batchSize) {
+                    $this->upsertDataBatch($dataBatch, $module);
+                    $dataBatch = [];
+                }
             }
-        }
 
-        // Insert any remaining records
-        if (count($dataBatch) > 0) {
-            $this->upsertDataBatch($dataBatch, $module);
+            // Insert any remaining records
+            if (count($dataBatch) > 0) {
+                $this->upsertDataBatch($dataBatch, $module);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error("Error importing data from CSV for module {$module}: " . $e->getMessage());
         }
     }
 
     protected function upsertDataBatch(array $dataBatch, $module)
     {
         try {
+            $updateColumns = $this->getUpdateColumns($dataBatch);
+
             switch ($module) {
                 case 'Contacts':
-                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id'], $this->getUpdateColumns($dataBatch));
+                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id'], $updateColumns);
                     break;
                 case 'Deals':
-                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id'], $this->getUpdateColumns($dataBatch));
+                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id'], $updateColumns);
                     break;
                 case 'Contacts_X_Groups':
-                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id'], $this->getUpdateColumns($dataBatch));
+                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id'], $updateColumns);
                     break;
                 case 'Agent_Commission_Incomes':
-                    // Handle upsert for Agent_Commission_Incomes if applicable
+                    \App\Models\ACI::upsert($dataBatch, ['zoho_aci_id'], $updateColumns);
                     break;
                     // Add other cases as needed
             }
@@ -1462,7 +1472,10 @@ class DB
 
     protected function getUpdateColumns(array $dataBatch)
     {
-        return array_keys($dataBatch[0]);
+        // Return the list of columns to update, excluding primary keys
+        $columns = array_keys($dataBatch[0]);
+        // You can customize this array to exclude certain columns if needed
+        return $columns;
     }
 
 }
