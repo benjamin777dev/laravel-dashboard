@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 
 class SaveModuleToDB extends Command
@@ -75,7 +75,7 @@ class SaveModuleToDB extends Command
             Log::info("Retrieved module for user {$user->id}: " . $allModule);
 
             // Store contacts in the database
-            $saveInDB = new DB();
+            $saveInDB = new DatabaseService();
             $saveInDB->storeModuleIntoDB($allModule);
         }
     }

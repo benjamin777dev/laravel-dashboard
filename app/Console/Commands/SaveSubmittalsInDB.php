@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Models\User; // Import the User model
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class SaveSubmittalsInDB extends Command
 {
@@ -77,7 +77,7 @@ class SaveSubmittalsInDB extends Command
             Log::info("Retrieved tasks for user {$user->id}: " . $allSubmittals);
 
             // Store submittals in the database
-            $saveInDB = new DB();
+            $saveInDB = new DatabaseService();
             $saveInDB->storeSubmittalsIntoDB($allSubmittals,$user);
         }
     }

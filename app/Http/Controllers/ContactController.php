@@ -10,7 +10,7 @@ use App\Models\Contact;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class ContactController extends Controller
 {
@@ -20,7 +20,7 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $search = request()->query('search');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search);
@@ -38,7 +38,7 @@ class ContactController extends Controller
 
     public function getContact(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -503,7 +503,7 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $contactId = request()->route('contactId');
-        $db = new DB();
+        $db = new DatabaseService();
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         // $contactInfo = Contact::getZohoContactInfo();
@@ -521,7 +521,7 @@ class ContactController extends Controller
         }
         $user_id = $user->root_user_id;
         $name = $user->name;
-        $db = new DB();
+        $db = new DatabaseService();
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
@@ -547,7 +547,7 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesForContact($user, $accessToken, $contactId);
@@ -564,7 +564,7 @@ class ContactController extends Controller
         }
         $user_id = $user->root_user_id;
         $name = $user->name;
-        $db = new DB();
+        $db = new DatabaseService();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
@@ -582,7 +582,7 @@ class ContactController extends Controller
 
     public function createContactId(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {

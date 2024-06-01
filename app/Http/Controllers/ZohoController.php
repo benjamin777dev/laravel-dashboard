@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class ZohoController extends Controller
 {
@@ -54,7 +54,7 @@ class ZohoController extends Controller
         $csvFilePath = Storage::path('zoho_bulk_read/' . basename($filePath, '.zip') . '.csv');
 
         // Process the CSV file and update the database
-        $dbService = new DB();
+        $dbService = new DatabaseService();
         $dbService->importDataFromCSV($csvFilePath, $module);
     }
 }

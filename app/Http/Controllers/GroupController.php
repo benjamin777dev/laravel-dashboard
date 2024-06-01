@@ -12,7 +12,7 @@ use App\Models\ContactGroups;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use League\Csv\Writer;
 
 use League\Csv\CannotInsertRecord;
@@ -23,7 +23,7 @@ class GroupController extends Controller
 {
     public function index(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -39,7 +39,7 @@ class GroupController extends Controller
 
     public function filterGroups(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -60,7 +60,7 @@ class GroupController extends Controller
 
     public function updateContactGroup(Request $request){
         try {
-            $db = new DB();
+            $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = auth()->user();
             if (!$user) {
@@ -98,7 +98,7 @@ class GroupController extends Controller
 
     public function deleteContactGroup(Request $request,$id){
         try {
-            $db = new DB();
+            $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = auth()->user();
             if (!$user) {
@@ -129,7 +129,7 @@ class GroupController extends Controller
     {
         try {
             $zoho = new ZohoCRM();
-            $db = new DB();
+            $db = new DatabaseService();
             $user = auth()->user();
             if (!$user) {
                 return redirect('/login');
@@ -192,7 +192,7 @@ class GroupController extends Controller
     {
         // Process the webhook payload here
         $payload = $request->all();
-        $db = new DB();
+        $db = new DatabaseService();
         $getBulkJob = $db->getBulkJob($payload['id']);
         $getUser = $getBulkJob->userData;
         $zoho = new ZohoCRM();
@@ -250,7 +250,7 @@ class GroupController extends Controller
     {
         try {
             $zoho = new ZohoCRM();
-            $db = new DB();
+            $db = new DatabaseService();
             $user = auth()->user();
             if (!$user) {
                 return redirect('/login');

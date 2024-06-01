@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use App\Services\Helper;
@@ -18,7 +18,7 @@ class PipelineController extends Controller
 {
     public function index(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {
@@ -70,7 +70,7 @@ class PipelineController extends Controller
 
     public function getDeals(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -93,7 +93,7 @@ class PipelineController extends Controller
     public function showViewPipelineForm(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
-        $db = new DB();
+        $db = new DatabaseService();
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
@@ -130,7 +130,7 @@ class PipelineController extends Controller
     public function showCreatePipelineForm(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
-        $db = new DB();
+        $db = new DatabaseService();
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
@@ -163,7 +163,7 @@ class PipelineController extends Controller
 
     public function getDeal(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -178,7 +178,7 @@ class PipelineController extends Controller
 
     public function createPipeline(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {
@@ -340,7 +340,7 @@ class PipelineController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $dealId = request()->route('dealId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
