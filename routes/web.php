@@ -13,6 +13,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
+use App\Http\Controllers\ZohoController;
+
+// Zoho Bulk Read Callback
+Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
 
 // Assuming you want to redirect authenticated users to the dashboard,
 // and non-authenticated users to a home or login page:

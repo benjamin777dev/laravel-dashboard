@@ -12,13 +12,7 @@
             selectElementId: 'related_to_rem' + id
         })
     });
-    modalSelectMaptsk.forEach(({
-        modalID,
-        selectElementId
-    }) => {
-        const selectElement = $(`#${selectElementId}`);
-        window.showDropdownForId(modalID, selectElement);
-    });
+   
 </script>
 <div class="table-responsive dresponsivetable">
     <table class="table dtableresp table-nowrap">
@@ -308,7 +302,7 @@
             selectElementId
         }) => {
             const selectElement = $(`#${selectElementId}`);
-            window.showDropdownForId(modalID, selectElement);
+            showDropdown(modalID, selectElement);
         });
 
         $(document).on('click', '.dpagination a', function(e) {

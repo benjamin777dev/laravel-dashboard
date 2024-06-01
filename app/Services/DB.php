@@ -10,6 +10,8 @@ use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
 use App\Models\Module; // Import the Module model
+use League\Csv\Reader;
+use League\Csv\Statement;
 use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
@@ -34,15 +36,27 @@ class DB
         $dealCount = count($dealsData);
         for ($i = 0; $i < $dealCount; $i++) {
             $deal = $dealsData[$i];
-            $userInstance = User::where('zoho_id', $deal['Contact_Name']['id'])->first();
-            if ($deal['Client_Name_Only']) {
+             
+            if ($deal['Contact_Name']) {
+                $contact = Contact::where('zoho_contact_id', $deal['Contact_Name']['id'])->first();
+            }
+            if ($deal['Owner']) {
+                $userInstance = User::where('root_user_id', $deal['Owner']['id'])->first();
+            }
+            if ($deal['Lead_Agent']) {
+                $lead_agent = User::where('root_user_id', $deal['Lead_Agent']['id'])->first();
+
+            }
+            if ($deal['TM_Name']) {
+                $tm_name = User::where('root_user_id', $deal['TM_Name']['id'])->first();
+            }
+            if($deal['Client_Name_Only']){
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
-
-                $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
+                $client_name = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
             }
             if (!$userInstance) {
-                // Log an error if the user is not found
+                // Log an eeor if the user is not found
                 Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
                 continue; // Skip to the next deal
             }
@@ -63,7 +77,7 @@ class DB
                 continue; // Skip to the next deal
             }
             $attachments = collect($attachmentResponse->json()['data'] ?? []);
-            Log::error("USERSARA" . $user);
+            Log::info("USERSARA" . $user);
             $this->storeAttachmentIntoDB($attachments, $userInstance, $deal['id']);
 
             // Fetching deal nonTM
@@ -73,7 +87,7 @@ class DB
                 continue; // Skip to the next deal
             }
             $nonTm = collect($nonTmResponse->json()['data'] ?? []);
-            Log::error("USERSARA" . $user);
+            Log::info("USERSARA" . $user);
             $this->storeNonTmIntoDB($nonTm, $userInstance, $deal['id']);
 
             // Update or create the deal
@@ -81,7 +95,7 @@ class DB
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
                 'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
-                'userID' => $userInstance->id,
+                'userID' =>isset($userInstance) ? $userInstance->id : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
                 'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
                 'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
@@ -94,7 +108,7 @@ class DB
                 'needs_new_date2' => isset($deal['Needs_New_Date2']) ? $deal['Needs_New_Date2'] : null,
                 'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
                 'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name' => isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'tm_name' => isset($tm_agent) ? $tm_agent->id : null,
                 'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
                 'sale_price' => isset($deal['Sale_Price']) ? $deal['Sale_Price'] : null,
                 'zoho_deal_id' => $deal['id'],
@@ -112,8 +126,9 @@ class DB
                 'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
                 'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
-                'contactId' => isset($contact) ? $contact->id : null,
-                'lead_agent' => isset($deal['Lead_Agent']) ? $deal['Lead_Agent']['id'] : null,
+                'contactId' => isset($client_name) ? $client_name->id : null,
+                'contact_name' => isset($contact) ? $contact->id : null,
+                'lead_agent' =>isset($lead_agent) ? $lead_agent->id : null,
                 'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
                 'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
                 'isDealCompleted' => true,
@@ -362,7 +377,7 @@ class DB
             $conditions = [['userID', $user->id], ['id', $dealId]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName');
+            $deals = Deal::with('userData', 'contactName','leadAgent','tmName');
 
 
             Log::info("Deal Conditions", ['deals' => $conditions]);
@@ -438,6 +453,32 @@ class DB
             Log::info("Retrieve Contact From Database");
 
             $conditions = [['contact_owner', $user->id], ['zoho_contact_id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName');
+
+
+            Log::info("Deal Conditions", ['contacts' => $conditions]);
+
+            // Retrieve contacts based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved contacts From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+
+    }
+
+    public function retrieveContactDetailsByZohoId(User $user, $accessToken, $contactId)
+    {
+
+        try {
+            Log::info("Retrieve Contact From Database");
+
+            $conditions = [['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
@@ -809,7 +850,7 @@ class DB
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact]];
+            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact],['userID',$user->id]];
             $deal = Deal::where($condition)->first();
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -823,7 +864,7 @@ class DB
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $contact = Contact::where('isContactCompleted', false)->first();
+            $contact = Contact::where([['isContactCompleted', false],['contact_owner',$user->id]])->first();
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
         } catch (\Exception $e) {
@@ -1391,6 +1432,51 @@ class DB
             ])->get();
             return $roles;
         Log::info("Contact Role retrived from database successfully.");
+    }
+
+    public function importDataFromCSV($csvFilePath, $module)
+    {
+        try {
+            $csv = Reader::createFromPath($csvFilePath, 'r');
+            $csv->setHeaderOffset(0);
+
+            $stmt = (new Statement())->offset(0);
+            $records = $stmt->process($csv);
+
+            foreach ($records as $record) {
+                switch ($module) {
+                    case 'Contacts':
+                        Contact::updateOrCreate(
+                            ['zoho_contact_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'Deals':
+                        Deal::updateOrCreate(
+                            ['zoho_deal_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'ContactGroups':
+                        ContactGroup::updateOrCreate(
+                            ['zoho_contact_group_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'AgentCommission':
+                        AgentCommission::updateOrCreate(
+                            ['zoho_agent_commission_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    // Add more cases for other modules
+                }
+            }
+
+            Log::info("Data imported successfully for module: {$module}");
+        } catch (\Exception $e) {
+            Log::error("Error importing data from CSV: " . $e->getMessage());
+        }
     }
 
 }

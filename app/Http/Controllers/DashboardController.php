@@ -948,6 +948,7 @@ class DashboardController extends Controller
                         "id" => $related_to_parent,
                     ],
                     "Note_Content" => $note_text,
+                    '$se_module' => $related_to,
                 ]
             ]
         ];

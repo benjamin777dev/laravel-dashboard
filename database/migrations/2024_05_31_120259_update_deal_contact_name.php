@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('deals', function (Blueprint $table) {
-            $table->string('lead_agent')->nullable();
-            $table->string('financing')->nullable();
-            $table->string('modern_mortgage_lender')->nullable();
-            $table->string('contact_name')->nullable();
+         Schema::table('deals', function (Blueprint $table) {
+            // Modify an existing column
+            $table->unsignedBigInteger('contact_name')->nullable()->change();
         });
     }
 
@@ -25,9 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('deals', function (Blueprint $table) {
-            $table->dropColumn('lead_agent');
-            $table->dropColumn('financing');
-            $table->dropColumn('modern_mortgage_lender');
+            // Change the column back to its original state
+            $table->string('contact_name')->nullable()->change(); // Assuming the original type was integer
         });
     }
 };
