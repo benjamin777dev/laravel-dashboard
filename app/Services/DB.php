@@ -10,6 +10,8 @@ use App\Models\Contact; // Import the Deal model
 use App\Models\Task; // Import the Deal model
 use App\Models\Note; // Import the Deal model
 use App\Models\Module; // Import the Module model
+use League\Csv\Reader;
+use League\Csv\Statement;
 use App\Models\Aci;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
@@ -1391,6 +1393,51 @@ class DB
             ])->get();
             return $roles;
         Log::info("Contact Role retrived from database successfully.");
+    }
+
+    public function importDataFromCSV($csvFilePath, $module)
+    {
+        try {
+            $csv = Reader::createFromPath($csvFilePath, 'r');
+            $csv->setHeaderOffset(0);
+
+            $stmt = (new Statement())->offset(0);
+            $records = $stmt->process($csv);
+
+            foreach ($records as $record) {
+                switch ($module) {
+                    case 'Contacts':
+                        Contact::updateOrCreate(
+                            ['zoho_contact_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'Deals':
+                        Deal::updateOrCreate(
+                            ['zoho_deal_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'ContactGroups':
+                        ContactGroup::updateOrCreate(
+                            ['zoho_contact_group_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    case 'AgentCommission':
+                        AgentCommission::updateOrCreate(
+                            ['zoho_agent_commission_id' => $record['id']],
+                            $record
+                        );
+                        break;
+                    // Add more cases for other modules
+                }
+            }
+
+            Log::info("Data imported successfully for module: {$module}");
+        } catch (\Exception $e) {
+            Log::error("Error importing data from CSV: " . $e->getMessage());
+        }
     }
 
 }
