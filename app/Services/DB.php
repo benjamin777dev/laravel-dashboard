@@ -2,27 +2,26 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use App\Models\User; // Import the User model
-use App\Models\Deal; // Import the Deal model
-use App\Models\DealContact; // Import the Deal model
-use App\Models\Contact; // Import the Deal model
-use App\Models\Task; // Import the Deal model
-use App\Models\Note; // Import the Deal model
-use App\Models\Module; // Import the Module model
-use League\Csv\Reader;
-use League\Csv\Statement;
 use App\Models\Aci;
+use App\Models\Attachment; // Import the User model
+use App\Models\BulkJob; // Import the Deal model
+use App\Models\Contact; // Import the Deal model
+use App\Models\ContactGroups; // Import the Deal model
+use App\Models\ContactRole; // Import the Deal model
+use App\Models\Deal; // Import the Deal model
+use App\Models\DealContact; // Import the Module model
+use App\Models\Groups;
+use App\Models\Module;
+use App\Models\NonTm;
+use App\Models\Note;
+use App\Models\Submittals;
+use App\Models\Task;
+use App\Models\User;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Models\Groups; 
-use App\Models\ContactGroups; 
-use App\Models\Attachment; 
-use App\Models\NonTm; 
-use App\Models\Submittals; 
-use App\Models\BulkJob; 
-use App\Models\ContactRole;
+use Illuminate\Support\Facades\Log;
+use League\Csv\Reader;
 
 class DB
 {
@@ -36,7 +35,7 @@ class DB
         $dealCount = count($dealsData);
         for ($i = 0; $i < $dealCount; $i++) {
             $deal = $dealsData[$i];
-             
+
             if ($deal['Contact_Name']) {
                 $contact = Contact::where('zoho_contact_id', $deal['Contact_Name']['id'])->first();
             }
@@ -50,7 +49,7 @@ class DB
             if ($deal['TM_Name']) {
                 $tm_name = User::where('root_user_id', $deal['TM_Name']['id'])->first();
             }
-            if($deal['Client_Name_Only']){
+            if ($deal['Client_Name_Only']) {
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
                 $client_name = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
@@ -95,7 +94,7 @@ class DB
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
                 'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
-                'userID' =>isset($userInstance) ? $userInstance->id : null,
+                'userID' => isset($userInstance) ? $userInstance->id : null,
                 'address' => isset($deal['Address']) ? $deal['Address'] : null,
                 'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
                 'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
@@ -123,16 +122,16 @@ class DB
                 'lender_name' => isset($deal['Lender_Name']) ? $deal['Lender_Name'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
                 'review_gen_opt_out' => isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
-                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
-                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
+                'deadline_em_opt_out' => isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out' => isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'contractId' => null,
                 'contactId' => isset($client_name) ? $client_name->id : null,
                 'contact_name' => isset($contact) ? $contact->id : null,
-                'lead_agent' =>isset($lead_agent) ? $lead_agent->id : null,
+                'lead_agent' => isset($lead_agent) ? $lead_agent->id : null,
                 'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
                 'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
                 'isDealCompleted' => true,
-                'isInZoho' => true
+                'isInZoho' => true,
             ]);
         }
 
@@ -153,13 +152,12 @@ class DB
                 'zoho_deal_id' => $dealId,
                 'contactId' => $contact ? $contact->id : null,
                 'userId' => $user ? $user->id : null,
-                'contactRole' => $dealContact['Contact_Role']['name']
+                'contactRole' => $dealContact['Contact_Role']['name'],
             ]);
         }
 
         Log::info("Deal Contacts stored into database successfully.");
     }
-
 
     /**
      * Store contacts into the database.
@@ -203,7 +201,7 @@ class DB
                 "Lead_Source" => isset($contact['Lead_Source']) ? $contact['Lead_Source'] : null,
                 "lead_source_detail" => isset($contact['Lead_Source_Detail']) ? $contact['Lead_Source_Detail'] : null,
                 "spouse_partner" => isset($contact['Spouse_Partner']) ? $contact['Spouse_Partner']['id'] : null,
-                "zoho_contact_id" => isset($contact['id']) ? $contact['id'] : null
+                "zoho_contact_id" => isset($contact['id']) ? $contact['id'] : null,
             ]);
         }
 
@@ -246,7 +244,7 @@ class DB
                 "owner" => isset($user['id']) ? $user['id'] : null,
                 "created_time" => isset($task['Created_Time']) ? $helper->convertToUTC($task['Created_Time']) : null,
                 "zoho_task_id" => isset($task['id']) ? $task['id'] : null,
-                "related_to" => isset($task['$se_module']) ? $task['$se_module'] : null
+                "related_to" => isset($task['$se_module']) ? $task['$se_module'] : null,
             ]);
         }
 
@@ -263,7 +261,7 @@ class DB
             Module::updateOrCreate(['zoho_module_id' => $module['id']], [
                 "api_name" => isset($module['api_name']) ? $module['api_name'] : null,
                 "modified_time" => isset($module['modified_time']) ? $helper->convertToUTC($module['modified_time']) : null,
-                "zoho_module_id" => isset($module['id']) ? $module['id'] : null
+                "zoho_module_id" => isset($module['id']) ? $module['id'] : null,
             ]);
         }
 
@@ -320,7 +318,6 @@ class DB
                 });
             }
 
-
             if ($sortValue != '' && $sortType != '') {
                 $sortField = $sortValue;
                 if ($sortField === 'contactName.first_name') {
@@ -335,20 +332,20 @@ class DB
                         $deals->orderBy($sortField, 'desc');
                         break;
                     default:
-                         
+
                         break;
                 }
-            }else{
+            } else {
                 $deals->orderBy('updated_at', 'desc');
             }
 
             if ($dateFilter && $dateFilter != '') {
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
-                $startOfNext30Days  = Carbon::now()->startOfDay();
-                $endOfNext30Days  = Carbon::now()->addDays(30)->endOfDay();
-                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek])->orWhere(function($query) use ($startOfNext30Days, $endOfNext30Days) {
-                    $query->whereBetween('closing_date', [$startOfNext30Days, $endOfNext30Days])->where('stage','!=','Under Contract');
+                $startOfNext30Days = Carbon::now()->startOfDay();
+                $endOfNext30Days = Carbon::now()->addDays(30)->endOfDay();
+                $deals->whereBetween('closing_date', [$startOfWeek, $endOfWeek])->orWhere(function ($query) use ($startOfNext30Days, $endOfNext30Days) {
+                    $query->whereBetween('closing_date', [$startOfNext30Days, $endOfNext30Days])->where('stage', '!=', 'Under Contract');
                 });
             }
             if ($filter) {
@@ -365,7 +362,6 @@ class DB
             throw $e;
         }
 
-
     }
 
     public function retrieveDealById(User $user, $accessToken, $dealId)
@@ -377,8 +373,7 @@ class DB
             $conditions = [['userID', $user->id], ['id', $dealId]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName','leadAgent','tmName');
-
+            $deals = Deal::with('userData', 'contactName', 'leadAgent', 'tmName');
 
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
@@ -390,8 +385,6 @@ class DB
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
-
-
 
     }
 
@@ -405,7 +398,6 @@ class DB
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
-
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -431,7 +423,6 @@ class DB
             // Adjust query to include contactName table using join
             $deals = Deal::with('userData', 'contactName');
 
-
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -442,7 +433,6 @@ class DB
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
-
 
     }
 
@@ -457,7 +447,6 @@ class DB
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
 
-
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
             // Retrieve contacts based on the conditions
@@ -468,7 +457,6 @@ class DB
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
-
 
     }
 
@@ -483,7 +471,6 @@ class DB
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
 
-
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
             // Retrieve contacts based on the conditions
@@ -494,7 +481,6 @@ class DB
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
-
 
     }
 
@@ -528,7 +514,7 @@ class DB
 
             Log::info("Retrieve Tasks From Database");
             $condition = [
-                ['owner', $user->id]
+                ['owner', $user->id],
             ];
             if ($dealId) {
                 $condition[] = ['what_id', $dealId];
@@ -551,7 +537,7 @@ class DB
 
             Log::info("Retrieve Deals From Database");
             $condition = [
-                ['userID', $user->id]
+                ['userID', $user->id],
             ];
             if ($dealId) {
                 $condition[] = ['zoho_deal_id', $dealId];
@@ -559,7 +545,7 @@ class DB
             if ($contactId) {
                 $condition[] = ['zoho_deal_id', $contactId];
             }
-            $Deals = Deal::where($condition)->orderBy('updated_at','desc')->get();
+            $Deals = Deal::where($condition)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
         } catch (\Exception $e) {
@@ -572,18 +558,18 @@ class DB
     {
         try {
             Log::info("Retrieve Contact From Database");
-    
+
             $conditions = [['contact_owner', $user->id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
-    
+
             if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
                 $contacts->where(function ($query) use ($searchTerms) {
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
-                          ->orWhere('email', 'like', '%' . $searchTerms . '%');
+                        ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
-    
+
             if ($filter) {
                 $conditions[] = ['abcd', $filter];
             }
@@ -599,22 +585,22 @@ class DB
                     $contacts->whereNull('abcd');
                 }
             }
-    
+
             // Apply additional filter conditions
             if ($filter) {
                 $contacts->where($conditions);
             }
-    
+
             // Apply sorting if specified
             if ($sortValue && $sortType) {
                 $contacts->orderBy($sortValue, $sortType);
             } else {
                 $contacts->orderBy('updated_at', 'desc');
             }
-    
+
             // Paginate the results
             $contacts = $contacts->paginate(12);
-    
+
             Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {
@@ -622,7 +608,6 @@ class DB
             throw $e;
         }
     }
-    
 
     public function retreiveContactsJson(User $user, $accessToken)
     {
@@ -846,11 +831,11 @@ class DB
         }
     }
 
-    public function getIncompleteDeal(User $user, $accessToken,$contact=null)
+    public function getIncompleteDeal(User $user, $accessToken, $contact = null)
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $condition=[['isDealCompleted', false],['Client_Name_Primary',$contact],['userID',$user->id]];
+            $condition = [['isDealCompleted', false], ['Client_Name_Primary', $contact], ['userID', $user->id]];
             $deal = Deal::where($condition)->first();
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -864,7 +849,7 @@ class DB
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $contact = Contact::where([['isContactCompleted', false],['contact_owner',$user->id]])->first();
+            $contact = Contact::where([['isContactCompleted', false], ['contact_owner', $user->id]])->first();
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
         } catch (\Exception $e) {
@@ -873,11 +858,11 @@ class DB
         }
     }
 
-    public function createDeal(User $user, $accessToken, $zohoDeal,$dealData)
+    public function createDeal(User $user, $accessToken, $zohoDeal, $dealData)
     {
         try {
             Log::info("User Deatils" . json_encode($zohoDeal));
-             if (isset($dealData['Client_Name_Only'])) {
+            if (isset($dealData['Client_Name_Only'])) {
                 $clientId = explode("||", $dealData['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
 
@@ -889,10 +874,10 @@ class DB
                 'userID' => $user->id,
                 'isInZoho' => true,
                 'zoho_deal_id' => $zohoDeal['id'],
-                'client_name_primary'=>isset($dealData['Client_Name_Primary'])?$dealData['Client_Name_Primary']:null,
-                'client_name_only'=>isset($dealData['Client_Name_Only'])?$dealData['Client_Name_Only']:null,
+                'client_name_primary' => isset($dealData['Client_Name_Primary']) ? $dealData['Client_Name_Primary'] : null,
+                'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
-                'contactId'=>isset($contact->id)?$contact->id:null
+                'contactId' => isset($contact->id) ? $contact->id : null,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -911,7 +896,7 @@ class DB
                 'isContactCompleted' => false,
                 'contact_owner' => $user->id,
                 'isInZoho' => true,
-                'zoho_contact_id' => $zohoContactId
+                'zoho_contact_id' => $zohoContactId,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
@@ -925,7 +910,7 @@ class DB
     {
         try {
             $helper = new Helper();
-            Log::info("User Details" ,$deal);
+            Log::info("User Details", $deal);
             if ($deal['Client_Name_Only']) {
                 $clientId = explode("||", $deal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
@@ -939,7 +924,7 @@ class DB
                 'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
                 'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
                 'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
-                'commission_flat_free'=>isset($deal['Commission_Flat_Fee']) ? $deal['Commission_Flat_Fee'] : null,
+                'commission_flat_free' => isset($deal['Commission_Flat_Fee']) ? $deal['Commission_Flat_Fee'] : null,
                 'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
                 'client_name_primary' => isset($deal['Client_Name_Primary']) ? $deal['Client_Name_Primary'] : null,
                 'closing_date' => isset($deal['Closing_Date']) ? $helper->convertToUTC($deal['Closing_Date']) : null,
@@ -953,13 +938,13 @@ class DB
                 'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
                 'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
                 'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
-                
-                'review_gen_opt_out'=>isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
-                'deadline_em_opt_out'=>isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
-                'status_rpt_opt_out'=>isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
-                'tm_preference'=>isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name'=>isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
-                'lead_agent'=>isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
+
+                'review_gen_opt_out' => isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
+                'deadline_em_opt_out' => isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
+                'status_rpt_opt_out' => isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
+                'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
+                'tm_name' => isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'lead_agent' => isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
                 'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
@@ -991,11 +976,10 @@ class DB
                     'ownerId' => $groupData['Owner']['id'],
                     'name' => $groupData['Name'] ?? null,
                     'isPublic' => $groupData['Is_Public'] ?? false,
-                    'isABCD' => $groupData['isABC'] ?? false
+                    'isABCD' => $groupData['isABC'] ?? false,
                 ]
             );
         }
-
 
         Log::info("Groups stored into database successfully.");
     }
@@ -1023,7 +1007,7 @@ class DB
                     'ownerId' => $user->id,
                     "contactId" => $contact['id'] ?? null,
                     "groupId" => $group['id'] ?? null,
-                    "zoho_contact_group_id" => $allContactGroup['id'] ?? null
+                    "zoho_contact_group_id" => $allContactGroup['id'] ?? null,
                 ]
             );
         }
@@ -1042,7 +1026,7 @@ class DB
                         if ($filter) {
                             $query->where('groupId', $filter);
                         }
-                    }
+                    },
                 ])
                 ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
@@ -1053,7 +1037,6 @@ class DB
                     $query->orderBy('first_name', $sort);
                 })
                 ->get();
-
 
             Log::info("Retrieved Contacts From Database", ['contacts_count' => $contacts->count()]);
 
@@ -1076,7 +1059,7 @@ class DB
                             $query->join('groups', 'contact_groups.groupId', '=', 'groups.id')
                                 ->orderBy('groups.' . $sortValue, $sortType);
                         }
-                    }
+                    },
                 ])
                 ->when($sort, function ($query, $sort) {
                     $query->orderBy('created_at', $sort);
@@ -1105,15 +1088,12 @@ class DB
         }
     }
 
-
-
     public function updateGroups(User $user, $accessToken, $data)
     {
         try {
             Log::info("Updating Groups");
 
             // Decode JSON data to array
-
 
             if (!$data) {
                 throw new \Exception("Error decoding JSON data");
@@ -1182,12 +1162,11 @@ class DB
                 "dealId" => isset($dealId) ? $dealId : null,
             ]);
             //     }
-            // }   
+            // }
         }
 
         Log::info("Attachment stored into database successfully.");
     }
-
 
     public function retreiveAttachment($dealId)
     {
@@ -1280,7 +1259,7 @@ class DB
         }
     }
 
-    public function saveBulkJobInDB($fileId,$userId,$jobId)
+    public function saveBulkJobInDB($fileId, $userId, $jobId)
     {
         try {
             $bulkJob = BulkJob::create([
@@ -1300,16 +1279,16 @@ class DB
         try {
             // Retrieve bulk job with user data eagerly loaded
             $bulkJob = BulkJob::where('jobId', $jobId)->with('userData')->firstOrFail();
-            
+
             // Log retrieved bulk job
             Log::info("Bulk job retrieved from the database", ['bulkJob' => $bulkJob->toArray()]);
-            
+
             // Return user data associated with the bulk job
             return $bulkJob;
         } catch (\Exception $e) {
             // Log error if any exception occurs
             Log::error("Error retrieving bulk job: " . $e->getMessage());
-            
+
             // Rethrow the exception to handle it elsewhere
             throw $e;
         }
@@ -1325,33 +1304,33 @@ class DB
             throw $e;
         }
     }
-    public function retriveModules($request,$user, $accessToken)
-    { 
+    public function retriveModules($request, $user, $accessToken)
+    {
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
-    
+
         $accessToken = $user->getAccessToken();
         // if (!$accessToken) {
         //     throw new \Exception("Invalid user token");
         // }
-    
+
         // Retrieve query parameters
         $searchQuery = $request->input('q', '');
         $page = $request->input('page', 1);
         $limit = $request->input('limit', 5);
         $offset = ($page - 1) * $limit;
-    
+
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
         $data = [];
         $moduleIds = [];
-    
+
         foreach ($filteredModules as $module) {
             $moduleIds[$module->api_name] = $module->zoho_module_id;
             $data[$module->api_name] = [];
         }
-    
+
         foreach ($filteredModules as $module) {
             if ($module->api_name === 'Deals') {
                 // Retrieve Deals data based on search query if provided
@@ -1371,9 +1350,9 @@ class DB
                 // Retrieve Contacts data based on search query if provided
                 $contactsQuery = Contact::query();
                 if ($searchQuery) {
-                    $contactsQuery->where(function($query) use ($searchQuery) {
+                    $contactsQuery->where(function ($query) use ($searchQuery) {
                         $query->where('first_name', 'like', "%$searchQuery%")
-                              ->orWhere('last_name', 'like', "%$searchQuery%");
+                            ->orWhere('last_name', 'like', "%$searchQuery%");
                     });
                 }
                 $totalContacts = $contactsQuery->count();
@@ -1386,26 +1365,26 @@ class DB
                 }
             }
         }
-    
+
         // Add objects for Contacts and Deals with their respective data arrays
         $responseData = [];
         foreach ($data as $moduleName => $moduleData) {
             if (!empty($moduleData)) {
                 $responseData[] = [
                     'text' => $moduleName,
-                    'children' => $moduleData
+                    'children' => $moduleData,
                 ];
             }
         }
-    
+
         // Return response with total count for pagination
         return response()->json([
             'items' => $responseData,
-            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0)
+            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0),
         ]);
     }
-    
-    public function storeRolesIntoDB($contactRoles,$user)
+
+    public function storeRolesIntoDB($contactRoles, $user)
     {
         Log::info("Storing Contact Roles Into Database");
         foreach ($contactRoles as $contactRole) {
@@ -1417,7 +1396,7 @@ class DB
                 'zoho_role_id' => $contactRole['id'],
                 'name' => $contactRole['name'],
                 'userId' => $user ? $user->id : null,
-                'sequence_no' => $contactRole['sequence_number']
+                'sequence_no' => $contactRole['sequence_number'],
             ]);
         }
 
@@ -1427,56 +1406,63 @@ class DB
     public function retrieveRoles($user)
     {
         Log::info("Get Contact Roles Into Database");
-            $roles = ContactRole::where([
-                'userId' => $user['id'],
-            ])->get();
-            return $roles;
+        $roles = ContactRole::where([
+            'userId' => $user['id'],
+        ])->get();
+        return $roles;
         Log::info("Contact Role retrived from database successfully.");
     }
 
     public function importDataFromCSV($csvFilePath, $module)
     {
-        try {
-            $csv = Reader::createFromPath($csvFilePath, 'r');
-            $csv->setHeaderOffset(0);
+        $reader = Reader::createFromPath($csvFilePath, 'r');
+        $reader->setHeaderOffset(0);
+        $records = $reader->getRecords();
 
-            $stmt = (new Statement())->offset(0);
-            $records = $stmt->process($csv);
+        $batchSize = 1000; // Adjust the batch size based on your memory and performance needs
+        $dataBatch = [];
 
-            foreach ($records as $record) {
-                switch ($module) {
-                    case 'Contacts':
-                        Contact::updateOrCreate(
-                            ['zoho_contact_id' => $record['id']],
-                            $record
-                        );
-                        break;
-                    case 'Deals':
-                        Deal::updateOrCreate(
-                            ['zoho_deal_id' => $record['id']],
-                            $record
-                        );
-                        break;
-                    case 'ContactGroups':
-                        ContactGroup::updateOrCreate(
-                            ['zoho_contact_group_id' => $record['id']],
-                            $record
-                        );
-                        break;
-                    case 'AgentCommission':
-                        AgentCommission::updateOrCreate(
-                            ['zoho_agent_commission_id' => $record['id']],
-                            $record
-                        );
-                        break;
-                    // Add more cases for other modules
-                }
+        foreach ($records as $record) {
+            $dataBatch[] = $record;
+
+            if (count($dataBatch) >= $batchSize) {
+                $this->upsertDataBatch($dataBatch, $module);
+                $dataBatch = [];
             }
-
-            Log::info("Data imported successfully for module: {$module}");
-        } catch (\Exception $e) {
-            Log::error("Error importing data from CSV: " . $e->getMessage());
         }
+
+        // Insert any remaining records
+        if (count($dataBatch) > 0) {
+            $this->upsertDataBatch($dataBatch, $module);
+        }
+    }
+
+    protected function upsertDataBatch(array $dataBatch, $module)
+    {
+        try {
+            switch ($module) {
+                case 'Contacts':
+                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id'], $this->getUpdateColumns($dataBatch));
+                    break;
+                case 'Deals':
+                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id'], $this->getUpdateColumns($dataBatch));
+                    break;
+                case 'Contacts_X_Groups':
+                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id'], $this->getUpdateColumns($dataBatch));
+                    break;
+                case 'Agent_Commission_Incomes':
+                    // Handle upsert for Agent_Commission_Incomes if applicable
+                    break;
+                    // Add other cases as needed
+            }
+        } catch (\Exception $e) {
+            Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
+        }
+    }
+
+    protected function getUpdateColumns(array $dataBatch)
+    {
+        return array_keys($dataBatch[0]);
     }
 
 }
