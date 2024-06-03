@@ -1,7 +1,7 @@
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 overflow-auto">
     <div class="col col-contact">
         <div class="webResponsiveDiv">
-            <table id="example" class="table table-striped table-bordered table-nowrap" cellspacing="0" width="100%">
+            <table id="example" style="width: 100vw;" class="table table-striped table-bordered table-nowrap" cellspacing="0" width="100%">
                 <thead class="thead_con_design">
                     <tr>
                         <th>
