@@ -68,7 +68,7 @@ class SaveTransactionToDB extends Command
             Log::info("Retrieved transactions for user {$user->id}: " . $allDeals);
 
             // Store contacts in the database
-            $saveInDB = new DB();
+            $saveInDB = new DatabaseService();
             $saveInDB->storeTransactionsIntoDB($allDeals);
         }
     }

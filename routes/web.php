@@ -13,13 +13,15 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
+use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\UpdateFromZohoCRMController;
 
-// Assuming you want to redirect authenticated users to the dashboard,
-// and non-authenticated users to a home or login page:
-// Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('root');
-// Dashboard Route
+// Zoho Bulk Read Callback
+Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
+Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
+
+
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
-// Route::get('/home', [HomeController::class, 'index'])->name('home.index')->middleware('auth');
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -42,7 +44,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
-Route::delete('/delete-note', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
+Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
 Route::post('/update-notes/{id}', [DashboardController::class, 'updateNote'])->name('update.note')->middleware('auth');
 

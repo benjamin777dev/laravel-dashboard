@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Models\User; // Add this line to import the User model
 
 class CompositeApi extends Command
@@ -31,7 +31,7 @@ class CompositeApi extends Command
     {
         $users = User::all();
         $zoho = new ZohoCRM();
-        $db = new DB();
+        $db = new DatabaseService();
         foreach ($users as $user) {
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;

@@ -278,64 +278,8 @@
         }
     }
 
-    const ui = {
-  confirm: async (message) => createConfirm(message)
-}
-    function deleteTask(id, isremoveselected = false) {
-        let updateids = removeAllSelected();
-        if (updateids === "" && id === 'remove_selected') {
-            return;
-        }
-        if (isremoveselected) {
-            id = undefined;
-        }
-
-        if (updateids !== "") {
-            if (save()) {
-
-            } else {
-                return;
-            }
-        }
-        if (id === undefined) {
-            id = updateids;
-        }
-        //remove duplicate ids
-        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-        return;
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        try {
-            if (id) {
-                $.ajax({
-                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                    method: 'DELETE', // Change to DELETE method
-                    contentType: 'application/json',
-                    dataType: 'JSON',
-                    data: {
-                        'id': id,
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        // Handle success response
-                        showToast("deleted successfully");
-                        window.location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        showToastError(xhr.responseText)
-                    }
-                })
-
-            }
-        } catch (err) {
-            console.error("error", err);
-        }
-    }
+    
+   
 
 
     function updateTask(id, indexid) {

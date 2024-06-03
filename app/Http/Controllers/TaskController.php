@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Task;
-use App\Services\DB;
+use App\Services\DatabaseService;
 
 class TaskController extends Controller
 {
@@ -14,7 +14,7 @@ class TaskController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $tab = request()->query('tab') ?? 'In Progress';
         $accessToken = $user->getAccessToken(); 
         $tasks = $db->retreiveTasks($user, $accessToken,$tab);

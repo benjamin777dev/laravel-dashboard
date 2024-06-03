@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Services\ZohoCRM;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Models\User; // Add this line to import the User model
 
 class SaveDealsToDB extends Command
@@ -83,7 +83,7 @@ class SaveDealsToDB extends Command
                 }
                
                 // Store retrieved deals into the database
-                $saveInDB = new DB();
+                $saveInDB = new DatabaseService();
                 $saveInDB->storeDealsIntoDB($allDeals,$user);
 
                 // Log success

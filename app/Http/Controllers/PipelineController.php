@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Services\DB;
+use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use App\Services\Helper;
@@ -18,7 +18,7 @@ class PipelineController extends Controller
 {
     public function index(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {
@@ -59,17 +59,18 @@ class PipelineController extends Controller
         
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
         }
-        return view('pipeline.index', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        return view('pipeline.index', compact('deals','userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 
     public function getDeals(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -92,7 +93,7 @@ class PipelineController extends Controller
     public function showViewPipelineForm(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
-        $db = new DB();
+        $db = new DatabaseService();
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
@@ -117,18 +118,19 @@ class PipelineController extends Controller
         $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $users = User::all();
         $contactRoles = $db->retrieveRoles($user);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
 
     }
 
     public function showCreatePipelineForm(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
-        $db = new DB();
+        $db = new DatabaseService();
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
@@ -152,15 +154,16 @@ class PipelineController extends Controller
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $users = User::all();
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('tasks','contactRoles', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
+        return view('pipeline.create', compact('tasks','contactRoles','users', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages'));
     }
 
     public function getDeal(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $user = auth()->user();
         if (!$user) {
             return redirect('/login');
@@ -175,7 +178,7 @@ class PipelineController extends Controller
 
     public function createPipeline(Request $request)
     {
-        $db = new DB();
+        $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
         if (!$user) {
@@ -337,7 +340,7 @@ class PipelineController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DB();
+        $db = new DatabaseService();
         $dealId = request()->route('dealId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
