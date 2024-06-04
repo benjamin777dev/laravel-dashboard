@@ -10,6 +10,9 @@ use App\Models\Contact;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use App\Models\Groups;
+use App\Models\ContactGroups;
+use Illuminate\Support\Facades\Response;
 use App\Services\DatabaseService;
 
 class ContactController extends Controller
@@ -28,12 +31,14 @@ class ContactController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $groups = $db->retrieveGroups($user, $accessToken);
+        $apend = false;
         if ($request->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('contacts.index', compact('contacts'))->render();
+            $apend = true;
+            $view = view('contacts.load',  compact('contacts','userContact','getdealsTransaction', 'retrieveModuleData', 'groups','apend'))->render();
+            return Response::json(['view' => $view, 'nextPageUrl' => $contacts->nextPageUrl()]);
         }
-
-        return view('contacts.index', compact('contacts','userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups'));
+ 
+        return view('contacts.index', compact('contacts','userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups','apend'));
     }
 
     public function getContact(Request $request)
@@ -54,7 +59,8 @@ class ContactController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
-        return view('contacts.contact',  compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups'))->render();
+        $apend = false;
+        return view('contacts.contact',  compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups','apend'))->render();
         // return view('pipeline.index', compact('deals'));
     }
 
@@ -148,6 +154,7 @@ class ContactController extends Controller
                     return $responseFromZoho;
                 }
             }
+           
             $contactOwnerArray = json_decode($request->contactOwner, true);
             // Validate the array
             $validatedData1 = validator()->make($contactOwnerArray, [
@@ -270,13 +277,7 @@ class ContactController extends Controller
                         "Email" => $validatedData['email'] ?? "",
                         "Business_Name" => $validatedData['business_name'] ?? "",
                         "Business_Info" => $validatedData['business_information'] ?? "",
-                        // "Groups"=> [
-                        //   [
-                        //     "Groups"=> [
-                        //       "id"=> "5141697000056430012"
-                        //     ]
-                        //   ]
-                        // ],
+                        "Groups" => [],
                         "Referred_By" => [
                             "id" => $validatedRefferedData['id'] ?? "",
                             "name" => $validatedRefferedData['Full_Name'] ?? "",
@@ -310,6 +311,22 @@ class ContactController extends Controller
                 ],
                 "skip_mandatory" => true
             ];
+            $selectedGroupsarr;
+            $selectedGroupsarr = json_decode($request->selectedGroups);
+            foreach ($selectedGroupsarr as $group) {
+                $responseData["data"][0]["Groups"][] = [
+                    "Groups" => [
+                        "id" => $group
+                    ]
+                ];
+            }
+
+            
+            
+            
+            if (empty($responseData["data"][0]["Groups"])) {
+                unset($responseData["data"][0]["Groups"]);
+            }
 
             if (empty($responseData['data'][0]['Relationship_Type'])) {
                 unset($responseData['data'][0]['Relationship_Type']);
@@ -410,7 +427,19 @@ class ContactController extends Controller
                     $contactInstance->last_emailed = $validatedData['last_emailed'];
                 }
                 $contactInstance->save();
+                foreach ($selectedGroupsarr as $group) {
+                    $groupsInstance = Groups::where('zoho_group_id', $group)->first();
+                $contactGroup = ContactGroups::updateOrCreate(
+                    ['zoho_contact_group_id' => $group],
+                    [
+                        'ownerId' => $user->id,
+                        "contactId" => $contactInstance['id'] ?? null,
+                        "groupId" => $groupsInstance['id'] ?? null,
+                        "zoho_contact_group_id" => $group ?? null,
+                    ]
+                );
             }
+        }
             // Redirect back with a success message
             return redirect()->back()->with('success', 'Contact Updated successfully!');
         } catch (\Exception $e) {
@@ -528,6 +557,7 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA'.$contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         $groups = $db->retrieveGroups($user, $accessToken);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType=null,  $sortField=null);
         $tab = request()->query('tab') ?? 'In Progress';
         $users =  $user;
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
@@ -537,7 +567,7 @@ class ContactController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.detail', compact('contact','userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups'));
+        return view('contacts.detail', compact('contact','userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups','contactsGroups'));
     }
 
 
@@ -575,8 +605,10 @@ class ContactController extends Controller
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType=null,  $sortField=null);
+        $groups = $db->retrieveGroups($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId'));
+        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId','groups','contactsGroups'));
 
     }
 

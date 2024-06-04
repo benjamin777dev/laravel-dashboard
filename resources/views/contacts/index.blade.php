@@ -73,7 +73,7 @@
         </div>
         </div>
 
-        <div class="contactlist" id="contactlist">
+        <div class="contactlist overflow-auto" id="contactlist">
             @include('contacts.contact', ['contacts' => $contacts])
             <!-- Filter Modal -->
           

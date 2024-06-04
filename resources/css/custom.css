@@ -3031,6 +3031,9 @@ input[type=button]:hover {
     max-height: 200px;
     overflow-y: hidden;
 }
+.choices__list--multiple .choices__item{
+    background-color: #222;
+}
 
 .contact-modal{
     width:500px;
