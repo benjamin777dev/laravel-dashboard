@@ -211,6 +211,8 @@ class DashboardController extends Controller
             'totalIRS1099' => $this->formatNumber($totalIRS1099 ?? 0),
         ];
 
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
+
         Log::Info("ACI Data: ". print_r($aciData, true));
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
@@ -225,7 +227,7 @@ class DashboardController extends Controller
                 'projectedIncome', 'beyond12MonthsData',
                 'needsNewDateData', 'allMonths', 'contactData',
                 'newContactsLast30Days', 'newDealsLast30Days',
-                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah'));
+                'averagePipelineProbability', 'tasks', 'aciData','tab','dealFordash','getdealsTransaction','notes','startDate','endDate','user','notesInfo','closedDeals','retrieveModuleData','accessToken','contactInfo','totalGciForDah','userContact'));
     }
 
     private function formatNumber($number) {

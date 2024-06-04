@@ -75,6 +75,29 @@
         </tbody>
     </table>
 </div>
+@foreach ($shownGroups as $shownGroup)
+<div class="ptableCardDiv">
+    <div class="pTableCard">
+        <div class="d-flex justify-content-between">
+            <div>
+            <p>Group Name</p>
+            <p>{{ $shownGroup['name'] }}</p>
+            </div> 
+            <div>
+            <p>Contacts</p>
+            <p>{{ count($shownGroup['contacts']) }}</p>
+            </div>
+            <div class="groupAddButton" type="button" data-bs-toggle="modal"
+                data-bs-target="#staticBackdropforNote">
+                <div class="tooltip-wrapper">
+                        <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon" >
+                        <span class="tooltiptext">Add Groups</span>
+                    </div>
+            </div>
+        </div>      
+    </div>
+</div>
+@endforeach
 <script>
   
     window.selectedValues = [];

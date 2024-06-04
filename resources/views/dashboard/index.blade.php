@@ -48,7 +48,7 @@
 
                     <div>
                         <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
-                            data-bs-target="#" onclick="createTransaction()"><i class="fas fa-plus plusicon">
+                            data-bs-target="#" onclick="createTransaction({{$userContact}})"><i class="fas fa-plus plusicon">
                             </i>
                             New Transaction
                         </div>
@@ -542,7 +542,7 @@
         return formattedDateTime;
     }
 
-    window.createTransaction = function() {
+    window.createTransaction = function(userContact) {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
         var formData = {
@@ -550,6 +550,10 @@
                 "Deal_Name": "{{ config('variables.dealName') }}",
                 "Owner": {
                     "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Contact_Name": {
+                    "id": userContact.zoho_contact_id,
+                    "Name":userContact.first_name+" "+userContact.last_name
                 },
                 "Stage": "Potential"
             }],
