@@ -1,150 +1,62 @@
-<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 overflow-auto">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
     <div class="col col-contact">
         <div class="webResponsiveDiv">
-            <table id="example" style="width: 100vw;" class="table table-striped table-bordered table-nowrap" cellspacing="0" width="100%">
+            <table id="example" style="width: 100vw;" class="table table-striped table-bordered table-nowrap"
+                cellspacing="0" width="100%">
+                @if ($apend===false)
                 <thead class="thead_con_design">
                     <tr>
                         <th>
                             <div class="commonFlex">
                                 <p class="mb-0">First name</p>
-                                <img onclick="sortContact('first_name')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                <img onclick="sortContact('first_name')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th>
                             <div class="commonFlex">
                                 <p class="mb-0">ABCD</p>
-                                <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Mobile</p>
-                                <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Email</p>
-                                <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Address</p>
-                                <img onclick="sortContact('mailing_address')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('mailing_address')"
+                                    src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th scope="col">
                             <div class="commonFlex">
                                 <p class="mb-0">Relationship Type</p>
-                                <img onclick="sortContact('relationship_type')" src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                <img onclick="sortContact('relationship_type')"
+                                    src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                     class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                             </div>
                         </th>
                         <th></th>
                     </tr>
                 </thead>
-                @foreach ($contacts as $contact)
-                    <a id="taskRoute" href="{{ route('contacts.show', $contact['id']) }}">
-                        <tbody>
-                            <tr>
-                                <td>{{ $contact['first_name'] ?? $contact['last_name'] }}</td>
-                                <td>{{ $contact['abcd'] ?? '-' }}</td>
-                                <td>
-                                    <div class="d-flex gap-2"
-                                        onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile_web','{{ $contact['mobile'] ?? 'N/A' }}')">
-                                        <p id="mobile_web{{ $contact['zoho_contact_id'] }}" class="card-text">
-                                            {{ $contact['mobile'] ?? 'N/A' }}</p>
-
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="datamailDiv px-0">
-                                        <img src="{{ URL::asset('/images/mail.svg') }}" alt=""
-                                            class="datamailicon">
-                                        <div class="d-flex gap-2 overflow-hidden"
-                                            onclick="editText('{{ $contact['zoho_contact_id'] }}','email_web','{{ $contact['email'] ?? 'N/A' }}')">
-                                            <p id="email_web{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
-                                                {{ $contact['email'] ?? 'N/A' }}</p>
-
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="datamailDiv px-0">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        <div class="d-flex gap-2 overflow-hidden">
-                                            <p id="address{{ $contact['zoho_contact_id'] }}" class="dataEmailtext">
-                                                @if ($contact['mailing_address'])
-                                                    {{ $contact['mailing_address'] }}
-                                                @endif
-                                                @if ($contact['mailing_city'])
-                                                    {{ $contact['mailing_address'] ? ', ' : '' }}
-                                                    {{ $contact['mailing_city'] }}
-                                                @endif
-                                                @if ($contact['mailing_state'])
-                                                    {{ $contact['mailing_city'] || $contact['mailing_address'] ? ', ' : '' }}
-                                                    {{ $contact['mailing_state'] }}
-                                                @endif
-                                                @if ($contact['mailing_zip'])
-                                                    {{ $contact['mailing_city'] || $contact['mailing_address'] || $contact['mailing_state'] ? ', ' : '' }}
-                                                    {{ $contact['mailing_zip'] }}
-                                                @endif
-                                                @if (empty($contact['mailing_address']) &&
-                                                        empty($contact['mailing_city']) &&
-                                                        empty($contact['mailing_state']) &&
-                                                        empty($contact['mailing_zip']))
-                                                    N/A
-                                                @endif
-
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-                                
-                                <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
-                                <td>
-
-                                    <div class="tooltip-wrapper">
-                                        <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
-                                            <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                                                class="ppiplinecommonIcon" title="Contact Details">
-                                            <span class="tooltiptext">Contact Details</span>
-                                        </a>
-                                    </div>
-
-                                    <div class="tooltip-wrapper">
-                                        <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon"
-                                            class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                            data-bs-target="#newTaskModalId{{ $contact['id'] }}" title="Add Task">
-                                        <span class="tooltiptext">Add Task</span>
-                                    </div>
-
-
-                                    <div class="tooltip-wrapper">
-                                        <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon"
-                                            class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
-                                            onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
-                                        <span class="tooltiptext">View Notes</span>
-                                    </div>
-
-                                    <div class="tooltip-wrapper">
-                                        <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
-                                            class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                            data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
-                                        <span class="tooltiptext">Add Note</span>
-                                    </div>
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </a>
-                @endforeach
+                @endif
+                <tbody class="table_apeend">
+                @include('contacts.load', ['contacts' => $contacts])
+                </tbody>
             </table>
         </div>
         @foreach ($contacts as $contact)
@@ -292,36 +204,48 @@
         @endforeach
     </div>
 </div>
-<div class="datapagination">
+<div class="datapagination d-none">
 
     @include('common.pagination', ['module' => $contacts])
 </div>
 <script>
-    window.onload = function() {
-        $(document).on('click', '.datapagination a', function(e) {
-            console.log(e, 'eeeeeee')
-            e.preventDefault();
-            let page = $(this).attr('href').split('page=')[1]
-            record(page)
-        })
-
-        function record(page) {
-            $.ajax({
-                url: "/contacts/fetch-contact?page=" + page,
-                success: function(res) {
-                    $('.contactlist').html(res);
+    $(document).ready(function() {
+        let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                if (nextPageUrl) {
+                    loadMorePosts();
                 }
-            })
+            }
+        });
+
+        function loadMorePosts() {
+            $.ajax({
+                url: nextPageUrl,
+                type: 'get',
+                beforeSend: function() {
+                    nextPageUrl = '';
+                },
+                success: function(data) {
+                    console.log(data, 'datatatata')
+                    nextPageUrl = data.nextPageUrl;
+                    $('.table_apeend').append(data.view);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading more posts:", error);
+                }
+            });
         }
-    }
+    });
+
     let sortDirectionContact = 'desc';
-    window.sortContact=function(sort){
+    window.sortContact = function(sort) {
         sortDirectionContact = (sortDirectionContact === 'desc') ? 'asc' : 'desc';
         // Call fetchDeal with the sortField parameter
-        fetchContact("",sort, sortDirectionContact);
+        fetchContact("", sort, sortDirectionContact);
     }
 
-    
+
 
     function editText(zohoID, name, value) {
         event.preventDefault();

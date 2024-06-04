@@ -278,7 +278,7 @@
                         <label for="contactName" class="form-label nplabelText">Contact Name</label>
                         <input type="hidden" name="contactName" id="contactNameObject" value="{{ json_encode($deal['contactName']) }}">
                         <input type="text" class="form-control npinputinfo" 
-                            id="contactName" required value = "{{$deal['contactName']['first_name']}} {{$deal['contactName']['last_name']}}" disabled/>
+                            id="contactName" required value = "{{$deal['contactName']['first_name'] ?? ''}} {{$deal['contactName']['last_name'] ?? ''}}"                            disabled/>
                     </div>
                     
                     <div class="col-md-6">
