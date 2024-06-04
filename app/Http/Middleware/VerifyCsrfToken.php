@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        '/bulkJob/update', // Add your webhook route here
+        '/bulkJob/update', 
+        '/webhook/contact'
     ];
 }

@@ -133,7 +133,6 @@
     </div>
 @endif
 <script>
-   
     function enableSelect(id) {
         // Enable the select element before form submission
         document.getElementById('noteSelect'+id).removeAttribute('disabled');

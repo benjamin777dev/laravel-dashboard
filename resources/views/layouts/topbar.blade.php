@@ -462,7 +462,7 @@
             selectElementId
         }) => {
             const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
+            showDropdownForId(modalID, selectElement);
         });
 
     });

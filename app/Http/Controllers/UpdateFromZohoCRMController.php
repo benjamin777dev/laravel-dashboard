@@ -21,10 +21,15 @@ class UpdateFromZohoCRMController extends Controller
         $data['zoho_contact_id'] = $zohoContactId;
 
         // Update or create the contact record in the database
-        Contact::updateOrCreate(
-            ['zoho_contact_id' => $zohoContactId],
-            $data
-        );
+        try {
+            Contact::updateOrCreate(
+                ['zoho_contact_id' => $zohoContactId],
+                $data
+            );
+        } catch (\Exception $e) {
+            Log::error('Error updating contact', ['zoho_contact_id' => $zohoContactId, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Error updating contact'], 500);
+        }
 
         Log::info('Contact updated/inserted successfully', ['zoho_contact_id' => $zohoContactId]);
 
