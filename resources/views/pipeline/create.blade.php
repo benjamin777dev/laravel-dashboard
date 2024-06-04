@@ -377,8 +377,8 @@
                     </form>
             </div>
         </div>
-        {{-- contact roles --}}
-        <div class="table-responsive dtranstiontable mt-3">
+       {{-- contact roles --}}
+        {{-- <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Contact Roles</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
@@ -457,10 +457,10 @@
             </div>
 
 
-        </div>
+        </div> --}}
 
         {{-- Add New Submittal --}}
-        <div class="table-responsive dtranstiontable mt-3">
+        {{-- <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Submittals</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
@@ -526,10 +526,10 @@
             </div>
 
 
-        </div>
+        </div> --}}
 
         {{-- Non-TM Check request --}}
-        <div class="table-responsive dtranstiontable mt-3">
+        {{-- <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Non-TM Check request</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
@@ -595,10 +595,10 @@
             </div>
 
 
-        </div>
+        </div> --}}
 
         {{-- Agent’s Commissions --}}
-        <div class="table-responsive dtranstiontable mt-3">
+        {{-- <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Agent’s Commissions</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
@@ -671,10 +671,10 @@
             </div>
 
 
-        </div>
+        </div> --}}
 
         {{-- Add New Attachment --}}
-        <div class="table-responsive dtranstiontable mt-3">
+        {{-- <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Attachments</p>
                 <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
@@ -746,7 +746,7 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div> --}}
 
         
 </div>
