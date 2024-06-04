@@ -557,6 +557,14 @@
     /* cursor: pointer; */
 }
 
+.groupAddButton {
+    right: 26px;
+    padding: 18px 18px;
+    background: #222;
+    border-radius: 50%;
+    /* cursor: pointer; */
+}
+
 /* Tooltip container */
 .tooltip-wrapper {
     position: relative;
@@ -2739,7 +2747,7 @@ body[data-sidebar="dark"] .navbar-brand-box {
     z-index: 0 !important;
 }
 .select2-container {
-    z-index: 9999 !important;
+    z-index: 0 !important;
 }
 
 .select2-selection {
@@ -3025,4 +3033,8 @@ input[type=button]:hover {
 }
 .choices__list--multiple .choices__item{
     background-color: #222;
+}
+
+.contact-modal{
+    width:500px;
 }

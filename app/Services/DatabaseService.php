@@ -869,6 +869,9 @@ class DatabaseService
 
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
             }
+            if ($dealData['Contact_Name']) {
+                $contact_name = Contact::where('zoho_contact_id', $dealData['Contact_Name']['id'])->first();
+            }
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
@@ -879,6 +882,7 @@ class DatabaseService
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
                 'contactId' => isset($contact->id) ? $contact->id : null,
+                'contact_name'=>isset($contact_name)?$contact_name->id:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;

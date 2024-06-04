@@ -19,7 +19,7 @@
             <p class="ncText">Create new contact</p>
         </div>
         <div class="row">
-            <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST">
+            <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST" onsubmit="enableCreateContactSelect()">
                 @csrf
                 @method('PUT')
                 <div class="col-md-6 col-sm-12"
@@ -229,19 +229,15 @@
 
                             <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
                             <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                                id="validationDefault03">
-                                @php
-                                    $spause_partner = $contact['spouse_partner'];
-                                @endphp
-                                <option value="">-None-</option>
-                                @if (!empty($contacts))
-                                    @foreach ($contacts as $contactrefs)
-                                        <option
-                                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                            {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
-                                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
-                                        </option>
-                                    @endforeach
+                             id="validationDefault13" style="display:none" >
+                            @if (!empty($contacts))
+                                @foreach ($contacts as $contactrefs)
+                                    <option
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                        >
+                                        {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                    </option>
+                                @endforeach
                                 @endif
 
                             </select>
@@ -385,6 +381,7 @@
             </div>
         </div>
     </div>
+    @include('common.contact.createModal', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])
     {{-- Note Modal --}}
     @include('common.notes.create', [
         'contact' => $contact,
@@ -400,6 +397,13 @@
 
 @endsection
 <script>
+    function enableCreateContactSelect() {
+        console.log("COntact Owner Validatio",document.getElementById('validationDefault22'));
+        // Enable the select element before form submission
+        document.getElementById('validationDefault22').removeAttribute('disabled');
+        // Return true to allow form submission
+        return true;
+    }
     document.addEventListener('DOMContentLoaded', function() {
         $('#primary_address').change(function() {
             if ($(this).is(':checked')) {
@@ -441,9 +445,17 @@
 
         });
         document.getElementById('contact_create_form').appendChild(hiddenInput);
-        document.getElementById("note_text").addEventListener("keyup", validateFormc);
-        document.getElementById("related_to").addEventListener("change", validateFormc);
 
+        var getSpouse = $('#validationDefault13');
+        getSpouse.select2({
+            placeholder: 'Search...',
+        }).on('select2:open', () => {
+        $(".select2-results:not(:has(a))").append('<div onclick = "openContactModal()" style="padding: 6px;height: 20px;display: inline-table; color:black; cursor:pointer;" ><i class="fas fa-plus plusicon"></i>New Contact</div>');
+
+            window.openContactModal=function() {
+                $("#createContactModal").modal('show');
+            }
+        })
     })
 
 
