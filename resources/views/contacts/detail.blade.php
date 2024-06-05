@@ -181,19 +181,19 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="validationDefault09" class="form-label nplabelText">Referred By</label>
+                            <label for="validationDefault14" class="form-label nplabelText">Referred By</label>
                             <select name="reffered_by" type="text" class="form-select npinputinfo"
-                                id="validationDefault09">
+                                id="validationDefault14" style="display:none">
                                 @php
                                     $referred_id = $contact['referred_id'];
                                 @endphp
-                                <option value="">-None-</option>
                                 @if (!empty($contacts))
                                     @foreach ($contacts as $contactRef)
                                         <option
                                             value="{{ json_encode(['id' => $contactRef['zoho_contact_id'], 'Full_Name' => $contactRef['first_name'] . ' ' . $contactRef['last_name']]) }}"
                                             {{ $contactRef['zoho_contact_id'] == $referred_id ? 'selected' : '' }}>
-                                            {{ $contactRef['first_name'] }} {{ $contactRef['last_name'] }}</option>
+                                            {{ $contactRef['first_name'] }} {{ $contactRef['last_name'] }}
+                                        </option>
                                     @endforeach
                                 @endif
                             </select>
@@ -242,23 +242,25 @@
                             <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
                                 class="form-control npinputinfo" id="validationDefault11">
                         </div>
-                        <div class="col-md-6">
+                         <div class="col-md-6">
 
-                            <label for="validationDefault12" class="form-label nplabelText">Spouse/Partner</label>
+                            <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                             <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                                id="validationDefault12">
-                                @php
-                                    $spause_partner = $contact['spouse_partner'];
-                                @endphp
-                                <option value="">-None-</option>
-                                @if (!empty($contacts))
-                                    @foreach ($contacts as $contactrefs)
-                                        <option
-                                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                            {{ $contactrefs['zoho_contact_id'] == $spause_partner ? 'selected' : '' }}>
-                                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}</option>
-                                    @endforeach
-                                @endif
+                             id="validationDefault13" style="display:none" >
+                            @if (!empty($spouseContact) && is_array($spouseContact))
+                                <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
+                                    {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
+                                </option>
+                            @endif
+                            @if (!empty($contacts))
+                                @foreach ($contacts as $contactrefs)
+                                    <option
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                        >
+                                        {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                    </option>
+                                @endforeach
+                            @endif
 
                             </select>
                         </div>
@@ -382,7 +384,7 @@
             </div>
         </div>
     </div>
-
+    @include('common.contact.createModal', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])                            
     {{-- Note Modal --}}
     @include('common.notes.create', [
         'contact' => $contact,
@@ -487,6 +489,25 @@
 
         });
         document.getElementById('contact_detail_form').appendChild(hiddenInput);
+
+        var getReffered = $('#validationDefault14')
+        getReffered.select2({
+            placeholder: 'Search...',
+        })
+        var getSpouse = $('#validationDefault13');
+        getSpouse.select2({
+            placeholder: 'Search...',
+        }).on('select2:open', () => {
+            // Remove existing button to avoid duplicates
+            $('.select2-results .new-contact-btn').remove();
+
+            // Append the button
+            $(".select2-results").append('<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>');
+        });
+
+        window.openContactModal = function() {
+            $("#createContactModal").modal('show');
+        }
 
 
 

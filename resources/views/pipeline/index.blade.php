@@ -79,7 +79,13 @@
         </div>
 
         <div class="transaction-container">
+            @if(count($deals) > 0)
             @include('pipeline.transaction')
+            @else
+                <div class="pnofound">
+                    <p>No records found</p>
+                </div>
+            @endif
         </div>
     </div>
     @vite(['resources/js/pipeline.js'])

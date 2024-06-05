@@ -357,7 +357,7 @@ class DashboardController extends Controller
         // don't count anything beyond 12 months
         // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['stage'], 'Dead')
+            return !Str::startsWith($deal['stage'], 'Dead-Lost To Competition')
                    && $deal['stage'] !== 'Sold'
                    && $this->masterFilter($deal); // Correct usage within the method
         });
