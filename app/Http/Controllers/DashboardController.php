@@ -82,7 +82,7 @@ class DashboardController extends Controller
                 ],
             ];
         });
-   
+     
         $cpv = $stageData->sum(function ($stage) {
             return $stage['asum'];
         });
