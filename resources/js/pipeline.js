@@ -59,8 +59,12 @@ window.checkValidate = function (deal) {
         probability.value = "20";
     } else if (stage.value == 'Under Contract') {
         probability.value = "60";
-    } else if (stage.value == 'Dead-Lost To Competition') {
+    } else if (stage.value == 'Sold') {
         probability.value = "100";
+    } else if (stage.value == 'Dead-Contract Terminated') {
+        probability.value = "0";
+    } else if (stage.value == 'Dead-Lost To Competition') {
+        probability.value = "0";
     }
     var address = document.getElementById('validationDefault07');
     var city = document.getElementById('validationDefault08');
@@ -390,9 +394,25 @@ window.updateDeal = function (dealID, field, Id, card, date) {
 
 window.addEventListener('DOMContentLoaded', function () {
     window.updateDealData = async function (field, id, dealID, value = null) {
+        let elementId = await document.getElementById(field + dealID);
+        let pipelineprobability = await document.getElementById('pipeline_probability' + dealID);
+        let probabilityData = {
+            "Potential": 5,
+            "Pre-Active": 20,
+            "Active": 40,
+            "Under Contract": 60,
+            "Dead-Lost To Competition": 100
+        };
+        
+        if (field === "stage") {
+            let stageValue = elementId.value;
+            if (probabilityData.hasOwnProperty(stageValue)) {
+                let probabilityValue = probabilityData[stageValue];
+                pipelineprobability.textContent = probabilityValue.toFixed(2) + "%";
+            }
+        }
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
-        let elementId = await document.getElementById(field + dealID);
         let formData = {
             "data": [{
                 "Deal_Name": field == "deal_name" ? elementId?.textContent : undefined,
@@ -403,7 +423,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 "Sale_Price": field == "sale_price" ? elementId?.textContent : undefined,
                 "Closing_Date": field == "closing_date" ? (elementId?.textContent ? elementId?.textContent : elementId.value) : undefined,
                 "Commission": field == "commission" ? elementId?.textContent : undefined,
-                "Pipeline_Probability": field == "pipeline_probability" ? elementId?.textContent : undefined
+                "Pipeline_Probability": field == "pipeline_probability" ? elementId?.textContent ?? pipelineprobability?.textContent : undefined
             }],
             "skip_mandatory": true
         }

@@ -311,8 +311,9 @@ class ContactController extends Controller
                 ],
                 "skip_mandatory" => true
             ];
-            $selectedGroupsarr;
+            $selectedGroupsarr=[];
             $selectedGroupsarr = json_decode($request->selectedGroups);
+            if(is_array($selectedGroupsarr)&&count($selectedGroupsarr)!==0){
             foreach ($selectedGroupsarr as $group) {
                 $responseData["data"][0]["Groups"][] = [
                     "Groups" => [
@@ -320,6 +321,7 @@ class ContactController extends Controller
                     ]
                 ];
             }
+        }
 
             
             
@@ -427,17 +429,19 @@ class ContactController extends Controller
                     $contactInstance->last_emailed = $validatedData['last_emailed'];
                 }
                 $contactInstance->save();
-                foreach ($selectedGroupsarr as $group) {
-                    $groupsInstance = Groups::where('zoho_group_id', $group)->first();
-                $contactGroup = ContactGroups::updateOrCreate(
-                    ['zoho_contact_group_id' => $group],
-                    [
-                        'ownerId' => $user->id,
-                        "contactId" => $contactInstance['id'] ?? null,
-                        "groupId" => $groupsInstance['id'] ?? null,
-                        "zoho_contact_group_id" => $group ?? null,
-                    ]
-                );
+                if(is_array($selectedGroupsarr)&&count($selectedGroupsarr)!==0){
+                    foreach ($selectedGroupsarr as $group) {
+                        $groupsInstance = Groups::where('zoho_group_id', $group)->first();
+                    $contactGroup = ContactGroups::updateOrCreate(
+                        ['zoho_contact_group_id' => $group],
+                        [
+                            'ownerId' => $user->id,
+                            "contactId" => $contactInstance['id'] ?? null,
+                            "groupId" => $groupsInstance['id'] ?? null,
+                            "zoho_contact_group_id" => $group ?? null,
+                        ]
+                    );
+                }
             }
         }
             // Redirect back with a success message
@@ -592,6 +596,9 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        $spouseContact = session('spouseContact');
+
+        session()->forget('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
@@ -608,7 +615,14 @@ class ContactController extends Controller
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType=null,  $sortField=null);
         $groups = $db->retrieveGroups($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId','groups','contactsGroups'));
+        if ($spouseContact) {
+        // Ensure $spouseContact is an array or an object, not a string
+            if (is_string($spouseContact)) {
+                $spouseContact = json_decode($spouseContact, true);
+            }
+        }
+
+        return view('contacts.create', compact('contact', 'user_id', 'name', 'users','spouseContact', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId','groups','contactsGroups'));
 
     }
 
@@ -630,16 +644,13 @@ class ContactController extends Controller
             $jsonData = $request->json()->all();
             $zohoContact = $zoho->createNewContactData($jsonData);
             if (!$zohoContact->successful()) {
-                return "error somthing" . $zohoContact;
+                return "error something" . $zohoContact;
             }
             $zohoContactArray = json_decode($zohoContact, true);
             $data = $zohoContactArray['data'][0]['details'];
             $contact = $db->createContact($user, $accessToken, $data['id']);
             return response()->json($contact);
         }
-
-
-
     }
 
     private function retrieveContactDetailsFromZoho($contactId, $accessToken)
@@ -662,6 +673,56 @@ class ContactController extends Controller
             Log::error("Exception when fetching contact details: {$e->getMessage()}");
             return null;
         }
+    }
+
+    public function createSpouseContact(Request $request,$id)
+    {
+        $db = new DatabaseService();
+        $zoho = new ZohoCRM();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        
+        $zoho->access_token = $accessToken;
+
+        $jsonData = $request->all();
+        $contactId = $id;
+       
+        $inputData = 
+        [
+            "data"=> [
+                [
+                    "Relationship_Type"=> "Secondary",
+                    "Missing_ABCD"=> true,
+                    "Owner"=> [
+                        "id"=> $user->root_user_id,
+                        "full_name"=>$user->name,
+                    ],
+                    "Layout"=>[
+                        "name"=> "Standard",
+                        "id"=> "5141697000000091033"
+                    ],
+                    "Last_Name"=> $jsonData['last_name'],
+                    "First_Name"=> $jsonData['first_name'],
+                    "Email"=> $jsonData['email'],
+                    "Phone"=> $jsonData['phone'],
+                    "Mobile"=> $jsonData['mobile'],
+                    "zia_suggested_users"=> [],
+                ]
+            ],
+        ];
+        $zohoContact = $zoho->createNewContactData($inputData);
+        if (!$zohoContact->successful()) {
+            return "error something" . $zohoContact;
+        }
+        $zohoContactArray = json_decode($zohoContact, true);
+        $data = $zohoContactArray['data'][0]['details'];
+        $contact = $db->createSpouseContact($user, $accessToken, $data['id'],$inputData['data'][0]);
+        session(['spouseContact' => $contact]);
+        // Redirect to the route without passing the contact object
+        return redirect()->route('contacts.create', ['contactId' => $contactId]);
     }
 
 }
