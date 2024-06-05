@@ -59,8 +59,12 @@ window.checkValidate = function (deal) {
         probability.value = "20";
     } else if (stage.value == 'Under Contract') {
         probability.value = "60";
-    } else if (stage.value == 'Dead-Lost To Competition') {
+    } else if (stage.value == 'Sold') {
         probability.value = "100";
+    } else if (stage.value == 'Dead-Contract Terminated') {
+        probability.value = "0";
+    } else if (stage.value == 'Dead-Lost To Competition') {
+        probability.value = "0";
     }
     var address = document.getElementById('validationDefault07');
     var city = document.getElementById('validationDefault08');

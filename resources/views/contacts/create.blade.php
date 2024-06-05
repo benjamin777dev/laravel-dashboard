@@ -4,6 +4,8 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
+    @vite(['resources/js/toast.js'])
+
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -23,39 +25,6 @@
                 method="POST" onsubmit="enableCreateContactSelect()">
                 @csrf
                 @method('PUT')
-                <div class="col-md-6 col-sm-12"
-                    style="display: none;padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-                    <p class="npinfoText">Internal Information</p>
-                    <div class="row g-3">
-                        <div>
-                            <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
-                            <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04">
-                                {{-- <option selected disabled value=""></option> --}}
-                                <option value="{{ json_encode(['id' => $user_id, 'Full_Name' => $name]) }}" selected>
-                                    {{ 'CHR Technology' }}
-                                </option>
-
-                            </select>
-                        </div>
-                        <div>
-                            @php
-                                // $date = "2024-04-11 00:00:00";
-                                $lastcalled = \Carbon\Carbon::parse($contact['last_called'])->format('Y-m-d');
-                                $lastemailed = \Carbon\Carbon::parse($contact['last_emailed'])->format('Y-m-d');
-                            @endphp
-                            <label for="validationDefault02" class="form-label nplabelText">Last Called</label>
-                            <input type="date" value="{{ $lastcalled }}" name="last_called"
-                                class="form-control npinputinfo" id="datetimeInput">
-                        </div>
-                        <div>
-                            <label for="validationDefault02" class="form-label nplabelText">Last Emailed</label>
-                            <input type="date" value="{{ $lastemailed }}" name="last_emailed"
-                                class="form-control npinputinfo" id="validationDefault02">
-                        </div>
-
-                    </div>
-                </div>
-
                 {{-- Contact Details --}}
                 <div class="col-md-6 col-sm-12"
                     style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
@@ -165,13 +134,12 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="validationDefault02" class="form-label nplabelText">Referred By</label>
+                            <label for="validationDefault14" class="form-label nplabelText">Referred By</label>
                             <select name="reffered_by" type="text" class="form-select npinputinfo"
-                                id="validationDefault02">
+                                id="validationDefault14" style="display:none">
                                 @php
                                     $referred_id = $contact['referred_id'];
                                 @endphp
-                                <option value="">-None-</option>
                                 @if (!empty($contacts))
                                     @foreach ($contacts as $contactRef)
                                         <option
@@ -232,17 +200,23 @@
                     </div> --}}
                         <div class="col-md-6">
 
-                            <label for="validationDefault03" class="form-label nplabelText">Spouse/Partner</label>
+                            <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                             <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                                id="validationDefault13" style="display:none">
-                                @if (!empty($contacts))
-                                    @foreach ($contacts as $contactrefs)
-                                        <option
-                                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}">
-                                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
-                                        </option>
-                                    @endforeach
-                                @endif
+                             id="validationDefault13" style="display:none" >
+                            @if (!empty($spouseContact) && is_array($spouseContact))
+                                <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
+                                    {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
+                                </option>
+                            @endif
+                            @if (!empty($contacts))
+                                @foreach ($contacts as $contactrefs)
+                                    <option
+                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                        >
+                                        {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                    </option>
+                                @endforeach
+                            @endif
 
                             </select>
                         </div>
@@ -454,23 +428,24 @@
         });
         document.getElementById('contact_create_form').appendChild(hiddenInput);
 
+        var getReffered = $('#validationDefault14')
+        getReffered.select2({
+            placeholder: 'Search...',
+        })
         var getSpouse = $('#validationDefault13');
         getSpouse.select2({
             placeholder: 'Search...',
         }).on('select2:open', () => {
-            // Check if the button already exists
-            if (!$(".select2-results").find(".new-contact-btn").length) {
-                // If not, append the button
-                $(".select2-results:not(:has(a))").append(
-                    '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px;height: 20px;display: inline-table; color:black; cursor:pointer;" ><i class="fas fa-plus plusicon"></i>New Contact</div>'
-                    );
-            }
-            // Define the function to open the modal
-            window.openContactModal = function() {
-                $("#createContactModal").modal('show');
-            };
+            // Remove existing button to avoid duplicates
+            $('.select2-results .new-contact-btn').remove();
+
+            // Append the button
+            $(".select2-results").append('<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>');
         });
 
+        window.openContactModal = function() {
+            $("#createContactModal").modal('show');
+        }
     })
 
 
@@ -479,6 +454,7 @@
         let last_name = $("#last_name").val();
         // let regex = /^[a-zA-Z ]{1,20}$/;
         if (last_name.trim() === "") {
+            showToastError('Please enter last name')
             return false;
         }
         let submitbtn = $("#submit_button");

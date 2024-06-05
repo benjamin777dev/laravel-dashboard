@@ -1,4 +1,3 @@
-
 <div class="table-responsive">
     <div class="container-fluid">
         <div class="col-md-12">
@@ -178,10 +177,7 @@
                 </div>
             </div>
         @endforeach
-    @else
-        <div class="pnofound">
-            <p>No records found</p>
-        </div>
+    
     @endif
 </div>
 <div class="datapagination d-none">

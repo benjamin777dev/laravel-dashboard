@@ -69,6 +69,7 @@ Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])-
 Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+Route::post('/contact/spouse/create/{contactId}', [ContactController::class, 'createSpouseContact'])->name('contact.spouse.create');
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
 //notes fetch in json for contact
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');

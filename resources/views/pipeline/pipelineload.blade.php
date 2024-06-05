@@ -174,10 +174,10 @@
                 </div>
             </div>
         </div>
+    </tr>
 @endforeach
 @else
 <div class="pnofound">
     <p>No records found</p>
 </div>
-</tr>
 @endif
