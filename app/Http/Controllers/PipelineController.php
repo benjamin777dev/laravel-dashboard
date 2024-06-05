@@ -210,7 +210,7 @@ class PipelineController extends Controller
 
     }
 
-    public function updatePipeline(Request $request, $id, DB $db, ZohoCRM $zoho)
+    public function updatePipeline(Request $request, $id, DatabaseService $db, ZohoCRM $zoho)
     {
         try {
             $user = auth()->user();

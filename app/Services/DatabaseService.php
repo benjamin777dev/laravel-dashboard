@@ -303,10 +303,10 @@ class DatabaseService
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [['userID', $user->id], ['stage', '!=', 'Dead-Lost To Competition']];
+            $conditions = [['userID', $user->id]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::where($conditions); // Select only fields from the deals table
+            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']);
 
             if ($search !== "") {
                 $searchTerms = urldecode($search);
@@ -1480,6 +1480,36 @@ class DatabaseService
         $columns = array_keys($dataBatch[0]);
         // You can customize this array to exclude certain columns if needed
         return $columns;
+    }
+
+    public function createSpouseContact(User $user, $accessToken, $spouseId,$zohoSpouseContact)
+    {
+        try {
+            Log::info("Spouse Contact Details" ,['contact' => $zohoSpouseContact]);
+            $contact = Contact::create([
+                'last_name' => $zohoSpouseContact['Last_Name'],
+                'relationship_type'=>$zohoSpouseContact['Relationship_Type'],
+                'missing_abcd'=>$zohoSpouseContact['Missing_ABCD'],
+                'first_name'=> $zohoSpouseContact['First_Name'],
+                'email'=> $zohoSpouseContact['Email'],
+                'phone'=> $zohoSpouseContact['Phone'],
+                'mobile'=> $zohoSpouseContact['Mobile'],
+                'isContactCompleted' => false,
+                'contact_owner' => $user->id,
+                'isInZoho' => true,
+                'zoho_contact_id' => $spouseId,
+                'contact_owner'=> $user->id,
+                /* "Layout"=>[
+                    "name"=> "Standard",
+                    "id"=> "5141697000000091033"
+                ],  */
+            ]);
+            Log::info("Spouse Contact Create In Database", ['contact' => $contact]);
+            return $contact;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
     }
 
 }

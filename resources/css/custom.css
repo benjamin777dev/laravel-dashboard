@@ -1452,7 +1452,7 @@
 
 .pstatusText {
     color: #000 !important;
-    text-align: center;
+    text-align: left;
     font-size: 16px;
     font-style: normal;
     font-weight: 700;
