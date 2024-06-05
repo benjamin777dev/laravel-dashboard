@@ -21,7 +21,8 @@
             <p class="ncText">Create new contact</p>
         </div>
         <div class="row">
-            <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST" onsubmit="enableCreateContactSelect()">
+            <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
+                method="POST" onsubmit="enableCreateContactSelect()">
                 @csrf
                 @method('PUT')
                 {{-- Contact Details --}}
@@ -88,13 +89,17 @@
                             <div class="row d-flex justify-content-center mt-100">
                                 <div>
                                     <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                                    <select id="choices-multiple-remove-button" placeholder="Select up to 5 Groups" multiple>
+                                    <select id="choices-multiple-remove-button" placeholder="Select up to 5 Groups"
+                                        multiple>
                                         @foreach ($groups as $group)
                                             @php
                                                 $selected = ''; // Initialize variable to hold 'selected' attribute
                                                 if (isset($contactsGroups[0]['groups'])) {
                                                     foreach ($contactsGroups[0]['groups'] as $contactGroup) {
-                                                        if ($group['zoho_group_id'] === $contactGroup['zoho_contact_group_id']) {
+                                                        if (
+                                                            $group['zoho_group_id'] ===
+                                                            $contactGroup['zoho_contact_group_id']
+                                                        ) {
                                                             $selected = 'selected'; // If IDs match, mark the option as selected
                                                             break; // Exit loop once a match is found
                                                         }
@@ -354,7 +359,11 @@
             </div>
         </div>
     </div>
-    @include('common.contact.createModal', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])
+    @include('common.contact.createModal', [
+        'contact' => $contact,
+        'retrieveModuleData' => $retrieveModuleData,
+        'type' => 'Contacts',
+    ])
     {{-- Note Modal --}}
     @include('common.notes.create', [
         'contact' => $contact,
@@ -371,7 +380,7 @@
 @endsection
 <script>
     function enableCreateContactSelect() {
-        console.log("COntact Owner Validatio",document.getElementById('validationDefault22'));
+        console.log("COntact Owner Validatio", document.getElementById('validationDefault22'));
         // Enable the select element before form submission
         document.getElementById('validationDefault22').removeAttribute('disabled');
         // Return true to allow form submission
