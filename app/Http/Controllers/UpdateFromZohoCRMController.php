@@ -52,15 +52,15 @@ class UpdateFromZohoCRMController extends Controller
             return;
         }
 
-        if ($data["status"] == "COMPLETED") {
+        if ($data["state"] == "COMPLETED") {
             Log::info('CSV callback completed', ['data' => $data]);
-            $jobId = $data["id"];
+            $jobId = $data["job_id"];
 
             $zoho = new ZohoBulkRead($user);
             $db = new DatabaseService();
 
             // Download the result
-            $result = $zoho->downloadResult($data["download_url"]);
+            $result = $zoho->downloadResult($data["result"]["download_url"]);
 
             if ($result) {
                 $module = $data["query"]["module"]["api_name"];
@@ -90,10 +90,10 @@ class UpdateFromZohoCRMController extends Controller
                 $this->error("Failed to download result for job ID: {$jobId}");
             }
 
-        } elseif ($data["status"] == "FAILURE") {
+        } elseif ($data["state"] == "FAILURE") {
             Log::error('CSV callback failed', ['data' => $data]);
 
-        } elseif ($data["status"] == "success" && $data['code'] == "ADDED_SUCCESSFULLY") {
+        } elseif ($data["state"] == "success" && $data['code'] == "ADDED_SUCCESSFULLY") {
             Log::info('CSV callback success', ['data' => $data]);
         }
     }
