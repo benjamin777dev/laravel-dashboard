@@ -48,7 +48,6 @@ class UpdateFromZohoCRMController extends Controller
         $user = User::where('email', 'phillip@coloradohomerealty.com')->first();
         if (!$user) {
             Log::error("User not found.");
-            $this->error("User not found.");
             return;
         }
 
@@ -66,7 +65,7 @@ class UpdateFromZohoCRMController extends Controller
                 $module = $data["query"]["module"]["api_name"];
                 $fileName = "{$module}_bulk_read.zip";
                 Storage::put($fileName, $result);
-                $this->info("Downloaded result for module: {$module} to {$fileName}");
+                Log::info("Downloaded result for module: {$module} to {$fileName}");
 
                 // Extract the CSV and import data to the database
                 $zip = new \ZipArchive();
@@ -80,14 +79,14 @@ class UpdateFromZohoCRMController extends Controller
                         if (pathinfo($csvFilePath, PATHINFO_EXTENSION) === 'csv') {
                             // Process CSV and import data to the database in chunks
                             $db->importDataFromCSV(storage_path('app/' . $csvFilePath), $module);
-                            $this->info("Data imported for module: {$module} from {$csvFilePath}");
+                            Log::info("Data imported for module: {$module} from {$csvFilePath}");
                         }
                     }
                 } else {
-                    $this->error("Failed to extract {$fileName}");
+                    Log::error("Failed to extract {$fileName}");
                 }
             } else {
-                $this->error("Failed to download result for job ID: {$jobId}");
+                Log::error("Failed to download result for job ID: {$jobId}");
             }
 
         } elseif ($data["state"] == "FAILURE") {
