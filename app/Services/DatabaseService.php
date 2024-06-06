@@ -725,7 +725,7 @@ class DatabaseService
         try {
 
             Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->id)->with('userData')->orderBy('updated_at', 'desc')->get();
+            $Contacts = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
             return $Contacts;
         } catch (\Exception $e) {
