@@ -74,10 +74,14 @@ class Deal extends Model
     public static function mapZohoData(array $data, $source = "webhook")
     {
 
+        //Log::info("Data: ". json_encode($data));
+
+        $contactNameId = $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : $data['Contact_Name'] ?? null;
+
         if ($source == 'webhook') {
-            Log::info("ID: ". $data['id']);
+            Log::info("ID: ". $data['id'] . " contact ID: " . $contactNameId);
         } else {
-            Log::info("ID: ". $data['Id']);
+            Log::info("ID: ". $data['Id'] . " contact ID: " . $contactNameId);
         }
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
@@ -85,7 +89,7 @@ class Deal extends Model
         $data['Create_Date'] = isset($data['Create_Date']) ? Carbon::parse($data['Create_Date'])->format('Y-m-d H:i:s') : null;
         $data['Lead_Conversion_Time'] = isset($data['Lead_Conversion_Time']) ? Carbon::parse($data['Lead_Conversion_Time'])->format('Y-m-d H:i:s') : null;
         
-        $contactNameId = $source == "webhook" ? (isset($data['Contact_Name']['id']) ? $data['Contact_Name']['id'] : null) : $data['Contact_Name'];
+        Log::info("contactNameId: ". $contactNameId);
         if ($contactNameId) {
             $user = User::where('zoho_id', $contactNameId)->first();
             $userID = $user ? $user->id : null;
@@ -109,9 +113,9 @@ class Deal extends Model
             'commission_flat_free' => $data['Commission_Flat_Fee'] ?? null,
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
             'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
-            'contactId' => $source == "webhook" ? ((int)($data['Contact']['id'] ?? null)) : ((int)($data['Contact'] ?? null)),
-            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : ($data['Contact_Name'] ?? null),
-            'contact_name_id' => $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : ($data['Contact_Name'] ?? null),
+            'contactId' => $contactNameId,
+            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['name'] ?? null) : null,
+            'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,
             'created_by' => json_encode($data['Created_By']) ?? null,
