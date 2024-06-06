@@ -149,6 +149,8 @@ class DatabaseService
 
             DealContact::updateOrCreate([
                 'zoho_deal_id' => $dealId,
+                'contactId' => $contact ? $contact->id : null,
+                'userId' => $user ? $user->id : null,
             ], [
                 'zoho_deal_id' => $dealId,
                 'contactId' => $contact ? $contact->id : null,
@@ -1638,6 +1640,21 @@ class DatabaseService
             ]);
             Log::info("Spouse Contact Create In Database", ['contact' => $contact]);
             return $contact;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+      public function removeDealContactfromDB($data)
+    {
+
+        try {
+            $dealContacts = DealContact::where('zoho_deal_id', $data['dealId'])
+                                    ->where('contactId', $data['contact_id'])
+                                    ->firstOrFail();
+            $dealContacts->delete();
+            return $dealContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
