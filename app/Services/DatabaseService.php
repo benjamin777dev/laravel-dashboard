@@ -176,7 +176,7 @@ class DatabaseService
 
             // Map the data correctly
             $mappedData = [
-                'contact_owner' => $user ? $user->id : null,
+                'contact_owner' => $user ? $user->root_user_id : null,
                 'zoho_contact_id' => $contact['id'] ?? null,
                 'email' => $contact['Email'] ?? null,
                 'first_name' => $contact['First_Name'] ?? null,
@@ -505,7 +505,7 @@ class DatabaseService
         try {
             Log::info("Retrieve contact From Database");
 
-            $conditions = [['contact_owner', $user->id], ['id', $contactId]];
+            $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
@@ -553,7 +553,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->id], ['zoho_contact_id', $contactId]];
+            $conditions = [['contact_owner', $user->root_user_id], ['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName');
@@ -960,7 +960,7 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Deal Contact From Database");
-            $contact = Contact::where([['isContactCompleted', false], ['contact_owner', $user->id]])->first();
+            $contact = Contact::where([['isContactCompleted', false], ['contact_owner', $user->root_user_id]])->first();
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
             return $contact;
         } catch (\Exception $e) {
@@ -1009,7 +1009,7 @@ class DatabaseService
             $contact = Contact::create([
                 'last_name' => "CHR",
                 'isContactCompleted' => false,
-                'contact_owner' => $user->id,
+                'contact_owner' => $user->root_user_id,
                 'isInZoho' => true,
                 'zoho_contact_id' => $zohoContactId,
             ]);
@@ -1135,7 +1135,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Contacts From Database");
 
-            $contacts = Contact::where('contact_owner', $user->id)
+            $contacts = Contact::where('contact_owner', $user->root_user_id)
                 ->with([
                     'groups' => function ($query) use ($filter) {
                         if ($filter) {
@@ -1628,10 +1628,9 @@ class DatabaseService
                 'phone' => $zohoSpouseContact['Phone'],
                 'mobile' => $zohoSpouseContact['Mobile'],
                 'isContactCompleted' => false,
-                'contact_owner' => $user->id,
+                'contact_owner' => $user->root_user_id,
                 'isInZoho' => true,
                 'zoho_contact_id' => $spouseId,
-                'contact_owner' => $user->id,
                 /* "Layout"=>[
             "name"=> "Standard",
             "id"=> "5141697000000091033"
