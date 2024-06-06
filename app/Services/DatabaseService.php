@@ -1533,28 +1533,43 @@ class DatabaseService
         $reader = Reader::createFromPath($csvFilePath, 'r');
         $reader->setHeaderOffset(0);
         $records = $reader->getRecords();
-
+    
         $batchSize = 10; // Adjust the batch size based on your memory and performance needs
         $dataBatch = [];
-
+    
         DB::beginTransaction();
         try {
             foreach ($records as $record) {
-
-                // Dynamically call the mapping method based on the module
-                $mappedData = $this->mapDataByModule($module, $record);
-
-                $dataBatch[] = $mappedData;
-
+                try {
+                    // Dynamically call the mapping method based on the module
+                    $mappedData = $this->mapDataByModule($module, $record);
+    
+                    $dataBatch[] = $mappedData;
+                } catch (\Exception $e) {
+                    Log::error("Error mapping record for module {$module}: " . $e->getMessage());
+                    // Optionally log the failed record or handle it as needed
+                    continue; // Skip the failed record and continue with the next one
+                }
+    
                 if (count($dataBatch) >= $batchSize) {
-                    $this->upsertDataBatch($dataBatch, $module);
+                    try {
+                        $this->upsertDataBatch($dataBatch, $module);
+                    } catch (\Exception $e) {
+                        Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
+                        // Optionally log specific records causing issues here
+                    }
                     $dataBatch = [];
                 }
             }
-
+    
             // Insert any remaining records
             if (count($dataBatch) > 0) {
-                $this->upsertDataBatch($dataBatch, $module);
+                try {
+                    $this->upsertDataBatch($dataBatch, $module);
+                } catch (\Exception $e) {
+                    Log::error("Error upserting remaining data batch for module {$module}: " . $e->getMessage());
+                    // Optionally log specific records causing issues here
+                }
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -1562,6 +1577,7 @@ class DatabaseService
             Log::error("Error importing data from CSV for module {$module}: " . $e->getMessage());
         }
     }
+    
 
     protected function mapDataByModule($module, $record)
     {
