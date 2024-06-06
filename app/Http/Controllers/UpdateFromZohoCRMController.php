@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Contact;
+use Carbon\Carbon;
 
 class UpdateFromZohoCRMController extends Controller
 {
@@ -20,31 +21,47 @@ class UpdateFromZohoCRMController extends Controller
         // Ensure zoho_contact_id is included in the data array
         $data['zoho_contact_id'] = $zohoContactId;
 
+        // Convert datetime fields to the correct format
+        $data['Created_Time'] = $this->convertDateTimeFormat($data['Created_Time'] ?? null);
+        $data['Last_Called'] = $this->convertDateTimeFormat($data['Last_Called'] ?? null);
+        $data['Last_Emailed'] = $this->convertDateTimeFormat($data['Last_Emailed'] ?? null);
+        $data['Modified_Time'] = $this->convertDateTimeFormat($data['Modified_Time'] ?? null);
+        $data['Termination_Date'] = $this->convertDateTimeFormat($data['Termination_Date'] ?? null);
+        $data['License_Start_Date'] = $this->convertDateTimeFormat($data['License_Start_Date'] ?? null);
+        $data['Unsubscribed_Time'] = $this->convertDateTimeFormat($data['Unsubscribed_Time'] ?? null);
+        $data['Last_Activity_Time'] = $this->convertDateTimeFormat($data['Last_Activity_Time'] ?? null);
+
+        $data['tag'] = isset($data['Tag']) ? json_encode($data['Tag']) : null;
+
         $mappedData = [
             'contact_owner' => $data['Owner']['id'] ?? null,
+            'zoho_contact_id' => $zohoContactId,
             'email' => $data['Email'] ?? null,
             'first_name' => $data['First_Name'] ?? null,
             'last_name' => $data['Last_Name'] ?? null,
             'phone' => $data['Phone'] ?? null,
-            'business_name' => $data['Business_Name'] ?? null,
-            'business_information' => $data['Business_Info'] ?? null,
-            'secondory_email' => $data['Secondary_Email'] ?? null,
-            'relationship_type' => $data['Relationship_Type'] ?? null,
-            'market_area' => $data['Market_Area'] ?? null,
-            'envelope_salutation' => $data['Salutation_s'] ?? null,
-            'mobile' => $data['Mobile'] ?? null,
             'created_time' => $data['Created_Time'] ?? null,
             'abcd' => $data['ABCD'] ?? null,
             'mailing_address' => $data['Mailing_Street'] ?? null,
             'mailing_city' => $data['Mailing_City'] ?? null,
+            'relationship_type' => $data['Relationship_Type'] ?? null,
+            'market_area' => $data['Market_Area'] ?? null,
+            'envelope_salutation' => $data['Salutation_s'] ?? null,
             'mailing_state' => $data['Mailing_State'] ?? null,
             'mailing_zip' => $data['Mailing_Zip'] ?? null,
-            'lead_source' => $data['Lead_Source'] ?? null,
+            'isContactCompleted' => $data['Is_Active'] ?? 1,
+            'isInZoho' => $data['$state'] == 'save' ? 1 : 0,
+            'mobile' => $data['Mobile'] ?? null,
+            'business_name' => $data['Business_Name'] ?? null,
+            'business_information' => $data['Business_Info'] ?? null,
+            'secondory_email' => $data['Secondary_Email'] ?? null,
+            'Lead_Source' => $data['Lead_Source'] ?? null,
             'lead_source_detail' => $data['Lead_Source_Detail'] ?? null,
-            'spouse_partner' => $data['Spouse_Partner'] ?? null,
+            'spouse_partner' => json_encode($data['Spouse_Partner']) ?? null,
             'last_called' => $data['Last_Called'] ?? null,
             'last_emailed' => $data['Last_Emailed'] ?? null,
-            'modified_time' => $data['Modified_Time'] ?? null,
+            'created_at' => now(),
+            'updated_at' => now(),
             'email_blast_opt_in' => $data['Email_Blast_Opt_In'] ?? null,
             'twitter_url' => $data['Twitter_URL'] ?? null,
             'emergency_contact_phone' => $data['Emergency_Contact_Phone'] ?? null,
@@ -90,7 +107,7 @@ class UpdateFromZohoCRMController extends Controller
             'income_goal' => $data['Income_Goal'] ?? null,
             'chr_relationship' => $data['CHR_Relationship'] ?? null,
             'locked_s' => $data['Locked__s'] ?? null,
-            'tag' => $data['Tag'] ?? null,
+            'tag' => json_encode($data['Tag']) ?? null,
             'import_batch' => $data['Import_Batch'] ?? null,
             'termination_date' => $data['Termination_Date'] ?? null,
             'license_start_date' => $data['License_Start_Date'] ?? null,
@@ -119,7 +136,6 @@ class UpdateFromZohoCRMController extends Controller
             'title_company' => $data['Title_Company'] ?? null,
             'select_your_prints' => $data['Select_your_prints'] ?? null,
             'role' => $data['Role'] ?? null,
-            'business_name' => $data['Business_Name'] ?? null,
             'missing' => $data['Missing'] ?? null,
             'groups_tags' => $data['Groups_Tags'] ?? null,
             'lender_company_name' => $data['Lender_Company_Name'] ?? null,
@@ -128,7 +144,7 @@ class UpdateFromZohoCRMController extends Controller
             'current_annual_academy' => $data['Current_Annual_Academy'] ?? null,
             'transaction_status_reports' => $data['Transaction_Status_Reports'] ?? null,
             'non_tm_assignment' => $data['Non_TM_Assignment'] ?? null,
-            'user' => $data['User'] ?? null,
+            'user' => $data['User']['id'] ?? null,
             'lender_email' => $data['Lender_Email'] ?? null,
             'sign_install' => $data['Sign_Install'] ?? null,
             'team_name' => $data['Team_Name'] ?? null,
@@ -144,14 +160,20 @@ class UpdateFromZohoCRMController extends Controller
             'additional_email_for_confirmation' => $data['Additional_Email_for_Confirmation'] ?? null,
             'important_date_added' => $data['Important_Date_Added'] ?? null,
             'emergency_contact_name' => $data['Emergency_Contact_Name'] ?? null,
-            'market_area' => $data['Market_Area'] ?? null,
             'initial_cap' => $data['Initial_Cap'] ?? null,
             'unsubscribed_time' => $data['Unsubscribed_Time'] ?? null,
             'mls_ppar' => $data['MLS_PPAR'] ?? null,
             'outsourced_mktg_3d_zillow_tour' => $data['Outsourced_Mktg_3D_Zillow_Tour'] ?? null,
-            'license_number' => $data['License_Number'] ?? null,
+            'marketing_specialist' => $data['Marketing_Specialist'] ?? null,
+            'default_commission_plan_id' => $data['Default_Commission_Plan_Id'] ?? null,
+            'feature_cards_or_sheets' => $data['Feature_Cards_or_Sheets'] ?? null,
+            'termination_reason' => $data['Termination_Reason'] ?? null,
+            'transaction_manager' => $data['Transaction_Manager'] ?? null,
+            'auto_address' => $data['Auto_Address'] ?? null,
         ];
 
+        log::info("Mapped Data", ['mappedData' => $mappedData]);
+        
         // Update or create the contact record in the database
         try {
             Contact::updateOrCreate(
@@ -166,5 +188,17 @@ class UpdateFromZohoCRMController extends Controller
         Log::info('Contact updated/inserted successfully', ['zoho_contact_id' => $zohoContactId]);
 
         return response()->json(['message' => 'Contact updated successfully'], 200);
+    }
+
+    private function convertDateTimeFormat($datetime)
+    {
+        if ($datetime) {
+            try {
+                return Carbon::parse($datetime)->format('Y-m-d H:i:s');
+            } catch (\Exception $e) {
+                Log::error('Error parsing datetime', ['datetime' => $datetime, 'exception' => $e->getMessage()]);
+            }
+        }
+        return null;
     }
 }
