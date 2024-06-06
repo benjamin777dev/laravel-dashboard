@@ -98,10 +98,10 @@ class UpdateFromZohoCRMController extends Controller
                 // Extract the CSV and import data to the database
                 $zip = new \ZipArchive();
                 if ($zip->open(storage_path('app/' . $fileName)) === true) {
-                    $zip->extractTo(storage_path('app/zoho_bulk_read/'));
+                    $zip->extractTo(storage_path('app/zoho_bulk_read/'.$module.'/'.$jobId.'/'));
                     $zip->close();
 
-                    $extractedFiles = Storage::files('zoho_bulk_read');
+                    $extractedFiles = Storage::files('zoho_bulk_read/'.$module.'/'.$jobId.'/');
 
                     foreach ($extractedFiles as $csvFilePath) {
                         if (pathinfo($csvFilePath, PATHINFO_EXTENSION) === 'csv') {

@@ -1584,6 +1584,8 @@ class DatabaseService
         switch ($module) {
             case 'Contacts':
                 return \App\Models\Contact::mapZohoData($record);
+            case 'Deals':
+                    return \App\Models\Deal::mapZohoData($record);
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
