@@ -101,8 +101,6 @@
                             <span class="tooltiptext">Add Task</span>
                         </div>
                     </td>
-                </tr>
-                <tr>
                     <td>
                         <div class="tooltip-wrapper">
                             <img src="{{ URL::asset('/images/sticky_note.svg') }}"

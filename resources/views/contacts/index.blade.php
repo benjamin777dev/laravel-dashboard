@@ -269,7 +269,7 @@
         var load = true;
         
         $.ajax({
-            url: '{{ url('/contacts/fetch-contact') }}',
+            url: '{{ url('/contacts') }}',
             method: 'GET',
             data: {
                 search: encodeURIComponent(searchValuetrim),
@@ -287,7 +287,7 @@
 
                 }
                 document.getElementById('close_btn').click();
-                const card = $('.contactlist').html(data);
+                const card = $('.table_apeend').html(data.view);
             },
             error: function(xhr, status, error) {
                 if (!load) {

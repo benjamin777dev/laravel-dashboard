@@ -3,59 +3,60 @@
         <div class="webResponsiveDiv">
             <table id="example" style="width: 100vw;" class="table table-striped table-bordered table-nowrap"
                 cellspacing="0" width="100%">
-                @if ($apend===false)
-                <thead class="thead_con_design">
-                    <tr>
-                        <th>
-                            <div class="commonFlex">
-                                <p class="mb-0">First name</p>
-                                <img onclick="sortContact('first_name')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th>
-                            <div class="commonFlex">
-                                <p class="mb-0">ABCD</p>
-                                <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="commonFlex">
-                                <p class="mb-0">Mobile</p>
-                                <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="commonFlex">
-                                <p class="mb-0">Email</p>
-                                <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                    alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="commonFlex">
-                                <p class="mb-0">Address</p>
-                                <img onclick="sortContact('mailing_address')"
-                                    src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="commonFlex">
-                                <p class="mb-0">Relationship Type</p>
-                                <img onclick="sortContact('relationship_type')"
-                                    src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                    class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                            </div>
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
+                @if ($apend === false)
+                    <thead class="thead_con_design">
+                        <tr>
+                            <th>
+                                <div class="commonFlex">
+                                    <p class="mb-0">First name</p>
+                                    <img onclick="sortContact('first_name')"
+                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="commonFlex">
+                                    <p class="mb-0">ABCD</p>
+                                    <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Mobile</p>
+                                    <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Email</p>
+                                    <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Address</p>
+                                    <img onclick="sortContact('mailing_address')"
+                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Relationship Type</p>
+                                    <img onclick="sortContact('relationship_type')"
+                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
                 @endif
                 <tbody class="table_apeend">
-                @include('contacts.load', ['contacts' => $contacts])
+                    @include('contacts.load', ['contacts' => $contacts])
                 </tbody>
             </table>
         </div>
@@ -209,8 +210,11 @@
     @include('common.pagination', ['module' => $contacts])
 </div>
 <script>
-    $(document).ready(function() {
+    window.onload = function() {
         let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
+        let searchInput = $('#contactSearch');
+        console.log(searchInput.value,'searchInput.value')
+      
         $(window).scroll(function() {
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
                 if (nextPageUrl) {
@@ -220,15 +224,38 @@
         });
 
         function loadMorePosts() {
+            let searchInput = $('#contactSearch');
+            console.log(searchInput, 'searchInput')
+            let csearch = $('#contactSort');
+            let filterVal = csearch.val();
+            let email = document.getElementById('filterEmail').checked;
+            let mobile = document.getElementById('filterMobile').checked;
+            let abcd = document.getElementById('filterABCD').checked;
+            let count = 1;
+            if (!email && !mobile && !abcd && count > 2) return;
+
+            let missingFeild = {
+                email: email,
+                mobile: mobile,
+                abcd: abcd
+            }
+            if (!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd) {
+                missingFeild = "";
+            }
+            let search = searchInput.val(); // Update search with input value
             $.ajax({
-                url: nextPageUrl,
+                url: nextPageUrl, // Send only the base URL, append parameters later
                 type: 'get',
+                data: {
+                    search: encodeURIComponent(search), // Pass correct parameters
+                    filter: csearch.val(), // Pass filter value
+                    missingField: missingFeild, // Adjust as per your requirement
+                },
                 beforeSend: function() {
-                    nextPageUrl = '';
+                    nextPageUrl = ''; // Reset nextPageUrl to prevent multiple requests
                 },
                 success: function(data) {
-                    console.log(data, 'datatatata')
-                    nextPageUrl = data.nextPageUrl;
+                    nextPageUrl = data.nextPageUrl; // Update nextPageUrl from response
                     $('.table_apeend').append(data.view);
                 },
                 error: function(xhr, status, error) {
@@ -236,7 +263,8 @@
                 }
             });
         }
-    });
+    }
+
 
     let sortDirectionContact = 'desc';
     window.sortContact = function(sort) {

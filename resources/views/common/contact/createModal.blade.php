@@ -93,7 +93,7 @@
                             <strong>Groups</strong>
                         </label>
                         <div class="col-sm-9">
-                            <select id="choices-multiple-remove-button" placeholder="Select up to 5 Groups" multiple>
+                            <select id="choices-multiple-remove-button-modal" placeholder="Select up to 5 Groups" multiple>
                                 @foreach ($groups as $group)
                                     @php
                                         $selected = '';
@@ -130,7 +130,7 @@
 
 <script>
  document.addEventListener('DOMContentLoaded', function() {
-     var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+     var multipleCancelButton = new Choices('#choices-multiple-remove-button-modal', {
             removeItemButton: true,
             maxItemCount: 5,
             searchResultLimit: 5,
@@ -140,7 +140,7 @@
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
-        document.getElementById('choices-multiple-remove-button').addEventListener('change', function(event) {
+        document.getElementById('choices-multiple-remove-button-modal').addEventListener('change', function(event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
                 selectedGroupsArr.push(selectedGroups);

@@ -25,8 +25,12 @@ class ContactController extends Controller
         }
         $db = new DatabaseService();
         $search = request()->query('search');
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $filter = $request->input('filter');
+        $missingFeild = $request->input('missingField');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $db->retreiveContacts($user, $accessToken, $search);
+        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter,$missingFeild);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
@@ -321,11 +325,8 @@ class ContactController extends Controller
                     ]
                 ];
             }
-        }
+        }  
 
-            
-            
-            
             if (empty($responseData["data"][0]["Groups"])) {
                 unset($responseData["data"][0]["Groups"]);
             }
@@ -445,7 +446,7 @@ class ContactController extends Controller
             }
         }
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Contact Updated successfully!');
+           return redirect('/contacts')->with('success', 'Contact Updated successfully!');
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
             return redirect()->back()->with('error', '!' . $e->getMessage());
