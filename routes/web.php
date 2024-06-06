@@ -84,6 +84,7 @@ Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->
 Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 Route::post('/add/deal/contact/role/{dealId}', [PipelineController::class, 'addContactRole'])->name('contacts.role')->middleware('auth');
+Route::post('/remove/deal/contact/role', [PipelineController::class, 'removeContactRole'])->name('contacts.role.remove')->middleware('auth');
 
 //Groups
 Route::get('/group', [GroupController::class, 'index'])->name('groups.index')->middleware('auth');

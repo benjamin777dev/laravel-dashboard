@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title">Contact Roles Mapping</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" id="closemodal" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="contactForm{{ $deal['id'] }}">
@@ -20,7 +20,7 @@
                                 @foreach($contacts as $contact)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="contact_{{ $contact['id'] }}" id="contact_{{ $contact['id'] }}" onclick="updateContactRoles({{ json_encode($contact)}}, '')">
+                                        <input type="checkbox" name="contact_{{ $contact['id'] }}" id="contact_{{ $contact['id'] }}" onclick="updateContactRoles({{ json_encode($contact)}}, '')" {{ $dealContacts->contains('id', $contact['id']) ? 'checked' : '' }}>
                                         <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
                                     </td>
                                     <td>{{ $contact['userData']['name'] }}</td>
@@ -102,20 +102,10 @@
                 dataType: 'json',
                 data: JSON.stringify(formData),
                 success: function (response) {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
-                    if (response?.data[0]?.status == "success") {
-                        var modalTarget = document.getElementById('savemakeModalId' + dealId);
-                        var updateMessage = document.getElementById('updated_message_make');
-                        updateMessage.textContent = response?.data[0]?.message;
-                        $(modalTarget).modal('show');
-                        window.location.reload();
-                    }
+                    document.getElementById('closemodal').click();
                 },
                 error: function (xhr) {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
-                    console.error(xhr.responseText);
+                    
                 }
             });
         };

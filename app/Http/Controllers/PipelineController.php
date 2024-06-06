@@ -357,21 +357,34 @@ class PipelineController extends Controller
         }
 
         $zoho = new ZohoCRM();
+        $db = new DatabaseService();
         $dealId = request()->route('dealId');
         $jsonData = $request->json()->all();
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
 
         $contactRole = $zoho->addContactRoleForDeal($dealId, $jsonData);
-        foreach ($contactRole as $response) {
-            if (!$response->successful()) {
-                // Log the error for debugging
-                Log::error('Error adding contact role: ' . $response->body());
-                return response()->json(['error' => 'Error adding contact role', 'details' => $response->body()], 500);
-            }
+        $response = $zoho->getDealContact($dealId);
+        $contactRoleArray = collect($response->json()['data'] ?? []);
+        $contactroles = $db->storeDealContactIntoDB($contactRoleArray, $dealId);
+        return $contactroles;
+    }
+
+    public function removeContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
         }
 
-        $contactRoleArray = json_decode($contactRole, true);
-        return $contactRoleArray;
+        $zoho = new ZohoCRM();
+        $db = new DatabaseService();
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        $contactRole = $zoho->removeContactRoleForDeal($jsonData);
+        $contactroles = $db->removeDealContactfromDB($jsonData);
+        return $contactroles;
     }
 }

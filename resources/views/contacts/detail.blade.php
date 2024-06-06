@@ -476,9 +476,6 @@
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsArr.push($(this).val());
-    });
         document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
