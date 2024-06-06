@@ -1540,16 +1540,9 @@ class DatabaseService
         DB::beginTransaction();
         try {
             foreach ($records as $record) {
-                // if module is contacts, we map it to the root user id
-                if ($module === 'Contacts') {
-                    $user = User::where('root_user_id', $record['Owner']['id'])->first();
-                } else {
-                    $user = null;
-                    return;
-                }
-                
+
                 // Dynamically call the mapping method based on the module
-                $mappedData = $this->mapDataByModule($module, $record, $user);
+                $mappedData = $this->mapDataByModule($module, $record);
 
                 $dataBatch[] = $mappedData;
 
@@ -1570,11 +1563,11 @@ class DatabaseService
         }
     }
 
-    protected function mapDataByModule($module, $record, $user)
+    protected function mapDataByModule($module, $record)
     {
         switch ($module) {
             case 'Contacts':
-                return \App\Models\Contact::mapZohoData($record, $user);
+                return \App\Models\Contact::mapZohoData($record);
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");

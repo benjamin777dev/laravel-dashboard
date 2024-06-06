@@ -197,63 +197,38 @@ class Contact extends Model
      * @param User|null $user
      * @return array
      */
-    public static function mapZohoData(array $contact, User $user = null)
+    public static function mapZohoData(array $data, $source = 'webhook')
     {
-        $data = $contact;
-
-        Log::info('Received contact update from Zoho CRM', ['data' => $data]);
-
-        // Extract necessary data from the payload
-        $zohoContactId = $data['id'];
-
-        // Ensure zoho_contact_id is included in the data array
-        $data['zoho_contact_id'] = $zohoContactId;
-
-        // Convert datetime fields to the correct format
-        $data['Created_Time'] = isset($data['Created_time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
-        $data['Last_Called'] = isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s') : null;
-        $data['Last_Emailed'] = isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s') : null;
-        $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
-        $data['Termination_Date'] = isset($data['Termination_Date']) ? Carbon::parse($data['Termination_Date'])->format('Y-m-d H:i:s') : null;
-        $data['License_Start_Date'] = isset($data['License_Start_Date']) ? Carbon::parse($data['License_Start_Date'])->format('Y-m-d H:i:s') : null;
-        $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s') : null;
-        $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s') : null;
-
-        $data['tag'] = isset($data['Tag']) ? json_encode($data['Tag']) : null;
-
-
-
-        $mappedData =  [
-            'contact_owner' => $data['Owner']['id'] ?? null,
-            'zoho_contact_id' => $zohoContactId,
+        $mappedData = [
+            'zoho_contact_id' => $source === 'webhook' ? $data['id'] : $data['Id'],
+            'contact_owner' => $source === 'webhook' ? $data['Owner']['id'] : $data['Owner'],
             'email' => $data['Email'] ?? null,
             'first_name' => $data['First_Name'] ?? null,
             'last_name' => $data['Last_Name'] ?? null,
             'phone' => $data['Phone'] ?? null,
-            'created_time' => $data['Created_Time'] ?? null,
-            'abcd' => $data['ABCD'] ?? null,
-            'mailing_address' => $data['Mailing_Street'] ?? null,
-            'mailing_city' => $data['Mailing_City'] ?? null,
-            'relationship_type' => $data['Relationship_Type'] ?? null,
-            'market_area' => $data['Market_Area'] ?? null,
-            'envelope_salutation' => $data['Salutation_s'] ?? null,
-            'mailing_state' => $data['Mailing_State'] ?? null,
-            'mailing_zip' => $data['Mailing_Zip'] ?? null,
-            'isContactCompleted' => $data['Is_Active'] ?? 1,
-            'isInZoho' => $data['$state'] == 'save' ? 1 : 0,
-            'mobile' => $data['Mobile'] ?? null,
             'business_name' => $data['Business_Name'] ?? null,
             'business_information' => $data['Business_Info'] ?? null,
             'secondory_email' => $data['Secondary_Email'] ?? null,
+            'relationship_type' => $data['Relationship_Type'] ?? null,
+            'market_area' => $data['Market_Area'] ?? null,
+            'envelope_salutation' => $data['Salutation'] ?? null,
+            'mobile' => $data['Mobile'] ?? null,
+            'created_time' => isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null,
+            'abcd' => $data['ABCD'] ?? null,
+            'mailing_address' => $data['Mailing_Street'] ?? null,
+            'mailing_city' => $data['Mailing_City'] ?? null,
+            'mailing_state' => $data['Mailing_State'] ?? null,
+            'mailing_zip' => $data['Mailing_Zip'] ?? null,
+            'isContactCompleted' => $data['Is_Active'] ?? 1,
+            'isInZoho' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
             'Lead_Source' => $data['Lead_Source'] ?? null,
+            'referred_id' => $data['Referred_By'] ?? null,
             'lead_source_detail' => $data['Lead_Source_Detail'] ?? null,
-            'spouse_partner' => json_encode($data['Spouse_Partner']) ?? null,
-            'last_called' => $data['Last_Called'] ?? null,
-            'last_emailed' => $data['Last_Emailed'] ?? null,
-            'created_at' => now(),
-            'updated_at' => now(),
-            'email_blast_opt_in' => $data['Email_Blast_Opt_In'] ?? null,
-            'twitter_url' => $data['Twitter_URL'] ?? null,
+            'spouse_partner' => $data['Spouse_Partner'] ?? null,
+            'last_called' => isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s') : null,
+            'last_emailed' => isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s') : null,
+            'email_blast_opt_in' => $source === 'webhook' ? $data['Email_Blast_Opt_In'] : $data['Email_Opt_In'],
+            'twitter_url' => $source === 'webhook' ? $data['Twitter_URL'] : $data['Twitter'],
             'emergency_contact_phone' => $data['Emergency_Contact_Phone'] ?? null,
             'print_qr_code_sheet' => $data['Print_QR_Code_Sheet'] ?? null,
             'invalid_address_usps' => $data['Invalid_Address_USPS'] ?? null,
@@ -297,7 +272,7 @@ class Contact extends Model
             'income_goal' => $data['Income_Goal'] ?? null,
             'chr_relationship' => $data['CHR_Relationship'] ?? null,
             'locked_s' => $data['Locked__s'] ?? null,
-            'tag' => json_encode($data['Tag']) ?? null,
+            'tag' => $data['Tag'] ?? null,
             'import_batch' => $data['Import_Batch'] ?? null,
             'termination_date' => $data['Termination_Date'] ?? null,
             'license_start_date' => $data['License_Start_Date'] ?? null,
@@ -306,7 +281,7 @@ class Contact extends Model
             'visitor_score' => $data['Visitor_Score'] ?? null,
             'sign_vendor' => $data['Sign_Vendor'] ?? null,
             'other_state' => $data['Other_State'] ?? null,
-            'last_activity_time' => $data['Last_Activity_Time'] ?? null,
+            'last_activity_time' => isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s') : null,
             'unsubscribed_mode' => $data['Unsubscribed_Mode'] ?? null,
             'license_number' => $data['License_Number'] ?? null,
             'exchange_rate' => $data['Exchange_Rate'] ?? null,
@@ -334,7 +309,7 @@ class Contact extends Model
             'current_annual_academy' => $data['Current_Annual_Academy'] ?? null,
             'transaction_status_reports' => $data['Transaction_Status_Reports'] ?? null,
             'non_tm_assignment' => $data['Non_TM_Assignment'] ?? null,
-            'user' => $data['User']['id'] ?? null,
+            'user' => $source === 'webhook' ? $data['User']['id'] : $data['User'],
             'lender_email' => $data['Lender_Email'] ?? null,
             'sign_install' => $data['Sign_Install'] ?? null,
             'team_name' => $data['Team_Name'] ?? null,
@@ -344,7 +319,6 @@ class Contact extends Model
             'import_id' => $data['Import_ID'] ?? null,
             'business_info' => $data['Business_Info'] ?? null,
             'email_signature' => $data['Email_Signature'] ?? null,
-            'phone' => $data['Phone'] ?? null,
             'property_website_qr_code' => $data['Property_Website_QR_Code'] ?? null,
             'draft_showing_instructions' => $data['Draft_Showing_Instructions'] ?? null,
             'additional_email_for_confirmation' => $data['Additional_Email_for_Confirmation'] ?? null,
@@ -358,11 +332,12 @@ class Contact extends Model
             'default_commission_plan_id' => $data['Default_Commission_Plan_Id'] ?? null,
             'feature_cards_or_sheets' => $data['Feature_Cards_or_Sheets'] ?? null,
             'termination_reason' => $data['Termination_Reason'] ?? null,
-            'transaction_manager' => json_encode($data['Transaction_Manager']) ?? null,
+            'transaction_manager' => $data['Transaction_Manager'] ?? null,
             'auto_address' => $data['Auto_Address'] ?? null,
         ];
+        
+        Log::info("Mapped Data: " , ['data' => $mappedData]);
 
-        Log::info("Mapped Data: ". json_encode($mappedData));
         return $mappedData;
     }
 }

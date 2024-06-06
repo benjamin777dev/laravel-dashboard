@@ -16,10 +16,9 @@ class UpdateFromZohoCRMController extends Controller
 
         $zohoContactId = $data['id'];
 
-        $user = auth()->user(); // Assuming you get the authenticated user
 
         // Map the data using the Contact model's mapping method
-        $mappedData = Contact::mapZohoData($data, $user);
+        $mappedData = Contact::mapZohoData($data, 'webhook');
 
         // Update or create the contact record in the database
         try {
