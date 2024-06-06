@@ -43,7 +43,7 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DatabaseService();
 
-        $modules = ['Contacts', 'Deals', 'Contacts_X_Groups', 'Agent_Commission_Incomes']; // Add other modules as needed
+        $modules = ['Contacts']; // Add other modules as needed
         Log::info("Syncing data for modules: " . implode(', ', $modules));
 
         // Sync users separately using the REST API
@@ -60,7 +60,7 @@ class SyncZohoData extends Command
                 do {
                     $statusResponse = $zoho->checkJobStatus($jobId);
                     $state = $statusResponse['data'][0]['state'] ?? 'IN_PROGRESS';
-                    sleep(30); // Wait for 30 seconds before checking the status again
+                    sleep(10); // Wait for 10 seconds before checking the status again
                 } while ($state !== 'COMPLETED');
 
                 $this->info("Bulk read job completed for module: {$module}");

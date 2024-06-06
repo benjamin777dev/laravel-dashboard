@@ -20,15 +20,62 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'zoho_id',
         'name',
         'email',
+        'email_verified_at',
         'password',
         'access_token',
         'refresh_token',
         'token_expires_at',
-        'zoho_id',
-        'root_user_id',
+        'remember_token',
+        'created_at',
+        'updated_at',
         'goal',
+        'root_user_id',
+        'country',
+        'city',
+        'state',
+        'zip',
+        'street',
+        'language',
+        'locale',
+        'is_online',
+        'currency',
+        'time_format',
+        'profile_name',
+        'profile_id',
+        'mobile',
+        'time_zone',
+        'created_time',
+        'modified_time',
+        'confirmed',
+        'full_name',
+        'date_format',
+        'status',
+        'website',
+        'email_blast_opt_in',
+        'strategy_group',
+        'notepad_mailer_opt_in',
+        'market_mailer_opt_in',
+        'role_name',
+        'role_id',
+        'modified_by_name',
+        'modified_by_id',
+        'created_by_name',
+        'created_by_id',
+        'alias',
+        'fax',
+        'country_locale',
+        'sandbox_developer',
+        'microsoft',
+        'reporting_to',
+        'offset',
+        'next_shift',
+        'shift_effective_from',
+        'transaction_status_reports',
+        'joined_date',
+        'territories',
     ];
 
     /**
@@ -56,9 +103,9 @@ class User extends Authenticatable
         Log::info('getAccessToken');
         if ($this->isAccessTokenValid()) {
             Log::info('getAccessToken: valid');
-           $decryptAccessToken= Crypt::decryptString($this->access_token);
-           Log::info('Decrypt Access Token'.$decryptAccessToken);
-           return $decryptAccessToken;
+            $decryptAccessToken = Crypt::decryptString($this->access_token);
+            Log::info('Decrypt Access Token' . $decryptAccessToken);
+            return $decryptAccessToken;
         }
 
         Log::info('getAccessToken: expired');
