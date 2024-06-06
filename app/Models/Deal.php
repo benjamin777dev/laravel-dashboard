@@ -71,10 +71,14 @@ class Deal extends Model
      * @param array $data
      * @return array
      */
-    public static function mapZohoData(array $data, $source = 'webhook')
+    public static function mapZohoData(array $data, $source = "webhook")
     {
-        Log::info("Received: " . $source . " data", ['data' => $data]);
 
+        if ($source == 'webhook') {
+            Log::info("ID: ". $data['id']);
+        } else {
+            Log::info("ID: ". $data['Id']);
+        }
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
         $data['Closing_Date'] = isset($data['Closing_Date']) ? Carbon::parse($data['Closing_Date'])->format('Y-m-d H:i:s') : null;
@@ -184,10 +188,7 @@ class Deal extends Model
             'z_project_id' => $data['Z_Project_ID'] ?? null,
             'zip' => $data['Zip'] ?? null,
         ];
-
-        Log::Info("Zoho Deal Id: ". $mappedData['zoho_deal_id']);
-        Log::Info("User ID: ". $userID);
-
+        
         return $mappedData;
     }
 
