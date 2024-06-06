@@ -2,7 +2,7 @@
 
 @section('title', 'Agent Commander | Groups')
 
-@section('content') 
+@section('content')
     @vite(['resources/css/custom.css'])
     <div class="container full-width-container">
         <div class="dbgroupsFlex">
@@ -86,9 +86,30 @@
         <div class = "group-container">
             @include('groups.group')
         </div>
+        <div class="datapagination">
+            @include('common.pagination', ['module' => $contacts])
+        </div>
     </div>
 
     <script>
+        window.onload = function() {
+            $(document).on('click', '.datapagination a', function(e) {
+                e.preventDefault();
+                let page = $(this).attr('href').split('page=')[1]
+                record(page)
+            })
+
+            function record(page) {
+                $.ajax({
+                    url: "/group?page=" + page,
+                    success: function(res) {
+                        $('.dbgHeaderTable').html(res);
+                        $('.ptableCardDiv').html(res);
+                    }
+                })
+            }
+
+        }
         window.fetchData = function(sortField = null) {
             // Get selected filter value
             const filterSelect = document.getElementById('validationDefault05');

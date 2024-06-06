@@ -73,8 +73,8 @@
             </div>
         </div>
         <div class="row">
-            <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}" method="POST"
-                onsubmit="enableContactSelect({{ $contact['id'] }})">
+            <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
+                method="POST" onsubmit="enableContactSelect({{ $contact['id'] }})">
                 @csrf
                 @method('PUT')
                 {{-- Contact Details --}}
@@ -140,13 +140,17 @@
                         <div class="row d-flex justify-content-center mt-100">
                             <div>
                                 <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                                <select id="choices-multiple-remove-button_test" placeholder="Select up to 5 Groups" multiple>
+                                <select id="choices-multiple-remove-button_test" placeholder="Select up to 5 Groups"
+                                    multiple>
                                     @foreach ($groups as $group)
                                         @php
                                             $selected = ''; // Initialize variable to hold 'selected' attribute
                                             if (isset($contactsGroups[0]['groups'])) {
                                                 foreach ($contactsGroups[0]['groups'] as $contactGroup) {
-                                                    if ($group['zoho_group_id'] === $contactGroup['zoho_contact_group_id']) {
+                                                    if (
+                                                        $group['zoho_group_id'] ===
+                                                        $contactGroup['zoho_contact_group_id']
+                                                    ) {
                                                         $selected = 'selected'; // If IDs match, mark the option as selected
                                                         break; // Exit loop once a match is found
                                                     }
@@ -158,8 +162,8 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                
-                                
+
+
                             </div>
                         </div>
                     </div>
@@ -242,25 +246,26 @@
                             <input type="text" value="{{ $contact['lead_source_detail'] }}" name="lead_source_detail"
                                 class="form-control npinputinfo" id="validationDefault11">
                         </div>
-                         <div class="col-md-6">
+                        <div class="col-md-6">
 
                             <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                             <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                             id="validationDefault13" style="display:none" >
-                            @if (!empty($spouseContact) && is_array($spouseContact))
-                                <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
-                                    {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
-                                </option>
-                            @endif
-                            @if (!empty($contacts))
-                                @foreach ($contacts as $contactrefs)
+                                id="validationDefault13" style="display:none">
+                                @if (!empty($spouseContact) && is_array($spouseContact))
                                     <option
-                                        value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                        >
-                                        {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                        value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}"
+                                        selected>
+                                        {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
                                     </option>
-                                @endforeach
-                            @endif
+                                @endif
+                                @if (!empty($contacts))
+                                    @foreach ($contacts as $contactrefs)
+                                        <option
+                                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}">
+                                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                        </option>
+                                    @endforeach
+                                @endif
 
                             </select>
                         </div>
@@ -384,7 +389,11 @@
             </div>
         </div>
     </div>
-    @include('common.contact.createModal', ['contact' => $contact, 'retrieveModuleData' => $retrieveModuleData, 'type' => 'Contacts'])                            
+    @include('common.contact.createModal', [
+        'contact' => $contact,
+        'retrieveModuleData' => $retrieveModuleData,
+        'type' => 'Contacts',
+    ])
     {{-- Note Modal --}}
     @include('common.notes.create', [
         'contact' => $contact,
@@ -476,10 +485,9 @@
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsArr.push($(this).val());
-    });
-        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(event) {
+
+        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(
+            event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
                 selectedGroupsArr.push(selectedGroups);
@@ -491,7 +499,25 @@
             console.log(selectedGroupsArr);
 
         });
- // This will log an array of selected values
+        //selected groups default
+        let selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button_test option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        })
+        // Add event listener for remove button
+        let removeGroupsArr = [];
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedGroup = event.detail.value;
+            if (selectedGroupsDefault.includes(removedGroup)) {
+                // Perform your API hit here
+                // console.log("API hit for removed group: " + removedGroup);
+                deleteAssignGroup(removedGroup);
+            }
+
+        });
+
+
+        // This will log an array of selected values
         document.getElementById('contact_detail_form').appendChild(hiddenInput);
 
         var getReffered = $('#validationDefault14')
@@ -506,7 +532,9 @@
             $('.select2-results .new-contact-btn').remove();
 
             // Append the button
-            $(".select2-results").append('<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>');
+            $(".select2-results").append(
+                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>'
+            );
         });
 
         window.openContactModal = function() {
@@ -517,6 +545,28 @@
 
     });
 
+
+    function deleteAssignGroup(removeGroupId) {
+        console.log("yes i am here", removeGroupId);
+        $.ajax({
+            url: '/contact/group/delete/'+removeGroupId, // Replace 'your_delete_endpoint_url' with the actual URL of your delete endpoint
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type: 'DELETE',
+            success: function(response) {
+                if(response){
+                    showToast("Group deleted successfully");
+
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error('Error deleting group:', error);
+            }
+        });
+
+    }
 
     function showValidation(e) {
         let lastName = e.value;

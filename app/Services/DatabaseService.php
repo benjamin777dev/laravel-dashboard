@@ -1151,7 +1151,7 @@ class DatabaseService
                 ->when($sort, function ($query, $sort) {
                     $query->orderBy('first_name', $sort);
                 })
-                ->get();
+                ->paginate();
 
             Log::info("Retrieved Contacts From Database", ['contacts_count' => $contacts->count()]);
 
