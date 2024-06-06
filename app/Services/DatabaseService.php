@@ -174,36 +174,146 @@ class DatabaseService
         foreach ($contacts as $contact) {
             $user = User::where('root_user_id', $contact['Owner']['id'])->first();
 
-            // if (!$user) {
-            //     // Log an error if the user is not found
-            //     Log::error("User with Zoho ID {$deal['Contact_Name']['id']} not found.");
-            //     continue; // Skip to the next deal
-            // }
+            // Map the data correctly
+            $mappedData = [
+                'contact_owner' => $user ? $user->id : null,
+                'zoho_contact_id' => $contact['id'] ?? null,
+                'email' => $contact['Email'] ?? null,
+                'first_name' => $contact['First_Name'] ?? null,
+                'last_name' => $contact['Last_Name'] ?? null,
+                'phone' => $contact['Phone'] ?? null,
+                'business_name' => $contact['Business_Name'] ?? null,
+                'business_information' => $contact['Business_Info'] ?? null,
+                'secondory_email' => $contact['Secondary_Email'] ?? null,
+                'relationship_type' => $contact['Relationship_Type'] ?? null,
+                'market_area' => $contact['Market_Area'] ?? null,
+                'envelope_salutation' => $contact['Salutation'] ?? null,
+                'mobile' => $contact['Mobile'] ?? null,
+                'created_time' => isset($contact['Created_Time']) ? $helper->convertToUTC($contact['Created_Time']) : null,
+                'abcd' => $contact['ABCD'] ?? null,
+                'mailing_address' => $contact['Mailing_Street'] ?? null,
+                'mailing_city' => $contact['Mailing_City'] ?? null,
+                'mailing_state' => $contact['Mailing_State'] ?? null,
+                'mailing_zip' => $contact['Mailing_Zip'] ?? null,
+                'isContactCompleted' => isset($contact['Is_Active']) ? (bool) $contact['Is_Active'] : 1,
+                'isInZoho' => isset($contact['$state']) && $contact['$state'] == 'save' ? 1 : 0,
+                'Lead_Source' => $contact['Lead_Source'] ?? null,
+                'referred_id' => $contact['Referred_By']['id'] ?? null,
+                'lead_source_detail' => $contact['Lead_Source_Detail'] ?? null,
+                'spouse_partner' => $contact['Spouse_Partner']['id'] ?? null,
+                'last_called' => isset($contact['Last_Called']) ? $helper->convertToUTC($contact['Last_Called']) : null,
+                'last_emailed' => isset($contact['Last_Emailed']) ? $helper->convertToUTC($contact['Last_Emailed']) : null,
+                'email_blast_opt_in' => $contact['Email_Blast_Opt_In'] ?? null,
+                'twitter_url' => $contact['Twitter_URL'] ?? null,
+                'emergency_contact_phone' => $contact['Emergency_Contact_Phone'] ?? null,
+                'print_qr_code_sheet' => $contact['Print_QR_Code_Sheet'] ?? null,
+                'invalid_address_usps' => $contact['Invalid_Address_USPS'] ?? null,
+                'mls_recolorado' => $contact['MLS_REColorado'] ?? null,
+                'mls_navica' => $contact['MLS_Navica'] ?? null,
+                'perfect' => $contact['Perfect'] ?? null,
+                'realtor_board' => $contact['Realtor_Board'] ?? null,
+                'initial_split' => $contact['Initial_Split'] ?? null,
+                'has_missing_important_date' => $contact['HasMissingImportantDate'] ?? null,
+                'need_o_e' => $contact['Need_O_E'] ?? null,
+                'culture_index' => $contact['Culture_Index'] ?? null,
+                'sticky_dots' => $contact['Sticky_Dots'] ?? null,
+                'strategy_group' => $contact['Strategy_Group'] ?? null,
+                'weekly_email' => $contact['Weekly_Email'] ?? null,
+                'number_of_chats' => $contact['Number_Of_Chats'] ?? null,
+                'notepad_mailer_opt_in' => $contact['Notepad_Mailer_Opt_In'] ?? null,
+                'chr_gives_amount' => $contact['CHR_Gives_Amount'] ?? null,
+                'other_zip' => $contact['Other_Zip'] ?? null,
+                'market_mailer_opt_in' => $contact['Market_Mailer_Opt_In'] ?? null,
+                'groups' => $contact['Groups'] ?? null,
+                'closer_name_phone' => $contact['Closer_Name_Phone'] ?? null,
+                'unsubscribe_from_reviews' => $contact['Unsubscribe_From_Reviews'] ?? null,
+                'outsourced_mktg_onsite_video' => $contact['Outsourced_Mktg_Onsite_Video'] ?? null,
+                'random_notes' => $contact['Random_Notes'] ?? null,
+                'residual_cap' => $contact['Residual_Cap'] ?? null,
+                'email_blast_to_reverse_prospect_list' => $contact['Email_Blast_to_Reverse_Prospect_List'] ?? null,
+                'review_generation' => $contact['Review_Generation'] ?? null,
+                'zillow_url' => $contact['Zillow_URL'] ?? null,
+                'agent_assistant' => $contact['Agent_Assistant'] ?? null,
+                'social_media_ads' => $contact['Social_Media_Ads'] ?? null,
+                'referred_by' => $contact['Referred_By'] ?? null,
+                'peer_advisor' => $contact['Peer_Advisor'] ?? null,
+                'agent_name_on_marketing' => $contact['Agent_Name_on_Marketing'] ?? null,
+                'other_street' => $contact['Other_Street'] ?? null,
+                'qr_code_sign_rider' => $contact['QR_Code_Sign_Rider'] ?? null,
+                'google_business_page_url' => $contact['Google_Business_Page_URL'] ?? null,
+                'has_email' => $contact['Has_Email'] ?? null,
+                'salesforce_id' => $contact['Salesforce_ID'] ?? null,
+                'mls_ires' => $contact['MLS_IRES'] ?? null,
+                'outsourced_mktg_floorplans' => $contact['Outsourced_Mktg_Floorplans'] ?? null,
+                'income_goal' => $contact['Income_Goal'] ?? null,
+                'chr_relationship' => $contact['CHR_Relationship'] ?? null,
+                'locked_s' => $contact['Locked__s'] ?? null,
+                'tag' => isset($contact['Tag']) ? json_encode($contact['Tag']) : null,
+                'import_batch' => $contact['Import_Batch'] ?? null,
+                'termination_date' => isset($contact['Termination_Date']) ? $helper->convertToUTC($contact['Termination_Date']) : null,
+                'license_start_date' => isset($contact['License_Start_Date']) ? $helper->convertToUTC($contact['License_Start_Date']) : null,
+                'brokermint_id' => $contact['Brokermint_ID'] ?? null,
+                'residual_split' => $contact['Residual_Split'] ?? null,
+                'visitor_score' => $contact['Visitor_Score'] ?? null,
+                'sign_vendor' => $contact['Sign_Vendor'] ?? null,
+                'other_state' => $contact['Other_State'] ?? null,
+                'last_activity_time' => isset($contact['Last_Activity_Time']) ? $helper->convertToUTC($contact['Last_Activity_Time']) : null,
+                'unsubscribed_mode' => $contact['Unsubscribed_Mode'] ?? null,
+                'license_number' => $contact['License_Number'] ?? null,
+                'exchange_rate' => $contact['Exchange_Rate'] ?? null,
+                'email_to_cc_on_all_marketing_comms' => $contact['Email_to_CC_on_All_Marketing_Comms'] ?? null,
+                'tm_preference' => $contact['TM_Preference'] ?? null,
+                'salutation_s' => $contact['Salutation_s'] ?? null,
+                '$locked_for_me' => $contact['$locked_for_me'] ?? null,
+                '$approved' => $contact['$approved'] ?? null,
+                'email_cc_1' => $contact['Email_CC_1'] ?? null,
+                'google_business' => $contact['Google_Business'] ?? null,
+                'email_cc_2' => $contact['Email_CC_2'] ?? null,
+                'days_visited' => $contact['Days_Visited'] ?? null,
+                'pipeline_stage' => $contact['Pipeline_Stage'] ?? null,
+                'social_media_images' => $contact['Social_Media_Images'] ?? null,
+                'fees_charged_to_seller_at_closing' => $contact['Fees_Charged_to_Seller_at_Closing'] ?? null,
+                'realtor_com_url' => $contact['Realtor_com_URL'] ?? null,
+                'title_company' => $contact['Title_Company'] ?? null,
+                'select_your_prints' => $contact['Select_your_prints'] ?? null,
+                'role' => $contact['Role'] ?? null,
+                'missing' => $contact['Missing'] ?? null,
+                'groups_tags' => $contact['Groups_Tags'] ?? null,
+                'lender_company_name' => $contact['Lender_Company_Name'] ?? null,
+                '$zia_owner_assignment' => $contact['$zia_owner_assignment'] ?? null,
+                'secondary_email' => $contact['Secondary_Email'] ?? null,
+                'current_annual_academy' => $contact['Current_Annual_Academy'] ?? null,
+                'transaction_status_reports' => $contact['Transaction_Status_Reports'] ?? null,
+                'non_tm_assignment' => $contact['Non_TM_Assignment'] ?? null,
+                'user' => $contact['User']['id'] ?? null,
+                'lender_email' => $contact['Lender_Email'] ?? null,
+                'sign_install' => $contact['Sign_Install'] ?? null,
+                'team_name' => $contact['Team_Name'] ?? null,
+                'pintrest_url' => $contact['Pintrest_URL'] ?? null,
+                'youtube_url' => $contact['Youtube_URL'] ?? null,
+                'include_insights_in_intro' => $contact['Include_Insights_in_Intro'] ?? null,
+                'import_id' => $contact['Import_ID'] ?? null,
+                'business_info' => $contact['Business_Info'] ?? null,
+                'email_signature' => $contact['Email_Signature'] ?? null,
+                'property_website_qr_code' => $contact['Property_Website_QR_Code'] ?? null,
+                'draft_showing_instructions' => $contact['Draft_Showing_Instructions'] ?? null,
+                'additional_email_for_confirmation' => $contact['Additional_Email_for_Confirmation'] ?? null,
+                'important_date_added' => $contact['Important_Date_Added'] ?? null,
+                'emergency_contact_name' => $contact['Emergency_Contact_Name'] ?? null,
+                'initial_cap' => $contact['Initial_Cap'] ?? null,
+                'unsubscribed_time' => isset($contact['Unsubscribed_Time']) ? $helper->convertToUTC($contact['Unsubscribed_Time']) : null,
+                'mls_ppar' => $contact['MLS_PPAR'] ?? null,
+                'outsourced_mktg_3d_zillow_tour' => $contact['Outsourced_Mktg_3D_Zillow_Tour'] ?? null,
+                'marketing_specialist' => $contact['Marketing_Specialist'] ?? null,
+                'default_commission_plan_id' => $contact['Default_Commission_Plan_Id'] ?? null,
+                'feature_cards_or_sheets' => $contact['Feature_Cards_or_Sheets'] ?? null,
+                'termination_reason' => $contact['Termination_Reason'] ?? null,
+                'transaction_manager' => $contact['Transaction_Manager'] ?? null,
+                'auto_address' => $contact['Auto_Address'] ?? null,
+            ];
 
-            // Update or create the deal
-            Contact::updateOrCreate(['zoho_contact_id' => $contact['id']], [
-                "contact_owner" => isset($user['id']) ? $user['id'] : null,
-                "email" => isset($contact['Email']) ? $contact['Email'] : null,
-                "first_name" => isset($contact['First_Name']) ? $contact['First_Name'] : null,
-                "last_name" => isset($contact['Last_Name']) ? $contact['Last_Name'] : null,
-                "phone" => isset($contact['Phone']) ? $contact['Phone'] : null,
-                "created_time" => isset($contact['Created_Time']) ? $helper->convertToUTC($contact['Created_Time']) : null,
-                "abcd" => isset($contact['ABCD']) ? $contact['ABCD'] : null,
-                "mailing_address" => isset($contact['Mailing_Address']) ? $contact['Mailing_Address'] : null,
-                "mailing_city" => isset($contact['Mailing_City']) ? $contact['Mailing_City'] : null,
-                "phone" => isset($contact['Phone']) ? $contact['Phone'] : null,
-                "mobile" => isset($contact['Mobile']) ? $contact['Mobile'] : null,
-                "mailing_state" => isset($contact['Mailing_State']) ? $contact['Mailing_State'] : null,
-                "market_area" => isset($contact['Market_Area']) ? $contact['Market_Area'] : null,
-                "relationship_type" => isset($contact['Relationship_Type']) ? $contact['Relationship_Type'] : null,
-                "envelope_salutation" => isset($contact['Salutation']) ? $contact['Salutation'] : null,
-                "envelope_salutation" => isset($contact['Salutation']) ? $contact['Salutation'] : null,
-                "referred_id" => isset($contact['Referred_By']) ? $contact['Referred_By']['id'] : null,
-                "Lead_Source" => isset($contact['Lead_Source']) ? $contact['Lead_Source'] : null,
-                "lead_source_detail" => isset($contact['Lead_Source_Detail']) ? $contact['Lead_Source_Detail'] : null,
-                "spouse_partner" => isset($contact['Spouse_Partner']) ? $contact['Spouse_Partner']['id'] : null,
-                "zoho_contact_id" => isset($contact['id']) ? $contact['id'] : null,
-            ]);
+            // Update or create the contact
+            Contact::updateOrCreate(['zoho_contact_id' => $contact['id']], $mappedData);
         }
 
         Log::info("Contacts stored into database successfully.");
@@ -882,7 +992,7 @@ class DatabaseService
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
                 'contactId' => isset($contact->id) ? $contact->id : null,
-                'contact_name'=>isset($contact_name)?$contact_name->id:null
+                'contact_name' => isset($contact_name) ? $contact_name->id : null,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -1424,23 +1534,34 @@ class DatabaseService
         $reader->setHeaderOffset(0);
         $records = $reader->getRecords();
 
-        $batchSize = 5000; // Adjust the batch size based on your memory and performance needs
+        $batchSize = 10; // Adjust the batch size based on your memory and performance needs
         $dataBatch = [];
 
         DB::beginTransaction();
         try {
             foreach ($records as $record) {
-                $dataBatch[] = $record;
+                // if module is contacts, we map it to the root user id
+                if ($module === 'Contacts') {
+                    $user = User::where('root_user_id', $record['Owner']['id'])->first();
+                } else {
+                    $user = null;
+                    return;
+                }
+                
+                // Dynamically call the mapping method based on the module
+                $mappedData = $this->mapDataByModule($module, $record, $user);
+
+                $dataBatch[] = $mappedData;
 
                 if (count($dataBatch) >= $batchSize) {
-                    $this->upsertDataBatch($dataBatch, $module);
+                    $this->upsertDataBatch($module, $dataBatch);
                     $dataBatch = [];
                 }
             }
 
             // Insert any remaining records
             if (count($dataBatch) > 0) {
-                $this->upsertDataBatch($dataBatch, $module);
+                $this->upsertDataBatch($module, $dataBatch);
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -1449,23 +1570,32 @@ class DatabaseService
         }
     }
 
+    protected function mapDataByModule($module, $record, $user)
+    {
+        switch ($module) {
+            case 'Contacts':
+                return \App\Models\Contact::mapZohoData($record, $user);
+            // Add other cases as needed
+            default:
+                throw new \Exception("Mapping not defined for module {$module}");
+        }
+    }
+
     protected function upsertDataBatch(array $dataBatch, $module)
     {
         try {
-            $updateColumns = $this->getUpdateColumns($dataBatch);
-
             switch ($module) {
                 case 'Contacts':
-                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id'], $updateColumns);
+                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id']);
                     break;
                 case 'Deals':
-                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id'], $updateColumns);
+                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id']);
                     break;
                 case 'Contacts_X_Groups':
-                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id'], $updateColumns);
+                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
                     break;
                 case 'Agent_Commission_Incomes':
-                    \App\Models\ACI::upsert($dataBatch, ['zoho_aci_id'], $updateColumns);
+                    \App\Models\ACI::upsert($dataBatch, ['zoho_aci_id']);
                     break;
                     // Add other cases as needed
             }
@@ -1474,35 +1604,27 @@ class DatabaseService
         }
     }
 
-    protected function getUpdateColumns(array $dataBatch)
-    {
-        // Return the list of columns to update, excluding primary keys
-        $columns = array_keys($dataBatch[0]);
-        // You can customize this array to exclude certain columns if needed
-        return $columns;
-    }
-
-    public function createSpouseContact(User $user, $accessToken, $spouseId,$zohoSpouseContact)
+    public function createSpouseContact(User $user, $accessToken, $spouseId, $zohoSpouseContact)
     {
         try {
-            Log::info("Spouse Contact Details" ,['contact' => $zohoSpouseContact]);
+            Log::info("Spouse Contact Details", ['contact' => $zohoSpouseContact]);
             $contact = Contact::create([
                 'last_name' => $zohoSpouseContact['Last_Name'],
-                'relationship_type'=>$zohoSpouseContact['Relationship_Type'],
-                'missing_abcd'=>$zohoSpouseContact['Missing_ABCD'],
-                'first_name'=> $zohoSpouseContact['First_Name'],
-                'email'=> $zohoSpouseContact['Email'],
-                'phone'=> $zohoSpouseContact['Phone'],
-                'mobile'=> $zohoSpouseContact['Mobile'],
+                'relationship_type' => $zohoSpouseContact['Relationship_Type'],
+                'missing_abcd' => $zohoSpouseContact['Missing_ABCD'],
+                'first_name' => $zohoSpouseContact['First_Name'],
+                'email' => $zohoSpouseContact['Email'],
+                'phone' => $zohoSpouseContact['Phone'],
+                'mobile' => $zohoSpouseContact['Mobile'],
                 'isContactCompleted' => false,
                 'contact_owner' => $user->id,
                 'isInZoho' => true,
                 'zoho_contact_id' => $spouseId,
-                'contact_owner'=> $user->id,
+                'contact_owner' => $user->id,
                 /* "Layout"=>[
-                    "name"=> "Standard",
-                    "id"=> "5141697000000091033"
-                ],  */
+            "name"=> "Standard",
+            "id"=> "5141697000000091033"
+            ],  */
             ]);
             Log::info("Spouse Contact Create In Database", ['contact' => $contact]);
             return $contact;
