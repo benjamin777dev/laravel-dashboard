@@ -199,6 +199,16 @@ class Contact extends Model
      */
     public static function mapZohoData(array $data, $source = 'webhook')
     {
+        $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
+        $data['Last_Called'] = isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s')  : null;
+        $data['Last_Emailed'] = isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s')  : null;
+        $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s')  : null;
+        $data['Termination_Date'] = isset($data['Termination_Date']) ? Carbon::parse($data['Termination_Date'])->format('Y-m-d H:i:s')  : null;
+        $data['License_Start_Date'] = isset($data['License_Start_Date']) ? Carbon::parse($data['License_Start_Date'])->format('Y-m-d H:i:s') : null;
+        $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s')  : null;
+        $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s')  : null;
+
+
         $mappedData = [
             'zoho_contact_id' => $source === 'webhook' ? (isset($data['id']) ? $data['id'] : null) : (isset($data['Id']) ? $data['Id'] : null),
             'contact_owner' => $source === 'webhook' ? (isset($data['Owner']['id']) ? $data['Owner']['id'] : null) : (isset($data['Owner']) ? $data['Owner'] : null),
@@ -213,7 +223,7 @@ class Contact extends Model
             'market_area' => isset($data['Market_Area']) ? $data['Market_Area'] : null,
             'envelope_salutation' => isset($data['Salutation']) ? $data['Salutation'] : null,
             'mobile' => isset($data['Mobile']) ? $data['Mobile'] : null,
-            'created_time' => isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null,
+            'created_time' => $data['Created_Time'],
             'abcd' => isset($data['ABCD']) ? $data['ABCD'] : null,
             'mailing_address' => isset($data['Mailing_Street']) ? $data['Mailing_Street'] : null,
             'mailing_city' => isset($data['Mailing_City']) ? $data['Mailing_City'] : null,
@@ -225,8 +235,8 @@ class Contact extends Model
             'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : null,
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
             'spouse_partner' => isset($data['Spouse_Partner']) ? $data['Spouse_Partner'] : null,
-            'last_called' => isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s') : null,
-            'last_emailed' => isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s') : null,
+            'last_called' => $data['Last_Called'],
+            'last_emailed' => $data['Last_Emailed'],
             'email_blast_opt_in' => isset($data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In']) ? (int)$data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In'] : null,
             'twitter_url' => isset($data[$source === 'webhook' ? 'Twitter_URL' : 'Twitter']) ? $data[$source === 'webhook' ? 'Twitter_URL' : 'Twitter'] : null,
             'emergency_contact_phone' => isset($data['Emergency_Contact_Phone']) ? $data['Emergency_Contact_Phone'] : null,
@@ -274,14 +284,14 @@ class Contact extends Model
             'locked_s' => isset($data['Locked__s']) ? (int)$data['Locked__s'] : null,
             'tag' => isset($data['Tag']) ? $data['Tag'] : null,
             'import_batch' => isset($data['Import_Batch']) ? $data['Import_Batch'] : null,
-            'termination_date' => isset($data['Termination_Date']) ? $data['Termination_Date'] : null,
-            'license_start_date' => isset($data['License_Start_Date']) ? $data['License_Start_Date'] : null,
+            'termination_date' => $data['Termination_Date'],
+            'license_start_date' => $data['License_Start_Date'],
             'brokermint_id' => isset($data['Brokermint_ID']) ? $data['Brokermint_ID'] : null,
             'residual_split' => isset($data['Residual_Split']) ? $data['Residual_Split'] : null,
             'visitor_score' => isset($data['Visitor_Score']) ? $data['Visitor_Score'] : null,
             'sign_vendor' => isset($data['Sign_Vendor']) ? $data['Sign_Vendor'] : null,
             'other_state' => isset($data['Other_State']) ? $data['Other_State'] : null,
-            'last_activity_time' => isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s') : null,
+            'last_activity_time' => $data['Last_Activity_Time'],
             'unsubscribed_mode' => isset($data['Unsubscribed_Mode']) ? $data['Unsubscribed_Mode'] : null,
             'license_number' => isset($data['License_Number']) ? $data['License_Number'] : null,
             'exchange_rate' => isset($data['Exchange_Rate']) ? $data['Exchange_Rate'] : null,
@@ -325,7 +335,7 @@ class Contact extends Model
             'important_date_added' => isset($data['Important_Date_Added']) ? (int)$data['Important_Date_Added'] : null,
             'emergency_contact_name' => isset($data['Emergency_Contact_Name']) ? $data['Emergency_Contact_Name'] : null,
             'initial_cap' => isset($data['Initial_Cap']) ? $data['Initial_Cap'] : null,
-            'unsubscribed_time' => isset($data['Unsubscribed_Time']) ? (int)$data['Unsubscribed_Time'] : null,
+            'unsubscribed_time' => $data['Unsubscribed_Time'],
             'mls_ppar' => isset($data['MLS_PPAR']) ? (int)$data['MLS_PPAR'] : null,
             'outsourced_mktg_3d_zillow_tour' => isset($data['Outsourced_Mktg_3D_Zillow_Tour']) ? (int)$data['Outsourced_Mktg_3D_Zillow_Tour'] : null,
             'marketing_specialist' => isset($data['Marketing_Specialist']) ? $data['Marketing_Specialist'] : null,
