@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\Deal;
 use App\Models\User;
 use App\Services\ZohoBulkRead;
 use Illuminate\Http\Request;
@@ -38,6 +39,33 @@ class UpdateFromZohoCRMController extends Controller
         Log::info('Contact updated/inserted successfully', ['zoho_contact_id' => $zohoContactId]);
 
         return response()->json(['message' => 'Contact updated successfully'], 200);
+    }
+
+    public function handleDealUpdate(Request $request)
+    {
+        $data = $request->all();
+
+        Log::info('Received deal update from Zoho CRM', ['data' => $data]);
+
+        $zohoDealId = $data['id'];
+
+        // Map the data using the Contact model's mapping method
+        $mappedData = Deal::mapZohoData($data, 'webhook');
+
+        // Update or create the contact record in the database
+        try {
+            Deal::updateOrCreate(
+                ['zoho_deal_id' => $zohoDealId],
+                $mappedData
+            );
+        } catch (\Exception $e) {
+            Log::error('Error updating deal', ['zoho_deal_id' => $zohoDealId, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Error updating contact'], 500);
+        }
+
+        Log::info('Deal updated/inserted successfully', ['zoho_deal_id' => $zohoDealId]);
+
+        return response()->json(['message' => 'Deal updated successfully'], 200);
     }
 
     public function handleCSVCallback(Request $request)
