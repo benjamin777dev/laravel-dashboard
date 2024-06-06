@@ -120,7 +120,7 @@ class SyncZohoData extends Command
                 foreach ($users as $zohoUser) {
                     $password = Hash::make($zohoUser['id'] . 'zportalINACTIVEUSER'. $zohoUser['email']);
                     User::updateOrCreate(
-                        ['zoho_id' => $zohoUser['id']],
+                        ['root_user_id' => $zohoUser['id']],
                         [
                             'name' => $zohoUser['full_name'] ?? null,
                             'email' => $zohoUser['email'] ?? null,
