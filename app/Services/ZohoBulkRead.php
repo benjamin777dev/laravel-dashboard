@@ -26,7 +26,7 @@ class ZohoBulkRead
                 'Content-Type' => 'application/json'
             ])->post($this->apiUrl . 'read', [
                 'callback' => [
-                    'url' => 'https://zportal.coloradohomerealty.com/api/zoho-callback',
+                    'url' => 'https://zportal.coloradohomerealty.com/api/webhook/csvcallback',
                     'method' => 'post'
                 ],
                 'query' => [

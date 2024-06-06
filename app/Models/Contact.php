@@ -347,7 +347,7 @@ class Contact extends Model
         ];
         
         
-        Log::info("Mapped Data: " , ['data' => $mappedData]);
+        //Log::info("Mapped Data: " , ['data' => $mappedData]);
 
         return $mappedData;
     }

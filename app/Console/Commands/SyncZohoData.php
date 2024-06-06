@@ -7,7 +7,6 @@ use App\Services\DatabaseService;
 use App\Services\ZohoBulkRead;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
 
@@ -55,45 +54,6 @@ class SyncZohoData extends Command
             if ($jobResponse) {
                 $jobId = $jobResponse['data'][0]['details']['id'];
                 $this->info("Bulk read job created for module: {$module} with job ID: {$jobId}");
-
-                // Check job status until it's completed
-                do {
-                    $statusResponse = $zoho->checkJobStatus($jobId);
-                    $state = $statusResponse['data'][0]['state'] ?? 'IN_PROGRESS';
-                    sleep(10); // Wait for 10 seconds before checking the status again
-                } while ($state !== 'COMPLETED');
-
-                $this->info("Bulk read job completed for module: {$module}");
-
-                // Download the result
-                $result = $zoho->downloadResult($jobId);
-
-                if ($result) {
-                    $fileName = "{$module}_bulk_read.zip";
-                    Storage::put($fileName, $result);
-                    $this->info("Downloaded result for module: {$module} to {$fileName}");
-
-                    // Extract the CSV and import data to the database
-                    $zip = new \ZipArchive();
-                    if ($zip->open(storage_path('app/' . $fileName)) === true) {
-                        $zip->extractTo(storage_path('app/zoho_bulk_read/'));
-                        $zip->close();
-
-                        $extractedFiles = Storage::files('zoho_bulk_read');
-
-                        foreach ($extractedFiles as $csvFilePath) {
-                            if (pathinfo($csvFilePath, PATHINFO_EXTENSION) === 'csv') {
-                                // Process CSV and import data to the database in chunks
-                                $db->importDataFromCSV(storage_path('app/' . $csvFilePath), $module);
-                                $this->info("Data imported for module: {$module} from {$csvFilePath}");
-                            }
-                        }
-                    } else {
-                        $this->error("Failed to extract {$fileName}");
-                    }
-                } else {
-                    $this->error("Failed to download result for job ID: {$jobId}");
-                }
             } else {
                 $this->error("Failed to create bulk read job for module: {$module}");
             }

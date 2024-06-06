@@ -19,7 +19,7 @@ use App\Http\Controllers\UpdateFromZohoCRMController;
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
 Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
-
+Route::post('/api/webhook/csvcallback', [UpdateFromZohoCRMController::class, 'handleCSVCallback']);
 
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
 
