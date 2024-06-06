@@ -36,4 +36,4 @@ jobs:
         php artisan config:cache # Cache configuration
         php artisan cache:clear # Clear cache
         php artisan migrate --force # Run migrations
-        chmod +x artiasn
+        chmod +x artisan
