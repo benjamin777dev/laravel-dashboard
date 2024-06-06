@@ -59,7 +59,7 @@ class UpdateFromZohoCRMController extends Controller
             $db = new DatabaseService();
 
             // Download the result
-            $result = $zoho->downloadResult($data["result"]["download_url"]);
+            $result = $zoho->downloadResult($jobId);
 
             if ($result) {
                 $module = $data["query"]["module"]["api_name"];
