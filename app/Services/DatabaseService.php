@@ -1547,14 +1547,14 @@ class DatabaseService
                 $dataBatch[] = $mappedData;
 
                 if (count($dataBatch) >= $batchSize) {
-                    $this->upsertDataBatch($module, $dataBatch);
+                    $this->upsertDataBatch($dataBatch, $module);
                     $dataBatch = [];
                 }
             }
 
             // Insert any remaining records
             if (count($dataBatch) > 0) {
-                $this->upsertDataBatch($module, $dataBatch);
+                $this->upsertDataBatch($dataBatch, $module);
             }
             DB::commit();
         } catch (\Exception $e) {
