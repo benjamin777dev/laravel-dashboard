@@ -23,7 +23,7 @@
                                         <input type="checkbox" name="contact_{{ $contact['id'] }}" id="contact_{{ $contact['id'] }}" onclick="updateContactRoles({{ json_encode($contact)}}, '')" {{ $dealContacts->contains('id', $contact['id']) ? 'checked' : '' }}>
                                         <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
                                     </td>
-                                    <td>{{ $contact['userData']['name'] }}</td>
+                                    <td>{{ $contact['userData']['name'] ?? "" }}</td>
                                     <td>
                                         <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}" onchange="updateContactRoles({{ json_encode($contact) }}, this.value)">
                                             @foreach($contactRoles as $contactRole)

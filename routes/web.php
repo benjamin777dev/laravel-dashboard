@@ -98,6 +98,9 @@ Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 
+// aci routes
+Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
+
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
 

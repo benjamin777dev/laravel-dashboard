@@ -155,8 +155,6 @@ class ZohoCRM
                 $this->refresh_token = $tokenData['refresh_token'];
             }
         }
-        // print_r($this->access_token);
-        // die;
         return $this->access_token;
     }
 
@@ -1014,6 +1012,38 @@ class ZohoCRM
         Log::info('Zoho Deal contact data responses: ' . json_encode($arrayResponse, true));
         return $arrayResponse;
     }
+
+    public function createAciData($inputJson)
+    {
+        try {
+            Log::info('Creating Zoho contacts',[$inputJson]);
+
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->patch($this->apiUrl . "Agent_Commission_Incomes/?affected_data=true", $inputJson);
+
+            $responseData = $response->json();
+
+            // Check if the request was successful
+            if (!$response->successful()) {
+                Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+                throw new \Exception('Failed to create Zoho contacts');
+            }
+
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
+
+
 
 
 }
