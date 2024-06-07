@@ -142,24 +142,33 @@ class DatabaseService
     public function storeDealContactIntoDB($dealContacts, $dealId)
     {
         Log::info("Storing Deal Contacts Into Database");
+        
+        $storedDealContacts = [];
+        
         foreach ($dealContacts as $dealContact) {
-            Log::info("dealContact", $dealContact);
-            $contact = Contact::where('zoho_contact_id', $dealContact['id'])->first();
-            $user = User::where('zoho_id', $dealContact['id'])->first();
-
-            DealContact::updateOrCreate([
-                'zoho_deal_id' => $dealId,
-                'contactId' => $contact ? $contact->id : null,
-                'userId' => $user ? $user->id : null,
-            ], [
-                'zoho_deal_id' => $dealId,
-                'contactId' => $contact ? $contact->id : null,
-                'userId' => $user ? $user->id : null,
-                'contactRole' => $dealContact['Contact_Role']['name'],
-            ]);
+        Log::info("dealContact", $dealContact);
+        
+        // Fetch the contact and user from the database
+        $contact = Contact::where('zoho_contact_id', $dealContact['id'])->first();
+        $user = User::where('zoho_id', $dealContact['id'])->first();
+        
+        // Update or create the deal contact
+        $dealContactEntry = DealContact::updateOrCreate([
+        'zoho_deal_id' => $dealId,
+        'contactId' => $contact ? $contact->id : null,
+        'userId' => $user ? $user->id : null,
+        ], [
+        'zoho_deal_id' => $dealId,
+        'contactId' => $contact ? $contact->id : null,
+        'userId' => $user ? $user->id : null,
+        'contactRole' => $dealContact['Contact_Role']['name'],
+        ]);
+        
+        $storedDealContacts[] = $dealContactEntry;
         }
-
+        
         Log::info("Deal Contacts stored into database successfully.");
+        return response()->json(['message' => 'Deal contacts stored successfully', 'dealContacts' => $storedDealContacts]);
     }
 
     /**
@@ -873,7 +882,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $dealId);
-            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->get();
+            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->orderBy('updated_at','desc')->paginate(10);
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
         } catch (\Exception $e) {

@@ -159,7 +159,7 @@ class Contact extends Model
 
     public function userData()
     {
-        return $this->belongsTo(User::class, 'contact_owner');
+        return $this->belongsTo(User::class, 'contact_owner','root_user_id');
     }
 
     public function contactName()
