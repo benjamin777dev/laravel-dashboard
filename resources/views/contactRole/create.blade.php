@@ -29,7 +29,7 @@
                                         <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{
                                             $contact['last_name'] }}</label>
                                     </td>
-                                    <td>{{ $contact['userData']['name'] }}</td>
+                                    <td>{{ $contact['userData']['name'] ?? "" }}</td>
                                     <td>
                                         <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}"
                                             onchange="updateContactRoles({{ json_encode($contact) }}, this.value,'{{$deal['zoho_deal_id']}}')">
