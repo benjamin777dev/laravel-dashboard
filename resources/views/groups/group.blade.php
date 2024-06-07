@@ -61,7 +61,7 @@
 
                     @foreach ($shownGroups as $index => $shownGroup)
                                 @php
-                                $group = $contact->groups->firstWhere('groupId', $shownGroup['id']);
+                                $group = optional($contact->groups)->firstWhere('groupId', $shownGroup['id']);
                                 @endphp
                                 <td>
                                     <input type="checkbox" data-id="{{$contact['zoho_contact_id']}}" data-group-id="{{$group}}"
