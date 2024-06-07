@@ -387,4 +387,23 @@ class PipelineController extends Controller
         $contactroles = $db->removeDealContactfromDB($jsonData);
         return $contactroles;
     }
+    public function getContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $zoho = new ZohoCRM();
+        $db = new DatabaseService();
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $dealContacts =$db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contactRoles = $db->retrieveRoles($user);
+        return view('contactRole.contact', compact('dealContacts','deal','contacts','contactRoles'))->render();
+    }
 }
