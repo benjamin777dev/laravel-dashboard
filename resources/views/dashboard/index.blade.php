@@ -155,40 +155,54 @@
                     @foreach ($closedDeals as $deal)
                         <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}">
                             <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
+                                <span class="dlabel">Transaction Name:</span>    
                                 <div class="dTContactName">{{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
                             </div>
                             <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
                                 <div class="dTContactName">
+                                    <span class="dlabel">Client Name:</span>
                                     <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
                                     {{ $deal->client_name_primary ?? 'N/A' }}
                                 </div>
                             </div>
                             <div data-type="stage" data-value="{{ $deal['stage'] }}">
                                 <div class="dTContactName">
+                                    <span class="dlabel">Stage:</span>
                                     <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
                                     {{ $deal['stage'] }}
                                 </div>
                             </div>
                             <div data-type="representing" data-value="{{ $deal['representing'] }}">
-                                <div class="dTContactName">{{ $deal['representing'] }}</div>
+                                <div class="dTContactName">
+                                    <span class="dlabel">Representing:</span>
+                                    {{ $deal['representing'] }}
+                                </div>
                             </div>
                             <div data-type="sale_price" data-value="{{ $deal['sale_price'] ?? 0 }}">
-                                <div class="dTContactName">{{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}</div>
+                                <div class="dTContactName">
+                                    <span class="dlabel">Sale Price:</span>
+                                    ${{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}
+                                </div>
                             </div>
                             <div>
+                                <span class="dlabel">Closing Date:</span>
                                 <input type="date" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
                                     id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                             </div>
                             <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
+                                <span class="dlabel">Commission:</span>
                                 <div class="dTContactName">{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
                             </div>
                             <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
+                                <span class="dlabel">Potential GCI:</span>    
                                 <div class="dTContactName">${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
                             </div>
                             <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
+                                <span class="dlabel">Probability:</span>    
                                 <div class="dTContactName">{{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
                             </div>
                             <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
+                                <span class="dlabel">Probable GCI:</span>    
                                 <div class="dTContactName">${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
                             </div>
                         </div>
