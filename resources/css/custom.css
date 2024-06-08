@@ -1125,6 +1125,16 @@
     align-items: center;
 
 }
+.submittaldiv{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.submittalType{
+    padding-bottom: 20px;
+
+}
 
 .ppipeDiv {
     background-color: #f8f9fa;
@@ -3054,4 +3064,10 @@ input[type=button]:hover {
 
 .contact-modal{
     width:100%;
+}
+
+.btn-disabled {
+    background-color: grey;
+    border-color: grey;
+    cursor: not-allowed;
 }

@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 
 
 
-class PipelineController extends Controller
+class SubmittalController extends Controller
 {
     public function index(Request $request)
     {
@@ -28,45 +28,10 @@ class PipelineController extends Controller
 
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
-        $search = request()->query('search');
-        $sortField = $request->input('sort');
-        $sortType = $request->input('sortType');
-        $filter = $request->input('filter');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType, null, $filter);
-
-        // configure the necessary pipeline stats
-        $totalSalesVolume = 0;
-        $totalCommission = 0;
-        $averageCommission = 0;
-        $totalPotentialGCI = 0;
-        $totalProbability = 0;
-        $averageProbability = 0;
-        $totalProbableGCI = 0;
-        $dealCount = count($deals);
-
-        // Calculate stats from deals
-        // Calculate stats from deals
-        foreach ($deals as $deal) {
-            $totalSalesVolume += $deal->sale_price ?? 0; // Updated field name
-            $totalCommission += $deal->commission ?? 0;       // Directly mapped
-            $totalPotentialGCI += $deal->potential_gci ?? 0;  // Directly mapped
-            $totalProbability += $deal->pipeline_probability ?? 0; // Updated field name
-            $totalProbableGCI += (($deal->sale_price ?? 0) * ($deal->commission ?? 0) * (($deal->pipeline_probability ?? 0) / 100)); // Calculate based on percentage
-        }
-
-        // Calculate averages
-        $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
-        $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
-        
-        $allstages = config('variables.dealStages');
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('pipeline.pipelineload', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
-        }
-        return view('pipeline.index', compact('deals','userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $submittals =[];
+        return view('submittals.index', compact('deal','submittals'))->render();
     }
 
     public function getDeals(Request $request)
@@ -165,11 +130,11 @@ class PipelineController extends Controller
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'))->render();
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'));
 
     }
 
-    public function showCreatePipelineForm(Request $request)
+    public function showSubmittalCreate(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
         $db = new DatabaseService();
@@ -181,10 +146,9 @@ class PipelineController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $dealId = request()->route('dealId');
-        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $submittalType = request()->route('type');
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
-        $tab = request()->query('tab') ?? 'In Progress';
+        /*$tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
         Log::info("Task Details: " . print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
@@ -199,8 +163,8 @@ class PipelineController extends Controller
         $users = User::all();
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
-        $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('tasks','contactRoles','users', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','deals'));
+        $contactRoles = $db->retrieveRoles($user); */
+        return view('submittals.create', compact('deals','submittalType'));
     }
 
     public function getDeal(Request $request)
