@@ -20,6 +20,12 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
+        @if ($needsNewDate->isNotEmpty())
+            <div class="alert alert-danger text-center">
+                You have {{ $needsNewDate->count() }} bad dates! 
+                &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
+            </div>
+        @endif
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
                 <div class="row g-1">
@@ -133,8 +139,14 @@
                 </div>
             </div>
 
-            <div class="table-responsive dtranstiontable mt-2">
-                <p class="fw-bold">Bad Dates</p>
+            <div class="table-responsive dtranstiontable mt-2" id="badDates">
+            @if ($needsNewDate->isNotEmpty())
+                <p class="fw-bold">Bad Dates | <span class="text-danger">{{count($needsNewDate)}} Bad Dates!</span></p>
+            @else
+                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+            @endif
+                
+                
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
                     <div>Client Name</div>
@@ -147,13 +159,13 @@
                     <div>Probability</div>
                     <div>Probable GCI</div>
                 </div>
-                @if (count($closedDeals) === 0)
+                @if (count($needsNewDate) === 0)
                     <div>
                         <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
-                    @foreach ($closedDeals as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}">
+                    @foreach ($needsNewDate as $deal)
+                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
                         <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
                                     <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
@@ -187,7 +199,7 @@
                             </div>
                             <div class="dTContactName">
                                 <span class="dlabel">Closing Date:</span>
-                                <input type="date" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
+                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
                                     id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                             </div>
                             <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
@@ -222,6 +234,21 @@
 
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('btnBadDates').addEventListener('click', function() {
+            const element = document.getElementById('badDates');
+            const offset = 100; // Adjust this value as needed
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+
     window.fetchData = function(tab = null) {
         $('#spinner').show();
         loading = true;

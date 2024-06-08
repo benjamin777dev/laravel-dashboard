@@ -158,7 +158,7 @@ window.checkAdditionalValidation = function (deal) {
     }
 }
 
-window.updateDataDeal = function (dealId) {
+window.updateDataDeal = function (dealId, dbDealId) {
     let isValid = true
     console.log(dealId);
     // Retrieve values from form fields
@@ -309,6 +309,7 @@ window.updateDataDeal = function (dealId) {
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
                     showToast(upperCaseMessage);
+                    updateDealInformation(dbDealId)
                     // window.location.reload();
                 }
             },
@@ -318,6 +319,28 @@ window.updateDataDeal = function (dealId) {
             }
         })
     }
+}
+
+window.updateDealInformation = function (dealId) {
+    $.ajax({
+        url: "/submittal/" + dealId,
+        type: 'Get',
+        success: function (response) {
+            // if (response?.data && response.data[0]?.message) {
+            //     // Convert message to uppercase and then display
+            //     const upperCaseMessage = response.data[0].message.toUpperCase();
+            //     showToast(upperCaseMessage);
+            //     updateDealInformation(response.data[0])
+            //     // window.location.reload();
+            // }
+            $('#showsubmittal').html(response);
+
+        },
+        error: function (xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText);
+        }
+    })
 }
 
 window.formatDate = function (date) {
@@ -403,7 +426,7 @@ window.addEventListener('DOMContentLoaded', function () {
             "Under Contract": 60,
             "Dead-Lost To Competition": 100
         };
-        
+
         if (field === "stage") {
             let stageValue = elementId.value;
             if (probabilityData.hasOwnProperty(stageValue)) {
