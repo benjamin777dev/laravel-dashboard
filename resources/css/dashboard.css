@@ -37,7 +37,8 @@
     bottom: -5rem;
     width: 4px;
     height: 20px;
-    background-color: #333; /* or any color of your choice */
+    background-color: #333;
+    /* or any color of your choice */
 }
 
 
@@ -48,6 +49,7 @@
     .dtableHeader {
         display: none;
     }
+
     .dtabletranstion.row-card {
         display: flex;
         flex-direction: column;
@@ -57,7 +59,8 @@
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
         border-radius: 8px;
     }
-    .dtabletranstion.row-card > div {
+
+    .dtabletranstion.row-card>div {
         margin-bottom: 10px;
     }
 }
@@ -72,10 +75,12 @@
         background: #222;
         border-bottom: 1px solid #e0e0e0;
     }
+
     .dtabletranstion.row-card {
         display: grid;
     }
 }
+
 .goal-thermometer {
     width: 100%;
     padding: 10px;
@@ -115,10 +120,19 @@
     bottom: -5rem;
     width: 4px;
     height: 20px;
-    background-color: #333; /* or any color of your choice */
+    background-color: #333;
+    /* or any color of your choice */
 }
 
+.dtabletranstion.row-card {
+    word-break: break-all;
+    word-wrap: break-word;
+}
 
+.dtabletranstion.row-card a {
+	color: #222;
+	font-weight: 600;
+}
 
 
 /* Mobile View */
@@ -126,6 +140,7 @@
     .dtableHeader {
         display: none;
     }
+
     .dtabletranstion.row-card {
         display: flex;
         flex-direction: column;
@@ -135,9 +150,11 @@
         box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
         border-radius: 8px;
     }
-    .dtabletranstion.row-card > div {
+
+    .dtabletranstion.row-card>div {
         margin-bottom: 5px;
     }
+
     .dlabel {
         font-weight: bold;
         display: inline-block;
@@ -149,10 +166,17 @@
     }
 
     .dTContactName {
-        padding: 5px 0; 
-        
+        padding: 5px 0;
+
     }
 }
+
+
+.dtableHeader>div,
+.dtabletranstion>div {
+    width: 100%;
+}
+
 
 /* Desktop View */
 @media (min-width: 768px) {
@@ -164,13 +188,17 @@
         background: #222;
         border-bottom: 1px solid #e0e0e0;
     }
+
     .dtabletranstion.row-card {
         display: grid;
         background: #fff;
     }
+
     .dlabel {
         display: none;
     }
 }
 
-
+.badDateInput {
+    border: 2px solid red;
+}

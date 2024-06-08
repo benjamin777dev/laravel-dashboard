@@ -20,6 +20,12 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
+        @if ($needsNewDate->isNotEmpty())
+            <div class="alert alert-danger text-center">
+                You have {{ $needsNewDate->count() }} bad dates! 
+                &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
+            </div>
+        @endif
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
                 <div class="row g-1">
@@ -133,8 +139,14 @@
                 </div>
             </div>
 
-            <div class="table-responsive dtranstiontable mt-2">
-                <p class="fw-bold">Bad Dates</p>
+            <div class="table-responsive dtranstiontable mt-2" id="badDates">
+            @if ($needsNewDate->isNotEmpty())
+                <p class="fw-bold">Bad Dates | <span class="text-danger">{{count($needsNewDate)}} Bad Dates!</span></p>
+            @else
+                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+            @endif
+                
+                
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
                     <div>Client Name</div>
@@ -147,17 +159,19 @@
                     <div>Probability</div>
                     <div>Probable GCI</div>
                 </div>
-                @if (count($closedDeals) === 0)
+                @if (count($needsNewDate) === 0)
                     <div>
                         <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
-                    @foreach ($closedDeals as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}">
-                            <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
+                    @foreach ($needsNewDate as $deal)
+                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
+                        <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
-                                    <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
-                            </div>
+                                    <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                        <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
+                                    </a>
+                                </div>
                             <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
                                 <div class="dTContactName">
                                     <span class="dlabel">Client Name:</span>
@@ -168,7 +182,6 @@
                             <div data-type="stage" data-value="{{ $deal['stage'] }}">
                                 <div class="dTContactName">
                                     <span class="dlabel">Stage:</span>
-                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
                                     {{ $deal['stage'] }}
                                 </div>
                             </div>
@@ -184,26 +197,23 @@
                                     ${{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}
                                 </div>
                             </div>
-                            <div>
+                            <div class="dTContactName">
                                 <span class="dlabel">Closing Date:</span>
-                                <input type="date" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
+                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
                                     id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                             </div>
                             <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
-                                <span class="dlabel">Commission:</span>
-                                <div class="dTContactName">{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
+                                <div class="dTContactName"><span class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
                             </div>
                             <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
-                                <span class="dlabel">Potential GCI:</span>    
-                                <div class="dTContactName">${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
+                                <div class="dTContactName"><span class="dlabel">Potential GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
                             </div>
                             <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
-                                <span class="dlabel">Probability:</span>    
-                                <div class="dTContactName">{{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
+                                <div class="dTContactName"><span class="dlabel">Probability:</span>   {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
                             </div>
                             <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
-                                <span class="dlabel">Probable GCI:</span>    
-                                <div class="dTContactName">${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
+                                   
+                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span> ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
                             </div>
                         </div>
                     @endforeach
@@ -224,6 +234,21 @@
 
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('btnBadDates').addEventListener('click', function() {
+            const element = document.getElementById('badDates');
+            const offset = 100; // Adjust this value as needed
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+
     window.fetchData = function(tab = null) {
         $('#spinner').show();
         loading = true;

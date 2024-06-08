@@ -403,14 +403,6 @@
     <div class="table-responsive dtranstiontable mt-3">
         <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
             <p class="nproletext">Agent’s Commissions</p>
-            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                data-bs-target="#contactCommission">
-                <i class="fas fa-plus plusicon">
-                </i>
-                Add Agent’s Commissions
-            </div>
-            @include('agentCommision.create')
-
         </div>
 
         <div class="row npAgentTable">
@@ -479,87 +471,6 @@
 
 
     </div>
-
-    {{-- Add New Attachment --}}
-    <div class="table-responsive dtranstiontable mt-3">
-        <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
-            <p class="nproletext">Attachments</p>
-            <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
-                <i class="fas fa-plus plusicon">
-                </i>
-                Add New Attachment
-            </div>
-
-        </div>
-
-        <div class="row npAttachmentTable">
-            <div class="col-md-3">Attachment Name</div>
-            <div class="col-md-3 ">Type</div>
-            <div class="col-md-3 ">Owner</div>
-            <div class="col-md-3 ">Uploaded On</div>
-        </div>
-        @if ($attachments->isEmpty())
-
-        <div>
-            <p class="text-center notesAsignedText">No Attachment assigned</p>
-
-        </div>
-        @else
-
-        @foreach ($attachments as $attachment)
-        <div class="row npAttachmentBody">
-            <div class="col-md-3 npcommontableBodytext">{{ $attachment['file_name'] }}</div>
-            <div class="col-md-3 npcommontableBodytext">PDF</div>
-            <div class="col-md-3 npcommontableBodytext">{{ $attachment['userData']['name'] }}</div>
-            <div class="col-md-3 commonTextEllipsis npcommontableBodyDatetext">
-                {{ $attachment['modified_time'] }}
-            </div>
-        </div>
-        @endforeach
-        @endif
-
-        @foreach ($attachments as $attachment)
-        <div class="npContactCard">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <p class="npcommonheaderText">Attachment Name</p>
-                    <p class="npcommontableBodytext">{{ $attachment['file_name'] }}</p>
-                </div>
-                <div>
-                    <p class="npcommonheaderText">Type</p>
-                    <p class="npcommontableBodytext">PDF</p>
-                </div>
-            </div>
-            <div class="npCardPhoneDiv">
-                <p class="npcommonheaderText">Owner</p>
-                <p class="npcommontableBodytext">{{ $attachment['userData']['name'] }}</p>
-            </div>
-            <div>
-                <p class="npcommonheaderText">Uploaded On</p>
-                <p class="npcommontableBodyDatetext">{{ $attachment['modified_time'] }}</p>
-            </div>
-        </div>
-        @endforeach
-        <div class="dpagination">
-
-            <nav aria-label="..." class="dpaginationNav">
-                <ul class="pagination ppipelinepage d-flex justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
-
 
 </div>
 <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"

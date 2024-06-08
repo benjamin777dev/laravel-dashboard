@@ -3008,6 +3008,7 @@ input[type=button]:hover {
     align-items: center;
     margin-left: 10px;
     font-size: 14px;
+    width: 40vw;
 }
 
 .search-input-design .select2-container .select2-selection--multiple {

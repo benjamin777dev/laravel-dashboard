@@ -66,7 +66,7 @@
                 </li>
                 <li class="menu-title" key="t-backend">@lang('Reports')</li>
                 <li>
-                    <a href="https://analytics.zoho.com/open-view/2487682000008614470" target="_blank" class="waves-effect">
+                    <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
                         <span key="t-tasks">@lang('CHR Rankings')</span>
                     </a>
@@ -113,7 +113,7 @@
                 
                 <li class="menu-title" key="t-backend">@lang('Reports')</li>
                 <li>
-                    <a href="https://analytics.zoho.com/open-view/2487682000008614470" target="_blank" class="waves-effect">
+                    <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
                         <span key="t-tasks">@lang('CHR Rankings')</span>
                     </a>
