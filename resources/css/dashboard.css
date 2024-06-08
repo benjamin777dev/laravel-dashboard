@@ -154,6 +154,14 @@
     }
 }
 
+
+.dtabletranstion > div,
+.dtableHeader > div {
+    width: 10%; 
+    display: inline-block;
+    vertical-align: top;
+}
+
 /* Desktop View */
 @media (min-width: 768px) {
     .dtabletranstion {
