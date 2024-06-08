@@ -157,10 +157,8 @@
                         <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
                                     <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                        <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                                            class="ppiplinecommonIcon" title="Transaction Details">
+                                        <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
                                     </a>
-                                    <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
                                 </div>
                             <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
                                 <div class="dTContactName">
