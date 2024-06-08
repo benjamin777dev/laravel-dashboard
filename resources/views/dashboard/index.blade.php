@@ -20,6 +20,12 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
+        @if ($needsNewDate->isNotEmpty())
+            <div class="alert alert-danger text-center">
+                You have {{ $needsNewDate->count() }} bad dates! 
+                &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
+            </div>
+        @endif
         <div class="row mt-4 text-center">
             <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
                 <div class="row g-1">
@@ -133,7 +139,7 @@
                 </div>
             </div>
 
-            <div class="table-responsive dtranstiontable mt-2">
+            <div class="table-responsive dtranstiontable mt-2" id="badDates">
                 <p class="fw-bold">Bad Dates</p>
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
@@ -222,6 +228,21 @@
 
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('btnBadDates').addEventListener('click', function() {
+            const element = document.getElementById('badDates');
+            const offset = 100; // Adjust this value as needed
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+
     window.fetchData = function(tab = null) {
         $('#spinner').show();
         loading = true;
