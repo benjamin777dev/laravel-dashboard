@@ -129,6 +129,11 @@
     word-wrap: break-word;
 }
 
+.dtabletranstion.row-card a {
+	color: #222;
+	font-weight: 600;
+}
+
 
 /* Mobile View */
 @media (max-width: 767px) {
