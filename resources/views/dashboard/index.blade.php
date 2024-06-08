@@ -155,8 +155,8 @@
                     @foreach ($closedDeals as $deal)
                         <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}">
                             <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
-                                <span class="dlabel">Transaction Name:</span>    
-                                <div class="dTContactName">{{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
+                                <div class="dTContactName">
+                                    <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
                             </div>
                             <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
                                 <div class="dTContactName">
