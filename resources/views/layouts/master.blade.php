@@ -58,6 +58,7 @@
     <!-- /Right-bar -->
 
     <!-- JAVASCRIPT -->
+    @yield('bladeScripts')
     @include('layouts.vendor-scripts')
     @vite(['resources/js/toast.js'])
     @vite(['resources/js/dropdown.js'])

@@ -208,6 +208,6 @@
     @include('common.notes.create')
 @endsection
 
-@section('dashboardScript')
+@section('bladeScripts')
     @vite(['resources/js/dashboard.js'])
 @endsection
