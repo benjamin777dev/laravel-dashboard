@@ -80,7 +80,7 @@
             $('#buyerSubmittal').show();
             $('#listingSubmittal').hide();
     } */
-    /* function showSubmittalForm(deal) {
+    function showSubmittalForm(deal) {
         deal = JSON.parse(deal);
         console.log(deal.representing,deal.tm_preference);
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
@@ -88,5 +88,5 @@
         }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
             window.location.href = '{{ url('submittal-create/Listing') }}';
         }
-    } */
+    }
 </script>
