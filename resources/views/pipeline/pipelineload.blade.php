@@ -1,6 +1,50 @@
 @if(count($deals) > 0)
 @foreach ($deals as $deal)
     <tr>
+    <td>
+            <table>
+                <tr>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
+                                    class="ppiplinecommonIcon" title="Transaction Details">
+                                <span class="tooltiptext">Transaction Details</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/splitscreen.svg') }}"
+                                alt="Split screen icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal"
+                                data-bs-target="#newTaskModalId{{ $deal['id'] }}"
+                                title="Add Task">
+                            <span class="tooltiptext">Add Task</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}"
+                                alt="Sticky note icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#"
+                                onclick="fetchNotesForDeal('{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}')">
+                            <span class="tooltiptext">View Notes</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
+                                class="ppiplinecommonIcon" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+                            <span class="tooltiptext">Add Note</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
         <td>
             <p class="pdealName"
                 onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','deal_name','{{ $deal['id'] }}')"
@@ -79,48 +123,7 @@
             </div>
         </td>
 
-        <td>
-            <table>
-                <tr>
-                    <td>
-                        <div class="tooltip-wrapper">
-                            <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                                    class="ppiplinecommonIcon" title="Transaction Details">
-                                <span class="tooltiptext">Transaction Details</span>
-                            </a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="tooltip-wrapper">
-                            <img src="{{ URL::asset('/images/splitscreen.svg') }}"
-                                alt="Split screen icon" class="ppiplinecommonIcon"
-                                data-bs-toggle="modal"
-                                data-bs-target="#newTaskModalId{{ $deal['id'] }}"
-                                title="Add Task">
-                            <span class="tooltiptext">Add Task</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="tooltip-wrapper">
-                            <img src="{{ URL::asset('/images/sticky_note.svg') }}"
-                                alt="Sticky note icon" class="ppiplinecommonIcon"
-                                data-bs-toggle="modal" data-bs-target="#"
-                                onclick="fetchNotesForDeal('{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}')">
-                            <span class="tooltiptext">View Notes</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="tooltip-wrapper">
-                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
-                                class="ppiplinecommonIcon" data-bs-toggle="modal"
-                                data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
-                            <span class="tooltiptext">Add Note</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </td>
+        
         {{-- Create New Task Modal --}}
         @include('common.tasks.create', ['deal' => $deal, 'type' => 'Deals'])
         {{-- Notes Modal --}}
