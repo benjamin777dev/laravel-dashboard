@@ -147,13 +147,13 @@
                     <div>Probability</div>
                     <div>Probable GCI</div>
                 </div>
-                @if (count($closedDeals) === 0)
+                @if (count($needsNewDate) === 0)
                     <div>
                         <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
-                    @foreach ($closedDeals as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}">
+                    @foreach ($needsNewDate as $deal)
+                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
                         <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
                                     <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
