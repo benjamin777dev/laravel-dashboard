@@ -1,9 +1,8 @@
 <div class="table-responsive dtranstiontable mt-3">
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Submittals</p>
-        <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-            data-bs-target="#submittalModal{{$deal['id']}}"><i class="fas fa-plus plusicon">
-            </i>
+        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalForm('{{$deal}}')">
+            <i class="fas fa-plus plusicon"></i>
             Add New Submittal
         </div>
 
@@ -13,7 +12,7 @@
         <div class="col-md-4 ">Owner</div>
         <div class="col-md-4 ">Created Time</div>
     </div>
-    @if ($submittals->isEmpty())
+    @if (count($submittals)==0)
     <div>
         <p class="text-center notesAsignedText">No Submittal assigned</p>
 
@@ -62,6 +61,32 @@
             </ul>
         </nav>
     </div>
-    @include('submittals.create',['dealContacts'=>$dealContacts,'deal'=>$deal])
 
 </div>
+
+<script>
+    var deal = @json($deal);
+        console.log("sub form sdjkfkdsj",deal);
+        if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null){
+            $('#addSubmittal').attr('disabled', true);
+            $('#addSubmittal').addClass('btn-disabled');
+        }else{
+            $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled')
+        }
+        /* if (subForm == "Listing Submittal") {
+            $('#listingSubmittal').show();
+            $('#buyerSubmittal').hide();
+        } else if (subForm == "Buyer Submittal") {
+            $('#buyerSubmittal').show();
+            $('#listingSubmittal').hide();
+    } */
+    function showSubmittalForm(deal) {
+        deal = JSON.parse(deal);
+        console.log(deal.representing,deal.tm_preference);
+        if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
+            window.location.href = '{{ url('submittal-create/Buyer') }}';
+        }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
+            window.location.href = '{{ url('submittal-create/Listing') }}';
+        }
+    }
+</script>

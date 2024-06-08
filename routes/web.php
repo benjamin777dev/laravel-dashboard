@@ -9,12 +9,14 @@ use App\Http\Controllers\Auth\ResetPasswordController; // Make sure to import th
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\NonTmController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
+use App\Http\Controllers\SubmittalController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -102,12 +104,20 @@ Auth::routes(['verify' => true]);
 // aci routes
 Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
 
+//nontm page route
+Route::post('/non-tm-create', [PipelineController::class, 'createNonTm'])->middleware('auth');
+Route::get('/non-tm', [NonTmController::class, 'index'])->middleware('auth');
+
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
 
 // Update User Details
 Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile')->middleware('auth');
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
+
+//Submittal Route
+Route::get('/submittal-create/{type}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
+Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('submittals.index')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
