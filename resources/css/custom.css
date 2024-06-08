@@ -3301,11 +3301,6 @@ input[type=button]:hover {
     width: 10vw;
 }
 
-<<<<<<< HEAD
-.contact-modal {
-    width: 100%;
-}
-=======
 .contact-modal{
     width:100%;
 }
@@ -3315,4 +3310,3 @@ input[type=button]:hover {
     border-color: grey;
     cursor: not-allowed;
 }
->>>>>>> d700c5dea34f2559207ae1f304e0afb0c1d8e262
