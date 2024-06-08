@@ -14,6 +14,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/bulkJob/update', 
         '/webhook/contact',
+        '/webhook/deal',
         '/api/webhook/csvcallback'
     ];
 }

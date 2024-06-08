@@ -19,6 +19,7 @@ use App\Http\Controllers\UpdateFromZohoCRMController;
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
 Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
+Route::post('/webhook/deal', [UpdateFromZohoCRMController::class, 'handleDealUpdate']);
 Route::post('/api/webhook/csvcallback', [UpdateFromZohoCRMController::class, 'handleCSVCallback']);
 
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
@@ -84,6 +85,8 @@ Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->
 Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 Route::post('/add/deal/contact/role/{dealId}', [PipelineController::class, 'addContactRole'])->name('contacts.role')->middleware('auth');
+Route::get('/get/deal/contact/role/{dealId}', [PipelineController::class, 'getContactRole'])->name('contact.role.fetch')->middleware('auth');
+Route::post('/remove/deal/contact/role', [PipelineController::class, 'removeContactRole'])->name('contacts.role.remove')->middleware('auth');
 
 //Groups
 Route::get('/group', [GroupController::class, 'index'])->name('groups.index')->middleware('auth');
@@ -95,6 +98,9 @@ Route::post('/contact/group/bulk/remove', [GroupController::class, 'bulkRemove']
 Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
+
+// aci routes
+Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
 
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');

@@ -33,7 +33,10 @@ class GroupController extends Controller
         $contacts = $db->retrieveContactGroups($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
-        
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('groups.group', compact('contacts','groups','shownGroups'))->render();
+        }
         return view('groups.index', compact('contacts','groups','shownGroups'));
     }
 

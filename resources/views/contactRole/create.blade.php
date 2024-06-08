@@ -3,7 +3,8 @@
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title">Contact Roles Mapping</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" id="closemodal" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="contactForm{{ $deal['id'] }}">
@@ -20,14 +21,20 @@
                                 @foreach($contacts as $contact)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="contact_{{ $contact['id'] }}" id="contact_{{ $contact['id'] }}" onclick="updateContactRoles({{ json_encode($contact)}}, '')">
-                                        <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
+
+                                        <input type="checkbox" name="contact_{{ $contact['id'] }}"
+                                            id="contact_{{ $contact['id'] }}"
+                                            onclick="updateContactRoles({{ json_encode($contact)}}, '','{{$deal['zoho_deal_id']}}')"
+                                            {{ $dealContacts->contains('id', $contact['id']) ? 'checked' : '' }}>
+                                        <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{
+                                            $contact['last_name'] }}</label>
                                     </td>
-                                    <td>{{ $contact['userData']['name'] }}</td>
+                                    <td>{{ $contact['userData']['name'] ?? "" }}</td>
                                     <td>
-                                        <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}" onchange="updateContactRoles({{ json_encode($contact) }}, this.value)">
+                                        <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}"
+                                            onchange="updateContactRoles({{ json_encode($contact) }}, this.value,'{{$deal['zoho_deal_id']}}')">
                                             @foreach($contactRoles as $contactRole)
-                                                <option value="{{$contactRole['name']}}">{{$contactRole['name']}}</option>
+                                            <option value="{{$contactRole['name']}}">{{$contactRole['name']}}</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -39,7 +46,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary taskModalSaveBtn" onclick="submitContactRoles('{{ $deal['zoho_deal_id'] }}')">
+                <button type="button" class="btn btn-secondary taskModalSaveBtn"
+                    onclick="submitContactRoles('{{ $deal['zoho_deal_id'] }}')">
                     <i class="fas fa-save saveIcon"></i> Save Changes
                 </button>
             </div>
@@ -48,11 +56,12 @@
 </div>
 
 <script>
+    var dealContactRoles = [];
     document.addEventListener('DOMContentLoaded', function () {
         var dealContacts = @json($dealContacts);
-        var dealContactRoles = [];
+        console.log("jsdgjasdgfsjdfgsdjfgsdjfgjhg",dealContacts.data);
 
-        dealContacts.forEach(function(contact) {
+        dealContacts.data?.forEach(function(contact) {
             var checkbox = document.getElementById('contact_' + contact.contactId);
             if (checkbox) {
                 checkbox.checked = true;
@@ -63,8 +72,8 @@
             }
             // dealContactRoles.push({ contactId: contact.contactId, role: contact.contactRole });
         });
-
-        window.updateContactRoles = function(contact, selectedRole) {
+    })
+        window.updateContactRoles = function(contact, selectedRole,dealId) {
             var role = selectedRole || document.getElementById('role_' + contact.id).value;
             var checkbox = document.getElementById('contact_' + contact.id);
             var index = dealContactRoles.findIndex(item => item.contactId === contact.zoho_contact_id);
@@ -75,8 +84,12 @@
                 } else {
                     dealContactRoles[index].role = role;
                 }
-            } else if (!checkbox.checked && index !== -1) {
+            } else if(!checkbox.checked){
+                removeContactRole(dealId,contact.zoho_contact_id,contact.id)
+            }
+            else if (!checkbox.checked && index !== -1) {
                 dealContactRoles.splice(index, 1);
+                
             }
 
             console.log(dealContactRoles);
@@ -102,22 +115,12 @@
                 dataType: 'json',
                 data: JSON.stringify(formData),
                 success: function (response) {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
-                    if (response?.data[0]?.status == "success") {
-                        var modalTarget = document.getElementById('savemakeModalId' + dealId);
-                        var updateMessage = document.getElementById('updated_message_make');
-                        updateMessage.textContent = response?.data[0]?.message;
-                        $(modalTarget).modal('show');
-                        window.location.reload();
-                    }
+                    document.getElementById('closemodal').click();
+                    fetchContactRole(dealId);
                 },
                 error: function (xhr) {
-                    document.getElementById("loaderOverlay").style.display = "none";
-                    document.getElementById('loaderfor').style.display = "none";
-                    console.error(xhr.responseText);
+                    
                 }
             });
         };
-    });
 </script>

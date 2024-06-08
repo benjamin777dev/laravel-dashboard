@@ -5,6 +5,9 @@
               <thead class="thead_con_design">
                   <tr>
                     <th>
+                        <div></div>
+                    </th>
+                    <th>
                         <div class="commonFlex">
                         <p class="mb-0">Transaction</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon"
@@ -79,9 +82,6 @@
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI" class="ppiplineSwapIcon"
                             id="pipelineSort" onclick="toggleSort('closing_date')">
                         </div>
-                    </th>
-                    <th>
-                        <div></div>
                     </th>
                   </tr>
               </thead>
@@ -186,23 +186,6 @@
 
 </div>
 <script>
-    // window.onload = function() {
-    //     $(document).on('click', '.datapagination a', function(e) {
-    //         console.log(e, 'eeeeeee')
-    //         e.preventDefault();
-    //         let page = $(this).attr('href').split('page=')[1]
-    //         record(page)
-    //     })
-
-    //     function record(page) {
-    //         $.ajax({
-    //             url: "/pipeline?page=" + page,
-    //             success: function(res) {
-    //                 $('.transaction-container').html(res);
-    //             }
-    //         })
-    //     }
-    // }
     $(document).ready(function() {
         let nextPageUrl = '{{ $deals->nextPageUrl() }}';
         $(window).scroll(function() {
@@ -332,11 +315,7 @@
             document.getElementById("subject_error").innerHTML = "Please enter details";
             return;
         }
-        // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
-        // var whoId = window.selectedTransation
-        // if (whoId === undefined) {
-        //     whoId = whoSelectoneid
-        // }
+        
         var dueDate = document.getElementsByName("due_date")[0].value;
 
         var formData = {
@@ -421,76 +400,6 @@
 
             success: function(data) {
                 const card = $('.transaction-container').html(data);
-                // ppipelineTableBody.empty();
-                // ptableCardDiv.empty();
-                // const isMobile = window.innerWidth < 767;
-                // if (isMobile) {
-                //     if (data.length === 0) {
-                //         // If no data found, display a message
-                //         ptableCardDiv.append('<div class="pnofound"><p class="text-center">No records found</p></div>');
-                //         return;
-                //     }
-                // }else{
-                //     if (data.length === 0) {
-                //         // If no data found, display a message
-                //         ppipelineTableBody.append('<div class="pnofound"><p class="text-center">No records found</p></div>');
-                //         return;
-                //     }
-                // }
-                // $.each(data, function(index, item) {
-                //     if (isMobile) {
-                //         // Render data in card format
-                //         const card = $('<div class="pTableCard">').html(`
-                //             <p class="pTableTransText">Transaction</p>
-                //                     <p class="pTableNameText">${item.deal_name || 'N/A'}</p>
-                //                     <div class="d-flex justify-content-between">
-                //                         <div class="pTableSelect pipelinestatusdiv">
-                //                             <p style="background-color: ${item.stage === 'Potential'
-                //                 ? '#dfdfdf'
-                //                 : (item.stage === 'Active'
-                //                     ? '#afafaf'
-                //                     : (item.stage === 'Pre-Active'
-                //                         ? '#cfcfcf'
-                //                         : (item.stage === 'Under Contract'
-                //                             ? '#8f8f8f;color=#fff;'
-                //                             : (item.stage === 'Dead-Lost To Competition'
-                //                                 ? '#efefef'
-                //                                 : '#6f6f6f;color=#fff;'))))}"
-                //                                 class="pstatusText">${item.stage || 'N/A'}</p>
-                //                             <i class="fas fa-angle-down"></i>
-                //                         </div>
-                //                         ${item.closing_date || 'N/A'}
-                //                     </div>
-                //                     <div class="d-flex justify-content-between psellDiv">
-                //                         <div><img src="{{ URL::asset('/images/account_box.svg') }}" alt="A"> ${item.client_name_primary?? 'N/A'}
-                //                         </div>
-                //                         <div>
-                //                             <img src="{{ URL::asset('/images/sell.svg') }}" alt="A">$
-                //                             ${item.sale_price || 'N/A'}
-                //                         </div>
-                //                     </div>
-                //                     <div class="pCardFooter">
-                //                         <div class="pfootericondiv">
-                //                             <img src="{{ URL::asset('/images/Frame 99.svg') }}" alt=""
-                //                                 class="pdiversityicon">
-                //                             <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt=""
-                //                                 class="pdiversityicon">
-                //                         </div>
-                //                         <div>
-                //                             <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt=""
-                //                                 class="pdiversityicon">
-                //                         </div>
-                //                     </div>
-                //                 </div>
-                //         `);
-                //         ptableCardDiv.append(card);
-                //     } else {
-                //         deal = item
-                //         // Render data in table format
-                //         const row = $('<div class="psearchandsort">').html(Item);
-                //         ppipelineTableBody.append(row);
-                //     }
-                // });
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);

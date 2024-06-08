@@ -426,6 +426,7 @@
             console.log(selectedGroupsArr);
 
         });
+       
         document.getElementById('contact_create_form').appendChild(hiddenInput);
 
         var getReffered = $('#validationDefault14')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Aci;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -89,6 +90,47 @@ class PipelineController extends Controller
         // return response()->json($deals);
         return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction'))->render();
     }
+
+    public function createACI(Request $request){
+       $aci = $request->data;
+        if (isset($aci['CHR_Agent'])) {
+            $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
+        }
+        if (isset($aci['Transaction'])) {
+            $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
+        }
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        try {
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+        $response = $zoho->createAciData($aci);
+        if (!$response->successful()) {
+            Log::error("Error retrieving aci: " . $response->body());
+            throw $response->body();
+        }
+        Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+            "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+            "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+            "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+            "userId" => isset($user['id']) ? $user['id'] : null,
+            "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+            "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+            "total" => isset($aci['Total']) ? $aci['Total'] : null,
+            "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+            'dealId' => isset($deal['id']) ? $deal['id'] : null,
+            'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+            'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+        ]);
+        return $response;
+     } catch (\Exception $e) {
+            Log::error("Error retrieving aci: " . $e->getMessage());
+            return $e;
+        }
+    }  
 
     public function showViewPipelineForm(Request $request)
     {
@@ -357,21 +399,53 @@ class PipelineController extends Controller
         }
 
         $zoho = new ZohoCRM();
+        $db = new DatabaseService();
         $dealId = request()->route('dealId');
         $jsonData = $request->json()->all();
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
 
         $contactRole = $zoho->addContactRoleForDeal($dealId, $jsonData);
-        foreach ($contactRole as $response) {
-            if (!$response->successful()) {
-                // Log the error for debugging
-                Log::error('Error adding contact role: ' . $response->body());
-                return response()->json(['error' => 'Error adding contact role', 'details' => $response->body()], 500);
-            }
+        $response = $zoho->getDealContact($dealId);
+        $contactRoleArray = collect($response->json()['data'] ?? []);
+        $contactroles = $db->storeDealContactIntoDB($contactRoleArray, $dealId);
+        return $contactroles;
+    }
+
+    public function removeContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
         }
 
-        $contactRoleArray = json_decode($contactRole, true);
-        return $contactRoleArray;
+        $zoho = new ZohoCRM();
+        $db = new DatabaseService();
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+
+        $contactRole = $zoho->removeContactRoleForDeal($jsonData);
+        $contactroles = $db->removeDealContactfromDB($jsonData);
+        return $contactroles;
+    }
+    public function getContactRole(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $zoho = new ZohoCRM();
+        $db = new DatabaseService();
+        $jsonData = $request->json()->all();
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $dealContacts =$db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contactRoles = $db->retrieveRoles($user);
+        return view('contactRole.contact', compact('dealContacts','deal','contacts','contactRoles'))->render();
     }
 }
