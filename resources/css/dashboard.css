@@ -155,12 +155,47 @@
 }
 
 
-.dtabletranstion > div,
-.dtableHeader > div {
-    width: 10%; 
-    display: inline-block;
-    vertical-align: top;
+.dtableHeader > div:nth-child(1),
+.dtabletranstion > div[data-type="deal_name"] {
+    width: 25%; /* Adjust width as needed */
 }
+
+.dtableHeader > div:nth-child(2),
+.dtabletranstion > div[data-type="client_name_primary"] {
+    width: 20%;
+}
+
+.dtableHeader > div:nth-child(3),
+.dtabletranstion > div[data-type="stage"] {
+    width: 10%;
+}
+
+.dtableHeader > div:nth-child(4),
+.dtabletranstion > div[data-type="representing"] {
+    width: 8%;
+}
+
+.dtableHeader > div:nth-child(5),
+.dtabletranstion > div[data-type="sale_price"] {
+    width: 12%;
+}
+
+.dtableHeader > div:nth-child(6),
+.dtabletranstion > div[data-type="closing_date"] {
+    width: 15%;
+}
+
+.dtableHeader > div:nth-child(7),
+.dtabletranstion > div[data-type="commission"],
+.dtableHeader > div:nth-child(8),
+.dtabletranstion > div[data-type="potential_gci"],
+.dtableHeader > div:nth-child(9),
+.dtabletranstion > div[data-type="pipeline_probability"],
+.dtableHeader > div:nth-child(10),
+.dtabletranstion > div[data-type="probable_gci"] {
+    width: 7%;
+}
+
 
 /* Desktop View */
 @media (min-width: 768px) {
