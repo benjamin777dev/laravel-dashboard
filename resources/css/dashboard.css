@@ -143,6 +143,15 @@
         display: inline-block;
         margin-right: 5px;
     }
+
+    .table-responsive {
+        display: block;
+    }
+
+    .dTContactName {
+        padding: 5px 0; 
+        
+    }
 }
 
 /* Desktop View */
@@ -163,3 +172,5 @@
         display: none;
     }
 }
+
+
