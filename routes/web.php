@@ -15,6 +15,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
+use App\Http\Controllers\SubmittalController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -108,6 +109,10 @@ Route::get('/customers', [CustomerController::class, 'index'])->name('customers.
 // Update User Details
 Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile')->middleware('auth');
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
+
+//Submittal Route
+Route::get('/submittal-create/{type}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
+Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('submittals.index')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
