@@ -140,7 +140,13 @@
             </div>
 
             <div class="table-responsive dtranstiontable mt-2" id="badDates">
-                <p class="fw-bold">Bad Dates</p>
+            @if ($needsNewDate->isNotEmpty())
+                <p class="fw-bold">Bad Dates | <span class="text-danger">{{count($needsNewDate)}} Bad Dates!</span></p>
+            @else
+                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+            @endif
+                
+                
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
                     <div>Client Name</div>
@@ -193,7 +199,7 @@
                             </div>
                             <div class="dTContactName">
                                 <span class="dlabel">Closing Date:</span>
-                                <input type="date" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
+                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
                                     id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                             </div>
                             <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
