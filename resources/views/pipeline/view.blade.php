@@ -383,16 +383,22 @@
 
 
     </div>
-    @if($deal['tm_preference'] == "Non-TM")                
+    
         {{-- Non-TM Check request --}}
         <div class="table-responsive dtranstiontable mt-3">
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Non-TM Check request</p>
-                <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#">
-                    <i class="fas fa-plus plusicon">
-                    </i>
-                    Add Non-TM Check request
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-bg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-plus plusicon"></i>
+                        Add Non-TM Check request
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="/non-tm">New</a></li>
+                        <li><a class="dropdown-item" href="#">Assign</a></li>
+                    </ul>
                 </div>
+                
 
             </div>
             <div class="row npNom-TM-Table">
@@ -455,7 +461,6 @@
 
 
         </div>
-    @endif                
     {{-- Agent’s Commissions --}}
     <div class="table-responsive dtranstiontable mt-3">
         <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
