@@ -418,7 +418,7 @@ class DatabaseService
         }
     }
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null)
+    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
     {
 
         try {
@@ -476,8 +476,11 @@ class DatabaseService
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->paginate(10);
-            Log::info("Retrieved Deals From Database", ['deals' => $deals->toArray()]);
+            if ($all) {
+                $deals = $deals->where($conditions)->paginate(1000);
+            } else {
+                $deals = $deals->where($conditions)->paginate(10);
+            }
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
@@ -501,7 +504,6 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             $deals = $deals->where($conditions)->first();
-            Log::info("Retrieved Deals From Database", ['deals' => $deals]);
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
@@ -549,7 +551,6 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             $deals = $deals->where($conditions)->first();
-            Log::info("Retrieved Deals From Database", ['deals' => $deals]);
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
@@ -573,7 +574,6 @@ class DatabaseService
 
             // Retrieve contacts based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved contacts From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -597,7 +597,6 @@ class DatabaseService
 
             // Retrieve contacts based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved contacts From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -622,7 +621,6 @@ class DatabaseService
                 $tasks->where('due_date', null);
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
-            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -645,7 +643,6 @@ class DatabaseService
                 $condition[] = ['who_id', $contactId];
             }
             $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
-            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -668,7 +665,6 @@ class DatabaseService
                 $condition[] = ['zoho_deal_id', $contactId];
             }
             $Deals = Deal::where($condition)->orderBy('updated_at', 'desc')->get();
-            Log::info("Retrieved deals From Database", ['Deals' => $Deals]);
             return $Deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
@@ -723,7 +719,6 @@ class DatabaseService
             // Paginate the results
             $contacts = $contacts->paginate(12);
 
-            Log::info("Retrieved contacts From Database", ['contacts' => $contacts->toArray()]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -737,7 +732,6 @@ class DatabaseService
 
             Log::info("Retrieve contacts From Database");
             $Contacts = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc')->get();
-            Log::info("Retrieved contacts From Database", ['Contacts' => $Contacts]);
             return $Contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -752,7 +746,6 @@ class DatabaseService
             Log::info("DealIDS" . $dealId);
             $tasks = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('what_id')
                 ->where('what_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
-            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -767,7 +760,6 @@ class DatabaseService
             Log::info("DealIDS" . $dealId);
             $contactTask = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('who_id')
                 ->where('who_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
-            Log::info("Retrieved Tasks From Database", ['contactTask' => $contactTask]);
             return $contactTask;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -841,7 +833,6 @@ class DatabaseService
         try {
             Log::info("Retrieve Notes From Database");
             $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at', 'desc')->get();
-            Log::info("Retrieved Notes From Database", ['notes' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -855,7 +846,6 @@ class DatabaseService
         try {
             Log::info("Retrieve Notes From Database");
             $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->get();
-            Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -869,7 +859,6 @@ class DatabaseService
         try {
             Log::info("Retrieve Notes From Database");
             $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->get();
-            Log::info("Retrieved Notes From Database", ['notes' => $notes->toArray()]);
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -1164,7 +1153,6 @@ class DatabaseService
                 })
                 ->paginate();
 
-            Log::info("Retrieved Contacts From Database", ['contacts_count' => $contacts->count()]);
 
             return $contacts;
         } catch (\Exception $e) {
@@ -1205,7 +1193,6 @@ class DatabaseService
                 return $contact->groups->isNotEmpty();
             });
 
-            Log::info("Retrieved Tasks From Database", ['tasks_count' => $tasks->count()]);
 
             return $tasks;
         } catch (\Exception $e) {
@@ -1259,7 +1246,6 @@ class DatabaseService
                 $condition[] = ['isShow', true];
             }
             $tasks = Groups::where($condition)->with('contacts')->orderBy('name', 'asc')->get();
-            Log::info("Retrieved Tasks From Database", ['tasks' => $tasks->toArray()]);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
