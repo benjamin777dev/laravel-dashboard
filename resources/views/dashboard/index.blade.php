@@ -208,6 +208,376 @@
     @include('common.notes.create')
 @endsection
 
+
+<script>
+    window.fetchData = function(tab = null) {
+        $('#spinner').show();
+        loading = true;
+        // Make AJAX call
+        $.ajax({
+            url: '{{ url('/dashboard') }}',
+            method: 'GET',
+            data: {
+                tab: tab,
+            },
+            dataType: 'html',
+            success: function(data) {
+                $('#spinner').hide();
+                loading = false;
+                $('.task-container').html(data);
+
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                loading = false;
+                console.error('Error:', error);
+            }
+        });
+
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
+
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
+
+        // Update the status information based on the current status
+        statusInfo[status] = true;
+
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
+        }
+
+        // Example of accessing status information
+        console.log(statusInfo);
+
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.style.backgroundColor = "#253C5B"
+            activeTab.style.color = "#fff";
+            activeTab.style.borderRadius = "4px";
+        }
+
+        // console.log("yes tist woring", @json($allMonths), )
+        var ctx = document.getElementById('chart').getContext('2d');
+        window.myGauge = new Chart(ctx, config);
+
+
+    });
+    // var selectedNoteIds = [];
+
+    function handleDeleteCheckbox(id) {
+        // Get all checkboxes
+        const checkboxes = document.querySelectorAll('.checkbox' + id);
+        // Get delete button
+        const deleteButton = document.getElementById('deleteButton' + id);
+        const editButton = document.getElementById('editButton' + id);
+        console.log(checkboxes, 'checkboxes')
+        // Add event listener to checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Check if any checkbox is checked
+                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+                // Toggle delete button visibility
+                editButton.style.display = anyChecked ? 'block' : 'none';
+                // if (deleteButton.style.display === 'block') {
+                //     selectedNoteIds.push(id)
+                // }
+            });
+        });
+
+    }
+    window.selectedTransation;
+    // Get the select element
+
+    function selectedElement(element) {
+        var selectedValue = element.value;
+        window.selectedTransation = selectedValue;
+        //    console.log(selectedTransation);
+    }
+
+    function resetValidation() {
+        document.getElementById("task_error").innerHTML = "";
+
+    }
+
+    function validateTextarea() {
+        var textarea = document.getElementById('subject');
+        var textareaValue = textarea.value;
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("task_error").innerHTML = "please enter details";
+        } else {
+            document.getElementById("task_error").innerHTML = "";
+        }
+    }
+
+    function addTask() {
+        var subject = document.getElementsByName("subject")[0].value;
+        if (subject.trim() === "") {
+            document.getElementById("task_error").innerHTML = "please enter details";
+            return;
+        }
+        var seModule = document.getElementsByName("related_to_task")[0].value;
+        var WhatSelectoneid = document.getElementsByName("related_to_parent")[0].value;
+        // var whoId = window.selectedTransation
+        // if (whoId === undefined) {
+        //     whoId = whoSelectoneid
+        // }
+        var dueDate = document.getElementsByName("due_date")[0].value;
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status": "Not Started",
+                "Due_Date": dueDate,
+                "Priority": "High",
+                "What_Id": {
+                    "id": WhatSelectoneid
+                },
+                "$se_module": seModule
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+
+        $.ajax({
+            url: '{{ route('create.task') }}',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    showToast(upperCaseMessage);
+                    // window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+    }
+
+
+    function convertDateTime(inputDateTime) {
+
+        // Parse the input date string
+        let dateObj = new Date(inputDateTime);
+
+        // Format the date components
+        let year = dateObj.getFullYear();
+        let month = (dateObj.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, so we add 1
+        let day = dateObj.getDate().toString().padStart(2, '0');
+        let hours = dateObj.getHours().toString().padStart(2, '0');
+        let minutes = dateObj.getMinutes().toString().padStart(2, '0');
+        let seconds = dateObj.getSeconds().toString().padStart(2, '0');
+
+        // Format the timezone offset
+        let timezoneOffsetHours = Math.abs(dateObj.getTimezoneOffset() / 60).toString().padStart(2, '0');
+        let timezoneOffsetMinutes = (dateObj.getTimezoneOffset() % 60).toString().padStart(2, '0');
+        let timezoneOffsetSign = dateObj.getTimezoneOffset() > 0 ? '-' : '+';
+
+        // Construct the formatted datetime string
+        let formattedDateTime =
+            `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
+
+        return formattedDateTime;
+    }
+
+    window.createTransaction = function(userContact) {
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
+        var formData = {
+            "data": [{
+                "Deal_Name": "{{ config('variables.dealName') }}",
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Contact_Name": {
+                    "id": userContact.zoho_contact_id,
+                    "Name":userContact.first_name+" "+userContact.last_name
+                },
+                "Stage": "Potential"
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/pipeline/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function createContact() {
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        let name = "CHR";
+        var formData = {
+            "data": [{
+                "Relationship_Type": "Primary",
+                "Missing_ABCD": true,
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "full_name": "{{ auth()->user()->name }}",
+                },
+                "Unsubscribe_From_Reviews": false,
+                "Currency": "USD",
+                "Market_Area": "-None-",
+                "Lead_Source": "-None-",
+                "ABCD": "-None-",
+                "Last_Name": name,
+                "zia_suggested_users": {}
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/contact/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/contacts-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+            }
+        });
+    }
+
+
+    var randomScalingFactor = function(progressCount = "") {
+        // console.log(progressCount,'progressCount')
+        return Math.round(Math.random() * 100);
+        // return Math.round(progressCount!==""?progressCount:@json($progress) );
+    };
+
+    var randomData = function() {
+        return [15, 45, 100];
+    };
+    var randomValue = function(data) {
+        if (data) {
+            console.log(data, 'data')
+            return data;
+        }
+        return @json($progress);
+    };
+
+    var data = randomData();
+    var value = randomValue();
+    console.log(data, value, 'valueishereeee')
+    var config = {
+        type: 'gauge',
+        data: {
+            datasets: [{
+                data: data,
+                value: value,
+                backgroundColor: ['#FE5243', '#FADA05', '#21AC25'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+            },
+            layout: {
+                padding: {
+                    bottom: 30
+                }
+            },
+            needle: {
+                radiusPercentage: 2,
+                widthPercentage: 3.2,
+                lengthPercentage: 80,
+            },
+            valueLabel: {
+                fontSize: "24px", // Change font size here
+                formatter: function(value) {
+                    return Math.round(value) + "%";
+                }
+            },
+            chartArea: {
+                width: '80%',
+                height: '80%'
+            },
+            // Add callbacks to draw percentage labels
+            plugins: {
+                afterDraw: function(chart, easing) {
+                    var ctx = chart.ctx;
+                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, 'normal', Chart
+                        .defaults.global.defaultFontFamily);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    chart.data.datasets.forEach(function(dataset) {
+                        for (var i = 0; i < dataset.data.length; i++) {
+                            var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+                            var labelText = Math.round(dataset.data[i]) + "%";
+                            ctx.fillStyle = '#000'; // set font color
+                            ctx.fillText(labelText, model.x, model.y -
+                                5); // adjust Y position for label
+                        }
+                    });
+                }
+            }
+        }
+    };
+</script>
+
 @section('bladeScripts')
     @vite(['resources/js/dashboard.js'])
 @endsection
