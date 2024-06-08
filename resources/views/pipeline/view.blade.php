@@ -398,6 +398,84 @@
 
 
     </div>
+    
+        {{-- Non-TM Check request --}}
+        <div class="table-responsive dtranstiontable mt-3">
+            <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
+                <p class="nproletext">Non-TM Check request</p>
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-bg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-plus plusicon"></i>
+                        Add Non-TM Check request
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="/non-tm">New</a></li>
+                        <li><a class="dropdown-item" href="#">Assign</a></li>
+                    </ul>
+                </div>
+                
+
+            </div>
+            <div class="row npNom-TM-Table">
+                <div class="col-md-4 ">Number</div>
+                <div class="col-md-4 ">Close Date</div>
+                <div class="col-md-4 ">Created Time</div>
+            </div>
+            @if ($nontms->isEmpty())
+
+                <div>
+                    <p class="text-center notesAsignedText">No Non-TM assigned</p>
+
+                </div>
+            @else
+
+                @foreach ($nontms as $nontm)
+                    <div class="row npNom-TM-Body">
+                        <div class="col-md-4 ">{{ $nontm['name'] }}</div>
+                        <div class="col-md-4 ">{{ $nontm['closed_date'] }}</div>
+                        <div class="col-md-4 commonTextEllipsis">{{ $nontm['created_at'] }}</div>
+                    </div>
+                @endforeach
+            @endif
+
+            @foreach ($nontms as $nontm)
+                <div class="npNom-TM-Card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="npcommonheaderText">Number</p>
+                            <p class="npcommontableBodytext">{{ $nontm['name'] }}</p>
+                        </div>
+                        <div>
+                            <p class="npcommonheaderText">Close Date</p>
+                            <p class="npcommontableBodyDatetext">{{ $nontm['closed_date'] }}</p>
+                        </div>
+                    </div>
+                    <div class="npCardPhoneDiv">
+                        <p class="npcommonheaderText">Created Time</p>
+                        <p class="npcommontableBodyDatetext">{{ $nontm['created_at'] }}</p>
+                    </div>
+                </div>
+            @endforeach
+            <div class="dpagination">
+                <nav aria-label="..." class="dpaginationNav">
+                    <ul class="pagination ppipelinepage d-flex justify-content-end">
+                        <li class="page-item disabled">
+                            <a class="page-link">Previous</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+
+        </div>
     @endif
     {{-- Agent’s Commissions --}}
     <div class="table-responsive dtranstiontable mt-3">

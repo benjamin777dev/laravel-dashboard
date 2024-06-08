@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\ResetPasswordController; // Make sure to import th
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\NonTmController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
@@ -102,6 +103,10 @@ Auth::routes(['verify' => true]);
 
 // aci routes
 Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
+
+//nontm page route
+Route::post('/non-tm-create', [PipelineController::class, 'createNonTm'])->middleware('auth');
+Route::get('/non-tm', [NonTmController::class, 'index'])->middleware('auth');
 
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
