@@ -74,29 +74,36 @@ class Deal extends Model
     public static function mapZohoData(array $data, $source = "webhook")
     {
 
+        $userId = null;
+
         //Log::info("Data: ". json_encode($data));
-
-        $contactNameId = $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : $data['Contact_Name'] ?? null;
-
-        if ($source == 'webhook') {
-            Log::info("ID: ". $data['id'] . " contact ID: " . $contactNameId);
-        } else {
-            Log::info("ID: ". $data['Id'] . " contact ID: " . $contactNameId);
+        // contact Name is a REQUIRED FIELD
+        // no deals inthe database can exist without it
+        // as zoho won't save a deal w/o one
+        // so we don't need to check for null here
+        $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] : $data['Contact_Name'];
+        if ($contactNameId == null) {
+            Log::error("No contact ID found! ", ['data'=> $data]);
+            $contactNameId = $source == "webhook" ? $data['Owner']['id'] : $data['Owner'];
+            if (!$contactNameId) {
+                return new Deal();
+            }
         }
+        // now that we have a contact name id, which is the name of the agent
+        // and id of the agent who is assigned this deal
+        // we can find that user in the system
+        $dealUser = User::where("zoho_id", $contactNameId)->first();
+        if ($dealUser) {
+            $userId = $dealUser->id;
+        }
+
+
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
         $data['Closing_Date'] = isset($data['Closing_Date']) ? Carbon::parse($data['Closing_Date'])->format('Y-m-d H:i:s') : null;
         $data['Create_Date'] = isset($data['Create_Date']) ? Carbon::parse($data['Create_Date'])->format('Y-m-d H:i:s') : null;
         $data['Lead_Conversion_Time'] = isset($data['Lead_Conversion_Time']) ? Carbon::parse($data['Lead_Conversion_Time'])->format('Y-m-d H:i:s') : null;
         
-        Log::info("contactNameId: ". $contactNameId);
-        if ($contactNameId) {
-            $user = User::where('zoho_id', $contactNameId)->first();
-            $userID = $user ? $user->id : null;
-        } else {
-            $userID = null;
-        }
-
         $mappedData = [
             'address' => $data['Address'] ?? null,
             'approval_state' => $data['Approval_State'] ?? null,
@@ -186,9 +193,9 @@ class Deal extends Model
             'tm_preference' => $data['TM_Preference'] ?? null,
             'transaction_code' => $data['Transaction_Code'] ?? null,
             'under_contract' => (int) ($data['Under_Contract'] ?? null),
-            'userID' => $userID,
+            'userID' => $userId,
             'zoho_deal_createdTime' => $data['Created_Time'] ?? null,
-            'zoho_deal_id' => $source == "webhook" ? ($data['id'] ?? null) : ($data['Id'] ?? null),
+            'zoho_deal_id' => $source == "webhook" ? $data['id'] : $data['Id'],
             'z_project_id' => $data['Z_Project_ID'] ?? null,
             'zip' => $data['Zip'] ?? null,
         ];
