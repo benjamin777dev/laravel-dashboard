@@ -44,11 +44,11 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DatabaseService();
 
-        $modules = ['Contacts']; // Add other modules as needed
+        $modules = ['Groups']; // Add other modules as needed
         Log::info("Syncing data for modules: " . implode(', ', $modules));
 
         // Sync users separately using the REST API
-        $this->syncUsers($user);
+        //$this->syncUsers($user);
 
         foreach ($modules as $module) {
             $jobResponse = $zoho->createBulkReadJob($module);
