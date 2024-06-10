@@ -752,8 +752,9 @@
         })
     }
 
-    function createTransaction(contact, userContact) {
-        console.log("Onclick");
+    function createTransaction(contactData, userContactData) {
+       let contact =  JSON.parse(contactData);
+       let userContact = JSON.parse(userContactData);
         var formData = {
             "data": [{
                 "Deal_Name": "{{ config('variables.dealName') }}",
