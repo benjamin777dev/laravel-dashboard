@@ -510,6 +510,10 @@
     overflow: auto;
 }
 
+.select2-container.select2-container--default.select2-container--open {
+    z-index: 5000;
+}
+
 .dmodaltaskSelect,
 .dmodalTaskDiv {
     width: 100%;
@@ -1128,13 +1132,14 @@
     align-items: center;
 
 }
-.submittaldiv{
+
+.submittaldiv {
     display: flex;
     justify-content: end;
     align-items: center;
 }
 
-.submittalType{
+.submittalType {
     padding-bottom: 20px;
 
 }
@@ -1943,7 +1948,7 @@
     background-color: #222;
 }
 
-.main-carousel{
+.main-carousel {
     display: flex;
     max-width: 1646px;
     padding: 24px;
@@ -1953,44 +1958,44 @@
     gap: 24px;
     align-self: stretch;
 }
-.carousel{
-display: flex;
-padding: 20px;
-flex-direction: column;
-justify-content: center;
-align-items: flex-start;
-gap: 24px;
-flex: 1 0 0;
-border-radius:8px;
-background: #FFF;
 
-/* layoutCardsShadow */
-box-shadow: 0px 2px 10px 0px #CECECE;
+.carousel {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* gap: 24px; */
+    flex: 1 0 0;
+    border-radius: 8px;
+    background: #FFF;
+    max-width: 750px;
+    /* min-height: 459px; */
+    width: 100%;
+
+    /* layoutCardsShadow */
+    box-shadow: 0px 2px 10px 0px #CECECE;
+}
+
+.corausal-req-text {
+    color: #000;
+    font-family: Avenir;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 18px;
+    margin-bottom: 0px;
+}
+
+.corausal-req-mb48 {
+    margin-bottom: 48px;
 }
 
 .carousel-item {
-    padding: 20px;
+    /* padding: 20px; */
 }
 
-.related_trxn label{
-color: #6C6C6C;
-font-family: Avenir;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
-}
-.related_trxn select{
-max-width: 639px;
-flex: 1 0 0;
-color:#222;
-font-family: Avenir;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
-}
-.additional_email label{
+.common-corousal-level {
     color: #6C6C6C;
     font-family: Avenir;
     font-size: 14px;
@@ -1998,7 +2003,21 @@ line-height: normal;
     font-weight: 400;
     line-height: normal;
 }
-.additional_email #add_email{
+
+.common-corousal-div {
+    margin-bottom: 7px;
+}
+
+.related_trxn label {
+    color: #6C6C6C;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.related_trxn select {
     max-width: 639px;
     flex: 1 0 0;
     color: #222;
@@ -2008,7 +2027,8 @@ line-height: normal;
     font-weight: 400;
     line-height: normal;
 }
-.close-date label{
+
+.additional_email label {
     color: #6C6C6C;
     font-family: Avenir;
     font-size: 14px;
@@ -2016,7 +2036,28 @@ line-height: normal;
     font-weight: 400;
     line-height: normal;
 }
-#close_date{
+
+.additional_email #add_email {
+    max-width: 639px;
+    flex: 1 0 0;
+    color: #222;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.close-date label {
+    color: #6C6C6C;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+#close_date {
     display: flex;
     height: 32px;
     padding: 12px;
@@ -2026,7 +2067,8 @@ line-height: normal;
     border: 1px solid #CECECE;
     background: #FFF;
 }
-.commission label{
+
+.commission label {
     color: #6C6C6C;
     font-family: Avenir;
     font-size: 14px;
@@ -2034,7 +2076,8 @@ line-height: normal;
     font-weight: 400;
     line-height: normal;
 }
-#commission{
+
+#commission {
     display: flex;
     height: 32px;
     padding: 12px;
@@ -2050,41 +2093,51 @@ line-height: normal;
     margin-bottom: -1rem;
     justify-content: space-between;
 }
-.carousel-indicators a{
+
+.carousel-indicators a {
     color: #000;
 }
-.carousel-indicators button[type=button]{
+
+.carousel-indicators button[type=button] {
     fill: #000;
     stroke-width: 1px;
     stroke: #000;
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
     background: #848484;
 }
-.carousel-indicators button[type=button].active{
+
+.carousel-indicators button[type=button].active {
     fill: #848484;
     background: #000;
 }
+
 .carousel-indicators button {
     width: 24px !important;
     border-radius: 50%;
 }
+
 .carousel-indicators [data-bs-target] {
     background-clip: unset;
 }
+
 .related_trxn {
     margin-bottom: 15px;
 }
-.additional_email{
+
+.additional_email {
     margin-bottom: 15px;
 }
-.close-date-comm{
+
+.close-date-comm {
     margin-bottom: 15px;
 }
-.nontm-header{
+
+.nontm-header {
     display: flex;
     padding-top: 36px;
     align-self: stretch;
 }
+
 .non-title {
     color: #000;
     /* page-title */
@@ -2097,7 +2150,7 @@ line-height: normal;
     text-transform: uppercase;
 }
 
-.nontm-cancel-btn button{
+.nontm-cancel-btn button {
     display: flex;
     height: 40px;
     padding: 12px;
@@ -2106,11 +2159,12 @@ line-height: normal;
     gap: 4px;
     color: #fff;
     border-radius: 16px;
-    border: 1px solid  #222;
+    border: 1px solid #222;
     background: #222;
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
 }
-.nontm-savenew-btn button{
+
+.nontm-savenew-btn button {
     display: flex;
     height: 40px;
     padding: 12px;
@@ -2118,15 +2172,15 @@ line-height: normal;
     align-items: center;
     gap: 4px;
     color: #fff;
-    border-radius:  16px;
-    border: 1px solid  #222;
+    border-radius: 16px;
+    border: 1px solid #222;
     background: #222;
 
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
 }
 
-.nontm-save-btn button{
+.nontm-save-btn button {
     display: flex;
     height: 40px;
     padding: 12px;
@@ -2134,14 +2188,14 @@ line-height: normal;
     align-items: center;
     gap: 4px;
     border-radius: var(--5, 16px);
-    border: 1px solid  #222;
-    background:  #222;
+    border: 1px solid #222;
+    background: #222;
     color: #fff;
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
 }
 
-.non-btns{
+.non-btns {
     display: flex;
     width: 816.333px;
     justify-content: flex-end;
@@ -2983,11 +3037,11 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 /* } */
 .selectSearch .select2-container {
-    z-index: 0 !important;
+    /* z-index: 0 !important; */
 }
 
 .select2-container {
-    z-index: 0 !important;
+    height: auto !important;
 }
 
 .select2-selection {
@@ -2999,9 +3053,14 @@ body[data-sidebar="dark"] .navbar-brand-box {
     display: none;
 }
 
-.select2 {
+/* .select2 {
     height: 33px;
     padding: 0;
+} */
+.select2 {
+
+    padding: 0;
+
 }
 
 .select2-selection.select2-selection--single {
@@ -3270,9 +3329,9 @@ input[type=button]:hover {
 }
 
 .modal-body {
-    max-height: 400px;
+    max-height: unset;
     /* Adjust the height as needed */
-    overflow-y: auto;
+    overflow-y: unset;
 }
 
 .select2-container--default .select2-selection--single {
@@ -3301,8 +3360,8 @@ input[type=button]:hover {
     width: 10vw;
 }
 
-.contact-modal{
-    width:100%;
+.contact-modal {
+    width: 100%;
 }
 
 .btn-disabled {

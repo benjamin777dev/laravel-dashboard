@@ -2,7 +2,7 @@ window.showDropdown = function (showDropdown, selectElement) {
     selectElement.empty();
     selectElement.each(function () {
         const options = {
-            theme: "material",
+            theme: "bootstrap",
             dropdownParent: $(this).parent(),
             ajax: {
                 url: '/task/get-Modules',
@@ -60,8 +60,6 @@ window.showDropdown = function (showDropdown, selectElement) {
             options.multiple = true;
             options.maximumSelectionLength = 1; // Use `maximumSelectionLength` instead of `maximumSelectionSize`
             options.placeholder = "Search...";
-            console.log(options,'optionssssssssss')
-           
         } else {
             options.placeholder = 'Please select';
             options.width = 'resolve';
@@ -100,6 +98,7 @@ window.showDropdown = function (showDropdown, selectElement) {
 };
 
 window.showDropdownForId = function (modalID, selectElement) {
+    console.log("yes hiiggggggggg");
     var selectedval = selectElement.val();
     var selectedText1 = selectElement.find('option:selected').text();
     console.log(selectedval, 'selectedText1');
@@ -213,6 +212,7 @@ window.addCommonTask = function (id = "", type = "") {
         // if (whoId === undefined) {
         //     whoId = whoSelectoneid
         // }
+        var formData;
         var dueDate = document.getElementsByName("due_date")[0].value;
         if (type == "Contacts") {
             var formData = {
@@ -222,7 +222,7 @@ window.addCommonTask = function (id = "", type = "") {
                     //     "id": whoId
                     // },
                     "Status": "Not Started",
-                    "Due_Date": dueDate,
+                    "Due_Date": dueDate ?? undefined,
                     // "Created_Time":new Date()
                     "Priority": "High",
                     "Who_Id": {
@@ -232,20 +232,22 @@ window.addCommonTask = function (id = "", type = "") {
                 }],
             };
         } else if (type == "Deals") {
-            var formData = {
+            var related_to = document.getElementById("related_to").value;
+            WhatSelectoneid = related_to;
+             formData = {
                 "data": [{
-                    "Subject": subject,
+                    "Subject": subject !=="" ?subject: undefined,
                     // "Who_Id": {
                     //     "id": whoId
                     // },
                     "Status": "Not Started",
-                    "Due_Date": dueDate,
+                    "Due_Date": dueDate !==""?dueDate :undefined,
                     // "Created_Time":new Date()
                     "Priority": "High",
-                    "What_Id": {
-                        "id": id
-                    },
-                    "$se_module": type
+                    "What_Id": WhatSelectoneid ? {
+                        "id": WhatSelectoneid
+                    } : undefined,
+                    "$se_module": type !=="" ?type: undefined
                 }],
             };
         }
@@ -260,49 +262,51 @@ window.addCommonTask = function (id = "", type = "") {
         console.log("WHAT ID", WhatSelectoneid);
         var dueDate = document.getElementsByName("due_date")[0].value;
         if (seModule == "Deals") {
-            var formData = {
+             formData = {
                 "data": [{
-                    "Subject": subject,
+                    "Subject": subject !=="" ?subject: undefined,
                     // "Who_Id": {
                     //     "id": whoId
                     // },
                     "Status": "Not Started",
-                    "Due_Date": dueDate,
+                    "Due_Date": dueDate !=="" ? dueDate: undefined,
                     // "Created_Time":new Date()
                     "Priority": "High",
-                    "What_Id": {
-                        "id": WhatSelectoneid
-                    },
-                    "$se_module": seModule
+                   "What_Id": WhatSelectoneid ? {
+                    "id": WhatSelectoneid
+                } : undefined,
+                    "$se_module": seModule !==""?seModule: undefined
                 }],
             };
         } else {
-            var formData = {
+            formData = {
                 "data": [{
-                    "Subject": subject,
+                    "Subject": subject !==""?subject: undefined,
                     // "Who_Id": {
                     //     "id": whoId
                     // },
                     "Status": "Not Started",
-                    "Due_Date": dueDate,
+                    "Due_Date": dueDate !==""?dueDate: undefined,
                     // "Created_Time":new Date()
                     "Priority": "High",
-                    "Who_Id": {
+                    "Who_Id": WhatSelectoneid ? {
                         "id": WhatSelectoneid
-                    },
-                    "$se_module": seModule
+                    } : undefined,
+                    "$se_module": seModule !==""?seModule: undefined
                 }],
             };
         }
-        console.log("formData", formData);
     }
+
+    formData.data[0] = Object.fromEntries(
+        Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+    );
 
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
     $.ajax({
         url: '/create-task',
         type: 'POST',
@@ -314,6 +318,7 @@ window.addCommonTask = function (id = "", type = "") {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                formData = "";
                 window.location.reload();
             } else {
                 showToastError("Response or message not found");

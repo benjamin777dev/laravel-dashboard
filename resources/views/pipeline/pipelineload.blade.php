@@ -13,8 +13,6 @@
                             </a>
                         </div>
                     </td>
-                </tr>
-                <tr>
                     <td>
                         <div class="tooltip-wrapper">
                             <img src="{{ URL::asset('/images/splitscreen.svg') }}"

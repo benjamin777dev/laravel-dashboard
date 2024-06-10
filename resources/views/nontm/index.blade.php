@@ -3,18 +3,6 @@
 @section('title', 'Agent Commander | NonTm')
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Document</title>
-    </head>
-
-    <body>
-
         <div class="nontm-header">
             <div class="non-title">
                 <h3>NON-TM CHECK REQUEST WIZARD</h3>
@@ -35,6 +23,9 @@
         </div>
         <div class="col-lg-12 main-carousel">
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="corausal-req-mb48">
+                    <p class="corausal-req-text">Non-TM Check Request Information</p>
+                </div>
                 <div class="carousel-indicators">
                     <div class="prev_btn">
                         <a href=""><span class="prev">
@@ -53,6 +44,7 @@
                     </div>
                 </div>
                 <div class="carousel-inner">
+                    
                     <div class="carousel-item active">
                         <div class="main_form_div">
                             <div class="related_trxn">
@@ -111,9 +103,11 @@
                         </div>
                     </div>
                     <div class="carousel-item">
+                       
                         <div class="main_form_div">
                             <div class="related_trxn">
-                                <label for="relatedto">Related Transaction <svg xmlns="http://www.w3.org/2000/svg"
+                               
+                                <label for="relatedto" class="common-corousal-level">Related Transaction <svg xmlns="http://www.w3.org/2000/svg"
                                         width="19" height="18" viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
                                             y="0" width="19" height="18">
@@ -130,7 +124,7 @@
                                 </select>
                             </div>
                             <div class="additional_email">
-                                <label for="add_email">Additional Email for Confirmation</label>
+                                <label for="add_email" class="common-corousal-level">Additional Email for Confirmation</label>
                                 <input type="email" class="form-control" placeholder="Enter email" id="add_email">
                             </div>
                             <div class="row close-date-comm">
@@ -169,8 +163,8 @@
                     </div>
                     <div class="carousel-item">
                         <div class="main_form_div">
-                            <div class="related_trxn">
-                                <label for="relatedto">Related Transaction <svg xmlns="http://www.w3.org/2000/svg"
+                            <div class="related_trxn common-corousal-div">
+                                <label for="relatedto" class="common-corousal-level">Related Transaction <svg xmlns="http://www.w3.org/2000/svg"
                                         width="19" height="18" viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
                                             y="0" width="19" height="18">
@@ -186,13 +180,13 @@
                                     <option value="" selected>Peters Listing Castle Rock</option>
                                 </select>
                             </div>
-                            <div class="additional_email">
-                                <label for="add_email">Additional Email for Confirmation</label>
+                            <div class="additional_email common-corousal-div">
+                                <label for="add_email" class="common-corousal-level">Additional Email for Confirmation</label>
                                 <input type="email" class="form-control" placeholder="Enter email" id="add_email">
                             </div>
-                            <div class="row close-date-comm">
+                            <div class="row close-date-comm common-corousal-div">
                                 <div class="col-6 close-date">
-                                    <label for="close_date">Close Date <svg xmlns="http://www.w3.org/2000/svg"
+                                    <label for="close_date" class="common-corousal-level">Close Date <svg xmlns="http://www.w3.org/2000/svg"
                                             width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
                                                 x="0" y="0" width="19" height="18">
@@ -207,7 +201,7 @@
                                     <input type="date" class="form-control" id="close_date">
                                 </div>
                                 <div class="col-6 commission">
-                                    <label for="commission">Commission % <svg xmlns="http://www.w3.org/2000/svg"
+                                    <label for="commission" class="common-corousal-level">Commission % <svg xmlns="http://www.w3.org/2000/svg"
                                             width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
                                                 x="0" y="0" width="19" height="18">
@@ -237,10 +231,6 @@
                 </button>
             </div>
         </div>
-
-    </body>
-
-    </html>
 
 @endsection
 

@@ -14,7 +14,7 @@
                     <div id="subject_error{{ $deal['id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
+                        <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
                             <option value="{{ $deal['zoho_deal_id'] }}" selected>
                                 {{ $deal['deal_name'] }}
                             </option>
@@ -56,8 +56,10 @@
                             </option>
                         </select>
                     </div>
-                    <p class="dDueText">Date due</p>
-                    <input type="date" name="due_date" class="dmodalInput" />
+                    <div>
+                        <p class="dDueText">Date due</p>
+                        <input type="date" name="due_date" class="dmodalInput">
+                    </div>
                 </div>
                 <div class="modal-footer ">
                     <button type="button" onclick="addCommonTask('{{ $contact['zoho_contact_id'] }}','Contacts')"
