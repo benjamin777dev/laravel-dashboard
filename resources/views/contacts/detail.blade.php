@@ -42,26 +42,28 @@
                 <div class="row">
                     <nav class="dtabs">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a href="/contacts-view/{{ $contact['id'] }}?tab=In Progress"> <button class="nav-link dtabsbtn"
+                             <button class="nav-link dtabsbtn" onclick="fetchContactTasks('In Progress','{{ $contact['id'] }}')"
                                     id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress'
                                     type="button" role="tab" aria-controls="nav-home" aria-selected="true">In
-                                    Progress</button></a>
-                            <a href="/contacts-view/{{ $contact['id'] }}?tab=Not Started"> <button class="nav-link dtabsbtn"
+                                    Progress</button>
+                             <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Not Started','{{ $contact['id'] }}')"
                                     data-tab='Not Started' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
-                                    aria-selected="false">Upcoming</button></a>
-                            <a href="/contacts-view/{{ $contact['id'] }}?tab=Completed"><button class="nav-link dtabsbtn"
+                                    aria-selected="false">Upcoming</button>
+                            <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Completed','{{ $contact['id'] }}')"
                                     data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                    aria-selected="false">Overdue</button></a>
+                                    aria-selected="false">Overdue</button>
                         </div>
                     </nav>
+                   <div class="contact-task-container">
 
-                    @include('common.tasks', [
-                        'tasks' => $tasks,
-                        'retrieveModuleData' => $retrieveModuleData,
-                        'module' => 'Contacts',
-                    ])
+                       @include('common.tasks', [
+                           'tasks' => $tasks,
+                           'retrieveModuleData' => $retrieveModuleData,
+                           'module' => 'Contacts',
+                           ])
+                           </div>
 
                 </div>
 
@@ -415,6 +417,29 @@
         // Return true to allow form submission
         return true;
     }
+
+        window.fetchContactTasks = function(tab, contactId) {
+            // Make AJAX call
+            $.ajax({
+                url: '/contacts-view/'+contactId,
+                method: 'GET',
+                data: {
+                    tab: tab,
+                },
+                dataType: 'html',
+                success: function(data) {
+
+                    $('.contact-task-container').html(data);
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    loading = false;
+                    console.error('Error:', error);
+                }
+            });
+
+        }
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')
@@ -454,9 +479,6 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#222"
-            activeTab.style.color = "#fff";
-            activeTab.style.borderRadius = "4px";
         }
         $('#primary_address').change(function() {
             if ($(this).is(':checked')) {
