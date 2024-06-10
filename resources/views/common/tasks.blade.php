@@ -1,4 +1,5 @@
 <script>
+        if (window.location.href.includes("tasks")) {
     var taskIDtest = [];
     var selectElementfortask;
     var tasks = @json($tasks);
@@ -20,6 +21,8 @@
             const selectElement = $(`#${selectElementfortask}`);
             showDropdownForId(modalID, selectElement);
         });
+
+    }
    
 </script>
 <div class="table-responsive dresponsivetable">
