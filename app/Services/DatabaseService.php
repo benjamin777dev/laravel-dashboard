@@ -956,6 +956,20 @@ class DatabaseService
         }
     }
 
+    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null)
+    {
+    try {
+    Log::info("Retrieve Submittal Contact From Database");
+    $condition = [['isSubmittalComplete', false], ['dealId', $dealId], ['userID', $user->id]];
+    $submittal = Submittals::where($condition)->first();
+    Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+    return $submittal;
+    } catch (\Exception $e) {
+    Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+    throw $e;
+    }
+    }
+
     public function getIncompleteContact(User $user, $accessToken)
     {
         try {
@@ -1654,6 +1668,37 @@ class DatabaseService
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    public function createListingSubmittal(User $user, $accessToken, $zohoSubmittal, $submittalData)
+    {
+    try {
+        
+        $submittal = Submittals::create([
+            'isSubmittalCompleted' => false,
+            'userID' => $user->id,
+            'isInZoho' => true,
+            'zoho_submittal_id' => $zohoSubmittal['id'],
+        ]);
+        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+        return $submittal;
+    } catch (\Exception $e) {
+        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+        throw $e;
+    }
+    }
+
+    public function retrieveSubmittal(User $user, $accessToken, $submittalId)
+    {
+    try {
+    
+    $submittal = Submittals::first(['id',$submittalId]);
+    Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+    return $submittal;
+    } catch (\Exception $e) {
+    Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+    throw $e;
+    }
     }
 
 }

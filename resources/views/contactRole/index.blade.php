@@ -41,19 +41,21 @@
                         </th>
                     </tr>
                 </thead>
-                @if ($dealContacts->isEmpty())
-                <div>
-                    <p class="text-center notesAsignedText">No contacts assigned</p>
-                </div>
-                @else
                 <tbody class="contact_role_table_pipeline">
+                    @if ($dealContacts->isEmpty())
+                    <p>if statement</p>
+                    <div>
+                        <p class="text-center notesAsignedText">No contacts assigned</p>
+                    </div>
+                    @else
                     @include('contactRole.contact',['dealContacts'=>$dealContacts,'deal'=>$deal])
+                    @endif
                 </tbody>
-                @endif
             </table>
         </div>
     </div>
 </div>
+
 <div class="ptableCardDiv">
     @foreach ($dealContacts as $dealContact)
     <div class="npRoleCard vprolecard">

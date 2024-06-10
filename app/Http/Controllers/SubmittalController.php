@@ -147,7 +147,10 @@ class SubmittalController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $submittalType = request()->route('type');
+        $submittalId = request()->route('submittalId');
+        $listingSubmittaltype = request()->query('formType');
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         /*$tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
         Log::info("Task Details: " . print_r($tasks, true));
@@ -164,7 +167,7 @@ class SubmittalController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
-        return view('submittals.create', compact('deals','submittalType'));
+        return view('submittals.create', compact('deals','submittalType','listingSubmittaltype'));
     }
 
     public function getDeal(Request $request)
@@ -182,7 +185,7 @@ class SubmittalController extends Controller
         // return view('pipeline.index', compact('deals'));
     }
 
-    public function createPipeline(Request $request)
+    public function createListingSubmittal(Request $request)
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
@@ -192,24 +195,20 @@ class SubmittalController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
+        $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
-        $contact = null;
-        if(isset($jsonData['data'][0]['Client_Name_Primary'])){
-            $contact = $jsonData['data'][0]['Client_Name_Primary'];
-        }
-        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken,$contact);
-        if ($isIncompleteDeal) {
-            return response()->json($isIncompleteDeal);
+        $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken,$dealId);
+        if ($isIncompleteSubmittal) {
+            return response()->json($isIncompleteSubmittal);
         } else {
-            
-            $zohoDeal = $zoho->createZohoDeal($jsonData);
-            if (!$zohoDeal->successful()) {
-                return "error somthing" . $zohoDeal;
+            $submittal = $zoho->createListingSubmittal($jsonData);
+            if (!$submittal->successful()) {
+                return "error something" . $submittal;
             }
-            $zohoDealArray = json_decode($zohoDeal, true);
-            $data = $zohoDealArray['data'][0]['details'];
-            $dealData = $jsonData['data'][0];
-            $deal = $db->createDeal($user, $accessToken, $data,$dealData);
+            $submittalArray = json_decode($submittal, true);
+            $data = $submittalArray['data'][0]['details'];
+            $submittalData = $jsonData['data'][0];
+            $deal = $db->createListingSubmittal($user, $accessToken, $data,$submittalData);
             return response()->json($deal);
         }
 

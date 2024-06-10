@@ -1,7 +1,7 @@
 <div class="table-responsive dtranstiontable mt-3">
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Submittals</p>
-        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalForm('{{$deal}}')">
+        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType('{{$deal}}')">
             <i class="fas fa-plus plusicon"></i>
             Add New Submittal
         </div>
@@ -80,13 +80,67 @@
             $('#buyerSubmittal').show();
             $('#listingSubmittal').hide();
     } */
-    function showSubmittalForm(deal) {
+    async function showSubmittalFormType(deal) {
         deal = JSON.parse(deal);
         console.log(deal.representing,deal.tm_preference);
+        let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
-            window.location.href = '{{ url('submittal-create/Buyer') }}';
+            submittalData = await addSubmittal('Buyer_Submittal',deal);
+            window.location.href = `{{ url('submittal-create/Buyer/${submittalData.id}') }}`;
         }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
-            window.location.href = '{{ url('submittal-create/Listing') }}';
+            addSubmittal('Listing_Submittal',deal).then((submittalData)=>{
+                console.log(submittalData);
+                window.location.href = `{{ url('submittal-create/Listing/${submittalData.id}') }}`;
+            });
+            console.log("submittalData",submittalData);
+        }else if(deal.representing === "Seller" && deal.tm_preference === "Non TM"){
+            submittalData = await addSubmittal('Listing_Submittal',deal);
+            window.location.href = `{{ url('submittal-create/Listing/${submittalData.id}') }}'+'?formType="Non TM"`;
         }
+    }
+
+    window.addSubmittal = function(type,deal){
+        if(type == "Buyer_Submittal"){
+
+        }else if(type == "Listing_Submittal"){
+            var formData = {
+                "data": [{
+                    "Transaction_Name": {
+                        "id":deal.zoho_deal_id,
+                        "name":deal.deal_name
+                    },
+                    "TM_Name": deal.tm_name,
+                }]
+            };
+            
+            $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                // Send AJAX request
+              $.ajax({
+                url: "/listing/submittal/create/"+deal.zoho_deal_id,
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log("response",response);
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                        // window.location.reload();
+                    }
+                    return response;
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }
+
     }
 </script>

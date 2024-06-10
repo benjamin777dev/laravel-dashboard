@@ -196,44 +196,58 @@ window.updateDataDeal = function (dealId, dbDealId) {
     var finance = $('#finance').val();
     var lender_company = $('#lender_company').val();
     var modern_mortgage_lender = $('#modern_mortgage_lender').val();
+
     if (client_name_primary === '') {
-        isValid = false
+        showToastError('Client Name Primary is required');
+        isValid = false;
     }
     if (representing === '') {
-        isValid = false
+        showToastError('Representing is required');
+        isValid = false;
     }
     if (deal_name === '') {
-        isValid = false
+        showToastError('Deal Name is required');
+        isValid = false;
     }
     if (stage === '') {
-        isValid = false
+        showToastError('Stage is required');
+        isValid = false;
     }
     if (sale_price === '') {
-        isValid = false
+        showToastError('Sale Price is required');
+        isValid = false;
     }
     if (closing_date === '') {
-        isValid = false
+        showToastError('Closing Date is required');
+        isValid = false;
     }
     if (commission === '') {
-        isValid = false
+        showToastError('Commission is required');
+        isValid = false;
     }
     if (stage === 'Under Contract') {
         if (address === '') {
-            isValid = false
+            showToastError('Address is required for Under Contract stage');
+            isValid = false;
         }
         if (city === '') {
-            isValid = false
+            showToastError('City is required for Under Contract stage');
+            isValid = false;
         }
         if (state === '') {
-            isValid = false
+            showToastError('State is required for Under Contract stage');
+            isValid = false;
         }
         if (zip === '') {
-            isValid = false
+            showToastError('ZIP Code is required for Under Contract stage');
+            isValid = false;
         }
         if (property_type === '') {
-            isValid = false
+            showToastError('Property Type is required for Under Contract stage');
+            isValid = false;
         }
     }
+
     if (isValid == true) {
         // Create formData object
         var formData = {
@@ -321,7 +335,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
     }
 }
 
-window.updateDealInformation = function (dealId) {
+window.getSubmittals = function (dealId) {
     $.ajax({
         url: "/submittal/" + dealId,
         type: 'Get',
@@ -333,7 +347,7 @@ window.updateDealInformation = function (dealId) {
             //     updateDealInformation(response.data[0])
             //     // window.location.reload();
             // }
-            $('#showsubmittal').html(response);
+            $('.showsubmittal').html(response);
 
         },
         error: function (xhr, status, error) {
