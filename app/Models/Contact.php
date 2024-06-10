@@ -208,7 +208,7 @@ class Contact extends Model
 
 
         $mappedData = [
-            'zoho_contact_id' => $source === 'webhook' ? (isset($data['id']) ? $data['id'] : null) : (isset($data['Id']) ? $data['Id'] : null),
+            'zoho_contact_id' => $source === 'webhook' ? $data['id'] :  $data['Id'],
             'contact_owner' => $source === 'webhook' ? (isset($data['Owner']['id']) ? $data['Owner']['id'] : null) : (isset($data['Owner']) ? $data['Owner'] : null),
             'email' => isset($data['Email']) ? $data['Email'] : null,
             'first_name' => isset($data['First_Name']) ? $data['First_Name'] : null,
@@ -230,7 +230,7 @@ class Contact extends Model
             'isContactCompleted' => isset($data['Is_Active']) ? (int)$data['Is_Active'] : 1,
             'isInZoho' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
-            'referred_id' => isset($data['Referred_By']) ? $data['Referred_By']["id"] : null,
+            'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : $data['Referred_By']["id"],
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
             'spouse_partner' => isset($data['Spouse_Partner']) ? json_encode($data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
