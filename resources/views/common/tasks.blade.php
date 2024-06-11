@@ -1,17 +1,28 @@
 <script>
-    var taskIDSS = [];
-    var selectElement;
+        if (window.location.href.includes("tasks")) {
+    var taskIDtest = [];
+    var selectElementfortask;
     var tasks = @json($tasks);
     tasks?.data?.forEach((task) => {
-        taskIDSS.push(task?.id)
+        taskIDtest.push(task?.id)
     })
-    var modalSelectMaptsk = []
-    taskIDSS.forEach((id) => {
-        modalSelectMaptsk.push({
+    var modalSelectMaptsk1 = []
+    taskIDtest.forEach((id) => {
+        modalSelectMaptsk1.push({
             modalID: id,
-            selectElementId: 'related_to_rem' + id
+            selectElementfortask: 'related_to_rem' + id
         })
     });
+
+    modalSelectMaptsk1.forEach(({
+            modalID,
+            selectElementfortask
+        }) => {
+            const selectElement = $(`#${selectElementfortask}`);
+            showDropdownForId(modalID, selectElement);
+        });
+
+    }
    
 </script>
 <div class="table-responsive dresponsivetable">
@@ -279,9 +290,6 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#222"
-            activeTab.style.color = "#fff";
-            activeTab.style.borderRadius = "4px";
         }
 
         var taskIDSS = [];
@@ -302,7 +310,7 @@
             selectElementId
         }) => {
             const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
+            showDropdownForId(modalID, selectElement);
         });
 
         $(document).on('click', '.dpagination a', function(e) {

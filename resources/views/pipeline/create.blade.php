@@ -441,9 +441,6 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#253C5B"
-            activeTab.style.color = "#fff";
-            activeTab.style.borderRadius = "4px";
         }
        var getLeadAgent = $('#leadAgent');
         getLeadAgent.select2({
