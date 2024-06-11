@@ -742,10 +742,19 @@ class DatabaseService
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
-
-            Log::info("DealIDS" . $dealId);
-            $tasks = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('what_id')
-                ->where('what_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
+            Log::info("Retrieve Tasks From Database");
+            $condition = [];
+            $tasks = Task::where('what_id', $dealId)->with(['dealData']);
+            if ($tab == 'Completed') {
+                $tasks
+                    ->where('due_date', '<', now());
+            } elseif ($tab == 'Not Started') {
+                $tasks
+                    ->where('due_date', '>=', now());
+            } else {
+                $tasks->where('due_date', null);
+            }
+            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -756,11 +765,20 @@ class DatabaseService
     public function retreiveTasksForContact(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
-
-            Log::info("DealIDS" . $dealId);
-            $contactTask = Task::with('dealData')->where([['owner', $user->id], ['status', $tab]])->whereNotNull('who_id')
-                ->where('who_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
-            return $contactTask;
+            Log::info("Retrieve Tasks From Database");
+            $condition = [];
+            $tasks = Task::where('who_id', $dealId)->with(['contactData']);
+            if ($tab == 'Completed') {
+                $tasks
+                    ->where('due_date', '<', now());
+            } elseif ($tab == 'Not Started') {
+                $tasks
+                    ->where('due_date', '>=', now());
+            } else {
+                $tasks->where('due_date', null);
+            }
+            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;

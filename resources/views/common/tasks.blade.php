@@ -1,4 +1,5 @@
 <script>
+        if (window.location.href.includes("tasks")) {
     var taskIDtest = [];
     var selectElementfortask;
     var tasks = @json($tasks);
@@ -20,6 +21,8 @@
             const selectElement = $(`#${selectElementfortask}`);
             showDropdownForId(modalID, selectElement);
         });
+
+    }
    
 </script>
 <div class="table-responsive dresponsivetable">
@@ -287,9 +290,6 @@
         var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
         if (activeTab) {
             activeTab.classList.add('active');
-            activeTab.style.backgroundColor = "#222"
-            activeTab.style.color = "#fff";
-            activeTab.style.borderRadius = "4px";
         }
 
         var taskIDSS = [];

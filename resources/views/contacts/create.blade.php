@@ -202,7 +202,7 @@
 
                             <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                             <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                             id="validationDefault13" style="display:none" >
+                             id="validationDefault13" >
                             @if (!empty($spouseContact) && is_array($spouseContact))
                                 <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
                                     {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
