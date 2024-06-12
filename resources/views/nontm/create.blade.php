@@ -13,7 +13,7 @@
 
             </div>
             <div class="nontm-savenew-btn">
-                <button onclick="submitNontm()">Save and New</button>
+                <button>Save and New</button>
             </div>
             <div class="nontm-save-btn">
                 <button>Save</button>
@@ -65,12 +65,14 @@
                                     </g>
                                 </svg></label>
                             <div class="nontm-select-div">
-                                <select name="related_transaction" id="related_transaction" class="nontm-select"
-                                    id="">
-                                    <option
-                                        value="{{ $deal['deal_name'] == 'Untitled' ? $deal['zoho_deal_id'] : $deal['zoho_deal_id'] }}"
-                                        selected>{{ $deal['deal_name'] == 'Untitled' ? '' : $deal['deal_name'] }}</option>
+                                <select name="related_transaction" id="related_transaction" class="nontm-select">
+                                    @if ($deal && isset($deal->deal_data) && isset($deal->deal_data->deal_name) && isset($deal['dealId']))
+                                    <option value="{{ $deal->deal_data->deal_name == 'Untitled' ? $deal['dealId'] : $deal['dealId'] }}" selected>
+                                        {{ $deal->deal_data->deal_name == 'Untitled' ? '' : $deal->deal_data->deal_name }}
+                                    </option>
+                                @endif
                                 </select>
+                                
                                 <img src="{{ URL::asset('/images/domain_add.svg') }}" alt="">
                             </div>
                             <div id="related_transaction_error" class="text-danger">
@@ -283,173 +285,6 @@
 @endsection
 
 <script type="text/javascript">
-    window.onload = function() {
-        $(".main-carousel a span.prev").click(function(e) {
-            e.preventDefault();
-            $(".main-carousel .carousel-control-prev").trigger("click");
-        });
-        $(".main-carousel a span.next").click(function(e) {
-            e.preventDefault();
-            $(".main-carousel .carousel-control-next").trigger("click");
-        });
-
-        let related_transaction = document.getElementById("related_transaction");
-        // let add_email = document.getElementById("add_email");
-        let close_date = document.getElementById("close_date");
-        let commission = document.getElementById("commission");
-        let final_purchase = document.getElementById("final_purchase");
-        related_transaction.addEventListener("keyup", validateNonTm);
-        close_date.addEventListener("change", validateNonTm);
-        commission.addEventListener("keyup", validateNonTm);
-        final_purchase.addEventListener("keyup", validateNonTm);
-
-        // Select all radio buttons
-        const radioButtons = document.querySelectorAll('input[type="radio"]');
-
-        // Initialize an object to store the values
-        window.values = {};
-
-        // Add event listener to each radio button
-        radioButtons.forEach(radioButton => {
-            radioButton.addEventListener('change', event => {
-                const question = radioButton.closest('.accordion-item').querySelector('button')
-                    .textContent.trim();
-                const value = event.target.value;
-                window.values[question] = value;
-                console.log(values, 'valuesis hreeee')
-            });
-        });
-
-    };
-
-    function validateNonTm() {
-        let related_transaction = document.getElementById("related_transaction");
-        // let add_email = document.getElementById("add_email");
-        let close_date = document.getElementById("close_date");
-        let commission = document.getElementById("commission");
-        let final_purchase = document.getElementById("final_purchase");
-        let related_transactionError = document.getElementById("related_transaction_error");
-        let close_dateError = document.getElementById("close_date_error");
-        let commissionError = document.getElementById("commission_error");
-        let final_purchaseError = document.getElementById("final_purchase_error");
 
 
-        let isValid = true;
-
-        // Validate related_transaction
-        if (related_transaction.value.trim() === "") {
-            related_transactionError.textContent = "Transaction Related cannot be empty.";
-            isValid = false;
-        }
-        // else if (isNaN(related_transaction.value.trim())) {
-        //     related_transactionError.textContent = "Transaction Related must be a number.";
-        //     isValid = false;
-        // }
-        else {
-            related_transactionError.textContent = "";
-        }
-
-        // Validate close_date
-        if (close_date.value.trim() === "") {
-            console.log(close_date, 'close_date');
-            close_dateError.textContent = "Close Datecannot be empty.";
-            isValid = false;
-        }
-        //  else if (isNaN(close_date.value.trim())) {
-        //     close_dateError.textContent = "TM Fees due to must be a number.";
-        //     isValid = false;
-        // } 
-        else {
-            close_dateError.textContent = "";
-        }
-
-        // validate commissionError
-        if (commission.value.trim() === "") {
-            commissionError.textContent = "Commision cannot be empty.";
-            isValid = false;
-        } else if (isNaN(commission.value.trim())) {
-            commissionError.textContent = "Commision must be a number.";
-            isValid = false;
-        } else {
-            commissionError.textContent = "";
-        }
-
-        // validate commissionError
-        if (final_purchase.value.trim() === "") {
-            final_purchaseError.textContent = "Final Purchase cannot be empty.";
-            isValid = false;
-        } else if (isNaN(final_purchase.value.trim())) {
-            final_purchaseError.textContent = "Final Purchase must be a number.";
-            isValid = false;
-        } else {
-            final_purchaseError.textContent = "";
-        }
-
-        return isValid;
-    }
-
-    function submitNontm() {
-        if (!validateNonTm()) {
-            return;
-        }
-        let related_transaction = document.getElementById("related_transaction");
-        let add_email = document.getElementById("add_email");
-        let close_date = document.getElementById("close_date");
-        let commission = document.getElementById("commission");
-        let refferal_fee = document.getElementById("refferal_fee");
-        let Home_warranty = document.getElementById("Home_warranty");
-        let fee_charged = document.getElementById("fee_charged");
-        let final_purchase = document.getElementById("final_purchase");
-        let additonal_fee = document.getElementById("additonal_fee");
-        let agent_comments = document.getElementById("agent_comments");
-        let other_comm_notes = document.getElementById("other_comm_notes");
-        console.log(related_transaction, add_email, close_date, commission, refferal_fee, Home_warranty, fee_charged,
-            final_purchase, additonal_fee, agent_comments, other_comm_notes, window.values)
-        return;
-        // request
-        // https://crm.zoho.com/crm/v2.2/Non_TM_Check_Requests
-        let formData = {
-           "data": [{
-                "Owner": {
-                    "id": "5141697000013347001",
-                    "full_name": "CHR Technology"
-                },
-                "Exchange_Rate": 1,
-                "Currency": "USD",
-                "Related_Transaction": {
-                    "id": "5141697000084904614",
-                    "name": "asdfasdf"
-                },
-                "$zia_owner_assignment": "owner_recommendation_unavailable",
-                "zia_suggested_users": {}
-            }],
-            "skip_mandatory": false
-        }
-        $.ajax({
-            url: '/aci_create',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-
-                console.log(response);
-                if (response?.data && response.data[0]?.message) {
-
-                    
-                    // Convert message to uppercase and then display
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    window.location.href = `{{ url('/nontm-create/${response?.data[0]?.id}') }}`;
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            }
-        })
-    }
 </script>

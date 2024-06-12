@@ -507,6 +507,21 @@ class ZohoCRM
         return $response;
     }
 
+    public function createZohoNonTm($inputJson)
+    {
+        Log::info('Creating Zoho Deal');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->post($this->bulkUrl . 'Non_TM_Check_Requests', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
     public function updateZohoDeal($inputJson, $id)
     {
         try {

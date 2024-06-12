@@ -512,6 +512,27 @@ class DatabaseService
 
     }
 
+    public function retrieveDealDataById(User $user, $accessToken, $dealId)
+    {
+
+        try {
+            Log::info("Retrieve Deals From Database");
+
+            $conditions = [['userID', $user->id], ['id', $dealId]];
+            // Adjust query to include contactName table using join
+            $deals = NonTm::with('userData', 'dealData');
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $deals = $deals->where($conditions)->first();
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
     public function retrieveContactById(User $user, $accessToken, $contactId)
     {
 
@@ -974,6 +995,20 @@ class DatabaseService
         }
     }
 
+    public function getIncompleteNonTm(User $user, $accessToken, $nontm = null)
+    {
+        try {
+            Log::info("Retrieve Deal Contact From Database");
+            $condition = [['isNonTmCompleted', false], ['dealId', $nontm], ['userId', $user->id]];
+            $nontmdata = NonTm::where($condition)->first();
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $nontmdata]);
+            return $nontmdata;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getIncompleteContact(User $user, $accessToken)
     {
         try {
@@ -1016,6 +1051,26 @@ class DatabaseService
             return $deal;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function createNonTmData(User $user, $accessToken, $dealData ,$zohoDealArray)
+    {
+        try {
+            Log::info("zohoDealArray Deatils" . json_encode($zohoDealArray));
+
+            $nontm = NonTm::create([
+                'userId' => $user->id,
+                'dealId' => $dealData['Related_Transaction']['id'],
+                'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
+                'isNonTmCompleted' =>false,
+            ]);
+            Log::info("Retrieved Deal nontm From Database", ['nontm' => $nontm]);
+            return $nontm;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal nontm: " . $e->getMessage());
             throw $e;
         }
     }

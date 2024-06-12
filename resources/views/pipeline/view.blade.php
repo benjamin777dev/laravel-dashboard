@@ -346,8 +346,8 @@
             <div class="table-responsive dtranstiontable mt-3">
                 <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                     <p class="nproletext">Non-TM Check request</p>
-                    <div class="input-group-text npcontactbtn" id="btnGroupAddon" data-bs-toggle="modal"
-                        data-bs-target="#">
+                    <div class="input-group-text npcontactbtn" onclick="addNonTm()" id="btnGroupAddon" 
+                        >
                         <i class="fas fa-plus plusicon">
                         </i>
                         Add Non-TM Check request
@@ -419,15 +419,12 @@
             <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
                 <p class="nproletext">Non-TM Check request</p>
                 <div class="dropdown">
-                    <button class="btn btn-secondary btn-bg dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    <button onclick="addNonTm()"  class="btn btn-secondary btn-bg dropdown-toggle" type="button" id="dropdownMenuButton1"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-plus plusicon"></i>
                         Add Non-TM Check request
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="/non-tm">New</a></li>
-                        <li><a class="dropdown-item" href="#">Assign</a></li>
-                    </ul>
+                   
                 </div>
 
 
@@ -926,6 +923,47 @@
                     console.error(xhr.responseText);
                 }
             })
+        }
+
+        window.addNonTm =function(){
+            let formData = {
+           "data": [{
+                "Owner": {
+                    "id": "{{$user->root_user_id}}",
+                    "full_name": "{{$user->name}}"
+                },
+                "Exchange_Rate": 1,
+                "Currency": "USD",
+                "Related_Transaction": {
+                    "id": "{{$deal->zoho_deal_id}}",
+                    "name": "{{$deal->deal_name}}"
+                },
+                "$zia_owner_assignment": "owner_recommendation_unavailable",
+                "zia_suggested_users": {}
+            }],
+            "skip_mandatory": false
+        }
+        console.log(formData,'sdfjsdfjsd')
+        $.ajax({
+            url: '/create-nontm',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response) {
+                    window.location.href = `{{ url('/nontm-create/${response?.id}') }}`;
+                    // window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
         }
     </script>
 @section('pipelineScript')

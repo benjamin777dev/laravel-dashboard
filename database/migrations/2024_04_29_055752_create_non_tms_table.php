@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('userId')->nullable();
             $table->unsignedBigInteger('dealId')->nullable();
             $table->unsignedBigInteger('zoho_nontm_id')->nullable();
+            $table->boolean('isNonTmCompleted')->default(false);
             $table->timestamps();
         });
     }
