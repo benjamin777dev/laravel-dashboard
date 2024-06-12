@@ -14,7 +14,17 @@ class NonTm extends Model
         "closed_date",
         "userId",
         "dealId",
+        "email",
+        "Commission",
+        "referral_fee_paid_out",
+        "home_warranty_paid_out_agent",
+        "any_additional_fees_charged",
+        "final_purchase_price",
+        "amount_to_chr_gives",
+        "agent_comments",
+        "other_commission_notes",
         "zoho_nontm_id",
+        "isNonTmCompleted"
     ];
 
     public static function getZohoContactInfo()
@@ -28,8 +38,14 @@ class NonTm extends Model
         return $this->belongsTo(User::class, 'userId');
     }
 
+    public function dealData()
+    {
+        return $this->belongsTo(Deal::class, 'dealId','zoho_deal_id');
+    }
+
     public function contactData()
     {
         return $this->belongsTo(Contact::class, 'contactId');
     }
+    
 }

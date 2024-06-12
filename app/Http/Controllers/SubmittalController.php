@@ -26,7 +26,7 @@ class SubmittalController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
+        try{
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');

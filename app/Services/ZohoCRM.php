@@ -507,6 +507,44 @@ class ZohoCRM
         return $response;
     }
 
+    public function createZohoNonTm($inputJson)
+    {
+        Log::info('Creating Zoho Deal');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->post($this->bulkUrl . 'Non_TM_Check_Requests', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function updateZohoNonTm($inputJson, $id) {
+        try {
+            Log::info('Creating Zoho Deal', $inputJson);
+            // https://crm.zoho.com/crm/v2.2/Non_TM_Check_Requests/5141697000085258009?affected_data=true
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->patch($this->bulkUrl . 'Non_TM_Check_Requests/' . $id, $inputJson);
+
+            Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+
+            return $response;
+        } catch (RequestException $exception) {
+            // Log the exception
+            Log::error('Error updating Zoho Deal: ' . $exception->getMessage());
+
+            // Return a default error response or rethrow the exception
+            throw $exception;
+    }
+}
+
     public function updateZohoDeal($inputJson, $id)
     {
         try {
