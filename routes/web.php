@@ -83,6 +83,7 @@ Route::get('/deal/note/{dealId}', [PipelineController::class, 'retriveNotesForDe
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
+Route::get('/pipeline/view/{dealId}', [PipelineController::class, 'getDeal'])->name('pipeline.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');
 Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
@@ -106,8 +107,10 @@ Auth::routes(['verify' => true]);
 Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
 
 //nontm page route
-Route::post('/non-tm-create', [PipelineController::class, 'createNonTm'])->middleware('auth');
-Route::get('/non-tm', [NonTmController::class, 'index'])->middleware('auth');
+Route::post('/create-nontm', [NonTmController::class, 'createNontm'])->middleware('auth');
+Route::get('/nontm-create/{id}', [NonTmController::class, 'createNontmView'])->middleware('auth');
+Route::put('/nontm-update/{id}', [NonTmController::class, 'updateNonTm'])->middleware('auth');
+Route::get('/nontm-view/{id}', [NonTmController::class, 'index'])->middleware('auth');
 
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
@@ -117,8 +120,15 @@ Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->n
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 
 //Submittal Route
-Route::get('/submittal-create/{type}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
 Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('submittals.index')->middleware('auth');
+Route::post('/listing/submittal/create/{dealId}', [SubmittalController::class,
+'createListingSubmittal'])->name('listing.submittal.create')->middleware('auth');
+Route::get('/submittal-create/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
+Route::get('/submittal-view/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalView'])->name('submittal.create')->middleware('auth');
+Route::put('/listing/submittal/update/{submittalId}', [SubmittalController::class, 'updateListingSubmittal'])->name('listing.submittal.update')->middleware('auth');
+Route::post('/buyer/submittal/create/{dealId}', [SubmittalController::class,
+'createBuyerSubmittal'])->name('buyer.submittal.create')->middleware('auth');
+Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class, 'updateBuyerSubmittal'])->name('buyer.submittal.update')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');

@@ -16,7 +16,7 @@
             {{ session('error') }}
         </div>
     @endif
-    <div class="container">
+    <div class="container-fluid">
         <div class="commonFlex ppipeDiv">
             <p class="pText"></p>
             <a onclick="createTransaction('{{ $contact }}','{{ $userContact }}');">

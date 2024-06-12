@@ -507,6 +507,44 @@ class ZohoCRM
         return $response;
     }
 
+    public function createZohoNonTm($inputJson)
+    {
+        Log::info('Creating Zoho Deal');
+        // trigger workflows
+        $inputJson['trigger'] = 'workflow';
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->post($this->bulkUrl . 'Non_TM_Check_Requests', $inputJson);
+
+        //Log::info('Zoho deals data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function updateZohoNonTm($inputJson, $id) {
+        try {
+            Log::info('Creating Zoho Deal', $inputJson);
+            // https://crm.zoho.com/crm/v2.2/Non_TM_Check_Requests/5141697000085258009?affected_data=true
+            // trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->patch($this->bulkUrl . 'Non_TM_Check_Requests/' . $id, $inputJson);
+
+            Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+
+            return $response;
+        } catch (RequestException $exception) {
+            // Log the exception
+            Log::error('Error updating Zoho Deal: ' . $exception->getMessage());
+
+            // Return a default error response or rethrow the exception
+            throw $exception;
+    }
+}
+
     public function updateZohoDeal($inputJson, $id)
     {
         try {
@@ -1043,6 +1081,126 @@ class ZohoCRM
         }
     }
 
+    public function createListingSubmittal($inputJson)
+    {
+    try {
+    Log::info('Creating Zoho contacts',[$inputJson]);
+    
+    // Trigger workflows
+    $inputJson['trigger'] = 'workflow';
+    // Adjust the URL and HTTP method based on your Zoho API requirements
+    $response = Http::withHeaders([
+    'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+    'Content-Type' => 'application/json',
+    ])->post($this->apiUrl . "Listing_Submittals", $inputJson);
+    
+    $responseData = $response->json();
+    
+    // Check if the request was successful
+    if (!$response->successful()) {
+    Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+    throw new \Exception('Failed to create Zoho contacts');
+    }
+    
+    Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+    
+    return $response;
+    } catch (\Throwable $th) {
+    Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+    throw new \Exception('Failed to create Zoho contacts');
+    }
+    }
+
+    public function updateListingSubmittal($submittalId,$inputJson)
+    {
+    try {
+    Log::info('Creating Zoho contacts',[$inputJson]);
+    
+    // Trigger workflows
+    $inputJson['trigger'] = 'workflow';
+    // Adjust the URL and HTTP method based on your Zoho API requirements
+    $response = Http::withHeaders([
+    'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+    'Content-Type' => 'application/json',
+    ])->patch($this->apiUrl . "Listing_Submittals/" . $submittalId . "?affected_data=true", $inputJson);
+
+    
+    $responseData = $response->json();
+    
+    // Check if the request was successful
+    if (!$response->successful()) {
+    Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+    throw new \Exception('Failed to create Zoho contacts');
+    }
+    
+    Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+    
+    return $response;
+    } catch (\Throwable $th) {
+    Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+    throw new \Exception('Failed to create Zoho contacts');
+    }
+    }
+
+    public function createBuyerSubmittal($inputJson)
+    {
+        try {
+            Log::info('Creating Zoho contacts',[$inputJson]);
+            
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+            ])->post($this->apiUrl . "Buyer_Submittals", $inputJson);
+            
+            $responseData = $response->json();
+            
+            // Check if the request was successful
+            if (!$response->successful()) {
+            Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+            throw new \Exception('Failed to create Zoho contacts');
+            }
+            
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+            
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
+
+    public function updateBuyerSubmittal($submittalId,$inputJson)
+    {
+        try {
+            Log::info('Creating Zoho contacts',[$inputJson]);
+            
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+            ])->patch($this->apiUrl . "Buyer_Submittals/" . $submittalId . "?affected_data=true", $inputJson);
+            
+            $responseData = $response->json();
+            
+            // Check if the request was successful
+            if (!$response->successful()) {
+            Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+            throw new \Exception('Failed to create Zoho contacts');
+            }
+            
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+            
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
 
 
 
