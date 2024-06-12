@@ -1076,4 +1076,67 @@ class ZohoCRM
             throw new \Exception('Failed to create Zoho Group');
         }
     }
+
+    public function updateGroup($inputJson, $id)
+    {
+        try {
+            Log::info('Updating Zoho Group', [$inputJson]);
+
+            // Ensure the input contains the 'data' key
+            if (!isset($inputJson['data']) || !is_array($inputJson['data'])) {
+                throw new \Exception('Invalid input: data field is required and must be an array');
+            }
+
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->put($this->apiUrl . "Groups/$id", $inputJson);
+
+            $responseData = $response->json();
+
+            if (!$response->successful()) {
+                Log::error('Zoho Group update failed', ['response' => $responseData]);
+                throw new \Exception('Failed to update Zoho Group');
+            }
+
+            Log::info('Zoho Group update response', ['response' => $responseData]);
+
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error updating Zoho Group: ' . $th->getMessage());
+            throw new \Exception('Failed to update Zoho Group');
+        }
+    }
+
+    public function deleteGroup($id)
+    {
+        try {
+            Log::info('Deleting Zoho Group', ['id' => $id]);
+
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->delete($this->apiUrl . "Groups/$id");
+
+            $responseData = $response->json();
+
+            if (!$response->successful()) {
+                Log::error('Zoho Group deletion failed', ['response' => $responseData]);
+                throw new \Exception('Failed to delete Zoho Group');
+            }
+
+            Log::info('Zoho Group deletion response', ['response' => $responseData]);
+
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error deleting Zoho Group: ' . $th->getMessage());
+            throw new \Exception('Failed to delete Zoho Group');
+        }
+    }
 }
