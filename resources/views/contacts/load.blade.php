@@ -1,5 +1,37 @@
 @foreach ($contacts as $contact)
         <tr>
+            <td>
+
+                <div class="tooltip-wrapper">
+                    <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
+                        <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
+                            class="ppiplinecommonIcon" title="Contact Details">
+                        <span class="tooltiptext">Contact Details</span>
+                    </a>
+                </div>
+
+                <div class="tooltip-wrapper">
+                    <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon"
+                        class="ppiplinecommonIcon" data-bs-toggle="modal"
+                        data-bs-target="#newTaskModalId{{ $contact['id'] }}" title="Add Task">
+                    <span class="tooltiptext">Add Task</span>
+                </div>
+
+
+                <div class="tooltip-wrapper">
+                    <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon"
+                        class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
+                        onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
+                    <span class="tooltiptext">View Notes</span>
+                </div>
+
+                <div class="tooltip-wrapper">
+                    <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
+                        class="ppiplinecommonIcon" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
+                    <span class="tooltiptext">Add Note</span>
+                </div>
+            </td>
             <td>{{ $contact['first_name'] ?? $contact['last_name'] }}</td>
             <td>{{ $contact['abcd'] ?? '-' }}</td>
             <td>
@@ -55,38 +87,7 @@
             </td>
             
             <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
-            <td>
-
-                <div class="tooltip-wrapper">
-                    <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
-                        <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                            class="ppiplinecommonIcon" title="Contact Details">
-                        <span class="tooltiptext">Contact Details</span>
-                    </a>
-                </div>
-
-                <div class="tooltip-wrapper">
-                    <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon"
-                        class="ppiplinecommonIcon" data-bs-toggle="modal"
-                        data-bs-target="#newTaskModalId{{ $contact['id'] }}" title="Add Task">
-                    <span class="tooltiptext">Add Task</span>
-                </div>
-
-
-                <div class="tooltip-wrapper">
-                    <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon"
-                        class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
-                        onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
-                    <span class="tooltiptext">View Notes</span>
-                </div>
-
-                <div class="tooltip-wrapper">
-                    <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon"
-                        class="ppiplinecommonIcon" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
-                    <span class="tooltiptext">Add Note</span>
-                </div>
-            </td>
+            
 
         </tr>
 @endforeach

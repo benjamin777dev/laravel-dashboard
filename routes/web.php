@@ -107,6 +107,8 @@ Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware
 //nontm page route
 Route::post('/create-nontm', [NonTmController::class, 'createNontm'])->middleware('auth');
 Route::get('/nontm-create/{id}', [NonTmController::class, 'createNontmView'])->middleware('auth');
+Route::put('/nontm-update/{id}', [NonTmController::class, 'updateNonTm'])->middleware('auth');
+Route::get('/nontm-view/{id}', [NonTmController::class, 'index'])->middleware('auth');
 
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');

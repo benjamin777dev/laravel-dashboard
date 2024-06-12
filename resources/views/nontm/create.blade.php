@@ -12,10 +12,10 @@
                 <button>Cancel</button>
 
             </div>
-            <div class="nontm-savenew-btn">
+            <div class="nontm-savenew-btn" onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',true)">
                 <button>Save and New</button>
             </div>
-            <div class="nontm-save-btn">
+            <div onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',false)" class="nontm-save-btn">
                 <button>Save</button>
 
             </div>
@@ -66,13 +66,14 @@
                                 </svg></label>
                             <div class="nontm-select-div">
                                 <select name="related_transaction" id="related_transaction" class="nontm-select">
-                                    @if ($deal && isset($deal->deal_data) && isset($deal->deal_data->deal_name) && isset($deal['dealId']))
-                                    <option value="{{ $deal->deal_data->deal_name == 'Untitled' ? $deal['dealId'] : $deal['dealId'] }}" selected>
-                                        {{ $deal->deal_data->deal_name == 'Untitled' ? '' : $deal->deal_data->deal_name }}
-                                    </option>
-                                @endif
+                                    @foreach ($deals as $deal)
+                                        <option value="{{ $deal->zoho_deal_id }}"
+                                            {{ $deal->zoho_deal_id == $dealData->dealId ? 'selected' : '' }}>
+                                            {{ $deal->deal_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
-                                
+
                                 <img src="{{ URL::asset('/images/domain_add.svg') }}" alt="">
                             </div>
                             <div id="related_transaction_error" class="text-danger">
@@ -80,7 +81,8 @@
                         </div>
                         <div class="additional_email label-div-mb">
                             <label for="add_email" class="common-label">Additional Email for Confirmation</label>
-                            <input type="email" class="form-control" placeholder="Enter email" id="add_email">
+                            <input type="email" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}"
+                                class="form-control" placeholder="Enter email" id="add_email">
                             <div class="add_email_error">
                             </div>
                         </div>
@@ -99,7 +101,9 @@
                                                 fill="#AC5353" />
                                         </g>
                                     </svg></label>
-                                <input type="date" class="form-control nontm-input" id="close_date">
+                                <input type="date"
+                                    value="{{ isset($dealData['closed_date']) ? $dealData['closed_date'] : '' }}"
+                                    class="form-control nontm-input" id="close_date">
                                 <div id="close_date_error" class="text-danger">
 
                                 </div>
@@ -118,7 +122,9 @@
                                                 fill="#AC5353" />
                                         </g>
                                     </svg></label>
-                                <input type="text" class="form-control nontm-input" id="commission">
+                                <input type="text"
+                                    value="{{ isset($dealData['Commission']) ? $dealData['Commission'] : '' }}"
+                                    class="form-control nontm-input" id="commission">
                                 <div id="commission_error" class="text-danger">
 
                                 </div>
@@ -234,14 +240,18 @@
                                             fill="#AC5353" />
                                     </g>
                                 </svg></label>
-                            <input type="text" placeholder="$" class="form-control nontm-input" id="final_purchase">
+                            <input type="text"
+                                value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
+                                placeholder="$" class="form-control nontm-input" id="final_purchase">
                             <div id="final_purchase_error" class="text-danger">
 
                             </div>
                         </div>
                         <div class="col-6 commission-nontm">
                             <label for="commission" class="common-label">Amount to CHR GIves</label>
-                            <input type="text" placeholder="$" class="form-control nontm-input" id="amount_chr">
+                            <input type="text"
+                                value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
+                                placeholder="$" class="form-control nontm-input" id="amount_chr">
 
                         </div>
                     </div>
@@ -249,7 +259,7 @@
                         <label for="payable" class="common-label">Checks Payable to</label>
                         <select name="additional_charge" id="additonal_fee"
                             class="form-select second-step-common-select select-mb24" id="">
-                            <option value="" selected>s</option>
+                            <option value="" selected>{{ $deal->userData->name }}</option>
                         </select>
                     </div>
 
@@ -258,13 +268,15 @@
                     <div class="main_form_div">
                         <div class="commission-nontm select-mb24">
                             <label for="commission" class="common-label">Agent Comments/Remarks/Instructions</label>
-                            <input type="textarea" placeholder="Add Copy" class="form-control nontm-input-textarea"
-                                id="agent_comments">
+                            <input type="textarea"
+                                value="{{ isset($dealData['agent_comments']) ? $dealData['agent_comments'] : '' }}"
+                                placeholder="Add Copy" class="form-control nontm-input-textarea" id="agent_comments">
                         </div>
                         <div class="commission-nontm">
                             <label for="commission" class="common-label">Other Commission Notes</label>
-                            <input type="textarea" placeholder="Add Copy" class="form-control nontm-input-textarea"
-                                id="other_comm_notes">
+                            <input type="textarea"
+                                value="{{ isset($dealData['other_commission_notes']) ? $dealData['other_commission_notes'] : '' }}"
+                                placeholder="Add Copy" class="form-control nontm-input-textarea" id="other_comm_notes">
                         </div>
                     </div>
                 </div>
@@ -285,8 +297,8 @@
 @endsection
 
 <script type="text/javascript">
-window.onload = function(){
-    $(".main-carousel a span.prev").click(function(e) {
+    window.onload = function() {
+        $(".main-carousel a span.prev").click(function(e) {
             e.preventDefault();
             $(".main-carousel .carousel-control-prev").trigger("click");
         });
@@ -294,6 +306,167 @@ window.onload = function(){
             e.preventDefault();
             $(".main-carousel .carousel-control-next").trigger("click");
         });
-}
 
+        $('.nontm-select').select2();
+
+        let related_transaction = document.getElementById("related_transaction");
+        // let add_email = document.getElementById("add_email");
+        let close_date = document.getElementById("close_date");
+        let commission = document.getElementById("commission");
+        let final_purchase = document.getElementById("final_purchase");
+        related_transaction.addEventListener("keyup", validateNonTm);
+        close_date.addEventListener("change", validateNonTm);
+        commission.addEventListener("keyup", validateNonTm);
+        final_purchase.addEventListener("keyup", validateNonTm);
+
+        // Select all radio buttons
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Initialize an object to store the values
+        window.values = {};
+
+        // Add event listener to each radio button
+        radioButtons.forEach(radioButton => {
+            radioButton.addEventListener('change', event => {
+                const question = radioButton.closest('.accordion-item').querySelector('button')
+                    .textContent.trim();
+                const value = event.target.value;
+                window.values[question] = value;
+                console.log(values, 'valuesis hreeee')
+            });
+        });
+
+    }
+
+    function validateNonTm() {
+        let related_transaction = document.getElementById("related_transaction");
+        // let add_email = document.getElementById("add_email");
+        let close_date = document.getElementById("close_date");
+        let commission = document.getElementById("commission");
+        let final_purchase = document.getElementById("final_purchase");
+        let related_transactionError = document.getElementById("related_transaction_error");
+        let close_dateError = document.getElementById("close_date_error");
+        let commissionError = document.getElementById("commission_error");
+        let final_purchaseError = document.getElementById("final_purchase_error");
+
+
+        let isValid = true;
+
+        // Validate related_transaction
+        if (related_transaction.value.trim() === "") {
+            related_transactionError.textContent = "Transaction Related cannot be empty.";
+            isValid = false;
+        }
+        // else if (isNaN(related_transaction.value.trim())) {
+        //     related_transactionError.textContent = "Transaction Related must be a number.";
+        //     isValid = false;
+        // }
+        else {
+            related_transactionError.textContent = "";
+        }
+
+        // Validate close_date
+        if (close_date.value.trim() === "") {
+            console.log(close_date, 'close_date');
+            close_dateError.textContent = "Close Datecannot be empty.";
+            isValid = false;
+        }
+        //  else if (isNaN(close_date.value.trim())) {
+        //     close_dateError.textContent = "TM Fees due to must be a number.";
+        //     isValid = false;
+        // } 
+        else {
+            close_dateError.textContent = "";
+        }
+
+        // validate commissionError
+        if (commission.value.trim() === "") {
+            commissionError.textContent = "Commision cannot be empty.";
+            isValid = false;
+        } else if (isNaN(commission.value.trim())) {
+            commissionError.textContent = "Commision must be a number.";
+            isValid = false;
+        } else {
+            commissionError.textContent = "";
+        }
+
+        // validate commissionError
+        if (final_purchase.value.trim() === "") {
+            final_purchaseError.textContent = "Final Purchase cannot be empty.";
+            isValid = false;
+        } else if (isNaN(final_purchase.value.trim())) {
+            final_purchaseError.textContent = "Final Purchase must be a number.";
+            isValid = false;
+        } else {
+            final_purchaseError.textContent = "";
+        }
+
+        return isValid;
+    }
+
+    window.updateNonTm = function(id, status) {
+        if (!validateNonTm()) {
+            return;
+        }
+
+        let related_transaction = document.getElementById("related_transaction");
+        let add_email = document.getElementById("add_email");
+        let close_date = document.getElementById("close_date");
+        let commission = document.getElementById("commission");
+        let final_purchase = document.getElementById("final_purchase");
+        let amount_chr = document.getElementById("amount_chr");
+        // let additonal_fee = document.getElementById("additonal_fee");
+        let agent_comments = document.getElementById("agent_comments");
+        let other_comm_notes = document.getElementById("other_comm_notes");
+        var selectedOption = related_transaction.options[related_transaction.selectedIndex];
+        // Get the value and text of the selected option
+        var selectedValue = selectedOption.value;
+        var selectedText = selectedOption.textContent;
+        let formData = {
+            "data": [{
+                "Commission":commission? commission.value.trim():undefined,
+                "Final_Purchase_Price": final_purchase? final_purchase.value.trim():undefined,
+                "Any_Additional_Fees_Charged":window.values["Any Additional Fees Charged?"]? window.values["Any Additional Fees Charged?"]
+                    ?.toUpperCase():undefined,
+                "Additional_Email_for_Confirmation":add_email? add_email.value.trim():undefined,
+                "Referral_Fee_Paid_Out":window.values['Referral Fee Paid Out?']? window.values['Referral Fee Paid Out?']?.toUpperCase():undefined,
+                "Close_Date": close_date?close_date.value.trim():undefined,
+                "Home_Warranty_Paid_by_Agent":window.values['Home Warranty Paid Out Agent?']? window.values['Home Warranty Paid Out Agent?']?.toUpperCase():undefined,
+                "CHR_Gives_Amount_to_Give":amount_chr? amount_chr.value.trim():undefined,
+                "Other_Commission_Notes":other_comm_notes.value? other_comm_notes.value.trim():undefined,
+                "Agent_Comments_Remarks_Instructions":agent_comments.value ? agent_comments.value.trim():undefined,
+                "Related_Transaction":selectedValue ? {
+                    "id": selectedValue.trim(),
+                    "name": selectedText.trim(),
+                }:undefined,
+            }]
+        }
+
+        formData.data[0] = Object.fromEntries(
+            Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+        );
+        
+        $.ajax({
+            url: '/nontm-update/' + id + '?status=' + status,
+            type: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data && response.data[0]?.message) {
+                    // Convert message to uppercase and then display
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    showToast(upperCaseMessage);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+
+    }
 </script>

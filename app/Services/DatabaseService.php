@@ -514,24 +514,22 @@ class DatabaseService
 
     public function retrieveDealDataById(User $user, $accessToken, $dealId)
     {
-
         try {
             Log::info("Retrieve Deals From Database");
-
+    
             $conditions = [['userID', $user->id], ['id', $dealId]];
+    
             // Adjust query to include contactName table using join
-            $deals = NonTm::with('userData', 'dealData');
+            $deals = NonTm::with('userData', 'dealData')->where($conditions)->first();
             Log::info("Deal Conditions", ['deals' => $conditions]);
-
-            // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->first();
+    
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
-
     }
+    
 
     public function retrieveContactById(User $user, $accessToken, $contactId)
     {
@@ -1060,8 +1058,9 @@ class DatabaseService
     {
         try {
             Log::info("zohoDealArray Deatils" . json_encode($zohoDealArray));
-
+            $uniqueNumber = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
             $nontm = NonTm::create([
+                'user' =>$uniqueNumber,
                 'userId' => $user->id,
                 'dealId' => $dealData['Related_Transaction']['id'],
                 'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
