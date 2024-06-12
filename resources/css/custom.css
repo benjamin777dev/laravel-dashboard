@@ -979,7 +979,7 @@
         font-weight: 800;
         line-height: 17px;
     } */
-    /* 
+    /*
     .dcardsdeletebtn {
         display: flex;
         height: 40px;
@@ -2458,6 +2458,7 @@
     border-radius: 16px;
     border: 1px solid #222;
     background: #222;
+    cursor: pointer;
 
     /* selected btn */
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);

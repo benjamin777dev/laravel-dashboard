@@ -92,6 +92,7 @@ Route::post('/remove/deal/contact/role', [PipelineController::class, 'removeCont
 
 //Groups
 Route::get('/group', [GroupController::class, 'index'])->name('groups.index')->middleware('auth');
+Route::post('/group/create', [GroupController::class, 'createGroup'])->name('group.create')->middleware('auth');
 Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');

@@ -7,7 +7,7 @@
     <div class="container full-width-container">
         <div class="dbgroupsFlex">
             <p class="ngText">Database Groups</p>
-            <div class="input-group-text dbNewGroups"><i class="fas fa-plus plusicon">
+            <div class="input-group-text dbNewGroups" onclick="addGroup()"><i class="fas fa-plus plusicon">
                 </i>
                 Add Group
             </div>
@@ -90,6 +90,7 @@
             @include('common.pagination', ['module' => $contacts])
         </div>
     </div>
+    @include('common.group.createModal', ['groups' => $groups])
 
     <script>
         window.onload = function() {
@@ -116,7 +117,7 @@
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
             // Make AJAX call
             $.ajax({
-                url: '{{ url('/contact/groups') }}',
+                url: "{{ url('/contact/groups') }}",
                 method: 'GET',
                 data: {
                     columnShow: JSON.stringify(selectedValues),
@@ -153,6 +154,10 @@
                 headerCheckbox.checked = allChecked;
             });
         };
+
+        window.addGroup = function() {
+            $('#createGroupModal').modal('show');
+        }
     </script>
 
 @endsection

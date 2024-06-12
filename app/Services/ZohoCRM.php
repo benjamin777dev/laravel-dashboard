@@ -189,7 +189,7 @@ class ZohoCRM
         return $response;
     }
 
-    //create contacts to zoho 
+    //create contacts to zoho
     public function createContactData($inputJson, $id)
     {
         try {
@@ -428,8 +428,8 @@ class ZohoCRM
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-        
-        
+
+
     }
 
     public function deleteTask($inputJson, $id)
@@ -783,21 +783,21 @@ class ZohoCRM
             ])->get($this->apiUrl . 'org');
 
             $orgId = $getOrgIdResponse->json()['org'][0]['zgid'];
-            
+
             $headers = [
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'X-CRM-ORG' => $orgId,
                 'feature' => 'bulk-write',
             ];
-            
+
             // Upload zip file
             $response = Http::withHeaders($headers)
                 ->attach('file', file_get_contents($zipFilepath), basename($zipFilepath))
                 ->post($this->contentURL . 'upload');
-            
+
             // Log response
             Log::info('Response after uploading ZIP file to Zoho', ['response' => $response->json()]);
-            
+
             return $response;
         } catch (\Exception $e) {
             Log::error("Error uploading ZIP file to Zoho: " . $e->getMessage());
@@ -820,9 +820,9 @@ class ZohoCRM
                 "resource" => [
                     [
                         "type" => "data",
-                        "module" => [ 
-                            "api_name" => "Contacts_X_Groups" 
-                        ],   
+                        "module" => [
+                            "api_name" => "Contacts_X_Groups"
+                        ],
                         "file_id" => $fileId,
                         "field_mappings" => [
                             [
@@ -847,10 +847,10 @@ class ZohoCRM
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post('https://www.zohoapis.com/crm/bulk/v3/write', $inputJSON);
-            
+
             // Log response
             Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
-            
+
             return $response;
         } catch (\Exception $e) {
             Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
@@ -889,10 +889,10 @@ class ZohoCRM
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->post('https://www.zohoapis.com/crm/v2/Contacts_X_Groups/actions/mass_delete', $inputJSON);
-            
+
             // Log response
             Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
-            
+
             return $response;
         } catch (\Exception $e) {
             Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
@@ -900,7 +900,7 @@ class ZohoCRM
         }
     }
 
-    
+
     public function storeDealContactIntoZOHO($dealContacts, $dealId)
     {
         try {
@@ -916,10 +916,10 @@ class ZohoCRM
                 ])->put($this->apiUrl . "Deals/$dealId/Contact_Roles", [
                 'fields' => 'Email,Department,First_Name,Last_Name'
             ]);
-            
+
             // Log response
             Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
-            
+
             return $response;
         } catch (\Exception $e) {
             Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
@@ -934,10 +934,10 @@ class ZohoCRM
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 ])->get($this->apiUrl . "Contacts/roles", [
             ]);
-            
+
             // Log response
             Log::info('Contact Roles', ['response' => $response->json()]);
-            
+
             return $response;
         } catch (\Exception $e) {
             Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
@@ -1043,7 +1043,37 @@ class ZohoCRM
         }
     }
 
+    public function createGroup($inputJson)
+    {
+        try {
+            Log::info('Creating Zoho Group', [$inputJson]);
 
+            // Ensure the input contains the 'data' key
+            if (!isset($inputJson['data']) || !is_array($inputJson['data'])) {
+                throw new \Exception('Invalid input: data field is required and must be an array');
+            }
 
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
 
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->post($this->apiUrl . "Groups", $inputJson);
+
+            $responseData = $response->json();
+
+            if (!$response->successful()) {
+                Log::error('Zoho Group creation failed', ['response' => $responseData]);
+                throw new \Exception('Failed to create Zoho Group');
+            }
+
+            Log::info('Zoho Group creation response', ['response' => $responseData]);
+
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho Group: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho Group');
+        }
+    }
 }
