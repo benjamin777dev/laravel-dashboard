@@ -67,7 +67,7 @@
                             <div id="canvas-holder" style="width:100%">
                                 <canvas id="chart" width="100%" height="100%"></canvas>
                             </div>
-                            <p class="dFont13 dMb5 dRangeText">{{ '$' . $totalGciForDah . ' of 250,000 Goal' }}</p>
+                            <p class="dFont13 dMb5 dRangeText">${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
                         </div>
                         <div class="col-md-8 graphp-dash">
                             <div class="container dgraphpstackContainer">
