@@ -298,9 +298,9 @@
                         </div>
 
                         <div>
-                            <label for="validationDefault01" class="form-label nplabelText">Contact Owner</label>
+                            <label for="contactOwner" class="form-label nplabelText">Contact Owner</label>
 
-                            <select name="contactOwner" class="form-select npinputinfo" id="validationDefault04"
+                            <select name="contactOwner" class="form-select npinputinfo" id="contactOwner"
                                 disabled>
 
                                 <option
@@ -380,9 +380,9 @@
 @endsection
 <script>
     function enableCreateContactSelect() {
-        console.log("COntact Owner Validatio", document.getElementById('validationDefault22'));
+        console.log("COntact Owner Validatio", document.getElementById('contactOwner'));
         // Enable the select element before form submission
-        document.getElementById('validationDefault22').removeAttribute('disabled');
+        document.getElementById('contactOwner').removeAttribute('disabled');
         // Return true to allow form submission
         return true;
     }

@@ -142,7 +142,7 @@ class PipelineController extends Controller
         $pipelineData = session('pipeline_data');
         $user = $this->user();
         if (!$user) {
-            return redirect('/login');
+        return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
@@ -171,8 +171,47 @@ class PipelineController extends Controller
             // If it's an AJAX request, return the pagination HTML
             return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
         }
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab', 'users', 'contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages', 'contactRoles'))->render();
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles','dealId'))->render();
 
+    }
+
+    public function getDeal(Request $request)
+    {
+    Log::info('Showing create pipeline form' . $request);
+    $db = new DatabaseService();
+    $helper = new Helper();
+    // Retrieve user data from the session
+    $pipelineData = session('pipeline_data');
+    $user = auth()->user();
+    if (!$user) {
+    return redirect('/login');
+    }
+    $accessToken = $user->getAccessToken();
+    $zoho = new ZohoCRM();
+    $zoho->access_token = $accessToken;
+    $tab = request()->query('tab') ?? 'In Progress';
+    $dealId = request()->route('dealId');
+    $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+    Log::info("deals and tab data " . $tab . $dealId);
+    $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
+    Log::info("Task Details: " . print_r($tasks, true));
+    $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+    $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+    $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+    $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
+    $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+    $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
+    $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+    $contacts = $db->retreiveContactsJson($user, $accessToken);
+    $users = User::all();
+    $contactRoles = $db->retrieveRoles($user);
+    $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+    $allStages = config('variables.dealStages');
+    $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+    return view('pipeline.detail', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData',
+    'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms',
+    'submittals', 'allStages','contactRoles'))->render();
+    
     }
 
     public function showCreatePipelineForm(Request $request)
@@ -209,20 +248,7 @@ class PipelineController extends Controller
         return view('pipeline.create', compact('tasks', 'contactRoles', 'users', 'tab', 'notesInfo', 'contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages', 'deals'));
     }
 
-    public function getDeal(Request $request)
-    {
-        $db = new DatabaseService();
-        $user = $this->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-
-        $accessToken = $user->getAccessToken();
-        $dealId = request()->params('dealId');
-        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        return response()->json($deal);
-        // return view('pipeline.index', compact('deals'));
-    }
+    
 
     public function createPipeline(Request $request)
     {
