@@ -30,18 +30,16 @@ class ContactController extends Controller
         $missingFeild = $request->input('missingField');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $groups = $db->retrieveGroups($user, $accessToken);
         $apend = false;
         if ($request->ajax()) {
             $apend = true;
-            $view = view('contacts.load', compact('contacts', 'userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'))->render();
+            $view = view('contacts.load', compact('contacts', 'userContact', 'retrieveModuleData', 'apend'))->render();
             return Response::json(['view' => $view, 'nextPageUrl' => $contacts->nextPageUrl()]);
         }
 
-        return view('contacts.index', compact('contacts', 'userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'));
+        return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend'));
     }
 
     public function getContact(Request $request)

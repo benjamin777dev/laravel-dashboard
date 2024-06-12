@@ -37,9 +37,8 @@ getJSON("contact-user-list.json", function (err, data) {
 });
 
 // load table list data
-function loadUserList(datas) {
+function loadUserList() {
     $('#userList-table').DataTable({
-        data: datas,
         "bLengthChange": false,
         order: [[0, 'desc']],
         language: {
@@ -49,68 +48,47 @@ function loadUserList(datas) {
             }
         },
         columns: [
+            { data: "name" }, // Assuming name is available
+            { data: "abcd" }, // Assuming abcd is available
+            { data: "relationship_type" }, // Assuming relationship_type is available
             {
-                data: null,
-                render: function (data, type, full) {
-                    var isUserProfile = full.memberImg ? '<img src="' + full.memberImg + '" alt="" class="member-img img-fluid d-block rounded-circle" />'
-                        : '<div class="avatar-title rounded-circle text-uppercase">' + full.nickname + '</div>';
-                    return '<div class="d-none">'+full.id+'</div><div class="avatar-xs img-fluid rounded-circle">' + isUserProfile + '</div';
+                data: "email",
+                render: function (data, type, row) {
+                    return '<span style="display:inline-block;white-space:normal; word-wrap: break-word; overflow-wrap: break-word; max-width:200px;">' + data + '</span>';
                 }
-
-            }, 
-            {
-                data: null,
-                render: function (data, type, full) {
-                    return '<div>\
-                    <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">'+ full.userName + '</a></h5>\
-                    <p class="text-muted mb-0">'+ full.designation + '</p>\
-                    </div>';
-                },
             },
-            { data: "email" },
+            { data: "mobile" }, // Assuming mobile is available
+            { data: "phone" }, // Assuming phone is available
             {
-                data: "tags",
-                render: function (data, type, full) {
-                    var tags = full.tags;
-                    var tagHtml = '';
-                    var tabShowSize = 2;
-                    Array.from(tags.slice(0, tabShowSize)).forEach(function (tag, index) {
-                        tagHtml += '<a href="javascript: void(0);" class="badge badge-soft-primary font-size-11 m-1">' + tag + '</a>';
-                    });
-                    if(tags.length > tabShowSize){
-                        var tabsLength = tags.length - tabShowSize;
-                        tagHtml += '<a href="javascript: void(0);" class="badge badge-soft-primary font-size-11 m-1">'+tabsLength+' more</a>';
-                    }
-                    
-                    return tagHtml;
-                },
+                data: "address",
+                render: function (data, type, row) {
+                    return '<span style="display:inline-block;white-space:normal; word-wrap: break-word; overflow-wrap: break-word; max-width:300px;">' + data + '</span>';
+                }
             },
-            {data: "projects"},
+{
+                data: "Salutation_s",
+                render: function (data, type, row) {
+                    return '<span style="display:inline-block;white-space:normal; word-wrap: break-word; overflow-wrap: break-word; max-width:200px;">' + data + '</span>';
+                }
+            },
             {
                 data: null,
                 'bSortable': false,
-                render: function (data, type, full) {
-                    return '<ul class="list-inline font-size-20 contact-links mb-0">\
-                    <li class="list-inline-item">\
-                        <a href="javascript: void(0);" class="px-2"><i class="bx bx-message-square-dots"></i></a>\
-                    </li>\
-                    <li class="list-inline-item">\
-                        <a href="javascript: void(0);" class="px-2"><i class="bx bx-user-circle"></i></a>\
-                    </li>\
-                    <li class="list-inline-item">\
-                    <div class="dropdown">\
-                        <a href="javascript: void(0);" class="dropdown-toggle card-drop px-2" data-bs-toggle="dropdown" aria-expanded="false">\
-                            <i class="mdi mdi-dots-horizontal font-size-18"></i>\
-                        </a>\
-                        <ul class="dropdown-menu dropdown-menu-end">\
-                            <li><a href="#newContactModal" data-bs-toggle="modal" class="dropdown-item edit-list" data-edit-id="'+ full.id + '"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>\
-                            <li><a href="#removeItemModal" data-bs-toggle="modal" class="dropdown-item remove-list" data-remove-id="'+ full.id + '"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>\
-                        </ul>\
-                    </div>\
-                    </li>\
-                </ul>';
-                },
-            },
+                render: function (data, type, row) {
+                    return '<div class="tooltip-wrapper">' +
+                           '<img src="/images/splitscreen.svg" alt="Split screen icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#newTaskModalId' + row.id + '"  title="Add Task">' +
+                           '<span class="tooltiptext">Add Task</span>' +
+                           '</div>' +
+                           '<div class="tooltip-wrapper">' +
+                           '<img src="/images/sticky_note.svg" alt="Sticky note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#" onclick="fetchNotesForContact(\'' + row.id + '\',\'' + row.zoho_contact_id + '\')">' +
+                           '<span class="tooltiptext">View Notes</span>' +
+                           '</div>' +
+                           '<div class="tooltip-wrapper">' +
+                           '<img src="/images/noteBtn.svg" alt="Note icon" class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_' + row.id + '">' +
+                           '<span class="tooltiptext">Add Note</span>' +
+                           '</div>';
+                }
+            }
         ],
         drawCallback: function (oSettings) {
             editContactList();
@@ -124,7 +102,7 @@ function loadUserList(datas) {
     $(".dataTables_length select").addClass('form-select form-select-sm');
     $('.dataTables_paginate').addClass('pagination-rounded');
     $(".dataTables_filter").hide();
-}
+};
 
 // Select2
 $("#tag-input").select2();
