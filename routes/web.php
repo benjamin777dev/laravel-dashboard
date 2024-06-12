@@ -22,6 +22,7 @@ use App\Http\Controllers\SubmittalController;
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
 Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
 Route::post('/webhook/deal', [UpdateFromZohoCRMController::class, 'handleDealUpdate']);
+Route::post('/webhook/cxg', [UpdateFromZohoCRMController::class, 'handleContactXGroupUpdate']);
 Route::post('/api/webhook/csvcallback', [UpdateFromZohoCRMController::class, 'handleCSVCallback']);
 
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');

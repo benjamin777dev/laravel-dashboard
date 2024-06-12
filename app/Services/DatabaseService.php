@@ -1630,6 +1630,8 @@ class DatabaseService
                 return \App\Models\Deal::mapZohoData($record, 'csv');
             case 'Groups':
                 return \App\Models\Groups::mapZohoData($record, 'csv');
+            case 'Contacts_X_Groups': 
+                return \App\Models\ContactGroups::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");

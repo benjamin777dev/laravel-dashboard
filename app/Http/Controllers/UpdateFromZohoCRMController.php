@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\User;
+use App\Models\ContactGroups;
 use App\Services\ZohoBulkRead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -25,11 +26,7 @@ class UpdateFromZohoCRMController extends Controller
             Log::info("Webhook delete triggered for Zoho Contact ID: " . $zohoContactId);
             Contact::where('zoho_contact_id', $zohoContactId)->delete();
             return response()->json(['message' => 'Deleted'], 200);
-        } else {
-            Log::info("Webhook not delete:", ['data' => $data]);
-            // Additional logic for non-delete webhook types can go here
-            return response()->json(['message' => 'Not a delete operation'], 200);
-        }
+        } 
         // Map the data using the Contact model's mapping method
         $mappedData = Contact::mapZohoData($data, 'webhook');
 
@@ -60,11 +57,7 @@ class UpdateFromZohoCRMController extends Controller
             Log::info("Webhook delete triggered for Zoho Deal ID: " . $zohoDealId);
             Deal::where('zoho_deal_id', $zohoDealId)->delete();
             return response()->json(['message' => 'Deleted'], 200);
-        } else {
-            Log::info("Webhook not delete:", ['data' => $data]);
-            // Additional logic for non-delete webhook types can go here
-            return response()->json(['message' => 'Not a delete operation'], 200);
-        }
+        } 
         // Map the data using the Contact model's mapping method
         $mappedData = Deal::mapZohoData($data, 'webhook');
 
@@ -83,6 +76,38 @@ class UpdateFromZohoCRMController extends Controller
 
         return response()->json(['message' => 'Deal updated successfully'], 200);
     }
+
+    public function handleContactXGroupUpdate(Request $request)
+    {
+        $data = $request->all();
+
+        Log::info('Received Contact X Group update from Zoho CRM', ['data' => $data]);
+
+        $zohoContactXGroupId = $data['id'];
+        if (isset($data['webhook_type']) && $data['webhook_type'] == 'delete') {
+            Log::info("Webhook delete triggered for Zoho ContactXGroup ID: " . $zohoContactXGroupId);
+            ContactGroups::where('zoho_contact_group_id', $zohoContactXGroupId)->delete();
+            return response()->json(['message' => 'Deleted'], 200);
+        } 
+        // Map the data using the Contact model's mapping method
+        $mappedData = ContactGroups::mapZohoData($data, 'webhook');
+
+        // Update or create the contact record in the database
+        try {
+            ContactGroups::updateOrCreate(
+                ['zoho_contact_group_id' => $zohoContactXGroupId],
+                $mappedData
+            );
+        } catch (\Exception $e) {
+            Log::error('Error updating ContactXGroup', ['zoho_contact_group_id' => $zohoContactXGroupId, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Error updating contact'], 500);
+        }
+
+        Log::info('ContactXGroup updated/inserted successfully', ['zoho_contact_group_id' => $zohoContactXGroupId]);
+
+        return response()->json(['message' => 'ContactXGroup updated successfully'], 200);
+    }
+
 
     public function handleCSVCallback(Request $request)
     {
