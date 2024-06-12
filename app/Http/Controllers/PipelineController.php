@@ -2,26 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Aci;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use App\Models\Deal;
+use App\Models\User;
 use App\Services\DatabaseService;
+use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Services\Helper;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
-
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PipelineController extends Controller
 {
     public function index(Request $request)
     {
         $db = new DatabaseService();
+        $user = $this->user();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -45,40 +44,40 @@ class PipelineController extends Controller
         $dealCount = count($deals);
 
         // Calculate stats from deals
-        // Calculate stats from deals
         foreach ($deals as $deal) {
             $totalSalesVolume += $deal->sale_price ?? 0; // Updated field name
-            $totalCommission += $deal->commission ?? 0;       // Directly mapped
-            $totalPotentialGCI += $deal->potential_gci ?? 0;  // Directly mapped
+            $totalCommission += $deal->commission ?? 0; // Directly mapped
+            $totalPotentialGCI += (($deal->sale_price ?? 0) * ($deal->commission/100 ?? 0)) ?? 0; // Directly mapped
             $totalProbability += $deal->pipeline_probability ?? 0; // Updated field name
-            $totalProbableGCI += (($deal->sale_price ?? 0) * ($deal->commission ?? 0) * (($deal->pipeline_probability ?? 0) / 100)); // Calculate based on percentage
+            $totalProbableGCI += 
+                (($deal->sale_price ?? 0) * ($deal->commission/100 ?? 0)) * ((($deal->pipeline_probability/100 ?? 0)));
         }
 
         // Calculate averages
         $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
         $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
-        
+
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('pipeline.pipelineload', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
         }
-        return view('pipeline.index', compact('deals','userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+        return view('pipeline.index', compact('deals', 'userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
     }
 
     public function getDeals(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
 
         $accessToken = $user->getAccessToken();
-        LOG::info('Access Token Decrypted'.$accessToken);
+        LOG::info('Access Token Decrypted' . $accessToken);
         $search = request()->query('search');
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
@@ -91,46 +90,48 @@ class PipelineController extends Controller
         return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction'))->render();
     }
 
-    public function createACI(Request $request){
-       $aci = $request->data;
+    public function createACI(Request $request)
+    {
+        $aci = $request->data;
         if (isset($aci['CHR_Agent'])) {
             $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
         }
         if (isset($aci['Transaction'])) {
             $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
         }
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
         try {
-        $accessToken = $user->getAccessToken();
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-        $response = $zoho->createAciData($aci);
-        if (!$response->successful()) {
-            Log::error("Error retrieving aci: " . $response->body());
-            throw $response->body();
-        }
-        Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
-            "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
-            "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
-            "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
-            "userId" => isset($user['id']) ? $user['id'] : null,
-            "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
-            "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
-            "total" => isset($aci['Total']) ? $aci['Total'] : null,
-            "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
-            'dealId' => isset($deal['id']) ? $deal['id'] : null,
-            'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
-            'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
-        ]);
-        return $response;
-     } catch (\Exception $e) {
+            $accessToken = $user->getAccessToken();
+            $zoho = new ZohoCRM();
+            $zoho->access_token = $accessToken;
+            $response = $zoho->createAciData($aci);
+            if (!$response->successful()) {
+                Log::error("Error retrieving aci: " . $response->body());
+                throw $response->body();
+            }
+            $helper = new Helper();
+            Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+                "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+                "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+                "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+                "userId" => isset($user['id']) ? $user['id'] : null,
+                "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+                "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+                "total" => isset($aci['Total']) ? $aci['Total'] : null,
+                "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                'dealId' => isset($deal['id']) ? $deal['id'] : null,
+                'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+                'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+            ]);
+            return $response;
+        } catch (\Exception $e) {
             Log::error("Error retrieving aci: " . $e->getMessage());
             return $e;
         }
-    }  
+    }
 
     public function showViewPipelineForm(Request $request)
     {
@@ -139,7 +140,7 @@ class PipelineController extends Controller
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -168,9 +169,9 @@ class PipelineController extends Controller
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks',compact('deal','tasks', 'retrieveModuleData', 'tab'))->render();
+            return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
         }
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles'))->render();
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab', 'users', 'contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages', 'contactRoles'))->render();
 
     }
 
@@ -181,7 +182,7 @@ class PipelineController extends Controller
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -205,13 +206,13 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('tasks','contactRoles','users', 'tab', 'notesInfo','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','deals'));
+        return view('pipeline.create', compact('tasks', 'contactRoles', 'users', 'tab', 'notesInfo', 'contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages', 'deals'));
     }
 
     public function getDeal(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -227,7 +228,7 @@ class PipelineController extends Controller
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -235,14 +236,14 @@ class PipelineController extends Controller
         $zoho->access_token = $accessToken;
         $jsonData = $request->json()->all();
         $contact = null;
-        if(isset($jsonData['data'][0]['Client_Name_Primary'])){
+        if (isset($jsonData['data'][0]['Client_Name_Primary'])) {
             $contact = $jsonData['data'][0]['Client_Name_Primary'];
         }
-        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken,$contact);
+        $isIncompleteDeal = $db->getIncompleteDeal($user, $accessToken, $contact);
         if ($isIncompleteDeal) {
             return response()->json($isIncompleteDeal);
         } else {
-            
+
             $zohoDeal = $zoho->createZohoDeal($jsonData);
             if (!$zohoDeal->successful()) {
                 return "error somthing" . $zohoDeal;
@@ -250,45 +251,44 @@ class PipelineController extends Controller
             $zohoDealArray = json_decode($zohoDeal, true);
             $data = $zohoDealArray['data'][0]['details'];
             $dealData = $jsonData['data'][0];
-            $deal = $db->createDeal($user, $accessToken, $data,$dealData);
+            $deal = $db->createDeal($user, $accessToken, $data, $dealData);
             return response()->json($deal);
         }
-
 
     }
 
     public function updatePipeline(Request $request, $id, DatabaseService $db, ZohoCRM $zoho)
     {
         try {
-            $user = auth()->user();
-        
+            $user = $this->user();
+
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
-            
+
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
 
             $jsonData = $request->json()->all();
             $zohoDeal = $zoho->updateZohoDeal($jsonData, $id);
-            
+
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-            
+
             $zohoDealArray = json_decode($zohoDeal, true);
             $zohoDealData = $zohoDealArray['data'][0]['details'];
             $resp = $zoho->getZohoDeal($zohoDealData['id']);
-            
+
             if (!$resp->successful()) {
                 return response()->json(['error' => 'Zoho Deal retrieval failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-            
+
             $zohoDeal_Array = json_decode($resp, true);
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
-            
+
             return response()->json($zohoDealArray);
         } catch (\Throwable $th) {
             // Handle the exception here
@@ -296,11 +296,9 @@ class PipelineController extends Controller
         }
     }
 
-    
-
     public function getClosedDeals(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -358,11 +356,11 @@ class PipelineController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $accessToken,
             ])->get($url, [
-                        'page' => 1,
-                        'per_page' => 200,
-                        'criteria' => $criteria,
-                        'fields' => $fields,
-                    ]);
+                'page' => 1,
+                'per_page' => 200,
+                'criteria' => $criteria,
+                'fields' => $fields,
+            ]);
             Log::info("Response: " . print_r($response, true));
 
             if ($response->successful()) {
@@ -383,7 +381,7 @@ class PipelineController extends Controller
     }
     public function retriveNotesForDeal()
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -393,12 +391,12 @@ class PipelineController extends Controller
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','deal'))->render();
+        return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'deal'))->render();
     }
 
     public function addContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -419,7 +417,7 @@ class PipelineController extends Controller
 
     public function removeContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -436,7 +434,7 @@ class PipelineController extends Controller
     }
     public function getContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -448,9 +446,9 @@ class PipelineController extends Controller
         $zoho->access_token = $accessToken;
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        $dealContacts =$db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $contactRoles = $db->retrieveRoles($user);
-        return view('contactRole.contact', compact('dealContacts','deal','contacts','contactRoles'))->render();
+        return view('contactRole.contact', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }

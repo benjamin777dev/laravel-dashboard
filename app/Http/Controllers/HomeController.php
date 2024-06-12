@@ -42,7 +42,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
 
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }

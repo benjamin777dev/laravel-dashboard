@@ -21,7 +21,15 @@ class UpdateFromZohoCRMController extends Controller
         Log::info('Received contact update from Zoho CRM', ['data' => $data]);
 
         $zohoContactId = $data['id'];
-
+        if (isset($data['webhook_type']) && $data['webhook_type'] == 'delete') {
+            Log::info("Webhook delete triggered for Zoho Contact ID: " . $zohoContactId);
+            Contact::where('zoho_contact_id', $zohoContactId)->delete();
+            return response()->json(['message' => 'Deleted'], 200);
+        } else {
+            Log::info("Webhook not delete:", ['data' => $data]);
+            // Additional logic for non-delete webhook types can go here
+            return response()->json(['message' => 'Not a delete operation'], 200);
+        }
         // Map the data using the Contact model's mapping method
         $mappedData = Contact::mapZohoData($data, 'webhook');
 
@@ -48,7 +56,15 @@ class UpdateFromZohoCRMController extends Controller
         Log::info('Received deal update from Zoho CRM', ['data' => $data]);
 
         $zohoDealId = $data['id'];
-
+        if (isset($data['webhook_type']) && $data['webhook_type'] == 'delete') {
+            Log::info("Webhook delete triggered for Zoho Deal ID: " . $zohoDealId);
+            Deal::where('zoho_deal_id', $zohoDealId)->delete();
+            return response()->json(['message' => 'Deleted'], 200);
+        } else {
+            Log::info("Webhook not delete:", ['data' => $data]);
+            // Additional logic for non-delete webhook types can go here
+            return response()->json(['message' => 'Not a delete operation'], 200);
+        }
         // Map the data using the Contact model's mapping method
         $mappedData = Deal::mapZohoData($data, 'webhook');
 
