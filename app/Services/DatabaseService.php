@@ -512,6 +512,25 @@ class DatabaseService
 
     }
 
+    public function retrieveDealDataById(User $user, $accessToken, $dealId)
+    {
+        try {
+            Log::info("Retrieve Deals From Database");
+    
+            $conditions = [['userID', $user->id], ['id', $dealId]];
+    
+            // Adjust query to include contactName table using join
+            $deals = NonTm::with('userData', 'dealData')->where($conditions)->first();
+            Log::info("Deal Conditions", ['deals' => $conditions]);
+    
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+
     public function retrieveContactById(User $user, $accessToken, $contactId)
     {
 
@@ -974,6 +993,33 @@ class DatabaseService
         }
     }
 
+    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType)
+    {
+    try {
+    Log::info("Retrieve Submittal Contact From Database");
+    $condition = [['isSubmittalComplete', false],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id]];
+    $submittal = Submittals::where($condition)->first();
+    Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+    return $submittal;
+    } catch (\Exception $e) {
+    Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+    throw $e;
+    }
+}
+    public function getIncompleteNonTm(User $user, $accessToken, $nontm = null)
+    {
+        try {
+            Log::info("Retrieve Deal Contact From Database");
+            $condition = [['isNonTmCompleted', false], ['dealId', $nontm], ['userId', $user->id]];
+            $nontmdata = NonTm::where($condition)->first();
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $nontmdata]);
+            return $nontmdata;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function getIncompleteContact(User $user, $accessToken)
     {
         try {
@@ -1016,6 +1062,27 @@ class DatabaseService
             return $deal;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function createNonTmData(User $user, $accessToken, $dealData ,$zohoDealArray)
+    {
+        try {
+            Log::info("zohoDealArray Deatils" . json_encode($zohoDealArray));
+
+            $nontm = NonTm::create([
+                'name' =>$dealData['Name'],
+                'userId' => $user->id,
+                'dealId' => $dealData['Related_Transaction']['id'],
+                'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
+                'isNonTmCompleted' =>false,
+            ]);
+            Log::info("Retrieved Deal nontm From Database", ['nontm' => $nontm]);
+            return $nontm;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal nontm: " . $e->getMessage());
             throw $e;
         }
     }
@@ -1405,7 +1472,7 @@ class DatabaseService
         foreach ($filteredsubmittals as $submittals) {
             $user = User::where('root_user_id', $submittals['Owner']['id'])->first();
             Submittals::updateOrCreate(['zoho_submittal_id' => $submittals['id']], [
-                "name" => isset($submittals['Name']) ? $submittals['Name'] : null,
+                "submittalName" => isset($submittals['Name']) ? $submittals['Name'] : null,
                 "closed_date" => isset($submittals['Close_Date']) ? $helper->convertToUTC($submittals['Close_Date']) : null,
                 "dealId" => isset($submittals['Transaction_Name']['id']) ? $submittals['Transaction_Name']['id'] : null,
                 "zoho_submittal_id" => isset($submittals['id']) ? $submittals['id'] : null,
@@ -1417,15 +1484,12 @@ class DatabaseService
         Log::info("Submittals stored into database successfully.");
     }
 
-    public function retreiveSubmittals($dealId)
+    public function retreiveSubmittals($dealId="")
     {
         try {
-
-            Log::info("Retrieve Submittals From Database");
-
-            $Submittals = Submittals::where('dealId', $dealId)->with('userData')->get();
-            Log::info("Retrieved Submittals From Database", ['Submittals' => $Submittals->toArray()]);
-            return $Submittals;
+        
+            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->paginate(5);
+            return $submittalData;
         } catch (\Exception $e) {
             Log::error("Error retrieving Submittals: " . $e->getMessage());
             throw $e;
@@ -1721,6 +1785,163 @@ class DatabaseService
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    public function createListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$dealId,$submittalType)
+    {
+    try {
+        
+        $submittal = Submittals::create([
+            'isSubmittalCompleted' => false,
+            'userId' => $user->id,
+            'isInZoho' => true,
+            'zoho_submittal_id' => $zohoSubmittal['id'],
+            'dealId'=>$dealId,
+            'submittalType'=>$submittalType,
+            'submittalName'=>$submittalData['Name'],
+            'formType'=>$submittalData['formType']
+        ]);
+        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+        return $submittal;
+    } catch (\Exception $e) {
+        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+        throw $e;
+    }
+    }
+
+    public function retrieveSubmittal(User $user, $accessToken, $submittalId)
+    {
+        try {
+            // Corrected the where clause syntax
+            $submittal = Submittals::where('id', $submittalId)->with('dealData')->first();
+            Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+            return $submittal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
+    {
+    try {
+        
+        $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
+        if (!$submittal) {
+            throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
+        }
+        $submittal->dealId = isset($submittalData["Transaction_Name"]["id"]) ? $submittalData["Transaction_Name"]["id"] : null;
+        $submittal->bedsBathsTotal = isset($submittalData["Beds_Baths_Total_Sq_Ft"]) ? $submittalData["Beds_Baths_Total_Sq_Ft"] : null;
+        $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
+        $submittal->mlsPublicRemarks = isset($submittalData["MLS_Public_Remarks"]) ? $submittalData["MLS_Public_Remarks"] : null;
+        $submittal->navica = isset($submittalData["Navica"]) ? $submittalData["Navica"] : null;
+        $submittal->hoaPhone = isset($submittalData["HOA_Phone"]) ? $submittalData["HOA_Phone"] : null;
+        $submittal->hasHOA = isset($submittalData["Has_HOA"]) ? $submittalData["Has_HOA"] : null;
+        $submittal->ppar = isset($submittalData["PPAR"]) ? $submittalData["PPAR"] : null;
+        $submittal->signInstallDate = isset($submittalData["Sign_Install_Date"]) ? $submittalData["Sign_Install_Date"] : null;
+        $submittal->brochurePickupDate = isset($submittalData["Pick_Up_Date"]) ? $submittalData["Pick_Up_Date"] : null;
+        $submittal->hoaName = isset($submittalData["HOA_Name"]) ? $submittalData["HOA_Name"] : null;
+        $submittal->usingCHR = isset($submittalData["Using_CHR_TM"]) ? $submittalData["Using_CHR_TM"] : null;
+        $submittal->emailBlastSphere = isset($submittalData["Email_Blast_to_Sphere"]) ? $submittalData["Email_Blast_to_Sphere"] : null;
+        $submittal->qrCodeSheet = isset($submittalData["Print_QR_Code_Sheet"]) ? $submittalData["Print_QR_Code_Sheet"] : null;
+        $submittal->mlsPrivateRemarks = isset($submittalData["MLS_Private_Remarks"]) ? $submittalData["MLS_Private_Remarks"] : null;
+        $submittal->featureCards = isset($submittalData["Feature_Cards_or_Sheets"]) ? $submittalData["Feature_Cards_or_Sheets"] : null;
+        $submittal->stickyDots = isset($submittalData["Sticky_Dots"]) ? $submittalData["Sticky_Dots"] : null;
+        $submittal->brochureLine = isset($submittalData["Brochure_Line"]) ? $submittalData["Brochure_Line"] : null;
+        $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
+        $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
+        $submittal->closerNamePhone = isset($submittalData["Closer_Name_Phone"]) ? $submittalData["Closer_Name_Phone"] : null;
+        $submittal->agreementExecuted = isset($submittalData["Listing_Agreement_Executed"]) ? $submittalData["Listing_Agreement_Executed"] : null;
+        $submittal->signInstallVendorOther = isset($submittalData["Sign_Install_Vendor_if_Other"]) ? $submittalData["Sign_Install_Vendor_if_Other"] : null;
+        $submittal->threeDZillowTour = isset($submittalData["D_Zillow_Tour"]) ? $submittalData["D_Zillow_Tour"] : null;
+        $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
+        $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
+        $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
+        $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
+        $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
+        $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;
+        $submittal->photoDate = isset($submittalData["Photo_Date"]) ? $submittalData["Photo_Date"] : null;
+        $submittal->socialMediaImages = isset($submittalData["Social_Media_Images"]) ? $submittalData["Social_Media_Images"] : null;
+        $submittal->featureCardCopy = isset($submittalData["Add_Feature_Card_or_Sheet_Copy"]) ? $submittalData["Add_Feature_Card_or_Sheet_Copy"] : null;
+        $submittal->titleCompany = isset($submittalData["Title_Company"]) ? $submittalData["Title_Company"] : null;
+        $submittal->referralToPay = isset($submittalData["Referral_to_Pay"]) ? $submittalData["Referral_to_Pay"] : null;
+        $submittal->marketingNotes = isset($submittalData["Property_Promotion_Notes"]) ? $submittalData["Property_Promotion_Notes"] : null;
+        $submittal->ires = isset($submittalData["IRES"]) ? $submittalData["IRES"] : null;
+        $submittal->price = isset($submittalData["Price"]) ? $submittalData["Price"] : null;
+        $submittal->commingSoon = isset($submittalData["Coming_Soon"]) ? $submittalData["Coming_Soon"] : null;
+        $submittal->titleToOrderHOA = isset($submittalData["Title_to_Order_HOA_docs"]) ? $submittalData["Title_to_Order_HOA_docs"] : null;
+        $submittal->includeInsights = isset($submittalData["Include_Insights_in_Intro1"]) ? $submittalData["Include_Insights_in_Intro1"] : null;
+        $submittal->featuresNeededForVideo = isset($submittalData["Features_Needed_for_Video"]) ? $submittalData["Features_Needed_for_Video"] : null;
+        $submittal->matterport = isset($submittalData["Matterport"]) ? $submittalData["Matterport"] : null;
+        $submittal->scheduleSignInstall = isset($submittalData["Schedule_Sign_Install"]) ? $submittalData["Schedule_Sign_Install"] : null;
+        $submittal->brochureDeliveryDate = isset($submittalData["Pick_Up_Delivery_Date"]) ? $submittalData["Pick_Up_Delivery_Date"] : null;
+        $submittal->propertyWebsite = isset($submittalData["Property_Website_QR_Code"]) ? $submittalData["Property_Website_QR_Code"] : null;
+        $submittal->powerOfAttnyNeeded = isset($submittalData["Power_of_Attny_Needed1"]) ? $submittalData["Power_of_Attny_Needed1"] : null;
+        $submittal->additionalEmail = isset($submittalData["Additional_Email_for_Confirmation"]) ? $submittalData["Additional_Email_for_Confirmation"] : null;
+        $submittal->tmName = isset($submittalData["TM_Name"]) ? $submittalData["TM_Name"] : null;
+        $submittal->propertyHighlightVideo = isset($submittalData["Property_Highlight_Video"]) ? $submittalData["Property_Highlight_Video"] : null;
+        $submittal->comingSoonDate = isset($submittalData["Coming_Soon_MLS_Date"]) ? $submittalData["Coming_Soon_MLS_Date"] : null;
+        $submittal->amountToCHR = isset($submittalData["Amount_to_CHR_Gives"]) ? $submittalData["Amount_to_CHR_Gives"] : null;
+        $submittal->reColorado = isset($submittalData["REColorado"]) ? $submittalData["REColorado"] : null;
+        $submittal->activeDate = isset($submittalData["Active_Date"]) ? $submittalData["Active_Date"] : null;
+        $submittal->needOE = isset($submittalData["Need_O_E1"]) ? $submittalData["Need_O_E1"] : null;
+        $submittal->signInstallVendor = isset($submittalData["Sign_Install_Vendor_Info"]) ? $submittalData["Sign_Install_Vendor_Info"] : null;
+        $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
+        $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
+        if ($isNew) {
+           $submittal->isSubmittalComplete = $isNew;
+        }
+
+        $submittal->save();
+        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+        return $submittal;
+    } catch (\Exception $e) {
+        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+        throw $e;
+    }
+    }
+
+     public function updateBuyerSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
+    {
+    try {
+        
+        $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
+        if (!$submittal) {
+            throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
+        }
+        $submittal->dealId = isset($submittalData["Related_Transaction"]["id"]) ? $submittalData["Related_Transaction"]["id"] : null;
+        $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
+        $submittal->buyerAgency = isset($submittalData["Buyer_Agency_Executed"]) ? $submittalData["Buyer_Agency_Executed"] : null;
+        $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed"]) ? $submittalData["Mailout_Needed"] : null;
+        $submittal->titleCompany = isset($submittalData["Title_Company_Closer_Info"]) ? $submittalData["Title_Company_Closer_Info"] : null;
+        $submittal->referralToPay = isset($submittalData["Referral_to_Pay"]) ? $submittalData["Referral_to_Pay"] : null;
+        $submittal->marketingNotes = isset($submittalData["Other_Important_Notes"]) ? $submittalData["Other_Important_Notes"] : null;
+        $submittal->includeInsights = isset($submittalData["Include_Insights_in_Intro"]) ? $submittalData["Include_Insights_in_Intro"] : null;
+        $submittal->powerOfAttnyNeeded = isset($submittalData["Power_of_Attny_Needed"]) ? $submittalData["Power_of_Attny_Needed"] : null;
+        $submittal->additionalEmail = isset($submittalData["Additional_Email_for_Confirmation"]) ? $submittalData["Additional_Email_for_Confirmation"] : null;
+        $submittal->tmName = isset($submittalData["TM_Name"]) ? $submittalData["TM_Name"] : null;
+        $submittal->amountToCHR = isset($submittalData["Amount_to_CHR_Gives"]) ? $submittalData["Amount_to_CHR_Gives"] : null;
+
+        $submittal->buyerPackage = isset($submittalData["Buyer_Package"]) ? $submittalData["Buyer_Package"] : null;
+        $submittal->buyerClosingDate = isset($submittalData["Closing_Date"]) ? $submittalData["Closing_Date"] : null;
+        $submittal->buyerLenderEmail = isset($submittalData["Lender_Email"]) ? $submittalData["Lender_Email"] : null;
+        $submittal->buyerLenderPhone = isset($submittalData["Lender_Phone"]) ? $submittalData["Lender_Phone"] : null;
+        $submittal->buyerFeesCharged = isset($submittalData["Fees_Charged_to_Buyer_at_Closing"]) ? $submittalData["Fees_Charged_to_Buyer_at_Closing"] : null;
+        $submittal->buyerBuilderrepresent = isset($submittalData["Builder_Representative"]) ? $submittalData["Builder_Representative"] : null;
+        $submittal->builderCommisionPercent = isset($submittalData["Builder_Commission_and_or_flat_fee"]) ? $submittalData["Builder_Commission_and_or_flat_fee"] : null;
+        $submittal->builderCommision = isset($submittalData["Builder_Commission_Based_On"]) ? $submittalData["Builder_Commission_Based_On"] : null;
+        $submittal->contractExecuted = isset($submittalData["Contract_Fully_Executed"]) ? $submittalData["Contract_Fully_Executed"] : null;
+        if ($isNew) {
+           $submittal->isSubmittalComplete = $isNew;
+        }
+
+        $submittal->save();
+        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+        return $submittal;
+    } catch (\Exception $e) {
+        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+        throw $e;
+    }
     }
 
 }

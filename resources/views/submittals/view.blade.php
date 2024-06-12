@@ -9,21 +9,9 @@
 <div class="container-fluid">
     <div class="submittaldiv">
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton" data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-save">
-                </i>
-                Cancel
-            </div>
-        </a>
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Save and New
-            </div>
-        </a>
-        <a>
             <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
                 </i>
-                Save
+                Update
             </div>
         </a>
     </div>
@@ -494,7 +482,7 @@
                     <label for="brochurePrint" class="form-label nplabelText">Brochure - Print, Deliver or PDF</label>
                     <select class="form-select npinputinfo" id="brochurePrint">
                         @foreach ($broucherPrint as $brochure)
-                            <option value="{{ $brochure }}" {{ $submittal['brochurePrint'] == $brochure ? 'selected' : '' }}>
+                            <option value="{{ $brochure }}" {{ $submittal['brochureLine'] == $brochure ? 'selected' : '' }}>
                                 {{ $brochure }}
                             </option>
                         @endforeach

@@ -30,7 +30,7 @@ class GroupController extends Controller
         }
 
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $db->retrieveContactGroups($user, $accessToken);
+        $contacts = $db->retrieveContactGroups($user, $accessToken);    
         $groups = $db->retrieveGroups($user, $accessToken);
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
         $ownerGroups = $db->getOwnerGroups($user, $accessToken);

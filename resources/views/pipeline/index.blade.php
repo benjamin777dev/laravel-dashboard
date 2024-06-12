@@ -13,7 +13,8 @@
             <div class="pipeline-btns-container">
 
                 <div class="input-group-text text-white justify-content-center pcontactBtn" id="btnGroupAddon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId" onclick="createTransaction({{$userContact}})">
+                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"
+                    onclick="createTransaction({{ $userContact }})">
                     <i class="fas fa-plus plusicon">
                     </i> New Transaction
                 </div>
@@ -60,8 +61,13 @@
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                     aria-label="Select Transaction" onchange="fetchDeal()">
                     <option value="">Sort Pipelines by...</option>
+                    @php
+                        $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];
+                    @endphp
                     @foreach ($allstages as $item)
-                        <option value="{{ $item }}">{{ $item }}</option>
+                        @if (!in_array($item, $excludedItems))
+                            <option value="{{ $item }}">{{ $item }}</option>
+                        @endif
                     @endforeach
                 </select>
                 {{-- <input placeholder="Sort Pipelines by..." id="pipelineSort" class="psearchInput" />
@@ -79,8 +85,8 @@
         </div>
 
         <div class="transaction-container">
-            @if(count($deals) > 0)
-            @include('pipeline.transaction')
+            @if (count($deals) > 0)
+                @include('pipeline.transaction')
             @else
                 <div class="pnofound">
                     <p>No records found</p>
@@ -144,9 +150,9 @@
                         "id": "{{ auth()->user()->root_user_id }}"
                     },
                     "Stage": "Potential",
-                    "Contact_Name":{
-                        "Name":userContact.first_name+" "+userContact.last_name,
-                        "id":userContact.zoho_contact_id
+                    "Contact_Name": {
+                        "Name": userContact.first_name + " " + userContact.last_name,
+                        "id": userContact.zoho_contact_id
                     }
                 }],
                 "_token": '{{ csrf_token() }}'
