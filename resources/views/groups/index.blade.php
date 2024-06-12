@@ -7,9 +7,15 @@
     <div class="container full-width-container">
         <div class="dbgroupsFlex">
             <p class="ngText">Database Groups</p>
-            <div class="input-group-text dbNewGroups"><i class="fas fa-plus plusicon">
-                </i>
-                Add Group
+            <div class="dbgroupsFlex">
+                <div class="input-group-text dbNewGroups" onclick="addGroup()"><i class="fas fa-plus plusicon">
+                    </i>
+                    Add Group
+                </div>
+                <div class="input-group-text dbEditGroups" onclick="EditGroup()"><i class="fas fa-edit plusicon">
+                    </i>
+                    Edit Group
+                </div>
             </div>
         </div>
         <div class="row" style="gap: 24px">
@@ -90,6 +96,8 @@
             @include('common.pagination', ['module' => $contacts])
         </div>
     </div>
+    @include('common.group.createModal', ['groups' => $groups])
+    @include('common.group.editModal', ['groups' => $ownerGroups])
 
     <script>
         window.onload = function() {
@@ -116,7 +124,7 @@
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
             // Make AJAX call
             $.ajax({
-                url: '{{ url('/contact/groups') }}',
+                url: "{{ url('/contact/groups') }}",
                 method: 'GET',
                 data: {
                     columnShow: JSON.stringify(selectedValues),
@@ -153,6 +161,14 @@
                 headerCheckbox.checked = allChecked;
             });
         };
+
+        window.addGroup = function() {
+            $('#createGroupModal').modal('show');
+        }
+
+        window.EditGroup = function() {
+            $('#editGroupModal').modal('show');
+        }
     </script>
 
 @endsection
