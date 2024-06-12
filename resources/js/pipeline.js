@@ -334,13 +334,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     Commission_Flat_Free: commission_flat_free,
                     TM_Preference: tm_preference,
                     Transaction_Owner: transaction_owner,
-                    Contact: {
-                        Name:
-                            (contact_name.first_name ?? "") +
-                            " " +
-                            (contact_name.last_name ?? ""),
-                        id: contact_name.zoho_contact_id,
-                    },
+                    Contact: contact_name,
                     Status_pt_out_out: status_rpt_opt_out,
                     Deadline_Emails: deadline_em_opt_out,
                     Financing: finance,

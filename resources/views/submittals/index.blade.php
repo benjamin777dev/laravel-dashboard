@@ -8,10 +8,11 @@
 
     </div>
     <div class="row npNom-TM-Table">
-        <div class="col-md-3 ">Submittal Name</div>
-        <div class="col-md-3 ">Submittal Type</div>
+        <div class="col-md-2 ">Submittal Name</div>
+        <div class="col-md-2 ">Submittal Type</div>
         <div class="col-md-3 ">Owner</div>
         <div class="col-md-3 ">Created Time</div>
+        <div class="col-md-1 "></div>
     </div>
     @if (count($submittals)==0)
     <div>
@@ -20,10 +21,17 @@
     @else
     @foreach($submittals as $submittal)
     <div class="row npNom-TM-Body">
-        <div class="col-md-3 ">{{$submittal['submittalName']}}</div>
-        <div class="col-md-3 ">{{$submittal['submittalType']}}</div>
+        <div class="col-md-2 ">{{$submittal['submittalName']}}</div>
+        <div class="col-md-2 ">{{$submittal['submittalType']}}</div>
         <div class="col-md-3 ">{{$submittal['userData']['name']}}</div>
         <div class="col-md-3 commonTextEllipsis">{{$submittal['created_at']}}</div>
+        <div class="col-md-1 tooltip-wrapper">
+            <a href="{{ url('/submittal-view/' . $submittal['submittalType'] . '/' . $submittal['id']) }}" target="_blank">
+                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
+                    class="ppiplinecommonIcon" title="Submittal Details">
+                <span class="tooltiptext">Submittal Details</span>
+            </a>
+        </div>
     </div>
     @endforeach
     @endif
@@ -49,7 +57,7 @@
         </div>
     </div>
     @endforeach
-    <div class="dpagination">
+    {{-- <div class="dpagination">
         <nav aria-label="..." class="dpaginationNav">
             <ul class="pagination ppipelinepage d-flex justify-content-end">
                 <li class="page-item disabled">
@@ -65,7 +73,7 @@
                 </li>
             </ul>
         </nav>
-    </div>
+    </div> --}}
 
 </div>
 
@@ -110,7 +118,50 @@
 
     window.addSubmittal = function(type,deal,formType){
         if(type == "buyer-submittal"){
-
+            var formData = {
+                "data": [{
+                    "Transaction_Name": {
+                        "id":deal.zoho_deal_id,
+                        "name":deal.deal_name
+                    },
+                    "TM_Name": deal.tmName,
+                    'Name':'BS-'+(generateRandom4DigitNumber()),
+                    "Owner": {
+                        "id": "{{ auth()->user()->root_user_id }}",
+                        "name": "{{ auth()->user()->name }}",
+                        "email": "{{ auth()->user()->email }}",
+                    },
+                    'formType':formType
+                }]
+            };
+            
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+                // Send AJAX request
+            $.ajax({
+                url: "/buyer/submittal/create/"+deal.zoho_deal_id,
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log("response",response);
+                    redirectUrl(type,response,formType)
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                        // window.location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
         }else if(type == "listing-submittal"){
             var formData = {
                 "data": [{
@@ -119,12 +170,13 @@
                         "name":deal.deal_name
                     },
                     "TM_Name": deal.tmName,
-                    'Name':'LS-'+(generateRandom4DigitNumber()),
+                    'Name':'BS-'+(generateRandom4DigitNumber()),
                     "Owner": {
                         "id": "{{ auth()->user()->root_user_id }}",
                         "name": "{{ auth()->user()->name }}",
                         "email": "{{ auth()->user()->email }}",
                     },
+                    'formType':formType
                 }]
             };
             

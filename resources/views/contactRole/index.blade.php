@@ -43,10 +43,6 @@
                 </thead>
                 <tbody class="contact_role_table_pipeline">
                     @if ($dealContacts->isEmpty())
-                    <p>if statement</p>
-                    <div>
-                        <p class="text-center notesAsignedText">No contacts assigned</p>
-                    </div>
                     @else
                     @include('contactRole.contact',['dealContacts'=>$dealContacts,'deal'=>$deal])
                     @endif
@@ -92,7 +88,7 @@
     </div>
     @endforeach
 </div>
-<div class="dpagination">
+{{-- <div class="dpagination">
     <nav aria-label="..." class="dpaginationNav">
         <ul class="pagination ppipelinepage d-flex justify-content-end">
             <li class="page-item disabled">
@@ -108,7 +104,7 @@
             </li>
         </ul>
     </nav>
-</div>
+</div> --}}
 @include('contactRole.create',['dealContacts'=>$dealContacts,'deal'=>$deal])
 
 

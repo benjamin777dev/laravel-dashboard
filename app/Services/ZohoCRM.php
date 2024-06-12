@@ -1084,7 +1084,7 @@ class ZohoCRM
     $response = Http::withHeaders([
     'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
     'Content-Type' => 'application/json',
-    ])->PATCH($this->apiUrl . "Listing_Submittals/" . $submittalId . "?affected_data=true", $inputJson);
+    ])->patch($this->apiUrl . "Listing_Submittals/" . $submittalId . "?affected_data=true", $inputJson);
 
     
     $responseData = $response->json();
@@ -1104,6 +1104,65 @@ class ZohoCRM
     }
     }
 
+    public function createBuyerSubmittal($inputJson)
+    {
+        try {
+            Log::info('Creating Zoho contacts',[$inputJson]);
+            
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+            ])->post($this->apiUrl . "Buyer_Submittals", $inputJson);
+            
+            $responseData = $response->json();
+            
+            // Check if the request was successful
+            if (!$response->successful()) {
+            Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+            throw new \Exception('Failed to create Zoho contacts');
+            }
+            
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+            
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
+
+    public function updateBuyerSubmittal($submittalId,$inputJson)
+    {
+        try {
+            Log::info('Creating Zoho contacts',[$inputJson]);
+            
+            // Trigger workflows
+            $inputJson['trigger'] = 'workflow';
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+            ])->patch($this->apiUrl . "Buyer_Submittals/" . $submittalId . "?affected_data=true", $inputJson);
+            
+            $responseData = $response->json();
+            
+            // Check if the request was successful
+            if (!$response->successful()) {
+            Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+            throw new \Exception('Failed to create Zoho contacts');
+            }
+            
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+            
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
 
 
 

@@ -121,7 +121,11 @@ Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('
 Route::post('/listing/submittal/create/{dealId}', [SubmittalController::class,
 'createListingSubmittal'])->name('listing.submittal.create')->middleware('auth');
 Route::get('/submittal-create/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
-Route::put('/listing/submittal/update/{submittalId}', [SubmittalController::class, 'updateListingSubmittal'])->name('submittal.create')->middleware('auth');
+Route::get('/submittal-view/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalView'])->name('submittal.create')->middleware('auth');
+Route::put('/listing/submittal/update/{submittalId}', [SubmittalController::class, 'updateListingSubmittal'])->name('listing.submittal.update')->middleware('auth');
+Route::post('/buyer/submittal/create/{dealId}', [SubmittalController::class,
+'createBuyerSubmittal'])->name('buyer.submittal.create')->middleware('auth');
+Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class, 'updateBuyerSubmittal'])->name('buyer.submittal.update')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
