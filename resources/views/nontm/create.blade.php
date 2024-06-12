@@ -285,6 +285,15 @@
 @endsection
 
 <script type="text/javascript">
-
+window.onload = function(){
+    $(".main-carousel a span.prev").click(function(e) {
+            e.preventDefault();
+            $(".main-carousel .carousel-control-prev").trigger("click");
+        });
+        $(".main-carousel a span.next").click(function(e) {
+            e.preventDefault();
+            $(".main-carousel .carousel-control-next").trigger("click");
+        });
+}
 
 </script>
