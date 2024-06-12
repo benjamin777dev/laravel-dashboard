@@ -110,13 +110,7 @@
                         <div class="btn-group dmodalTaskDiv">
                             <select class="form-select dmodaltaskSelect" id="related_to_note" name="related_to"
                                 aria-label="Select Transaction">
-                                <option value="">Please select one</option>
-                                @foreach ($retrieveModuleData as $item)
-                                    @if (in_array($item['api_name'], ['Deals', 'Contacts']))
-                                        <option value="{{ $item['zoho_module_id'] }}">{{ $item['api_name'] }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                        </select>
                         </div>
                         <div id="related_to_error" class="text-danger"></div>
                     </div>

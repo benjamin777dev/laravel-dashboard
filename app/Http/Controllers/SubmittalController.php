@@ -19,19 +19,25 @@ class SubmittalController extends Controller
 {
     public function index(Request $request)
     {
-        $db = new DatabaseService();
-        $zoho = new ZohoCRM();
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
+        try {
+           $db = new DatabaseService();
+            $zoho = new ZohoCRM();
+            $user = auth()->user();
+            if (!$user) {
+                return redirect('/login');
+            }
 
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
-        $dealId = request()->route('dealId');
-        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        $submittals =[];
-        return view('submittals.index', compact('deal','submittals'))->render();
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+            $dealId = request()->route('dealId');
+            $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+            $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+            return view('submittals.index', compact('deal','submittals'))->render();
+        } catch (\Throwable $th) {
+            return $th;
+            throw $th;
+        }
+        
     }
 
     public function getDeals(Request $request)
@@ -167,7 +173,7 @@ class SubmittalController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
-        return view('submittals.create', compact('deals','submittalType','listingSubmittaltype'));
+        return view('submittals.create', compact('deals','submittalType','listingSubmittaltype','submittal'));
     }
 
     public function getDeal(Request $request)
@@ -198,6 +204,7 @@ class SubmittalController extends Controller
         $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
         $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken,$dealId);
+        // $isIncompleteSubmittal =null;
         if ($isIncompleteSubmittal) {
             return response()->json($isIncompleteSubmittal);
         } else {
@@ -208,7 +215,7 @@ class SubmittalController extends Controller
             $submittalArray = json_decode($submittal, true);
             $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
-            $deal = $db->createListingSubmittal($user, $accessToken, $data,$submittalData);
+            $deal = $db->createListingSubmittal($user, $accessToken, $data,$submittalData,$dealId,'listing-submittal');
             return response()->json($deal);
         }
 
@@ -410,5 +417,28 @@ class SubmittalController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $contactRoles = $db->retrieveRoles($user);
         return view('contactRole.contact', compact('dealContacts','deal','contacts','contactRoles'))->render();
+    }
+
+    public function updateListingSubmittal(Request $request)
+    {
+        $db = new DatabaseService();
+        $zoho = new ZohoCRM();
+        $user = auth()->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $submittalId = $request->route('submittalId');
+        $jsonData = $request->json()->all();
+        $submittal = $zoho->updateListingSubmittal($submittalId,$jsonData);
+        if (!$submittal->successful()) {
+            return "error something" . $submittal;
+        }
+        $submittalArray = json_decode($submittal, true);
+        $data = $submittalArray['data'][0]['details'];
+        $submittalData = $jsonData['data'][0];
+        $deal = $db->updateListingSubmittal($user, $accessToken, $data,$submittalData);
+        return response()->json($deal);
     }
 }

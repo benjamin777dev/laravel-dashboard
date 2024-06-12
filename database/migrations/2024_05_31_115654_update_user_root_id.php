@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Modify an existing column
-            $table->string('root_user_id')->change();
+            $table->string('root_user_id')->nullable()->change();
         });
     }
 

@@ -222,3 +222,16 @@
         </form>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+            var getLeadAgent = $('#leadAgent');
+            getLeadAgent.select2({
+                placeholder: 'Search...',
+            });
+            var getClientName = $('#validationDefault01');
+            getClientName.select2({
+                placeholder: 'Search...',
+            });
+        })
+
+    </script>

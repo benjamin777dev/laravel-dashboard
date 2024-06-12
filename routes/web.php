@@ -118,9 +118,10 @@ Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])-
 
 //Submittal Route
 Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('submittals.index')->middleware('auth');
-Route::get('/submittal-create/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
 Route::post('/listing/submittal/create/{dealId}', [SubmittalController::class,
 'createListingSubmittal'])->name('listing.submittal.create')->middleware('auth');
+Route::get('/submittal-create/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
+Route::put('/listing/submittal/update/{submittalId}', [SubmittalController::class, 'updateListingSubmittal'])->name('submittal.create')->middleware('auth');
 
 // Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
 // Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');

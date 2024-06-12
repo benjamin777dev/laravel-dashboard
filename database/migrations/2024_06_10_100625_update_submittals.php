@@ -16,57 +16,57 @@ return new class extends Migration
             $table->string('transactionName')->nullable();
             $table->string('additionalEmail')->nullable();
             $table->string('agentName')->nullable();
-            $table->boolean('commingSoon')->default(false);
+            $table->string('commingSoon')->nullable();
             $table->date('comingSoonDate')->nullable();
             $table->string('tmName')->nullable();
             $table->date('activeDate')->nullable();
-            $table->boolean('agreementExecuted')->default(false);
+            $table->string('agreementExecuted')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->date('photoDate')->nullable();
             $table->string('photoURL')->nullable();
             $table->string('bedsBathsTotal')->nullable();
             $table->string('tourURL')->nullable();
-            $table->boolean('usingCHR')->default(false);
-            $table->boolean('needOE')->default(false);
-            $table->boolean('hasHOA')->default(false);
-            $table->boolean('includeInsights')->default(false);
-            $table->boolean('titleToOrderHOA')->default(false);
-            $table->boolean('mailoutNeeded')->default(false);
-            $table->boolean('powerOfAttnyNeeded')->default(false);
+            $table->string('usingCHR')->nullable();
+            $table->string('needOE')->nullable();
+            $table->string('hasHOA')->nullable();
+            $table->string('includeInsights')->nullable();
+            $table->string('titleToOrderHOA')->nullable();
+            $table->string('mailoutNeeded')->nullable();
+            $table->string('powerOfAttnyNeeded')->nullable();
             $table->string('hoaName')->nullable();
             $table->string('hoaPhone')->nullable();
             $table->string('hoaWebsite')->nullable();
             $table->text('miscNotes')->nullable();
-            $table->boolean('scheduleSignInstall')->default(false);
-            $table->boolean('conciergeListing')->default(false);
+            $table->string('scheduleSignInstall')->nullable();
+            $table->string('conciergeListing')->nullable();
             $table->string('signInstallVendor')->nullable();
             $table->text('draftShowingInstructions')->nullable();
             $table->string('titleCompany')->nullable();
             $table->string('closerNamePhone')->nullable();
             $table->string('signInstallVendorOther')->nullable();
             $table->date('signInstallDate')->nullable();
-            $table->boolean('reColorado')->default(false);
-            $table->boolean('navica')->default(false);
-            $table->boolean('ppar')->default(false);
-            $table->boolean('grandCounty')->default(false);
-            $table->boolean('ires')->default(false);
+            $table->string('reColorado')->nullable();
+            $table->string('navica')->nullable();
+            $table->string('ppar')->nullable();
+            $table->string('grandCounty')->nullable();
+            $table->string('ires')->nullable();
             $table->text('mlsPrivateRemarks')->nullable();
             $table->text('mlsPublicRemarks')->nullable();
             $table->string('feesCharged')->nullable();
             $table->string('referralToPay')->nullable();
             $table->decimal('amountToCHR', 10, 2)->nullable();
             $table->text('referralDetails')->nullable();
-            $table->boolean('matterport')->default(false);
-            $table->boolean('floorPlans')->default(false);
-            $table->boolean('threeDZillowTour')->default(false);
-            $table->boolean('onsiteVideo')->default(false);
-            $table->boolean('propertyWebsite')->default(false);
-            $table->boolean('emailBlastSphere')->default(false);
-            $table->boolean('emailBlastReverseProspect')->default(false);
-            $table->boolean('propertyHighlightVideo')->default(false);
-            $table->boolean('socialMediaImages')->default(false);
-            $table->boolean('socialMediaAds')->default(false);
-            $table->boolean('priceImprovementPackage')->default(false);
+            $table->string('matterport')->nullable();
+            $table->string('floorPlans')->nullable();
+            $table->string('threeDZillowTour')->nullable();
+            $table->string('onsiteVideo')->nullable();
+            $table->string('propertyWebsite')->nullable();
+            $table->string('emailBlastSphere')->nullable();
+            $table->string('emailBlastReverseProspect')->nullable();
+            $table->string('propertyHighlightVideo')->nullable();
+            $table->string('socialMediaImages')->nullable();
+            $table->string('socialMediaAds')->nullable();
+            $table->string('priceImprovementPackage')->nullable();
             $table->string('customDomainName')->nullable();
             $table->text('featuresNeededForVideo')->nullable();
             $table->text('marketingNotes')->nullable();
@@ -76,14 +76,16 @@ return new class extends Migration
             $table->string('headlineForBrochure')->nullable();
             $table->string('stickyDots')->nullable();
             $table->string('qrCodeSheet')->nullable();
-            $table->boolean('qrCodeSignRider')->default(false);
+            $table->string('qrCodeSignRider')->nullable();
             $table->string('featureCards')->nullable();
             $table->string('featureCardCopy')->nullable();
             $table->date('brochureDeliveryDate')->nullable();
             $table->string('deliveryAddress')->nullable();
             $table->date('printedItemsPickupDate')->nullable();
             $table->date('brochurePickupDate')->nullable();
-            $table->boolean('isSubmittalComplete')->default(false);
+            $table->string('isSubmittalComplete')->nullable();
+            $table->string('submittalName')->nullable();
+            $table->string('submittalType')->nullable();
         });
     }
 
@@ -164,6 +166,9 @@ return new class extends Migration
                 'deliveryAddress',
                 'printedItemsPickupDate',
                 'brochurePickupDate',
+                'isSubmittalComplete',
+                'submittalName',
+                'submittalType',
             ]);
         });
     }

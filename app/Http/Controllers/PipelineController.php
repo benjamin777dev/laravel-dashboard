@@ -164,10 +164,13 @@ class PipelineController extends Controller
         $contactRoles = $db->retrieveRoles($user);
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
+        $tab = request()->query('tab') ?? 'In Progress';
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.view', compact('dealId','tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData',
-        'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms',
-        'submittals', 'allStages','contactRoles'))->render();
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks',compact('deal','tasks', 'retrieveModuleData', 'tab'))->render();
+        }
+        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles','dealId'))->render();
 
     }
 

@@ -214,6 +214,32 @@
             });
         }
     });
+    window.fetchNotesForDeal=function(id, dealId) {
+        event.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{ route('notes.fetch.deal', ['dealId' => ':dealId']) }}".replace(':dealId', id),
+            method: "GET",
+            success: function(response) {
+                console.log(response);
+                // $('#notesContainer').append('<p>New Note Content</p>');
+                let noteContainer = $("#notesContainer"+dealId);
+                const card = noteContainer.html(response);
+                console.log(card, 'card')
+                $("#notefetchrelatedDeal" + dealId).modal('show');
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                showToastError(error);
+                console.error("Ajax Error:", error);
+            }
+        });
+
+    }
 
     window.moduleSelected = function(selectedModule, deal) {
         console.log("dealId", deal);

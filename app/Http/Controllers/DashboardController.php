@@ -465,9 +465,9 @@ class DashboardController extends Controller
         try {
             $response = $zoho->createTask($jsonData);
 
-            // if (!$response->successful()) {
-            //      return "error something".$response;
-            // }
+            if (!$response->successful()) {
+                response()->json(['message' => $e->getMessage()], 404);
+            }
             $responseArray = json_decode($response, true);
             $data = $responseArray['data'][0]['details'];
             $zoho_id = $data['id'];
@@ -498,7 +498,7 @@ class DashboardController extends Controller
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
-            return "somthing went wrong" . $e;
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 

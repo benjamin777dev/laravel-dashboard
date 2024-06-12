@@ -19,7 +19,7 @@ class ContactController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user(); 
         if (!$user) {
             return redirect('/login');
         }
@@ -72,7 +72,7 @@ class ContactController extends Controller
     {
         try {
         $user = auth()->user();
-        if (!$user) {
+        if (!$user) { 
             return redirect('/login');
         }
         $rules = [];
@@ -572,6 +572,10 @@ class ContactController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks', compact('contact','tasks', 'retrieveModuleData', 'tab'))->render();
+        }
         return view('contacts.detail', compact('contact','userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups','contactsGroups'));
     }
 
