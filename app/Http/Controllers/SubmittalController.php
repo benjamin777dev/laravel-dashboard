@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Aci;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use App\Models\Deal;
+use App\Models\User;
 use App\Services\DatabaseService;
+use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
-use App\Services\Helper;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -19,13 +20,12 @@ class SubmittalController extends Controller
 {
     public function index(Request $request)
     {
-        try {
-           $db = new DatabaseService();
-            $zoho = new ZohoCRM();
-            $user = auth()->user();
-            if (!$user) {
-                return redirect('/login');
-            }
+        $db = new DatabaseService();
+        $zoho = new ZohoCRM();
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
 
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
@@ -43,7 +43,7 @@ class SubmittalController extends Controller
     public function getDeals(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -70,7 +70,7 @@ class SubmittalController extends Controller
         if (isset($aci['Transaction'])) {
             $deal = Deal::where('zoho_deal_id', $aci['Transaction']['id'])->first();
         }
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -83,6 +83,7 @@ class SubmittalController extends Controller
             Log::error("Error retrieving aci: " . $response->body());
             throw $response->body();
         }
+        $helper = new Helper();
         Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
             "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
             "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
@@ -110,7 +111,7 @@ class SubmittalController extends Controller
         $helper = new Helper();
         // Retrieve user data from the session
         $pipelineData = session('pipeline_data');
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -182,7 +183,7 @@ class SubmittalController extends Controller
     public function getDeal(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -198,7 +199,7 @@ class SubmittalController extends Controller
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -228,7 +229,7 @@ class SubmittalController extends Controller
     public function updatePipeline(Request $request, $id, DatabaseService $db, ZohoCRM $zoho)
     {
         try {
-            $user = auth()->user();
+            $user = $this->user();
         
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
@@ -268,7 +269,7 @@ class SubmittalController extends Controller
 
     public function getClosedDeals(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -351,7 +352,7 @@ class SubmittalController extends Controller
     }
     public function retriveNotesForDeal()
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -366,7 +367,7 @@ class SubmittalController extends Controller
 
     public function addContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -387,7 +388,7 @@ class SubmittalController extends Controller
 
     public function removeContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -404,7 +405,7 @@ class SubmittalController extends Controller
     }
     public function getContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }

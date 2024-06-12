@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/bulkJob/update', 
         '/webhook/contact',
         '/webhook/deal',
+        '/webhook/cxg',
         '/api/webhook/csvcallback'
     ];
 }

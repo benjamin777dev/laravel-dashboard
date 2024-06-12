@@ -29,7 +29,7 @@ class DashboardController extends Controller
     public function index()
     {
 
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -415,7 +415,7 @@ class DashboardController extends Controller
 
     public function createTaskaction(Request $request, User $user)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -466,7 +466,7 @@ class DashboardController extends Controller
             $response = $zoho->createTask($jsonData);
 
             if (!$response->successful()) {
-                response()->json(['message' => $e->getMessage()], 404);
+                response()->json(['message' => "failed, not found"], 404);
             }
             $responseArray = json_decode($response, true);
             $data = $responseArray['data'][0]['details'];
@@ -504,7 +504,7 @@ class DashboardController extends Controller
 
     public function deleteTaskaction(Request $request, User $user, $id)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -545,7 +545,7 @@ class DashboardController extends Controller
     }
     public function updateTaskaction(Request $request, User $user, $id)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -647,7 +647,7 @@ class DashboardController extends Controller
     public function retriveModulesDB(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -661,7 +661,7 @@ class DashboardController extends Controller
     public function getTasks(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -679,7 +679,7 @@ class DashboardController extends Controller
     public function getDeals(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -697,7 +697,7 @@ class DashboardController extends Controller
     public function getDealsForDash()
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -713,7 +713,7 @@ class DashboardController extends Controller
     public function getContacts(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -738,7 +738,7 @@ class DashboardController extends Controller
         $start_date = request()->query('start_date') ?? ''; // Start date of the range
         $end_date = request()->query('end_date') ?? ''; // End date of the range
 
-        $user = auth()->user();
+        $user = $this->user();
         $db = new DatabaseService();
         $accessToken = $user->getAccessToken();
         if (!$user) {
@@ -788,7 +788,7 @@ class DashboardController extends Controller
 
     public function deleteNote(Request $request, $id)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -841,8 +841,8 @@ class DashboardController extends Controller
         // ]);
         $mergedData = json_decode($request->input('merged_data'), true);
         $note_text = $request->input('note_text');
-        $related_to;
-        $related_to_parent;
+        $related_to = "";
+        $related_to_parent = "";
         if (empty($mergedData)) {
             $related_to = $related_to_['api_name'] ?? null;
             $related_to_parent = $request->input('related_to_parent');
@@ -860,7 +860,7 @@ class DashboardController extends Controller
             }
 
         }
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -922,7 +922,7 @@ class DashboardController extends Controller
     }
     public function markAsDone(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -969,7 +969,7 @@ class DashboardController extends Controller
         ], [
             'note_text.required' => 'The Note field is required.',
         ]);
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -1009,7 +1009,7 @@ class DashboardController extends Controller
 
     public function getTasksForDashboard(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -1029,7 +1029,7 @@ class DashboardController extends Controller
 
     public function getContactRole(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -1039,7 +1039,7 @@ class DashboardController extends Controller
         $zoho->access_token = $accessToken;
         try {
             $contactRoles = $zoho->getContactRoles($user, $accessToken);
-            $saveInDB = $db->storeRolesInDB($contactRoles->contact_roles);
+            $saveInDB = $db->storeRolesIntoDB($contactRoles, $this->user());
             Log::info("contactRoles " . print_r($saveInDB, true));
             return response()->json($saveInDB, 201);
         } catch (\Exception $e) {

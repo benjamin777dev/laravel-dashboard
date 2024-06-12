@@ -64,13 +64,20 @@
                         <span key="t-tasks">@lang('Tasks')</span>
                     </a>
                 </li>
-                <li class="menu-title" key="t-backend">@lang('Reports')</li>
+                <li class="menu-title" key="t-backend">@lang('Resources')</li>
                 <li>
                     <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
                         <span key="t-tasks">@lang('CHR Rankings')</span>
                     </a>
                 </li>
+                <li>
+                    <a href="https://form.asana.com/?k=2uSi4xtUCZY7Pdcuaaycyg&d=308059472239312" target="_blank" class="waves-effect">
+                        <i class="bx bx-list-ul"></i>
+                        <span key="t-tasks">@lang('Marketing Request')</span>
+                    </a>
+                </li>
+                
                 {{-- <li>
                     <a href="dashboard" class="waves-effect">
                         <i class="bx bx-home-circle"></i>
@@ -111,11 +118,17 @@
                     </a>
                 </li>
                 
-                <li class="menu-title" key="t-backend">@lang('Reports')</li>
+                <li class="menu-title" key="t-backend">@lang('Resources')</li>
                 <li>
                     <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">
                         <i class="bx bx-list-ul"></i>
                         <span key="t-tasks">@lang('CHR Rankings')</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://form.asana.com/?k=2uSi4xtUCZY7Pdcuaaycyg&d=308059472239312" target="_blank" class="waves-effect">
+                        <i class="bx bx-list-ul"></i>
+                        <span key="t-tasks">@lang('Marketing Request')</span>
                     </a>
                 </li>
                 
