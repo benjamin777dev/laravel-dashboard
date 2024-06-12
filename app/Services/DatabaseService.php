@@ -1255,16 +1255,46 @@ class DatabaseService
     public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
         try {
+            Log::info("Retrieve Groups From Database");
 
-            Log::info("Retrieve Tasks From Database");
-            $condition = [];
+            $query = Groups::query();
+
             if ($isShown) {
-                $condition[] = ['isShow', true];
+                $query->where('isShow', true);
             }
-            $tasks = Groups::where($condition)->with('contacts')->orderBy('name', 'asc')->get();
-            return $tasks;
+
+            // Apply ownership filter
+            $query->where(function ($query) use ($user) {
+                $query->where('ownerId', $user->id)
+                    ->orWhere('isPublic', true);
+            });
+
+            // Get all groups
+            $groups = $query->with('contacts')->get();
+
+            // Separate the groups into different categories
+            $abcdGroups = $groups->filter(function ($group) {
+                return $group->isABCD && !$group->isD;
+            })->sortBy('name');
+
+            $dGroups = $groups->filter(function ($group) {
+                return $group->isD && !$group->isABCD;
+            })->sortBy('name');
+
+            $publicGroups = $groups->filter(function ($group) {
+                return $group->isPublic && !$group->isABCD && !$group->isD;
+            })->sortBy('name');
+
+            $userGroups = $groups->filter(function ($group) {
+                return !$group->isPublic && !$group->isABCD && !$group->isD;
+            })->sortBy('name');
+
+            // Merge the groups back together in the desired order
+            $sortedGroups = $abcdGroups->merge($dGroups)->merge($publicGroups)->merge($userGroups);
+
+            return $sortedGroups->values(); // Reindex the sorted collection
         } catch (\Exception $e) {
-            Log::error("Error retrieving tasks: " . $e->getMessage());
+            Log::error("Error retrieving groups: " . $e->getMessage());
             throw $e;
         }
     }
