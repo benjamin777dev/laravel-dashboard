@@ -24,7 +24,7 @@ class GroupController extends Controller
     public function index(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -43,7 +43,7 @@ class GroupController extends Controller
     public function filterGroups(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -65,7 +65,7 @@ class GroupController extends Controller
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
-            $user = auth()->user();
+            $user = $this->user();
             if (!$user) {
                 return redirect('/login');
             }
@@ -103,7 +103,7 @@ class GroupController extends Controller
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
-            $user = auth()->user();
+            $user = $this->user();
             if (!$user) {
                 return redirect('/login');
             }
@@ -133,7 +133,7 @@ class GroupController extends Controller
         try {
             $zoho = new ZohoCRM();
             $db = new DatabaseService();
-            $user = auth()->user();
+            $user = $this->user();
             if (!$user) {
                 return redirect('/login');
             }
@@ -254,7 +254,7 @@ class GroupController extends Controller
         try {
             $zoho = new ZohoCRM();
             $db = new DatabaseService();
-            $user = auth()->user();
+            $user = $this->user();
             if (!$user) {
                 return redirect('/login');
             }

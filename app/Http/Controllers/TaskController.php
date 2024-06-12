@@ -10,7 +10,7 @@ class TaskController extends Controller
     public function index()
     {
 
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }

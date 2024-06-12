@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
+use App\Models\ContactGroups;
+use App\Models\Groups;
 use App\Models\User;
+use App\Services\DatabaseService;
+use App\Services\Helper;
+use App\Services\ZohoCRM;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Models\Contact;
-use App\Services\Helper;
-use App\Services\ZohoCRM;
-use Carbon\Carbon;
-use App\Models\Groups;
-use App\Models\ContactGroups;
 use Illuminate\Support\Facades\Response;
-use App\Services\DatabaseService;
 
 class ContactController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
@@ -30,25 +29,26 @@ class ContactController extends Controller
         $filter = $request->input('filter');
         $missingFeild = $request->input('missingField');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter,$missingFeild);
+        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $groups = $db->retrieveGroups($user, $accessToken);
         $apend = false;
         if ($request->ajax()) {
             $apend = true;
-            $view = view('contacts.load',  compact('contacts','userContact','getdealsTransaction', 'retrieveModuleData', 'groups','apend'))->render();
+            $view = view('contacts.load', compact('contacts', 'userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'))->render();
             return Response::json(['view' => $view, 'nextPageUrl' => $contacts->nextPageUrl()]);
         }
- 
-        return view('contacts.index', compact('contacts','userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups','apend'));
+
+        return view('contacts.index', compact('contacts', 'userContact', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'));
     }
 
     public function getContact(Request $request)
     {
         $db = new DatabaseService();
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -59,93 +59,94 @@ class ContactController extends Controller
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
         $missingFeild = $request->input('missingField');
-        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter,$missingFeild);
+        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $apend = false;
-        return view('contacts.contact',  compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups','apend'))->render();
+        return view('contacts.contact', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'))->render();
         // return view('pipeline.index', compact('deals'));
     }
 
     public function updateContact(Request $request, $id)
     {
         try {
-        $user = auth()->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $rules = [];
-        $helper = new Helper();
-        $accessToken = $user->getAccessToken();
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-        $frontData = $request->all();
-        if(!empty($frontData['data'])){
-            $first_name;
-            $last_name;
-            $contactInstanceforJson = Contact::where('zoho_contact_id', $id)->first();
-            if(isset($frontData['data'][0]['First_Name'])){
-            if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
-                $parts = explode(' ', $frontData['data'][0]['First_Name']);
-                if (count($parts) == 5) {
-                $first_name = $parts[0];
-                // The last part will be the last name
-                $last_name = end($parts);
-                $frontData['data'][0]['First_Name'] = $first_name;
-                $frontData['data'][0]['Last_Name'] = $last_name;
-                }else{
-                    return response()->json(['error' => 'Use Only One Space','status'=>401], 500);
-                }
+            $user = $this->user();
+
+            if (!$user) {
+                return redirect('/login');
             }
-        }
-        $mobile;
-        if(isset($frontData['data'][0]['Mobile'])){
-                $mobile = $frontData['data'][0]['Mobile'];
-                if (!ctype_digit($mobile)) {
-                    // If mobile contains non-numeric characters, return an error
-                    return response()->json(['error' => 'Mobile must contain only numbers','status'=>401], 500);
+            $rules = [];
+            $helper = new Helper();
+            $accessToken = $user->getAccessToken();
+            $zoho = new ZohoCRM();
+            $zoho->access_token = $accessToken;
+            $frontData = $request->all();
+            if (!empty($frontData['data'])) {
+                $first_name = "";
+                $last_name = "";
+                $contactInstanceforJson = Contact::where('zoho_contact_id', $id)->first();
+                if (isset($frontData['data'][0]['First_Name'])) {
+                    if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
+                        $parts = explode(' ', $frontData['data'][0]['First_Name']);
+                        if (count($parts) == 5) {
+                            $first_name = $parts[0];
+                            // The last part will be the last name
+                            $last_name = end($parts);
+                            $frontData['data'][0]['First_Name'] = $first_name;
+                            $frontData['data'][0]['Last_Name'] = $last_name;
+                        } else {
+                            return response()->json(['error' => 'Use Only One Space', 'status' => 401], 500);
+                        }
+                    }
                 }
-            }
-                $validEmail;
-                if(isset($frontData['data'][0]['Email'])){
-              
+                $mobile = "";
+                if (isset($frontData['data'][0]['Mobile'])) {
+                    $mobile = $frontData['data'][0]['Mobile'];
+                    if (!ctype_digit($mobile)) {
+                        // If mobile contains non-numeric characters, return an error
+                        return response()->json(['error' => 'Mobile must contain only numbers', 'status' => 401], 500);
+                    }
+                }
+                $validEmail = "";
+                if (isset($frontData['data'][0]['Email'])) {
+
                     $email = $frontData['data'][0]['Email'];
-                    
+
                     // Validate email address
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         // Email is valid, assign it to the contact instance
                         $validEmail = $email;
                     } else {
                         // Email is not valid, handle the error (return an error response, log it, etc.)
-                        return response()->json(['error' => 'Invalid email address','status'=>401], 500);
+                        return response()->json(['error' => 'Invalid email address', 'status' => 401], 500);
                     }
                 }
-            $responseFromZoho = $zoho->createContactData($frontData,$id);
-            if (!$responseFromZoho->successful()) {
-                Log::error("Error creating contacts:");
-                return "error somthing".$responseFromZoho;
-            }
-            
-            $dataJson = json_decode($responseFromZoho, true);
-            if (isset($responseFromZoho['data'][0])) {
-                $data = $responseFromZoho['data'][0];
-                $id = $data['details']['id'];
-                $createdByName = $data['details']['Created_By']['name'];
-                $createdById = $data['details']['Created_By']['id'];
-                $contactInstanceforJson->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
-                if(!empty($first_name)){
-                    $contactInstanceforJson->first_name = $first_name ?? null;
+                $responseFromZoho = $zoho->createContactData($frontData, $id);
+                if (!$responseFromZoho->successful()) {
+                    Log::error("Error creating contacts:");
+                    return "error somthing" . $responseFromZoho;
                 }
-                if(!empty($last_name)){
-                    $contactInstanceforJson->last_name = $last_name ?? null;
-                }
-                if(!empty($mobile)){
-                    $contactInstanceforJson->mobile =  $mobile  ?? null;
 
-                }
-                if(!empty($validEmai)){
-                    $contactInstanceforJson->email = $validEmail ?? null;
+                $dataJson = json_decode($responseFromZoho, true);
+                if (isset($responseFromZoho['data'][0])) {
+                    $data = $responseFromZoho['data'][0];
+                    $id = $data['details']['id'];
+                    $createdByName = $data['details']['Created_By']['name'];
+                    $createdById = $data['details']['Created_By']['id'];
+                    $contactInstanceforJson->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
+                    if (!empty($first_name)) {
+                        $contactInstanceforJson->first_name = $first_name ?? null;
+                    }
+                    if (!empty($last_name)) {
+                        $contactInstanceforJson->last_name = $last_name ?? null;
+                    }
+                    if (!empty($mobile)) {
+                        $contactInstanceforJson->mobile = $mobile ?? null;
+
+                    }
+                    if (!empty($validEmai)) {
+                        $contactInstanceforJson->email = $validEmail ?? null;
 
                     }
                     if (!empty($frontData['data'][0]['Email'])) {
@@ -158,7 +159,7 @@ class ContactController extends Controller
                     return $responseFromZoho;
                 }
             }
-           
+
             $contactOwnerArray = json_decode($request->contactOwner, true);
             // Validate the array
             $validatedData1 = validator()->make($contactOwnerArray, [
@@ -254,7 +255,6 @@ class ContactController extends Controller
             // Validate the request data using the defined rules
             $validatedData = $request->validate($rules);
 
-
             $validatedData2 = $request->validate([
                 'last_name' => 'required|string|max:255',
             ]);
@@ -310,22 +310,22 @@ class ContactController extends Controller
                         //   "id"=> "5141697000000091033"
                         // ],
                         // "$zia_owner_assignment"=> "owner_recommendation_unavailable",
-                        "zia_suggested_users" => []
-                    ]
+                        "zia_suggested_users" => [],
+                    ],
                 ],
-                "skip_mandatory" => true
+                "skip_mandatory" => true,
             ];
-            $selectedGroupsarr=[];
+            $selectedGroupsarr = [];
             $selectedGroupsarr = json_decode($request->selectedGroups);
-            if(is_array($selectedGroupsarr)&&count($selectedGroupsarr)!==0){
-            foreach ($selectedGroupsarr as $group) {
-                $responseData["data"][0]["Groups"][] = [
-                    "Groups" => [
-                        "id" => $group
-                    ]
-                ];
+            if (is_array($selectedGroupsarr) && count($selectedGroupsarr) !== 0) {
+                foreach ($selectedGroupsarr as $group) {
+                    $responseData["data"][0]["Groups"][] = [
+                        "Groups" => [
+                            "id" => $group,
+                        ],
+                    ];
+                }
             }
-        }  
 
             if (empty($responseData["data"][0]["Groups"])) {
                 unset($responseData["data"][0]["Groups"]);
@@ -421,7 +421,6 @@ class ContactController extends Controller
                 $contactInstance->isContactCompleted = true;
                 $contactInstance->isInZoho = true;
 
-
                 if (isset($validatedData['last_called']) && !empty($validatedData['last_called'])) {
                     $contactInstance->last_called = $validatedData['last_called'];
                 }
@@ -430,23 +429,23 @@ class ContactController extends Controller
                     $contactInstance->last_emailed = $validatedData['last_emailed'];
                 }
                 $contactInstance->save();
-                if(is_array($selectedGroupsarr)&&count($selectedGroupsarr)!==0){
+                if (is_array($selectedGroupsarr) && count($selectedGroupsarr) !== 0) {
                     foreach ($selectedGroupsarr as $group) {
                         $groupsInstance = Groups::where('zoho_group_id', $group)->first();
-                    $contactGroup = ContactGroups::updateOrCreate(
-                        ['zoho_contact_group_id' => $group],
-                        [
-                            'ownerId' => $user->id,
-                            "contactId" => $contactInstance['id'] ?? null,
-                            "groupId" => $groupsInstance['id'] ?? null,
-                            "zoho_contact_group_id" => $group ?? null,
-                        ]
-                    );
+                        $contactGroup = ContactGroups::updateOrCreate(
+                            ['zoho_contact_group_id' => $group],
+                            [
+                                'ownerId' => $user->id,
+                                "contactId" => $contactInstance['id'] ?? null,
+                                "groupId" => $groupsInstance['id'] ?? null,
+                                "zoho_contact_group_id" => $group ?? null,
+                            ]
+                        );
+                    }
                 }
             }
-        }
             // Redirect back with a success message
-           return redirect('/contacts')->with('success', 'Contact Updated successfully!');
+            return redirect('/contacts')->with('success', 'Contact Updated successfully!');
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
             return redirect()->back()->with('error', '!' . $e->getMessage());
@@ -457,7 +456,8 @@ class ContactController extends Controller
 
     public function databaseGroup()
     {
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -484,17 +484,17 @@ class ContactController extends Controller
 
                 // Adjust here for Bootstrap background colors
                 $contacts->transform(function ($contact) {
-                    $hasEmail = !empty ($contact['Email']);
-                    $hasPhone = !empty ($contact['Phone']) || !empty ($contact['Mobile']);
-                    $hasAddress = !empty ($contact['Mailing_Street']) && !empty ($contact['Mailing_City']) && !empty ($contact['Mailing_State']) && !empty ($contact['Mailing_Zip']);
-                    $hasImpDate = isset ($contact['HasMissingImportantDate']) && !$contact['HasMissingImportantDate'];
+                    $hasEmail = !empty($contact['Email']);
+                    $hasPhone = !empty($contact['Phone']) || !empty($contact['Mobile']);
+                    $hasAddress = !empty($contact['Mailing_Street']) && !empty($contact['Mailing_City']) && !empty($contact['Mailing_State']) && !empty($contact['Mailing_Zip']);
+                    $hasImpDate = isset($contact['HasMissingImportantDate']) && !$contact['HasMissingImportantDate'];
 
                     $contact['perfect'] = $hasEmail && $hasPhone && $hasAddress && $hasImpDate;
 
                     // Update for background color
                     $abcdBackgroundClass = ''; // Default to nothing
 
-                    if (isset ($contact['ABCD'])) {
+                    if (isset($contact['ABCD'])) {
                         switch ($contact['ABCD']) {
                             case "A+":
                             case "A":
@@ -530,9 +530,10 @@ class ContactController extends Controller
         }
     }
 
-    function getGroups(Request $request)
+    public function getGroups(Request $request)
     {
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -542,14 +543,15 @@ class ContactController extends Controller
         $sortType = $request->input('sortType');
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType,  $sortField);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType, $sortField);
         return response()->json($contactsGroups);
 
     }
 
     public function show($contactId)
     {
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -559,30 +561,30 @@ class ContactController extends Controller
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
-        Log::info('CONTACTIDDATA'.$contactId);
+        Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         $groups = $db->retrieveGroups($user, $accessToken);
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType=null,  $sortField=null);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $tab = request()->query('tab') ?? 'In Progress';
-        $users =  $user;
+        $users = $user;
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('contact','tasks', 'retrieveModuleData', 'tab'))->render();
+            return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
         }
-        return view('contacts.detail', compact('contact','userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups','contactsGroups'));
+        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
     }
-
 
     public function retriveNotesForContact()
     {
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -592,12 +594,13 @@ class ContactController extends Controller
         $notesInfo = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        return view('common.notes.listPopup',  compact('notesInfo','retrieveModuleData','contact'))->render();
+        return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'contact'))->render();
     }
 
     public function showCreateContactForm()
     {
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -610,24 +613,24 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        $users =$user;
+        $users = $user;
         $tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken,$contactId,$filter = null, $sortType=null,  $sortField=null);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $groups = $db->retrieveGroups($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         if ($spouseContact) {
-        // Ensure $spouseContact is an array or an object, not a string
+            // Ensure $spouseContact is an array or an object, not a string
             if (is_string($spouseContact)) {
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
 
-        return view('contacts.create', compact('contact', 'user_id', 'name', 'users','spouseContact', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId','groups','contactsGroups'));
+        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'spouseContact', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'groups', 'contactsGroups'));
 
     }
 
@@ -635,7 +638,8 @@ class ContactController extends Controller
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $user = $this->user();
+
         if (!$user) {
             return redirect('/login');
         }
@@ -680,42 +684,42 @@ class ContactController extends Controller
         }
     }
 
-    public function createSpouseContact(Request $request,$id)
+    public function createSpouseContact(Request $request, $id)
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        
+
         $zoho->access_token = $accessToken;
 
         $jsonData = $request->all();
         $contactId = $id;
-       
-        $inputData = 
-        [
-            "data"=> [
+
+        $inputData =
+            [
+            "data" => [
                 [
-                    "Relationship_Type"=> "Secondary",
-                    "Missing_ABCD"=> true,
-                    "Owner"=> [
-                        "id"=> $user->root_user_id,
-                        "full_name"=>$user->name,
+                    "Relationship_Type" => "Secondary",
+                    "Missing_ABCD" => true,
+                    "Owner" => [
+                        "id" => $user->root_user_id,
+                        "full_name" => $user->name,
                     ],
-                    "Layout"=>[
-                        "name"=> "Standard",
-                        "id"=> "5141697000000091033"
+                    "Layout" => [
+                        "name" => "Standard",
+                        "id" => "5141697000000091033",
                     ],
-                    "Last_Name"=> $jsonData['last_name'],
-                    "First_Name"=> $jsonData['first_name'],
-                    "Email"=> $jsonData['email'],
-                    "Phone"=> $jsonData['phone'],
-                    "Mobile"=> $jsonData['mobile'],
-                    "zia_suggested_users"=> [],
-                ]
+                    "Last_Name" => $jsonData['last_name'],
+                    "First_Name" => $jsonData['first_name'],
+                    "Email" => $jsonData['email'],
+                    "Phone" => $jsonData['phone'],
+                    "Mobile" => $jsonData['mobile'],
+                    "zia_suggested_users" => [],
+                ],
             ],
         ];
         $zohoContact = $zoho->createNewContactData($inputData);
@@ -724,7 +728,7 @@ class ContactController extends Controller
         }
         $zohoContactArray = json_decode($zohoContact, true);
         $data = $zohoContactArray['data'][0]['details'];
-        $contact = $db->createSpouseContact($user, $accessToken, $data['id'],$inputData['data'][0]);
+        $contact = $db->createSpouseContact($user, $accessToken, $data['id'], $inputData['data'][0]);
         session(['spouseContact' => $contact]);
         // Redirect to the route without passing the contact object
         return redirect()->route('contacts.create', ['contactId' => $contactId]);

@@ -14,7 +14,7 @@ class NonTmController extends Controller
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
-        $user = auth()->user();
+        $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }

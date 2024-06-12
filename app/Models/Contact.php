@@ -230,7 +230,7 @@ class Contact extends Model
             'isContactCompleted' => isset($data['Is_Active']) ? (int)$data['Is_Active'] : 1,
             'isInZoho' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
-            'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : $data['Referred_By']["id"],
+            'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
             'spouse_partner' => isset($data['Spouse_Partner']) ? json_encode($data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
