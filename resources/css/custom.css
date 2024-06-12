@@ -2007,17 +2007,25 @@
 .common-corousal-div {
     margin-bottom: 7px;
 }
+.second-step-common-select{
+padding: 12px 16px;
 
-.related_trxn label {
-    color: #6C6C6C;
-    font-family: Avenir;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+background:  #F5F5F5;
+flex: 1 0 0;
+
+color:  #222;
+
+/* label-sm */
+font-family: Avenir;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
 }
-
-.related_trxn select {
+.select-mb24{
+    margin-bottom: 24px;
+}
+.related_trxn .related_trxn select {
     max-width: 639px;
     flex: 1 0 0;
     color: #222;
@@ -2026,10 +2034,24 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+}
+
+.nontm-input-textarea{
+    display: flex;
+height: 86px;
+padding:  12px;
+align-items: flex-start;
+align-self: stretch;
+
+border-radius:  4px;
+border: 1px solid  #CECECE;
+background:  #FFF;
 }
 
 .additional_email label {
     color: #6C6C6C;
+
+    /* label-sm */
     font-family: Avenir;
     font-size: 14px;
     font-style: normal;
@@ -2037,57 +2059,50 @@
     line-height: normal;
 }
 
-.additional_email #add_email {
-    max-width: 639px;
+.additional_email input {
+    display: flex;
+    height: 48px;
+    padding: 12px;
+    align-items: center;
+    align-self: stretch;
+
+    border-radius: 4px;
+    border: 1px solid #CECECE;
+    background: #FFF;
+}
+
+/* .close-date-nontm {
+    display: flex;
+    padding: 0px 0px 0px;
+    flex-direction: column;
+    align-items: flex-start;
     flex: 1 0 0;
-    color: #222;
-    font-family: Avenir;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+} */
+.close-date-nontm {
+    flex: 1 0 0;
 }
-
-.close-date label {
-    color: #6C6C6C;
-    font-family: Avenir;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
-#close_date {
+.nontm-input {
     display: flex;
-    height: 32px;
-    padding: 12px;
     align-items: center;
     align-self: stretch;
+
     border-radius: 4px;
     border: 1px solid #CECECE;
     background: #FFF;
-}
-
-.commission label {
-    color: #6C6C6C;
+    height: 48px;
+    padding: 12px;
+    flex: 1 0 0;
+    color: #848484;
+    /* label-sm */
     font-family: Avenir;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
 }
-
-#commission {
-    display: flex;
-    height: 32px;
-    padding: 12px;
-    align-items: center;
-    align-self: stretch;
-    border-radius: 4px;
-    border: 1px solid #CECECE;
-    background: #FFF;
+.main_form_div{
+    padding: 0 90px 48px 90px;
 }
-
 .carousel-indicators {
     bottom: 20px;
     margin-bottom: -1rem;
@@ -2120,16 +2135,28 @@
     background-clip: unset;
 }
 
-.related_trxn {
-    margin-bottom: 15px;
+.label-div-mb {
+    margin-bottom: 24px;
+
 }
 
-.additional_email {
-    margin-bottom: 15px;
+.common-label {
+    color: #6C6C6C;
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
+
+.additional_email {}
 
 .close-date-comm {
-    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    align-self: stretch;
 }
 
 .nontm-header {
@@ -2138,16 +2165,46 @@
     align-self: stretch;
 }
 
-.non-title {
-    color: #000;
-    /* page-title */
+.nontm-select-div {
+    display: flex;
+    height: 48px;
+    padding: 12px;
+    align-items: center;
+    align-self: stretch;
+
+    border-radius: 4px;
+    border: 1px solid #CECECE;
+    background: #FFF;
+}
+
+.nontm-select:focus {
+    outline: 0 !important;
+    border: 0 !important;
+    box-shadow: none;
+}
+
+.nontm-select {
+    flex: 1 0 0;
+    border: none;
+    color: #222;
     font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    -webkit-appearance: none;
+}
+
+
+
+.non-title-div {
+    color: #000;
+    /* title-md */
     font-size: 16px;
     font-style: normal;
-    font-weight: 900;
-    line-height: 19.2px;
-    /* 120% */
-    text-transform: uppercase;
+    font-weight: 800;
+    line-height: 18px;
+    /* 112.5% */
 }
 
 .nontm-cancel-btn button {

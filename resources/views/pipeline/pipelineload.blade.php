@@ -53,7 +53,7 @@
         </td>
         <td
             onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','client_name_primary','{{ $deal['id'] }}')"
-            id="client_name_primary{{ $deal['zoho_deal_id'] }}">
+            id="client_name_primary">
             {{ $deal->client_name_primary ?? 'N/A' }}
         </td>
         <td>
