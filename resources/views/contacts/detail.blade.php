@@ -500,8 +500,8 @@
         var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
             removeItemButton: true,
             maxItemCount: 5,
-            searchResultLimit: 5,
-            renderChoiceLimit: 5,
+            searchResultLimit: 500,
+            renderChoiceLimit: -1,
         });
         let selectedGroupsArr = [];
         const hiddenInput = document.createElement('input');
