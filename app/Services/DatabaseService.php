@@ -1319,6 +1319,21 @@ class DatabaseService
         }
     }
 
+    public function getOwnerGroups(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Groups From Database");
+
+            // Retrieve all groups owned by the user
+            $groups = Groups::where('ownerId', $user->id)->get();
+
+            return $groups;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving groups: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
         try {
@@ -1694,7 +1709,7 @@ class DatabaseService
                 return \App\Models\Deal::mapZohoData($record, 'csv');
             case 'Groups':
                 return \App\Models\Groups::mapZohoData($record, 'csv');
-            case 'Contacts_X_Groups': 
+            case 'Contacts_X_Groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
