@@ -424,10 +424,10 @@ class DatabaseService
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [['userID', $user->id]];
+            $conditions = [['userID', $user->id],['isDealCompleted',true]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']);
+            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', '', 'Dead-Contract Terminated']);
 
             if ($search !== "") {
                 $searchTerms = urldecode($search);
@@ -477,7 +477,7 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             if ($all) {
-                $deals = $deals->where($conditions)->paginate(1000);
+                $deals = $deals->where($conditions)->get();
             } else {
                 $deals = $deals->where($conditions)->paginate(10);
             }
@@ -676,6 +676,7 @@ class DatabaseService
             Log::info("Retrieve Deals From Database");
             $condition = [
                 ['userID', $user->id],
+                
             ];
             if ($dealId) {
                 $condition[] = ['zoho_deal_id', $dealId];
@@ -736,7 +737,7 @@ class DatabaseService
             }
 
             // Paginate the results
-            $contacts = $contacts->paginate(12);
+            $contacts = $contacts->paginate(10);
 
             return $contacts;
         } catch (\Exception $e) {
@@ -1352,7 +1353,9 @@ class DatabaseService
             });
 
             // Get all groups
-            $groups = $query->with('contacts')->get();
+            $groups = $query->with(['contacts' => function ($query) use ($user) {
+                $query->where('ownerId', $user->id);
+            }])->get();
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {

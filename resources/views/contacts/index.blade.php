@@ -26,7 +26,7 @@
                         New Contact
                     </div>
                 </a>
-                <a onclick="createTransaction({{$userContact}});">
+                <a onclick="createTransaction({{ $userContact }});">
                     <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                         data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                         </i>
@@ -35,7 +35,7 @@
                 </a>
             </div>
         </div>
-      
+
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
                 <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
@@ -62,21 +62,21 @@
 
             </div>
             <div class="d-flex gap-4">
-            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
-                Filter
+                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
+                    data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
+                    Filter
+                </div>
+                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
+                    data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
+                    Reset All
+                </div>
             </div>
-            <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
-                Reset All
-            </div>
-        </div>
         </div>
 
         <div class="contactlist overflow-auto" id="contactlist">
             @include('contacts.contact', ['contacts' => $contacts])
             <!-- Filter Modal -->
-          
+
         </div>
         <div class="modal fade" id="filterModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -148,8 +148,8 @@
         }
         if (!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd) {
             missingFeild = "";
-        }  
-         if (reset) {
+        }
+        if (reset) {
             if (searchInput.val().trim() !== "") {
                 searchInput.val("");
             }
@@ -158,7 +158,7 @@
             }
         }
 
-        filterContactData("", "", "", "", missingFeild,reset);
+        filterContactData("", "", "", "", missingFeild, reset);
         count++;
 
 
@@ -251,23 +251,21 @@
         }
         return isValid;
     }
-
-
-
-
+    var prevSelectedColumn = null;
+    var prevSortDirection = "";
 
     function filterContactData(sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
-        "",reset) {
+        "", reset, clickedColumn = "") {
         var searchValuetrim = "";
         if (searchInput) {
             searchValuetrim = searchInput?.val().trim();
         }
-        if(reset){
-          sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
-        ""  
+        if (reset) {
+            sortField = "", sortDirection = "", searchInput = "", filterVal = "", missingFeild =
+                ""
         }
         var load = true;
-        
+
         $.ajax({
             url: '{{ url('/contacts') }}',
             method: 'GET',
@@ -286,6 +284,27 @@
                     document.getElementById('loaderfor').style.display = "none";
 
                 }
+                // Update arrow colors for the previously selected column
+                if (prevSelectedColumn !== null) {
+                    if (prevSortDirection === "asc") {
+                        $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                        $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                    } else {
+                        $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                        $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                    }
+                }
+                if (sortDirection === "asc") {
+                    $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                    $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                } else {
+                    $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                    $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                }
+
+                // Update the previously selected column and its sorting direction
+                prevSelectedColumn = clickedColumn;
+                prevSortDirection = sortDirection;
                 document.getElementById('close_btn').click();
                 const card = $('.table_apeend').html(data.view);
             },
@@ -304,14 +323,14 @@
 
 
 
-    function fetchContact(e, sortField, sortDirection) {
+    function fetchContact(e, sortField, sortDirection, clickedColumn) {
         const searchInput = $('#contactSearch');
         var csearch = $('#contactSort');
         var filterVal = csearch.val();
         console.log(sortField, sortDirection, searchInput, filterVal, 'testignnnnnnnnn')
         // var filterVal = selectedModule.val();
         // Call fetchData with the updated parameters
-        filterContactData(sortField, sortDirection, searchInput, filterVal);
+        filterContactData(sortField, sortDirection, searchInput, filterVal, "", "", clickedColumn);
     }
 
 
@@ -351,9 +370,9 @@
                 "Stage": "Potential",
                 // "Client_Primary_Name":,
                 // "Client_Name_Only":
-                "Contact_Name":{
-                    "Name":userContact.first_name+" "+userContact.last_name,
-                    "id":userContact.zoho_contact_id
+                "Contact_Name": {
+                    "Name": userContact.first_name + " " + userContact.last_name,
+                    "id": userContact.zoho_contact_id
                 }
             }],
             "_token": '{{ csrf_token() }}'

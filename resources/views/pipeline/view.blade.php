@@ -59,6 +59,7 @@
                     New Task
                 </div>
                 @include('common.tasks.create',['deal'=>$deal,'type'=>'Deals'])
+                @include('common.notes.create',['deal'=>$deal,'type'=>'Deals'])
 
             </div>
             <div class="row">
@@ -99,7 +100,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12"
         style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-        <p class="npinfoText">Client Information</p>
+        <p class="npinfoText">Transaction Details</p>
         <form class="row g-3" id="additionalFields">
             <div class="col-md-6 selectSearch">
                 <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
@@ -268,7 +269,7 @@
                     value="{{$deal['userData']['name']}}">
             </div>
             <div class="col-md-6">
-                <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
+                <label for="tmPreference" class="form-label nplabelText">TM Preference</label>
                 <select class="form-select npinputinfo" id="tmPreference" required>
                     <option selected value="">--None--</option>
                     <option value="CHR TM" {{$deal['tm_preference']=='CHR TM' ? 'selected' : '' }}>CHR TM</option>
@@ -319,7 +320,13 @@
         </form>
     </div>
 </div>
-
+<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
+data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+<div class="tooltip-wrapper">
+    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    <span class="tooltiptext">Add Notes</span>
+</div>
+</div>
 {{-- contact roles --}}
 @include('contactRole.index',['dealContacts'=>$dealContacts])
 
@@ -476,8 +483,6 @@
             </ul>
         </nav>
     </div>
-
-
 </div>
 
 </div>
