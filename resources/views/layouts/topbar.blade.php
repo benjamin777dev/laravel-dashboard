@@ -444,34 +444,6 @@
 </div><!-- /.modal -->
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let delay;
-        let timeout;
-        timeout =  setTimeout(() => {
-        var button = document.querySelector('.navbar-toggler');
-        var sidebar = document.querySelector('.vertical-menu');
-
-        button.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-        });
-
-        const modalSelectMap = [{
-            modalID: 'global-search',
-            selectElementId: 'global-search'
-        }, ];
-
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
-        });
-
-    }, delay);
-
-    });
-
     function addressNavbar() {
         let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
         let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
