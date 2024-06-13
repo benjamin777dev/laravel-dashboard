@@ -3083,16 +3083,16 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 }
 
-/* @media (max-width: 992px) { */
-/* .vertical-menu {
+@media (max-width: 992px) { 
+    .vertical-menu{
         display: none;
-    } */
-
-.vertical-menu.show {
-    display: block;
+    }
+    .vertical-menu.show {
+    display: block !important;
+    width: 250px !important;
 }
 
-/* } */
+}
 .selectSearch .select2-container {
     /* z-index: 0 !important; */
 }

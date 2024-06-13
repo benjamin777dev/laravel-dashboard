@@ -142,7 +142,7 @@
                         <div class="row d-flex justify-content-center mt-100">
                             <div>
                                 <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                                <select id="choices-multiple-remove-button_test" placeholder="Select up to 5 Groups"
+                                <select id="choices-multiple-remove-button_test" placeholder="Select  Groups"
                                     multiple>
                                     @foreach ($groups as $group)
                                         @php
@@ -499,7 +499,7 @@
 
         var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
             removeItemButton: true,
-            maxItemCount: 5,
+            maxItemCount: null,
             searchResultLimit: 500,
             renderChoiceLimit: -1,
         });

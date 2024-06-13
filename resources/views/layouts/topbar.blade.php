@@ -445,6 +445,9 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        let delay;
+        let timeout;
+        timeout =  setTimeout(() => {
         var button = document.querySelector('.navbar-toggler');
         var sidebar = document.querySelector('.vertical-menu');
 
@@ -464,6 +467,8 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdown(modalID, selectElement);
         });
+
+    }, delay);
 
     });
 
