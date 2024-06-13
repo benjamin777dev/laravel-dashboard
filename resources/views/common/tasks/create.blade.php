@@ -56,10 +56,8 @@
                             </option>
                         </select>
                     </div>
-                    <div>
                         <p class="dDueText">Date due</p>
-                        <input type="date" name="due_date" class="dmodalInput">
-                    </div>
+                        <input type="text" id="due_date_contact" class="dmodalInput">
                 </div>
                 <div class="modal-footer ">
                     <button type="button" onclick="addCommonTask('{{ $contact['zoho_contact_id'] }}','Contacts')"
@@ -106,8 +104,9 @@
         </div>
     </div>
 @endif
+
 <script>
-    window.onload = function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const modalSelectMap = [{
                 modalID: 'staticBackdropforTask',
                 selectElementId: 'related_to_rem_create'
@@ -126,7 +125,7 @@
             showDropdown(modalID, selectElement);
         });
 
-    }
+    });
     window.resetValidationTask = function(id) {
         if (id) {
             document.getElementById("subject_error" + id).innerHTML = "";

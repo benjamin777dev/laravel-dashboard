@@ -59,6 +59,7 @@
                     New Task
                 </div>
                 @include('common.tasks.create',['deal'=>$deal,'type'=>'Deals'])
+                @include('common.notes.create',['deal'=>$deal,'type'=>'Deals'])
 
             </div>
             <div class="row">
@@ -319,7 +320,13 @@
         </form>
     </div>
 </div>
-
+<div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
+data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
+<div class="tooltip-wrapper">
+    <img src="{{ URL::asset('/images/notesIcon.svg') }}" alt="Notes icon">
+    <span class="tooltiptext">Add Notes</span>
+</div>
+</div>
 {{-- contact roles --}}
 @include('contactRole.index',['dealContacts'=>$dealContacts])
 

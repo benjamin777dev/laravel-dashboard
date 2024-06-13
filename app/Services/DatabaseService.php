@@ -736,7 +736,7 @@ class DatabaseService
             }
 
             // Paginate the results
-            $contacts = $contacts->paginate(12);
+            $contacts = $contacts->paginate(10);
 
             return $contacts;
         } catch (\Exception $e) {

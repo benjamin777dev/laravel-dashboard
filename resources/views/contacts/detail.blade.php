@@ -391,6 +391,12 @@
             </div>
         </div>
     </div>
+      {{-- task modal --}}
+      @include('common.tasks.create', [
+        'contact' => $contact,
+        'retrieveModuleData' => $retrieveModuleData,
+        'type' => 'Contacts',
+    ])
     @include('common.contact.createModal', [
         'contact' => $contact,
         'retrieveModuleData' => $retrieveModuleData,
@@ -402,12 +408,7 @@
         'retrieveModuleData' => $retrieveModuleData,
         'type' => 'Contacts',
     ])
-    {{-- task modal --}}
-    @include('common.tasks.create', [
-        'contact' => $contact,
-        'retrieveModuleData' => $retrieveModuleData,
-        'type' => 'Contacts',
-    ])
+  
 
 @endsection
 <script>
@@ -503,7 +504,7 @@
             searchResultLimit: 500,
             renderChoiceLimit: -1,
         });
-        let selectedGroupsArr = [];
+        let selectedGroupsArr = [];         
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';

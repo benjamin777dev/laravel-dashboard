@@ -2347,6 +2347,10 @@ background:  #FFF;
 .dataCardDiv {
     min-height: 245px;
     cursor: pointer;
+    display: none;
+}
+.d-flex.flex-column i {
+    margin-bottom: -5px; /* Adjust this value to reduce the space between the icons */
 }
 
 .dacBodyDiv {
@@ -3178,18 +3182,16 @@ body[data-sidebar="dark"] .navbar-brand-box {
     cursor: not-allowed;
 }
 
-.dataCardDiv {
-    display: none;
-}
+
 
 /* Styles for screens smaller than 767px */
 @media (max-width: 767px) {
     .webResponsiveDiv {
-        display: none;
+        display: none !important;
     }
 
     .dataCardDiv {
-        display: block;
+        display: block !important;
     }
 
     .col-contact {

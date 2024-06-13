@@ -7,80 +7,100 @@
                     <th>
                         <div></div>
                     </th>
-                    <th>
-                        <div class="commonFlex">
+                    <th class="sorting sorting_asc">
+                        <div onclick="toggleSort('deal_name',this)" class="commonFlex">
                         <p class="mb-0">Transaction</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon" alt="Transaction icon"
-                            id="pipelineSort" onclick="toggleSort('deal_name')">
+                            <div class="d-flex flex-column">
+                                <i class="bx bx-caret-up up-arrow"></i>
+                                <i class="bx bx-caret-down down-arrow"></i>
+                            </div>
                         </div>
                     </th>
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('client_name_primary',this)" class="commonFlex">
                         <p class="mb-0">Client Name</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('client_name_primary')">
+                            <div class="d-flex flex-column">
+                                <i class="bx bx-caret-up up-arrow"></i>
+                                <i class="bx bx-caret-down down-arrow"></i>
+                            </div>
                         </div>
                     </th>
     
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('stage',this)" class="commonFlex">
                         <p class="mb-0">Status&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Status icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('stage')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                         </div>
                     </th>
     
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('representing',this)" class="commonFlex">
                         <p class="mb-0">Representing</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Rep icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('representing')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                         </div>
                     </th>
     
     
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('sale_price',this)" class="commonFlex">
                         <p class="mb-0">Price</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Price icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('sale_price')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                         </div>
                     </th>
     
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Close Date</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Close icon" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                             </div>
                     </th>
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Commission</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Commission" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                         </div>
                     </th>
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Potential GCI</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Potential GCI" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                             </div>
                     </th>
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Probability</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probability" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                             </div>
     
                     </th>
                     <th>
-                        <div class="commonFlex">
+                        <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Probable GCI</p>
-                        <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Probable GCI" class="ppiplineSwapIcon"
-                            id="pipelineSort" onclick="toggleSort('closing_date')">
+                        <div class="d-flex flex-column">
+                            <i class="bx bx-caret-up up-arrow"></i>
+                            <i class="bx bx-caret-down down-arrow"></i>
+                        </div>
                         </div>
                     </th>
                   </tr>
@@ -388,14 +408,14 @@
 
 
     // Initial sorting direction
-    let sortDirection = 'desc';
-
+    
+    let sortDirectionPipeline = 'desc';
     // Function to toggle sort
-    window.toggleSort = function(sortField) {
+    window.toggleSort = function(sortField,clickedColumn) {
         // Toggle the sort direction
-        sortDirection = (sortDirection === 'desc') ? 'asc' : 'desc';
+        sortDirectionPipeline = (sortDirectionPipeline === 'desc') ? 'asc' : 'desc';
         // Call fetchDeal with the sortField parameter
-        fetchDeal(sortField, sortDirection);
+        fetchDeal(sortField, sortDirectionPipeline,"",clickedColumn);
     };
 
     function validateTextarea() {
@@ -410,38 +430,4 @@
         }
     }
 
-    // Add an event listener to send search term as request
-    function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv) {
-        // console.log("filter",filter);
-        const searchValue = searchInput.val().trim();
-        $.ajax({
-            url: '{{ url('/pipeline/deals') }}',
-            method: 'GET',
-            data: {
-                search: encodeURIComponent(searchValue),
-                sort: sortValue || "",
-                sortType: sortType || "",
-                filter: filter
-            },
-
-            success: function(data) {
-                const card = $('.transaction-container').html(data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-
-
-    window.fetchDeal = function(sortField, sortDirection) {
-        const searchInput = $('#pipelineSearch');
-        const sortInput = $('#pipelineSort');
-        const ppipelineTableBody = $('.psearchandsort');
-        const ptableCardDiv = $('.ptableCardDiv');
-        var selectedModule = $('#related_to_stage');
-        var selectedText = selectedModule.val();
-        // Call fetchData with the updated parameters
-        fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv);
-    }
 </script>
