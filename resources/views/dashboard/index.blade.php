@@ -246,6 +246,48 @@
                 behavior: 'smooth'
             });
         });
+      
+        var defaultTab = "{{ $tab }}";
+        console.log(defaultTab, 'tab is here')
+        localStorage.setItem('status', defaultTab);
+        // Retrieve the status from local storage
+        var status = localStorage.getItem('status');
+
+        // Object to store status information
+        var statusInfo = {
+            'In Progress': false,
+            'Overdue': false,
+            'Not Started': false,
+        };
+
+        // Update the status information based on the current status
+        statusInfo[status] = true;
+
+        // Loop through statusInfo to set other statuses to false
+        for (var key in statusInfo) {
+            if (key !== status) {
+                statusInfo[key] = false;
+            }
+        }
+
+        // Remove active class from all tabs
+        var tabs = document.querySelectorAll('.nav-link');
+        console.log(tabs, 'tabssss')
+        tabs.forEach(function(tab) {
+            tab.classList.remove('active');
+        });
+
+        // Set active class to the tab corresponding to the status
+        console.log(status, 'status');
+        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
+        if (activeTab) {
+            activeTab.classList.add('active');
+        }
+
+        // console.log("yes tist woring", @json($allMonths), )
+        var ctx = document.getElementById('chart').getContext('2d');
+        window.myGauge = new Chart(ctx, config);
+
     });
 
 
@@ -274,53 +316,6 @@
         });
 
     }
-    document.addEventListener('DOMContentLoaded', function() {
-        var defaultTab = "{{ $tab }}";
-        console.log(defaultTab, 'tab is here')
-        localStorage.setItem('status', defaultTab);
-        // Retrieve the status from local storage
-        var status = localStorage.getItem('status');
-
-        // Object to store status information
-        var statusInfo = {
-            'In Progress': false,
-            'Overdue': false,
-            'Not Started': false,
-        };
-
-        // Update the status information based on the current status
-        statusInfo[status] = true;
-
-        // Loop through statusInfo to set other statuses to false
-        for (var key in statusInfo) {
-            if (key !== status) {
-                statusInfo[key] = false;
-            }
-        }
-
-        // Example of accessing status information
-        console.log(statusInfo);
-
-        // Remove active class from all tabs
-        var tabs = document.querySelectorAll('.nav-link');
-        console.log(tabs, 'tabssss')
-        tabs.forEach(function(tab) {
-            tab.classList.remove('active');
-        });
-
-        // Set active class to the tab corresponding to the status
-        console.log(status, 'status');
-        var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
-        if (activeTab) {
-            activeTab.classList.add('active');
-        }
-
-        // console.log("yes tist woring", @json($allMonths), )
-        var ctx = document.getElementById('chart').getContext('2d');
-        window.myGauge = new Chart(ctx, config);
-
-
-    });
     // var selectedNoteIds = [];
 
     function handleDeleteCheckbox(id) {

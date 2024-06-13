@@ -99,10 +99,11 @@
 
 
     <script>
+        var prevSelectedColumn = null;
+        var prevSortDirection = "";
         // Add an event listener to send search term as request
-        function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall) {
-
-            // console.log("filter",filter);
+        function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+            clickedColumn = "") {
             let searchValue = searchInput.val().trim();
             if (resetall === "reset_all") {
                 document.getElementById("loaderOverlay").style.display = "block";
@@ -128,6 +129,26 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
+                    if (prevSelectedColumn !== null) {
+                        if (prevSortDirection === "asc") {
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                        } else {
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                        }
+                    }
+                    if (sortType === "asc") {
+                        $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                    } else {
+                        $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                    }
+
+                    // Update the previously selected column and its sorting direction
+                    prevSelectedColumn = clickedColumn;
+                    prevSortDirection = sortType;
                     const card = $('.transaction-container').html(data);
 
                 },
@@ -176,7 +197,7 @@
             });
         }
 
-        window.fetchDeal = function(sortField, sortDirection, resetall = "") {
+        window.fetchDeal = function(sortField, sortDirection, resetall = "", clickedCoulmn) {
             let searchInput = $('#pipelineSearch');
             let sortInput = $('#pipelineSort');
             let ppipelineTableBody = $('.psearchandsort');
@@ -184,7 +205,7 @@
             let selectedModule = $('#related_to_stage');
             let selectedText = selectedModule.val();
             // Call fetchData with the updated parameters
-            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall);
+            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
         }
     </script>
 

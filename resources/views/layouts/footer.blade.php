@@ -12,3 +12,26 @@
         </div>
     </div>
 </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var button = document.querySelector('.navbar-toggler');
+        var sidebar = document.querySelector('.vertical-menu');
+
+        button.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+
+        const modalSelectMap = [{
+            modalID: 'global-search',
+            selectElementId: 'global-search'
+        }, ];
+
+        modalSelectMap.forEach(({
+            modalID,
+            selectElementId
+        }) => {
+            const selectElement = $(`#${selectElementId}`);
+            showDropdown(modalID, selectElement);
+        });
+    });
+</script>

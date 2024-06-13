@@ -7,52 +7,61 @@
                     <thead class="thead_con_design">
                         <tr>
                             <th></th>
-                            <th>
-                                <div class="commonFlex">
+                            <th data-sort-type="text">
+                                <div class="commonFlex" onclick="sortContact('last_name',this)">
                                     <p class="mb-0">Full name</p>
-                                    <img onclick="sortContact('first_name')"
-                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                    <div class="d-flex flex-column">
+                                        <i class="bx bx-caret-up up-arrow"></i>
+                                        <i class="bx bx-caret-down down-arrow"></i>
+                                    </div>
                                 </div>
                             </th>
                             <th scope="col">
-                                <div class="commonFlex">
+                                <div onclick="sortContact('relationship_type',this)" class="commonFlex">
                                     <p class="mb-0">Relationship Type</p>
-                                    <img onclick="sortContact('relationship_type')"
-                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                    <div class="d-flex flex-column">
+                                        <i class="bx bx-caret-up up-arrow"></i>
+                                        <i class="bx bx-caret-down down-arrow"></i>
+                                    </div>
                                 </div>
                             </th>
                             <th scope="col">
-                                <div class="commonFlex">
+                                <div onclick="sortContact('email',this)" class="commonFlex">
                                     <p class="mb-0">Email</p>
-                                    <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                    <div class="d-flex flex-column">
+                                    <i class="bx bx-caret-up up-arrow"></i>
+                                    <i class="bx bx-caret-down down-arrow"></i>
+                                </div>
                                 </div>
                             </th>
-                            <th scope="col">
-                                <div class="commonFlex">
-                                    <p class="mb-0">Mobile</p>
-                                    <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                                </div>
-                            </th>
-                            <!-- <th>
-                                <div class="commonFlex">
+                            {{-- <th>
+                                <div onclick="sortContact('abcd',this)" class="commonFlex">
                                     <p class="mb-0">ABCD</p>
-                                    <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                        <div class="d-flex flex-column">
+                                            <i class="bx bx-caret-up up-arrow"></i>
+                                            <i class="bx bx-caret-down down-arrow"></i>
+                                        </div>
                                 </div>
-                            </th> -->
+                            </th> --}}
                             <th scope="col">
-                                <div class="commonFlex">
-                                    <p class="mb-0">Address</p>
-                                    <img onclick="sortContact('mailing_address')"
-                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                <div onclick="sortContact('mobile',this)" class="commonFlex">
+                                    <p class="mb-0">Mobile</p>
+                                        <div class="d-flex flex-column">
+                                            <i class="bx bx-caret-up up-arrow"></i>
+                                            <i class="bx bx-caret-down down-arrow"></i>
+                                        </div>
                                 </div>
                             </th>
                             
+                            <th scope="col">
+                                <div onclick="sortContact('mailing_address',this)" class="commonFlex">
+                                    <p class="mb-0">Address</p>
+                                    <div class="d-flex flex-column">
+                                    <i class="bx bx-caret-up up-arrow"></i>
+                                    <i class="bx bx-caret-down down-arrow"></i>
+                                </div>
+                                </div>
+                            </th>                            
                         </tr>
                     </thead>
                 @endif
@@ -153,28 +162,9 @@
                     </div>
                 </div>
             </a>
-            {{-- task create model --}}
-            @include('common.tasks.create', ['contact' => $contact, 'type' => 'Contacts'])
-
-            {{-- fetch details notes related 0 --}}
-            <div class="modal fade testing" onclick="event.preventDefault();"
-                id="notefetchrelatedContact{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
-                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered deleteModal">
-                    <div class="modal-content dtaskmodalContent">
-                        <div class="modal-header border-0">
-                            <p class="modal-title dHeaderText">Notes</p>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                onclick="resetValidation()" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body dtaskbody" id="notesContainer{{ $contact['zoho_contact_id'] }}">
-
-                        </div>
 
 
-                    </div>
-                </div>
-            </div>
+        
             <div class="modal fade" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered deleteModal">
                     <div class="modal-content">
@@ -201,7 +191,6 @@
                     </div>
                 </div>
             </div>
-            @include('common.notes.create', ['contact' => $contact, 'type' => 'Contacts'])
             </a>
         @endforeach
     </div>
@@ -264,14 +253,15 @@
                 }
             });
         }
+        
     }
 
 
     let sortDirectionContact = 'desc';
-    window.sortContact = function(sort) {
+    window.sortContact = function(sort,clickColumn) {
         sortDirectionContact = (sortDirectionContact === 'desc') ? 'asc' : 'desc';
         // Call fetchDeal with the sortField parameter
-        fetchContact("", sort, sortDirectionContact);
+        fetchContact("", sort, sortDirectionContact,clickColumn);
     }
 
 
