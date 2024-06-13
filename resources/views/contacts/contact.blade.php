@@ -6,39 +6,11 @@
                 @if ($apend === false)
                     <thead class="thead_con_design">
                         <tr>
+                            <th></th>
                             <th>
                                 <div class="commonFlex">
-                                    <p class="mb-0">First name</p>
+                                    <p class="mb-0">Full name</p>
                                     <img onclick="sortContact('first_name')"
-                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
-                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                                </div>
-                            </th>
-                            <th>
-                                <div class="commonFlex">
-                                    <p class="mb-0">ABCD</p>
-                                    <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="commonFlex">
-                                    <p class="mb-0">Mobile</p>
-                                    <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="commonFlex">
-                                    <p class="mb-0">Email</p>
-                                    <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
-                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="commonFlex">
-                                    <p class="mb-0">Address</p>
-                                    <img onclick="sortContact('mailing_address')"
                                         src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
                                         class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                                 </div>
@@ -51,7 +23,36 @@
                                         class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
                                 </div>
                             </th>
-                            <th></th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Email</p>
+                                    <img onclick="sortContact('email')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Mobile</p>
+                                    <img onclick="sortContact('mobile')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            <!-- <th>
+                                <div class="commonFlex">
+                                    <p class="mb-0">ABCD</p>
+                                    <img onclick="sortContact('abcd')" src="{{ URL::asset('/images/swap_vert.svg') }}"
+                                        alt="Client icon" class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th> -->
+                            <th scope="col">
+                                <div class="commonFlex">
+                                    <p class="mb-0">Address</p>
+                                    <img onclick="sortContact('mailing_address')"
+                                        src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Client icon"
+                                        class="ppiplineSwapIcon" {{-- id="pipelineSort" onclick="toggleSort('client_name_primary')" --}}>
+                                </div>
+                            </th>
+                            
                         </tr>
                     </thead>
                 @endif

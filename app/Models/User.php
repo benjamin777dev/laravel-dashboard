@@ -178,4 +178,8 @@ class User extends Authenticatable
         Log::info("Decrypted refresh token: " . $refreshToken);
         return $refreshToken;
     }
+    public function contactData()
+    {
+        return $this->belongsTo(Contact::class, 'zoho_id', 'zoho_contact_id');
+    }
 }
