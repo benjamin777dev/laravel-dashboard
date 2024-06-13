@@ -1353,7 +1353,9 @@ class DatabaseService
             });
 
             // Get all groups
-            $groups = $query->with('contacts')->get();
+            $groups = $query->with(['contacts' => function ($query) use ($user) {
+                $query->where('ownerId', $user->id);
+            }])->get();
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {
