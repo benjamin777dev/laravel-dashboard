@@ -9,29 +9,20 @@
                             <th></th>
                             <th data-sort-type="text">
                                 <div class="commonFlex" onclick="sortContact('last_name',this)">
-                                    <p class="mb-0">First name</p>
+                                    <p class="mb-0">Full name</p>
                                     <div class="d-flex flex-column">
                                         <i class="bx bx-caret-up up-arrow"></i>
                                         <i class="bx bx-caret-down down-arrow"></i>
                                     </div>
                                 </div>
                             </th>
-                            <th>
-                                <div onclick="sortContact('abcd',this)" class="commonFlex">
-                                    <p class="mb-0">ABCD</p>
-                                        <div class="d-flex flex-column">
-                                            <i class="bx bx-caret-up up-arrow"></i>
-                                            <i class="bx bx-caret-down down-arrow"></i>
-                                        </div>
-                                </div>
-                            </th>
                             <th scope="col">
-                                <div onclick="sortContact('mobile',this)" class="commonFlex">
-                                    <p class="mb-0">Mobile</p>
-                                        <div class="d-flex flex-column">
-                                            <i class="bx bx-caret-up up-arrow"></i>
-                                            <i class="bx bx-caret-down down-arrow"></i>
-                                        </div>
+                                <div onclick="sortContact('relationship_type',this)" class="commonFlex">
+                                    <p class="mb-0">Relationship Type</p>
+                                    <div class="d-flex flex-column">
+                                        <i class="bx bx-caret-up up-arrow"></i>
+                                        <i class="bx bx-caret-down down-arrow"></i>
+                                    </div>
                                 </div>
                             </th>
                             <th scope="col">
@@ -43,6 +34,25 @@
                                 </div>
                                 </div>
                             </th>
+                            {{-- <th>
+                                <div onclick="sortContact('abcd',this)" class="commonFlex">
+                                    <p class="mb-0">ABCD</p>
+                                        <div class="d-flex flex-column">
+                                            <i class="bx bx-caret-up up-arrow"></i>
+                                            <i class="bx bx-caret-down down-arrow"></i>
+                                        </div>
+                                </div>
+                            </th> --}}
+                            <th scope="col">
+                                <div onclick="sortContact('mobile',this)" class="commonFlex">
+                                    <p class="mb-0">Mobile</p>
+                                        <div class="d-flex flex-column">
+                                            <i class="bx bx-caret-up up-arrow"></i>
+                                            <i class="bx bx-caret-down down-arrow"></i>
+                                        </div>
+                                </div>
+                            </th>
+                            
                             <th scope="col">
                                 <div onclick="sortContact('mailing_address',this)" class="commonFlex">
                                     <p class="mb-0">Address</p>
@@ -51,17 +61,7 @@
                                     <i class="bx bx-caret-down down-arrow"></i>
                                 </div>
                                 </div>
-                            </th>
-                            <th scope="col">
-                                <div onclick="sortContact('relationship_type',this)" class="commonFlex">
-                                    <p class="mb-0">Relationship Type</p>
-                                    <div class="d-flex flex-column">
-                                    <i class="bx bx-caret-up up-arrow"></i>
-                                    <i class="bx bx-caret-down down-arrow"></i>
-                                </div>
-                            </div>
-                            </th>
-                            <th></th>
+                            </th>                            
                         </tr>
                     </thead>
                 @endif

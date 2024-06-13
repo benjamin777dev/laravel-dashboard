@@ -407,8 +407,7 @@
                 </form>
             </div>
         </div>
-        {{-- contact roles --}}
-        @include('contactRole.index', ['dealContacts' => $dealContacts])
+        
 
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"

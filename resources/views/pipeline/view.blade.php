@@ -100,7 +100,7 @@
 <div class="row">
     <div class="col-md-6 col-sm-12"
         style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-        <p class="npinfoText">Client Information</p>
+        <p class="npinfoText">Transaction Details</p>
         <form class="row g-3" id="additionalFields">
             <div class="col-md-6 selectSearch">
                 <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
@@ -269,7 +269,7 @@
                     value="{{$deal['userData']['name']}}">
             </div>
             <div class="col-md-6">
-                <label for="tmPreference" class="form-label nplabelText">Tm Preference</label>
+                <label for="tmPreference" class="form-label nplabelText">TM Preference</label>
                 <select class="form-select npinputinfo" id="tmPreference" required>
                     <option selected value="">--None--</option>
                     <option value="CHR TM" {{$deal['tm_preference']=='CHR TM' ? 'selected' : '' }}>CHR TM</option>

@@ -53,15 +53,7 @@
             </div>
         </td>
         <td>{{ $contact['first_name'] ?? $contact['last_name'] }}</td>
-        <td>{{ $contact['abcd'] ?? '-' }}</td>
-        <td>
-            <div class="d-flex gap-2"
-                onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile_web','{{ $contact['mobile'] ?? 'N/A' }}')">
-                <p id="mobile_web{{ $contact['zoho_contact_id'] }}" class="card-text">
-                    {{ $contact['mobile'] ?? 'N/A' }}</p>
-
-            </div>
-        </td>
+        <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
         <td>
             <div class="datamailDiv px-0">
                 <img src="{{ URL::asset('/images/mail.svg') }}" alt="" class="datamailicon">
@@ -73,6 +65,17 @@
                 </div>
             </div>
         </td>
+
+        {{-- <td>{{ $contact['abcd'] ?? '-' }}</td> --}}
+        <td>
+            <div class="d-flex gap-2"
+                onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile_web','{{ $contact['mobile'] ?? 'N/A' }}')">
+                <p id="mobile_web{{ $contact['zoho_contact_id'] }}" class="card-text">
+                    {{ $contact['mobile'] ?? 'N/A' }}</p>
+
+            </div>
+        </td>
+       
         <td>
             <div class="datamailDiv px-0">
                 <i class="fas fa-map-marker-alt"></i>
@@ -105,7 +108,6 @@
             </div>
         </td>
 
-        <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
 
 
     </tr>

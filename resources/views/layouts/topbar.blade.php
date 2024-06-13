@@ -35,322 +35,27 @@
 
             <!-- App Search-->
             <div class="search-input-design">
-            <div class="app-search d-none d-lg-block" id="global-search" >
-                
-            </div>
-        </div> 
-
-            <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
-                
-                <div class="dropdown-menu dropdown-megamenu">
-                    <div class="row">
-                        <div class="col-sm-8">
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h5 class="font-size-14 mt-0" key="t-ui-components">@lang('UI_Components')</h5>
-                                    <ul class="list-unstyled megamenu-list">
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-lightbox">@lang('Lightbox')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-range-slider">@lang('Range_Slider')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-sweet-alert">@lang('Sweet_Alert')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-rating">@lang('Rating')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-forms">@lang('Forms')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-tables">@lang('Tables')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-charts">@lang('Charts')</a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <h5 class="font-size-14 mt-0" key="t-applications">@lang('Applications')</h5>
-                                    <ul class="list-unstyled megamenu-list">
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-ecommerce">@lang('Ecommerce')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-calendar">@lang('Calendars')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-email">@lang('Email')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-projects">@lang('Projects')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-tasks">@lang('Tasks')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-contacts">@lang('Contacts')</a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <h5 class="font-size-14 mt-0" key="t-extra-pages">@lang('Extra_Pages')</h5>
-                                    <ul class="list-unstyled megamenu-list">
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-light-sidebar">@lang('Light_Sidebar')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-compact-sidebar">@lang('Compact_Sidebar')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-horizontal">@lang('Horizontal_layout')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-maintenance">@lang('Maintenance')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-coming-soon">@lang('Coming_Soon')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-timeline">@lang('Timeline')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-faqs">@lang('FAQs')</a>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <h5 class="font-size-14 mt-0" key="t-ui-components">@lang('UI_Components')</h5>
-                                    <ul class="list-unstyled megamenu-list">
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-lightbox">@lang('Lightbox')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-range-slider">@lang('Range_Slider')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-sweet-alert">@lang('Sweet_Alert')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-rating">@lang('Rating')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-forms">@lang('Forms')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-tables">@lang('Tables')</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" key="t-charts">@lang('Charts')</a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="col-sm-5">
-                                    <div>
-                                        <img src="{{ URL::asset('build/images/megamenu-img.png') }}" alt=""
-                                            class="img-fluid mx-auto d-block">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="app-search d-none d-lg-block" id="global-search" >
+                    
                 </div>
-            </div>
+            </div> 
+
+            
         </div>
 
-        <div class="d-flex">
-
-            <div class="dropdown d-inline-block d-lg-none ms-2">
-                <button type="button" class="btn header-item noti-icon waves-effect"
-                    id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    <i class="mdi mdi-magnify"></i>
+        <div class="d-flex ">
+                <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-plus plusicon"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
-                    aria-labelledby="page-header-search-dropdown">
-
-                    <form class="p-3">
-                        <div class="form-group m-0">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="@lang('Search')"
-                                    aria-label="Search input">
-
-                                <button class="btn btn-primary" type="submit"><i
-                                        class="mdi mdi-magnify"></i></button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <!-- item-->
+                    <a class="dropdown-item" href="javascript:void();"
+                        onclick="createTransaction('{{Auth::user()->contactData}}');"><i class="fas fa-plus plusicon"></i> <span
+                            key="t-logout">New Transaction</span></a>
                 </div>
             </div>
-
-            <div class="dropdown d-inline-block">
-
-            </div>
-
-            <div class="dropdown d-none d-lg-inline-block ms-1">
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                    <div class="px-lg-2">
-                        <div class="row g-0">
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/github.png') }}" alt="Github">
-                                    <span>GitHub</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/bitbucket.png') }}" alt="bitbucket">
-                                    <span>Bitbucket</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/dribbble.png') }}" alt="dribbble">
-                                    <span>Dribbble</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="row g-0">
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/dropbox.png') }}" alt="dropbox">
-                                    <span>Dropbox</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/mail_chimp.png') }}"
-                                        alt="mail_chimp">
-                                    <span>Mail Chimp</span>
-                                </a>
-                            </div>
-                            <div class="col">
-                                <a class="dropdown-icon-item" href="#">
-                                    <img src="{{ URL::asset('build/images/brands/slack.png') }}" alt="slack">
-                                    <span>Slack</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="dropdown d-none d-lg-inline-block ms-1">
-            </div>
-            {{-- <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon waves-effect"
-                    id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    <i class="bx bx-bell bx-tada"></i>
-                    <span class="badge bg-danger rounded-pill">3</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
-                    aria-labelledby="page-header-notifications-dropdown">
-                    <div class="p-3">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h6 class="m-0" key="t-notifications"> @lang('Notifications') </h6>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#!" class="small" key="t-view-all"> @lang('View_All')</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div data-simplebar style="max-height: 230px;">
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="avatar-xs me-3">
-                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
-                                        <i class="bx bx-cart"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6>Notification Not Found..</h6>
-                                    {{-- <h6 class="mt-0 mb-1" key="t-your-order">@lang('empty notificaton')</h6> --}}
-            {{-- <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-grammer">
-                                            @lang('If_several_languages_coalesce_the_grammar')</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span
-                                                key="t-min-ago">@lang('3_min_ago')</span></p>
-                                    </div> --}}
-            {{--
-                                </div>
-                            </div>
-                        </a> --}}
-            {{-- <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}"
-                                    class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                <div class="flex-grow-1">
-                                    <h6 class="mt-0 mb-1">@lang('James_Lemire')</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-simplified">
-                                            @lang('It_will_seem_like_simplified_English')
-                                        </p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span
-                                                key="t-hours-ago">@lang('1_hours_ago')</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a> --}}
-            {{-- <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="avatar-xs me-3">
-                                    <span class="avatar-title bg-success rounded-circle font-size-16">
-                                        <i class="bx bx-badge-check"></i>
-                                    </span>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="mt-0 mb-1" key="t-shipped">@lang('Your_item_is_shipped')</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-grammer">
-                                            @lang('If_several_languages_coalesce_the_grammar')</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span
-                                                key="t-min-ago">@lang('3_min_ago')</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <img src="{{ URL::asset('build/images/users/avatar-4.jpg') }}"
-                                    class="me-3 rounded-circle avatar-xs" alt="user-pic">
-                                <div class="flex-grow-1">
-                                    <h6 class="mt-0 mb-1">@lang('Salena_Layfield')</h6>
-                                    <div class="font-size-12 text-muted">
-                                        <p class="mb-1" key="t-occidental">
-                                            @lang('As_a_skeptical_Cambridge_friend_of_mine_occidental')</p>
-                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span
-                                                key="t-hours-ago">@lang('1_hours_ago')</span></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a> --}}
-            {{--
-                    </div>
-                    <div class="p-2 border-top d-grid">
-                        <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                            <i class="mdi mdi-arrow-right-circle me-1"></i> <span
-                                key="t-view-more">@lang('View_More')</span>
-                        </a>
-                    </div>
-                </div> --}}
-            {{--
-            </div> --}}
-
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -385,11 +90,6 @@
                     </form>
                 </div>
             </div>
-            {{-- <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                    <i class="bx bx-cog bx-spin"></i>
-                </button>
-            </div> --}}
         </div>
     </div>
 </header>
@@ -471,5 +171,43 @@
             main_content.classList.add("margin-class");
         }
 
+    }
+    window.createTransaction = function(userContact) {
+        document.getElementById("loaderOverlay").style.display = "block";
+        document.getElementById('loaderfor').style.display = "block";
+        var formData = {
+            "data": [{
+                "Deal_Name": "{{ config('variables.dealName') }}",
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}"
+                },
+                "Contact_Name": {
+                    "id": userContact.zoho_contact_id,
+                    "Name":userContact.first_name+" "+userContact.last_name
+                },
+                "Stage": "Potential"
+            }],
+            "_token": '{{ csrf_token() }}'
+        };
+        $.ajax({
+            url: '{{ url('/pipeline/create') }}',
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(formData),
+            dataType: 'json',
+            success: function(data) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+                // Handle success response, such as redirecting to a new page
+                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
+            },
+            error: function(xhr, status, error) {
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById("loaderfor").style.display = "none";
+                console.error('Error:', error);
+            }
+        });
     }
 </script>
