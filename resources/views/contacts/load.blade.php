@@ -65,7 +65,6 @@
                 </div>
             </div>
         </td>
-
         {{-- <td>{{ $contact['abcd'] ?? '-' }}</td> --}}
         <td>
             <div class="d-flex gap-2"
