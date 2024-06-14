@@ -1,4 +1,4 @@
-@import"https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap";
+@import "https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap";
 
 .bg-black {
     background-color: #000000 !important;
@@ -83,7 +83,7 @@
     font-style: normal;
     font-weight: 800;
     line-height: 18.4px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .plusicon {
@@ -268,12 +268,10 @@
 }
 
 .page-link.active,
-.active>.page-link {
+.active > .page-link {
     background-color: #222 !important;
     border: 1px solid #222;
 }
-
-
 
 .dnotesUl {
     max-height: 325px;
@@ -320,7 +318,7 @@
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
     color: #fff;
-    background-color: #3B3B3B;
+    background-color: #3b3b3b;
 }
 
 .nav-link.active {
@@ -504,7 +502,6 @@
 
 .select2-container--default .select2-selection--single {
     border: none !important;
-
 }
 
 .select2-container--open .select2-dropdown--below {
@@ -633,8 +630,6 @@
     /* Adjust the size as needed */
     height: 24px;
 }
-
-
 
 /* / / / Note Modal / / / */
 .noteModal {
@@ -844,7 +839,6 @@
     .calendarInput {
         width: 206px !important;
     }
-
 }
 
 @media (min-width: 425px) and (max-width: 1345px) {
@@ -1136,7 +1130,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
 }
 
 .submittaldiv {
@@ -1147,7 +1140,6 @@
 
 .submittalType {
     padding-bottom: 20px;
-
 }
 
 .ppipeDiv {
@@ -1302,7 +1294,6 @@
     line-height: 16.1px;
     /* 115% */
 }
-
 
 .pfilterDiv {
     display: flex;
@@ -1608,7 +1599,6 @@
     font-weight: 400;
     letter-spacing: -0.28px;
     white-space: nowrap;
-
 }
 
 .table-data td {
@@ -1640,7 +1630,6 @@
 }
 
 @media (max-width: 767px) {
-
     .ppipelineTable,
     .dtabletranstion,
     .npcontacts-Table,
@@ -1974,13 +1963,13 @@
     /* gap: 24px; */
     flex: 1 0 0;
     border-radius: 8px;
-    background: #FFF;
+    background: #fff;
     max-width: 750px;
     /* min-height: 459px; */
     width: 100%;
 
     /* layoutCardsShadow */
-    box-shadow: 0px 2px 10px 0px #CECECE;
+    box-shadow: 0px 2px 10px 0px #cecece;
 }
 
 .corausal-req-text {
@@ -2002,7 +1991,7 @@
 }
 
 .common-corousal-level {
-    color: #6C6C6C;
+    color: #6c6c6c;
     font-family: Avenir;
     font-size: 14px;
     font-style: normal;
@@ -2013,22 +2002,22 @@
 .common-corousal-div {
     margin-bottom: 7px;
 }
-.second-step-common-select{
-padding: 12px 16px;
+.second-step-common-select {
+    padding: 12px 16px;
 
-background:  #F5F5F5;
-flex: 1 0 0;
+    background: #f5f5f5;
+    flex: 1 0 0;
 
-color:  #222;
+    color: #222;
 
-/* label-sm */
-font-family: Avenir;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
+    /* label-sm */
+    font-family: Avenir;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
-.select-mb24{
+.select-mb24 {
     margin-bottom: 24px;
 }
 .related_trxn .related_trxn select {
@@ -2042,20 +2031,20 @@ line-height: normal;
     line-height: normal;
 }
 
-.nontm-input-textarea{
+.nontm-input-textarea {
     display: flex;
-height: 86px;
-padding:  12px;
-align-items: flex-start;
-align-self: stretch;
+    height: 86px;
+    padding: 12px;
+    align-items: flex-start;
+    align-self: stretch;
 
-border-radius:  4px;
-border: 1px solid  #CECECE;
-background:  #FFF;
+    border-radius: 4px;
+    border: 1px solid #cecece;
+    background: #fff;
 }
 
 .additional_email label {
-    color: #6C6C6C;
+    color: #6c6c6c;
 
     /* label-sm */
     font-family: Avenir;
@@ -2073,8 +2062,8 @@ background:  #FFF;
     align-self: stretch;
 
     border-radius: 4px;
-    border: 1px solid #CECECE;
-    background: #FFF;
+    border: 1px solid #cecece;
+    background: #fff;
 }
 
 /* .close-date-nontm {
@@ -2093,8 +2082,8 @@ background:  #FFF;
     align-self: stretch;
 
     border-radius: 4px;
-    border: 1px solid #CECECE;
-    background: #FFF;
+    border: 1px solid #cecece;
+    background: #fff;
     height: 48px;
     padding: 12px;
     flex: 1 0 0;
@@ -2106,7 +2095,7 @@ background:  #FFF;
     font-weight: 400;
     line-height: normal;
 }
-.main_form_div{
+.main_form_div {
     padding: 0 90px 48px 90px;
 }
 .carousel-indicators {
@@ -2119,7 +2108,7 @@ background:  #FFF;
     color: #000;
 }
 
-.carousel-indicators button[type=button] {
+.carousel-indicators button[type="button"] {
     fill: #000;
     stroke-width: 1px;
     stroke: #000;
@@ -2127,7 +2116,7 @@ background:  #FFF;
     background: #848484;
 }
 
-.carousel-indicators button[type=button].active {
+.carousel-indicators button[type="button"].active {
     fill: #848484;
     background: #000;
 }
@@ -2143,11 +2132,10 @@ background:  #FFF;
 
 .label-div-mb {
     margin-bottom: 24px;
-
 }
 
 .common-label {
-    color: #6C6C6C;
+    color: #6c6c6c;
     font-family: Avenir;
     font-size: 14px;
     font-style: normal;
@@ -2155,7 +2143,8 @@ background:  #FFF;
     line-height: normal;
 }
 
-.additional_email {}
+.additional_email {
+}
 
 .close-date-comm {
     display: flex;
@@ -2179,8 +2168,8 @@ background:  #FFF;
     align-self: stretch;
 
     border-radius: 4px;
-    border: 1px solid #CECECE;
-    background: #FFF;
+    border: 1px solid #cecece;
+    background: #fff;
 }
 
 .nontm-select:focus {
@@ -2200,8 +2189,6 @@ background:  #FFF;
     line-height: normal;
     -webkit-appearance: none;
 }
-
-
 
 .non-title-div {
     color: #000;
@@ -2279,7 +2266,6 @@ background:  #FFF;
     margin: 0 68px 15px;
 }
 
-
 .npcontactbtn {
     display: flex;
     padding: 6px 11px;
@@ -2305,7 +2291,7 @@ background:  #FFF;
 
 .nav-link.active {
     background-color: #222 !important;
-    color: white !important
+    color: white !important;
 }
 
 /* CSS (inside your stylesheet or style tag) */
@@ -2327,7 +2313,7 @@ background:  #FFF;
     }
 }
 
-@media(max-width: 580px) {
+@media (max-width: 580px) {
     .nplabelText {
         text-align: start !important;
     }
@@ -2372,7 +2358,7 @@ background:  #FFF;
 
 .dacHeaderDiv {
     padding-left: 20px;
-    padding-top: .8rem;
+    padding-top: 0.8rem;
 }
 
 .databaseCardWord {
@@ -2484,7 +2470,6 @@ background:  #FFF;
 }
 
 @media (min-width: 320px) and (max-width: 475px) {
-
     .dbgroupsFlex,
     .pipeline-btns-container {
         display: block;
@@ -2982,7 +2967,6 @@ body {
 }
 
 .stacked-bar-chart {
-
     /* [class*="bar-"] {
         /* padding: 5px; */
     /* } */
@@ -3106,7 +3090,6 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 .dealTaskSelect:focus-visible {
     outline: 0 !important;
-
 }
 
 .select2-container {
@@ -3116,18 +3099,16 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 .select2-container:focus-visible {
     outline: 0 !important;
-
 }
 
-@media (max-width: 992px) { 
-    .vertical-menu{
+@media (max-width: 992px) {
+    .vertical-menu {
         display: none;
     }
     .vertical-menu.show {
-    display: block !important;
-    width: 250px !important;
-}
-
+        display: block !important;
+        width: 250px !important;
+    }
 }
 .selectSearch .select2-container {
     /* z-index: 0 !important; */
@@ -3139,7 +3120,6 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
 .select2-selection {
     border: 0;
-
 }
 
 .select2-selection__arrow {
@@ -3151,9 +3131,7 @@ body[data-sidebar="dark"] .navbar-brand-box {
     padding: 0;
 } */
 .select2 {
-
     padding: 0;
-
 }
 
 .select2-selection.select2-selection--single {
@@ -3182,8 +3160,6 @@ body[data-sidebar="dark"] .navbar-brand-box {
     cursor: not-allowed;
 }
 
-
-
 /* Styles for screens smaller than 767px */
 @media (max-width: 767px) {
     .webResponsiveDiv {
@@ -3202,7 +3178,6 @@ body[data-sidebar="dark"] .navbar-brand-box {
 .thead_con_design th {
     background-color: #222 !important;
     color: #fff;
-
 }
 
 thead,
@@ -3320,7 +3295,7 @@ th {
     animation: spin 1s ease infinite;
 }
 
-input[type=button] {
+input[type="button"] {
     padding: 5px 10px;
     margin: 10px 5px;
     border-radius: 5px;
@@ -3329,7 +3304,7 @@ input[type=button] {
     border: 1px solid #ccc;
 }
 
-input[type=button]:hover {
+input[type="button"]:hover {
     background: #ccc;
 }
 
@@ -3381,7 +3356,6 @@ input[type=button]:hover {
     margin: 5px;
 }
 
-
 .search-input-design {
     display: flex;
     align-items: center;
@@ -3399,17 +3373,18 @@ input[type=button]:hover {
     width: 250px !important;
     border-radius: 10px !important;
     padding: 8px !important;
-
 }
 
 .search-input-design .select2-container .select2-selection--multiple {
     padding: 0 !important;
 }
 
-.search-input-design .select2-container .select2-selection--multiple .select2-search__field {
+.search-input-design
+    .select2-container
+    .select2-selection--multiple
+    .select2-search__field {
     margin: 0 !important;
 }
-
 
 .search-input-design input:focus {
     outline: none !important;
@@ -3430,15 +3405,16 @@ input[type=button]:hover {
     /* Match the height of Bootstrap's default form-control */
     padding: 6px 12px;
     /* Adjust padding to match form-control */
-
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
     line-height: 24px;
     /* Adjust line height */
 }
 
-.select2-container--default .select2-results>.select2-results__options {
+.select2-container--default .select2-results > .select2-results__options {
     max-height: 200px;
     overflow-y: hidden;
 }

@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" data-bs-toggle="modal"
+                        <div class="input-group-text dcontactBtns" data-bs-toggle="modal"
                             data-bs-target="#" onclick="createTransaction({{ $userContact }})">
                             <i class="fas fa-plus plusicon"></i> New Transaction
                         </div>
@@ -440,45 +440,6 @@
             `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezoneOffsetSign}${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
 
         return formattedDateTime;
-    }
-
-    window.createTransaction = function(userContact) {
-        document.getElementById("loaderOverlay").style.display = "block";
-        document.getElementById('loaderfor').style.display = "block";
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Contact_Name": {
-                    "id": userContact.zoho_contact_id,
-                    "Name":userContact.first_name+" "+userContact.last_name
-                },
-                "Stage": "Potential"
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                console.error('Error:', error);
-            }
-        });
     }
 
     function createContact() {
