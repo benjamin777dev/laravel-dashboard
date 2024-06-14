@@ -193,7 +193,7 @@
                     <div class="col-md-6">
                         <label for="validationDefault02" class="form-label nplabelText">Representing</label>
                         <select class="form-select npinputinfo validate" id="validationDefault02" required
-                            onchange="checkValidate('{{ $deal }}')">
+                            onchange="checkValidate({{$deal}})">
                             <option value="" {{ empty($deal['representing']) ? 'selected' : '' }}>--None--</option>
                             <option value="Buyer" {{ $deal['representing'] == 'Buyer' ? 'selected' : '' }}>Buyer</option>
                             <option value="Seller" {{ $deal['representing'] == 'Seller' ? 'selected' : '' }}>Seller
@@ -210,7 +210,7 @@
                     <div class="col-md-6">
                         <label for="validationDefault04" class="form-label nplabelText">Stage</label>
                         <select class="form-select npinputinfo validate" id="validationDefault04" required
-                            onchange="checkValidate('{{ $deal }}')">
+                            onchange="checkValidate({{$deal}})">
                             <option value="" disabled {{ empty($deal['stage']) ? 'selected' : '' }}>Please select
                             </option>
                             @foreach ($allStages as $stage)
@@ -347,8 +347,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="tmPreference" class="form-label nplabelText">TM Preference</label>
-                        <select class="form-select npinputinfo" id="tmPreference" required>
-                            <option selected value="">--None--</option>
+                        <select class="form-select npinputinfo" id="tmPreference" required onchange="setTmName(this)">
                             <option value="CHR TM" {{ $deal['tm_preference'] == 'CHR TM' ? 'selected' : '' }}>CHR TM
                             </option>
                             <option value="Non TM" {{ $deal['tm_preference'] == 'Non TM' ? 'selected' : '' }}>Non TM
@@ -359,19 +358,18 @@
                     <div class="col-md-6">
                         <label for="tmName" class="form-label nplabelText">TM Name</label>
                         <select class="form-select npinputinfo" id="tmName" required disabled>
-                            @foreach ($users as $user)
-                                <option value="{{ $user }}"
-                                    {{ $deal['tm_name'] == $user['root_user_id'] ? 'selected' : '' }}>
+                             @foreach($users as $user)
+                                <option value="{{ $user }}" {{ isset($deal['tmName']['name']) && $deal['tmName']['name'] == $user['name'] ? 'selected' : '' }}>
                                     {{ $user['name'] }}
                                 </option>
-                            @endforeach
+                                @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label for="contactName" class="form-label nplabelText">Contact Name</label>
                         <input type="hidden" name="contactName" id="contactNameObject"
                             value="{{ json_encode($deal['contactName']) }}">
-                        <input type="text" class="form-control npinputinfo" id="contactName"
+                        <input type="text" class="form-control npinputinfo validate" id="contactName"
                             value="{{ isset($deal['contactName']) ? $deal['contactName']['first_name'] . ' ' . $deal['contactName']['last_name'] : '' }}"
                             disabled />
 
@@ -424,45 +422,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var defaultTab = "{{ $tab }}";
-            console.log(defaultTab, 'tab is here')
-            localStorage.setItem('status', defaultTab);
-            // Retrieve the status from local storage
-            var status = localStorage.getItem('status');
-
-            // Object to store status information
-            var statusInfo = {
-                'In Progress': false,
-                'Overdue': false,
-                'Not Started': false,
-            };
-
-            // Update the status information based on the current status
-            statusInfo[status] = true;
-
-            // Loop through statusInfo to set other statuses to false
-            for (var key in statusInfo) {
-                if (key !== status) {
-                    statusInfo[key] = false;
-                }
-            }
-
-            // Example of accessing status information
-            console.log(statusInfo);
-
-            // Remove active class from all tabs
-            var tabs = document.querySelectorAll('.nav-link');
-            console.log(tabs, 'tabssss')
-            tabs.forEach(function(tab) {
-                tab.classList.remove('active');
-            });
-
-            // Set active class to the tab corresponding to the status
-            console.log(status, 'status');
-            var activeTab = document.querySelector('.nav-link[data-tab="' + status + '"]');
-            if (activeTab) {
-                activeTab.classList.add('active');
-            }
+            var deal = @json($deal);
+            
             var getLeadAgent = $('#leadAgent');
             getLeadAgent.select2({
                 placeholder: 'Search...',
@@ -472,110 +433,22 @@
                 placeholder: 'Search...',
             });
 
-            var representing = document.getElementById('validationDefault02');
-            var stage = document.getElementById('validationDefault04');
-            if (representing.value == 'Buyer' && stage.value == "Under Contract") {
-                $('#additionalFields').append(`
-                    <div class="col-md-6 additional-field ">
-                        <label for="finance" class="form-label nplabelText">Financing</label>
-                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${deal})'>
-                            <option value="" ${!(deal['financing']) ? 'selected' : ''}>--None--</option>
-                            <option value="Cash" ${deal['financing'] == 'Cash' ? 'selected' : ''}>Cash</option>
-                            <option value="Loan" ${deal['financing'] == 'Loan' ? 'selected' : ''}>Loan
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 additional-field">
-                        <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${deal})'>
-                            <option value="" ${!(deal['lender_company']) ? 'selected' : ''}>--None--</option>
-                            <option value="Modern Mortgage" ${deal['lender_company'] == 'Modern Mortgage' ? 'selected' : ''}>Modern Mortgage</option>
-                            <option value="Other" ${deal['lender_company'] == 'Other' ? 'selected' : ''}>Other
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 additional-field">
-                        <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
-                        <select class="form-select npinputinfo" id="modern_mortgage_lender" required >
-                            <option value="" ${!(deal['modern_mortgage_lender']) ? 'selected' : ''}>--None--</option>
-                            <option value="Joe Biniasz" ${deal['modern_mortgage_lender'] == 'Joe Biniasz' ? 'selected' : ''}>Joe Biniasz</option>
-                            <option value="Laura Berry" ${deal['modern_mortgage_lender'] == 'Laura Berry' ? 'selected' : ''}>Laura Berry
-                            </option>
-                            <option value="Virginia Shank" ${deal['modern_mortgage_lender'] == 'Virginia Shank' ? 'selected' : ''}>Virginia Shank
-                            </option>
-                        </select>
-                    </div>
-                `);
-            } else {
-                // If representing is not buyer, remove the additional fields
-                $('#additionalFields').find('.additional-field').remove();
-            }
-
-
-            var probability = document.getElementById('validationDefault15');
-            if (stage.value == 'Active') {
-                probability.value = "40";
-            } else if (stage.value == 'Potential') {
-                probability.value = "5";
-            } else if (stage.value == 'Pre-Active') {
-                probability.value = "20";
-            } else if (stage.value == 'Under Contract') {
-                probability.value = "60";
-            } else if (stage.value == 'Dead-Lost To Competition') {
-                probability.value = "100";
-            }
-            var address = document.getElementById('validationDefault07');
-            var city = document.getElementById('validationDefault08');
-            var state = document.getElementById('validationDefault09');
-            var zip = document.getElementById('validationDefault10');
-            var property_type = document.getElementById('validationDefault12');
-            var tm_preference = document.getElementById('tmPreference');
-            var finance = document.getElementById('finance');
-            console.log("FINANCE", finance);
-            var contact_name = document.getElementById('contactName');
-
-
-
-            // Check representing value
-            if (stage.value === 'Under Contract' && representing.value === 'Seller') {
-                toggleValidation(address, true);
-                toggleValidation(city, true);
-                toggleValidation(state, true);
-                toggleValidation(zip, true);
-                toggleValidation(tm_preference, true);
-                toggleValidation(contact_name, true);
-                toggleValidation(property_type, true);
-            } else if (stage.value === 'Under Contract' && representing.value === 'Buyer') {
-                toggleValidation(address, true);
-                toggleValidation(city, true);
-                toggleValidation(state, true);
-                toggleValidation(zip, true);
-                toggleValidation(tm_preference, true);
-                toggleValidation(contact_name, true);
-                toggleValidation(property_type, true);
-                if (finance) {
-                    toggleValidation(finance, true);
-                }
-            } else if (stage.value === 'Under Contract') {
-                toggleValidation(address, true);
-                toggleValidation(city, true);
-                toggleValidation(state, true);
-                toggleValidation(zip, true);
-                toggleValidation(property_type, true);
-            } else {
-                toggleValidation(address, false);
-                toggleValidation(city, false);
-                toggleValidation(state, false);
-                toggleValidation(zip, false);
-                toggleValidation(tm_preference, false);
-                toggleValidation(contact_name, false);
-                toggleValidation(property_type, false);
-                if (finance) {
-                    toggleValidation(finance, false);
-                }
-            }
-
+            checkValidate(deal);
+            setTmName();
         });
+        window.setTmName = function () {
+            var users = @json($users);
+            
+            let tm_preference = document.getElementById("tmPreference").value;
+            let tm_name = document.getElementById("tmName");
+            if (tm_preference === "Non TM") {
+                let user = users.find((val)=>val.name == "File Management Team");
+                console.log("TMUSERS",user);
+                tm_name.value = user
+            } else if (tm_preference === "CHR TM") {
+                tm_name.value = "{{ auth()->user() }}";
+            }
+        };
         // Function to populate client information
         window.addTask = function(deal) {
             var subject = document.getElementsByName("subject")[0].value;
