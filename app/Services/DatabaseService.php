@@ -108,7 +108,7 @@ class DatabaseService
                 'needs_new_date2' => isset($deal['Needs_New_Date2']) ? $deal['Needs_New_Date2'] : null,
                 'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
                 'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name' => isset($tm_agent) ? $tm_agent->id : null,
+                'tm_name' => isset($tm_name) ? $tm_name->root_user_id : null,
                 'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
                 'sale_price' => isset($deal['Sale_Price']) ? $deal['Sale_Price'] : null,
                 'zoho_deal_id' => $deal['id'],
@@ -498,7 +498,7 @@ class DatabaseService
             $conditions = [['userID', $user->id], ['id', $dealId]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName', 'leadAgent', 'tmName');
+            $deals = Deal::with('userData', 'contactName', 'leadAgent');
 
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
@@ -1144,7 +1144,7 @@ class DatabaseService
                 'deadline_em_opt_out' => isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
                 'status_rpt_opt_out' => isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
                 'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name' => isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
+                'tm_name' => isset($deal['TM_Name']['id']) ? $deal['TM_Name']['id'] : null,
                 'lead_agent' => isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,

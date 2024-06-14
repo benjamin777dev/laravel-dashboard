@@ -12,7 +12,7 @@
             <p class="ngText">Pipelines</p>
             <div class="pipeline-btns-container">
 
-                <div class="input-group-text text-white justify-content-center pcontactBtn" id="btnGroupAddon"
+                <div class="input-group-text text-white justify-content-center pcontactBtn"
                     data-bs-toggle="modal" data-bs-target="#newTaskModalId"
                     onclick="createTransaction({{ $userContact }})">
                     <i class="fas fa-plus plusicon">
@@ -157,41 +157,6 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                    console.error('Error:', error);
-                }
-            });
-        }
-
-        window.createTransaction = function(userContact) {
-            console.log("Onclick");
-            var formData = {
-                "data": [{
-                    "Deal_Name": "{{ config('variables.dealName') }}",
-                    "Owner": {
-                        "id": "{{ auth()->user()->root_user_id }}"
-                    },
-                    "Stage": "Potential",
-                    "Contact_Name": {
-                        "Name": userContact.first_name + " " + userContact.last_name,
-                        "id": userContact.zoho_contact_id
-                    }
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-            $.ajax({
-                url: '{{ url('/pipeline/create') }}',
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: JSON.stringify(formData),
-                dataType: 'json',
-                success: function(data) {
-                    console.log(data);
-                    // Handle success response, such as redirecting to a new page
-                    window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-                },
-                error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
             });

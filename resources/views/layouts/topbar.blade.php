@@ -52,7 +52,7 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <a class="dropdown-item" href="javascript:void();"
-                        onclick="createTransaction('{{Auth::user()->contactData}}');"><i class="fas fa-plus plusicon"></i> <span
+                        onclick="createTransaction({{Auth::user()->contactData}});"><i class="fas fa-plus plusicon"></i> <span
                             key="t-logout">New Transaction</span></a>
                 </div>
             </div>
@@ -172,42 +172,5 @@
         }
 
     }
-    window.createTransaction = function(userContact) {
-        document.getElementById("loaderOverlay").style.display = "block";
-        document.getElementById('loaderfor').style.display = "block";
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Contact_Name": {
-                    "id": userContact.zoho_contact_id,
-                    "Name":userContact.first_name+" "+userContact.last_name
-                },
-                "Stage": "Potential"
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                console.error('Error:', error);
-            }
-        });
-    }
+    
 </script>

@@ -441,7 +441,9 @@
             $('.select2-results .new-contact-btn').remove();
 
             // Append the button
-            $(".select2-results").append('<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>');
+            $(".select2-results").prepend(
+                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+            );
         });
 
         window.openContactModal = function() {
