@@ -17,9 +17,11 @@
         </div>
     @endif
     <div class="container-fluid">
+        <div class="loader" id="loaderfor" style="display: none;"></div>
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
             <p class="pText"></p>
-            <a onclick="createTransaction('{{ $contact }}','{{ $userContact }}');">
+            <a onclick="createTransactionInContactDetail('{{ $contact }}','{{ $userContact }}')">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
@@ -775,9 +777,9 @@
         })
     }
 
-    function createTransaction(contactData, userContactData) {
-       let contact =  JSON.parse(contactData);
-       let userContact = JSON.parse(userContactData);
+    function createTransactionInContactDetail(contact,userContact) {
+       document.getElementById("loaderOverlay").style.display = "block";
+       document.getElementById('loaderfor').style.display = "block";
         var formData = {
             "data": [{
                 "Deal_Name": "{{ config('variables.dealName') }}",
@@ -809,11 +811,15 @@
             dataType: 'json',
             success: function(data) {
                 console.log(data);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
                 // Handle success response, such as redirecting to a new page
                 window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
+                document.getElementById("loaderOverlay").style.display = "none";
+                document.getElementById('loaderfor').style.display = "none";
             }
         });
     }

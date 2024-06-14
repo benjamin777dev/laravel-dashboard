@@ -17,8 +17,6 @@
                 {{-- task create model --}}
                 @include('common.tasks.create', ['contact' => $contact, 'type' => 'Contacts'])
             </div>
-
-
             <div class="tooltip-wrapper">
                 <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon"
                     data-bs-toggle="modal" data-bs-target="#"

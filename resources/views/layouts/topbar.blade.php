@@ -26,12 +26,9 @@
                 </a>
             </div>
 
-            <button class="navbar-toggler" onclick="addressNavbar()" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
-
+            <button class="navbar-toggler" id="vertical-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-fw fa-bars"></i>
-            </button>
+        </button>
 
             <!-- App Search-->
             <div class="search-input-design">
@@ -144,34 +141,7 @@
 </div><!-- /.modal -->
 
 <script>
-    function addressNavbar() {
-        let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
-        let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
-        let main_content = document.getElementsByClassName("main-content")[0];
-        let container = document.getElementsByClassName("container")[0];
-        const conlContact = document.querySelectorAll('.col-contact')[0];
-        // Toggle the width of navbar-brand-box
-        if (navbarBox.style.width === "0%") {
-            navbarBox.style.width = "250px"; // Change this to the desired width
-        } else {
-            navbarBox.style.width = "0%";
-        }
-
-        // Toggle the width of vertical-menu
-        if (verticalMenu.style.width === "0%") {
-            verticalMenu.style.width = "250px"; // Change this to the desired width
-        } else {
-            verticalMenu.style.width = "0%";
-        }
-        if (main_content.classList.contains("margin-class")) {
-            main_content.style.marginLeft = "250px";
-            main_content.classList.remove("margin-class");
-        } else {
-            main_content.style.marginLeft = "unset";
-            main_content.classList.add("margin-class");
-        }
-
-    }
+  
     window.createTransaction = function(userContact) {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
