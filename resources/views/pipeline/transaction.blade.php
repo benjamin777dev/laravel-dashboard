@@ -107,6 +107,13 @@
               </thead>
                 <tbody class="table_pipeline">
                     @include('pipeline.pipelineload', ['module' => $deals])
+                    <tr class="spinner" style="display: none;">
+                        <td colspan="7" class="text-center">
+                            <!-- Add your spinner HTML here -->
+                            <!-- For example, you can use Font Awesome spinner -->
+                            <i class="fas fa-spinner fa-spin"></i> Loading...
+                        </td>
+                    </tr>
                 </tbody>
           </table>
         </div>
@@ -217,6 +224,7 @@
         });
 
         function loadMorePosts() {
+            $('.spinner').show();
             $.ajax({
                 url: nextPageUrl,
                 type: 'get',
@@ -225,11 +233,13 @@
                 },
                 success: function(data) {
                     console.log(data, 'datatatata')
+                    $('.spinner').hide();
                     nextPageUrl = data.nextPageUrl;
                     $('.table_pipeline').append(data);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error loading more posts:", error);
+                    $('.spinner').hide();
                 }
             });
         }

@@ -129,7 +129,10 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                    if (prevSelectedColumn !== null) {
+                   
+                    const card = $('.transaction-container').html(data);
+                    if(card){
+                        if (prevSelectedColumn !== null) {
                         if (prevSortDirection === "asc") {
                             $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
                             $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
@@ -149,7 +152,7 @@
                     // Update the previously selected column and its sorting direction
                     prevSelectedColumn = clickedColumn;
                     prevSortDirection = sortType;
-                    const card = $('.transaction-container').html(data);
+                    }
 
                 },
                 error: function(xhr, status, error) {

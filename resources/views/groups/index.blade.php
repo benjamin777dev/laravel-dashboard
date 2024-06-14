@@ -92,7 +92,7 @@
         <div class = "group-container">
             @include('groups.group')
         </div>
-        <div class="datapagination">
+        <div class="datapagination d-none">
             @include('common.pagination', ['module' => $contacts])
         </div>
     </div>
@@ -101,21 +101,36 @@
 
     <script>
         window.onload = function() {
-            $(document).on('click', '.datapagination a', function(e) {
-                e.preventDefault();
-                let page = $(this).attr('href').split('page=')[1]
-                record(page)
-            })
-
-            function record(page) {
-                $.ajax({
-                    url: "/group?page=" + page,
-                    success: function(res) {
-                        $('.dbgHeaderTable').html(res);
-                        $('.ptableCardDiv').html(res);
-                    }
-                })
+            let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
+        $(window).scroll(function() {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                if (nextPageUrl) {
+                    loadMorePosts();
+                }
             }
+        });
+
+        function loadMorePosts() {
+            $('.spinner').show();
+            $.ajax({
+                url: nextPageUrl,
+                type: 'get',
+                beforeSend: function() {
+                    nextPageUrl = '';
+                },
+                success: function(data) {
+                    console.log(data, 'datatatata')
+                    $('.spinner').hide();
+                    nextPageUrl = data.nextPageUrl;
+                    $('.dbgBodyTable').append(data);
+                    $('.ptableCardDiv').append(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading more posts:", error);
+                    $('.spinner').hide();
+                }
+            });
+        }
 
         }
         window.fetchData = function(sortField = null) {

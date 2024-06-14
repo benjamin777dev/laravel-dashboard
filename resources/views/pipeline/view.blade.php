@@ -105,7 +105,7 @@
                 <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
                 {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo" id="leadAgent"
                     required value="{{ $deal['client_name_primary'] }}">--}}
-                <select id="leadAgent" style="display:none;">
+                <select id="leadAgent" class="form-select">
                     <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select
                     </option>
                     @foreach($users as $user)
@@ -115,6 +115,10 @@
                     </option>
                     @endforeach
                 </select>
+                <div class="mb-3 ajax-select mt-3 mt-lg-0">
+                    <label class="form-label">Ajax (remote data)</label>
+                    <select class="form-control select2-ajax"></select>
+                </div>
 
             </div>
             <div class="col-md-6 selectSearch">

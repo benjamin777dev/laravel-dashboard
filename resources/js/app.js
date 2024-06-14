@@ -60,9 +60,10 @@ File: Main Js File
             event.preventDefault();
             $('body').toggleClass('sidebar-enable');
             if ($(window).width() >= 992) {
-                $('body').toggleClass('vertical-collpsed');
+                console.log($('body'))
+                $('body')[0].toggleClass('vertical-collpsed');
             } else {
-                $('body').removeClass('vertical-collpsed');
+                $('body')[0].removeClass('vertical-collpsed');
             }
         });
     }

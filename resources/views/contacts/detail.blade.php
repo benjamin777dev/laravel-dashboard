@@ -17,6 +17,8 @@
         </div>
     @endif
     <div class="container-fluid">
+        <div class="loader" id="loaderfor" style="display: none;"></div>
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
             <p class="pText"></p>
             <a onclick="createTransaction({{ $userContact }},{{ $contact }});">

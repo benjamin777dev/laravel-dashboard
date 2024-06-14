@@ -699,6 +699,7 @@ class DatabaseService
 
             $conditions = [['contact_owner', $user->root_user_id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
+           
 
             if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
@@ -737,8 +738,7 @@ class DatabaseService
             }
 
             // Paginate the results
-            $contacts = $contacts->paginate(10);
-
+            $contacts = $contacts->paginate(50);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
