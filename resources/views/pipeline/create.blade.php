@@ -162,26 +162,12 @@
                 <p class="npinfoText">Transaction Details</p>
                 <form class="row g-3" id="additionalFields">
                     <div class="col-md-6 selectSearch">
-                        <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
-                        {{-- <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                        id="leadAgent" required value="{{ $deal['client_name_primary'] }}"> --}}
-                        <select id="leadAgent" style="display:none;">
-                            <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select
-                            </option>
-                            @foreach ($users as $user)
-                                <option value="{{ json_encode($user) }}"
-                                    {{ isset($deal['leadAgent']) && $deal['leadAgent']['id'] == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }} - {{ $user->email }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                    </div>
-                    <div class="col-md-6 selectSearch">
                         <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                         {{-- <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
                         id="validationDefault01" required value="{{ $deal['contactId'] }}"> --}}
                         <select style="display:none;" id="validationDefault01" required>
+                            <option value="" disabled {{ empty( $deal['client_name_primary']) ? 'selected' : '' }}>Please select
+                            </option>
                             @foreach ($contacts as $contact)
                                 <option value="{{ $contact }}"
                                     {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact[' last_name'] ? 'selected' : '' }}>
@@ -340,6 +326,22 @@
                     </div>
 
                     <p class="npinfoText">Settings</p>
+                    <div class="col-md-6 selectSearch">
+                        <label for="leadAgent" class="form-label nplabelText">Co-Listing Agent</label>
+                        {{-- <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
+                        id="leadAgent" required value="{{ $deal['client_name_primary'] }}"> --}}
+                        <select id="leadAgent" style="display:none;">
+                            <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select
+                            </option>
+                            @foreach ($users as $user)
+                                <option value="{{ json_encode($user) }}"
+                                    {{ isset($deal['leadAgent']) && $deal['leadAgent']['id'] == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} - {{ $user->email }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
                     <div class="col-md-6">
                         <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
                         <input type="text" class="form-control npinputinfo" id="transactionOwner" required
@@ -374,7 +376,7 @@
                             disabled />
 
                     </div>
-
+                    <div></div>        
                     <div class="col-md-6">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03"
                             <?php if ($deal['review_gen_opt_out']) {
@@ -438,17 +440,39 @@
         });
         window.setTmName = function () {
             var users = @json($users);
-            
+
             let tm_preference = document.getElementById("tmPreference").value;
-            let tm_name = document.getElementById("tmName");
+            let tm_name_select = document.getElementById("tmName");
+
             if (tm_preference === "Non TM") {
-                let user = users.find((val)=>val.name == "File Management Team");
-                console.log("TMUSERS",user);
-                tm_name.value = user
+                let user = users.find((val) => val.name === "File Management Team");
+                console.log("TMUSERS", user);
+                
+                // Clear existing options
+                tm_name_select.innerHTML = '';
+
+                // Add the new option
+                let option = document.createElement("option");
+                option.value = JSON.stringify(user);
+                option.text = user.name;
+                option.selected = true;
+                tm_name_select.appendChild(option);
             } else if (tm_preference === "CHR TM") {
-                tm_name.value = "{{ auth()->user() }}";
+                let currentUser = @json(auth()->user());
+                console.log("TMUSERS", currentUser);
+
+                // Clear existing options
+                tm_name_select.innerHTML = '';
+
+                // Add the new option
+                let option = document.createElement("option");
+                option.value = JSON.stringify(currentUser);
+                option.text = currentUser.name;
+                option.selected = true;
+                tm_name_select.appendChild(option);
             }
         };
+
         // Function to populate client information
         window.addTask = function(deal) {
             var subject = document.getElementsByName("subject")[0].value;

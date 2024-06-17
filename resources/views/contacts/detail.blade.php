@@ -306,11 +306,11 @@
                             <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
                                 class="form-control npinputinfo" id="validationDefault17">
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label for="validationDefault18" class="form-label nplabelText">Email</label>
                             <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
                                 class="form-control npinputinfo" id="validationDefault18">
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -333,7 +333,7 @@
                                 id="validationDefault20">{{ $contact['business_information'] }}</textarea>
                         </div>
 
-                        <div>
+                        <!-- <div>
                             <label for="validationDefault21" class="form-label nplabelText">Contact Owner</label>
 
                             <select name="contactOwner" class="form-select npinputinfo" id="validationDefault21"
@@ -344,7 +344,7 @@
                                     {{ $users['name'] }}
                                 </option>
                             </select>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>

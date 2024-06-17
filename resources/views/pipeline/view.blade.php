@@ -39,6 +39,15 @@
                 <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                 Delete
             </div> --}}
+            @if($deal['locked_s'])
+            <a >
+                <div class="input-group-text text-white justify-content-center ppipeBtn btn-disabled" id="savebutton"
+                    data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-edit">
+                    </i>
+                    Update
+                </div>
+            </a>
+            @else
             <a onclick="updateDataDeal('{{ $deal['zoho_deal_id'] }}','{{ $deal['id'] }}')">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-edit">
@@ -46,6 +55,7 @@
                     Update
                 </div>
             </a>
+            @endif
         </div>
     </div>
     <div class="row">
@@ -101,31 +111,14 @@
         style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
         <p class="npinfoText">Transaction Details</p>
         <form class="row g-3" id="additionalFields">
-            <div class="col-md-6 selectSearch">
-                <label for="leadAgent" class="form-label nplabelText">Lead Agent</label>
-                {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo" id="leadAgent"
-                    required value="{{ $deal['client_name_primary'] }}">--}}
-                <select id="leadAgent" class="form-select">
-                    <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select
-                    </option>
-                    @foreach($users as $user)
-                    <option value="{{ json_encode($user) }}" {{ isset($deal['leadAgent']) &&
-                        $deal['leadAgent']['id']==$user->id ? 'selected' : '' }}>
-                        {{ $user->name }} - {{ $user->email }}
-                    </option>
-                    @endforeach
-                </select>
-                <div class="mb-3 ajax-select mt-3 mt-lg-0">
-                    <label class="form-label">Ajax (remote data)</label>
-                    <select class="form-control select2-ajax"></select>
-                </div>
-
-            </div>
+            
             <div class="col-md-6 selectSearch">
                 <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                 {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
                     id="validationDefault01" required value="{{ $deal['contactId'] }}">--}}
                 <select style="display:none;" id="validationDefault01" required>
+                    <option value="" disabled {{ empty( $deal['client_name_primary']) ? 'selected' : '' }}>Please select
+                    </option>
                     @foreach($contacts as $contact)
                     <option value="{{$contact}}" {{ $deal['client_name_primary']==$contact['first_name'] .' '.$contact['
                         last_name']? 'selected' : '' }}>
@@ -266,6 +259,26 @@
             </div>
 
             <p class="npinfoText">Settings</p>
+            <div class="col-md-6 selectSearch">
+                <label for="leadAgent" class="form-label nplabelText">Co-Listing Agent</label>
+                {{--<input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo" id="leadAgent"
+                    required value="{{ $deal['client_name_primary'] }}">--}}
+                <select id="leadAgent" class="form-select">
+                    <option value="" disabled {{ empty($deal['leadAgent']) ? 'selected' : '' }}>Please select
+                    </option>
+                    @foreach($users as $user)
+                    <option value="{{ json_encode($user) }}" {{ isset($deal['leadAgent']) &&
+                        $deal['leadAgent']['id']==$user->id ? 'selected' : '' }}>
+                        {{ $user->name }} - {{ $user->email }}
+                    </option>
+                    @endforeach
+                </select>
+                <div class="mb-3 ajax-select mt-3 mt-lg-0">
+                    <label class="form-label">Ajax (remote data)</label>
+                    <select class="form-control select2-ajax"></select>
+                </div>
+
+            </div>
             <div class="col-md-6">
                 <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
                 <input type="text" class="form-control npinputinfo" id="transactionOwner" required
@@ -297,7 +310,7 @@
                     value="{{$deal['contactName']['first_name'] ?? ''}} {{$deal['contactName']['last_name'] ?? ''}}"
                     disabled />
             </div>
-
+            <div></div>
             <div class="col-md-6">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if
                     ($deal['review_gen_opt_out']) { echo 'checked' ; } ?>>

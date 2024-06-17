@@ -33,7 +33,9 @@ window.checkValidate = function (deal) {
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(deal)'>
+                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${JSON.stringify(
+                            deal
+                        )})'>
                             <option value="" ${
                                 !deal["lender_company"] ? "selected" : ""
                             }>--None--</option>

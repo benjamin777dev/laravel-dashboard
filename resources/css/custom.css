@@ -3436,3 +3436,7 @@ input[type="button"]:hover {
     border-color: grey;
     cursor: not-allowed;
 }
+
+.lockedRow td {
+    cursor: not-allowed;
+}

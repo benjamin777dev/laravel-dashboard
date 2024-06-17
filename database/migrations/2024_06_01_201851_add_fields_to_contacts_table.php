@@ -322,7 +322,7 @@ class AddFieldsToContactsTable extends Migration
                 $table->text('initial_cap')->nullable();
             }
             if (!Schema::hasColumn('contacts', 'unsubscribed_time')) {
-                $table->boolean('unsubscribed_time')->nullable();
+                $table->timestamp('unsubscribed_time')->nullable();
             }
             if (!Schema::hasColumn('contacts', 'mls_ppar')) {
                 $table->boolean('mls_ppar')->nullable();
