@@ -67,6 +67,13 @@
                 @endif
                 <tbody class="table_apeend">
                     @include('contacts.load', ['contacts' => $contacts])
+                    <tr class="spinner" style="display: none;">
+                        <td colspan="5" class="text-center">
+                            <!-- Add your spinner HTML here -->
+                            <!-- For example, you can use Font Awesome spinner -->
+                            <i class="fas fa-spinner fa-spin"></i> Loading...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -232,6 +239,7 @@
             if (!missingFeild.email && !missingFeild.mobile && !missingFeild.abcd) {
                 missingFeild = "";
             }
+            $('.spinner').show();
             let search = searchInput.val(); // Update search with input value
             $.ajax({
                 url: nextPageUrl, // Send only the base URL, append parameters later
@@ -245,11 +253,13 @@
                     nextPageUrl = ''; // Reset nextPageUrl to prevent multiple requests
                 },
                 success: function(data) {
+                    $('.spinner').hide();
                     nextPageUrl = data.nextPageUrl; // Update nextPageUrl from response
                     $('.table_apeend').append(data.view);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error loading more posts:", error);
+                    $('.spinner').hide();
                 }
             });
         }

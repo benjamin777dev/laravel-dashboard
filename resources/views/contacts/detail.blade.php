@@ -17,9 +17,11 @@
         </div>
     @endif
     <div class="container-fluid">
+        <div class="loader" id="loaderfor" style="display: none;"></div>
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="commonFlex ppipeDiv">
             <p class="pText"></p>
-            <a onclick="createTransaction('{{ $contact }}','{{ $userContact }}');">
+            <a onclick="createTransaction({{ $userContact }},{{ $contact }});">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                     </i>
@@ -304,11 +306,11 @@
                             <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
                                 class="form-control npinputinfo" id="validationDefault17">
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label for="validationDefault18" class="form-label nplabelText">Email</label>
                             <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
                                 class="form-control npinputinfo" id="validationDefault18">
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -331,7 +333,7 @@
                                 id="validationDefault20">{{ $contact['business_information'] }}</textarea>
                         </div>
 
-                        <div>
+                        <!-- <div>
                             <label for="validationDefault21" class="form-label nplabelText">Contact Owner</label>
 
                             <select name="contactOwner" class="form-select npinputinfo" id="validationDefault21"
@@ -342,7 +344,7 @@
                                     {{ $users['name'] }}
                                 </option>
                             </select>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -555,8 +557,8 @@
             $('.select2-results .new-contact-btn').remove();
 
             // Append the button
-            $(".select2-results").append(
-                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>'
+            $(".select2-results").prepend(
+                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
             );
         });
 
@@ -775,46 +777,4 @@
         })
     }
 
-    function createTransaction(contactData, userContactData) {
-       let contact =  JSON.parse(contactData);
-       let userContact = JSON.parse(userContactData);
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Stage": "Potential",
-                "Client_Name_Primary": contact.first_name + " " + contact.last_name,
-                "Client_Name_Only": contact.first_name + " " + contact.last_name + " || " + contact
-                    .zoho_contact_id,
-                "Contact": {
-                    "Name": contact.first_name + " " + contact.last_name,
-                    "id": contact.zoho_contact_id
-                },
-                "Contact_Name": {
-                    "Name": userContact.first_name + " " + userContact.last_name,
-                    "id": userContact.zoho_contact_id
-                },
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                console.log(data);
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
 </script>

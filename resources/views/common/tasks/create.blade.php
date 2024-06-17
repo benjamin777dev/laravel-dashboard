@@ -35,41 +35,41 @@
         </div>
     </div>
 @elseif(isset($type) && $type == 'Contacts')
-    <div class="modal fade" id="newTaskModalId{{ $contact['id'] }}" onclick="event.preventDefault();" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
-                <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        onclick="resetValidationTask('{{ $contact['zoho_contact_id'] }}')" aria-label="Close"></button>
+<div class="modal fade" id="newTaskModalId{{ $contact->id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-content dtaskmodalContent">
+            <div class="modal-header border-0">
+                <p class="modal-title dHeaderText">Create New Tasks</p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
+            </div>
+            <div class="modal-body dtaskbody">
+                <p class="ddetailsText">Details</p>
+                <textarea name="subject" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="darea{{ $contact['id'] }}"
+                    rows="4" class="dtextarea"></textarea>
+                <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
+                <p class="dRelatedText">Related to...</p>
+                <div class="btn-group dmodalTaskDiv">
+                    <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
+                        <option value="{{ $contact['zoho_contact_id'] }}" selected>
+                            {{ $contact['last_name'] }}
+                        </option>
+                    </select>
                 </div>
-                <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask('{{ $contact['zoho_contact_id'] }}');" id="darea{{ $contact['zoho_contact_id'] }}" rows="4"
-                        class="dtextarea"></textarea>
-                    <div id="subject_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
-                    <div class="btn-group dmodalTaskDiv">
-                        <select class="form-select dmodaltaskSelect" name="related_to" aria-label="Select Transaction">
-                            <option value="{{ $contact['zoho_contact_id'] }}" selected>
-                                {{ $contact['first_name'] }} {{ $contact['last_name'] }}
-                            </option>
-                        </select>
-                    </div>
-                        <p class="dDueText">Date due</p>
-                        <input type="text" id="due_date_contact" class="dmodalInput">
-                </div>
-                <div class="modal-footer ">
-                    <button type="button" onclick="addCommonTask('{{ $contact['zoho_contact_id'] }}','Contacts')"
-                        class="btn btn-secondary taskModalSaveBtn">
-                        <i class="fas fa-save saveIcon"></i> Save Changes
-                    </button>
-
-                </div>
+                <p class="dDueText">Date due</p>
+                <input type="date" name="due_date" class="dmodalInput" />
+            </div>
+            <div class="modal-footer ">
+                <button type="button" onclick="addCommonTask('{{ $contact['zoho_contact_id'] }}','Contacts')"
+                    class="btn btn-secondary taskModalSaveBtn">
+                    <i class="fas fa-save saveIcon"></i> Save Changes
+                </button>
 
             </div>
+
         </div>
     </div>
+</div>
 @else
     <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1">

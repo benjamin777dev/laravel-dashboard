@@ -32,9 +32,8 @@
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
-                <th scope="col">Transaction Related</th>
-                <th scope="col">Task Date</th>
-                <th scope="col">TimeStamp</th>
+                <th scope="col">Related To</th>
+                <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>
@@ -62,14 +61,14 @@
                                     @if ($task['related_to'] == 'Contacts')
                                         <option value="{{ $task->contactData->zoho_contact_id ?? '' }}" selected>
                                             {{ $task->contactData->first_name ?? '' }}
-                                            {{ $task->contactData->last_name ?? 'Please Select' }}
+                                            {{ $task->contactData->last_name ?? 'General' }}
                                         </option>
                                     @elseif ($task['related_to'] == 'Deals')
                                         <option value="{{ $task->dealData->zoho_deal_id ?? '' }}" selected>
-                                            {{ $task->dealData->deal_name ?? 'Please select' }}
+                                            {{ $task->dealData->deal_name ?? 'General' }}
                                         </option>
                                     @else
-                                        <option value="" selected>Please select</option>
+                                        <option value="" selected>General</option>
                                     @endif
                                 </select>
                             </div>
@@ -78,15 +77,6 @@
                             <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
                                 onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['zoho_task_id'] }}')"
                                 value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-                        </td>
-                        <td>
-                            <div class="dcardsdateinput">
-                                @if(!empty($task['updated_at']))
-                                    <p class="dcardsTaskText">{{ $task['updated_at'] }}</p>
-                                @else
-                                    <p class="dcardsTaskText">{{ $task['created_at'] }}</p>
-                                @endif
-                            </div>                            
                         </td>
                         <td>
                             <div class="d-flex btn-save-del">

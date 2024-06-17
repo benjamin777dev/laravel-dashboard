@@ -27,7 +27,7 @@
                     </div>
                 </a>
                 <a onclick="createTransaction({{ $userContact }});">
-                    <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
+                    <div class="input-group-text text-white justify-content-center ppipeBtn"
                         data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
                         </i>
                         New Transaction
@@ -354,49 +354,5 @@
     function formatSentence(sentence) {
         // Convert the first character to uppercase and the rest to lowercase
         return sentence.charAt(0).toUpperCase() + sentence.slice(1).toLowerCase();
-    }
-
-
-
-    function createTransaction(userContact) {
-        document.getElementById("loaderOverlay").style.display = "block";
-        document.getElementById('loaderfor').style.display = "block";
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Stage": "Potential",
-                // "Client_Primary_Name":,
-                // "Client_Name_Only":
-                "Contact_Name": {
-                    "Name": userContact.first_name + " " + userContact.last_name,
-                    "id": userContact.zoho_contact_id
-                }
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                console.log(data);
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById('loaderfor').style.display = "none";
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById('loaderfor').style.display = "none";
-                console.error('Error:', error);
-            }
-        });
     }
 </script>

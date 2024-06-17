@@ -61,7 +61,7 @@ window.showDropdown = function (showDropdown, selectElement) {
             options.maximumSelectionLength = 1; // Use `maximumSelectionLength` instead of `maximumSelectionSize`
             options.placeholder = "Search...";
         } else {
-            options.placeholder = 'Please select';
+            options.placeholder = 'General';
             options.width = 'resolve';
         }
 
@@ -98,7 +98,6 @@ window.showDropdown = function (showDropdown, selectElement) {
 };
 
 window.showDropdownForId = function (modalID, selectElement) {
-    console.log("yes hiiggggggggg");
     var selectedval = selectElement.val();
     var selectedText1 = selectElement.find('option:selected').text();
     console.log(selectedval, 'selectedText1');

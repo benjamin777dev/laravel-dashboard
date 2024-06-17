@@ -26,12 +26,9 @@
                 </a>
             </div>
 
-            <button class="navbar-toggler" onclick="addressNavbar()" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
-
+            <button class="navbar-toggler" id="vertical-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-fw fa-bars"></i>
-            </button>
+        </button>
 
             <!-- App Search-->
             <div class="search-input-design">
@@ -52,7 +49,7 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
                     <a class="dropdown-item" href="javascript:void();"
-                        onclick="createTransaction('{{Auth::user()->contactData}}');"><i class="fas fa-plus plusicon"></i> <span
+                        onclick="createTransaction({{Auth::user()->contactData}});"><i class="fas fa-plus plusicon"></i> <span
                             key="t-logout">New Transaction</span></a>
                 </div>
             </div>
@@ -142,72 +139,3 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
-<script>
-    function addressNavbar() {
-        let navbarBox = document.getElementsByClassName("navbar-brand-box")[0];
-        let verticalMenu = document.getElementsByClassName("vertical-menu")[0];
-        let main_content = document.getElementsByClassName("main-content")[0];
-        let container = document.getElementsByClassName("container")[0];
-        const conlContact = document.querySelectorAll('.col-contact')[0];
-        // Toggle the width of navbar-brand-box
-        if (navbarBox.style.width === "0%") {
-            navbarBox.style.width = "250px"; // Change this to the desired width
-        } else {
-            navbarBox.style.width = "0%";
-        }
-
-        // Toggle the width of vertical-menu
-        if (verticalMenu.style.width === "0%") {
-            verticalMenu.style.width = "250px"; // Change this to the desired width
-        } else {
-            verticalMenu.style.width = "0%";
-        }
-        if (main_content.classList.contains("margin-class")) {
-            main_content.style.marginLeft = "250px";
-            main_content.classList.remove("margin-class");
-        } else {
-            main_content.style.marginLeft = "unset";
-            main_content.classList.add("margin-class");
-        }
-
-    }
-    window.createTransaction = function(userContact) {
-        document.getElementById("loaderOverlay").style.display = "block";
-        document.getElementById('loaderfor').style.display = "block";
-        var formData = {
-            "data": [{
-                "Deal_Name": "{{ config('variables.dealName') }}",
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}"
-                },
-                "Contact_Name": {
-                    "id": userContact.zoho_contact_id,
-                    "Name":userContact.first_name+" "+userContact.last_name
-                },
-                "Stage": "Potential"
-            }],
-            "_token": '{{ csrf_token() }}'
-        };
-        $.ajax({
-            url: '{{ url('/pipeline/create') }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: JSON.stringify(formData),
-            dataType: 'json',
-            success: function(data) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                // Handle success response, such as redirecting to a new page
-                window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-            },
-            error: function(xhr, status, error) {
-                document.getElementById("loaderOverlay").style.display = "none";
-                document.getElementById("loaderfor").style.display = "none";
-                console.error('Error:', error);
-            }
-        });
-    }
-</script>

@@ -9,10 +9,10 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipelines</p>
+            <p class="ngText">Pipeline</p>
             <div class="pipeline-btns-container">
 
-                <div class="input-group-text text-white justify-content-center pcontactBtn" id="btnGroupAddon"
+                <div class="input-group-text text-white justify-content-center pcontactBtn"
                     data-bs-toggle="modal" data-bs-target="#newTaskModalId"
                     onclick="createTransaction({{ $userContact }})">
                     <i class="fas fa-plus plusicon">
@@ -60,7 +60,7 @@
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                     aria-label="Select Transaction" onchange="fetchDeal()">
-                    <option value="">Sort Pipelines by...</option>
+                    <option value="">Sort Pipeline by...</option>
                     @php
                         $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];
                     @endphp
@@ -129,7 +129,10 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                    if (prevSelectedColumn !== null) {
+                   
+                    const card = $('.transaction-container').html(data);
+                    if(card){
+                        if (prevSelectedColumn !== null) {
                         if (prevSortDirection === "asc") {
                             $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
                             $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
@@ -149,7 +152,7 @@
                     // Update the previously selected column and its sorting direction
                     prevSelectedColumn = clickedColumn;
                     prevSortDirection = sortType;
-                    const card = $('.transaction-container').html(data);
+                    }
 
                 },
                 error: function(xhr, status, error) {
@@ -157,41 +160,6 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                    console.error('Error:', error);
-                }
-            });
-        }
-
-        window.createTransaction = function(userContact) {
-            console.log("Onclick");
-            var formData = {
-                "data": [{
-                    "Deal_Name": "{{ config('variables.dealName') }}",
-                    "Owner": {
-                        "id": "{{ auth()->user()->root_user_id }}"
-                    },
-                    "Stage": "Potential",
-                    "Contact_Name": {
-                        "Name": userContact.first_name + " " + userContact.last_name,
-                        "id": userContact.zoho_contact_id
-                    }
-                }],
-                "_token": '{{ csrf_token() }}'
-            };
-            $.ajax({
-                url: '{{ url('/pipeline/create') }}',
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: JSON.stringify(formData),
-                dataType: 'json',
-                success: function(data) {
-                    console.log(data);
-                    // Handle success response, such as redirecting to a new page
-                    window.location.href = `{{ url('/pipeline-create/${data.id}') }}`;
-                },
-                error: function(xhr, status, error) {
                     console.error('Error:', error);
                 }
             });

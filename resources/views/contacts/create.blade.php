@@ -257,11 +257,7 @@
                             <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
                                 class="form-control npinputinfo" id="validationDefault03">
                         </div>
-                        <div class="col-md-6">
-                            <label for="validationDefault03" class="form-label nplabelText">Email</label>
-                            <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
-                                class="form-control npinputinfo" id="validationDefault03">
-                        </div>
+                       
                         {{-- <div class="col-md-6">
                         <input class="form-check-input" name="primary_address" type="checkbox" value="false"
                             id="primary_address">
@@ -297,7 +293,7 @@
                                 id="validationDefault02">{{ $contact['business_information'] }}</textarea>
                         </div>
 
-                        <div>
+                        {{--<div>
                             <label for="contactOwner" class="form-label nplabelText">Contact Owner</label>
 
                             <select name="contactOwner" class="form-select npinputinfo" id="contactOwner"
@@ -309,7 +305,7 @@
                                     {{ $users['name'] }}
                                 </option>
                             </select>
-                        </div>
+                        </div>--}}
 
                     </div>
                 </div>
@@ -317,7 +313,7 @@
 
                 <div>
                     <button class="submit_button btn btn-primary" id="submit_button" type="button"
-                        onclick="validateContactForm()">Submit</button>
+                        onclick="validateContactForm()">Create</button>
                 </div>
             </form>
         </div>
@@ -441,7 +437,9 @@
             $('.select2-results .new-contact-btn').remove();
 
             // Append the button
-            $(".select2-results").append('<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer;"><i class="fas fa-plus plusicon"></i> New Contact</div>');
+            $(".select2-results").prepend(
+                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+            );
         });
 
         window.openContactModal = function() {

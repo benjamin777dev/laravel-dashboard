@@ -9,14 +9,16 @@ window.toggleValidation = function (element, addValidation) {
 };
 window.checkValidate = function (deal) {
     console.log(deal);
-    deal = JSON.parse(JSON.stringify(deal));
+
     var representing = document.getElementById("validationDefault02");
     var stage = document.getElementById("validationDefault04");
     if (representing?.value == "Buyer" && stage?.value == "Under Contract") {
         $("#additionalFields").append(`
                     <div class="col-md-6 additional-field ">
                         <label for="finance" class="form-label nplabelText">Financing</label>
-                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${deal})'>
+                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${JSON.stringify(
+                            deal
+                        )})'>
                             <option value="" ${
                                 !deal["financing"] ? "selected" : ""
                             }>--None--</option>
@@ -31,7 +33,9 @@ window.checkValidate = function (deal) {
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${deal})'>
+                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(${JSON.stringify(
+                            deal
+                        )})'>
                             <option value="" ${
                                 !deal["lender_company"] ? "selected" : ""
                             }>--None--</option>
@@ -115,7 +119,6 @@ window.checkValidate = function (deal) {
         toggleValidation(state, true);
         toggleValidation(zip, true);
         toggleValidation(tm_preference, true);
-        toggleValidation(contact_name, true);
         toggleValidation(property_type, true);
     } else if (
         stage.value === "Under Contract" &&
@@ -126,7 +129,6 @@ window.checkValidate = function (deal) {
         toggleValidation(state, true);
         toggleValidation(zip, true);
         toggleValidation(tm_preference, true);
-        toggleValidation(contact_name, true);
         toggleValidation(property_type, true);
         if (finance) {
             toggleValidation(finance, true);
@@ -137,13 +139,13 @@ window.checkValidate = function (deal) {
         toggleValidation(state, true);
         toggleValidation(zip, true);
         toggleValidation(property_type, true);
+        toggleValidation(tm_preference, true);
     } else {
         toggleValidation(address, false);
         toggleValidation(city, false);
         toggleValidation(state, false);
         toggleValidation(zip, false);
         toggleValidation(tm_preference, false);
-        toggleValidation(contact_name, false);
         toggleValidation(property_type, false);
         if (finance) {
             toggleValidation(finance, false);
@@ -152,6 +154,7 @@ window.checkValidate = function (deal) {
 
     if (finance && finance.value == "Loan") {
         var lender_company = document.getElementById("lender_company");
+        toggleValidation(lender_company, true);
         if (lender_company && lender_company.value == "Modern Mortgage") {
             var modern_mortgage_lender = document.getElementById(
                 "modern_mortgage_lender"
@@ -164,6 +167,7 @@ window.checkValidate = function (deal) {
 };
 
 window.checkAdditionalValidation = function (deal) {
+    console.log("CheckValidation", deal);
     var finance = document.getElementById("finance");
     var lender_company = document.getElementById("lender_company");
     var modern_mortgage_lender = document.getElementById(
@@ -195,7 +199,12 @@ window.checkAdditionalValidation = function (deal) {
                     </div>
                 `);
             toggleValidation(modern_mortgage_lender, false);
+        } else {
+            $("#additionalFields").find(".additional-field-lender").remove();
         }
+    } else {
+        toggleValidation(lender_company, false);
+        $("#additionalFields").find(".additional-field-lender").remove();
     }
 };
 

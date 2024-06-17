@@ -7,21 +7,21 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}" id ="contact_spouse_create_form" method="POST">
+                <form action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}" id ="contact_spouse_create_form" method="POST" onsubmit="validateSpouseContactForm()">
                     @csrf
                     {{-- Layout --}}
-                    <div class="mb-3 row">
+                    <!-- <div class="mb-3 row">
                         <label for="layout_design" class="col-sm-2 col-form-label nplabelText text-end">
                             <strong>Layout</strong>
                         </label>
                         <div class="col-sm-2 col-6 min-width-120">
-                            <select name="layout" class="form-select text-center" id="layout_design">
+                            <select name="layout" class="form-select text-center" id="layout_design" disabled>
                                 <option value="" readonly>None</option>
                                 <option value="Agent" selected>Agent</option>
                                 <option value="Standard">Standard</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
 
                     {{-- First Name --}}
                     <div class="mb-3 row">
@@ -79,9 +79,9 @@
                             <strong>Relationship Type</strong>
                         </label>
                         <div class="col-sm-9">
-                            <select name="relationship_type" class="form-select npinputinfo" id="spouseRelationType">
-                                <option disabled value="">-None-</option>
-                                <option value="Primary">Primary</option>
+                            <select name="relationship_type" class="form-select npinputinfo" id="spouseRelationType" disabled>
+                                <!-- <option disabled value="">-None-</option>
+                                <option value="Primary">Primary</option> -->
                                 <option value="Secondary">Secondary</option>
                             </select>
                         </div>
@@ -116,7 +116,7 @@
 
                     <div class="modal-footer">
                         <div>
-                            <button type="button" class="btn btn-secondary taskModalSaveBtn" id="spouse_submit_button" onclick="validateSpouseContactForm()">
+                            <button type="submit" class="btn btn-secondary taskModalSaveBtn" id="spouse_submit_button" >
                                 <i class="fas fa-save saveIcon"></i> Save Changes
                             </button>
                         </div>
