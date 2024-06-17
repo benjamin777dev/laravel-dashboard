@@ -253,6 +253,7 @@ class DatabaseService
                 'qr_code_sign_rider' => $contact['QR_Code_Sign_Rider'] ?? null,
                 'google_business_page_url' => $contact['Google_Business_Page_URL'] ?? null,
                 'has_email' => $contact['Has_Email'] ?? null,
+                'has_address' => $contact['Has_Address'] ?? null,
                 'salesforce_id' => $contact['Salesforce_ID'] ?? null,
                 'mls_ires' => $contact['MLS_IRES'] ?? null,
                 'outsourced_mktg_floorplans' => $contact['Outsourced_Mktg_Floorplans'] ?? null,
@@ -1232,7 +1233,7 @@ class DatabaseService
                 ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
                         $query->where('groupId', $filter);
-                    });
+                    })->orWhere($filter,true);
                 })
                 ->when($sort, function ($query, $sort) {
                     $query->orderBy('first_name', $sort);

@@ -44,6 +44,8 @@
                         <select class="form-select dbgSelectinfo" placeholder="Sort groups by" id="validationDefault05"
                             onchange="fetchData()" required>
                             <option selected value = "">-None-</option>
+                            <option value = "has_address">Has Address</option>
+                            <option value = "has_email">Has Email</option>
                             @foreach ($groups as $group)
                                 <option value = "{{ $group['id'] }}">{{ $group['name'] }} </option>
                             @endforeach

@@ -33,7 +33,7 @@
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
                 <th scope="col">Related To</th>
-                <th scope="col">Task Date</th>
+                <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>

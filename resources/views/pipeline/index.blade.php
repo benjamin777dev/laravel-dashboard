@@ -9,7 +9,7 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipelines</p>
+            <p class="ngText">Pipeline</p>
             <div class="pipeline-btns-container">
 
                 <div class="input-group-text text-white justify-content-center pcontactBtn"
@@ -60,7 +60,7 @@
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                     aria-label="Select Transaction" onchange="fetchDeal()">
-                    <option value="">Sort Pipelines by...</option>
+                    <option value="">Sort Pipeline by...</option>
                     @php
                         $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];
                     @endphp
