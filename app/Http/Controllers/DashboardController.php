@@ -570,6 +570,7 @@ class DashboardController extends Controller
             $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
             $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
             $whoId = $data['Who_Id']['id'] ?? null; // Get 'What_Id' from data
+            $status = $data['Status'] ?? null; // Get 'What_Id' from data
             $seModule = $data['$se_module'] ?? null;
             if ($task) {
                 if ($dueDate !== null) {

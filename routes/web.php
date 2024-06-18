@@ -66,13 +66,15 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
+Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::get('/contact/create/form/{contactId}', [ContactController::class, 'contactCreateForm'])->name('contacts.create.form')->middleware('auth');
+Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
+Route::get('/contact/detail/form/{contactId}', [ContactController::class, 'showDetailForm'])->name('contacts.detail.form')->middleware('auth');
 Route::get('/get-groups', [ContactController::class, 'getGroups'])->name('group.sort')->middleware('auth');
 Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])->name('contacts.fetch')->middleware('auth');
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
-Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
-Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
-Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 Route::post('/contact/spouse/create/{contactId}', [ContactController::class, 'createSpouseContact'])->name('contact.spouse.create');
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
 //notes fetch in json for contact
@@ -138,6 +140,7 @@ Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class,
 
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
+Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContact'])->name('task.contact')->middleware('auth');
 
 
 

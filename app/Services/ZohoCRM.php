@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
+use App\Services\DatabaseService;
 
 class ZohoCRM
 {
@@ -191,37 +192,44 @@ class ZohoCRM
     }
 
     //create contacts to zoho
-    public function createContactData($inputJson, $id)
+   public function createContactData($inputJson, $id)
     {
         try {
-            Log::info('Creating Zoho contacts', [$inputJson]);
+            Log::info('Creating Zoho contacts', ['input' => $inputJson, 'id' => $id]);
 
             // Trigger workflows
             $inputJson['trigger'] = 'workflow';
-            // Adjust the URL and HTTP method based on your Zoho API requirements
+
+            // Send the HTTP request to Zoho API
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->patch($this->bulkUrl . "Contacts/$id?affected_data=true", $inputJson);
 
+            // Decode the response data
             $responseData = $response->json();
 
             // Check if the request was successful
             if (!$response->successful()) {
-                Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
-                throw new \Exception('Failed to create Zoho contacts');
+                Log::error('Zoho contacts creation failed', ['response' => $responseData]);
+                
+                // Remove the contact from the database if the request fails
+                if(isset($responseData->message)==="the id given seems to be invalid"){
+                    $db = new DatabaseService();
+                    $db->removeContactFromDB($id);
+                }
+                
+                throw new \Exception("Failed to create contact in ZohoCRM. Contact ID not found.");
             }
 
-            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+            Log::info('Zoho contacts creation successful', ['response' => $responseData]);
 
             return $response;
         } catch (\Throwable $th) {
-            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            Log::error('Error creating Zoho contacts', ['error' => $th->getMessage()]);
             throw new \Exception('Failed to create Zoho contacts');
         }
     }
-
-
     public function createNewContactData($inputJson)
     {
         try {
