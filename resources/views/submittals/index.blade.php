@@ -1,7 +1,7 @@
 <div class="table-responsive dtranstiontable mt-3">
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Submittals</p>
-        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType('{{$deal}}')">
+        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
             <i class="fas fa-plus plusicon"></i>
             Add New Submittal
         </div>
@@ -93,9 +93,9 @@
             $('#buyerSubmittal').show();
             $('#listingSubmittal').hide();
     } */
-    function showSubmittalFormType(deal) {
-        deal = JSON.parse(deal);
-        console.log(deal.representing,deal.tm_preference);
+    function showSubmittalFormType() {
+        console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
+        // deal = JSON.parse(deal);
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
             addSubmittal('buyer-submittal',deal);
@@ -116,7 +116,7 @@
             return Math.floor(1000 + Math.random() * 9000);
         }
 
-    window.addSubmittal = function(type,deal,formType){
+    window.addSubmittal = function(type,deal,formType=null){
         if(type == "buyer-submittal"){
             var formData = {
                 "data": [{
