@@ -121,7 +121,7 @@ class Deal extends Model
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
             'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
-            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['name'] ?? null) : null,
+            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : null,
             'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,

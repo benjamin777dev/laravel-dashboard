@@ -295,11 +295,11 @@
             <div class="col-md-6">
                 <label for="tmName" class="form-label nplabelText">TM Name</label>
                 <select class="form-select npinputinfo" id="tmName" required disabled>
-                    @foreach($users as $user)
-                    <option value="{{ $user['name'] }}" {{ isset($deal['tmName']['name']) && $deal['tmName']['name'] == $user['name'] ? 'selected' : '' }}>
-                        {{ $user['name'] }}
-                    </option>
-                    @endforeach
+                        @foreach($users as $user)
+                        <option value="{{ $user }}" {{ isset($deal['tmName']['name']) && $deal['tmName']['name'] == $user['name'] ? 'selected' : '' }}>
+                            {{ $user['name'] }}
+                        </option>
+                        @endforeach
                 </select>
             </div>
             <div class="col-md-6">
@@ -509,7 +509,6 @@ data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
     document.addEventListener('DOMContentLoaded', function () {
         var dealId = @json($dealId);
         getSubmittals(dealId);
-       
     })
     // Function to populate client information
     function getPipeline(dealId) {
@@ -623,15 +622,39 @@ data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
 
     });
     window.setTmName = function () {
-        let tm_preference = document.getElementById("tmPreference").value;
-        let tm_name = document.getElementById("tmName");
-        if (tm_preference === "Non TM") {
-            tm_name.value = "File Management Team";
-        } else if (tm_preference === "CHR TM") {
-            tm_name.value = "{{ auth()->user()->name }}";
-        }
-    };
+            var users = @json($users);
 
+            let tm_preference = document.getElementById("tmPreference").value;
+            let tm_name_select = document.getElementById("tmName");
+
+            if (tm_preference === "Non TM") {
+                let user = users.find((val) => val.name === "File Management Team");
+                console.log("TMUSERS", user);
+                
+                // Clear existing options
+                tm_name_select.innerHTML = '';
+
+                // Add the new option
+                let option = document.createElement("option");
+                option.value = JSON.stringify(user);
+                option.text = user.name;
+                option.selected = true;
+                tm_name_select.appendChild(option);
+            } else if (tm_preference === "CHR TM") {
+                let currentUser = @json(auth()->user());
+                console.log("TMUSERS", currentUser);
+
+                // Clear existing options
+                tm_name_select.innerHTML = '';
+
+                // Add the new option
+                let option = document.createElement("option");
+                option.value = JSON.stringify(currentUser);
+                option.text = currentUser.name;
+                option.selected = true;
+                tm_name_select.appendChild(option);
+            }
+        };
     window.fetchTask = function(tab, dealID) {
         // Make AJAX call
         $.ajax({
