@@ -156,7 +156,10 @@
                                                 aria-label="Select Transaction">
                                                 <!-- @foreach ($retrieveModuleData as $item)
                                                     @if (in_array($item['api_name'], ['Contacts'])) -->
-                                                        <option value="{{ $note }}" selected>{{ $note['ContactData']['first_name'] }} {{ $note['ContactData']['last_name'] }}</option>
+                                                        <option value="{{ $note }}" {{ isset($note['ContactData']) ? 'selected' : '' }}>
+                                                            {{ $note['ContactData']['first_name'] ?? '' }} {{ $note['ContactData']['last_name'] ?? '' }}
+                                                        </option>
+
                                                     <!-- @endif
                                                 @endforeach -->
                                             </select>

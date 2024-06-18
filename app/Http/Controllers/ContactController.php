@@ -42,6 +42,133 @@ class ContactController extends Controller
         return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend'));
     }
 
+    public function showCreateContactForm()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $spouseContact = session('spouseContact');
+
+        session()->forget('spouseContact');
+        $user_id = $user->root_user_id;
+        $name = $user->name;
+        $db = new DatabaseService();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactId = request()->route('contactId');
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+         if (!$contact) {
+            return redirect('/contacts');
+        }
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        return view('contacts.create', compact('contactId','retrieveModuleData','contact'));
+
+    }
+    public function contactCreateForm(Request $request)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $spouseContact = session('spouseContact');
+
+        session()->forget('spouseContact');
+        $user_id = $user->root_user_id;
+        $name = $user->name;
+        $db = new DatabaseService();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactId = request()->route('contactId');
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+         if (!$contact) {
+            return redirect('/contacts');
+        }
+        $users = $user;
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
+        $groups = $db->retrieveGroups($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        if ($spouseContact) {
+            // Ensure $spouseContact is an array or an object, not a string
+            if (is_string($spouseContact)) {
+                $spouseContact = json_decode($spouseContact, true);
+            }
+        }
+
+        return view('contacts.createForm', compact('contact','retrieveModuleData','contacts',  'users', 'spouseContact',  'contactId', 'groups', 'contactsGroups'));
+
+    }
+
+    public function show($contactId)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $user_id = $user->root_user_id;
+        $name = $user->name;
+        $db = new DatabaseService();
+        // $contactInfo = Contact::getZohoContactInfo();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactId = request()->route('contactId');
+        Log::info('CONTACTIDDATA' . $contactId);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        if (!$contact) {
+            return redirect('/contacts');
+        }
+        $groups = $db->retrieveGroups($user, $accessToken);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
+        $tab = request()->query('tab') ?? 'In Progress';
+        $users = $user;
+        $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
+        $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
+        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        if (request()->ajax()) {
+            // If it's an AJAX request, return the pagination HTML
+            return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
+        }
+        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+    }
+
+    public function showDetailForm($contactId)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $user_id = $user->root_user_id;
+        $name = $user->name;
+        $db = new DatabaseService();
+        // $contactInfo = Contact::getZohoContactInfo();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactId = request()->route('contactId');
+        Log::info('CONTACTIDDATA' . $contactId);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        if (!$contact) {
+            return redirect('/contacts');
+        }
+        $groups = $db->retrieveGroups($user, $accessToken);
+        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
+        $tab = request()->query('tab') ?? 'In Progress';
+        $users = $user;
+        $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
+        $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
+        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        return view('contacts.detailForm', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+    }
+    
+
     public function getContact(Request $request)
     {
         $db = new DatabaseService();
@@ -84,6 +211,9 @@ class ContactController extends Controller
                 $first_name = "";
                 $last_name = "";
                 $contactInstanceforJson = Contact::where('zoho_contact_id', $id)->first();
+                if (!$contactInstanceforJson) {
+                    return redirect('/contacts');
+                }
                 if (isset($frontData['data'][0]['First_Name'])) {
                     if (strpos($frontData['data'][0]['First_Name'], ' ') !== false) {
                         $parts = explode(' ', $frontData['data'][0]['First_Name']);
@@ -384,6 +514,9 @@ class ContactController extends Controller
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
             $contactInstance = Contact::where('id', $id)->first();
+            if (!$contactInstance) {
+                return redirect('/contacts');
+            }
             $response = $zoho->createContactData($responseData, $contactInstance->zoho_contact_id);
             if (!$response->successful()) {
                 Log::error("Error creating contacts:");
@@ -443,7 +576,7 @@ class ContactController extends Controller
                 }
             }
             // Redirect back with a success message
-            return redirect('/contacts')->with('success', 'Contact Updated successfully!');
+            return response()->json(['data' => $contactInstance], 200);
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
             return redirect()->back()->with('error', '!' . $e->getMessage());
@@ -546,39 +679,6 @@ class ContactController extends Controller
 
     }
 
-    public function show($contactId)
-    {
-        $user = $this->user();
-
-        if (!$user) {
-            return redirect('/login');
-        }
-        $user_id = $user->root_user_id;
-        $name = $user->name;
-        $db = new DatabaseService();
-        // $contactInfo = Contact::getZohoContactInfo();
-        $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactId = request()->route('contactId');
-        Log::info('CONTACTIDDATA' . $contactId);
-        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        $groups = $db->retrieveGroups($user, $accessToken);
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
-        $tab = request()->query('tab') ?? 'In Progress';
-        $users = $user;
-        $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
-        $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
-        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
-        }
-        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
-    }
-
     public function retriveNotesForContact()
     {
         $user = $this->user();
@@ -595,42 +695,7 @@ class ContactController extends Controller
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'contact'))->render();
     }
 
-    public function showCreateContactForm()
-    {
-        $user = $this->user();
-
-        if (!$user) {
-            return redirect('/login');
-        }
-        $spouseContact = session('spouseContact');
-
-        session()->forget('spouseContact');
-        $user_id = $user->root_user_id;
-        $name = $user->name;
-        $db = new DatabaseService();
-        $accessToken = $user->getAccessToken(); // Method to get the access token.
-        $contactId = request()->route('contactId');
-        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        $users = $user;
-        $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
-        $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
-        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
-        $groups = $db->retrieveGroups($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        if ($spouseContact) {
-            // Ensure $spouseContact is an array or an object, not a string
-            if (is_string($spouseContact)) {
-                $spouseContact = json_decode($spouseContact, true);
-            }
-        }
-
-        return view('contacts.create', compact('contact', 'user_id', 'name', 'users', 'spouseContact', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'groups', 'contactsGroups'));
-
-    }
+    
 
     public function createContactId(Request $request)
     {
