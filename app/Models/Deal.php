@@ -93,6 +93,7 @@ class Deal extends Model
         // and id of the agent who is assigned this deal
         // we can find that user in the system
         $dealUser = User::where("zoho_id", $contactNameId)->first();
+        $contact = Contact::where("zoho_contact_id", $contactNameId)->first();
         if ($dealUser) {
             $userId = $dealUser->id;
         }
@@ -121,7 +122,7 @@ class Deal extends Model
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
             'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
-            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['id'] ?? null) : null,
+            'contact_name' => $source == "webhook" ? ($contact['id'] ?? null) : null,
             'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,

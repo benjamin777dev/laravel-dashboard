@@ -81,10 +81,10 @@
                         <td>
                             <div class="d-flex btn-save-del">
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                    id="btnGroupAddon" data-bs-toggle="modal"
+                                    id="update_changes" data-bs-toggle="modal"
                                     onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
                                     <i class="fas fa-hdd plusicon"></i>
-                                    Save
+                                    Done
                                 </div>
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                     id="btnGroupAddon" data-bs-toggle="modal"
@@ -444,9 +444,7 @@
             var formData = {
                 "data": [{
                     "Subject": elementValue,
-                    // "Remind_At": {
-                    //     "ALARM": `FREQ=NONE;ACTION=EMAIL;TRIGGER=DATE-TIME:${taskDate.value}`
-                    // }
+                    "Status":"Completed"
                 }]
             };
             // console.log("ys check ot")

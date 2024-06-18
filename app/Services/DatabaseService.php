@@ -631,14 +631,16 @@ class DatabaseService
             Log::info("Retrieve Tasks From Database");
             $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
-            if ($tab == 'Completed') {
+            if ($tab == 'Overdue') {
                 $tasks
                     ->where('due_date', '<', now());
-            } elseif ($tab == 'Not Started') {
+            } elseif ($tab == 'Upcoming') {
                 $tasks
                     ->where('due_date', '>=', now());
-            } else {
-                $tasks->where('due_date', null);
+            } elseif ($tab == 'In Progress') {
+                $tasks->where([['due_date', null],['status','!=','Completed']]);
+            } elseif ($tab == 'Completed') {
+                $tasks->where('status', 'Completed');
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             return $tasks;
@@ -766,14 +768,16 @@ class DatabaseService
             Log::info("Retrieve Tasks From Database");
             $condition = [];
             $tasks = Task::where('what_id', $dealId)->with(['dealData']);
-            if ($tab == 'Completed') {
+            if ($tab == 'Overdue') {
                 $tasks
                     ->where('due_date', '<', now());
-            } elseif ($tab == 'Not Started') {
+            } elseif ($tab == 'Upcoming') {
                 $tasks
                     ->where('due_date', '>=', now());
-            } else {
-                $tasks->where('due_date', null);
+            } elseif ($tab == 'In Progress') {
+                $tasks->where([['due_date', null],['status','!=','Completed']]);
+            } elseif ($tab == 'Completed') {
+                $tasks->where('status', 'Completed');
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             return $tasks;
@@ -789,14 +793,16 @@ class DatabaseService
             Log::info("Retrieve Tasks From Database");
             $condition = [];
             $tasks = Task::where('who_id', $dealId)->with(['contactData']);
-            if ($tab == 'Completed') {
+            if ($tab == 'Overdue') {
                 $tasks
                     ->where('due_date', '<', now());
-            } elseif ($tab == 'Not Started') {
+            } elseif ($tab == 'Upcoming') {
                 $tasks
                     ->where('due_date', '>=', now());
-            } else {
-                $tasks->where('due_date', null);
+            } elseif ($tab == 'In Progress') {
+                $tasks->where([['due_date', null],['status','!=','Completed']]);
+            } elseif ($tab == 'Completed') {
+                $tasks->where('status', 'Completed');
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
             return $tasks;
@@ -1946,6 +1952,17 @@ class DatabaseService
         Log::error("Error retrieving submittal contacts: " . $e->getMessage());
         throw $e;
     }
+    }
+
+    public function removeContactFromDB($id)
+    {
+        try {
+            $bulkJob = Contact::where('zoho_contact_id', $id)->delete();
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
     }
 
 }

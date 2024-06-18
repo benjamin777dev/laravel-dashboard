@@ -25,4 +25,26 @@ class TaskController extends Controller
             compact('tasks','getdealsTransaction','retrieveModuleData','tab'));
     }
 
+    public function taskForContact()
+    {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $tab = request()->query('tab') ?? 'In Progress';
+        $accessToken = $user->getAccessToken();
+        $contactId = request()->route('contactId');
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        if (!$contact) {
+            return redirect('/contacts');
+        } 
+        $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+
+       return view('common.tasks',
+            compact('tasks','contact','retrieveModuleData','tab'));
+    }
+
 }

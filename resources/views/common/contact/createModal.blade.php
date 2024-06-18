@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}" id ="contact_spouse_create_form" method="POST" onsubmit="validateSpouseContactForm()">
+                <form action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}" id ="contact_spouse_create_form" method="POST" onsubmit="return validateSpouseContactForm();">
                     @csrf
                     {{-- Layout --}}
                     <!-- <div class="mb-3 row">
@@ -93,7 +93,7 @@
                             <strong>Groups</strong>
                         </label>
                         <div class="col-sm-9">
-                            <select id="choices-multiple-remove-button-modal" placeholder="Select up to 5 Groups" multiple>
+                            <select id="choices-multiple-remove-button-modal" placeholder="Select Groups" multiple>
                                 @foreach ($groups as $group)
                                     @php
                                         $selected = '';
@@ -129,12 +129,9 @@
 </div>
 
 <script>
- document.addEventListener('DOMContentLoaded', function() {
-     var multipleCancelButton = new Choices('#choices-multiple-remove-button-modal', {
+    $(document).ready(function() {
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button-modal', {
             removeItemButton: true,
-            maxItemCount: 5,
-            searchResultLimit: 5,
-            renderChoiceLimit: 5,
         });
         let selectedGroupsArr = [];
         const hiddenInput = document.createElement('input');
@@ -152,8 +149,32 @@
             console.log(selectedGroupsArr);
 
         });
+       
         document.getElementById('contact_spouse_create_form').appendChild(hiddenInput);
- })    
+            $('#contact_spouse_create_form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Serialize form data
+            var formData = $(this).serialize();
+            // console.log(JSON.parse(formData));
+            // return;
+            // AJAX post request
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                dataType: 'json', // Expect JSON response
+                success: function(response) {
+                    showToast("Spouse create successfully")
+                    getCreateForm();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    showToastError("Spouse creation failed")
+                }
+            });
+        });
+    })    
 
     function validateSpouseContactForm() {
         let last_name = $("#spouseLastName").val();
@@ -163,9 +184,6 @@
             showToastError('Please enter last name')
             return false;
         }
-        let submitbtn = $("#spouse_submit_button");
-        console.log(submitbtn);
-        submitbtn.attr("type", "submit");
-
+        return true
     }
-    </script>
+</script>

@@ -124,13 +124,16 @@
                                 data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
                                 aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
                                 Progress</button>
-                            <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
+                            <button class="nav-link dtabsbtn" data-tab='Upcoming' id="nav-profile-tab"
                                 data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                                 aria-controls="nav-profile" aria-selected="false"
-                                onclick="fetchData('Not Started')">Upcoming</button>
+                                onclick="fetchData('Upcoming')">Upcoming</button>
+                            <button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                                aria-selected="false" onclick="fetchData('Overdue')">Overdue</button>
                             <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
+                                aria-selected="false" onclick="fetchData('Completed')">Completed</button>
                         </div>
                     </nav>
                     <div class="task-container">
@@ -257,7 +260,8 @@
         var statusInfo = {
             'In Progress': false,
             'Overdue': false,
-            'Not Started': false,
+            'Completed': false,
+            'Upcoming': false,
         };
 
         // Update the status information based on the current status

@@ -80,14 +80,18 @@
                             data-tab='In Progress' type="button" role="tab" aria-controls="nav-home"
                             aria-selected="true">In
                             Progress</button>
-                        <button class="nav-link dtabsbtn" data-tab='Not Started'
-                            onclick="fetchTask('Not Started','{{$deal['id']}}')" id="nav-profile-tab"
+                        <button class="nav-link dtabsbtn" data-tab='Upcoming'
+                            onclick="fetchTask('Upcoming','{{$deal['id']}}')" id="nav-profile-tab"
                             data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                             aria-controls="nav-profile" aria-selected="false">Upcoming</button>
                         <button class="nav-link dtabsbtn" data-tab='Overdue'
-                            onclick="fetchTask('Completed','{{$deal['id']}}')" id="nav-contact-tab" data-bs-toggle="tab"
+                            onclick="fetchTask('Overdue','{{$deal['id']}}')" id="nav-contact-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                             aria-selected="false">Overdue</button>
+                        <button class="nav-link dtabsbtn" data-tab='Completed'
+                            onclick="fetchTask('Completed','{{$deal['id']}}')" id="nav-contact-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                            aria-selected="false">Completed</button>
                     </div>
                 </nav>
                 <div class="task-container-data">
@@ -273,11 +277,6 @@
                     </option>
                     @endforeach
                 </select>
-                <div class="mb-3 ajax-select mt-3 mt-lg-0">
-                    <label class="form-label">Ajax (remote data)</label>
-                    <select class="form-control select2-ajax"></select>
-                </div>
-
             </div>
             <div class="col-md-6">
                 <label for="transactionOwner" class="form-label nplabelText">Transaction Owner</label>
@@ -548,7 +547,8 @@ data-bs-target="#staticBackdropforNote_{{ $deal['id'] }}">
         var statusInfo = {
             'In Progress': false,
             'Overdue': false,
-            'Not Started': false,
+            'Completed': false,
+            'Upcoming': false,
         };
 
         // Update the status information based on the current status
