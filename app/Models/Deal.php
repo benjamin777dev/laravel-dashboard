@@ -152,7 +152,7 @@ class Deal extends Model
             'lender_company' => $data['Lender_Company'] ?? null,
             'lender_company_name' => $data['Lender_Company_Name'] ?? null,
             'lender_name' => $data['Lender_Name'] ?? null,
-            'locked_s' => (int) ($data['Locked__s'] ?? null),
+            'locked_s' => ($data['Stage'] === "Under Contract" || strpos($data['Stage'], "Dead") === 0),
             'marketing_specialist' => $data['Marketing_Specialist'] ?? null,
             'modern_mortgage_lender' => $data['Modern_Mortgage_Lender'] ?? null,
             'modified_by_email' => $data['Modified_By']['email'] ?? null,
