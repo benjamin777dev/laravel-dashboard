@@ -133,7 +133,7 @@ class PipelineController extends Controller
         }
     }
 
-    public function showViewPipelineForm(Request $request)
+    public function showViewPipeline(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
         $db = new DatabaseService();
@@ -150,68 +150,90 @@ class PipelineController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        Log::info("deals and tab data " . $tab . $dealId);
-        $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-        Log::info("Task Details: " . print_r($tasks, true));
+        // Log::info("deals and tab data " . $tab . $dealId);
+        // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
+        // Log::info("Task Details: " . print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
+        // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
-        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+        // $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
+        // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+        // $contacts = $db->retreiveContactsJson($user, $accessToken);
+        // $users = User::all();
+        // $contactRoles = $db->retrieveRoles($user);
+        // $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        // $allStages = config('variables.dealStages');
+        // $tab = request()->query('tab') ?? 'In Progress';
+        // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        // if (request()->ajax()) {
+        //     // If it's an AJAX request, return the pagination HTML
+        //     return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
+        // }
+        return view('pipeline.view', compact( 'deal','dealId','notesInfo','retrieveModuleData','tab'))->render();
+
+    }
+
+    public function showViewPipelineForm(Request $request)
+    {
+        Log::info('Showing create pipeline form' . $request);
+        $db = new DatabaseService();
+        $helper = new Helper();
+        // Retrieve user data from the session
+        $pipelineData = session('pipeline_data');
+        $user = $this->user();
+        if (!$user) {
+        return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+                
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
-        $contactRoles = $db->retrieveRoles($user);
-        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        
         $allStages = config('variables.dealStages');
-        $tab = request()->query('tab') ?? 'In Progress';
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
-        }
-        return view('pipeline.view', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages','contactRoles','dealId'))->render();
+        return view('pipeline.detail', compact('users','contacts', 'deal', 'closingDate', 'allStages','dealId'))->render();
 
     }
 
-    public function getDeal(Request $request)
-    {
-    Log::info('Showing create pipeline form' . $request);
-    $db = new DatabaseService();
-    $helper = new Helper();
-    // Retrieve user data from the session
-    $pipelineData = session('pipeline_data');
-    $user = auth()->user();
-    if (!$user) {
-    return redirect('/login');
-    }
-    $accessToken = $user->getAccessToken();
-    $zoho = new ZohoCRM();
-    $zoho->access_token = $accessToken;
-    $tab = request()->query('tab') ?? 'In Progress';
-    $dealId = request()->route('dealId');
-    $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-    Log::info("deals and tab data " . $tab . $dealId);
-    $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-    Log::info("Task Details: " . print_r($tasks, true));
-    $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-    $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-    $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-    $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
-    $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-    $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
-    $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
-    $contacts = $db->retreiveContactsJson($user, $accessToken);
-    $users = User::all();
-    $contactRoles = $db->retrieveRoles($user);
-    $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-    $allStages = config('variables.dealStages');
-    $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-    return view('pipeline.detail', compact('tasks', 'notesInfo', 'tab','users','contacts', 'pipelineData',
-    'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'retrieveModuleData', 'attachments', 'nontms',
-    'submittals', 'allStages','contactRoles'))->render();
     
+    public function showCreatePipeline(Request $request)
+    {
+        Log::info('Showing create pipeline form' . $request);
+        $db = new DatabaseService();
+        $helper = new Helper();
+        // Retrieve user data from the session
+        $pipelineData = session('pipeline_data');
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        // $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        // $tab = request()->query('tab') ?? 'In Progress';
+        // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
+        // Log::info("Task Details: " . print_r($tasks, true));
+        // $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
+        // $attachments = $db->retreiveAttachment($dealId);
+        // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+        // $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        // $contacts = $db->retreiveContactsJson($user, $accessToken);
+        // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        // $users = User::all();
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        // $allStages = config('variables.dealCreateStages');
+        // $contactRoles = $db->retrieveRoles($user);
+        return view('pipeline.create', compact('dealId','deal','retrieveModuleData'));
     }
 
     public function showCreatePipelineForm(Request $request)
@@ -228,24 +250,27 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        if (!$deal) {
+            return response()->json(["redirect" => "/pipelines"]);
+        }
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
-        $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-        Log::info("Task Details: " . print_r($tasks, true));
-        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
-        $attachments = $db->retreiveAttachment($dealId);
-        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
-        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        // $tab = request()->query('tab') ?? 'In Progress';
+        // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
+        // Log::info("Task Details: " . print_r($tasks, true));
+        // $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
+        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
+        // $attachments = $db->retreiveAttachment($dealId);
+        // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
+        // $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $users = User::all();
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        // $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
-        $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('tasks', 'contactRoles', 'users', 'tab', 'notesInfo', 'contacts', 'pipelineData', 'getdealsTransaction', 'deal', 'closingDate', 'dealContacts', 'dealaci', 'dealId', 'retrieveModuleData', 'attachments', 'nontms', 'submittals', 'allStages', 'deals'));
+        // $contactRoles = $db->retrieveRoles($user);
+        return view('pipeline.createForm', compact('deal','contacts','allStages','users'))->render();
     }
 
     
@@ -475,6 +500,6 @@ class PipelineController extends Controller
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $contactRoles = $db->retrieveRoles($user);
-        return view('contactRole.contact', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
+        return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }
