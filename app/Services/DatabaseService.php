@@ -1004,8 +1004,8 @@ class DatabaseService
     public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType)
     {
     try {
-    Log::info("Retrieve Submittal Contact From Database");
-    $condition = [['isSubmittalComplete', false],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id]];
+    Log::info("Retrieve Submittal Contact From Database",[['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id]]);
+    $condition = [['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id]];
     $submittal = Submittals::where($condition)->first();
     Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
     return $submittal;
@@ -1498,7 +1498,7 @@ class DatabaseService
     {
         try {
         
-            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->paginate(5);
+            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
             return $submittalData;
         } catch (\Exception $e) {
             Log::error("Error retrieving Submittals: " . $e->getMessage());
@@ -1802,7 +1802,7 @@ class DatabaseService
     try {
         
         $submittal = Submittals::create([
-            'isSubmittalCompleted' => false,
+            'isSubmittalComplete' => "false",
             'userId' => $user->id,
             'isInZoho' => true,
             'zoho_submittal_id' => $zohoSubmittal['id'],
@@ -1860,6 +1860,7 @@ class DatabaseService
         $submittal->brochureLine = isset($submittalData["Brochure_Line"]) ? $submittalData["Brochure_Line"] : null;
         $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
         $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
+        $submittal->tourURL = isset($submittalData["3D_Tour_URL"]) ? $submittalData["3D_Tour_URL"] : null;
         $submittal->closerNamePhone = isset($submittalData["Closer_Name_Phone"]) ? $submittalData["Closer_Name_Phone"] : null;
         $submittal->agreementExecuted = isset($submittalData["Listing_Agreement_Executed"]) ? $submittalData["Listing_Agreement_Executed"] : null;
         $submittal->signInstallVendorOther = isset($submittalData["Sign_Install_Vendor_if_Other"]) ? $submittalData["Sign_Install_Vendor_if_Other"] : null;
@@ -1958,6 +1959,17 @@ class DatabaseService
     {
         try {
             $bulkJob = Contact::where('zoho_contact_id', $id)->delete();
+            return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function removeDealFromDB($id)
+    {
+        try {
+            $bulkJob = Deal::where('zoho_deal_id', $id)->delete();
             return $bulkJob;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());

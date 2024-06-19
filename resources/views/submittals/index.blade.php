@@ -79,20 +79,6 @@
 
 <script>
     var deal = @json($deal);
-        console.log("sub form sdjkfkdsj",deal);
-        if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null){
-            $('#addSubmittal').attr('disabled', true);
-            $('#addSubmittal').addClass('btn-disabled');
-        }else{
-            $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled')
-        }
-        /* if (subForm == "Listing Submittal") {
-            $('#listingSubmittal').show();
-            $('#buyerSubmittal').hide();
-        } else if (subForm == "Buyer Submittal") {
-            $('#buyerSubmittal').show();
-            $('#listingSubmittal').hide();
-    } */
     function showSubmittalFormType() {
         console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
         // deal = JSON.parse(deal);
@@ -101,10 +87,8 @@
             addSubmittal('buyer-submittal',deal);
         }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
             addSubmittal('listing-submittal',deal)
-            window.location.href = `{{ url('submittal-create/Listing/${submittalData.id}') }}`;
         }else if(deal.representing === "Seller" && deal.tm_preference === "Non TM"){
             addSubmittal('listing-submittal',deal,'Non TM');
-            window.location.href = `{{ url('submittal-create/Listing/${submittalData.id}') }}'+'?formType="Non TM"`;
         }
     }
 
@@ -116,7 +100,7 @@
             return Math.floor(1000 + Math.random() * 9000);
         }
 
-    window.addSubmittal = function(type,deal,formType=null){
+    function addSubmittal (type,deal,formType=null){
         if(type == "buyer-submittal"){
             var formData = {
                 "data": [{
@@ -170,7 +154,7 @@
                         "name":deal.deal_name
                     },
                     "TM_Name": deal.tmName,
-                    'Name':'BS-'+(generateRandom4DigitNumber()),
+                    'Name':'LS-'+(generateRandom4DigitNumber()),
                     "Owner": {
                         "id": "{{ auth()->user()->root_user_id }}",
                         "name": "{{ auth()->user()->name }}",

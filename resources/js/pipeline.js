@@ -19,8 +19,8 @@ window.checkValidate = function (deal) {
                     <div class="col-md-6 additional-field ">
                         <label for="finance" class="form-label nplabelText">Financing</label>
                         <select class="form-select npinputinfo" id="finance" ${disabledText} required onchange='checkAdditionalValidation(${JSON.stringify(
-                            deal
-                        )})'>
+            deal
+        )})'>
                             <option value="" ${
                                 !deal["financing"] ? "selected" : ""
                             }>--None--</option>
@@ -36,8 +36,8 @@ window.checkValidate = function (deal) {
                     <div class="col-md-6 additional-field">
                         <label for="lender_company" class="form-label nplabelText">Lender Company</label>
                         <select class="form-select npinputinfo" id="lender_company" ${disabledText} required onchange='checkAdditionalValidation(${JSON.stringify(
-                            deal
-                        )})'>
+            deal
+        )})'>
                             <option value="" ${
                                 !deal["lender_company"] ? "selected" : ""
                             }>--None--</option>
@@ -183,7 +183,8 @@ window.checkAdditionalValidation = function (deal) {
             $("#additionalFields").find(".additional-field-lender").remove();
         } else if (lender_company && lender_company.value == "Other") {
             var stage = document.getElementById("validationDefault04");
-            let disabledText =  stage?.value == "Under Contract" ? "disabled" : "";
+            let disabledText =
+                stage?.value == "Under Contract" ? "disabled" : "";
             $("#additionalFields").append(`
                     <div class="col-md-6 additional-field-lender ">
                         <label for="lender_company_name" class="form-label nplabelText">Lender Company Name</label>
@@ -309,16 +310,6 @@ window.updateDataDeal = function (dealId, dbDealId) {
         var formData = {
             data: [
                 {
-                    Client_Name_Primary:
-                        (client_name_primary.first_name || "") +
-                        " " +
-                        (client_name_primary.last_name || ""),
-                    Client_Name_Only:
-                        (client_name_primary.first_name || "") +
-                        " " +
-                        (client_name_primary.last_name || "") +
-                        " || " +
-                        client_name_primary.zoho_contact_id,
                     Representing: representing,
                     Deal_Name: deal_name,
                     Stage: stage,
@@ -370,7 +361,18 @@ window.updateDataDeal = function (dealId, dbDealId) {
                 full_name: lead_agent.name ?? "",
             };
         }
-
+        if (client_name_primary) {
+            (formData.data[0].Client_Name_Primary =
+                (client_name_primary.first_name || "") +
+                " " +
+                (client_name_primary.last_name || "")),
+                (formData.data[0].Client_Name_Only =
+                    (client_name_primary.first_name || "") +
+                    " " +
+                    (client_name_primary.last_name || "") +
+                    " || " +
+                    client_name_primary.zoho_contact_id);
+        }
         // Add TM_Name if tm_name is defined
         if (tm_name) {
             formData.data[0].TM_Name = {
@@ -398,37 +400,18 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     const upperCaseMessage =
                         response.data[0].message.toUpperCase();
                     showToast(upperCaseMessage);
-                    updateDealInformation(dbDealId);
+                    getCreateForm(dbDealId);
                     // window.location.reload();
                 }
             },
             error: function (xhr, status, error) {
                 // Handle error response
                 console.error(xhr.responseText);
+                showToastError(xhr?.responseJSON?.error);
+                getCreateForm(dbDealId);
             },
         });
     }
-};
-
-window.getSubmittals = function (dealId) {
-    $.ajax({
-        url: "/submittal/" + dealId,
-        type: "Get",
-        success: function (response) {
-            // if (response?.data && response.data[0]?.message) {
-            //     // Convert message to uppercase and then display
-            //     const upperCaseMessage = response.data[0].message.toUpperCase();
-            //     showToast(upperCaseMessage);
-            //     updateDealInformation(response.data[0])
-            //     // window.location.reload();
-            // }
-            $(".showsubmittal").html(response);
-        },
-        error: function (xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText);
-        },
-    });
 };
 
 window.formatDate = function (date) {

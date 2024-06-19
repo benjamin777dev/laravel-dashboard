@@ -9,39 +9,54 @@
             <div class="modal-body">
                 <form id="contactForm{{ $deal['id'] }}">
                     <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Contacts</th>
-                                    <th>Account Name</th>
-                                    <th>Contact Roles</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($contacts as $contact)
-                                <tr>
-                                    <td>
+                        @if(count($contacts) && count($contactRoles))
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Contacts</th>
+                                        <th>Account Name</th>
+                                        <th>Contact Roles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($contacts as $contact)
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="contact_{{ $contact['id'] }}"
+                                                    id="contact_{{ $contact['id'] }}"
+                                                    onclick="updateContactRoles({{ json_encode($contact) }}, '', '{{ $deal['zoho_deal_id'] }}')"
+                                                    {{ $dealContacts->contains('id', $contact['id']) ? 'checked' : '' }}>
+                                                <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{ $contact['last_name'] }}</label>
+                                            </td>
+                                            <td>{{ $contact['userData']['name'] ?? "" }}</td>
+                                            <td>
+                                                <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}">
+                                                    @foreach($contactRoles as $contactRole)
+                                                        <option value="{{ $contactRole['name'] }}">{{ $contactRole['name'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Contacts</th>
+                                        <th>Account Name</th>
+                                        <th>Contact Roles</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3">No Contact Roles Available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        @endif
 
-                                        <input type="checkbox" name="contact_{{ $contact['id'] }}"
-                                            id="contact_{{ $contact['id'] }}"
-                                            onclick="updateContactRoles({{ json_encode($contact)}}, '','{{$deal['zoho_deal_id']}}')"
-                                            {{ $dealContacts->contains('id', $contact['id']) ? 'checked' : '' }}>
-                                        <label for="contact_{{ $contact['id'] }}">{{ $contact['first_name'] }} {{
-                                            $contact['last_name'] }}</label>
-                                    </td>
-                                    <td>{{ $contact['userData']['name'] ?? "" }}</td>
-                                    <td>
-                                        <select name="role_{{ $contact['id'] }}" id="role_{{ $contact['id'] }}"
-                                            onchange="updateContactRoles({{ json_encode($contact) }}, this.value,'{{$deal['zoho_deal_id']}}')">
-                                            @foreach($contactRoles as $contactRole)
-                                            <option value="{{$contactRole['name']}}">{{$contactRole['name']}}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
                     </div>
                 </form>
             </div>

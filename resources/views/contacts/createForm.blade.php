@@ -389,8 +389,9 @@
                     getCreateForm();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                    showToastError("Contact creation failed")
+                    console.error('Error in contact creation:', xhr.responseJSON);
+                    showToastError(xhr.responseJSON?.message)
+                    getCreateForm();
                 }
             });
         });

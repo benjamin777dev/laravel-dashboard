@@ -51,8 +51,14 @@
         $.ajax({
             url: `{{ url('/contact/create/form/') }}/${contactId}`,
             method: 'GET',
-            success: function(data) {                
-                $('.contactCreateForm').html(data);
+            success: function(response) {   
+                console.log(response,"response") 
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }else{
+
+                    $('.contactCreateForm').html(response);
+                }        
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
