@@ -393,8 +393,9 @@
                     updateContactform();
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                    showToastError("Contact updation failed")
+                    getCreateForm();
+                    console.error('Error in contact creation:', error,xhr.responseJSON, status);
+                    showToastError(xhr.responseJSON?.message)
                 }
             });
         });
