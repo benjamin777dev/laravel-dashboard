@@ -16,21 +16,26 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        <div class="commonFlex ppipeDiv">
+        <div class="d-flex justify-content-between align-items-center">
             <p class="pText">Database</p>
-            <div class="commonFlex cpbutton">
-                <a onclick="createContact();">
-                    <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                        </i>
-                        New Contact
+            <div class="d-flex gap-1">
+                <a >
+                    <div>
+                        @include('components.button', [
+                            'attributes' => "onclick=\"createContact()\"",
+                            'label' => 'New Contact',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
                     </div>
+                   
                 </a>
                 <a onclick="createTransaction({{ $userContact }});">
-                    <div class="input-group-text text-white justify-content-center ppipeBtn"
-                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                        </i>
-                        New Transaction
+                    <div>
+                        @include('components.button', [
+                            'attributes' => "onclick=\"createTransaction()\"",
+                            'label' => 'New Transaction',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
                     </div>
                 </a>
             </div>
@@ -62,13 +67,19 @@
 
             </div>
             <div class="d-flex gap-4">
-                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
-                    Filter
+                <div >  
+                    @include('components.button', [
+                        'attributes' => 'id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#filterModal"',
+                        'label' => 'Filter',
+                        'icon' => 'fas fa-filter',
+                    ])                    
                 </div>
-                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
-                    Reset All
+                <div> 
+                    @include('components.button', [
+                        'attributes' => "onclick=\"applyFilter('reset')\"",
+                        'label' => 'Reset All',
+                        'icon' => 'fas fa-sync',
+                    ])
                 </div>
             </div>
         </div>
@@ -132,7 +143,8 @@
 
     }
 
-    function applyFilter(reset) {
+    function applyFilter(reset="") {
+        console.log('yesshdhfshdf');
         let email = document.getElementById('filterEmail').checked;
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;

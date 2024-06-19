@@ -1,4 +1,4 @@
-<div class="col-md-4">
+<div class="col-md-4 w-100" style="background:#efefef;">
     <h4 class="text-start dFont600 mb-4">Notes</h4>
     @if ($notesInfo->isEmpty())
         <p class="text-center">No notes found.</p>

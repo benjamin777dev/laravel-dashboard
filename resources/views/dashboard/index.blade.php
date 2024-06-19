@@ -22,7 +22,7 @@
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         @if ($needsNewDate->isNotEmpty())
             <div class="alert alert-danger text-center">
-                You have {{ $needsNewDate->count() }} bad dates! 
+                You have {{ $needsNewDate->count() }} bad dates!
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
@@ -30,85 +30,90 @@
             <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
                 <div class="row g-1">
                     <div>
-                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" onclick="createContact();">
-                            <i class="fas fa-plus plusicon"></i> New Contact
-                        </div>
+                        @include('components.button', [
+                            'attributes' => "onclick=\"createContact()\"",
+                            'label' => 'New Contact',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
                     </div>
                     <div>
-                        <div class="input-group-text dcontactBtns" data-bs-toggle="modal"
-                            data-bs-target="#" onclick="createTransaction({{ $userContact }})">
-                            <i class="fas fa-plus plusicon"></i> New Transaction
+                        @include('components.button', [
+                            'attributes' => "onclick=\"createTransaction()\"",
+                            'label' => 'New Transaction',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
+                    </div>
+                </div>
+            </div>
+            @include('components.dashboardcard', ['stageData' => $stageData])
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <div class="card card-body h-100 card-body-padding0">
+                    <p class="text-dark font-family-montserrat font-size-16 fw-bolder mb-0">My Pipeline</p>
+                    <div id="canvas-holder" style="width:100%">
+                        <canvas id="chart" width="100%" height="100%"></canvas>
+                    </div>
+                    <p class="fs-13 mb-0 text-center font-size-18 fw-bolder mt-auto">
+                        ${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card card-body text-center h-100 card-body-padding0">
+                    <div
+                        class="container d-flex p-4 flex-column justify-content-center align-items-start gap-4 border rounded-3 bg-white shadow-sm">
+                        <p class="text-dark text-start font-family-montserrat font-size-16 fw-bolder line-height-18">Monthly
+                            Pipeline Comparison</p>
+                        <div class="stacked-bar-chart w-100 d-flex flex-column gap-1">
+                            @php
+                                $gcis = array_column($allMonths, 'gci');
+                                $maxGCI = max($gcis);
+                            @endphp
+                            @foreach ($allMonths as $month => $data)
+                                @php
+                                    $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
+                                @endphp
+                                <div class="row">
+                                    <div
+                                        class="col-md-2 align-self-center text-end text-muted small fw-bold font-montserrat fs-6">
+                                        {{ Carbon\Carbon::parse($month)->format('M') }}</div>
+                                    <div class="col-md-10 dashchartImg">
+                                        <div class="row dgraph-strip">
+                                            @php
+                                                $formattedGCI = str_replace(
+                                                    ['$', ','],
+                                                    '',
+                                                    number_format($data['gci'], 0),
+                                                );
+                                            @endphp
+                                            <div class="col-md-11 text-end bar-a"
+                                                style="width: {{ $formattedGCI < 1000 ? 'auto' : $widthPercentage . '%' }}">
+                                                {{ '$' . number_format($data['gci'], 0) }}
+                                            </div>
+                                            <div class="col-md-1">
+                                                <p class="dtransactions-des text-nowrap">{{ $data['deal_count'] }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-ld-9 col-md-9 col-sm-12">
-                <div class="row dashboard-cards-resp">
-                    @foreach ($stageData as $stage => $data)
-                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
-                            <div class="card dash-card">
-                                <div class="card-body dash-front-cards">
-                                    <h5 class="card-title dTitle mb-0">{{ $stage }}</h5>
-                                    <p class="dSumValue">${{ $data['sum'] }}</p>
-                                    <p class="card-text dcountText">{{ $data['count'] }} Transactions</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+
+            <div class="col-lg-3 h-100 mb-4">
+                <div class="card card-body card-body-padding0">
+                    @include('common.notes.view', [
+                        'notesInfo' => $notesInfo,
+                        'retrieveModuleData' => $retrieveModuleData,
+                    ])
                 </div>
             </div>
         </div>
-        <div class="row dmain-Container">
-            <div class="row dgraphdiv">
-                <div class="col-md-8">
-                    <div class="row dspeedn-month-camaparison">
-                        <div class="col-md-4 dspeedometersection">
-                            <p class="dpipetext">My Pipeline</p>
-                            <div id="canvas-holder" style="width:100%">
-                                <canvas id="chart" width="100%" height="100%"></canvas>
-                            </div>
-                            <p class="dFont13 dMb5 dRangeText">${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
-                        </div>
-                        <div class="col-md-8 graphp-dash">
-                            <div class="container dgraphpstackContainer">
-                                <p class="dcamptext">Monthly Pipeline Comparison</p>
-                                <div class="stacked-bar-chart w-100 stacked-contain">
-                                    @php
-                                        $gcis = array_column($allMonths, 'gci');
-                                        $maxGCI = max($gcis);
-                                    @endphp
-                                    @foreach ($allMonths as $month => $data)
-                                        @php
-                                            $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
-                                        @endphp
-                                        <div class="row">
-                                            <div class="col-md-1 align-self-center dmonth-design">
-                                                {{ Carbon\Carbon::parse($month)->format('M') }}</div>
-                                            <div class="col-md-11 dashchartImg">
-                                                <div class="row dgraph-strip">
-                                                    @php
-                                                        $formattedGCI = str_replace(['$', ','], '', number_format($data['gci'], 0));
-                                                    @endphp
-                                                    <div class="col-md-10 text-end bar-a" style="width: {{ $formattedGCI < 1000 ? 'auto' : $widthPercentage . '%' }}">
-                                                        {{ '$' . number_format($data['gci'], 0) }}
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <p class="dtransactions-des">{{ $data['deal_count'] }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @include('common.notes.view', [
-                    'notesInfo' => $notesInfo,
-                    'retrieveModuleData' => $retrieveModuleData,
-                ])
-            </div>
+        <div class="row">
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
@@ -140,13 +145,15 @@
             </div>
 
             <div class="table-responsive dtranstiontable mt-2" id="badDates">
-            @if ($needsNewDate->isNotEmpty())
-                <p class="fw-bold">Bad Dates | <span class="text-danger">{{count($needsNewDate)}} Bad Dates!</span></p>
-            @else
-                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
-            @endif
-                
-                
+                @if ($needsNewDate->isNotEmpty())
+                    <p class="fw-bold">Bad Dates | <span class="text-danger">{{ count($needsNewDate) }} Bad Dates!</span>
+                    </p>
+                @else
+                    <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great
+                                Job!</strong>!</span></p>
+                @endif
+
+
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
                     <div>Client Name</div>
@@ -165,13 +172,16 @@
                     </div>
                 @else
                     @foreach ($needsNewDate as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
-                        <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
+                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}"
+                            data-zid="{{ $deal['zoho_deal_id'] }}">
+                            <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
                                     <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                        <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
-                                    </a>
+                                        <span class="dlabel">Transaction Name:</span> {{ $deal['deal_name'] }}
+                                        {{ $deal['address'] }}
                                 </div>
+                                </a>
+                            </div>
                             <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
                                 <div class="dTContactName">
                                     <span class="dlabel">Client Name:</span>
@@ -199,27 +209,37 @@
                             </div>
                             <div class="dTContactName">
                                 <span class="dlabel">Closing Date:</span>
-                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
-                                    id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
+                                <input type="date" class="badDateInput"
+                                    onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
+                                    id="closing_date{{ $deal['zoho_deal_id'] }}"
+                                    value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
                             </div>
                             <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
+                                <div class="dTContactName"><span
+                                        class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%
+                                </div>
                             </div>
                             <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Potential GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
+                                <div class="dTContactName"><span class="dlabel">Potential
+                                        GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
                             </div>
                             <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Probability:</span>   {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
+                                <div class="dTContactName"><span class="dlabel">Probability:</span>
+                                    {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
                             </div>
-                            <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
-                                   
-                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span> ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
+                            <div data-type="probable_gci"
+                                data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
+
+                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span>
+                                    ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 @endif
             </div>
         </div>
+
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">
@@ -246,7 +266,7 @@
                 behavior: 'smooth'
             });
         });
-      
+
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')
         localStorage.setItem('status', defaultTab);

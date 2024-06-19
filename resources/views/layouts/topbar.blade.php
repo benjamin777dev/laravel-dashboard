@@ -28,17 +28,20 @@
 
             <button class="navbar-toggler" id="vertical-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-fw fa-bars"></i>
-        </button>
+            </button>
 
-            <!-- App Search-->
-            <div class="search-input-design">
-                <div class="app-search d-none d-lg-block" id="global-search" >
-                    
-                </div>
-            </div> 
-
-            
+                <!-- App Search-->
+          <form class="app-search d-none d-lg-block">
+            <div class="position-relative search-input-design">
+                <select class="form-control select2" id="global-search" data-placeholder="@lang('Search')">
+                    <!-- Option to load data asynchronously -->
+                </select>
+                <span class="bx bx-search-alt"></span>
+            </div>
+        </form>
+           
         </div>
+      
 
         <div class="d-flex ">
                 <div class="dropdown d-inline-block">

@@ -12,17 +12,20 @@
             <p class="ngText">Pipelines</p>
             <div class="pipeline-btns-container">
 
-                <div class="input-group-text text-white justify-content-center pcontactBtn"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"
-                    onclick="createTransaction({{ $userContact }})">
-                    <i class="fas fa-plus plusicon">
-                    </i> New Transaction
+                <div>
+                    @include('components.button', [
+                        'attributes' => "onclick=\"createTransaction()\"",
+                        'label' => 'New Transaction',
+                        'icon' => 'fas fa-plus plusicon',
+                        
+                    ])
                 </div>
-                <div class="input-group-text text-white justify-content-center pTransactionBtn">
-                    <i class="fas fa-plus plusicon">
-                    </i>
-                    New Submittal
-
+                <div>
+                    @include('components.button', [
+                        'attributes' => "onclick=\"createSubmittals()\"",
+                        'label' => 'New Submittal',
+                        'icon' => 'fas fa-plus plusicon',
+                    ])
                 </div>
             </div>
         </div>
@@ -74,12 +77,19 @@
             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
             --}}
             </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
-                Filter
+            <div>
+                @include('components.button', [
+                    'attributes' => "onclick=\"fetchDeal()\"",
+                    'label' => 'Filter',
+                    'icon' => 'fas fa-filter',
+                ])
             </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal('','','reset_all')"> <i
-                    class="fas fa-sync"></i>
-                Reset All
+            <div>
+                @include('components.button', [
+                    'attributes' => "onclick=\"fetchDeal('', '', 'reset_all')\"",
+                    'label' => 'Reset All',
+                    'icon' => 'fas fa-sync',
+                ])                   
             </div>
 
         </div>

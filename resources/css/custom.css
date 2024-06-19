@@ -1,7 +1,17 @@
 @import "https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap";
 
+body {
+    font-family: Montserrat;
+}
+
 .bg-black {
     background-color: #000000 !important;
+}
+.card{
+    margin-bottom: 0 !important;
+}
+.card-body-padding0{
+    padding: 0 !important;
 }
 
 .taskbtn {
@@ -17,7 +27,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -65,25 +75,15 @@
 }
 
 .dcontactBtns {
-    display: flex;
-    height: 52px;
-    padding: 16px 12px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    align-self: stretch;
-    border-radius: 16px;
+  
     border: 1px solid #222;
     background: #222;
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
-    color: #fff;
-    text-align: center;
-    font-family: Montserrat;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: 18.4px;
-    cursor: pointer;
+    border-radius: 16px !important;
+
+}
+.dcontactBtns:hover {
+    background: #222;
 }
 
 .plusicon {
@@ -111,7 +111,7 @@
     background: #848484;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -122,12 +122,6 @@
     background-color: #3b3b3b;
 }
 
-.dash-card {
-    min-height: 109px;
-    max-height: 109px;
-    min-width: 170px;
-    border-radius: 12px;
-}
 
 .ddaterangepicker {
     border: none;
@@ -152,24 +146,11 @@
     margin-top: 5px;
 }
 
-.dTitle {
-    /* padding-bottom: 12px; */
-    align-self: stretch;
-    color: #222;
-    text-align: center;
-    font-family: Montserrat;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 21px;
-    letter-spacing: -0.28px;
-}
-
 .dSumValue {
     /* max-width: 195.09px; */
     color: #6c6c6c;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 30px;
     font-style: normal;
     font-weight: 900;
@@ -179,7 +160,7 @@
 .dcountText {
     color: #222;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -214,7 +195,7 @@
 
 .dtableHeaderTr th {
     color: #333;
-    font-family: Montserrat;
+   
     font-size: 14px !important;
     font-style: normal;
     font-weight: 900;
@@ -233,7 +214,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -251,7 +232,7 @@
     background: #848484;
     color: var(--white, #fff);
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -268,7 +249,7 @@
 }
 
 .page-link.active,
-.active > .page-link {
+.active>.page-link {
     background-color: #222 !important;
     border: 1px solid #222;
 }
@@ -375,10 +356,6 @@
     font-size: 11.4px;
 }
 
-.dFont13 {
-    font-size: 13px;
-}
-
 .dFont14 {
     font-size: 14px;
 }
@@ -442,7 +419,7 @@
 
 .notesAsignedText {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -581,6 +558,20 @@
     display: inline-block;
     cursor: pointer;
     margin: 5px;
+}
+
+body .vertical-collpsed span .logo-sm {
+    padding: 18px 0px 0px 0px !important;
+}
+
+body .vertical-collpsed span .logo-sm image {
+    height: 18px;
+}
+
+.app-search span {
+    position: relative;
+    line-height: unset;
+    left: 5px;
 }
 
 /* Tooltip text */
@@ -722,7 +713,7 @@
     align-self: stretch;
     color: #222;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -742,7 +733,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -762,7 +753,7 @@
     background: #fff;
     color: var(--Brand, #222);
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -787,7 +778,7 @@
     align-self: stretch;
     color: #222;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -841,30 +832,6 @@
     }
 }
 
-@media (min-width: 425px) and (max-width: 1345px) {
-    .dashboard-cards-resp {
-        display: grid;
-        grid-template-columns: auto auto;
-        gap: 8px;
-    }
-
-    .dCardsCols {
-        width: 100%;
-    }
-}
-
-@media (min-width: 1346px) {
-    .dashboard-cards-resp {
-        display: grid;
-        grid-template-columns: auto auto auto auto;
-        gap: 8px;
-    }
-
-    .dCardsCols {
-        width: 100%;
-    }
-}
-
 @media (max-width: 767px) {
     .dCalander {
         margin-bottom: 24px;
@@ -906,7 +873,7 @@
 
     .dcardSubject {
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -924,7 +891,7 @@
 
     .dcardsTransactionText {
         color: #3f3f3f;
-        font-family: Montserrat;
+       
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -934,7 +901,7 @@
 
     .dcardsselectdiv {
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -944,7 +911,7 @@
 
     .dcardsTaskText {
         color: #3f3f3f;
-        font-family: Montserrat;
+       
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -973,7 +940,7 @@
         background: #222;
         color: #fff;
         text-align: center;
-        font-family: Montserrat;
+       
         font-size: 11.4px;
         font-style: normal;
         font-weight: 800;
@@ -993,7 +960,7 @@
         background: #222;
         color: #fff;
         text-align: center;
-        font-family: Montserrat;
+       
         font-size: 11.4px;
         font-style: normal;
         font-weight: 800;
@@ -1045,7 +1012,7 @@
 /* Dashboard transactions table css */
 .dtHeaderName {
     color: #fff;
-    font-family: Montserrat;
+   
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1061,7 +1028,7 @@
     flex: 1 0 0;
     align-self: stretch;
     color: #000;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1088,7 +1055,7 @@
     }
 
     .dTCardDate {
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -1102,7 +1069,7 @@
         align-self: stretch;
         padding-block: 5px;
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 350;
@@ -1115,7 +1082,7 @@
         gap: 5px;
         align-self: stretch;
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -1126,12 +1093,6 @@
 
 /* / / Pipeline component / / */
 
-.commonFlex {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .submittaldiv {
     display: flex;
     justify-content: end;
@@ -1140,14 +1101,6 @@
 
 .submittalType {
     padding-bottom: 20px;
-}
-
-.ppipeDiv {
-    background-color: #f8f9fa;
-    /* Example background color */
-    /* margin: 20px; */
-    border-radius: 5px;
-    /* padding: 15px; */
 }
 
 .progressCardsContainer {
@@ -1166,7 +1119,7 @@
     text-align: center;
 
     /* dashStatsNumber */
-    font-family: Montserrat;
+   
     font-size: 30px;
     font-style: normal;
     font-weight: 900;
@@ -1177,7 +1130,7 @@
     align-self: stretch;
     color: #000;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1236,7 +1189,7 @@
 
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1264,7 +1217,7 @@
     background: #848484;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1287,7 +1240,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1343,7 +1296,7 @@
 
 .cpinput {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -1374,7 +1327,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1404,7 +1357,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1484,7 +1437,7 @@
 /* new pipeline common table css */
 .npcommonheaderText {
     color: #3f3f3f;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 350;
@@ -1494,7 +1447,7 @@
 
 .npcommontableBodytext {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -1514,7 +1467,7 @@
 
 .npcommontableBodyDatetext {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1548,7 +1501,7 @@
     padding: 14px 12px;
     color: #fff;
 
-    font-family: Montserrat;
+   
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1567,7 +1520,7 @@
     background: #222;
     padding: 14px 12px;
     color: #fff;
-    font-family: Montserrat;
+   
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1593,7 +1546,7 @@
 .groups-view th {
     color: #000;
     flex: 1;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1608,7 +1561,7 @@
 .npcontacts-Body td {
     color: #000;
     flex: 1;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1622,7 +1575,7 @@
 .npRoleBody {
     color: #222;
     padding: 16px 12px;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1630,6 +1583,7 @@
 }
 
 @media (max-width: 767px) {
+
     .ppipelineTable,
     .dtabletranstion,
     .npcontacts-Table,
@@ -1747,7 +1701,7 @@
 
     .pTableTransText {
         color: #8f8f8f;
-        font-family: Montserrat;
+       
         font-size: 11px;
         font-style: normal;
         font-weight: 600;
@@ -1758,7 +1712,7 @@
 
     .pTableNameText {
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1813,7 +1767,7 @@
 
     .pTableTransText {
         color: #8f8f8f;
-        font-family: Montserrat;
+       
         font-size: 11px;
         font-style: normal;
         font-weight: 600;
@@ -1824,7 +1778,7 @@
 
     .pTableNameText {
         color: #222;
-        font-family: Montserrat;
+       
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1886,7 +1840,7 @@
     background: #dfdfdf;
     color: #222;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1905,7 +1859,7 @@
     cursor: pointer;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1914,7 +1868,7 @@
 
 .npinfoText {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -1923,7 +1877,7 @@
 
 .nplabelText {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 350;
@@ -2002,6 +1956,7 @@
 .common-corousal-div {
     margin-bottom: 7px;
 }
+
 .second-step-common-select {
     padding: 12px 16px;
 
@@ -2017,9 +1972,11 @@
     font-weight: 400;
     line-height: normal;
 }
+
 .select-mb24 {
     margin-bottom: 24px;
 }
+
 .related_trxn .related_trxn select {
     max-width: 639px;
     flex: 1 0 0;
@@ -2076,6 +2033,7 @@
 .close-date-nontm {
     flex: 1 0 0;
 }
+
 .nontm-input {
     display: flex;
     align-items: center;
@@ -2095,9 +2053,11 @@
     font-weight: 400;
     line-height: normal;
 }
+
 .main_form_div {
     padding: 0 90px 48px 90px;
 }
+
 .carousel-indicators {
     bottom: 20px;
     margin-bottom: -1rem;
@@ -2143,8 +2103,7 @@
     line-height: normal;
 }
 
-.additional_email {
-}
+.additional_email {}
 
 .close-date-comm {
     display: flex;
@@ -2255,7 +2214,7 @@
 
 .nproletext {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -2276,7 +2235,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2335,8 +2294,10 @@
     cursor: pointer;
     display: none;
 }
+
 .d-flex.flex-column i {
-    margin-bottom: -5px; /* Adjust this value to reduce the space between the icons */
+    margin-bottom: -5px;
+    /* Adjust this value to reduce the space between the icons */
 }
 
 .dacBodyDiv {
@@ -2365,7 +2326,7 @@
     background-color: #dfdfdf;
     color: #000 !important;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 20px;
     font-style: normal;
     font-weight: 900;
@@ -2434,7 +2395,7 @@
 
 .ncText {
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -2453,7 +2414,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 11.4px;
     font-style: normal;
     font-weight: 800;
@@ -2470,6 +2431,7 @@
 }
 
 @media (min-width: 320px) and (max-width: 475px) {
+
     .dbgroupsFlex,
     .pipeline-btns-container {
         display: block;
@@ -2492,7 +2454,7 @@
 
 .ngText {
     color: #000;
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -2516,7 +2478,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2541,7 +2503,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2570,7 +2532,7 @@
     border-right: #8f8f8f;
     background: #222;
     color: #fff;
-    font-family: Montserrat;
+   
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -2583,7 +2545,7 @@
     border-bottom: 1px solid var(--Skiding-btns-back, #efefef);
     background: #fff;
     color: #222;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -2622,7 +2584,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -2664,7 +2626,7 @@
 .gdropdown-btn {
     flex: 1 0 0;
     color: #848484;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2709,7 +2671,7 @@
     border: 1px solid #cecece;
     flex: 1 0 0;
     color: #848484;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2740,7 +2702,7 @@
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2763,12 +2725,6 @@
 
     .dbgSelectDiv {
         margin-right: 12px;
-    }
-
-    .commonFlex {
-        flex-direction: column;
-        gap: 15px;
-        /* Stack flex children vertically on small screens */
     }
 
     .alert {
@@ -2808,7 +2764,7 @@
     background: #fff;
     color: #222;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2824,7 +2780,7 @@
     color: #253c5b;
 
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2834,7 +2790,7 @@
 
 .viewMapP {
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2857,7 +2813,7 @@
     background: #222;
     color: #fff;
     text-align: center;
-    font-family: Montserrat;
+   
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2936,7 +2892,7 @@
     color: #222;
 
     /* title-md */
-    font-family: Montserrat;
+   
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
@@ -2967,6 +2923,7 @@ body {
 }
 
 .stacked-bar-chart {
+
     /* [class*="bar-"] {
         /* padding: 5px; */
     /* } */
@@ -2995,7 +2952,7 @@ body {
 .dmonth-design {
     color: #7f7f7f;
     text-align: right;
-    font-family: Montserrat;
+   
     font-size: 12px;
     font-style: normal;
     font-weight: 800;
@@ -3003,9 +2960,9 @@ body {
 }
 
 .dtransactions-des {
-    color: #000;
-    font-family: Montserrat;
-    font-size: 12px;
+
+
+
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -3026,17 +2983,7 @@ body {
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
 }
 
-.dcamptext {
-    color: #222;
 
-    text-align: start;
-    /* title-md */
-    font-family: Montserrat;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: 18px;
-}
 
 .dashchartImg {
     padding-inline: 20px;
@@ -3105,11 +3052,13 @@ body[data-sidebar="dark"] .navbar-brand-box {
     .vertical-menu {
         display: none;
     }
+
     .vertical-menu.show {
         display: block !important;
         width: 250px !important;
     }
 }
+
 .selectSearch .select2-container {
     /* z-index: 0 !important; */
 }
@@ -3379,10 +3328,7 @@ input[type="button"]:hover {
     padding: 0 !important;
 }
 
-.search-input-design
-    .select2-container
-    .select2-selection--multiple
-    .select2-search__field {
+.search-input-design .select2-container .select2-selection--multiple .select2-search__field {
     margin: 0 !important;
 }
 
@@ -3407,14 +3353,12 @@ input[type="button"]:hover {
     /* Adjust padding to match form-control */
 }
 
-.select2-container--default
-    .select2-selection--single
-    .select2-selection__rendered {
+.select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 24px;
     /* Adjust line height */
 }
 
-.select2-container--default .select2-results > .select2-results__options {
+.select2-container--default .select2-results>.select2-results__options {
     max-height: 200px;
     overflow-y: hidden;
 }
