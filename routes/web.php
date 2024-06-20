@@ -130,6 +130,8 @@ Route::get('/submittal/{dealId}', [SubmittalController::class, 'index'])->name('
 Route::post('/listing/submittal/create/{dealId}', [SubmittalController::class,
 'createListingSubmittal'])->name('listing.submittal.create')->middleware('auth');
 Route::get('/submittal-create/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalCreate'])->name('submittal.create')->middleware('auth');
+Route::get('/listing/form/{submittalId}', [SubmittalController::class, 'showListingSubmittalForm'])->name('listing.submittal.form')->middleware('auth');
+Route::get('/buyer/form/{submittalId}', [SubmittalController::class, 'showBuyerSubmittalForm'])->name('buyer.submittal.form')->middleware('auth');
 Route::get('/submittal-view/{type}/{submittalId}', [SubmittalController::class, 'showSubmittalView'])->name('submittal.create')->middleware('auth');
 Route::put('/listing/submittal/update/{submittalId}', [SubmittalController::class, 'updateListingSubmittal'])->name('listing.submittal.update')->middleware('auth');
 Route::post('/buyer/submittal/create/{dealId}', [SubmittalController::class,

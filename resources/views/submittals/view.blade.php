@@ -18,7 +18,7 @@
 
     <div class="submittalType">
         <label for="submittalType" class="form-label nplabelText">Submittal Type</label>
-        <select class="form-select npinputinfo" id="submittalType" onchange="showSubmittalForm(this)">
+        <select class="form-select npinputinfo" id="submittalType" onchange="showSubmittalForm(this)" disabled>
             <option value="Buyer Submittal" {{$submittalType=="buyer-submittal" ?'selected':''}}>Buyer Submittal
             </option>
             <option value="Listing Submittal" {{$submittalType=="listing-submittal" ?'selected':''}}>Listing
@@ -482,7 +482,7 @@
                     <label for="brochurePrint" class="form-label nplabelText">Brochure - Print, Deliver or PDF</label>
                     <select class="form-select npinputinfo" id="brochurePrint">
                         @foreach ($broucherPrint as $brochure)
-                            <option value="{{ $brochure }}" {{ $submittal['brochureLine'] == $brochure ? 'selected' : '' }}>
+                            <option value="{{ $brochure }}" {{ $submittal['brochurePrint'] == $brochure ? 'selected' : '' }}>
                                 {{ $brochure }}
                             </option>
                         @endforeach
@@ -779,6 +779,22 @@
            return parseInt(string.replace('$', ''))
         }
 
+        function isValidEmail(email) {
+            var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+        function isValidUrl(url) {
+            var regex = new RegExp(
+                '^(https?:\\/\\/)' + // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3})|' + // OR ip (v4) address
+                '\\[?[a-f\\d]*:[a-f\\d:]+\\]?)' + // OR ip (v6) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                '(\\#[-a-z\\d_]*)?$', 'i' // fragment locator
+            );
+            return regex.test(url);
+        }
         function validateSubmittal(submittal,isNew) {
             isValid = false
             if(submittal.submittalType == 'buyer-submittal'){
@@ -810,6 +826,14 @@
                     isValid = true
                 } else {
                     showToastError("Please fill in all the required fields.")
+                }
+                if((additionalEmailBuyer!='')&&(!(isValidEmail(additionalEmailBuyer)))){
+                    showToastError("Additional Email for confirmation should be in email format")
+                    isValid = false
+                }
+                if((buyerLenderEmail!='')&&(!(isValidEmail(buyerLenderEmail)))){
+                    showToastError("Lender Email should be in email format")
+                    isValid = false
                 }
                 console.log("isValid", isValid);
                 if(isValid == true){
@@ -857,17 +881,18 @@
                         data: JSON.stringify(formdata),
                         success: function (response) {
                             console.log("response",response);
-                            redirectUrl(type,response,formType)
+                            showToast("Buyer Submittal updated successfully");
                             if (response?.data && response.data[0]?.message) {
                                 // Convert message to uppercase and then display
                                 const upperCaseMessage = response.data[0].message.toUpperCase();
-                                showToast(upperCaseMessage);
+                                
                                 // window.location.reload();
                             }
                         },
                         error: function (xhr, status, error) {
                             // Handle error response
                             console.error(xhr.responseText);
+                            showToastError(xhr.responseText);
                         }
                     })
                 }
@@ -959,6 +984,7 @@
                 var deliveryAddress = $('#deliveryAddress').val();
                 var printedItemsPickupDate = $('#printedItemsPickupDate').val();
                 var brochurePickupDate = $('#brochurePickupDate').val();
+
                 if ((transactionName && agentName && commingSoon && tmName && activeDate && agreementExecuted && price && bedsBathsTotal && usingCHR) !== '') {
                     isValid = true
                     if(showOtherListingForm!="null") {
@@ -971,6 +997,19 @@
                 } else {
                     showToastError("Please fill in all the required fields.")
                 }
+                 if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
+                    showToastError("Additional Email for confirmation should be in email format")
+                    isValid = false
+                 }
+                 console.log("photo url", isValidUrl(photoURL));
+                 if((photoURL!='')&&(!(isValidUrl(photoURL)))){
+                    showToastError("Photo URL should be in URL format")
+                    isValid = false
+                 }
+                 if((tourURL!='')&&(!(isValidUrl(tourURL)))){
+                    showToastError("3D Tour URL should be in URL format")
+                    isValid = false
+                 }
                 console.log("isValid", isValid);
                 if(isValid == true){
                     var formdata = {
@@ -1000,6 +1039,7 @@
                             "Brochure_Line": brochureLine,
                             "HOA_Website": hoaWebsite,
                             "Photo_URL": photoURL,
+                            "3D_Tour_URL":tourURL,
                             "Closer_Name_Phone": closerNamePhone,
                             "Listing_Agreement_Executed": agreementExecuted,
                             "Sign_Install_Vendor_if_Other": signInstallVendorOther,
@@ -1055,7 +1095,7 @@
                         data: JSON.stringify(formdata),
                         success: function (response) {
                             console.log("response",response);
-                            redirectUrl(type,response,formType)
+                            showToast("Listing Submittal updated successfully");
                             if (response?.data && response.data[0]?.message) {
                                 // Convert message to uppercase and then display
                                 const upperCaseMessage = response.data[0].message.toUpperCase();
@@ -1066,6 +1106,7 @@
                         error: function (xhr, status, error) {
                             // Handle error response
                             console.error(xhr.responseText);
+                            showToastError(xhr.responseText);
                         }
                     })
                 }

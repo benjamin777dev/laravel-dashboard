@@ -272,9 +272,14 @@
                 <label for="contactName" class="form-label nplabelText">Contact Name</label>
                 <input type="hidden" 
                     name="contactName" 
-                    id="contactNameObject"
+                    id="contactName"
                     @if($deal['locked_s']) disabled @endif
-                    value="{{ json_encode($deal['contactName']) }}">
+                    value="{{ $deal['contact_name'] }}">
+                    <input type="hidden" 
+                    name="contactName" 
+                    id="contactNameId"
+                    @if($deal['locked_s']) disabled @endif
+                    value="{{ $deal['contact_name_id'] }}">
                 <input type="text" 
                     class="form-control npinputinfo validate" 
                     id="contactName" 
@@ -308,12 +313,14 @@
     </div>
 </div>
 {{-- contact roles --}}
-<div class="contact_role_table_pipeline">
-                        
+<div class="contact_role_table_pipeline">                     
 </div>
+
 {{-- Add New Submittal --}}
 <div class="showsubmittal">
 </div>
+
+
 
 <script>
     $(document).ready(function() {
