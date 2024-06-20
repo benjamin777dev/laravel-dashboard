@@ -79,6 +79,12 @@
 
 <script>
     var deal = @json($deal);
+    if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null){
+        $('#addSubmittal').attr('disabled', true);
+        $('#addSubmittal').addClass('btn-disabled');
+    }else{
+        $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled')
+    }
     function showSubmittalFormType() {
         console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
         // deal = JSON.parse(deal);
@@ -93,7 +99,8 @@
     }
 
     function redirectUrl(submittalType=null,submittalData = null,formType =null){
-        window.location.href = `{{ url('submittal-create/${submittalType}/${submittalData.id}?formType=${formType}')}}`
+       const url = `{{ url('submittal-create/${submittalType}/${submittalData.id}?formType=${formType}')}}`
+       window.open(url,'_blank')
     }
 
     function generateRandom4DigitNumber() {

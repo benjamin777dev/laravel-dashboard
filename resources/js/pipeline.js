@@ -243,8 +243,9 @@ window.updateDataDeal = function (dealId, dbDealId) {
     var tm_preference = $("#tmPreference").val();
     var tm_name = $("#tmName").val();
     tm_name = JSON.parse(tm_name);
-    var contact_name = $("#contactNameObject").val();
-    contact_name = JSON.parse(contact_name);
+    var contact_name = $("#contactName").val();
+    var contact_name_id = $("#contactNameId").val();
+    // contact_name = JSON.parse(contact_name);
     var transaction_owner = $("#transactionOwner").val();
     var lead_agent = $("#leadAgent").val();
     lead_agent = JSON.parse(lead_agent);
@@ -328,22 +329,16 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     Personal_Transaction: personal_transaction,
                     Double_Ended: double_ended,
                     Contact_Name: {
-                        Name:
-                            (contact_name.first_name ?? "") +
-                            " " +
-                            (contact_name.last_name ?? ""),
-                        id: contact_name.zoho_contact_id,
+                        Name: contact_name ?? "",
+                        id: contact_name_id ?? "",
                     },
                     Review_Gen_Opt_Out: review_gen_opt_out,
                     Commission_Flat_Free: commission_flat_free,
                     TM_Preference: tm_preference,
                     Transaction_Owner: transaction_owner,
                     Contact: {
-                        Name:
-                            (contact_name.first_name ?? "") +
-                            " " +
-                            (contact_name.last_name ?? ""),
-                        id: contact_name.zoho_contact_id,
+                        Name: contact_name ?? "",
+                        id: contact_name_id ?? "",
                     },
                     Status_pt_out_out: status_rpt_opt_out,
                     Deadline_Emails: deadline_em_opt_out,

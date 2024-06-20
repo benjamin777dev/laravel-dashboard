@@ -87,6 +87,7 @@ class Submittals extends Model
         'printedItemsPickupDate',
         'brochurePickupDate',
         'isSubmittalComplete',
+        'formType'
     ];
 
     public static function getZohoContactInfo()

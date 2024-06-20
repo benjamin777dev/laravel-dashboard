@@ -1,4 +1,4 @@
-<div class="row " id="listingSubmittal" style="display:none">
+<div class="row " id="listingSubmittal">
     <p>Listing Submittal Information</p>
     {{-- Basic Info --}}
     <div class="col-md-12 col-sm-24" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
@@ -39,7 +39,7 @@
             </div>
             <div class="col-md-6">
                 <label for="tmName" class="form-label nplabelText">TM Name</label>
-                <input type="text" class="form-control npinputinfo validate" id="tmName" required value="{{$submittal['tmName']}}">
+                <input type="text" class="form-control npinputinfo validate" id="tmName" required value="{{$submittal['dealData']['tmName']['name']}}">
             </div>
 
             <div class="col-md-6">
@@ -78,7 +78,7 @@
             </div>
             <div class="col-md-6">
                 <label for="usingCHR" class="form-label nplabelText">Using CHR TM </label>
-                <select class="form-select npinputinfo validate" id="usingCHR">
+                <select class="form-select npinputinfo validate" id="usingCHR" onchange="putConditionOnForm()">
                         <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['usingCHR']=="Yes" ?'selected':''}}>Yes
@@ -167,15 +167,14 @@
                 <input type="text" class="form-control npinputinfo" id="hoaWebsite" required value="{{$submittal['hoaWebsite']}}">
             </div>
             <div class="col-md-12">
-                <label for="miscNotes" class="form-label nplabelText">Misc Notes - Seller, Communication,
-                    etc</label>
+                <label for="miscNotes" class="form-label nplabelText">Misc Notes - Seller, Communication, etc</label>
                 <textarea class="form-control" id="miscNotes" aria-label="With textarea">{{$submittal['miscNotes']}}</textarea>
             </div>
 
         </form>
     </div>
     {{--CHR TM - Service Providers--}}
-    <div class="col-md-12 col-sm-24" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+    <div class="col-md-12 col-sm-24 serviceProvider" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
         <p class="npinfoText">CHR TM - Service Providers</p>
         <form class="row g-3">
@@ -242,7 +241,7 @@
         </form>
     </div>
     {{--CHR TM - Select MLS--}}
-    <div class="col-md-12 col-sm-24" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+    <div class="col-md-12 col-sm-24 selectMLS" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
         <p class="npinfoText">CHR TM - Select MLS</p>
         <form class="row g-3">
@@ -285,7 +284,7 @@
         </form>
     </div>
     {{--CHR TM - Commission Details--}}
-    <div class="col-md-12 col-sm-24" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+    <div class="col-md-12 col-sm-24 commDetails" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
         <p class="npinfoText">CHR TM - Commission Details</p>
         <form class="row g-3">
@@ -424,7 +423,7 @@
             <div class="col-md-6">
                 <label for="brochureLine" class="form-label nplabelText">Brochure Line - Top Right Brochure Preview
                     button</label>
-                <select class="form-select npinputinfo " id="broucherLine">
+                <select class="form-select npinputinfo " id="brochureLine">
                     <option value="">--None--
                     </option>
                     <option value="No Brochure" {{$submittal['brochureLine']=="No Brochure" ?'selected':''}}>No Brochure
@@ -473,20 +472,20 @@
                 <label for="stickyDots" class="form-label nplabelText">Sticky Dots</label>
                 <select class="form-select npinputinfo " id="stickyDots">
                     <option value="">--None--</option>
-                    <option value="1 Per Feature Card - $.75 each">1 Per Feature Card - $.75 each
+                    <option value="1 Per Feature Card - $.75 each" {{ $submittal['stickyDots'] == "1 Per Feature Card - $.75 each" ? 'selected' : '' }}>1 Per Feature Card - $.75 each
                     </option>
-                    <option value="2 Per Feature Card - $.75 each">2 Per Feature Card - $.75 each</option>
-                    <option value="No Dots">No Dots</option>
+                    <option value="2 Per Feature Card - $.75 each" {{ $submittal['stickyDots'] == "2 Per Feature Card - $.75 each" ? 'selected' : '' }}>2 Per Feature Card - $.75 each</option>
+                    <option value="No Dots" {{ $submittal['stickyDots'] == "No Dots" ? 'selected' : '' }}>No Dots</option>
                 </select>
             </div>
             <div class="col-md-6">
                 <label for="qrCodeSheet" class="form-label nplabelText">QR Code Sheet</label>
                 <select class="form-select npinputinfo" id="qrCodeSheet">
                     <option value="">--None--</option>
-                    <option value="Print 1 at Alamo - $1">Print 1 at Alamo - $1
+                    <option value="Print 1 at Alamo - $1" {{ $submittal['qrCodeSheet'] == "Print 1 at Alamo - $1" ? 'selected' : '' }}>Print 1 at Alamo - $1
                     </option>
-                    <option value="Print 2 at Alamo - $2">Print 2 at Alamo - $2</option>
-                    <option value="PDF - I'll Print it Myself">PDF - I'll Print it Myself</option>
+                    <option value="Print 2 at Alamo - $2" {{ $submittal['qrCodeSheet'] == "Print 2 at Alamo - $2" ? 'selected' : '' }}>Print 2 at Alamo - $2</option>
+                    <option value="PDF - I'll Print it Myself" {{ $submittal['qrCodeSheet'] == "PDF - I'll Print it Myself" ? 'selected' : '' }}>PDF - I'll Print it Myself</option>
                 </select>
             </div>
             <div class="col-md-6">
@@ -532,3 +531,110 @@
     </div>
 
 </div>
+<script>
+    var showOtherListingForm = @json($listingSubmittaltype);
+    $(document).ready(function(){
+        if (showOtherListingForm!='null') {
+            console.log("SUBmittal form", showOtherListingForm);
+            $('.transactionForm').show();
+            $('.promotionOutside').show();
+            $('.promotionMarket').show();
+            $('.promotionNote').show();
+            $('.promotionPrint').show();
+            $('#broucherLine').addClass('validate');
+            $('#featureCards').addClass('validate');
+            $('#stickyDots').addClass('validate');
+
+        } else {
+            $('.transactionForm').hide();
+            $('.promotionOutside').hide();
+            $('.promotionMarket').hide();
+            $('.promotionNote').hide();
+            $('.promotionPrint').hide();
+            $('#broucherLine').removeClass('validate');
+            $('#featureCards').removeClass('validate');
+            $('#stickyDots').removeClass('validate');
+        }
+        putConditionOnForm();
+    })
+    function putConditionOnForm() {
+        var usingCHRValue = $("#usingCHR").val()
+        console.log("Consition");
+        if(usingCHRValue == "No"){
+            $('.transactionForm').hide();
+            $('.serviceProvider').hide();
+            $('.selectMLS').hide();
+            $('.commDetails').hide();
+            $('.promotionOutside').show();
+            $('.promotionMarket').show();
+            $('.promotionNote').show();
+            $('.promotionPrint').show();
+            $('#broucherLine').addClass('validate');
+            $('#featureCards').addClass('validate');
+            $('#stickyDots').addClass('validate');
+
+        }else if(usingCHRValue == "Yes"){
+             $('.transactionForm').show();
+            $('.serviceProvider').show();
+            $('.selectMLS').show();
+            $('.commDetails').show();
+            $('.promotionOutside').hide();
+            $('.promotionMarket').hide();
+            $('.promotionNote').hide();
+            $('.promotionPrint').hide();
+            $('#broucherLine').removeClass('validate');
+            $('#featureCards').removeClass('validate');
+            $('#stickyDots').removeClass('validate');
+            $('.commDetails').html(`
+            <div class="col-md-6">
+                <label for="showPromotion" class="form-label nplabelText">Are you ready to continue to Property Promotion?</label>
+
+                <select class="form-select npinputinfo" id="showPromotion" onchange="showPromotion()">
+                    <option value="">--None--
+                    </option>
+                    <option value="Yes" {{$submittal['showPromotion']=="Yes" ?'selected':''}}>Yes
+                    </option>
+                    <option value="No" {{$submittal['showPromotion']=="No" ?'selected':''}}>No</option>
+                </select>
+            </div>
+            `)
+        }
+        
+    }
+
+    function showPromotion(){
+        var showPromotionValue = $("#showPromotion").val();
+        if(showPromotionValue=="No"){
+            // $('.commDetails').html(`
+            // <div class="col-md-6">
+            //     <label for="showPromotion" class="form-label nplabelText">Are you ready to continue to Property Promotion?</label>
+
+            //     <select class="form-select npinputinfo" id="showPromotion" onchange="showPromotion()">
+            //         <option value="">--None--
+            //         </option>
+            //         <option value="Yes" {{$submittal['showPromotion']=="Yes" ?'selected':''}}>Yes
+            //         </option>
+            //         <option value="No" {{$submittal['showPromotion']=="No" ?'selected':''}}>No</option>
+            //     </select>
+            // </div>
+            // <div class="col-md-6">
+            //     <a>
+            //         <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            //             </i>
+            //             Save and Submit
+            //         </div>
+            //     </a>
+            // </div>
+            //     <p>When you are ready to continue your Listing Submittal select View Submittal from your Pipeline and Resubmit it to the Marketing Team.</p>
+            // `)
+        }else if(showPromotionValue=="Yes"){
+            $('.promotionOutside').show();
+            $('.promotionMarket').show();
+            $('.promotionNote').show();
+            $('.promotionPrint').show();
+            $('#broucherLine').addClass('validate');
+            $('#featureCards').addClass('validate');
+            $('#stickyDots').addClass('validate');
+        }
+    }
+</script>
