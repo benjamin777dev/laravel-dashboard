@@ -9,49 +9,62 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipelines</p>
+            <p class="ngText">Pipeline</p>
             <div class="pipeline-btns-container">
 
                 <div>
-                    @include('components.button', [
-                        'attributes' => "onclick=\"createTransaction()\"",
+                    @component('components.button', [
+                        'clickEvent' => 'createTransaction()',
                         'label' => 'New Transaction',
-                        'icon' => 'fas fa-plus plusicon',
-                        
+                        'icon' => 'fas fa-plus plusicon'
                     ])
+                    @endcomponent
                 </div>
+                
+                
                 <div>
-                    @include('components.button', [
-                        'attributes' => "onclick=\"createSubmittals()\"",
+                    @component('components.button', [
+                        'clickEvent' => 'createSubmittals()',
                         'label' => 'New Submittal',
-                        'icon' => 'fas fa-plus plusicon',
+                        'icon' => 'fas fa-plus plusicon'
                     ])
+                    @endcomponent
                 </div>
             </div>
         </div>
 
-        <div class="pipeline-cards-container">
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Sales Volume</p>
-                ${{ number_format($totalSalesVolume, 0, '.', ',') }}
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Avg Commission</p>
-                {{ number_format($averageCommission, 2) }}%
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Potential GCI</p>
-                ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Avg Probability</p>
-                {{ number_format($averageProbability, 2) }}%
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Probable GCI</p>
-                ${{ number_format($totalProbableGCI, 0, '.', ',') }}
-            </div>
 
+
+        <div class="pipeline-cards-container">
+            @component('components.pipe-cards', [
+                'title' => 'Sales Volume',
+                'value' => '$' . number_format($totalSalesVolume, 0, '.', ','),
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Avg Commission',
+                'value' => number_format($averageCommission, 2) . '%',
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Potential GCI',
+                'value' => '$' . number_format($totalPotentialGCI, 0, '.', ','),
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Avg Probability',
+                'value' => number_format($averageProbability, 2) . '%',
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Probable GCI',
+                'value' => '$' . number_format($totalProbableGCI, 0, '.', ','),
+            ])
+            @endcomponent
         </div>
 
         <div class="pfilterDiv">
@@ -63,7 +76,7 @@
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
                     aria-label="Select Transaction" onchange="fetchDeal()">
-                    <option value="">Sort Pipelines by...</option>
+                    <option value="">Sort Pipeline by...</option>
                     @php
                         $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];
                     @endphp
@@ -78,18 +91,20 @@
             --}}
             </div>
             <div>
-                @include('components.button', [
-                    'attributes' => "onclick=\"fetchDeal()\"",
+                 @component('components.button', [
+                    'clickEvent' => 'fetchDeal()',
                     'label' => 'Filter',
-                    'icon' => 'fas fa-filter',
+                    'icon' => 'fas fa-filter'
                 ])
+                @endcomponent
             </div>
             <div>
-                @include('components.button', [
-                    'attributes' => "onclick=\"fetchDeal('', '', 'reset_all')\"",
+                   @component('components.button', [
+                    'clickEvent' => 'fetchDeal(\'\', \'\', \'reset_all\')',
                     'label' => 'Reset All',
-                    'icon' => 'fas fa-sync',
-                ])                   
+                    'icon' => 'fas fa-sync'
+                ])
+                @endcomponent
             </div>
 
         </div>
@@ -139,29 +154,29 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                   
-                    const card = $('.transaction-container').html(data);
-                    if(card){
-                        if (prevSelectedColumn !== null) {
-                        if (prevSortDirection === "asc") {
-                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
-                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
-                        } else {
-                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
-                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
-                        }
-                    }
-                    if (sortType === "asc") {
-                        $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
-                        $(clickedColumn).find(".up-arrow").css("color", "#fff");
-                    } else {
-                        $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
-                        $(clickedColumn).find(".down-arrow").css("color", "#fff");
-                    }
 
-                    // Update the previously selected column and its sorting direction
-                    prevSelectedColumn = clickedColumn;
-                    prevSortDirection = sortType;
+                    const card = $('.transaction-container').html(data);
+                    if (card) {
+                        if (prevSelectedColumn !== null) {
+                            if (prevSortDirection === "asc") {
+                                $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                                $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                            } else {
+                                $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                                $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                            }
+                        }
+                        if (sortType === "asc") {
+                            $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                            $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                        } else {
+                            $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                            $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                        }
+
+                        // Update the previously selected column and its sorting direction
+                        prevSelectedColumn = clickedColumn;
+                        prevSortDirection = sortType;
                     }
 
                 },
@@ -183,7 +198,8 @@
             let selectedModule = $('#related_to_stage');
             let selectedText = selectedModule.val();
             // Call fetchData with the updated parameters
-            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
+            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+                clickedCoulmn);
         }
     </script>
 

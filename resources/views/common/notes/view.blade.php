@@ -1,5 +1,4 @@
-<div class="col-md-4 w-100" style="background:#efefef;">
-    <h4 class="text-start dFont600 mb-4">Notes</h4>
+<div class="col-md-4 w-100">
     @if ($notesInfo->isEmpty())
         <p class="text-center">No notes found.</p>
     @else
@@ -7,18 +6,24 @@
             @foreach ($notesInfo as $note)
                 <li
                     class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdropnoteview{{ $note['zoho_note_id'] }}">
+                        data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
                     <div class="text-start"
                         class="form-check-input checkbox{{ $note['id'] }}"
-                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                        id="editButton{{ $note['id'] }}" class="btn btn-primary position-fixed bottom-5 end-0 p-3 bg-dark rounded-circle"
                         type="button" >
-                        @if ($note['related_to_type'] === 'Deals')
+                        @if ($note['related_to_type'] === 'Deals'&& $note['dealData'])
+                        <div onclick = "event.stopPropagation();">
                             <span class="dFont800 dFont13">Related to:</span>
-                            {{ $note->dealData->deal_name ?? '' }}<br />
-                        @elseif ($note['related_to_type'] === 'Contacts')
+                             <a href="{{ route('pipeline.view', ['dealId' => $note->dealData->id]) }}">{{ $note->dealData->deal_name ?? '' }}</a>
+                        </div>
+                            
+                        @elseif ($note['related_to_type'] === 'Contacts' && $note['ContactData'])
+                        <div onclick = "event.stopPropagation();">
                             <span class="dFont800 dFont13">Related to:</span>
-                            {{ $note->contactData->first_name ?? '' }}
-                            {{ $note->contactData->last_name ?? '' }}<br />
+                            <a href="{{ route('contacts.show', ['contactId' => $note->ContactData->id]) }}">{{ $note->contactData->first_name ?? '' }}
+                            {{ $note->contactData->last_name ?? '' }}</a>
+                        </div>
+                            
                         @else
                             <span class="dFont800 dFont13">Related to:</span>
                             Global
@@ -136,28 +141,32 @@
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
 
-                                        @if($note['related_to_type'] === 'Deals')                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
+                                        @if($note['related_to_type'] === 'Deals')
+                                            <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to" 
                                                 aria-label="Select Transaction">
-                                                @foreach ($retrieveModuleData as $item)
-                                                    @if (in_array($item['api_name'], ['Deals']))
-                                                        <option value="{{ $item }}" selected>{{ $item['api_name'] }}</option>
-                                                    @endif
-                                                @endforeach
+                                                <!-- @foreach ($retrieveModuleData as $item)
+                                                    @if (in_array($item['api_name'], ['Deals'])) -->
+                                                        <option value="{{ $note }}" selected>{{ $note['dealData']['deal_name'] ??'N/A'}}</option>
+                                                    <!-- @endif
+                                                @endforeach -->
                                             </select>
                                         @elseif($note['related_to_type'] === 'Contacts')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
                                                 aria-label="Select Transaction">
-                                                @foreach ($retrieveModuleData as $item)
-                                                    @if (in_array($item['api_name'], ['Contacts']))
-                                                        <option value="{{ $item }}" selected>{{ $item['api_name'] }}</option>
-                                                    @endif
-                                                @endforeach
+                                                <!-- @foreach ($retrieveModuleData as $item)
+                                                    @if (in_array($item['api_name'], ['Contacts'])) -->
+                                                        <option value="{{ $note }}" {{ isset($note['ContactData']) ? 'selected' : '' }}>
+                                                            {{ $note['ContactData']['first_name'] ?? '' }} {{ $note['ContactData']['last_name'] ?? '' }}
+                                                        </option>
+
+                                                    <!-- @endif
+                                                @endforeach -->
                                             </select>
                                         @else
                                             <div class="btn-group dmodalTaskDiv">
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                     name="related_to" aria-label="Select Transaction">
-                                                    <option value="">Global</option>
+                                                    <option value="">General</option>
                                                 </select>
                                             </div>
                                         @endif

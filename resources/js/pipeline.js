@@ -13,10 +13,12 @@ window.checkValidate = function (deal) {
     var representing = document.getElementById("validationDefault02");
     var stage = document.getElementById("validationDefault04");
     if (representing?.value == "Buyer" && stage?.value == "Under Contract") {
+        let disabledText = "disabled";
+
         $("#additionalFields").append(`
                     <div class="col-md-6 additional-field ">
                         <label for="finance" class="form-label nplabelText">Financing</label>
-                        <select class="form-select npinputinfo" id="finance" required onchange='checkAdditionalValidation(${JSON.stringify(
+                        <select class="form-select npinputinfo" id="finance" ${disabledText} required onchange='checkAdditionalValidation(${JSON.stringify(
                             deal
                         )})'>
                             <option value="" ${
@@ -33,7 +35,9 @@ window.checkValidate = function (deal) {
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="lender_company" class="form-label nplabelText">Lender Company</label>
-                        <select class="form-select npinputinfo" id="lender_company" required onchange='checkAdditionalValidation(deal)'>
+                        <select class="form-select npinputinfo" id="lender_company" ${disabledText} required onchange='checkAdditionalValidation(${JSON.stringify(
+                            deal
+                        )})'>
                             <option value="" ${
                                 !deal["lender_company"] ? "selected" : ""
                             }>--None--</option>
@@ -52,7 +56,7 @@ window.checkValidate = function (deal) {
                     </div>
                     <div class="col-md-6 additional-field">
                         <label for="modern_mortgage_lender" class="form-label nplabelText">Modern Mortgage Lender</label>
-                        <select class="form-select npinputinfo" id="modern_mortgage_lender" required >
+                        <select class="form-select npinputinfo" ${disabledText} id="modern_mortgage_lender" required >
                             <option value="" ${
                                 !deal["modern_mortgage_lender"]
                                     ? "selected"
@@ -178,10 +182,12 @@ window.checkAdditionalValidation = function (deal) {
             toggleValidation(modern_mortgage_lender, true);
             $("#additionalFields").find(".additional-field-lender").remove();
         } else if (lender_company && lender_company.value == "Other") {
+            var stage = document.getElementById("validationDefault04");
+            let disabledText =  stage?.value == "Under Contract" ? "disabled" : "";
             $("#additionalFields").append(`
                     <div class="col-md-6 additional-field-lender ">
                         <label for="lender_company_name" class="form-label nplabelText">Lender Company Name</label>
-                        <input type="text" class="form-control npinputinfo validate"
+                        <input type="text" class="form-control npinputinfo ${disabledText} validate"
                             id="lender_company_name" value = "${
                                 deal["lender_company_name"]
                                     ? deal["lender_company_name"]
@@ -190,7 +196,7 @@ window.checkAdditionalValidation = function (deal) {
                     </div>
                     <div class="col-md-6 additional-field-lender ">
                         <label for="lender_name" class="form-label nplabelText">Lender Name</label>
-                        <input type="text" class="form-control npinputinfo validate"
+                        <input type="text" class="form-control ${disabledText} npinputinfo validate"
                             id="lender_name" value = "${
                                 deal["lender_name"] ? deal["lender_name"] : ""
                             }" required>
@@ -341,7 +347,13 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     Commission_Flat_Free: commission_flat_free,
                     TM_Preference: tm_preference,
                     Transaction_Owner: transaction_owner,
-                    Contact: contact_name,
+                    Contact: {
+                        Name:
+                            (contact_name.first_name ?? "") +
+                            " " +
+                            (contact_name.last_name ?? ""),
+                        id: contact_name.zoho_contact_id,
+                    },
                     Status_pt_out_out: status_rpt_opt_out,
                     Deadline_Emails: deadline_em_opt_out,
                     Financing: finance,

@@ -21,21 +21,24 @@
             <div class="d-flex gap-1">
                 <a >
                     <div>
-                        @include('components.button', [
-                            'attributes' => "onclick=\"createContact()\"",
-                            'label' => 'New Contact',
-                            'icon' => 'fas fa-plus plusicon',
-                        ])
-                    </div>
-                   
+                        @component('components.button', [
+                         'clickEvent' => 'createContact()',
+                         'label' => 'New Contact',
+                         'icon' => 'fas fa-plus plusicon'
+                     ])
+                     @endcomponent
+                 </div>
                 </a>
                 <a onclick="createTransaction({{ $userContact }});">
                     <div>
-                        @include('components.button', [
-                            'attributes' => "onclick=\"createTransaction()\"",
-                            'label' => 'New Transaction',
-                            'icon' => 'fas fa-plus plusicon',
-                        ])
+                        <div>
+                            @component('components.button', [
+                               'clickEvent' => 'createTransaction({{ $userContact }})',
+                               'label' => 'New Transaction',
+                               'icon' => 'fas fa-plus plusicon'
+                           ])
+                           @endcomponent
+                       </div>
                     </div>
                 </a>
             </div>
@@ -67,20 +70,22 @@
 
             </div>
             <div class="d-flex gap-4">
-                <div >  
-                    @include('components.button', [
-                        'attributes' => 'id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#filterModal"',
-                        'label' => 'Filter',
-                        'icon' => 'fas fa-filter',
-                    ])                    
-                </div>
-                <div> 
-                    @include('components.button', [
-                        'attributes' => "onclick=\"applyFilter('reset')\"",
-                        'label' => 'Reset All',
-                        'icon' => 'fas fa-sync',
-                    ])
-                </div>
+                <div>
+                    @component('components.button', [
+                       'attributes' => 'id=btnGroupAddon data-bs-toggle=modal data-bs-target=#filterModal',
+                       'label' => 'Filter',
+                       'icon' => 'fas fa-filter'
+                   ])
+                   @endcomponent
+               </div>
+               <div>
+                      @component('components.button', [
+                       'clickEvent' => 'applyFilter(\'reset\')',
+                       'label' => 'Reset All',
+                       'icon' => 'fas fa-sync'
+                   ])
+                   @endcomponent
+               </div>
             </div>
         </div>
 

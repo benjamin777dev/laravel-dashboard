@@ -1,20 +1,20 @@
 <script>
-        if (window.location.href.includes("tasks")) {
-    var taskIDtest = [];
-    var selectElementfortask;
-    var tasks = @json($tasks);
-    tasks?.data?.forEach((task) => {
-        taskIDtest.push(task?.id)
-    })
-    var modalSelectMaptsk1 = []
-    taskIDtest.forEach((id) => {
-        modalSelectMaptsk1.push({
-            modalID: id,
-            selectElementfortask: 'related_to_rem' + id
+    if (window.location.href.includes("tasks")) {
+        var taskIDtest = [];
+        var selectElementfortask;
+        var tasks = @json($tasks);
+        tasks?.data?.forEach((task) => {
+            taskIDtest.push(task?.id)
         })
-    });
+        var modalSelectMaptsk1 = []
+        taskIDtest.forEach((id) => {
+            modalSelectMaptsk1.push({
+                modalID: id,
+                selectElementfortask: 'related_to_rem' + id
+            })
+        });
 
-    modalSelectMaptsk1.forEach(({
+        modalSelectMaptsk1.forEach(({
             modalID,
             selectElementfortask
         }) => {
@@ -23,17 +23,16 @@
         });
 
     }
-   
 </script>
-<div class="table-responsive dresponsivetable">
-    <table class="table dtableresp table-nowrap">
+<div class="table-responsive mt-3 ms-0">
+    <table class="table dtableresp py-2 px-3 table-nowrap">
         <thead>
             <tr class="dFont700 dFont10 dtableHeaderTr">
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
                 <th scope="col">Related To</th>
-                <th scope="col">Task Date</th>
+                <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
             </tr>
         </thead>
@@ -81,10 +80,10 @@
                         <td>
                             <div class="d-flex btn-save-del">
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                    id="btnGroupAddon" data-bs-toggle="modal"
+                                    id="update_changes" data-bs-toggle="modal"
                                     onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
                                     <i class="fas fa-hdd plusicon"></i>
-                                    Save
+                                    Done
                                 </div>
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
                                     id="btnGroupAddon" data-bs-toggle="modal"
@@ -198,7 +197,7 @@
         </tbody>
 
     </table>
-    
+
 
     <div class="dpagination">
         <div onclick="deleteTask('',true)"
@@ -208,33 +207,34 @@
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
-<!-- Bootstrap Modal with Custom Class -->
-<div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
-            </div>
-            <div class="modal-footer justify-content-evenly border-0">
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-trash-alt"></i> Yes, delete
-                    </button>
+    <!-- Bootstrap Modal with Custom Class -->
+    <div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
-                        <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
-                    </button>
+                <div class="modal-body">
+                    <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-trash-alt"></i> Yes, delete
+                        </button>
+                    </div>
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
+                            <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</div>
-</div>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -413,7 +413,7 @@
     }
 
     function updateTask(id, indexid) {
-        
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -440,9 +440,7 @@
             var formData = {
                 "data": [{
                     "Subject": elementValue,
-                    // "Remind_At": {
-                    //     "ALARM": `FREQ=NONE;ACTION=EMAIL;TRIGGER=DATE-TIME:${taskDate.value}`
-                    // }
+                    "Status": "Completed"
                 }]
             };
             // console.log("ys check ot")
@@ -458,11 +456,11 @@
                     if (response?.data[0]?.status == "success") {
                         // console.log(response?.data[0], 'sdfjkshdjkfshd')
                         // Get the button element by its ID
-                        if (!document.getElementById('saveModalId'+id).classList.contains('show')) {
+                        if (!document.getElementById('saveModalId' + id).classList.contains('show')) {
                             var button = document.getElementById('update_changes');
                             var update_message = document.getElementById('updated_message');
                             // Get the modal target element by its ID
-                            var modalTarget = document.getElementById('saveModalId'+id);
+                            var modalTarget = document.getElementById('saveModalId' + id);
                             console.log(modalTarget, 'modalTarget')
                             // Set the data-bs-target attribute of the button to the ID of the modal
                             button.setAttribute('data-bs-target', '#' + modalTarget.id);
@@ -537,95 +535,95 @@
     }
 
     const ui = {
-    confirm: async (message) => createConfirm(message)
-};
+        confirm: async (message) => createConfirm(message)
+    };
 
-const createConfirm = (message) => {
-    console.log("message", message);
-    return new Promise((complete, failed) => {
-        $('#confirmMessage').text(message);
+    const createConfirm = (message) => {
+        console.log("message", message);
+        return new Promise((complete, failed) => {
+            $('#confirmMessage').text(message);
 
-        $('#confirmYes').off('click').on('click', () => {
-            $('#confirmModal').modal('hide');
-            complete(true);
+            $('#confirmYes').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(true);
+            });
+
+            $('#confirmNo').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(false);
+            });
+
+            $('#confirmModal').modal('show');
         });
+    };
 
-        $('#confirmNo').off('click').on('click', () => {
-            $('#confirmModal').modal('hide');
-            complete(false);
-        });
+    const saveForm = async () => {
+        console.log(ui);
+        const confirm = await ui.confirm('Are you sure you want to do this?');
 
-        $('#confirmModal').modal('show');
-    });
-};
+        if (confirm) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
-const saveForm = async () => {
-    console.log(ui);
-    const confirm = await ui.confirm('Are you sure you want to do this?');
+    async function deleteTask(id = "", isremoveselected = false) {
+        let updateids = removeAllSelected();
 
-    if (confirm) {
-        return true;
-    } else {
-        return false;
-    }
-};
-
-async function deleteTask(id = "", isremoveselected = false) {
-    let updateids = removeAllSelected();
-    
-    if (updateids === "" && id === 'remove_selected') {
-        return;
-    }
-    if (isremoveselected) {
-        id = undefined;
-    }
-    
-    if (updateids !== "") {
-        console.log("id, isremoveselected", updateids, isremoveselected, id);
-        const shouldDelete = await saveForm();
-        if (!shouldDelete) {
-            console.log("User cancelled delete");
+        if (updateids === "" && id === 'remove_selected') {
             return;
         }
-    }
-    if (id === undefined) {
-        id = updateids;
-    }
-    //remove duplicate ids
-    ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-    console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh');
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        if (isremoveselected) {
+            id = undefined;
         }
-    });
-    try {
-        if (id) {
-            $.ajax({
-                url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                method: 'DELETE', // Change to DELETE method
-                contentType: 'application/json',
-                dataType: 'JSON',
-                data: {
-                    'id': id,
-                    '_token': '{{ csrf_token() }}',
-                },
-                success: function(response) {
-                    // Handle success response
-                    showToast("deleted successfully");
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
+
+        if (updateids !== "") {
+            console.log("id, isremoveselected", updateids, isremoveselected, id);
+            const shouldDelete = await saveForm();
+            if (!shouldDelete) {
+                console.log("User cancelled delete");
+                return;
+            }
         }
-    } catch (err) {
-        console.error("error", err);
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
     }
-}
 
 
     function toggleAllCheckboxes() {

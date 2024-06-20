@@ -33,6 +33,7 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdown(modalID, selectElement);
         });
+        
     });
     function createTransaction(userContactData,contactData=null) {
         console.log(typeof userContactData,JSON.parse(JSON.stringify(userContactData)));

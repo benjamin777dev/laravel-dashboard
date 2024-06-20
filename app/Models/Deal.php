@@ -93,6 +93,7 @@ class Deal extends Model
         // and id of the agent who is assigned this deal
         // we can find that user in the system
         $dealUser = User::where("zoho_id", $contactNameId)->first();
+        $contact = Contact::where("zoho_contact_id", $contactNameId)->first();
         if ($dealUser) {
             $userId = $dealUser->id;
         }
@@ -121,7 +122,7 @@ class Deal extends Model
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
             'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
-            'contact_name' => $source == "webhook" ? ($data['Contact_Name']['name'] ?? null) : null,
+            'contact_name' => $source == "webhook" ? ($contact['id'] ?? null) : null,
             'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,
@@ -151,7 +152,7 @@ class Deal extends Model
             'lender_company' => $data['Lender_Company'] ?? null,
             'lender_company_name' => $data['Lender_Company_Name'] ?? null,
             'lender_name' => $data['Lender_Name'] ?? null,
-            'locked_s' => (int) ($data['Locked__s'] ?? null),
+            'locked_s' => ($data['Stage'] === "Under Contract" || strpos($data['Stage'], "Dead") === 0),
             'marketing_specialist' => $data['Marketing_Specialist'] ?? null,
             'modern_mortgage_lender' => $data['Modern_Mortgage_Lender'] ?? null,
             'modified_by_email' => $data['Modified_By']['email'] ?? null,

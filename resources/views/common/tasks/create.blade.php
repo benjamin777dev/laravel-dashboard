@@ -1,18 +1,18 @@
 @if (isset($type) && $type == 'Deals')
     <div class="modal fade" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+            <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Tasks</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         onclick="resetValidationTask('{{ $deal->id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
+                    <p class="ddetailsText fw-normal">Details</p>
                     <textarea name="subject" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="darea{{ $deal['id'] }}"
                         rows="4" class="dtextarea"></textarea>
                     <div id="subject_error{{ $deal['id'] }}" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
+                    <label class="dRelatedText mb-2">Related to...</label>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
                             <option value="{{ $deal['zoho_deal_id'] }}" selected>
@@ -36,19 +36,19 @@
     </div>
 @elseif(isset($type) && $type == 'Contacts')
 <div class="modal fade" id="newTaskModalId{{ $contact->id }}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered deleteModal">
-        <div class="modal-content dtaskmodalContent">
+    <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+        <div class="modal-content p-1">
             <div class="modal-header border-0">
                 <p class="modal-title dHeaderText">Create New Tasks</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">
-                <p class="ddetailsText">Details</p>
+                <p class="ddetailsText fw-normal">Details</p>
                 <textarea name="subject" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="darea{{ $contact['id'] }}"
                     rows="4" class="dtextarea"></textarea>
                 <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
-                <p class="dRelatedText">Related to...</p>
+                <label class="dRelatedText mb-2">Related to...</label>
                 <div class="btn-group dmodalTaskDiv">
                     <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
                         <option value="{{ $contact['zoho_contact_id'] }}" selected>
@@ -71,20 +71,20 @@
     </div>
 </div>
 @else
-    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"
+    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"
         tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+            <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Tasks</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidationTask()"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
-                    <p class="ddetailsText">Details</p>
+                    <p class="ddetailsText fw-bolder">Details</p>
                     <textarea name="subject" onkeyup="validateTextareaTask()" id="darea" rows="4" class="dtextarea"></textarea>
                     <div id="subject_error" class="text-danger"></div>
-                    <p class="dRelatedText">Related to...</p>
+                    <label class="dRelatedText mb-2">Related to...</label>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" id="related_to_rem_create"
                             name="related_to_task_dashboard" aria-label="Select Transaction">
@@ -103,6 +103,7 @@
             </div>
         </div>
     </div>
+   
 @endif
 
 <script>

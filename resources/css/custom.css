@@ -136,35 +136,8 @@ body {
 .ddaterangepicker:focus-visible {
     outline: none;
 }
-
-.dash-front-cards {
-    padding-block: 5px;
-    padding-inline: 12px;
-}
-
 .closeIcon {
     margin-top: 5px;
-}
-
-.dSumValue {
-    /* max-width: 195.09px; */
-    color: #6c6c6c;
-    text-align: center;
-   
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: 34.5px;
-}
-
-.dcountText {
-    color: #222;
-    text-align: center;
-   
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: 16.1px;
 }
 
 .dCenterText {
@@ -184,7 +157,6 @@ body {
 
 .dtasksection {
     background: rgba(255, 255, 255, 1);
-    padding: 20px;
 }
 
 .dtableHeaderTr {
@@ -291,10 +263,13 @@ body {
 .dtabs {
     background: #6c6c6c !important;
     color: #fff;
-    margin-top: 12px;
-    padding-left: 0px;
     border-radius: 5px;
 }
+
+.kontribusi{
+    border-radius: 10px;
+    margin:0 10px 0 10px;
+  }
 
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
@@ -308,15 +283,6 @@ body {
 
 .dtabsbtn:hover {
     color: #fff;
-}
-
-.dresponsivetable {
-    margin-top: 12px;
-    padding-inline: 0px;
-}
-
-.dtableresp {
-    padding: 8px 12px 8px 12px;
 }
 
 .dtableresp th {
@@ -429,9 +395,7 @@ body {
 }
 
 /* / / / create task modal  / / / */
-.dtaskmodalContent {
-    padding: 4px;
-}
+
 
 .dHeaderText {
     color: #343a40;
@@ -449,7 +413,6 @@ body {
 .ddetailsText {
     color: #000;
     font-size: 13px;
-    font-style: normal;
     font-weight: 600;
     line-height: 18px;
     margin-bottom: 8px;
@@ -470,7 +433,6 @@ body {
     font-style: normal;
     font-weight: 900;
     line-height: 16.8px;
-    margin-bottom: 8px;
 }
 
 .dtextarea:focus-visible {
@@ -541,7 +503,7 @@ body {
     padding: 19px;
     background: #222;
     border-radius: 50%;
-    /* cursor: pointer; */
+   
 }
 
 .groupAddButton {
@@ -571,7 +533,7 @@ body .vertical-collpsed span .logo-sm image {
 .app-search span {
     position: relative;
     line-height: unset;
-    left: 5px;
+    left: 0px;
 }
 
 /* Tooltip text */
@@ -976,17 +938,15 @@ body .vertical-collpsed span .logo-sm image {
     }
 
     .dspeedometersection,
-    .graphp-dash,
-    .dcontactbtns-div {
+    .graphp-dash {
         margin-bottom: 24px;
     }
-
-    .dspeedn-month-camaparison,
-    .dmain-Container,
-    .dgraphdiv {
+    .unset-bs-gutter-x {
         --bs-gutter-x: 0;
     }
 }
+
+
 
 @media (min-width: 320px) and (max-width: 398px) {
     .dtabsbtn {
@@ -2910,11 +2870,6 @@ body .vertical-collpsed span .logo-sm image {
     text-align: center;
 }
 
-/* stacked chart css */
-.dgraphdiv {
-    margin-bottom: 24px;
-}
-
 html,
 body {
     font: 500 15px/1.5 Montserrat, sans-serif;
@@ -3378,5 +3333,9 @@ input[type="button"]:hover {
 .btn-disabled {
     background-color: grey;
     border-color: grey;
+    cursor: not-allowed;
+}
+
+.lockedRow td {
     cursor: not-allowed;
 }

@@ -1,8 +1,8 @@
 @if (isset($type) && $type == 'Deals')
     <div class="modal fade" id="staticBackdropforNote_{{ $deal['id'] }}" data-bs-backdrop="static"
         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content noteModal">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+            <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -11,10 +11,10 @@
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
-                        <p class="ddetailsText">Details</p>
+                        <label class="ddetailsText">Details</label>
                         <textarea name="note_text" id="note_text{{ $deal['id'] }}" rows="4" class="dtextarea"></textarea>
                         <div id="note_text_error{{ $deal['id'] }}" class="text-danger"></div>
-                        <p class="dRelatedText">Related to...</p>
+                        <label class="dRelatedText">Related to...</label>
                         <div class="btn-group dmodalTaskDiv">
                             <select class="form-select dmodaltaskSelect"  id="related_to{{ $deal['id'] }}"
                                 name="related_to" style="display:none;" aria-label="Select Transaction" >
@@ -46,7 +46,7 @@
     <div class="modal fade" onclick="event.preventDefault();" id="staticBackdropforNote_{{ $contact['id'] }}"
         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal deleteModal">
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
@@ -92,7 +92,7 @@
 @else
     <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal deleteModal">
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>

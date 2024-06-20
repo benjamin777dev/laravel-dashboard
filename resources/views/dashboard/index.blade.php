@@ -26,31 +26,36 @@
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
-        <div class="row mt-4 text-center">
-            <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
+        <div class="row mt-3 text-center">
+            <div class="col-lg-3 col-md-3 text-start">
                 <div class="row g-1">
                     <div>
-                        @include('components.button', [
-                            'attributes' => "onclick=\"createContact()\"",
+                           @component('components.button', [
+                            'clickEvent' => 'createContact()',
                             'label' => 'New Contact',
-                            'icon' => 'fas fa-plus plusicon',
+                            'icon' => 'fas fa-plus plusicon'
                         ])
+                        @endcomponent
                     </div>
                     <div>
-                        @include('components.button', [
-                            'attributes' => "onclick=\"createTransaction()\"",
+                         @component('components.button', [
+                            'clickEvent' => 'createTransaction()',
                             'label' => 'New Transaction',
-                            'icon' => 'fas fa-plus plusicon',
+                            'icon' => 'fas fa-plus plusicon'
                         ])
+                        @endcomponent
                     </div>
                 </div>
             </div>
-            @include('components.dashboardcard', ['stageData' => $stageData])
+            @component('components.dashboardcard', [
+                'stageData' => $stageData,
+            ])
+            @endcomponent
         </div>
 
-        <div class="row">
+        <div class="row unset-bs-gutter-x">
             <div class="col-lg-3 mb-4">
-                <div class="card card-body h-100 card-body-padding0">
+                <div class="card card-body h-100 ">
                     <p class="text-dark font-family-montserrat font-size-16 fw-bolder mb-0">My Pipeline</p>
                     <div id="canvas-holder" style="width:100%">
                         <canvas id="chart" width="100%" height="100%"></canvas>
@@ -105,7 +110,8 @@
             </div>
 
             <div class="col-lg-3 h-100 mb-4">
-                <div class="card card-body card-body-padding0">
+                <div class="card card-body card-body-padding0" style="background: transparent;">
+                    <h4 class="text-start dFont600 mb-4">Notes</h4>
                     @include('common.notes.view', [
                         'notesInfo' => $notesInfo,
                         'retrieveModuleData' => $retrieveModuleData,
@@ -114,28 +120,30 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 dtasksection">
+            <div class="col-sm-12 dtasksection p-4">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
-                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask">
-                        <i class="fas fa-plus plusicon"></i> New Task
-                    </div>
+                    <button type="button"
+                        class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
+                        data-bs-toggle="modal" data-bs-target="#staticBackdropforTask" data-bs-whatever="@getbootstrap"><i
+                            class="fas fa-plus plusicon"></i> New Task</button>
                 </div>
                 <div class="row">
-                    <nav class="dtabs">
+                    <nav class="dtabs mt-3 pl-0">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
                                 aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
                                 Progress</button>
-                            <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
-                                data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
-                                aria-controls="nav-profile" aria-selected="false"
-                                onclick="fetchData('Not Started')">Upcoming</button>
+                            <button class="nav-link dtabsbtn" data-tab='Upcoming' id="nav-profile-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
+                                aria-selected="false" onclick="fetchData('Upcoming')">Upcoming</button>
+                            <button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                                aria-selected="false" onclick="fetchData('Overdue')">Overdue</button>
                             <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
+                                aria-selected="false" onclick="fetchData('Completed')">Completed</button>
                         </div>
                     </nav>
                     <div class="task-container">
@@ -277,7 +285,8 @@
         var statusInfo = {
             'In Progress': false,
             'Overdue': false,
-            'Not Started': false,
+            'Completed': false,
+            'Upcoming': false,
         };
 
         // Update the status information based on the current status

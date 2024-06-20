@@ -1,6 +1,6 @@
 <header id="page-topbar">
     <div class="navbar-header">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
             <!-- LOGO -->
             <div class="navbar-brand-box">
                 <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
@@ -31,12 +31,11 @@
             </button>
 
                 <!-- App Search-->
-          <form class="app-search d-none d-lg-block">
+          <form class="app-search d-none d-lg-block p-0 mb-0">
             <div class="position-relative search-input-design">
-                <select class="form-control select2" id="global-search" data-placeholder="@lang('Search')">
+                <select class="form-control " id="global-search" data-placeholder="@lang('Search')">
                     <!-- Option to load data asynchronously -->
                 </select>
-                <span class="bx bx-search-alt"></span>
             </div>
         </form>
            

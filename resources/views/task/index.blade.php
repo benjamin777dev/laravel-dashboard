@@ -21,13 +21,16 @@
                             data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
                             aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
                             Progress</button>
-                        <button class="nav-link dtabsbtn" data-tab='Not Started' id="nav-profile-tab"
+                        <button class="nav-link dtabsbtn" data-tab='Upcoming' id="nav-profile-tab"
                             data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                             aria-controls="nav-profile" aria-selected="false"
-                            onclick="fetchData('Not Started')">Upcoming</button>
+                            onclick="fetchData('Upcoming')">Upcoming</button>
+                        <button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
+                            aria-selected="false" onclick="fetchData('Overdue')">Overdue</button>
                         <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                            aria-selected="false" onclick="fetchData('Completed')">Overdue</button>
+                            aria-selected="false" onclick="fetchData('Completed')">Completed</button>
                     </div>
                 </nav>
                <div class= "task-container">
@@ -39,40 +42,6 @@
             </div>
 
         </div>
-
-
-        {{-- <div class="table-responsive dtranstiontable mt-3">
-            <p class="fw-bold">Transactions closing soon</p>
-            <table class="table dtabletranstion">
-                <thead>
-                    <tr>
-                        <th scope="col">Transaction Name</th>
-                        <th scope="col">Contact Name</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Closing Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (count($closedDeals) === 0)
-                        <tr>
-                            <td class="text-center" colspan="5">No records found</td>
-                        </tr>
-                    @else
-                        @foreach ($closedDeals as $deal)
-                            <tr>
-                                <td>{{ $deal['deal_name'] ?? 'N/A' }}</td>
-                                <td>{{ $deal->contactName->first_name ?? 'N/A' }}
-                                    {{ $deal->contactName->last_name ?? '' }}</td>
-                                <td>{{ $deal->contactName->phone ?? 'N/A' }}</td>
-                                <td>{{ $deal->contactName->email ?? 'N/A' }}</td>
-                                <td>{{ $deal['closing_date'] ?? 'N/A' }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
-        </div> --}}
     </div>
     {{-- Create New Task Modal --}}
     @include('common.tasks.create')
