@@ -59,7 +59,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
          if (!$contact) {
-            return redirect('/contacts');
+            return response()->json(["redirect" => "/contacts"]);
         }
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         return view('contacts.create', compact('contactId','retrieveModuleData','contact'));
@@ -81,8 +81,8 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-         if (!$contact) {
-            return redirect('/contacts');
+        if (!$contact) {
+            return response()->json(["redirect" => "/contacts"]);
         }
         $users = $user;
         $contacts = $db->retreiveContactsJson($user, $accessToken);
@@ -116,7 +116,7 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-            return redirect('/contacts');
+           return response()->json(["redirect" => "/contacts"]);
         }
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
@@ -152,7 +152,7 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-            return redirect('/contacts');
+           return response()->json(["redirect" => "/contacts"]);
         }
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
@@ -578,11 +578,9 @@ class ContactController extends Controller
             // Redirect back with a success message
             return response()->json(['data' => $contactInstance], 200);
         } catch (\Exception $e) {
-            Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error', '!' . $e->getMessage());
-            return "somthing went wrong" . $e->getMessage();
+            Log::error("Error creating notes: " . $e->getMessage());
+            throw new \Exception($e->getMessage());
         }
-
     }
 
     public function databaseGroup()

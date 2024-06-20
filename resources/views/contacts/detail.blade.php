@@ -115,8 +115,12 @@
         $.ajax({
             url: `{{ url('/contact/detail/form/') }}/${contactId}`,
             method: 'GET',
-            success: function(data) {                
-                $('.updateContactform').html(data);
+            success: function(data) {
+                 if (data.redirect) {
+                    window.location.href = data.redirect;
+                }else{
+                    $('.updateContactform').html(data);
+                }                 
             },
             error: function(xhr, status, error) {
                 console.error('Error:', error);
