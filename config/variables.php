@@ -5,7 +5,6 @@ return [
     'dealStages'=>['Potential', 'Pre-Active', 'Active', 'Under Contract','Sold','Dead-Lost To Competition','Dead-Contract Terminated'],
     'dealCreateStages'=>['Potential', 'Pre-Active', 'Active','Under Contract'],
     'broucherPrint'=>[
-    '-None-',
     'No Brochures',
     'Print at Alamo - 2 page - 25 ct - $20',
     'Print at Alamo - 2 page - 50 ct - $40',
@@ -18,7 +17,6 @@ return [
     'PDF - 2 Page - I’ll Print it Myself'
     ],
     'featuresCard'=>[
-    '-None-',
     'No Feature Cards',
     'Print at Alamo - Blue Feature Cards - $1 for 4',
     'Print at Alamo - White Feature Cards - $1 for 4',

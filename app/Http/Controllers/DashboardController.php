@@ -103,6 +103,7 @@ class DashboardController extends Controller
                 ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
                 && !Str::startsWith($deal['stage'], 'Dead')
                 && $deal['stage'] !== 'Sold'
+                && $deal['stage'] !== "Under Contract"
             );
         
             // Debugging: Print if the deal needs a new date
@@ -552,53 +553,36 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
 
-        Log::info("JSON TASK INPUT" . json_encode($jsonData));
+        Log::info("JSON TASK INPUT: " . json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
-        $task = Task::where('zoho_task_id', $id)->first();
-        if (empty($task)) {
-            $task = Task::where('id', $id)->first();
+        $task = Task::where('zoho_task_id', $id)->first() ?? Task::where('id', $id)->first();
+
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
         }
+
         try {
             $response = $zoho->updateTask($jsonData, $task['zoho_task_id']);
             if (!$response->successful()) {
-                throw $response;
-            }
-            $requestData = $request->json()->all(); // Get JSON data from request
-            $data = $requestData['data'][0]; // Access the 'data' array
-            $subject = $data['Subject'] ?? null; // Get 'Subject' from data
-            $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
-            $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
-            $whoId = $data['Who_Id']['id'] ?? null; // Get 'What_Id' from data
-            $status = $data['Status'] ?? null; // Get 'What_Id' from data
-            $seModule = $data['$se_module'] ?? null;
-            if ($task) {
-                if ($dueDate !== null) {
-                    $task->due_date = $dueDate ?? $task->due_date;
-                }
-                if ($subject !== null) {
-                    $task->subject = $subject;
-                }
-                if ($whatId !== null) {
-                    $task->what_id = $whatId;
-                }
-                if ($seModule !== null) {
-                    $task->related_to = $seModule;
-                }
-                if ($whoId !== null) {
-                    $task->who_id = $whoId;
-                }
-                $task->status = $status ?? $task->status;
-                $task->save();
+                throw new \Exception("Zoho update failed");
             }
 
-            Log::info("Successful task update... " . $response);
-            return $response;
+            $data = $jsonData['data'][0];
+            $task->due_date = $data['Due_Date'] ?? $task->due_date;
+            $task->subject = $data['Subject'] ?? $task->subject;
+            $task->what_id = $data['What_Id']['id'] ?? $task->what_id;
+            $task->related_to = $data['$se_module'] ?? $task->related_to;
+            $task->who_id = $data['Who_Id']['id'] ?? $task->who_id;
+            $task->status = $data['Status'] ?? $task->status;
+            $task->save();
+
+            Log::info("Successful task update... ", ['response' => $response->json()]);
+            return response()->json($response->json());
         } catch (\Exception $e) {
-            Log::error("Error creating task: " . $e->getMessage());
-            return $e->getMessage();
+            Log::error("Error updating task: " . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
     }
 
     public function retrieveDealTransactionData(User $user, $accessToken)

@@ -264,6 +264,7 @@
             var tourURL = $('#tourURL').val();
             var usingCHR = $('#usingCHR').val();
 
+
             // Get values from CHR TM - Transaction Details and Preferences section
             var needOE = $('#needOE').val();
             var hasHOA = $('#hasHOA').val();
@@ -313,6 +314,7 @@
             var emailBlastReverseProspect = $('#emailBlastReverseProspect').prop('checked');
             var propertyHighlightVideo = $('#propertyHighlightVideo').prop('checked');
             var socialMediaImages = $('#socialMediaImages').prop('checked');
+            var showPromotion = $('#showPromotion').val();
             var socialMediaAds = $('#socialMediaAds').prop('checked');
             var priceImprovementPackage = $('#priceImprovementPackage').prop('checked');
             var customDomainName = $('#customDomainName').val();
@@ -335,21 +337,27 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
-
-            if (((transactionName && agentName && commingSoon && tmName && activeDate && agreementExecuted && bedsBathsTotal && usingCHR) !== '') && (price !== "$")) {
-                isValid = true;
-
-                if (showOtherListingForm !== "null") {
-                    if (stickyDots && featureCards && brochureLine) {
-                        isValid = true;
-                    } else {
-                        showToastError("Please fill in all the required fields in the PROPERTY PROMOTION - Print Requests section.");
-                        isValid = false;
-                    }
-                }
-            } else {
-                showToastError("Please fill in all the required fields.");
-                isValid = false;
+            // Select all div elements
+            const listingSubmittalsContainer = document.getElementById('listingSubmittal');
+            console.log("listingSubmittalsContainer",listingSubmittalsContainer);
+            if (listingSubmittalsContainer) {
+                const allDivs = listingSubmittalsContainer.querySelectorAll(':scope > div');
+                // Filter out divs that are hidden (display: none)
+                const visibleDivs = Array.from(allDivs).filter(div => window.getComputedStyle(div).display !== 'none');
+                console.log("visibleDivs",visibleDivs);
+                // Loop through each visible div and validate form fields within it
+                visibleDivs.forEach(div => {
+                    const validatedElements = div.querySelectorAll('.validate');
+                    console.log("validatedElements",validatedElements);
+                    validatedElements.forEach(element => {
+                        if (element.value.trim() === '') {
+                            const label = document.querySelector(`label[for="${element.id}"]`);
+                            const text = label ? label.innerHTML : "This field";
+                            showToastError(text + " cannot be empty");
+                            isValid = false;
+                        }
+                    });
+                });
             }
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
@@ -453,6 +461,7 @@
                         "Sign_Install_Vendor_Info": signInstallVendor,
                         "Delivery_Only_Shipping_Address_Name": deliveryAddress,
                         "Fees_Charged_to_Seller_at_Closing": feesCharged,
+                        "showPromotion":showPromotion
                     }],
                     "_token": '{{ csrf_token() }}'
                 }
