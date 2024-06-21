@@ -47,7 +47,7 @@ class Deal extends Model
 
     public function contactName()
     {
-        return $this->belongsTo(Contact::class, 'contact_name');
+        return $this->belongsTo(Contact::class, 'contact_name_id','zoho_contact_id');
     }
 
     public function tasks()
@@ -57,7 +57,7 @@ class Deal extends Model
 
     public function tmName()
     {
-        return $this->belongsTo(User::class, 'tm_name', 'root_user_id');
+        return $this->belongsTo(User::class, 'tm_name_id', 'root_user_id');
     }
 
     public function leadAgent()
