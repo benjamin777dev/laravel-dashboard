@@ -110,7 +110,8 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 if (response) {
-                    window.location.href = `{{ url('/nontm-create/${response?.id}') }}`;
+                    const url = `{{ url('/nontm-create/${response?.id}') }}`
+                    window.open(url,'_blank')
                     // window.location.reload();
                 }
             },

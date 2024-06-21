@@ -9,19 +9,19 @@
 <div class="container-fluid">
     <div class="submittaldiv">
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  ><i class="fas fa-save">
                 </i>
                 Cancel
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="validateSubmittal('{{$submittal}}',true)"><i class="fas fa-save">
                 </i>
                 Save and New
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal('{{$submittal}}',false)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
@@ -127,7 +127,10 @@
     }
 
     function validateSubmittal(submittal,isNew) {
-        isValid = false
+        
+        isValid = true
+        submittal = JSON.parse(submittal)
+        console.log(submittal.submittalType);
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
@@ -248,6 +251,7 @@
                 })
             }
         }else if(submittal.submittalType == 'listing-submittal'){
+            console.log("jasgdfjashj");
             // Get values from Basic Info section
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
@@ -358,6 +362,7 @@
                         }
                     });
                 });
+                
             }
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){

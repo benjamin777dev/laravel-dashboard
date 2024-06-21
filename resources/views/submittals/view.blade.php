@@ -325,21 +325,27 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
-            const validatedElements = document.querySelectorAll('.validate');
-            console.log("Validate Element", validatedElements);
-            let isValid = true;
-
-            validatedElements.forEach(element => {
-                if (window.getComputedStyle(element).display !== 'none') {
-                    if (element.value === '') {
-                       const label = document.querySelector(`label[for="${element.id}"]`);
-                        const text = label ? label.innerHTML : "This field";
-                        showToastError(text + " cannot be empty");
-                        isValid = false;
-                    }
-                }
-            });
-
+            const listingSubmittalsContainer = document.getElementById('listingSubmittal');
+            console.log("listingSubmittalsContainer",listingSubmittalsContainer);
+            if (listingSubmittalsContainer) {
+                const allDivs = listingSubmittalsContainer.querySelectorAll(':scope > div');
+                // Filter out divs that are hidden (display: none)
+                const visibleDivs = Array.from(allDivs).filter(div => window.getComputedStyle(div).display !== 'none');
+                console.log("visibleDivs",visibleDivs);
+                // Loop through each visible div and validate form fields within it
+                visibleDivs.forEach(div => {
+                    const validatedElements = div.querySelectorAll('.validate');
+                    console.log("validatedElements",validatedElements);
+                    validatedElements.forEach(element => {
+                        if (element.value.trim() === '') {
+                            const label = document.querySelector(`label[for="${element.id}"]`);
+                            const text = label ? label.innerHTML : "This field";
+                            showToastError(text + " cannot be empty");
+                            isValid = false;
+                        }
+                    });
+                });
+            }
             
             
 
