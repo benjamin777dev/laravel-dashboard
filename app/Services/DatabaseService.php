@@ -1065,7 +1065,8 @@ class DatabaseService
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
                 'contactId' => isset($contact->id) ? $contact->id : null,
-                'contact_name' => isset($contact_name) ? $contact_name->id : null,
+                'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
+                'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
