@@ -1,7 +1,6 @@
 @foreach ($contacts as $contact)
     <tr>
         <td>
-
             <div class="tooltip-wrapper">
                 <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
                     <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"

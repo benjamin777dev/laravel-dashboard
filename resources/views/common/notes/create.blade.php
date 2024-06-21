@@ -11,7 +11,7 @@
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
-                        <label class="ddetailsText">Details</label>
+                        <label class="ddetailsText d-grid">Details</label>
                         <textarea name="note_text" id="note_text{{ $deal['id'] }}" rows="4" class="dtextarea"></textarea>
                         <div id="note_text_error{{ $deal['id'] }}" class="text-danger"></div>
                         <label class="dRelatedText">Related to...</label>

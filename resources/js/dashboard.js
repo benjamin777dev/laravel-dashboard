@@ -53,13 +53,8 @@ window.moduleSelected = function (selectedModule, id = "") {
 
 window.updateDeal = function(zohoDealId, dealId, parentElement) {
     event.preventDefault();
-
+   
     let dealData = {};
-    parentElement.querySelectorAll('[data-type]').forEach(element => {
-        let type = element.getAttribute('data-type');
-        let value = element.getAttribute('data-value');
-        dealData[type] = value;
-    });
 
     let closingDateInput = document.getElementById(`closing_date${zohoDealId}`);
     let closingDate = closingDateInput ? closingDateInput.value : null;
@@ -73,17 +68,21 @@ window.updateDeal = function(zohoDealId, dealId, parentElement) {
 
     let formData = {
         "data": [{
-            "Deal_Name": dealData.deal_name,
-            "Client_Name_Primary": dealData.client_name_primary,
-            "Stage": dealData.stage,
-            "Representing": dealData.representing,
-            "Sale_Price": dealData.sale_price,
-            "Closing_Date": dealData.closing_date,
-            "Commission": dealData.commission,
-            "Pipeline_Probability": dealData.pipeline_probability,
+            "Deal_Name": dealData.deal_name? dealData.deal_name:undefined,
+            "Client_Name_Primary": dealData.client_name_primary?dealData.client_name_primary:undefined,
+            "Stage": dealData.stage?dealData.stage:undefined,
+            "Representing": dealData.representing ? dealData.representing : undefined,
+            "Sale_Price": dealData.sale_price ? dealData.sale_price : undefined,
+            "Closing_Date": dealData.closing_date ? dealData.closing_date : undefined,
+            "Commission": dealData.commission ? dealData.commission : undefined,
+            "Pipeline_Probability": dealData.pipeline_probability ? dealData.pipeline_probability: undefined,
         }],
         "skip_mandatory": true
     };
+
+    formData.data[0] = Object.fromEntries(
+        Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+    );
 
     $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 

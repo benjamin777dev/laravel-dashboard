@@ -89,8 +89,26 @@
             </div>
         </div>
 
+        @php
+            $contactHeader = [
+                "",
+                "Full name",
+                "Relationship Type",
+                "Email",
+                "Mobile",
+                "Address"
+            ]
+        @endphp
+
         <div class="contactlist overflow-auto" id="contactlist">
-            @include('contacts.contact', ['contacts' => $contacts])
+            @component('components.common-table', [
+                'th' => $contactHeader,
+                'id'=>'datatable_contact',
+                'commonArr' =>$contacts,
+                'retrieveModuleData'=>$retrieveModuleData,
+                "type" =>"contact",
+            ])
+            @endcomponent
             <!-- Filter Modal -->
 
         </div>

@@ -43,6 +43,15 @@ body {
     gap: 24px;
 }
 
+.table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before{
+    background-color: #222 !important;
+}
+
+.table th {
+     background-color: #222;
+     color: #fff;
+}
+
 .navbar-toggler {
     margin-left: 15px;
 }

@@ -30,24 +30,24 @@
             <div class="col-lg-3 col-md-3 text-start">
                 <div class="row g-1">
                     <div>
-                           @component('components.button', [
+                        @component('components.button', [
                             'clickEvent' => 'createContact()',
                             'label' => 'New Contact',
-                            'icon' => 'fas fa-plus plusicon'
+                            'icon' => 'fas fa-plus plusicon',
                         ])
                         @endcomponent
                     </div>
                     <div>
-                         @component('components.button', [
+                        @component('components.button', [
                             'clickEvent' => 'createTransaction()',
                             'label' => 'New Transaction',
-                            'icon' => 'fas fa-plus plusicon'
+                            'icon' => 'fas fa-plus plusicon',
                         ])
                         @endcomponent
                     </div>
                 </div>
             </div>
-            @component('components.dashboardcard', [
+            @component('components.dash-cards', [
                 'stageData' => $stageData,
             ])
             @endcomponent
@@ -151,101 +151,28 @@
                     </div>
                 </div>
             </div>
-
-            <div class="table-responsive dtranstiontable mt-2" id="badDates">
-                @if ($needsNewDate->isNotEmpty())
-                    <p class="fw-bold">Bad Dates | <span class="text-danger">{{ count($needsNewDate) }} Bad Dates!</span>
-                    </p>
-                @else
-                    <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great
-                                Job!</strong>!</span></p>
-                @endif
-
-
-                <div class="dtabletranstion dtableHeader">
-                    <div>Transaction Name</div>
-                    <div>Client Name</div>
-                    <div>Stage</div>
-                    <div>Representing</div>
-                    <div>Sale Price</div>
-                    <div>Closing Date</div>
-                    <div>Commission</div>
-                    <div>Potential GCI</div>
-                    <div>Probability</div>
-                    <div>Probable GCI</div>
-                </div>
-                @if (count($needsNewDate) === 0)
-                    <div>
-                        <p class="text-center mt-4" colspan="12">No records found</p>
-                    </div>
-                @else
-                    @foreach ($needsNewDate as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}"
-                            data-zid="{{ $deal['zoho_deal_id'] }}">
-                            <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
-                                <div class="dTContactName">
-                                    <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                        <span class="dlabel">Transaction Name:</span> {{ $deal['deal_name'] }}
-                                        {{ $deal['address'] }}
-                                </div>
-                                </a>
-                            </div>
-                            <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Client Name:</span>
-                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                    {{ $deal->client_name_primary ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div data-type="stage" data-value="{{ $deal['stage'] }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Stage:</span>
-                                    {{ $deal['stage'] }}
-                                </div>
-                            </div>
-                            <div data-type="representing" data-value="{{ $deal['representing'] }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Representing:</span>
-                                    {{ $deal['representing'] }}
-                                </div>
-                            </div>
-                            <div data-type="sale_price" data-value="{{ $deal['sale_price'] ?? 0 }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Sale Price:</span>
-                                    ${{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}
-                                </div>
-                            </div>
-                            <div class="dTContactName">
-                                <span class="dlabel">Closing Date:</span>
-                                <input type="date" class="badDateInput"
-                                    onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
-                                    id="closing_date{{ $deal['zoho_deal_id'] }}"
-                                    value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
-                            </div>
-                            <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
-                                <div class="dTContactName"><span
-                                        class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%
-                                </div>
-                            </div>
-                            <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Potential
-                                        GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
-                            </div>
-                            <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Probability:</span>
-                                    {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
-                            </div>
-                            <div data-type="probable_gci"
-                                data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
-
-                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span>
-                                    ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
-            </div>
+            @php
+                 $headers = [
+                    'Transaction Name',
+                    'Client Name',
+                    'Stage',
+                    'Representing',
+                    'Sale Price',
+                    'Closing Date',
+                    'Commission',
+                    'Potential GCI',
+                    'Probability',
+                    'Probable GCI',
+                ];
+            @endphp
+              @component('components.common-table', [
+                'th' => $headers,
+                'id'=>'datatable_transaction',
+                'commonArr' =>$needsNewDate,
+                "type" =>"dash-transaction",
+            ])
+            @endcomponent
+           
         </div>
 
     </div>
