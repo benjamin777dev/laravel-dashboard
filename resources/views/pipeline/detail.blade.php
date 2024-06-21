@@ -320,12 +320,17 @@
 <div class="showsubmittal">
 </div>
 
-
+{{-- Add Non TM --}}
+@if ($deal['tm_preference'] == 'Non TM')
+<div class="showNonTm"></div>
+</div>
+@endif
 
 <script>
     $(document).ready(function() {
         fetchContactRole();
         getSubmittals();
+        getNonTms();
     })
     $(document).ready(function() {
         var getLeadAgent = $('#leadAgent');
@@ -398,6 +403,26 @@
                 //     // window.location.reload();
                 // }
                 $(".showsubmittal").html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            },
+        });
+    };
+    function getNonTms () {
+        $.ajax({
+            url: `{{ url('/nontms/${dealId}')}}`,
+            type: 'GET',
+            success: function (response) {
+                // if (response?.data && response.data[0]?.message) {
+                //     // Convert message to uppercase and then display
+                //     const upperCaseMessage = response.data[0].message.toUpperCase();
+                //     showToast(upperCaseMessage);
+                //     updateDealInformation(response.data[0])
+                //     // window.location.reload();
+                // }
+                $(".showNonTm").html(response);
             },
             error: function (xhr, status, error) {
                 // Handle error response

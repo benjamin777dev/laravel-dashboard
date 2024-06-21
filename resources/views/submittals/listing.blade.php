@@ -94,7 +94,7 @@
         <form class="row g-3">
             <div class="col-md-6">
                 <label for="needOE" class="form-label nplabelText">Need O&E</label>
-                <select class="form-select npinputinfo" id="needOE">
+                <select class="form-select npinputinfo validate" id="needOE">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['needOE']=="Yes" ?'selected':''}}>Yes
@@ -105,7 +105,7 @@
 
             <div class="col-md-6">
                 <label for="hasHOA" class="form-label nplabelText">Has HOA?</label>
-                <select class="form-select npinputinfo" id="hasHOA">
+                <select class="form-select npinputinfo validate" id="hasHOA">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['hasHOA']=="Yes" ?'selected':''}}>Yes
@@ -115,7 +115,7 @@
             </div>
             <div class="col-md-6">
                 <label for="includeInsights" class="form-label nplabelText">Include Insights in Intro?</label>
-                <select class="form-select npinputinfo" id="includeInsights">
+                <select class="form-select npinputinfo validate" id="includeInsights">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['includeInsights']=="Yes" ?'selected':''}}>Yes
@@ -125,7 +125,7 @@
             </div>
             <div class="col-md-6">
                 <label for="titleToOrderHOA" class="form-label nplabelText">Title to Order HOA docs?</label>
-                <select class="form-select npinputinfo" id="titleToOrderHOA">
+                <select class="form-select npinputinfo validate" id="titleToOrderHOA">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['titleToOrderHOA']=="Yes" ?'selected':''}}>Yes
@@ -136,7 +136,7 @@
             </div>
             <div class="col-md-6">
                 <label for="mailoutNeeded" class="form-label nplabelText">Mailout Needed?</label>
-                <select class="form-select npinputinfo" id="mailoutNeeded">
+                <select class="form-select npinputinfo validate" id="mailoutNeeded">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['mailoutNeeded']=="Yes" ?'selected':''}}>Yes
@@ -146,7 +146,7 @@
             </div>
             <div class="col-md-6">
                 <label for="powerOfAttnyNeeded" class="form-label nplabelText">Power of Attny Needed?</label>
-                <select class="form-select npinputinfo" id="powerOfAttnyNeeded">
+                <select class="form-select npinputinfo validate" id="powerOfAttnyNeeded">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['powerOfAttnyNeeded']=="Yes" ?'selected':''}}>Yes
@@ -173,6 +173,39 @@
 
         </form>
     </div>
+        {{--CHR TM - Commission Details--}}
+    <div class="col-md-12 col-sm-24 commDetails" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+
+        <p class="npinfoText">CHR TM - Commission Details</p>
+        <form class="row g-3">
+            <div class="col-md-6">
+                <label for="feesCharged" class="form-label nplabelText">Fees Charged to Seller at
+                    Closing</label>
+                <input type="text" class="form-control npinputinfo" id="feesCharged" required value="${{$submittal['feesCharged']}}">
+            </div>
+
+            <div class="col-md-6">
+                <label for="referralToPay" class="form-label nplabelText">Referral to Pay</label>
+
+                <select class="form-select npinputinfo" id="referralToPay">
+                    <option value="">--None--
+                    </option>
+                    <option value="Yes" {{$submittal['referralToPay']=="Yes" ?'selected':''}}>Yes
+                    </option>
+                    <option value="No" {{$submittal['referralToPay']=="No" ?'selected':''}}>No</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="amountToCHR" class="form-label nplabelText">Amount to CHR Gives</label>
+                <input type="text" class="form-control npinputinfo" id="amountToCHR" required value="${{$submittal['amountToCHR']}}">
+            </div>
+            <div class="col-md-6">
+                <label for="referralDetails" class="form-label nplabelText">Referral Details</label>
+                <input type="text" class="form-control npinputinfo" id="referralDetails" required value="{{$submittal['referralDetails']}}">
+            </div>
+
+        </form>
+    </div>
     {{--CHR TM - Service Providers--}}
     <div class="col-md-12 col-sm-24 serviceProvider" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
@@ -180,7 +213,7 @@
         <form class="row g-3">
             <div class="col-md-6">
                 <label for="scheduleSignInstall" class="form-label nplabelText">Schedule Sign Install</label>
-                <select class="form-select npinputinfo" id="scheduleSignInstall">
+                <select class="form-select npinputinfo validate" id="scheduleSignInstall">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['scheduleSignInstall']=="Yes" ?'selected':''}}>Yes
@@ -191,7 +224,7 @@
 
             <div class="col-md-6">
                 <label for="conciergeListing" class="form-label nplabelText">Concierge Listing (Optional)</label>
-                <select class="form-select npinputinfo" id="conciergeListing">
+                <select class="form-select npinputinfo " id="conciergeListing">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['conciergeListing']=="Yes" ?'selected':''}}>Yes
@@ -211,7 +244,7 @@
             <div class="col-md-6">
                 <label for="draftShowingInstructions" class="form-label nplabelText">Draft Showing
                     Instructions?</label>
-                <select class="form-select npinputinfo" id="draftShowingInstructions">
+                <select class="form-select npinputinfo validate" id="draftShowingInstructions">
                     <option value="">--None--
                     </option>
                     <option value="Yes" {{$submittal['draftShowingInstructions']=="Yes" ?'selected':''}}>Yes
@@ -226,7 +259,7 @@
             </div>
             <div class="col-md-6">
                 <label for="closerNamePhone" class="form-label nplabelText">Closer Name & Phone</label>
-                <input type="text" class="form-control npinputinfo" id="closerNamePhone" required value="{{$submittal['closerNamePhone']}}">
+                <input type="text" class="form-control npinputinfo validate" id="closerNamePhone" required value="{{$submittal['closerNamePhone']}}">
             </div>
             <div class="col-md-12">
                 <label for="signInstallVendorOther" class="form-label nplabelText">Sign Install Vendor (if
@@ -283,39 +316,7 @@
 
         </form>
     </div>
-    {{--CHR TM - Commission Details--}}
-    <div class="col-md-12 col-sm-24 commDetails" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
-        <p class="npinfoText">CHR TM - Commission Details</p>
-        <form class="row g-3">
-            <div class="col-md-6">
-                <label for="feesCharged" class="form-label nplabelText">Fees Charged to Seller at
-                    Closing</label>
-                <input type="text" class="form-control npinputinfo" id="feesCharged" required value="${{$submittal['feesCharged']}}">
-            </div>
-
-            <div class="col-md-6">
-                <label for="referralToPay" class="form-label nplabelText">Referral to Pay</label>
-
-                <select class="form-select npinputinfo" id="referralToPay">
-                    <option value="">--None--
-                    </option>
-                    <option value="Yes" {{$submittal['referralToPay']=="Yes" ?'selected':''}}>Yes
-                    </option>
-                    <option value="No" {{$submittal['referralToPay']=="No" ?'selected':''}}>No</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="amountToCHR" class="form-label nplabelText">Amount to CHR Gives</label>
-                <input type="text" class="form-control npinputinfo" id="amountToCHR" required value="${{$submittal['amountToCHR']}}">
-            </div>
-            <div class="col-md-6">
-                <label for="referralDetails" class="form-label nplabelText">Referral Details</label>
-                <input type="text" class="form-control npinputinfo" id="referralDetails" required value="{{$submittal['referralDetails']}}">
-            </div>
-
-        </form>
-    </div>
     {{--PROPERTY PROMOTION - Outside Services--}}
     <div class="col-md-12 col-sm-24 promotionOutside" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
@@ -423,7 +424,7 @@
             <div class="col-md-6">
                 <label for="brochureLine" class="form-label nplabelText">Brochure Line - Top Right Brochure Preview
                     button</label>
-                <select class="form-select npinputinfo " id="brochureLine">
+                <select class="form-select npinputinfo validate" id="brochureLine">
                     <option value="">--None--
                     </option>
                     <option value="No Brochure" {{$submittal['brochureLine']=="No Brochure" ?'selected':''}}>No Brochure
@@ -451,6 +452,7 @@
             <div class="col-md-6">
                 <label for="brochurePrint" class="form-label nplabelText">Brochure - Print, Deliver or PDF</label>
                 <select class="form-select npinputinfo" id="brochurePrint">
+                    <option value="">--None--</option>
                     @foreach ($broucherPrint as $brochure)
                         <option value="{{ $brochure }}" {{ $submittal['brochurePrint'] == $brochure ? 'selected' : '' }}>
                             {{ $brochure }}
@@ -470,7 +472,7 @@
             </div>
             <div class="col-md-6">
                 <label for="stickyDots" class="form-label nplabelText">Sticky Dots</label>
-                <select class="form-select npinputinfo " id="stickyDots">
+                <select class="form-select npinputinfo validate" id="stickyDots">
                     <option value="">--None--</option>
                     <option value="1 Per Feature Card - $.75 each" {{ $submittal['stickyDots'] == "1 Per Feature Card - $.75 each" ? 'selected' : '' }}>1 Per Feature Card - $.75 each
                     </option>
@@ -495,7 +497,8 @@
             </div>
             <div class="col-md-6">
                 <label for="featureCards" class="form-label nplabelText">Feature Cards</label>
-                <select class="form-select npinputinfo " id="featureCards">
+                <select class="form-select npinputinfo validate" id="featureCards">
+                    <option value="">--None--</option>
                         @foreach ($featuresCard as $currfeaturesCard)
                         <option value="{{ $currfeaturesCard }}" {{ $submittal['featureCards'] == $currfeaturesCard ? 'selected' : '' }}>
                             {{ $currfeaturesCard }}
@@ -541,9 +544,6 @@
             $('.promotionMarket').show();
             $('.promotionNote').show();
             $('.promotionPrint').show();
-            $('#broucherLine').addClass('validate');
-            $('#featureCards').addClass('validate');
-            $('#stickyDots').addClass('validate');
 
         } else {
             $('.transactionForm').hide();
@@ -551,11 +551,9 @@
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
             $('.promotionPrint').hide();
-            $('#broucherLine').removeClass('validate');
-            $('#featureCards').removeClass('validate');
-            $('#stickyDots').removeClass('validate');
         }
         putConditionOnForm();
+        showPromotion();
     })
     function putConditionOnForm() {
         var usingCHRValue = $("#usingCHR").val()
@@ -569,9 +567,7 @@
             $('.promotionMarket').show();
             $('.promotionNote').show();
             $('.promotionPrint').show();
-            $('#broucherLine').addClass('validate');
-            $('#featureCards').addClass('validate');
-            $('#stickyDots').addClass('validate');
+            $('.showPromotion').hide()
 
         }else if(usingCHRValue == "Yes"){
              $('.transactionForm').show();
@@ -582,59 +578,95 @@
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
             $('.promotionPrint').hide();
-            $('#broucherLine').removeClass('validate');
-            $('#featureCards').removeClass('validate');
-            $('#stickyDots').removeClass('validate');
-            $('.commDetails').html(`
-            <div class="col-md-6">
-                <label for="showPromotion" class="form-label nplabelText">Are you ready to continue to Property Promotion?</label>
-
-                <select class="form-select npinputinfo" id="showPromotion" onchange="showPromotion()">
-                    <option value="">--None--
-                    </option>
-                    <option value="Yes" {{$submittal['showPromotion']=="Yes" ?'selected':''}}>Yes
-                    </option>
-                    <option value="No" {{$submittal['showPromotion']=="No" ?'selected':''}}>No</option>
-                </select>
-            </div>
+            $('.selectMLS').append(`
+                <div class="col-md-6 showPromotion">
+                    <label for="showPromotion" class="form-label nplabelText">Are you ready to continue to Property Promotion?</label>
+                    <select class="form-select npinputinfo validate" id="showPromotion" onchange="showPromotion()">
+                        <option value="">--None--
+                        </option>
+                        <option value=1 {{$submittal['showPromotion']==true ?'selected':''}}>Yes
+                        </option>
+                        <option value=0 {{$submittal['showPromotion']==false ?'selected':''}}>No</option>
+                    </select>
+                </div>
             `)
+        }else{
+             $('.serviceProvider').show();
+            $('.selectMLS').show();
+            $('.commDetails').show();
+            $('.promotionOutside').hide();
+            $('.promotionMarket').hide();
+            $('.promotionNote').hide();
+            $('.promotionPrint').hide();
+            $('.transactionForm').hide();
+            $('.showPromotion').hide()
         }
         
     }
 
     function showPromotion(){
         var showPromotionValue = $("#showPromotion").val();
-        if(showPromotionValue=="No"){
-            // $('.commDetails').html(`
-            // <div class="col-md-6">
-            //     <label for="showPromotion" class="form-label nplabelText">Are you ready to continue to Property Promotion?</label>
-
-            //     <select class="form-select npinputinfo" id="showPromotion" onchange="showPromotion()">
-            //         <option value="">--None--
-            //         </option>
-            //         <option value="Yes" {{$submittal['showPromotion']=="Yes" ?'selected':''}}>Yes
-            //         </option>
-            //         <option value="No" {{$submittal['showPromotion']=="No" ?'selected':''}}>No</option>
-            //     </select>
-            // </div>
-            // <div class="col-md-6">
-            //     <a>
-            //         <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
-            //             </i>
-            //             Save and Submit
-            //         </div>
-            //     </a>
-            // </div>
-            //     <p>When you are ready to continue your Listing Submittal select View Submittal from your Pipeline and Resubmit it to the Marketing Team.</p>
-            // `)
-        }else if(showPromotionValue=="Yes"){
+        if(showPromotionValue==false){
+            $('.submitToCHR').hide();
+            $('.submitToCHRContent').hide();
+            $('.promotionOutside').hide();
+            $('.promotionMarket').hide();
+            $('.promotionNote').hide();
+            $('.promotionPrint').hide();
+            $('#listingSubmittal').append(`
+                <div class="col-md-12 col-sm-24 surityChoose " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
+                justify-content: center;">
+                    <div class="col-md-3">
+                        <a>
+                            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+                                </i>
+                                Save and Submit
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-24 surityChooseContent " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
+                justify-content: center;">
+                    <div class="col-md-6">
+                    <p>When you are ready to continue your Listing Submittal select View Submittal from your Pipeline and Resubmit it to the Marketing Team.</p>
+                    </div>
+                </div>
+            `)
+        }else if(showPromotionValue==true){
+            $('.surityChoose').hide();
+            $('.surityChooseContent').hide();
             $('.promotionOutside').show();
             $('.promotionMarket').show();
             $('.promotionNote').show();
             $('.promotionPrint').show();
-            $('#broucherLine').addClass('validate');
-            $('#featureCards').addClass('validate');
-            $('#stickyDots').addClass('validate');
+            $('#listingSubmittal').append(`
+                <div class="col-md-12 col-sm-24 submitToCHR " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
+                justify-content: center;">
+                    <div class="col-md-3">
+                        <a>
+                            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+                                </i>
+                                Save and Submit to CHR
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-24 submitToCHRContent " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
+                justify-content: center;">
+                    <div class="col-md-6">
+                    <p>Thank you for your Listing Submittal. We have received your request and are taking action to create a wonderful experience for you and your client. Congratulations on the new listing!</p>
+                    </div>
+                </div>
+            `)
+        }else{
+            $('.submitToCHR').hide();
+            $('.submitToCHRContent').hide();
+            $('.surityChoose').hide();
+            $('.surityChooseContent').hide();
+            $('.promotionOutside').hide();
+            $('.promotionMarket').hide();
+            $('.promotionNote').hide();
+            $('.promotionPrint').hide();
         }
     }
 </script>
