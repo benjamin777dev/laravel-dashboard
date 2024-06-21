@@ -47,7 +47,7 @@ class Deal extends Model
 
     public function contactName()
     {
-        return $this->belongsTo(Contact::class, 'contact_name');
+        return $this->belongsTo(Contact::class, 'contact_name_id','zoho_contact_id');
     }
 
     public function tasks()
@@ -57,7 +57,7 @@ class Deal extends Model
 
     public function tmName()
     {
-        return $this->belongsTo(User::class, 'tm_name', 'root_user_id');
+        return $this->belongsTo(User::class, 'tm_name_id', 'root_user_id');
     }
 
     public function leadAgent()
@@ -122,8 +122,8 @@ class Deal extends Model
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
             'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
-            'contact_name' => $source == "webhook" ? ($contact['id'] ?? null) : null,
-            'contact_name_id' => $contactNameId,
+            'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
+            'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,
             'created_by' => json_encode($data['Created_By']) ?? null,

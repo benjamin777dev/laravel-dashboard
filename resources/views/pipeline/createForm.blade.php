@@ -213,10 +213,12 @@
                 </div>
                 <div class="col-md-6">
                     <label for="contactName" class="form-label nplabelText">Contact Name</label>
-                    <input type="hidden" name="contactName" id="contactNameObject"
-                        value="{{ json_encode($deal['contactName']) }}">
+                    <input type="hidden" name="contactName" id="contactName"
+                        value="{{ $deal['contact_name'] }}">
+                    <input type="hidden" name="contactName" id="contactNameId"
+                        value="{{ $deal['contact_name_id'] }}">
                     <input type="text" class="form-control npinputinfo validate" id="contactName"
-                        value="{{ isset($deal['contactName']) ? $deal['contactName']['first_name'] . ' ' . $deal['contactName']['last_name'] : '' }}"
+                        value="{{ isset($deal['contact_name']) ? $deal['contact_name'] : '' }}"
                         disabled />
 
                 </div>

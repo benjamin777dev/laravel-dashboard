@@ -60,7 +60,7 @@ class TaskController extends Controller
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         if (!$deal) {
-            return redirect('/pipelines');
+            return redirect('/pipeline');
         } 
         $tasks = $db->retreiveTasksForDeal($user, $accessToken, $tab, $deal->zoho_deal_id);
         $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
