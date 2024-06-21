@@ -50,4 +50,26 @@ class TaskController extends Controller
             compact('tasks','contact','retrieveModuleData','tab'));
     }
 
+    public function taskForPipeline()
+    {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $tab = request()->query('tab') ?? 'In Progress';
+        $accessToken = $user->getAccessToken();
+        $dealId = request()->route('dealId');
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        if (!$deal) {
+            return redirect('/pipeline');
+        } 
+        $tasks = $db->retreiveTasksForDeal($user, $accessToken, $tab, $deal->zoho_deal_id);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+
+       return view('common.tasks',
+            compact('tasks','deal','retrieveModuleData','tab'));
+    }
+
 }
