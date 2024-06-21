@@ -23,7 +23,7 @@ class NonTmController extends Controller
             $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-            $nontms = $db->retreiveNonTm($dealId);
+            $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
            /*  print_r($nontms);
             die; */
             return view('nontm.index', compact('deal','nontms'))->render();
