@@ -275,7 +275,7 @@
                     id="contactName"
                     @if($deal['locked_s']) disabled @endif
                     value="{{ $deal['contact_name'] }}">
-                    <input type="hidden" 
+                <input type="hidden" 
                     name="contactName" 
                     id="contactNameId"
                     @if($deal['locked_s']) disabled @endif
@@ -284,7 +284,7 @@
                     class="form-control npinputinfo validate" 
                     id="contactName" 
                     required
-                    value="{{$deal['contactName']['first_name'] ?? ''}} {{$deal['contactName']['last_name'] ?? ''}}"
+                    value="{{$deal['contact_name'] ?? ''}}"
                     disabled />
             </div>
             <div></div>
