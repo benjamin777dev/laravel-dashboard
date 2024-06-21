@@ -636,10 +636,10 @@ class DatabaseService
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
             if ($tab == 'Overdue') {
                 $tasks
-                    ->where('due_date', '<', now());
+                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
             } elseif ($tab == 'Upcoming') {
                 $tasks
-                    ->where('due_date', '>=', now());
+                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
             } elseif ($tab == 'In Progress') {
                 $tasks->where([['due_date', null],['status','!=','Completed']]);
             } elseif ($tab == 'Completed') {

@@ -9,20 +9,23 @@ class TaskController extends Controller
 {
     public function index()
     {
-
         $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DatabaseService();
-        $tab = request()->query('tab') ?? 'In Progress';
-        $accessToken = $user->getAccessToken(); 
-        $tasks = $db->retreiveTasks($user, $accessToken,$tab);
-        $getdealsTransaction = $db->retrieveDeals($user,$accessToken);
-        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
 
-       return view('task.index',
-            compact('tasks','getdealsTransaction','retrieveModuleData','tab'));
+        $db = new DatabaseService();
+        $accessToken = $user->getAccessToken();
+
+        // Fetch tasks for each category
+        $upcomingTasks = $db->retreiveTasks($user, $accessToken, 'Upcoming');
+        $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'In Progress');
+        $completedTasks = $db->retreiveTasks($user, $accessToken, 'Completed');
+
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+
+        return view('task.index', compact('upcomingTasks', 'inProgressTasks', 'completedTasks', 'getdealsTransaction', 'retrieveModuleData'));
     }
 
     public function taskForContact()
