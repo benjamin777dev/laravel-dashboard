@@ -251,7 +251,7 @@ class PipelineController extends Controller
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         if (!$deal) {
-            return response()->json(["redirect" => "/pipelines"]);
+            return response()->json(["redirect" => "/pipeline"]);
         }
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         // $tab = request()->query('tab') ?? 'In Progress';
