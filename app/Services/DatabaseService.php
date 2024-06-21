@@ -483,7 +483,7 @@ class DatabaseService
             if ($all) {
                 $deals = $deals->where($conditions)->get();
             } else {
-                $deals = $deals->where($conditions)->paginate(10);
+                $deals = $deals->where($conditions)->get();
             }
             return $deals;
         } catch (\Exception $e) {

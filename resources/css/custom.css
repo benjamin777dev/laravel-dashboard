@@ -52,6 +52,10 @@ body {
      color: #fff;
 }
 
+.dataTables_filter{
+    display: none;
+}
+
 .navbar-toggler {
     margin-left: 15px;
 }

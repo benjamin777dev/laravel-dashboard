@@ -129,7 +129,7 @@
                             class="fas fa-plus plusicon"></i> New Task</button>
                 </div>
                 <div class="row">
-                    <nav class="dtabs mt-3 pl-0">
+                    <nav class="dtabs mt-3 ps-0">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
                                 data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
