@@ -75,7 +75,7 @@
             <div class="col-md-6">
                 <label for="buyerFeesCharged" class="form-label nplabelText">Fees Charged to Buyer at
                     Closing</label>
-                <input type="text" class="form-control npinputinfo " id="buyerFeesCharged" required value="${{$submittal['buyerFeesCharged']}}">
+                <input type="text" class="form-control npinputinfo " id="buyerFeesCharged" required placeholder ="$" value="{{$submittal['buyerFeesCharged']}}">
             </div>
             <div class="col-md-6">
                 <label for="buyerTmName" class="form-label nplabelText">TM Name</label>
@@ -83,7 +83,7 @@
             </div>
             <div class="col-md-6">
                 <label for="buyerAmountChr" class="form-label nplabelText">Amount to CHR Gives</label>
-                <input type="text" class="form-control npinputinfo" id="buyerAmountChr" required value="${{$submittal['amountToCHR']}}">
+                <input type="text" class="form-control npinputinfo" id="buyerAmountChr" required placeholder="$" value="{{$submittal['amountToCHR']}}">
             </div>
 
             <div class="col-md-6">

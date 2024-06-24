@@ -98,11 +98,19 @@
     function convertInInteger(string) {
         try {
             console.log("String",string);
-            let num = parseInt(string.replace('$', ''));
-            if (isNaN(num)) {
-                throw new Error("Conversion Error: Invalid input");
+            if(string){
+                let integerPart = string.split('.')[0];
+                console.log("integerPart",integerPart);
+                if (integerPart.length > 4) {
+                    throw new Error("Input Error: Amount length must be exactly 4 characters");
+                }
+                let num = parseInt(integerPart);
+                if (isNaN(num)) {
+                    throw new Error("Conversion Error: Invalid input");
+                }
+                return num;
             }
-            return num;
+            return null
         } catch (error) {
             console.log(error);
             throw new Error(error.message);
@@ -128,7 +136,6 @@
 
     function validateSubmittal(submittal,isNew) {
         console.log(submittal);
-        
         isValid = true
         // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
