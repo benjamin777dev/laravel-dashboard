@@ -15,13 +15,13 @@
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="validateSubmittal('{{json_encode($submittal)}}',true)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Save and New
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal('{{json_encode($submittal)}}',false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
@@ -127,10 +127,10 @@
     }
 
     function validateSubmittal(submittal,isNew) {
+        console.log(submittal);
         
         isValid = true
-        submittal = JSON.parse(submittal)
-        console.log(submittal.submittalType);
+        // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
