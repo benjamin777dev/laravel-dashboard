@@ -30,7 +30,7 @@
                     </div>
 
                     <ul class="dropdown-menu gdropdown-ul gdropdownMax" aria-labelledby="dropdownMenuButton1"
-                        onchange="">
+                        onchange="fetchData()">
                         @foreach ($groups as $group)
                             <li class="gdropdown" value="{{ $group['id'] }}">{{ $group['name'] }} <input type="checkbox"
                                     {{ $group->isShow == true ? 'checked' : '' }} /></li>
