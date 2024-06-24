@@ -46,7 +46,7 @@
 
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
+                <input placeholder="Search" class="psearchInput" id="contactSearch" />
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
@@ -56,7 +56,7 @@
                 @endphp
                 <div class="row" style="gap:24px;flex-wrap:nowrap;">
                     <div class="psortFilterDiv">
-                        <select name="abcd_class" onchange="fetchContact(event)" class="psearchInput" id="contactSort">
+                        <select name="abcd_class" class="psearchInput" id="contactSort">
                             <option selected value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
                                 <option value="{{ $abcdIndex }}">{{ $abcdIndex }}</option>

@@ -437,8 +437,8 @@ class DatabaseService
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%');
-                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('stage', 'like', '%' . $searchTerms . '%');
                     //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
                     // Add more OR conditions as needed
                 });
@@ -492,6 +492,8 @@ class DatabaseService
         }
 
     }
+
+
 
     public function retrieveDealById(User $user, $accessToken, $dealId)
     {
@@ -752,19 +754,33 @@ class DatabaseService
         }
     }
 
-    public function retreiveContactsJson(User $user, $accessToken)
+    public function retreiveContactsJson(User $user, $accessToken, $search = null)
     {
         try {
-
-            Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc')->get();
-            return $Contacts;
+            Log::info("Retrieve contacts from database");
+    
+            $query = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc');
+    
+            if (!empty($search)) {
+                $searchTerms = urldecode($search);
+                $query->where(function ($query) use ($searchTerms) {
+                    $query->where('last_name', 'like', '%' . $searchTerms . '%')
+                          ->orWhere('email', 'like', '%' . $searchTerms . '%')
+                          ->orWhere('phone', 'like', '%' . $searchTerms . '%')
+                          ->orWhere('abcd', 'like', '%' . $searchTerms . '%');
+                    // Add more OR conditions as needed
+                });
+            }
+    
+            $contacts = $query->get();
+    
+            return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
-
         }
     }
+    
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {

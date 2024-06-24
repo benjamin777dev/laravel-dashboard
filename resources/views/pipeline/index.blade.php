@@ -68,14 +68,14 @@
         </div>
 
         <div class="pfilterDiv">
-            <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()" />
+            <div class="pcommonFilterDiv dataTables_filter">
+                <input placeholder="Search" class="psearchInput" id="pipelineSearch"/>
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
-                    aria-label="Select Transaction" onchange="fetchDeal()">
+                    aria-label="Select Transaction">
                     <option value="">Sort Pipeline by...</option>
                     @php
                         $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];

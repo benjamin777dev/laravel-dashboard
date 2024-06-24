@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use DataTables;
 
 class PipelineController extends Controller
 {
@@ -89,6 +90,29 @@ class PipelineController extends Controller
         // return response()->json($deals);
         return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction'))->render();
     }
+
+    public function getDealsJson(Request $request)
+    {
+        $db = new DatabaseService();
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        LOG::info('Access Token Decrypted' . $accessToken);
+        $search = request()->query('search');
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $filter = $request->input('filter');
+        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType, null, $filter);
+        $allstages = config('variables.dealStages');
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        return Datatables::of($deals)->make(true);
+       
+    }
+    
 
     public function createACI(Request $request)
     {
@@ -277,6 +301,7 @@ class PipelineController extends Controller
 
     public function createPipeline(Request $request)
     {
+          
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
@@ -341,6 +366,71 @@ class PipelineController extends Controller
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
 
             return response()->json($zohoDealArray);
+        } catch (\Throwable $th) {
+            // Handle the exception here
+            return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function updateDeals(Request $request){
+        try {
+            $user = $this->user();
+
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            }
+            $zoho = new ZohoCRM();
+ 
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+
+            $id = $request->input('id');
+            $dbfield = $request->input('field');
+            $value = $request->input('value');
+            $field;
+            if($dbfield==="deal_name"){
+                $field = "Deal_Name";
+            }
+            if($dbfield==="client_name_primary"){
+                $field = "Client_Name_Primary";
+            }
+            if($dbfield==="stage"){
+                $field = "Stage";
+            }
+            if($dbfield==="representing"){
+                $field = "Representing";
+            }
+
+            if($dbfield==="sale_price"){
+                $field = "Sale_Price";
+            }
+            if($dbfield==="closing_date"){
+                $field = "Closing_Date";
+            }
+
+            if($dbfield==="commission"){
+                $field = "Commission";
+            }
+            
+            $deal = Deal::findOrFail($id);
+            $formData = [
+                'data' => [
+                    [
+                      $field => $value,
+                    ],
+                ],
+                'skip_mandatory' => true,
+            ];
+            
+            $zohoDeal = $zoho->updateZohoDeal($formData, $deal->zoho_deal_id);
+
+            if (!$zohoDeal->successful()) {
+                return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $deal->$dbfield = $value;
+            $deal->save();
+            return response()->json(['data'=>$zohoDeal,'message'=>"Successfully Updated"]);
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);

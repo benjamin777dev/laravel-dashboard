@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
+use DataTables;
 
 class ContactController extends Controller
 {
@@ -135,6 +136,29 @@ class ContactController extends Controller
         }
         return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
     }
+
+    public function getContactJson(){
+        {
+            $user = $this->user();
+    
+            if (!$user) {
+                return redirect('/login');
+            }
+            $db = new DatabaseService();
+            $search = request()->query('search');
+            // $contactInfo = Contact::getZohoContactInfo();
+            $accessToken = $user->getAccessToken(); // Method to get the access token.
+            if(!$accessToken){
+                return "invalid token.";
+            }
+            $contacts = $db->retreiveContactsJson($user, $accessToken,$search);
+            if (!$contacts) {
+               return response()->json(["redirect" => "/contacts"]);
+            }
+            return Datatables::of($contacts)->make(true);
+        }
+    }
+    
 
     public function showDetailForm($contactId)
     {

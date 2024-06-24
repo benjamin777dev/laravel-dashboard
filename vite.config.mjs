@@ -39,7 +39,8 @@ export default defineConfig({
                 'resources/css/contacts.css',
                 'resources/css/app.css',
                 'resources/js/toast.js',
-                'resources/js/dropdown.js'
+                'resources/js/dropdown.js',
+                'resources/js/datatable.js',
             ],
             refresh: true,
         }),

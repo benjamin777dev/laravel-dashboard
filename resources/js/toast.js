@@ -7,7 +7,7 @@
     }).showToast();
 }
 
-window.showToastError=function(message, duration = 3000, backgroundColor = "red", stopOnFocus = true) {
+window.showToastError=function(message="Not found", duration = 3000, backgroundColor = "red", stopOnFocus = true) {
     Toastify({
         text: message,
         duration: duration,

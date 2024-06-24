@@ -17,7 +17,6 @@
                     <thead>
                         <tr>
                             @foreach ($th as $thname)
-
                                 <th>{{ $thname }}</th>
                             @endforeach
                         </tr>
@@ -63,15 +62,9 @@
                     @endif
 
                     @if ($type === 'dash-pipe-transaction')
-                        <tbody>
-                            @include('pipeline.pipelineload', ['deals' => $commonArr,'retrieveModuleData'=>$retrieveModuleData])
-                        </tbody>
                     @endif
                     @if ($type === 'contact')
-                    <tbody>
-                        @include('contacts.load', ['contacts' => $commonArr])
-                    </tbody>
-                @endif
+                    @endif
                 </table>
 
             </div>
