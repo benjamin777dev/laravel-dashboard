@@ -1259,7 +1259,7 @@ class DatabaseService
                 ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
                         $query->where('groupId', $filter);
-                    })->orWhere($filter, true);
+                    });
                 })
                 ->orderByRaw('CASE WHEN contacts.spouse_partner IS NULL THEN 0 ELSE 1 END')
                 ->orderByRaw('CONCAT(contacts.first_name, " ", contacts.last_name) ' . $sort)
