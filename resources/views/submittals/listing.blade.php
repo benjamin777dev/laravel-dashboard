@@ -58,7 +58,7 @@
             </div>
             <div class="col-md-6">
                 <label for="price" class="form-label nplabelText">Price</label>
-                <input type="text" class="form-control npinputinfo validate" id="price" required value="${{$submittal['price']}}">
+                <input type="text" class="form-control npinputinfo validate" id="price" required placeholder = "$" value="{{$submittal['price']}}">
             </div>
             <div class="col-md-6">
                 <label for="photoDate" class="form-label nplabelText">Photo Date</label>
@@ -181,7 +181,7 @@
             <div class="col-md-6">
                 <label for="feesCharged" class="form-label nplabelText">Fees Charged to Seller at
                     Closing</label>
-                <input type="text" class="form-control npinputinfo" id="feesCharged" required value="${{$submittal['feesCharged']}}">
+                <input type="text" class="form-control npinputinfo" id="feesCharged" required placeholder="$" value="{{$submittal['feesCharged']}}">
             </div>
 
             <div class="col-md-6">
@@ -197,7 +197,7 @@
             </div>
             <div class="col-md-6">
                 <label for="amountToCHR" class="form-label nplabelText">Amount to CHR Gives</label>
-                <input type="text" class="form-control npinputinfo" id="amountToCHR" required value="${{$submittal['amountToCHR']}}">
+                <input type="text" class="form-control npinputinfo" id="amountToCHR" required placeholder = "$" value="{{$submittal['amountToCHR']}}">
             </div>
             <div class="col-md-6">
                 <label for="referralDetails" class="form-label nplabelText">Referral Details</label>

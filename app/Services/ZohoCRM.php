@@ -27,7 +27,7 @@ class ZohoCRM
         $this->client_id = config('services.zoho.client_id');
         $this->client_secret = config('services.zoho.client_secret');
         $this->redirect_uri = route('auth.callback');
-        $this->serverUrl = env('APP_URL');
+        $this->serverUrl = config('app.url');
 
         Log::info('Zoho CRM initialized');
     }

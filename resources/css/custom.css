@@ -712,11 +712,11 @@
 .dNoteFooters {
     justify-content: center;
 }
-
+/* 
 .deleteModal {
     width: 340px;
     margin-inline: auto;
-}
+} */
 
 .deleteModalBodyText {
     align-self: stretch;

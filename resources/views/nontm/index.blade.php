@@ -33,7 +33,6 @@
                 <a class="col-md-1 text-end" href="/nontm-view/{{$nontm['id']}}"><div ><img
                         src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
                         title="Non TM Details"></div></a> 
-                        <a class="col-md-1 text-start" href="/nontm-create/{{$nontm['id']}}"><div ><i class="fas fa-pencil-alt pencilIcon"></i></div></a> 
                         
             </div>
         @endforeach
@@ -78,6 +77,9 @@
 
 </div>
 <script>
+      function generateRandom4DigitNumber() {
+            return Math.floor(1000 + Math.random() * 9000);
+        }
     window.addNonTm = function() {
         let formData = {
             "data": [{
