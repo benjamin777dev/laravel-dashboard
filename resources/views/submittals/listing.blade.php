@@ -618,7 +618,7 @@
                 justify-content: center;">
                     <div class="col-md-3">
                         <a>
-                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal('{{json_encode($submittal)}}',false)"><i class="fas fa-save">
                                 </i>
                                 Save and Submit
                             </div>
@@ -644,7 +644,7 @@
                 justify-content: center;">
                     <div class="col-md-3">
                         <a>
-                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal('{{$submittal}}',false)"><i class="fas fa-save">
+                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal('{{json_encode($submittal)}}',false)"><i class="fas fa-save">
                                 </i>
                                 Save and Submit to CHR
                             </div>

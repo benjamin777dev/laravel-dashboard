@@ -52,7 +52,7 @@ class ContactGroups extends Model
 
     public function groups()
     {
-        return $this->hasMany(ContactGroups::class, 'contactId')->with("group");
+        return $this->belongsTo(ContactGroups::class, 'contactId')->with("group");
     }
 
     public function group()

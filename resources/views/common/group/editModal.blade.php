@@ -56,6 +56,10 @@
                         if (response.status === 'success') {
                             showToast(response.message);
                             changesmade = true;
+                            $('#editGroupModal').modal('hide');
+                            if (changesmade) {
+                                window.location.reload();
+                            }
                         } else {
                             showToastError(response.message);
                         }
@@ -117,7 +121,7 @@
     $('.taskModalSaveBtn').on('click', function () {
         $('#editGroupModal').modal('hide');
         if (changesmade) {
-            location.reload();
+            window.location.reload();
         }
     });
 
@@ -125,7 +129,7 @@
     $('#editGroupModal').on('hidden.bs.modal', function () {
         console.log(changesmade);
         if (changesmade) {
-            location.reload();
+            window.location.reload();
         }
     });
 
