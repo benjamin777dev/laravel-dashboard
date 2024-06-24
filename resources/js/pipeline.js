@@ -13,7 +13,7 @@ window.checkValidate = function (deal) {
     var representing = document.getElementById("validationDefault02");
     var stage = document.getElementById("validationDefault04");
     if (representing?.value == "Buyer" && stage?.value == "Under Contract") {
-        let disabledText = "disabled";
+        let disabledText = deal.locked_s ? "disabled" : "";
 
         $("#additionalFields").append(`
                     <div class="col-md-6 additional-field ">
@@ -183,8 +183,7 @@ window.checkAdditionalValidation = function (deal) {
             $("#additionalFields").find(".additional-field-lender").remove();
         } else if (lender_company && lender_company.value == "Other") {
             var stage = document.getElementById("validationDefault04");
-            let disabledText =
-                stage?.value == "Under Contract" ? "disabled" : "";
+            let disabledText = deal?.locked_s ? "disabled" : "";
             $("#additionalFields").append(`
                     <div class="col-md-6 additional-field-lender ">
                         <label for="lender_company_name" class="form-label nplabelText">Lender Company Name</label>

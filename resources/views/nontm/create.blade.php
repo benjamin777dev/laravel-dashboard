@@ -252,6 +252,9 @@
                             <input type="text"
                                 value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
                                 placeholder="$" class="form-control nontm-input" id="amount_chr">
+                                <div id="amount_chr_error" class="text-danger">
+
+                            </div>
 
                         </div>
                     </div>
@@ -314,11 +317,13 @@
         let close_date = document.getElementById("close_date");
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
+        let amount_chr = document.getElementById("amount_chr");
         related_transaction.addEventListener("keyup", validateNonTm);
         add_email.addEventListener("keyup",validateNonTm);
         close_date.addEventListener("change", validateNonTm);
         commission.addEventListener("keyup", validateNonTm);
         final_purchase.addEventListener("keyup", validateNonTm);
+        amount_chr.addEventListener("keyup", validateNonTm);
 
         // Select all radio buttons
         const radioButtons = document.querySelectorAll('input[type="radio"]');
@@ -358,11 +363,13 @@
         let close_date = document.getElementById("close_date");
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
+        let amount_chr = document.getElementById("amount_chr");
         let related_transactionError = document.getElementById("related_transaction_error");
         let add_emailError = document.getElementById("add_email_error");
         let close_dateError = document.getElementById("close_date_error");
         let commissionError = document.getElementById("commission_error");
         let final_purchaseError = document.getElementById("final_purchase_error");
+        let amount_chrError = document.getElementById("amount_chr_error");
 
 
         let isValid = true;
@@ -421,16 +428,32 @@
         }
 
         // validate commissionError
+        final_purchase.value = final_purchase.value.trim().split('.')[0]
         if (final_purchase.value.trim() === "") {
             final_purchaseError.textContent = "Final Purchase cannot be empty.";
             isValid = false;
         } else if (isNaN(final_purchase.value.trim())) {
             final_purchaseError.textContent = "Final Purchase must be a number.";
             isValid = false;
-        } else {
+        } else if (final_purchase.value.trim().length>4) {
+            final_purchaseError.textContent = "Final Purchase length must be exactly 4 characters.";
+            isValid = false;
+        }else {
             final_purchaseError.textContent = "";
         }
-
+        
+        if(amount_chr){
+            amount_chr.value = amount_chr.value.trim().split('.')[0]
+            if (isNaN(amount_chr.value.trim())) {
+                amount_chrError.textContent = "Amount to CHR must be a number.";
+                isValid = false;
+            } else if (amount_chr.value.trim().length>4) {
+                amount_chrError.textContent = "Amount to CHR length must be exactly 4 characters.";
+                isValid = false;
+            }else {
+                amount_chrError.textContent = "";
+            }
+        }
         return isValid;
     }
 

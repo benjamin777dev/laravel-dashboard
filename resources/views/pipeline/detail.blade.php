@@ -317,9 +317,10 @@
 </div>
 
 {{-- Add New Submittal --}}
+@if ($deal['tm_preference'] == 'CHR TM')
 <div class="showsubmittal">
 </div>
-
+@endif
 {{-- Add Non TM --}}
 @if ($deal['tm_preference'] == 'Non TM')
 <div class="showNonTm"></div>

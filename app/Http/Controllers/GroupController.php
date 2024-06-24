@@ -338,7 +338,7 @@ class GroupController extends Controller
         $helper = new Helper();
         $user = $getUser;
         if (!$user) {
-            return redirect('/login');
+            Log::error("User Not Found");
         }
 
         $accessToken = $user->getAccessToken();
