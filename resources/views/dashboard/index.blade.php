@@ -112,7 +112,7 @@
                         <div class="col-md-5 mt-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="card-title text-center mb-4">Recent Tasks</div>
+                                    <div class="card-title text-center mb-4">Upcoming Tasks</div>
                                     <div class="d-flex flex-column">
                                         @if ($upcomingTasks->take(5)->count() > 0)
                                             @foreach ($upcomingTasks->take(5) as $task)
