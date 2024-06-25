@@ -71,7 +71,7 @@ class Deal extends Model
      * @param array $data
      * @return array
      */
-    public static function mapZohoData(array $data, $source = "webhook")
+    public static function mapZohoData(array $data, $source)
     {
 
         $userId = null;

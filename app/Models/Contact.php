@@ -195,7 +195,7 @@ class Contact extends Model
      * @param User|null $user
      * @return array
      */
-    public static function mapZohoData(array $data, $source = 'webhook')
+    public static function mapZohoData(array $data, $source)
     {
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Last_Called'] = isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s')  : null;
@@ -227,8 +227,8 @@ class Contact extends Model
             'mailing_city' => isset($data['Mailing_City']) ? $data['Mailing_City'] : null,
             'mailing_state' => isset($data['Mailing_State']) ? $data['Mailing_State'] : null,
             'mailing_zip' => isset($data['Mailing_Zip']) ? $data['Mailing_Zip'] : null,
-            'isContactCompleted' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
-            'isInZoho' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
+            'isContactCompleted' => $source == "webhook" || $source == "csv",
+            'isInZoho' => $source == "webhook" || $source == "csv",
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
             'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,

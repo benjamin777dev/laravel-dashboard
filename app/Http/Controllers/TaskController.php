@@ -21,11 +21,13 @@ class TaskController extends Controller
         $upcomingTasks = $db->retreiveTasks($user, $accessToken, 'Upcoming');
         $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'In Progress');
         $completedTasks = $db->retreiveTasks($user, $accessToken, 'Completed');
+        $overdueTasks = $db->retreiveTasks($user, $accessToken, 'Overdue');
 
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
 
-        return view('task.index', compact('upcomingTasks', 'inProgressTasks', 'completedTasks', 'getdealsTransaction', 'retrieveModuleData'));
+        return view('task.index', compact('upcomingTasks', 'inProgressTasks', 
+            'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks'));
     }
 
     public function taskForContact()
