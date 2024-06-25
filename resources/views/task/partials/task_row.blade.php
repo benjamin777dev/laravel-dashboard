@@ -20,6 +20,7 @@
     <td>
         <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}" onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['zoho_task_id'] }}')" value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
     </td>
+    @if($task['status']!='Completed')
     <td>
         <div class="d-flex btn-save-del">
             <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
@@ -34,6 +35,7 @@
             </div>
         </div>
     </td>
+    @endif
 </tr>
 
 <!-- Delete Modal -->

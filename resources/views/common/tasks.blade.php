@@ -74,7 +74,7 @@
                             </div>
                         </td>
                        <td>
-                            <input type="date" id="date_val{{ $task['zoho_task_id'] }}"
+                            <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
                                 onchange="makeEditable('{{ $task['id'] }}', 'date', '{{ $task['zoho_task_id'] }}', 'date_val{{ $task['zoho_task_id'] }}')"
                                 @if($task['due_date'])
                                     value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}"
@@ -427,27 +427,10 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var inputElement = document.getElementById('editableText' + indexid);
-        var taskDate = document.getElementById('date_val' + id);
-        let formattedDateTime = convertDateTime(taskDate.value);
-        // console.log(formattedDateTime);
-        //         alert(formattedDateTime);
-        //         return;
-        if (!inputElement) {
-            console.error("Input element not found for indexid:", indexid);
-            return;
-        }
-        var elementValue = inputElement.textContent;
-        // return;
-        if (elementValue.trim() === "") {
-            // console.log("chkockdsjkfjksdh")
-            return showToastError("Please enter subject value first");
-        }
+
         // console.log("inputElementval",elementValue!==undefined,elementValue)
-        if (elementValue !== undefined) { // return;
             var formData = {
                 "data": [{
-                    "Subject": elementValue,
                     "Status":"Completed"
                 }]
             };
@@ -489,7 +472,6 @@
 
                 }
             })
-        }
     }
 
     function triggerCheckbox(checkboxid) {

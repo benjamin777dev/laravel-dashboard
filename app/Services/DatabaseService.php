@@ -1233,8 +1233,13 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contacts From Database");
-
-            $contacts = Contact::where('contacts.contact_owner', $user->root_user_id)
+            $condition = [['contacts.contact_owner', $user->root_user_id]];
+            if ($filter === "has_email") {
+                $condition[]=['contacts.has_email',1];
+            }else if($filter==="has_address"){
+                $condition[]=['contacts.has_address',1];
+            }
+            $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on(DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'), '=', 'contacts.zoho_contact_id');
