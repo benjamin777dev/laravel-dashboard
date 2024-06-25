@@ -6,9 +6,6 @@
                     <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
                 </h6>
                 <small class="text-muted">
-                    @php
-                        print_r($task);
-                    @endphp
                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
                     related to
                      @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))

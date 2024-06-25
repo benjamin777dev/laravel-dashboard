@@ -120,10 +120,12 @@
                                                     <div class="card-body p-3">
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <div>
-                                                                <h6 class="m-0">
-                                                                    <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
-                                                                </h6>
-                                                                <small class="text-muted">
+                                                            <h6 class="m-0">
+                                                                <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                                                            </h6>
+                                                            <small class="text-muted">
+                                                                Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
+                                                                related to
                                                                 @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
                                                                     <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
                                                                         {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
@@ -142,7 +144,7 @@
                                                                 @else
                                                                     <span class="text-secondary">General</span>
                                                                 @endif
-                                                                </small>
+                                                            </small>
                                                             </div>
                                                             <div class="d-flex">
                                                                 @php
@@ -354,7 +356,7 @@
                 // Handle success response
 
                 if (response?.data[0]?.status == "success") {
-                    window.location.reload();
+                     window.location.reload();
                 }
             },
             error: function(xhr, status, error) {
