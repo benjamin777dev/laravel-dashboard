@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\User;
 use App\Models\ContactGroups;
+use App\Models\Task;
 use App\Services\ZohoBulkRead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -106,6 +107,37 @@ class UpdateFromZohoCRMController extends Controller
         Log::info('ContactXGroup updated/inserted successfully', ['zoho_contact_group_id' => $zohoContactXGroupId]);
 
         return response()->json(['message' => 'ContactXGroup updated successfully'], 200);
+    }
+
+    public function handleTaskUpdate(Request $request)
+    {
+        $data = $request->all();
+
+        Log::info('Received Task update from Zoho CRM', ['data' => $data]);
+
+        $zohoTaskId = $data['id'];
+        if (isset($data['webhook_type']) && $data['webhook_type'] == 'delete') {
+            Log::info("Webhook delete triggered for Zoho Task ID: " . $zohoTaskId);
+            Task::where('zoho_task_id', $zohoTaskId)->delete();
+            return response()->json(['message' => 'Deleted'], 200);
+        } 
+        // Map the data using the Contact model's mapping method
+        $mappedData = Task::mapZohoData($data, 'webhook');
+
+        // Update or create the contact record in the database
+        try {
+            Task::updateOrCreate(
+                ['zoho_task_id' => $zohoTaskId],
+                $mappedData
+            );
+        } catch (\Exception $e) {
+            Log::error('Error updating Task', ['zoho_task_id' => $zohoTaskId, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Error updating contact'], 500);
+        }
+
+        Log::info('Task updated/inserted successfully', ['zoho_task_id' => $zohoTaskId]);
+
+        return response()->json(['message' => 'Task updated successfully'], 200);
     }
 
 

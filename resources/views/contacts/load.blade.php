@@ -51,6 +51,7 @@
             </div>
         </td>
         <td>{{ $contact['first_name'] ?? $contact['last_name'] }}</td>
+        <td>{{ $contact['abcd'] ?? '-' }}</td>
         <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
         <td>
             <div class="datamailDiv px-0">
@@ -63,13 +64,19 @@
                 </div>
             </div>
         </td>
-        {{-- <td>{{ $contact['abcd'] ?? '-' }}</td> --}}
         <td>
             <div class="d-flex gap-2"
                 onclick="editText('{{ $contact['zoho_contact_id'] }}','mobile_web','{{ $contact['mobile'] ?? 'N/A' }}')">
                 <p id="mobile_web{{ $contact['zoho_contact_id'] }}" class="card-text">
                     {{ $contact['mobile'] ?? 'N/A' }}</p>
 
+            </div>
+        </td>
+        <td>
+            <div class="d-flex gap-2"
+                onclick="editText('{{ $contact['zoho_contact_id'] }}','phone_web','{{ $contact['phone'] ?? 'N/A' }}')">
+                <p id="phone_web{{ $contact['zoho_contact_id'] }}" class="card-text">
+                    {{ $contact['phone'] ?? 'N/A' }}</p>
             </div>
         </td>
        
@@ -104,6 +111,8 @@
                 </div>
             </div>
         </td>
+        <td>{{ $contact['salutation_s'] ?? 'N/A' }}</td>
+
 
 
 

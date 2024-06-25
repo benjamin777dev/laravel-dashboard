@@ -77,7 +77,7 @@
                             <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}"
                                 onchange="makeEditable('{{ $task['id'] }}', 'date', '{{ $task['zoho_task_id'] }}', 'date_val{{ $task['zoho_task_id'] }}')"
                                 @if($task['due_date'])
-                                    value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}"
+                                    value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d h:m') }}"
                                 @endif
                             />
                         </td>

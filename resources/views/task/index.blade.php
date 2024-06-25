@@ -65,17 +65,17 @@
             <!-- Completed Tasks -->
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">Completed</h4>
+                    <h4 class="card-title mb-4">Overdue</h4>
                     <div class="table-responsive">
                         <table class="table table-nowrap align-middle mb-0">
                             <tbody>
-                                @if (count($completedTasks) > 0)
-                                    @foreach ($completedTasks as $task)
+                                @if (count($overdueTasks) > 0)
+                                    @foreach ($overdueTasks as $task)
                                         @include('task.partials.task_row', ['task' => $task])
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="5">No completed tasks found</td>
+                                        <td class="text-center" colspan="5">No overdue tasks found</td>
                                     </tr>
                                 @endif
                             </tbody>
@@ -147,6 +147,48 @@
 
 
     <script>
+
+window.closeTask = function(id, indexId, subject) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status":"Completed"
+            }]
+        };
+
+        // console.log("ys check ot")
+        $.ajax({
+            url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                // Handle success response
+
+                if (response?.data[0]?.status == "success") {
+
+                        window.location.reload();
+
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                showToastError("Something went wrong");
+                console.error(xhr.responseText, 'errrorroororooro');
+
+
+
+            }
+        })
+    }
+
         $(document).on('click', '.dpagination a', function(e) {
             e.preventDefault();
             let page = $(this).attr('href').split('page=')[1];
