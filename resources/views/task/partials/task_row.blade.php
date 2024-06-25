@@ -1,3 +1,4 @@
+
 <div class="card mb-2 shadow-sm border-0">
     <div class="card-body p-3">
         <div class="d-flex justify-content-between align-items-center">
@@ -28,6 +29,7 @@
                     @endif
                 </small>
             </div>
+            
             <div class="d-flex">
                 @php
                     $taskzId = $task['zoho_task_id'];
@@ -71,31 +73,6 @@
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered deleteModal">
-        <div class="modal-content">
-            <div class="modal-header border-0 deleteModalHeaderDiv">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body deletemodalBodyDiv">
-                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
-            </div>
-            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
-                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
-                    </button>
-                </div>
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
-                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Save Modal -->
 <div class="modal fade" id="saveModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered deleteModal">

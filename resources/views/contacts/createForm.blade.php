@@ -386,7 +386,7 @@
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
                     showToast("Contact create successfully")
-                    getCreateForm();
+                    window.location.href = "{{route('contacts.show', ['contactId' => $contact->id])}}"
                 },
                 error: function(xhr, status, error) {
                     console.error('Error in contact creation:', xhr.responseJSON);
