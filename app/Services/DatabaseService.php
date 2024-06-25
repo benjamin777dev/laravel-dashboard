@@ -431,16 +431,16 @@ class DatabaseService
             $conditions = [['userID', $user->id],['isDealCompleted',true]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', '', 'Dead-Contract Terminated']);
+            $deals = Deal::where($conditions)
+                ->whereNotIn('stage', 
+                    ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
+                );
 
             if ($search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%');
-                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
-                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
-                    // Add more OR conditions as needed
                 });
             }
 
@@ -520,20 +520,20 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Deals From Database");
-    
+
             $conditions = [['userID', $user->id], ['id', $dealId]];
-    
+
             // Adjust query to include contactName table using join
             $deals = NonTm::with('userData', 'dealData')->where($conditions)->first();
             Log::info("Deal Conditions", ['deals' => $conditions]);
-    
+
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
 
     public function retrieveContactById(User $user, $accessToken, $contactId)
     {
@@ -632,25 +632,36 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Tasks From Database");
-            $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
+        
             if ($tab == 'Overdue') {
-                $tasks
-                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
+                // these are any tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Upcoming') {
-                $tasks
-                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
+                // these are any tasks that have a due date greater or equal to now and are not complete
+                $tasks->where([['due_date', '>=', now()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'desc');
             } elseif ($tab == 'In Progress') {
-                $tasks->where([['due_date', null],['status','!=','Completed']]);
+                // these are any tasks that are in progress, regardless of due date
+                $tasks->where('status', 'In Progress')
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
+                // these are tasks that are completed
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+        
+            // This will apply the updated_at ordering only if it's not already ordered by due_date
+            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'In Progress') {
+                $tasks = $tasks->orderBy('updated_at', 'desc');
+            }
+        
+            $tasks = $tasks->paginate(10);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
-        }
+        } 
     }
 
     public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
@@ -682,7 +693,7 @@ class DatabaseService
             Log::info("Retrieve Deals From Database");
             $condition = [
                 ['userID', $user->id],
-                
+
             ];
             if ($dealId) {
                 $condition[] = ['zoho_deal_id', $dealId];
@@ -705,7 +716,7 @@ class DatabaseService
 
             $conditions = [['contact_owner', $user->root_user_id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
-           
+
 
             if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
@@ -1104,10 +1115,10 @@ class DatabaseService
         try {
             Log::info("User Deatils" . $user);
             $contact = Contact::create([
-                'last_name' => "CHR",
+                // 'last_name' => "CHR",
                 'isContactCompleted' => false,
                 'contact_owner' => $user->root_user_id,
-                'isInZoho' => true,
+                'isInZoho' => false,
                 'zoho_contact_id' => $zohoContactId,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
@@ -1233,8 +1244,13 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contacts From Database");
-
-            $contacts = Contact::where('contacts.contact_owner', $user->root_user_id)
+            $condition = [['contacts.contact_owner', $user->root_user_id]];
+            if ($filter === "has_email") {
+                $condition[]=['contacts.has_email',1];
+            }else if($filter==="has_address"){
+                $condition[]=['contacts.has_address',1];
+            }
+            $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on(DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'), '=', 'contacts.zoho_contact_id');
@@ -1516,7 +1532,7 @@ class DatabaseService
     public function retreiveSubmittals($dealId="")
     {
         try {
-        
+
             $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
             return $submittalData;
         } catch (\Exception $e) {
@@ -1740,6 +1756,8 @@ class DatabaseService
                 return \App\Models\Groups::mapZohoData($record, 'csv');
             case 'Contacts_X_Groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
+            case 'Tasks':
+                return \App\Models\Task::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1765,6 +1783,10 @@ class DatabaseService
                 case 'Groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
+                case 'Tasks':
+                    \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                    
                     // Add other cases as needed
             }
         } catch (\Exception $e) {
@@ -1819,7 +1841,7 @@ class DatabaseService
     public function createListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$dealId,$submittalType)
     {
     try {
-        
+
         $submittal = Submittals::create([
             'isSubmittalComplete' => "false",
             'userId' => $user->id,
@@ -1854,7 +1876,7 @@ class DatabaseService
     public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
     try {
-        
+
         $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
         if (!$submittal) {
             throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
@@ -1945,7 +1967,7 @@ class DatabaseService
     public function updateBuyerSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
         try {
-            
+
             $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
             if (!$submittal) {
                 throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
