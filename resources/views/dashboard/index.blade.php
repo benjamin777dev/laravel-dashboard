@@ -118,44 +118,44 @@
                                             @foreach ($upcomingTasks->take(5) as $task)
                                                 <div class="card mb-2 shadow-sm border-0">
                                                     <div class="card-body p-3">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                            <h6 class="m-0">
-                                                                <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
-                                                            </h6>
-                                                            <small class="text-muted">
-                                                                Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
-                                                                related to
-                                                                @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
-                                                                    <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
-                                                                        {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
-                                                                    </a>&nbsp;/&nbsp; 
-                                                                    <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
-                                                                        {{ $task->dealData->deal_name ?? 'General' }}
-                                                                    </a>
-                                                                @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
-                                                                    <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
-                                                                        {{ $task->contactData->first_name ?? '' }}
-                                                                    </a>
-                                                                @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
-                                                                    <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
-                                                                        {{ $task->dealData->deal_name ?? 'General' }}
-                                                                    </a>
-                                                                @else
-                                                                    <span class="text-secondary">General</span>
-                                                                @endif
-                                                            </small>
+                                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                                            <div class="w-100">
+                                                                <h6 class="m-0">
+                                                                    <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                                                                </h6>
+                                                                <small class="text-muted">
+                                                                    Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
+                                                                    related to
+                                                                    @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                                                                        </a>&nbsp;/&nbsp; 
+                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->dealData->deal_name ?? 'General' }}
+                                                                        </a>
+                                                                    @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->contactData->first_name ?? '' }}
+                                                                        </a>
+                                                                    @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->dealData->deal_name ?? 'General' }}
+                                                                        </a>
+                                                                    @else
+                                                                        <span class="text-secondary">General</span>
+                                                                    @endif
+                                                                </small>
                                                             </div>
-                                                            <div class="d-flex">
+                                                            <div class="d-flex flex-md-shrink-0 mt-2 mt-md-0">
                                                                 @php
                                                                     $taskzId = $task['zoho_task_id'];
                                                                     $taskId = $task['id'];
                                                                     $subject = $task['subject'];
                                                                 @endphp
-                                                                <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
+                                                                <button class="btn btn-dark btn-sm me-2 text-nowrap" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
                                                                     <i class="fas fa-check"></i> Done
                                                                 </button>
-                                                                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                                                <button class="btn btn-secondary btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                                                                     <i class="fas fa-trash-alt"></i> Delete
                                                                 </button>
                                                             </div>
@@ -198,6 +198,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
