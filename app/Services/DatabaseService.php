@@ -633,29 +633,35 @@ class DatabaseService
         try {
             Log::info("Retrieve Tasks From Database");
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
+        
             if ($tab == 'Overdue') {
-                // these are any tasks that have a due date less than today and the task
-                // status isn't completed
-                $tasks
-                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
+                // these are any tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Upcoming') {
-                // these are any tasks that have a due date greater or equal to now
-                // and are not complete
-                $tasks
-                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
+                // these are any tasks that have a due date greater or equal to now and are not complete
+                $tasks->where([['due_date', '>=', now()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'desc');
             } elseif ($tab == 'In Progress') {
-                // these are any tasks that are not completed, regardless of due date
-                $tasks->where('status','In Progress');
+                // these are any tasks that are in progress, regardless of due date
+                $tasks->where('status', 'In Progress')
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
                 // these are tasks that are completed
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+        
+            // This will apply the updated_at ordering only if it's not already ordered by due_date
+            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'In Progress') {
+                $tasks = $tasks->orderBy('updated_at', 'desc');
+            }
+        
+            $tasks = $tasks->paginate(10);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
-        }
+        } 
     }
 
     public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
