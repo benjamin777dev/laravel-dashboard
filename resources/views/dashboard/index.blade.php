@@ -20,9 +20,9 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        @if ($needsNewDate->isNotEmpty())
+        @if ($needsNewDate['count'] > 0)
             <div class="alert alert-danger text-center">
-                You have {{ $needsNewDate->count() }} bad dates! 
+                You have {{ $needsNewDate['count'] }} bad dates! 
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
@@ -48,7 +48,9 @@
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
                             <div class="card dash-card">
                                 <div class="card-body dash-front-cards">
-                                    <h5 class="card-title dTitle mb-0">{{ $stage }}</h5>
+                                    <h5 
+                                        class="card-title dTitle mb-0"
+                                        >{{ $stage }}</h5>
                                     <p class="dSumValue">${{ $data['sum'] }}</p>
                                     <p class="card-text dcountText">{{ $data['count'] }} Transactions</p>
                                 </div>
@@ -58,57 +60,146 @@
                 </div>
             </div>
         </div>
-        <div class="row dmain-Container">
-            <div class="row dgraphdiv">
-                <div class="col-md-8">
-                    <div class="row dspeedn-month-camaparison">
-                        <div class="col-md-4 dspeedometersection">
-                            <p class="dpipetext">My Pipeline</p>
-                            <div id="canvas-holder" style="width:100%">
-                                <canvas id="chart" width="100%" height="100%"></canvas>
+        <div class="section pt-0 pb-0">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title text-center mb-4">My Pipeline</div>
+                                    <div id="canvas-holder" style="width:100%">
+                                        <canvas id="chart" width="100%" height="100%"></canvas>
+                                    </div>
+                                    <p class="dFont13 dMb5 dRangeText">${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
+                                </div>
                             </div>
-                            <p class="dFont13 dMb5 dRangeText">${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
                         </div>
-                        <div class="col-md-8 graphp-dash">
-                            <div class="container dgraphpstackContainer">
-                                <p class="dcamptext">Monthly Pipeline Comparison</p>
-                                <div class="stacked-bar-chart w-100 stacked-contain">
-                                    @php
-                                        $gcis = array_column($allMonths, 'gci');
-                                        $maxGCI = max($gcis);
-                                    @endphp
-                                    @foreach ($allMonths as $month => $data)
+                        <div class="col-md-4 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title mb-4 text-center fw-bold">Monthly Pipeline Comparison</div>
+                                    <div class="stacked-bar-chart w-100 stacked-contain">
                                         @php
-                                            $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
+                                            $gcis = array_column($allMonths, 'gci');
+                                            $maxGCI = max($gcis);
                                         @endphp
-                                        <div class="row">
-                                            <div class="col-md-1 align-self-center dmonth-design">
-                                                {{ Carbon\Carbon::parse($month)->format('M') }}</div>
-                                            <div class="col-md-11 dashchartImg">
-                                                <div class="row dgraph-strip">
-                                                    @php
-                                                        $formattedGCI = str_replace(['$', ','], '', number_format($data['gci'], 0));
-                                                    @endphp
-                                                    <div class="col-md-10 text-end bar-a" style="width: {{ $formattedGCI < 1000 ? 'auto' : $widthPercentage . '%' }}">
-                                                        {{ '$' . number_format($data['gci'], 0) }}
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <p class="dtransactions-des">{{ $data['deal_count'] }}</p>
+                                        @foreach ($allMonths as $month => $data)
+                                            @php
+                                                $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 100 : 0;
+                                                $minWidth = $widthPercentage < 10 ? 'min-width: 2.5rem;' : ''; // Ensure minimum width for visibility
+                                            @endphp
+                                            <div class="row align-items-center">
+                                                <div class="col-3 text-center fw-bold">
+                                                    {{ Carbon\Carbon::parse($month)->format('M') }}
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="progress" style="height: 1.5rem;">
+                                                        <div class="progress-bar bg-dark text-white d-flex justify-content-center align-items-center" role="progressbar" style="width: {{ $widthPercentage }}%; {{ $minWidth }}" aria-valuenow="{{ $widthPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                                                            {{ '$' . number_format($data['gci'], 0) }}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-2 text-center fw-bold">
+                                                    {{ $data['deal_count'] }}
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title text-center mb-4">Recent Tasks</div>
+                                    <div class="d-flex flex-column">
+                                        @if ($upcomingTasks->take(5)->count() > 0)
+                                            @foreach ($upcomingTasks->take(5) as $task)
+                                                <div class="card mb-2 shadow-sm border-0">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <h6 class="m-0">
+                                                                    <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                                                                </h6>
+                                                                <small class="text-muted">
+                                                                @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
+                                                                    <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                        {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                                                                    </a>&nbsp;/&nbsp; 
+                                                                    <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                        {{ $task->dealData->deal_name ?? 'General' }}
+                                                                    </a>
+                                                                @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                                                                    <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                        {{ $task->contactData->first_name ?? '' }}
+                                                                    </a>
+                                                                @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                                                                    <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                        {{ $task->dealData->deal_name ?? 'General' }}
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-secondary">General</span>
+                                                                @endif
+                                                                </small>
+                                                            </div>
+                                                            <div class="d-flex">
+                                                                @php
+                                                                    $taskzId = $task['zoho_task_id'];
+                                                                    $taskId = $task['id'];
+                                                                    $subject = $task['subject'];
+                                                                @endphp
+                                                                <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
+                                                                    <i class="fas fa-check"></i> Done
+                                                                </button>
+                                                                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Delete Modal -->
+                                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body deletemodalBodyDiv">
+                                                                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
+                                                            </div>
+                                                            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
+                                                                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center">
+                                                <p>No recent tasks found</p>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @include('common.notes.view', [
-                    'notesInfo' => $notesInfo,
-                    'retrieveModuleData' => $retrieveModuleData,
-                ])
             </div>
+        </div>
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
                     <p class="dFont800 dFont15">Tasks</p>
@@ -143,8 +234,8 @@
             </div>
 
             <div class="table-responsive dtranstiontable mt-2" id="badDates">
-            @if ($needsNewDate->isNotEmpty())
-                <p class="fw-bold">Bad Dates | <span class="text-danger">{{count($needsNewDate)}} Bad Dates!</span></p>
+            @if ($needsNewDate['count'] > 0)
+                <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
             @else
                 <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
             @endif
@@ -162,12 +253,12 @@
                     <div>Probability</div>
                     <div>Probable GCI</div>
                 </div>
-                @if (count($needsNewDate) === 0)
+                @if ($needsNewDate['count'] === 0)
                     <div>
                         <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
                 @else
-                    @foreach ($needsNewDate as $deal)
+                    @foreach ($needsNewDate['deals'] as $deal)
                         <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
                         <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
                                 <div class="dTContactName">
@@ -185,7 +276,8 @@
                             <div data-type="stage" data-value="{{ $deal['stage'] }}">
                                 <div class="dTContactName">
                                     <span class="dlabel">Stage:</span>
-                                    {{ $deal['stage'] }}
+                                    <span style="font-weight:600;padding:5px;background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
+                                    >{{ $deal['stage'] }}</span>
                                 </div>
                             </div>
                             <div data-type="representing" data-value="{{ $deal['representing'] }}">
@@ -237,6 +329,44 @@
 
 
 <script>
+    window.closeTask = function(id, indexId, subject) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status":"Completed"
+            }]
+        };
+
+        // console.log("ys check ot")
+        $.ajax({
+            url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                // Handle success response
+
+                if (response?.data[0]?.status == "success") {
+                    window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                showToastError("Something went wrong");
+                console.error(xhr.responseText, 'errrorroororooro');
+
+
+
+            }
+        })
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('btnBadDates').addEventListener('click', function() {
             const element = document.getElementById('badDates');
@@ -544,7 +674,7 @@
             valueLabel: {
                 fontSize: "24px", // Change font size here
                 formatter: function(value) {
-                    return Math.round(value) + "%";
+                    return Math.round(value * 10) / 10  + "%";
                 }
             },
             chartArea: {

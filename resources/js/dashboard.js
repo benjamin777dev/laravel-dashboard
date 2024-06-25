@@ -48,8 +48,44 @@ window.moduleSelected = function (selectedModule, id = "") {
             console.error("Ajax Error:", error);
         }
     });
-
 }
+
+window.closeTask = function(id, indexid, date) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    var formData = {
+        "data": [{
+             "Subject": elementValue,
+             "Status":"Completed"
+        }]
+    };
+
+    // console.log("ys check ot")
+    $.ajax({
+        url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+        method: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            // Handle success response
+
+            if (response?.data[0]?.status == "success") {
+                window.location.reload();
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            showToastError("Something went wrong");
+            console.error(xhr.responseText, 'errrorroororooro');
+        }
+    })
+}
+
 
 window.updateDeal = function(zohoDealId, dealId, parentElement) {
     event.preventDefault();

@@ -431,16 +431,16 @@ class DatabaseService
             $conditions = [['userID', $user->id],['isDealCompleted',true]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', '', 'Dead-Contract Terminated']);
+            $deals = Deal::where($conditions)
+                ->whereNotIn('stage', 
+                    ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
+                );
 
             if ($search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%');
-                    //     ->orWhere('contacts.last_name', 'like', '%' . $searchTerms . '%')
-                    //    ->orWhere(\Illuminate\Support\Facades\DB::raw("CONCAT(contacts.first_name, ' ', contacts.last_name)"), 'like', '%' . $searchTerms . '%');
-                    // Add more OR conditions as needed
                 });
             }
 
@@ -632,17 +632,22 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Tasks From Database");
-            $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
             if ($tab == 'Overdue') {
+                // these are any tasks that have a due date less than today and the task
+                // status isn't completed
                 $tasks
                     ->where([['due_date', '<', now()],['status','!=','Completed']]);
             } elseif ($tab == 'Upcoming') {
+                // these are any tasks that have a due date greater or equal to now
+                // and are not complete
                 $tasks
                     ->where([['due_date', '>=', now()],['status','!=','Completed']]);
             } elseif ($tab == 'In Progress') {
-                $tasks->where([['due_date', null],['status','!=','Completed']]);
+                // these are any tasks that are not completed, regardless of due date
+                $tasks->where('status','In Progress');
             } elseif ($tab == 'Completed') {
+                // these are tasks that are completed
                 $tasks->where('status', 'Completed');
             }
             $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
@@ -1740,6 +1745,8 @@ class DatabaseService
                 return \App\Models\Groups::mapZohoData($record, 'csv');
             case 'Contacts_X_Groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
+            case 'Tasks':
+                return \App\Models\Task::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1765,6 +1772,10 @@ class DatabaseService
                 case 'Groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
+                case 'Tasks':
+                    \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                    
                     // Add other cases as needed
             }
         } catch (\Exception $e) {

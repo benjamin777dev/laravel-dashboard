@@ -16,165 +16,185 @@ use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
+    
+    protected $db;
+    protected $helper;
+
+    public function __construct(DatabaseService $db, Helper $helper)
+    {
+        $this->db = $db;
+        $this->helper = $helper;
+    }
+
+
     private function masterFilter($deal)
     {
-        $helper = new Helper();
-        $closingDate = Carbon::parse($helper->convertToMST(isset($deal['closing_date']) ? $deal['closing_date'] : null));
-        $startOfYear = Carbon::now()->startOfYear();
-        $endOfYear = Carbon::now()->endOfYear();
+        $closingDate = Carbon::parse($this->helper->convertToMST($deal['closing_date'] ?? null));
+        $startDate = Carbon::now();
+        $endDate = Carbon::now()->addYear();
 
-        return $closingDate->gte($startOfYear) && $closingDate->lte($endOfYear);
+        return $closingDate->between($startDate, $endDate);
     }
 
     public function index()
     {
-
         $user = $this->user();
         if (!$user) {
             return redirect('/login');
         }
-        $db = new DatabaseService();
-        $helper = new Helper();
-        $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
 
-        //Get Date Range
-        $startDate = Carbon::now()->subYear()->format('d.m.Y'); // 1 year
-        $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
-        $endDate = Carbon::now()->format('d.m.Y'); // Current date
-
-        // Set default goal or use user-defined goal
+        $accessToken = $user->getAccessToken();
         $goal = $user->goal ?? 250000;
+        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
 
-        // Retrieve deals from Zoho CRM
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
-        
-        // Calculate the progress towards the goal
         $progress = $this->calculateProgress($deals, $goal);
         $totalGciForDah = $this->totalGCIForDash($deals, $goal);
         Log::info("Progress: $progress");
 
-        // master filter will exclude anything that is beyond 12 months
-        // anything that is a bad date (less than today)
-        // anything closing in the next 30 days that isn't under contract
+        $stageData = $this->getStageData($deals, $goal);
+        $needsNewDate = $this->getNeedsNewDateData($deals);
+        $allMonths = $this->getMonthlyGCI($deals);
+
+        $tab = request()->query('tab') ?? 'In Progress';
+        $retrieveModuleData = $this->db->retrieveModuleDataDB($user, $accessToken);
+        $tasks = $this->db->retreiveTasks($user, $accessToken, $tab);
+        $upcomingTasks = $this->db->retreiveTasks($user, $accessToken, 'Upcoming');
+         
+        $notesInfo = $this->db->retrieveNotes($user, $accessToken);
+        $notes = $this->fetchNotes();
+        $userContact = $this->db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
+
+
+        if (request()->ajax()) {
+            return view('common.tasks', compact('tasks', 'retrieveModuleData', 'tab'))->render();
+        }
+
+        return view('dashboard.index', compact(
+            'progress', 'goal', 'stageData', 'needsNewDate', 'allMonths', 
+            'tasks', 'tab', 'notes', 'notesInfo', 'retrieveModuleData', 
+            'totalGciForDah', 'userContact', 'upcomingTasks'
+        ));
+    }
+
+    private function getStageData($deals, $goal)
+    {
+        // Define the stages to process
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
-        $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $startDate, $endDate) {
+        // Define the date range for filtering deals (current 12-month period)
+        $startDate = Carbon::now();
+        $endDate = Carbon::now()->addYear();
+
+        // Process each stage and calculate metrics
+        return collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $startDate, $endDate) {
+            // Filter deals for the current stage and date range
             $filteredDeals = $deals->filter(function ($deal) use ($stage, $startDate, $endDate) {
                 $closingDate = Carbon::parse($deal['closing_date']);
-                return $deal['stage'] === $stage && $this->masterFilter($deal) && $closingDate->gte($startDate) && $closingDate->lte($endDate);
+                return $deal['stage'] === $stage 
+                    && $closingDate->between($startDate, $endDate)
+                    && !Str::startsWith($deal['stage'], 'Dead') 
+                    && $deal['stage'] !== 'Sold';
             });
+
+            // Calculate stage progress and related metrics
             $stageProgress = $this->calculateStageProgress($filteredDeals, $goal);
-            $stageProgressClass = $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
-            $stageProgressIcon = $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : ($stageProgress <= 45 ? "mdi mdi-arrow-top-right" : "mdi mdi-arrow-top-right");
-            $stageProgressExpr = $stageProgress <= 15 ? "-" : ($stageProgress <= 45 ? "-" : "+");
-            Log::info("stageProgress: $stageProgress");
+            $stageProgressClass = $this->getProgressClass($stageProgress);
+            $stageProgressIcon = $this->getProgressIcon($stageProgress);
+            $stageProgressExpr = $this->getProgressExpr($stageProgress);
+
+            // Return metrics for the current stage
             return [
                 $stage => [
                     'count' => $this->formatNumber($filteredDeals->count()),
                     'sum' => $this->formatNumber($filteredDeals->sum('pipeline1')),
                     'asum' => $filteredDeals->sum('pipeline1'),
                     'stageProgress' => $stageProgress,
-                    "stageProgressClass" => $stageProgressClass,
+                    'stageProgressClass' => $stageProgressClass,
                     'stageProgressIcon' => $stageProgressIcon,
                     'stageProgressExpr' => $stageProgressExpr,
                 ],
             ];
         });
+    }
 
-        $cpv = $stageData->sum(function ($stage) {
-            return $stage['asum'];
-        });
+    private function getProgressClass($stageProgress)
+    {
+        return $stageProgress <= 15 ? "bg-danger" : ($stageProgress <= 45 ? "bg-warning" : "bg-success");
+    }
 
-        // Needs New Date
-        $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
-            $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+    private function getProgressIcon($stageProgress)
+    {
+        return $stageProgress <= 15 ? "mdi mdi-arrow-bottom-right" : "mdi mdi-arrow-top-right";
+    }
+
+    private function getProgressExpr($stageProgress)
+    {
+        return $stageProgress <= 15 ? "-" : "+";
+    }
+
+    private function getNeedsNewDateData($deals)
+    {
+        $endDate30Days = Carbon::now()->addMonth(1);
+
+        $needsNewDate = $deals->filter(function ($deal) use ($endDate30Days) {
+            $closingDate = Carbon::parse($this->helper->convertToMST($deal['closing_date']));
             $now = now();
-        
-            // Debugging: Print the deal details and dates
-            Log::info('Checking deal:', [
-                'deal_id' => $deal['id'],
-                'closing_date' => $deal['closing_date'],
-                'converted_closing_date' => $closingDate,
-                'now' => $now,
-                'end_date_30_days' => $endDate30Days,
-                'stage' => $deal['stage']
-            ]);
-        
-            $needsNewDate = (
-                ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
+
+            return ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
                 && !Str::startsWith($deal['stage'], 'Dead')
                 && $deal['stage'] !== 'Sold'
-                && $deal['stage'] !== "Under Contract"
-            );
-        
-            // Debugging: Print if the deal needs a new date
-            if ($needsNewDate) {
-                Log::info('Deal needs new date:', ['deal_id' => $deal['id']]);
-            }
-        
-            return $needsNewDate;
+                && $deal['stage'] !== "Under Contract";
         });
 
-        $needsNewDateData = [
+        return [
             'sum' => $this->formatNumber($needsNewDate->sum('pipeline1')),
             'asum' => $needsNewDate->sum('pipeline1'),
             'count' => $needsNewDate->count(),
+            'deals' => $needsNewDate
         ];
+    }
 
+    private function getMonthlyGCI($deals)
+    {
+        // Filter deals to exclude 'Dead' and 'Sold' stages and ensure they fall within the next 12-month period
         $filteredDeals = $deals->filter(function ($deal) {
-            return $this->masterFilter($deal)
-            && !Str::startsWith($deal['stage'], 'Dead')
+            return $this->masterFilter($deal) 
+                && !Str::startsWith($deal['stage'], 'Dead') 
                 && $deal['stage'] !== 'Sold';
         });
-        $monthlyGCI = $filteredDeals->groupBy(function ($deal) use ($helper) {
-            return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m');
+
+        // Group deals by month and calculate the total GCI for each month
+        $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
+            return Carbon::parse($this->helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
             return $dealsGroup->sum('pipeline1');
         });
 
-        // Ensure all months of the year are represented, fill missing months with 0
-        $startOfYear = Carbon::now()->startOfYear();
-        $endOfYear = Carbon::now()->endOfYear();
+        // Initialize the start and end of the rolling 12 months period
+        $currentMonth = Carbon::now()->startOfMonth();
+        $endMonth = Carbon::now()->addYear()->endOfMonth();
         $allMonths = [];
-        while ($startOfYear->lessThanOrEqualTo($endOfYear)) {
-            $month = $startOfYear->format('Y-m');
+
+        // Iterate through each month of the rolling 12-month period
+        while ($currentMonth->lessThanOrEqualTo($endMonth)) {
+            $month = $currentMonth->format('Y-m');
             $gci = $monthlyGCI->get($month, 0);
 
-            // Get the count of deals for this month
-            $dealCount = $filteredDeals->filter(function ($deal) use ($month, $helper) {
-                return Carbon::parse($helper->convertToMST($deal['closing_date']))->format('Y-m') === $month;
+            // Get the count of deals for the current month
+            $dealCount = $filteredDeals->filter(function ($deal) use ($month) {
+                return Carbon::parse($this->helper->convertToMST($deal['closing_date']))->format('Y-m') === $month;
             })->count();
 
+            // Store the GCI and deal count for the current month
             $allMonths[$month] = [
                 'gci' => $gci,
                 'deal_count' => $dealCount,
             ];
 
-            $startOfYear->addMonth();
+            // Move to the next month
+            $currentMonth->addMonth();
         }
 
-        $rootUserId = $user->root_user_id; // Assuming root_user_id is a field in your User model
-
-        $tab = request()->query('tab') ?? 'In Progress';
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $tasks = $db->retreiveTasks($user, $accessToken, $tab);
-
-        $notesInfo = $db->retrieveNotes($user, $accessToken);
-        
-        $notes = $this->fetchNotes();
-        
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('common.tasks', compact('tasks', 'retrieveModuleData', 'tab'))->render();
-        }
-
-        $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken,$user->zoho_id);
-
-        // Pass data to the view
-        return view('dashboard.index',
-            compact('progress', 'goal','stageData',
-                'needsNewDate', 'needsNewDateData', 'allMonths',
-                 'tasks', 'tab','notes', 'startDate', 'notesInfo', 
-                 'retrieveModuleData', 'totalGciForDah', 'userContact'));
+        return $allMonths;
     }
 
     private function formatNumber($number)
@@ -190,228 +210,43 @@ class DashboardController extends Controller
         }
     }
 
-    private function retrieveACIFromZoho(User $user, $accessToken)
-    {
-        $allACI = collect();
-        $page = 1;
-        $hasMorePages = true;
-
-        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
-        $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
-        Log::info("Retrieving aci for criteria: $criteria");
-
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        try {
-            while ($hasMorePages) {
-                $response = $zoho->getACIData($criteria, $fields, $page, 200);
-                if (!$response->successful()) {
-                    Log::error("Error retrieving aci: " . $response->body());
-                    // Handle unsuccessful response
-                    $hasMorePages = false;
-                    break;
-                }
-
-                Log::info("Successful aci fetch... Page: " . $page);
-                $responseData = $response->json();
-                $aciData = collect($responseData['data'] ?? []);
-                $allACI = $allACI->concat($aciData);
-
-                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-                $page++;
-            }
-        } catch (\Exception $e) {
-            Log::error("Error retrieving aci: " . $e->getMessage());
-            return $allACI;
-        }
-
-        Log::info("Total aci records: " . $allACI->count());
-        Log::info("Aci Records: ", $allACI->toArray());
-        return $allACI;
-    }
-
-    //get notes data function
-    private function retrieveNOTESFromZoho(User $user, $accessToken)
-    {
-        $allNotes = collect();
-        $page = 1;
-        $hasMorePages = true;
-
-        $startDateTime = now()->subDays(7)->toIso8601String(); // Get start date/time (7 days ago) in ISO 8601 format
-        $endDateTime = now()->toIso8601String(); // Get current date/time in ISO 8601 format
-        $criteria = "(Owner:equals:$user->root_user_id)";
-        $fields = "Note_Content,Created_Time,Owner,Parent_Id";
-        Log::info("Retrieving notes for criteria: $criteria");
-
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        try {
-            while ($hasMorePages) {
-                $response = $zoho->getNotesData($criteria, $fields, $page, 200);
-                if (!$response->successful()) {
-                    Log::error("Error retrieving notes: " . $response->body());
-                    // Handle unsuccessful response
-                    $hasMorePages = false;
-                    break;
-                }
-
-                Log::info("Successful notes fetch... Page: " . $page);
-                $responseData = $response->json();
-                $allNotes = collect($responseData['data'] ?? []);
-                $allNotes = $allNotes->concat($allNotes);
-
-                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-                $page++;
-            }
-        } catch (\Exception $e) {
-            Log::error("Error retrieving notes: " . $e->getMessage());
-            return $allNotes;
-        }
-
-        Log::info("Total notes records: " . $allNotes->count());
-        Log::info("notes Records: ", $allNotes->toArray());
-        return $allNotes;
-    }
-
     private function calculateProgress($deals, $goal)
     {
-        // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
-        // don't count anything beyond 12 months
-        // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
             return !Str::startsWith($deal['stage'], 'Dead')
-            && $deal['stage'] !== 'Sold'
-            && $this->masterFilter($deal); // Correct usage within the method
+                && $deal['stage'] !== 'Sold'
+                && $this->masterFilter($deal);
         });
-        // Sum the 'Pipeline1' values of the filtered deals.
+
         $totalGCI = $filteredDeals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
 
-        // Calculate the progress as a percentage of the goal.
         $progress = ($totalGCI / $goal) * 100;
         Log::info("Progress towards goal: $progress");
 
-        // Ensure progress does not exceed 100%.
         return min($progress, 100);
     }
 
     private function totalGCIForDash($deals, $goal)
     {
-        // Filter out deals that are in any stage that starts with 'Dead' or are in 'Sold' stage.
-        // don't count anything beyond 12 months
-        // exclude bad dates as well
         $filteredDeals = $deals->filter(function ($deal) {
             return !Str::startsWith($deal['stage'], 'Dead-Lost To Competition')
-            && $deal['stage'] !== 'Sold'
-            && $this->masterFilter($deal); // Correct usage within the method
+                && $deal['stage'] !== 'Sold'
+                && $this->masterFilter($deal);
         });
 
-        // Sum the 'Pipeline1' values of the filtered deals.
-        $totalGCI = $filteredDeals->sum('pipeline1');
-
-        return $totalGCI;
+        return $filteredDeals->sum('pipeline1');
     }
 
     private function calculateStageProgress($deals, $goal)
     {
-        // Sum the 'Pipeline1' values of the filtered deals.
         $totalGCI = $deals->sum('pipeline1');
         Log::info("Total GCI from open stages: $totalGCI");
 
-        // Calculate the progress as a percentage of the goal.
         $progress = ($totalGCI / $goal) * 100;
         Log::info("Progress towards goal: $progress");
 
-        // Ensure progress does not exceed 100%.
         return round(min($progress, 100));
-    }
-
-    private function retrieveAndCheckContacts($rootUserId, $accessToken)
-    {
-        $helper = new Helper();
-        $allContacts = $this->retrieveContactsFromZoho($rootUserId, $accessToken);
-
-        $abcContacts = $allContacts->filter(function ($contact) {
-            return (!empty($contact['ABCD']) && $contact['ABCD'] !== 'D');
-        })->count();
-        Log::info("ABC Contacts: $abcContacts");
-
-        $needsEmail = $allContacts->filter(function ($contact) {
-            return empty($contact['Email']);
-        })->count();
-        Log::info("Needs Email: $needsEmail");
-
-        $needsAddress = $allContacts->filter(function ($contact) {
-            return empty($contact['Mailing_Address']) || empty($contact['Mailing_City']) || empty($contact['Mailing_State']) || empty($contact['Mailing_Zip']);
-        })->count();
-        Log::info("Needs Address: $needsAddress");
-
-        $needsPhone = $allContacts->filter(function ($contact) {
-            return empty($contact['Phone']);
-        })->count();
-        Log::info("Needs Phone: $needsPhone");
-
-        $missingAbcd = $allContacts->filter(function ($contact) {
-            return empty($contact['ABCD']);
-        })->count();
-        Log::info("Missing ABCD: $missingAbcd");
-
-        $contactsLast30Days = $allContacts->filter(function ($contact) use ($helper) {
-            return now()->diffInDays($helper->convertToMST($contact['Created_Time'])) < 30;
-        })->count();
-
-        return [
-            'abcContacts' => $abcContacts,
-            'needsEmail' => $needsEmail,
-            'needsAddress' => $needsAddress,
-            'needsPhone' => $needsPhone,
-            'missingAbcd' => $missingAbcd,
-            'contactsLast30Days' => $contactsLast30Days,
-        ];
-    }
-
-    private function retrieveContactsFromZoho($rootUserId, $accessToken)
-    {
-        $allContacts = collect();
-        $page = 1;
-        $hasMorePages = true;
-
-        $criteria = "(Owner:equals:$rootUserId)";
-        $fields = 'Contact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_ZipContact Owner,Email,First Name,Last Name,Phone,Created_Time,ABCD,Mailing_Address,Mailing_City,Mailing_State,Mailing_Zip';
-        Log::info("Retrieving contacts for criteria: $criteria");
-
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-
-        try {
-            while ($hasMorePages) {
-                $response = $zoho->getContactData($criteria, $fields, $page, 200);
-
-                if (!$response->successful()) {
-                    Log::error("Error retrieving contacts: " . $response->body());
-                    // Handle unsuccessful response
-                    $hasMorePages = false;
-                    break;
-                }
-
-                Log::info("Successful contact fetch... Page: " . $page);
-                $responseData = $response->json();
-                $contacts = collect($responseData['data'] ?? []);
-                $allContacts = $allContacts->concat($contacts);
-
-                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
-                $page++;
-            }
-
-        } catch (\Exception $e) {
-            Log::error("Error retrieving contacts: " . $e->getMessage());
-            return $allContacts;
-        }
-        Log::info("Retrieved contacts: " . $allContacts->count());
-
-        return $allContacts;
     }
 
     public function createTaskaction(Request $request, User $user)
@@ -565,6 +400,7 @@ class DashboardController extends Controller
         try {
             $response = $zoho->updateTask($jsonData, $task['zoho_task_id']);
             if (!$response->successful()) {
+                Log::error(['zoho_task_update_error', $response]);
                 throw new \Exception("Zoho update failed");
             }
 

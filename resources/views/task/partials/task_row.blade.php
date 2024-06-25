@@ -1,40 +1,78 @@
-<tr>
-    <td>
-        <h5 class="text-truncate font-size-14 m-0">
-            <a href="#" class="text-dark">{{ $task['subject'] ?? 'N/A' }}</a>
-        </h5>
-    </td>
-    <td>
-        @if ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
-            <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->zoho_contact_id ?? '' }}">
-                {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
-            </a>
-        @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
-            <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->zoho_deal_id ?? '' }}">
-                {{ $task->dealData->deal_name ?? 'General' }}
-            </a>
-        @else
-            General
-        @endif
-    </td>
-    <td>
-        <input type="datetime-local" id="date_val{{ $task['zoho_task_id'] }}" onchange="makeEditable('{{ $task['id'] }}','date','{{ $task['zoho_task_id'] }}','date_val{{ $task['zoho_task_id'] }}')" value="{{ \Carbon\Carbon::parse($task['due_date'])->format('Y-m-d\TH:i') }}" />
-    </td>
-    <td>
-        <div class="d-flex btn-save-del">
-            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                id="update_changes" data-bs-toggle="modal" onclick="updateTask('{{ $task['zoho_task_id'] }}','{{ $task['id'] }}')">
-                <i class="fas fa-hdd plusicon"></i>
-                Done
+<div class="card mb-2 shadow-sm border-0">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="m-0">
+                    <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                </h6>
+                <small class="text-muted">
+                    @php
+                        print_r($task);
+                    @endphp
+                    Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
+                    related to
+                     @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
+                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                            {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                        </a>&nbsp;/&nbsp; 
+                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                            {{ $task->dealData->deal_name ?? 'General' }}
+                        </a>
+                    @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                            {{ $task->contactData->first_name ?? '' }}
+                        </a>
+                    @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                            {{ $task->dealData->deal_name ?? 'General' }}
+                        </a>
+                    @else
+                        <span class="text-secondary">General</span>
+                    @endif
+                </small>
             </div>
-            <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
-                <i class="fas fa-trash-alt plusicon"></i>
-                Delete
+            <div class="d-flex">
+                @php
+                    $taskzId = $task['zoho_task_id'];
+                    $taskId = $task['id'];
+                    $subject = $task['subject'];
+                @endphp
+                <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
+                    <i class="fas fa-check"></i> Done
+                </button>
+                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
             </div>
         </div>
-    </td>
-</tr>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered deleteModal">
+        <div class="modal-content">
+            <div class="modal-header border-0 deleteModalHeaderDiv">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body deletemodalBodyDiv">
+                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
+            </div>
+            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                <div class="d-grid gap-2 col-5">
+                    <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                    </button>
+                </div>
+                <div class="d-grid gap-2 col-5">
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
+                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
