@@ -165,6 +165,15 @@
             </div>
         </tr>
         @else
+        @php
+            $endDate30Days = \Carbon\Carbon::now()->addMonth(1);
+            $now = \Carbon\Carbon::now();
+            $closingDate = \Carbon\Carbon::parse($deal['closing_date']);
+            $deal['isBadDate'] = ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
+                    && !Str::startsWith($deal['stage'], 'Dead')
+                    && $deal['stage'] !== 'Sold'
+                    && $deal['stage'] !== "Under Contract";
+        @endphp
         <tr>
             <td>
                 <table>
@@ -274,12 +283,11 @@
                 {{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}
             </td>
             <td>
-
                 <input type="date"
-                    onchange="updateDeal('{{ $deal['zoho_deal_id'] }}','closing_date','{{ $deal['id'] }}')"
+                    class="{{ $deal['isBadDate'] ?? 0 ? 'badDateInput' : '' }}"
+                    onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', 'closing_date', '{{ $deal['id'] }}')"
                     id="closing_date{{ $deal['zoho_deal_id'] }}"
                     value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
-
             </td>
             <td>
                 <div onclick="updateDeal('{{ $deal['zoho_deal_id'] }}','commission','{{ $deal['id'] }}')"

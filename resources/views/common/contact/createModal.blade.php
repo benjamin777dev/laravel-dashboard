@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}" id ="contact_spouse_create_form" method="POST" onsubmit="return validateSpouseContactForm();">
+                <form id ="contact_spouse_create_form">
                     @csrf
                     {{-- Layout --}}
                     <!-- <div class="mb-3 row">
@@ -127,7 +127,7 @@
         </div>
     </div>
 </div>
-
+@vite(['resources/js/helper.js'])
 <script>
     $(document).ready(function() {
         var multipleCancelButton = new Choices('#choices-multiple-remove-button-modal', {
@@ -151,8 +151,11 @@
         });
        
         document.getElementById('contact_spouse_create_form').appendChild(hiddenInput);
-            $('#contact_spouse_create_form').submit(function(event) {
-            event.preventDefault(); // Prevent default form submission
+        $('#contact_spouse_create_form').submit(function(event) {
+            if (!validateSpouseContactForm()) {
+                event.preventDefault(); 
+                return; 
+            }
 
             // Serialize form data
             var formData = $(this).serialize();
@@ -160,8 +163,8 @@
             // return;
             // AJAX post request
             $.ajax({
+                url: '{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}',
                 type: 'POST',
-                url: $(this).attr('action'),
                 data: formData,
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
@@ -175,15 +178,31 @@
             });
         });
     })    
-
+    
     function validateSpouseContactForm() {
         let last_name = $("#spouseLastName").val();
+        let email = $("#spouseEmail").val();
+        let mobile = $("#spouseMobile").val();
         
-        // let regex = /^[a-zA-Z ]{1,20}$/;
+        // Validate last name
         if (last_name.trim() === "") {
-            showToastError('Please enter last name')
+            showToastError('Please enter last name');
             return false;
         }
-        return true
+
+        // Validate email
+        if (email.trim()!=""&&(!isValidEmail(email.trim()))) {
+            showToastError('Email should be in a valid format');
+            return false;
+        }
+
+        // Validate mobile
+        if (mobile.trim()!=""&&(isNaN(mobile.trim()))) {
+            showToastError('Mobile should be a number and at least 10 digits long');
+            return false;
+        }
+
+        return true;
     }
+
 </script>

@@ -423,7 +423,10 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else {
+        } else if (commission.value.trim().length>4) {
+            commissionError.textContent = "Commission length must be exactly 4 characters.";
+            isValid = false;
+        }else {
             commissionError.textContent = "";
         }
 

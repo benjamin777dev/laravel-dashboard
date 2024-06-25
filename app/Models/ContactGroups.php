@@ -85,15 +85,11 @@ class ContactGroups extends Model
         // Initialize the mapped data array
         $mappedData = [];
 
+        // Determine the ID key based on the source
+        $idKey = $source === "webhook" ? $data['id'] : $data['Id'];
 
         // Lookup the existing record in the database
-        $idKey = $source == "webhook" ? $data['id'] : $data['Id'];
-
         $contactGroup = self::where('zoho_contact_group_id', $idKey)->first();
-        
-        if ($contactGroup) {
-            Log::info("--found an existing contact group for the contact group id: " . $idKey);
-        }
 
         // Helper function to map fields
         $mapField = function ($field, $sourceField = null) use ($data, $contactGroup, $source, &$mappedData) {
@@ -129,55 +125,64 @@ class ContactGroups extends Model
         };
 
         // Map the fields
-        $mapField('name', 'Name');
-        $mapField('email', 'Email');
-        $mapField('created_time', 'Created_Time');
-        $mapField('modified_time', 'Modified_Time');
-        $mapField('last_activity_time', 'Last_Activity_Time');
-        $mapField('import_batch', 'Import_Batch');
-        $mapField('secondary_email', 'Secondary_Email');
-        $mapField('email_opt_out', 'Email_Opt_Out');
+        $fieldsToMap = [
+            'name' => 'Name',
+            'email' => 'Email',
+            'created_time' => 'Created_Time',
+            'modified_time' => 'Modified_Time',
+            'last_activity_time' => 'Last_Activity_Time',
+            'import_batch' => 'Import_Batch',
+            'secondary_email' => 'Secondary_Email',
+            'email_opt_out' => 'Email_Opt_Out'
+        ];
 
-        if ($source == "webhook") {
-            $mapField('modified_by_id', 'Modified_By.id');
-            $mapField('modified_by_name', 'Modified_By.name');
-            $mapField('created_by_id', 'Created_By.id');
-            $mapField('created_by_name', 'Created_By.name');
-            $mapField('contacts_id', 'Contacts.id');
-            $mapField('contacts_name', 'Contacts.name');
-            $mapField('groups_id', 'Groups.id');
-            $mapField('groups_name', 'Groups.name');
-        } else {
-            $mapField('modified_by_id', 'Modified_By');
-            $mapField('created_by_id', 'Created_By');
-            $mapField('contacts_id', 'Contacts');
-            $mapField('groups_id', 'Groups');
+        foreach ($fieldsToMap as $field => $sourceField) {
+            $mapField($field, $sourceField);
         }
 
-        $foundUser = Contact::where('zoho_contact_id', $mappedData['contacts_id'])->first();
-        $foundGroup = Groups::where('zoho_group_id', $mappedData['groups_id'])->first();
-        
-        if ($foundUser) {
-            $mappedData['contactId'] = $foundUser->id;
+        if ($source === "webhook") {
+            $webhookFieldsToMap = [
+                'modified_by_id' => 'Modified_By.id',
+                'modified_by_name' => 'Modified_By.name',
+                'created_by_id' => 'Created_By.id',
+                'created_by_name' => 'Created_By.name',
+                'contacts_id' => 'Contacts.id',
+                'contacts_name' => 'Contacts.name',
+                'groups_id' => 'Groups.id',
+                'groups_name' => 'Groups.name'
+            ];
         } else {
-            $mappedData['contactId'] = $mappedData['contacts_id'];
+            $webhookFieldsToMap = [
+                'modified_by_id' => 'Modified_By',
+                'created_by_id' => 'Created_By',
+                'contacts_id' => 'Contacts',
+                'groups_id' => 'Groups'
+            ];
         }
-        
-        if ($foundGroup) {
-            $mappedData['groupId'] = $foundGroup->id;
-        } else {
-            $mappedData['groupId'] = $mappedData['groups_id'];
+
+        foreach ($webhookFieldsToMap as $field => $sourceField) {
+            $mapField($field, $sourceField);
         }
+
+        // Handle contact and group lookups
+        $foundUser = isset($mappedData['contacts_id']) 
+            ? Contact::where('zoho_contact_id', $mappedData['contacts_id'])->first() 
+            : null;
+        $foundGroup = isset($mappedData['groups_id']) 
+            ? Groups::where('zoho_group_id', $mappedData['groups_id'])->first() 
+            : null;
+
+        // Set contactId and groupId based on lookups
+        $mappedData['contactId'] = $foundUser ? $foundUser->id : $mappedData['contacts_id'] ?? null;
+        $mappedData['groupId'] = $foundGroup ? $foundGroup->id : $mappedData['groups_id'] ?? null;
 
         $mappedData['zoho_contact_group_id'] = $idKey;
-        $zOwner = $source == "webhook" ? $data["Owner"]['id'] : $data['Owner'];
+
+        // Handle owner lookup
+        $zOwner = $source === "webhook" ? $data["Owner"]['id'] : $data['Owner'];
         $eUser = User::where("root_user_id", $zOwner)->first();
 
-        if ($eUser) {
-            $mappedData['ownerId'] = $eUser->id;
-        } else {
-            $mappedData['ownerId'] = $zOwner;
-        }
+        $mappedData['ownerId'] = $eUser ? $eUser->id : $zOwner;
 
         //Log::info("Mapped Data: ", ['data' => $mappedData]);
 
