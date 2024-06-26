@@ -10,6 +10,13 @@
     @endcomponent
 
     <div class="row">
+        <div class="d-flex justify-content-between">
+            <p class="dFont800 dFont15">Tasks</p>
+            <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
+                id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask">
+                <i class="fas fa-plus plusicon"></i> New Task
+            </div>
+        </div>
         <div class="col-lg-8">
             <!-- Upcoming Tasks -->
             <div class="card">
@@ -149,7 +156,7 @@
             </div>
         </div>
     </div>
-    <!-- end row -->
+    @include('common.tasks.create')
 
 @endsection
 

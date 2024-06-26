@@ -167,7 +167,7 @@ class ContactController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         return view('contacts.detailForm', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
     }
-    
+
 
     public function getContact(Request $request)
     {
@@ -517,7 +517,11 @@ class ContactController extends Controller
             if (!$contactInstance) {
                 return redirect('/contacts');
             }
-            $response = $zoho->createContactData($responseData, $contactInstance->zoho_contact_id);
+            if ($contactInstance->zoho_contact_id && $contactInstance->isContactCompleted) {
+                $response = $zoho->createContactData($responseData, $contactInstance->zoho_contact_id);
+            } else {
+                $response = $zoho->createNewContactData($responseData);
+            }
             if (!$response->successful()) {
                 Log::error("Error creating contacts:");
                 return "error somthing" . $response;
@@ -526,10 +530,12 @@ class ContactController extends Controller
             if (isset($response['data'][0])) {
                 $data = $response['data'][0];
                 $id = $data['details']['id'];
+                $zohoContactId = $data['details']['id'];
                 $createdByName = $data['details']['Created_By']['name'];
                 $createdById = $data['details']['Created_By']['id'];
                 $contactInstance->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
                 $contactInstance->last_name = $last_name;
+                $contactInstance->zoho_contact_id = $zohoContactId;
                 $contactInstance->first_name = $validatedData['first_name'] ?? null;
                 $contactInstance->mobile = $validatedData['mobile'] ?? null;
                 $contactInstance->email = $validatedData['email'] ?? null;
@@ -693,12 +699,12 @@ class ContactController extends Controller
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'contact'))->render();
     }
 
-    
+
 
     public function createContactId(Request $request)
     {
         $db = new DatabaseService();
-        $zoho = new ZohoCRM();
+        // $zoho = new ZohoCRM();
         $user = $this->user();
 
         if (!$user) {
@@ -709,16 +715,16 @@ class ContactController extends Controller
         if ($isIncompleteContact) {
             return response()->json($isIncompleteContact);
         } else {
-            $zoho->access_token = $accessToken;
+            // $zoho->access_token = $accessToken;
 
-            $jsonData = $request->json()->all();
-            $zohoContact = $zoho->createNewContactData($jsonData);
-            if (!$zohoContact->successful()) {
-                return "error something" . $zohoContact;
-            }
-            $zohoContactArray = json_decode($zohoContact, true);
-            $data = $zohoContactArray['data'][0]['details'];
-            $contact = $db->createContact($user, $accessToken, $data['id']);
+            // $jsonData = $request->json()->all();
+            // $zohoContact = $zoho->createNewContactData($jsonData);
+            // if (!$zohoContact->successful()) {
+            //     return "error something" . $zohoContact;
+            // }
+            // $zohoContactArray = json_decode($zohoContact, true);
+            // $data = $zohoContactArray['data'][0]['details'];
+            $contact = $db->createContact($user, $accessToken, null);
             return response()->json($contact);
         }
     }

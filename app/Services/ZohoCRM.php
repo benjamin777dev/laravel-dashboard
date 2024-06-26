@@ -243,8 +243,7 @@ class ZohoCRM
             // Adjust the URL and HTTP method based on your Zoho API requirements
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
-                'Content-Type' => 'application/json',
-            ])->post($this->bulkUrl . "Contacts", $inputJson);
+            ])->post($this->apiUrl . "Contacts", $inputJson);
 
             $responseData = $response->json();
 

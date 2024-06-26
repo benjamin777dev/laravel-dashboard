@@ -80,6 +80,7 @@
     </div>
     {{-- information form --}}
     <div class="updatePipelineform">
+       
     </div>
     
 </div>
