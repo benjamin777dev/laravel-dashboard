@@ -361,6 +361,14 @@ class Contact extends Model
             'auto_address' => isset($data['Auto_Address']) ? $data['Auto_Address'] : null,
         ];
         
+        if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {
+            $user = User::where('email', $mappedData['email'])->first();
+            if ($user) {
+                $user->zoho_id = $mappedData['zoho_contact_id'];
+                $user->goal = $mappedData['income_goal'] ?? 250000;
+                $user->save();
+            }
+        }
         
         //Log::info("Mapped Data: " , ['data' => $mappedData]);
 
