@@ -163,27 +163,11 @@ class PipelineController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        // Log::info("deals and tab data " . $tab . $dealId);
-        // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-        // Log::info("Task Details: " . print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        // $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
-        // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
-        // $contacts = $db->retreiveContactsJson($user, $accessToken);
-        // $users = User::all();
-        // $contactRoles = $db->retrieveRoles($user);
-        // $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-        // $allStages = config('variables.dealStages');
-        // $tab = request()->query('tab') ?? 'In Progress';
-        // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        // if (request()->ajax()) {
-        //     // If it's an AJAX request, return the pagination HTML
-        //     return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
-        // }
+        
+        
+        
         return view('pipeline.view', compact('deal', 'dealId', 'notesInfo', 'retrieveModuleData', 'tab'))->render();
 
     }
@@ -509,7 +493,14 @@ class PipelineController extends Controller
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $contactRoles = $db->retrieveRoles($user);
+        //$contactRoles = $db->retrieveRoles($user);
+
+        // Ensure relationships are eager loaded
+        $deal->load('contactName', 'leadAgent', 'tmName');
+
+        // Fetch contact roles
+        $contactRoles = $deal->getContactRoles();
+
         return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }
