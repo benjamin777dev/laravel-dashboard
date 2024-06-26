@@ -214,32 +214,49 @@
 </div>
 <script>
     $(document).ready(function() {
-        let nextPageUrl = '{{ $deals->nextPageUrl() }}';
+        let isLoading = false;
+        let currentPage = 1;
+        const baseUrl = '{{ url('/pipeline') }}';
+        
         $(window).scroll(function() {
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-                if (nextPageUrl) {
+                if (!isLoading) {
                     loadMorePosts();
                 }
             }
         });
 
         function loadMorePosts() {
+            isLoading = true;
             $('.spinner').show();
+            currentPage++;
+            const nextPageUrl = `${baseUrl}?page=${currentPage}`;
+            
             $.ajax({
                 url: nextPageUrl,
                 type: 'get',
-                beforeSend: function() {
-                    nextPageUrl = '';
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(data) {
-                    console.log(data, 'datatatata')
                     $('.spinner').hide();
-                    nextPageUrl = data.nextPageUrl;
-                    $('.table_pipeline').append(data);
+                    const newRows = data;
+
+                    if (newRows.trim().indexOf("No records found") !== -1) {
+                        $(window).off('scroll');
+                    } else {
+                        $('.table_pipeline').append(newRows);
+                    }
+                 
+
+                    // If "No records found" is present in new rows, stop further pagination
+                    
+                    isLoading = false;
                 },
                 error: function(xhr, status, error) {
                     console.error("Error loading more posts:", error);
                     $('.spinner').hide();
+                    isLoading = false;
                 }
             });
         }
