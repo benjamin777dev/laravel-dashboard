@@ -113,6 +113,17 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="card-title text-center mb-4">Upcoming Tasks</div>
+                                    
+                                    <button 
+                                        class="btn btn-sm btn-dark"
+                                        id="btnGroupAddon" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#staticBackdropforTask"
+                                    >
+                                        <i class="fas fa-plus plusicon"></i> New Task
+                                    </button>
+
+                                    <a href="/tasks" class="btn btn-sm btn-dark">View Tasks</a>
                                     <div class="d-flex flex-column">
                                         @if ($upcomingTasks->take(5)->count() > 0)
                                             @foreach ($upcomingTasks->take(5) as $task)
@@ -120,9 +131,9 @@
                                                     <div class="card-body p-3">
                                                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                                                             <div class="w-100">
-                                                                <h6 class="m-0">
+                                                                <h5 class="m-0">
                                                                     <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
-                                                                </h6>
+                                                                </h5>
                                                                 <small class="text-muted">
                                                                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
                                                                     related to
@@ -205,33 +216,78 @@
         </div>
             <div class="col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between">
-                    <p class="dFont800 dFont15">Tasks</p>
-                    <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask">
-                        <i class="fas fa-plus plusicon"></i> New Task
-                    </div>
+                    <p class="dFont800 dFont15">Notes</p>
                 </div>
                 <div class="row">
-                    <nav class="dtabs">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
-                                aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
-                                Progress</button>
-                            <button class="nav-link dtabsbtn" data-tab='Upcoming' id="nav-profile-tab"
-                                data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
-                                aria-controls="nav-profile" aria-selected="false"
-                                onclick="fetchData('Upcoming')">Upcoming</button>
-                            <button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Overdue')">Overdue</button>
-                            <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Completed')">Completed</button>
-                        </div>
-                    </nav>
-                    <div class="task-container">
-                        @include('common.tasks', ['tasks' => $tasks])
+                <div class="d-flex flex-column">
+                        @if ($notes->count() > 0)
+                            @foreach ($notesInfo as $note)
+                                <div class="card mb-2 shadow-sm border-0">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                            <div class="w-100">
+                                                <h5 class="m-0">
+                                                    <span class="text-dark">{{ $note['note_content'] ?? 'General Note' }}</span>
+                                                </h5>
+                                                <small class="text-muted">
+                                                    Created: {{ \Carbon\Carbon::parse($note['created_time'])->format('M d, Y') ?? '' }},
+                                                    related to
+                                                    @if ($note['related_to_type'] == 'Contacts' && isset($note->contactData->zoho_contact_id))
+                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $note->contactData->id ?? '' }}" class="text-primary">
+                                                            {{ $note->contactData->first_name ?? '' }} {{ $note->contactData->last_name ?? '' }}
+                                                        </a>
+                                                    @elseif ($note['related_to_type'] == 'Deals' && isset($note->dealData->zoho_deal_id))
+                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $note->dealData->id ?? '' }}" class="text-primary">
+                                                            {{ $note->dealData->deal_name ?? 'General Deal' }}
+                                                        </a>
+                                                    @else
+                                                        <span class="text-secondary">General</span>
+                                                    @endif
+                                                </small>
+                                            </div>
+                                            <div class="d-flex flex-md-shrink-0 mt-2 mt-md-0">
+                                                @php
+                                                    $taskzId = $note['zoho_note_id'];
+                                                    $taskId = $note['id'];
+                                                    $subject = $note['note_content'];
+                                                @endphp
+                                                <button class="btn btn-secondary btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $note['zoho_note_id'] }}">                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModalId{{ $note['zoho_note_id'] }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body deletemodalBodyDiv">
+                                                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
+                                            </div>
+                                            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                <div class="d-grid gap-2 col-5">
+                                                    <button type="button" onclick="deleteNote('{{ $note['zoho_note_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                                                    </button>
+                                                </div>
+                                                <div class="d-grid gap-2 col-5">
+                                                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
+                                                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="text-center">
+                                <p>No recent notes found</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -332,6 +388,42 @@
 
 
 <script>
+
+    window.deleteNote = function(id) {
+        console.log("delete note called",id);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.note', ['id' => ':id']) }}".replace(':id', id),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                    }
+                })
+
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+
+    }
+
     window.closeTask = function(id, indexId, subject) {
         $.ajaxSetup({
             headers: {
@@ -370,6 +462,44 @@
             }
         })
     }
+
+    window.deleteTask = function(id) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+    }
+
+
+
+
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('btnBadDates').addEventListener('click', function() {
             const element = document.getElementById('badDates');

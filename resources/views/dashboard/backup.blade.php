@@ -430,7 +430,7 @@
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <p class="modal-title dHeaderText">Create New Task</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
