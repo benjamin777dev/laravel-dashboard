@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
@@ -139,6 +140,7 @@ class ContactController extends Controller
 
     public function getContactJson(){
         {
+            try{
             $user = $this->user();
     
             if (!$user) {
@@ -146,75 +148,120 @@ class ContactController extends Controller
             }
             $db = new DatabaseService();
             $search = request()->query('search');
+            $stage = request()->query('stage');
+            $filterobj = request()->query('filterobj');
             // $contactInfo = Contact::getZohoContactInfo();
             $accessToken = $user->getAccessToken(); // Method to get the access token.
             if(!$accessToken){
                 return "invalid token.";
             }
-            $contacts = $db->retreiveContactsJson($user, $accessToken,$search);
+            $contacts = $db->retreiveContactsJson($user, $accessToken,$search,$stage,$filterobj);
             if (!$contacts) {
                return response()->json(["redirect" => "/contacts"]);
             }
             return Datatables::of($contacts)->make(true);
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
         }
     }
 
     public function updateContactField(Request $request){
         try {
             $user = $this->user();
-
+    
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
-            $zoho = new ZohoCRM();
- 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
-
             $id = $request->input('id');
             $dbfield = $request->input('field');
             $value = $request->input('value');
-            $field;
-            if($dbfield==="last_name"){
-                $field = "Last_Name";
-            }
-            if($dbfield==="relationship_type"){
-                $field = "Relationship_Type";
-            }
-            if($dbfield==="email"){
-                $field = "Email";
-            }
-            if($dbfield==="mobile"){
-                $field = "Mobile";
-            }
+               // Define validation rules and messages
+           // Define validation rules and messages
+           $rules = [
+            'id' => 'required|exists:contacts,id',
+            'field' => 'required|in:email,mobile,phone,envelope_salutation',
+            'value' => 'nullable', // Allow the value to be nullable (empty)
+        ];
 
-            if($dbfield==="mailing_address"){
-                $field = "Mailing_Address";
+        $messages = [
+            'id.required' => 'Contact ID is required.',
+            'id.exists' => 'Invalid contact ID.',
+            'field.required' => 'Field type is required.',
+            'field.in' => 'Invalid field type.',
+            'value.email' => 'Invalid email format.',
+            'value.regex' => 'Invalid mobile phone format.',
+            'value.numeric' => $dbfield .' number must be numeric.',
+        ];
+
+        // Add custom validation for email format and phone number format if value is not empty
+        if (!empty($request->input('value'))) {
+            if ($request->input('field') === 'email') {
+                $rules['value'] .= '|email';
+            } elseif ($request->input('field') === 'mobile' || $request->input('field') === 'phone') {
+                $rules['value'] .= '|numeric'; // Regex for international phone numbers
             }
+        }
+
+        // Validate request inputs
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+        }
+        
+            $zoho = new ZohoCRM();
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+    
+            $field = "";
+            switch ($dbfield) {
+                case "email":
+                    $field = "Email";
+                    break;
+                case "mobile":
+                    $field = "Mobile";
+                    break;
+                case "phone":
+                    $field = "Phone";
+                    break;
+                case "envelope_salutation":
+                    $field = "Mailing_Address"; // Adjust field name as needed
+                    break;
+                default:
+                    return response()->json(['error' => 'Invalid field type'], Response::HTTP_BAD_REQUEST);
+            }
+    
             $contact = Contact::findOrFail($id);
+    
             $formData = [
                 'data' => [
                     [
-                      $field => $value,
+                        $field => $value,
                     ],
                 ],
                 'skip_mandatory' => true,
             ];
-
+    
             $zohoContact = $zoho->createContactData($formData, $contact->zoho_contact_id);
-
+    
             if (!$zohoContact->successful()) {
                 return response()->json(['error' => 'Zoho Contact update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-
+    
+            // Update local contact record
             $contact->$dbfield = $value;
             $contact->save();
-            return response()->json(['data'=>$zohoContact,'message'=>"Successfully Updated"]);
+    
+            return response()->json(['data' => $zohoContact, 'message' => "Successfully Updated"]);
+    
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
     
 
     public function showDetailForm($contactId)

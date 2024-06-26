@@ -92,7 +92,6 @@
             </div>
             <div>
                  @component('components.button', [
-                    'clickEvent' => 'fetchDeal()',
                     'label' => 'Filter',
                     'icon' => 'fas fa-filter'
                 ])
@@ -100,7 +99,6 @@
             </div>
             <div>
                    @component('components.button', [
-                    'clickEvent' => 'fetchDeal(\'\', \'\', \'reset_all\')',
                     'label' => 'Reset All',
                     'icon' => 'fas fa-sync'
                 ])

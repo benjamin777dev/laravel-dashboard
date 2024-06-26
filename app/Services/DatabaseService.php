@@ -772,8 +772,7 @@ class DatabaseService
             throw $e;
         }
     }
-
-    public function retreiveContactsJson(User $user, $accessToken, $search = null)
+    public function retreiveContactsJson(User $user, $accessToken, $search = null, $stage = null,$filterobj=null)
     {
         try {
             Log::info("Retrieve contacts from database");
@@ -785,13 +784,44 @@ class DatabaseService
                 $query->where(function ($query) use ($searchTerms) {
                     $query->where('last_name', 'like', '%' . $searchTerms . '%')
                           ->orWhere('email', 'like', '%' . $searchTerms . '%')
-                          ->orWhere('phone', 'like', '%' . $searchTerms . '%')
-                          ->orWhere('abcd', 'like', '%' . $searchTerms . '%');
-                    // Add more OR conditions as needed
+                          ->orWhere('phone', 'like', '%' . $searchTerms . '%');
                 });
+            }
+           
+            if ($filterobj) {
+                // Check for email filter
+                if (isset($filterobj['email']) && $filterobj['email']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('email')->orWhere('email', '');
+                    });
+                }
+    
+                // Check for mobile filter
+                if (isset($filterobj['mobile']) && $filterobj['mobile']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('phone')->orWhere('phone', '');
+                    });
+                }
+    
+                // Check for abcd filter
+                if (isset($filterobj['abcd']) && $filterobj['abcd']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('abcd')->orWhere('abcd', '');
+                    });
+                }
+            }
+
+            // Additional condition for stage
+            if (!empty($stage)) {
+                $searchStage = urldecode($stage);
+                $query->where(function ($query) use ($searchStage) {
+                $query->orWhere('abcd', 'like', '%' . $searchStage . '%');
+            });
             }
     
             $contacts = $query->get();
+    
+            Log::info("Retrieved " . $contacts->count() . " contacts.");
     
             return $contacts;
         } catch (\Exception $e) {
@@ -799,6 +829,7 @@ class DatabaseService
             throw $e;
         }
     }
+    
     
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {

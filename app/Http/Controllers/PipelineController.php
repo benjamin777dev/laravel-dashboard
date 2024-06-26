@@ -421,6 +421,9 @@ class PipelineController extends Controller
             if($dbfield==="commission"){
                 $field = "Commission";
             }
+            if($dbfield==="address"){
+                $field = "Address";
+            }
             
             $deal = Deal::findOrFail($id);
             $formData = [

@@ -93,10 +93,12 @@
             $contactHeader = [
                 "",
                 "Full name",
+                "ABCD",
                 "Relationship Type",
                 "Email",
                 "Mobile",
-                "Address"
+                "Phone",
+                "Envelope"
             ]
         @endphp
 
@@ -118,7 +120,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
-                        <button type="button" onclick="resetFilters()"
+                        <button type="button"
                             class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
                         <button id="close_btn" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
@@ -138,7 +140,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary w-auto filterClosebtn"
                             data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="pfilterBtn w-auto" onclick="applyFilter()">Filter</button>
+                        <button type="button" class="pfilterBtn w-auto">Filter</button>
                     </div>
                 </div>
             </div>

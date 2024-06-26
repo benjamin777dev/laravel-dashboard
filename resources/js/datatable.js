@@ -7,6 +7,42 @@
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands_sep);
             return parts.join(dec_point);
         }
+        function getColorForStage(stage) {
+            switch (stage) {
+                case 'Potential':
+                    return '#dfdfdf';
+                case 'Active':
+                    return '#afafaf';
+                case 'Pre-Active':
+                    return '#cfcfcf';
+                case 'Under Contract':
+                    return '#8f8f8f';
+                case 'Dead-Lost To Competition':
+                    return '#efefef';
+                default:
+                    return '#6f6f6f';
+            }
+        }
+        
+        function getTextColorForStage(stage) {
+            switch (stage) {
+                case 'Under Contract':
+                    return '#fff';
+                default:
+                    return '#000'; // Default text color
+            }
+        }
+        function formateDate(data){
+            const dateObj = new Date(data);
+                
+            // Format the date to display in YYYY-MM-DD format
+            const formattedDate = dateObj.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            return formattedDate;
+        }
       //pipeline data table code
         var table = $('#datatable_pipe_transaction').DataTable({
             paging: true,
@@ -17,8 +53,10 @@
                     data: null,
                     title: "Actions",
                     render: function(data, type, row) {
-                        console.log(data,'datais hereeee')
-                        return `<a href="/pipeline-view/${data.id}" target='_blank'>
+                        let icon="";
+                        if(data.stage==="Under Contract") icon = `<i class="fas fa-lock"></i>`;
+                        return ` ${icon}
+                        <a href="/pipeline-view/${data.id}" target='_blank'>
                         <img src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
                         <span class="tooltiptext"></span>
                     </a>
@@ -45,64 +83,92 @@
                     data: 'deal_name',
                     title: "Transaction",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="deal_name" data-id="${row.id}">${data}</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${data || "N/A"}</span>`;
+                        }
+                        return `<span class="editable" data-name="deal_name" data-id="${row.id}" title="Click to edit">${data || "N/A"}</span>
+                    <br><span class="editable fs-6" data-name="address" data-id="${row.id}" title="Click to edit">${row.address || "Address not available"}</span>`;
                     }
                 },
                 {
                     data: 'client_name_primary',
                     title: "Client Name",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="client_name_primary" data-id="${row.id}">${data}</span>`;
+                        return `<span>${data || "N/A"}</span>`;
                     }
                 },
                 {
                     data: 'stage',
                     title: "Status",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="stage" data-id="${row.id}">${data}</span>`;
+                        console.log(data,'sdfsdhfshd')
+                        if (row.stage === "Under Contract") {
+                            return `<span style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}">${data || "N/A"}</span>`;
+                        } 
+                        return `<span class="editable" data-name="stage" style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}" data-id="${row.id}">${data || "N/A"}</span>`;
                     }
                 },
                 {
                     data: 'representing',
                     title: "Representing",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="representing" data-id="${row.id}">${data}</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${data || "N/A"}</span>`;
+                        } 
+                        return `<span class="editable" data-name="representing" data-id="${row.id}">${data || "N/A"}</span>`;
                     }
                 },
                 {
                     data: 'sale_price',
                     title: "Price",
                     render: function(data, type, row) {
-                        console.log(data, 'datattas')
-                        return `<span class="editable" data-name="sale_price" data-id="${row.id}">$${number_format(data, 0, '.', ',')}</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${data || "N/A"}</span>`;
+                        } 
+                        return `<span class="editable" data-name="sale_price" data-id="${row.id}">$${number_format(data, 0, '.', ',') || "N/A"}</span>`;
                     }
                 },
                 {
                     data: 'closing_date',
                     title: "Close Date",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="closing_date" data-id="${row.id}">${data}</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${formateDate(data) || "N/A"}</span>`;
+                        } 
+                        if (data) {
+                            // Create a Date object from the ISO 8601 format string
+                          
+                
+                            // Return the formatted date
+                            return `<span class="editable" data-name="closing_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+                        }
                     }
                 },
                 {
                     data: 'commission',
                     title: "Commission",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="commission" data-id="${row.id}">${data}%</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${data || "N/A"}</span>`;
+                        } 
+                        return `<span class="editable" data-name="commission" data-id="${row.id}">${data || "N/A"}%</span>`;
                     }
                 },
                 {
                     data: 'potential_gci',
                     title: "Potential GCI",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="potential_gci" data-id="${row.id}">${data}</span>`;
+                        return `<span>${data || "N/A"}</span>`;
                     }
                 },
                 {
                     data: 'pipeline_probability',
                     title: "Probability",
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="pipeline_probability" data-id="${row.id}">${data}%</span>`;
+                        if (row.stage === "Under Contract") {
+                            return `<span>${data || "N/A"}</span>`;
+                        } 
+                        return `<span class="editable" data-name="pipeline_probability" data-id="${row.id}">${data || "N/A"}%</span>`;
                     }
                 },
                 {
@@ -125,7 +191,6 @@
                     request.stage = $('#related_to_stage').val(),
                     request.page = (request.start / request.length) + 1;
                     request.search = request.search.value;
-
                 },
                 dataSrc: function(data) {
                     return data?.data; // Return the data array or object from your response
@@ -219,7 +284,7 @@
 
                     // Check if the value has changed
                     if (newValue !== currentText) {
-
+                        $("#datatable_pipe_transaction_processing").css("display", "block");
                         // Example AJAX call (replace with your actual endpoint and data):
                         $.ajax({
                             url: '/deals/update/' + dataId,
@@ -234,13 +299,17 @@
                             },
                             success: function(response) {
                                 console.log('Updated successfully:', response);
+                                $("#datatable_pipe_transaction_processing").css("display", "none");
                                 if (response?.message) {
                                     showToast(response?.message);
+                                    $('#datatable_pipe_transaction').DataTable().ajax.reload();
                                 }
                             },
                             error: function(error) {
                                 console.error('Error updating:', error);
+                                $("#datatable_pipe_transaction_processing").css("display", "none");
                                 showToastError(error?.responseJSON?.error);
+                                $('#datatable_pipe_transaction').DataTable().ajax.reload();
                             }
                         });
                     }
@@ -278,6 +347,7 @@
         });
         $('#Reset_All').on('click', function() {
             $('#pipelineSearch').val("");
+            $('#related_to_stage').val("");
             table.search("").draw();
         });
 
@@ -733,7 +803,7 @@
         });
 
 
- function generateModalHtml(data) {
+        function generateModalHtml(data) {
             return `
                 <div class="modal fade" id="newTaskModalId${data.id}" tabindex="-1">
                     <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
@@ -883,226 +953,274 @@
 
  //contact data table code
 
- var tableContact = $('#datatable_contact').DataTable({
-    paging: true,
-    searching: true,
-    "processing": true,
-    serverSide: true,
-    columns: [{
-            data: null,
-            title: "Actions",
-            render: function(data, type, row) {
-                return `<a href="/contacts-view/${data.id}" target='_blank'>
-                <img src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
-                <span class="tooltiptext"></span>
-            </a>
-            <img src="/images/splitscreen.svg" alt="Split screen icon"
-                    class="ppiplinecommonIcon" data-bs-toggle="modal"
-                    data-bs-target="#newTaskModalId${data.id}" title="Add Task">
-                <span class="tooltiptext"></span>
-                ${generateModalHtml(data)}
-            <img src="/images/sticky_note.svg" alt="Sticky note icon"
-                    class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
-                    onclick="fetchNotesForContact('${data.id}','${data.zoho_contact_id}','Contacts')">
-                <span class="tooltiptext"></span>
-                ${fetchNotesDeal(data.zoho_contact_id)}
-            <img src="/images/noteBtn.svg" alt="Note icon"
-                    class="ppiplinecommonIcon" data-bs-toggle="modal"
-                    onclick="createNotesForContact('${data.id}','${data.zoho_contact_id}')"
-                    data-bs-target="#staticBackdropforNote_${data.id}">
-                <span class="tooltiptext"></span>
-                <div class="createNoteModal"></div>
-                `;
-            }
-        },
-        {
-            data: 'last_name',
-            title: "Full name",
-            render: function(data, type, row) {
-                return `<span class="editable" data-name="last_name" data-id="${row.id}">${data}</span>`;
-            }
-        },
-        {
-            data: 'relationship_type',
-            title: "Relationship Type",
-            render: function(data, type, row) {
-                return `<span class="editable" data-name="relationship_type" data-id="${row.id}">${data}</span>`;
-            }
-        },
-        {
-            data: 'email',
-            title: "Email",
-            render: function(data, type, row) {
-                return `<span class="editable" data-name="email" data-id="${row.id}">${data}</span>`;
-            }
-        },
-        {
-            data: 'mobile',
-            title: "Mobile",
-            render: function(data, type, row) {
-                return `<span class="editable" data-name="mobile" data-id="${row.id}">${data}</span>`;
-            }
-        },
-        {
-            data: 'mailing_address',
-            title: "Address",
-            render: function(data, type, row) {
-                return `<span class="editable" data-name="mailing_address" data-id="${row.id}">${data}</span>`;
-            }
-        },
-    ],
-    ajax: {
-        url: '/contact_view', // Ensure this URL is correct
-        type: 'GET', // or 'POST' depending on your server setup
-        "data": function(request) {
-            request._token = "{{ csrf_token() }}";
-            request.perPage = request.length;
-            request.stage = $('#related_to_stage').val(),
-            request.page = (request.start / request.length) + 1;
-            request.search = request.search.value;
+        var tableContact = $('#datatable_contact').DataTable({
+            paging: true,
+            searching: true,
+            processing: true,
+            responsive: true,
+            serverSide: true,
+            order: [0, 'desac'],
+            columns: [{
+                    data: null,
+                    title: "Actions",
+                    render: function(data, type, row) {
+                        return `<a href="/contacts-view/${data.id}" target='_blank'>
+                        <img src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
+                        <span class="tooltiptext"></span>
+                    </a>
+                    <img src="/images/splitscreen.svg" alt="Split screen icon"
+                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                            data-bs-target="#newTaskModalId${data.id}" title="Add Task">
+                        <span class="tooltiptext"></span>
+                        ${generateModalHtml(data)}
+                    <img src="/images/sticky_note.svg" alt="Sticky note icon"
+                            class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
+                            onclick="fetchNotesForContact('${data.id}','${data.zoho_contact_id}','Contacts')">
+                        <span class="tooltiptext"></span>
+                        ${fetchNotesDeal(data.zoho_contact_id)}
+                    <img src="/images/noteBtn.svg" alt="Note icon"
+                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                            onclick="createNotesForContact('${data.id}','${data.zoho_contact_id}')"
+                            data-bs-target="#staticBackdropforNote_${data.id}">
+                        <span class="tooltiptext"></span>
+                        <div class="createNoteModal"></div>
+                        `;
+                    }
+                },
+                {
+                    data: 'last_name',
+                    title: "Full name",
+                    render: function(data, type, row) {
+                        return `<span>${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'abcd',
+                    title: "ABCD",
+                    render: function(data, type, row) {
+                        return `<span>${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'relationship_type',
+                    title: "Relationship Type",
+                    render: function(data, type, row) {
+                        return `<span>${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'email',
+                    title: "Email",
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="email" data-id="${row.id}">${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'mobile',
+                    title: "Mobile",
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="mobile" data-id="${row.id}">${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'phone',
+                    title: "Phone",
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="phone" data-id="${row.id}">${data || 'N/A'}</span>`;
+                    }
+                },
+                {
+                    data: 'envelope_salutation',
+                    title: "Envelope",
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="envelope_salutation" data-id="${row.id}">${data || 'N/A'}</span>`;
+                    }
+                },
+            ],
+            ajax: {
+                url: '/contact_view', // Ensure this URL is correct
+                type: 'GET', // or 'POST' depending on your server setup
+                "data": function(request) {
+                    request._token = "{{ csrf_token() }}";
+                    request.perPage = request.length;
+                    var contactSortValue = $('#contactSort').val();
+                    
+                    var emailChecked = $('#filterEmail').prop('checked');
+                    var mobileChecked = $('#filterMobile').prop('checked');
+                    var abcdChecked = $('#filterABCD').prop('checked');
+                    if(emailChecked || mobileChecked || abcdChecked){
+                        request.filterobj = {
+                            email:emailChecked,
+                            mobile:mobileChecked,
+                            abcd:abcdChecked
+                        }
+                    }
+                    if (contactSortValue) {
+                        request.stage = contactSortValue;
+                    }
+                    request.page = (request.start / request.length) + 1;
+                    request.search = request.search.value;
+                    console.log(request,'request')
 
-        },
-        dataSrc: function(data) {
-            return data?.data; // Return the data array or object from your response
-        }
-    },
-    initComplete: function() {
-        // Function to handle editing mode
-        var currentText;
-        function enterEditMode(element) {
-            if ($(element).hasClass('editing')) {
-                return; // Do nothing if already editing
-            }
+                },
+                dataSrc: function(data) {
+                    document.getElementById('close_btn').click();
+                    return data?.data; // Return the data array or object from your response
+                }
+            },
+            initComplete: function() {
+                // Function to handle editing mode
+                var currentText;
+                function enterEditMode(element) {
+                    if ($(element).hasClass('editing')) {
+                        return; // Do nothing if already editing
+                    }
 
-            // Close any other editing inputs
-            $('#datatable_contact tbody').find('input.edit-input, select.edit-input').each(
-                function() {
-                    var newValue = $(this).val();
-                    var dataName = $(this).data('name');
-                    var dataId = $(this).data('id');
-                    $(this).replaceWith(
-                        `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
-                    );
+                    // Close any other editing inputs
+                    $('#datatable_contact tbody').find('input.edit-input, select.edit-input').each(
+                        function() {
+                            var newValue = $(this).val();
+                            var dataName = $(this).data('name');
+                            var dataId = $(this).data('id');
+                            $(this).replaceWith(
+                                `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                            );
+                        });
+
+                    currentText = $(element).text(); // Set currentText when entering edit mode
+                    var dataName = $(element).data('name');
+                    var dataId = $(element).data('id');
+
+                    // Replace span with input or select for editing
+                    if (dataName !== "closing_date" && dataName !== "stage" && dataName !== "representing") {
+                        $(element).replaceWith(
+                            `<input type="text" class="edit-input form-control" value="${currentText}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "closing_date") {
+                        $(element).replaceWith(
+                            `<input type="date" class="edit-input form-control" value="${formatDate(currentText)}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "stage") {
+                        // Fetch stage options from backend (example)
+                        var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
+                        var selectOptions = stageOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    } else if (dataName === "representing") {
+                        // Fetch representing options from backend (example)
+                        var representingOptions = ['Buyer', 'Seller'];
+                        var selectOptions = representingOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    }
+
+                    // Focus on the input field or select dropdown
+                    $('#datatable_contact tbody').find('input.edit-input, select.edit-input').focus();
+                }
+
+
+                // Function to handle exiting editing mode
+                function exitEditMode(inputElement) {
+                    var newValue = $(inputElement).val();
+                    var dataName = $(inputElement).data('name');
+                    var conId = $(inputElement).data('id');
+
+                    // Replace input or select with span
+                    $(inputElement).replaceWith(
+                        `<span class="editable" data-name="${dataName}" data-id="${conId}">${newValue}</span>`
+                    ).removeClass('editing');
+
+                    // Check if the value has changed
+                    if (newValue !== currentText) {
+                        $("#datatable_contact_processing").css("display", "block");
+                        // Example AJAX call (replace with your actual endpoint and data):
+                        $.ajax({
+                            url: '/contact/update/' + conId,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                id: conId,
+                                field: dataName,
+                                value: newValue
+                            },
+                            success: function(response) {
+                                console.log('Updated successfully:', response);
+                                $("#datatable_contact_processing").css("display", "none");
+                                if (response?.message) {
+                                    showToast(response?.message);
+                                    $('#datatable_contact').DataTable().ajax.reload();
+                                }
+                            },
+                            error: function(error) {
+                                console.error('Error updating:', error);
+                                $("#datatable_contact_processing").css("display", "none");
+                                $('#datatable_contact').DataTable().ajax.reload();
+                                showToastError(error?.responseJSON?.error);
+                            }
+                        });
+                    }
+                }
+
+                // Click event to enter editing mode
+                $('#datatable_contact tbody').on('click', 'span.editable', function() {
+                    enterEditMode(this);
                 });
 
-            currentText = $(element).text(); // Set currentText when entering edit mode
-            var dataName = $(element).data('name');
-            var dataId = $(element).data('id');
-
-            // Replace span with input or select for editing
-            if (dataName !== "closing_date" && dataName !== "stage" && dataName !== "representing") {
-                $(element).replaceWith(
-                    `<input type="text" class="edit-input form-control" value="${currentText}" data-name="${dataName}" data-id="${dataId}">`
-                ).addClass('editing');
-            } else if (dataName === "closing_date") {
-                $(element).replaceWith(
-                    `<input type="date" class="edit-input form-control" value="${formatDate(currentText)}" data-name="${dataName}" data-id="${dataId}">`
-                ).addClass('editing');
-            } else if (dataName === "stage") {
-                // Fetch stage options from backend (example)
-                var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
-                var selectOptions = stageOptions.map(option => {
-                    return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
-                }).join('');
-
-                $(element).replaceWith(
-                    `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
-            ${selectOptions}
-        </select>`
-                ).addClass('editing');
-            } else if (dataName === "representing") {
-                // Fetch representing options from backend (example)
-                var representingOptions = ['Buyer', 'Seller'];
-                var selectOptions = representingOptions.map(option => {
-                    return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
-                }).join('');
-
-                $(element).replaceWith(
-                    `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
-            ${selectOptions}
-        </select>`
-                ).addClass('editing');
-            }
-
-            // Focus on the input field or select dropdown
-            $('#datatable_contact tbody').find('input.edit-input, select.edit-input').focus();
-        }
-
-
-        // Function to handle exiting editing mode
-        function exitEditMode(inputElement) {
-            var newValue = $(inputElement).val();
-            var dataName = $(inputElement).data('name');
-            var conId = $(inputElement).data('id');
-
-            // Replace input or select with span
-            $(inputElement).replaceWith(
-                `<span class="editable" data-name="${dataName}" data-id="${conId}">${newValue}</span>`
-            ).removeClass('editing');
-
-            // Check if the value has changed
-            if (newValue !== currentText) {
-
-                // Example AJAX call (replace with your actual endpoint and data):
-                $.ajax({
-                    url: '/contact/update/' + conId,
-                    type: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        id: conId,
-                        field: dataName,
-                        value: newValue
-                    },
-                    success: function(response) {
-                        console.log('Updated successfully:', response);
-                        if (response?.message) {
-                            showToast(response?.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.error('Error updating:', error);
-                        showToastError(error?.responseJSON?.error);
+                // Keyup event to exit editing mode on Enter
+                $('#datatable_contact tbody').on('keyup', 'input.edit-input', function(event) {
+                    if (event.key === "Enter") {
+                        exitEditMode(this);
                     }
                 });
-            }
-        }
+                // Handle onchange event for select
+                $('#datatable_contact tbody').on('change', 'select.edit-input', function() {
+                    exitEditMode(this); // Exit edit mode when a selection is made
+                });
 
-        // Click event to enter editing mode
-        $('#datatable_contact tbody').on('click', 'span.editable', function() {
-            enterEditMode(this);
-        });
-
-        // Keyup event to exit editing mode on Enter
-        $('#datatable_contact tbody').on('keyup', 'input.edit-input', function(event) {
-            if (event.key === "Enter") {
-                exitEditMode(this);
+                // Blur event to exit editing mode when clicking away
+                $('#datatable_contact tbody').on('blur', 'input.edit-input', function() {
+                    exitEditMode(this);
+                });
             }
         });
-        // Handle onchange event for select
-        $('#datatable_contact tbody').on('change', 'select.edit-input', function() {
-            exitEditMode(this); // Exit edit mode when a selection is made
-        });
-
-        // Blur event to exit editing mode when clicking away
-        $('#datatable_contact tbody').on('blur', 'input.edit-input', function() {
-            exitEditMode(this);
-        });
-    }
-});
 
         $('#contactSearch').on('keyup', function() {
             tableContact.search(this.value).draw();
         });
 
         $('#contactSort').on('change', function() {
-            tableContact.search(this.value).draw();
+            tableContact.search("").draw();
         });
-        
+        $('.pfilterBtn').on('click', function() {
+            tableContact.search("").draw();
+        });
+         
+        $('.filterClosebtn').on('click', function() {
+            $('#filterEmail').prop('checked',false);
+            $('#filterMobile').prop('checked',false);
+            $('#filterABCD').prop('checked',false);
+            tableContact.search("").draw();
+        });
         $('#Reset_All').on('click', function() {
             $('#contactSearch').val("");
             $('#contactSort').val("");  
+            $('#filterEmail').prop('checked',false);
+            $('#filterMobile').prop('checked',false);
+            $('#filterABCD').prop('checked',false);
             tableContact.search("").draw();
         });
 

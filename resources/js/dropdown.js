@@ -305,6 +305,7 @@ window.addCommonTask = function (id = "", type = "") {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    
     $.ajax({
         url: '/create-task',
         type: 'POST',
@@ -317,7 +318,6 @@ window.addCommonTask = function (id = "", type = "") {
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
                 formData = "";
-                window.location.reload();
             } else {
                 showToastError("Response or message not found");
             }
