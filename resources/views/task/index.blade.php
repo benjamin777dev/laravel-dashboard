@@ -43,7 +43,7 @@
             <!-- In Progress Tasks -->
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-4">In Progress</h4>
+                    <h4 class="card-title mb-4">Due Today</h4>
                     <div class="table-responsive">
                         <table class="table table-nowrap align-middle mb-0">
                             <tbody>
@@ -62,7 +62,7 @@
                 </div>
             </div>
 
-            <!-- Completed Tasks -->
+            <!-- Overdue Tasks -->
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Overdue</h4>
@@ -76,6 +76,28 @@
                                 @else
                                     <tr>
                                         <td class="text-center" colspan="5">No overdue tasks found</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Tasks -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Completed</h4>
+                    <div class="table-responsive">
+                        <table class="table table-nowrap align-middle mb-0">
+                            <tbody>
+                                @if (count($completedTasks) > 0)
+                                    @foreach ($completedTasks as $task)
+                                        @include('task.partials.task_row', ['task' => $task])
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td class="text-center" colspan="5">No completed tasks found</td>
                                     </tr>
                                 @endif
                             </tbody>

@@ -31,6 +31,8 @@
             </div>
             
             <div class="d-flex">
+                // if completed, don't show buttons
+                // but do show the completed date
                 @php
                     $taskzId = $task['zoho_task_id'];
                     $taskId = $task['id'];

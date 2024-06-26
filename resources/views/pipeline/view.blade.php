@@ -6,6 +6,16 @@
 @vite(['resources/css/pipeline.css'])
 @vite(['resources/js/toast.js'])
 
+
+@if (!isset($deal['deal_name']) && !isset($deal['deal_id']))
+    <div class="container-fluid">
+        <div class="commonFlex ppipeDiv">
+            No Deal Found
+        </div>
+    </div>
+    
+@else
+
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
         <p class="pText">{{ $deal['deal_name'] }}</p>
@@ -188,4 +198,5 @@
     }
     
 </script>
+@endif
 @endsection
