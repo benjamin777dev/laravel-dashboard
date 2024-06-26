@@ -44,7 +44,7 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DatabaseService();
 
-        $modules = ['Contacts', 'Groups', 'Tasks', 'Deals']; // Add other modules as needed
+        $modules = ['Contacts', 'Groups', 'Tasks', 'Deals', 'Contacts_X_Groups']; // Add other modules as needed
         Log::info("Syncing data for modules: " . implode(', ', $modules));
 
         // Sync users separately using the REST API

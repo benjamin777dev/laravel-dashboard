@@ -171,7 +171,7 @@
             } catch (error) {
                 isValid = false;
                 showToastError(error.message)
-                return false 
+                return false
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -219,7 +219,7 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        window.location.href = "https://zportal.coloradohomerealty.com/pipeline-view/" + submittal.deal_data.zoho_deal_id;
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -339,8 +339,8 @@
                     });
                 });
             }
-            
-            
+
+
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
                 showToastError("Additional Email for confirmation should be in email format")
@@ -362,7 +362,7 @@
                 var feesCharged = ($('#feesCharged').val()!='$')?convertInInteger($('#feesCharged').val()):null;
             } catch (error) {
                 isValid = false;
-                showToastError(error.message) 
+                showToastError(error.message)
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -461,7 +461,7 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        window.location.href = "https://zportal.coloradohomerealty.com/pipeline-view/" + submittal.deal_data.zoho_deal_id;
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -472,6 +472,8 @@
             }
         }
     }
-   
+
 </script>
 @endsection
+
+

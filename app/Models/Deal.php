@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use Ramsey\Uuid\Type\Decimal;
 
 class Deal extends Model
 {
@@ -47,7 +46,12 @@ class Deal extends Model
 
     public function contactName()
     {
-        return $this->belongsTo(Contact::class, 'contact_name_id','zoho_contact_id');
+        return $this->belongsTo(Contact::class, 'contact_name_id', 'zoho_contact_id');
+    }
+
+    public function contactNames()
+    {
+        return $this->hasMany(Contact::class, 'contact_name_id', 'zoho_contact_id');
     }
 
     public function tasks()
@@ -63,6 +67,89 @@ class Deal extends Model
     public function leadAgent()
     {
         return $this->belongsTo(User::class, 'lead_agent_id', 'root_user_id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Contact::class, 'contactId');
+    }
+
+    public function clientContact()
+    {
+        return $this->belongsTo(Contact::class, 'client_name_id', 'zoho_contact_id');
+    }
+
+    public function getClientFromClientNameOnly()
+    {
+        if (is_null($this->client_name_only) || $this->client_name_only == '') {
+            return null;
+        }
+
+        $clientData = explode('||', $this->client_name_only);
+        if (count($clientData) < 2) {
+            return null;
+        }
+
+        $clientId = trim($clientData[1]);
+
+        return Contact::where('zoho_contact_id', $clientId)->first();
+    }
+
+    public function getContactRoles()
+    {
+        $roles = collect();
+
+        // Client and Spouse
+        $client = $this->getClientFromClientNameOnly();
+        if ($client) {
+            $roles->push(
+                ['name' => $client->first_name . ' ' . $client->last_name,
+                    'role' => 'Client',
+                    'phone' => $client->phone,
+                    'email' => $client->email,
+                ]);
+            $spouse = $client->getSpouse();
+            if ($spouse) {
+                $roles->push([
+                    'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                    'role' => 'Client',
+                    'phone' => $spouse->phone,
+                    'email' => $spouse->email]);
+            }
+        }
+
+        // Lead Agent and CHR Agent
+        $leadAgent = $this->leadAgent;
+        $contactName = $this->contactName;
+        if ($leadAgent) {
+            $roles->push(['name' => $leadAgent->name,
+                'role' => 'CHR Agent',
+                'phone' => $leadAgent->phone,
+                'email' => $leadAgent->email,
+            ]);
+            if ($contactName) {
+                $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
+                    'role' => 'Co-Listing Agent',
+                    'phone' => $contactName->phone,
+                    'email' => $contactName->email]);
+            }
+        } elseif ($contactName) {
+            $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
+                'role' => 'CHR Agent',
+                'phone' => $contactName->phone,
+                'email' => $contactName->email]);
+        }
+
+        // Transaction Manager
+        $tm = $this->tmName;
+        if ($tm) {
+            $roles->push(['name' => $tm->name,
+                'role' => 'Transaction Manager',
+                'phone' => $tm->phone,
+                'email' => $tm->email]);
+        }
+
+        return $roles;
     }
 
     /**
@@ -83,7 +170,7 @@ class Deal extends Model
         // so we don't need to check for null here
         $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] : $data['Contact_Name'];
         if ($contactNameId == null) {
-            Log::error("No contact ID found! ", ['data'=> $data]);
+            Log::error("No contact ID found! ", ['data' => $data]);
             $contactNameId = $source == "webhook" ? $data['Owner']['id'] : $data['Owner'];
             if (!$contactNameId) {
                 return new Deal();
@@ -98,13 +185,12 @@ class Deal extends Model
             $userId = $dealUser->id;
         }
 
-
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
         $data['Closing_Date'] = isset($data['Closing_Date']) ? Carbon::parse($data['Closing_Date'])->format('Y-m-d H:i:s') : null;
         $data['Create_Date'] = isset($data['Create_Date']) ? Carbon::parse($data['Create_Date'])->format('Y-m-d H:i:s') : null;
         $data['Lead_Conversion_Time'] = isset($data['Lead_Conversion_Time']) ? Carbon::parse($data['Lead_Conversion_Time'])->format('Y-m-d H:i:s') : null;
-        
+
         $mappedData = [
             'address' => $data['Address'] ?? null,
             'approval_state' => $data['Approval_State'] ?? null,
@@ -116,11 +202,11 @@ class Deal extends Model
             'client_name_only' => $data['Client_Name_Only'] ?? null,
             'client_name_primary' => $data['Client_Name_Primary'] ?? null,
             'closing_date' => $data['Closing_Date'] ?? null,
-            'commission' => (float)($data['Commission'] ?? null),
+            'commission' => (float) ($data['Commission'] ?? null),
             'commission_flat_fee' => $data['Commission_Flat_Fee'] ?? null,
             'commission_flat_free' => $data['Commission_Flat_Fee'] ?? null,
             'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
-            'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
+            'contractId' => $source == "webhook" ? ((int) ($data['Contract']['id'] ?? null)) : ((int) ($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
             'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
             'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
@@ -135,7 +221,7 @@ class Deal extends Model
             'deadline_em_opt_out' => (int) ($data['Deadline_Emails'] ?? null),
             'deadline_emails' => (int) ($data['Deadline_Emails'] ?? null),
             'double_ended' => (int) ($data['Double_Ended'] ?? null),
-            'exchange_rate' => (float)($data['Exchange_Rate'] ?? null),
+            'exchange_rate' => (float) ($data['Exchange_Rate'] ?? null),
             'final_commission_for_agent' => $data['Final_Commission_for_Agent'] ?? null,
             'final_commission_for_co_op_agent_flat_fee' => $data['Final_Commission_for_Co_Op_Agent_Flat_Fee'] ?? null,
             'financing' => $data['Financing'] ?? null,
@@ -164,25 +250,25 @@ class Deal extends Model
             'original_co_op_commission' => $data['Original_Co_Op_Commission'] ?? null,
             'original_co_op_commission_flat_fee' => $data['Original_Co_Op_Commission_Flat_Fee'] ?? null,
             'original_commission_for_agent_flat_fee' => $data['Original_Commission_For_Agent_Flat_Fee'] ?? null,
-            'original_listing_price' => (float)($data['Original_Listing_Price'] ?? null),
-            'overall_sales_duration' => (int)($data['Overall_Sales_Duration'] ?? null),
+            'original_listing_price' => (float) ($data['Original_Listing_Price'] ?? null),
+            'overall_sales_duration' => (int) ($data['Overall_Sales_Duration'] ?? null),
             'owner_email' => $data['Owner']['email'] ?? null,
             'owner_id' => $source == "webhook" ? ($data['Owner']['id'] ?? null) : ($data['Owner'] ?? null),
             'owner_name' => $data['Owner']['name'] ?? null,
             'ownership_type' => $data['Ownership_Type'] ?? null,
             'personal_transaction' => (int) ($data['Personal_Transaction'] ?? null),
             'pipeline1' => $data['Pipeline1'] ?? null,
-            'pipeline_probability' => (float)($data['Pipeline_Probability'] ?? null),
+            'pipeline_probability' => (float) ($data['Pipeline_Probability'] ?? null),
             'potential_gci' => $data['Potential_GCI'] ?? null,
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
-            'probability' => (float)($data['Probability'] ?? null),
+            'probability' => (float) ($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
             'property_type' => $data['Property_Type'] ?? null,
             'representing' => $data['Representing'] ?? null,
             'review_gen_opt_out' => (int) ($data['Review_Gen_Opt_Out'] ?? null),
             'review_process' => json_encode($data['review_process'] ?? null),
-            'sale_price' => (float)($data['Sale_Price'] ?? null),
-            'sales_cycle_duration' => (int)($data['Sales_Cycle_Duration'] ?? null),
+            'sale_price' => (float) ($data['Sale_Price'] ?? null),
+            'sales_cycle_duration' => (int) ($data['Sales_Cycle_Duration'] ?? null),
             'stage' => $data['Stage'] ?? null,
             'state' => $data['State'] ?? null,
             'status_reports' => (int) ($data['Status_Reports'] ?? null),
@@ -200,7 +286,7 @@ class Deal extends Model
             'z_project_id' => $data['Z_Project_ID'] ?? null,
             'zip' => $data['Zip'] ?? null,
         ];
-        
+
         return $mappedData;
     }
 
