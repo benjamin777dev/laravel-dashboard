@@ -3,7 +3,11 @@
         <p class="nproletext">Submittals</p>
         <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
             <i class="fas fa-plus plusicon"></i>
-            Add New Submittal
+            @if ($submittals->count() === 0)
+                Add New Submittal
+            @else
+                Show Submittal
+            @endif
         </div>
 
     </div>
