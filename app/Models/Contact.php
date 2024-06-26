@@ -162,6 +162,11 @@ class Contact extends Model
         return $this->belongsTo(User::class, 'contact_owner','root_user_id');
     }
 
+    public function spouseContact()
+    {
+        return $this->belongsTo(Contact::class, 'spouse_partner','zoho_contact_id');
+    }
+
     public function contactName()
     {
         return $this->belongsTo(Contact::class, 'contactId');

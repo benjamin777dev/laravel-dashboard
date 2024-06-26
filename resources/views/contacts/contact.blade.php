@@ -8,7 +8,7 @@
                         <tr>
                             <th></th>
                             <th data-sort-type="text">
-                                <div class="commonFlex" onclick="sortContact('last_name',this)">
+                                <div class="commonFlex" onclick="sortContact('first_name,last_name',this)">
                                     <p class="mb-0">Full name</p>
                                     <div class="d-flex flex-column">
                                         <i class="bx bx-caret-up up-arrow"></i>
@@ -103,7 +103,7 @@
                         <div class="d-flex justify-content-between align-items-center dacHeaderDiv">
                             <div class="d-flex gap-2">
                                 <h5 class="card-title" id="first_name{{ $contact['zoho_contact_id'] }}">
-                                    {{ $contact['first_name'] . ' ' . $contact['last_name'] ?? 'N/A' }}</h5>
+                                    {{ $contact['first_name']}} {{$contact['last_name'] ?? 'N/A' }}</h5>
                             </div>
 
                             <p class="databaseCardWord">
