@@ -14,7 +14,7 @@
                         </option>
                         @foreach ($contacts as $contact)
                             <option value="{{ $contact }}"
-                                {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact[' last_name'] ? 'selected' : '' }}>
+                                {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
                                 {{ $contact['first_name'] }} {{ $contact['last_name'] }}
                             </option>
                         @endforeach
@@ -116,7 +116,7 @@
                 </div>
             </form>
             <div class="commonFlex mt-3">
-                <a onclick="updateDataDeal('{{ $deal['zoho_deal_id'] }}')">
+                <a onclick="updateDataDeal({{ $deal['id'] }})">
                     <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton" data-bs-toggle="modal"
                         data-bs-target="#"><i class="fas fa-save">
                         </i>

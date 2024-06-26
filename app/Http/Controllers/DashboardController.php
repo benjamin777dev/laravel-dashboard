@@ -735,10 +735,10 @@ class DashboardController extends Controller
             // Save the Note to the database
             $note->save();
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Note saved successfully!');
+            return $note;
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error', 'Note Not saved successfully!');
+            // return redirect()->back()->with('error', 'Note Not saved successfully!');
             return "somthing went wrong" . $e->getMessage();
         }
     }

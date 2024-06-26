@@ -289,14 +289,14 @@ class PipelineController extends Controller
             return response()->json($isIncompleteDeal);
         } else {
 
-            $zohoDeal = $zoho->createZohoDeal($jsonData);
-            if (!$zohoDeal->successful()) {
-                return "error somthing" . $zohoDeal;
-            }
-            $zohoDealArray = json_decode($zohoDeal, true);
-            $data = $zohoDealArray['data'][0]['details'];
+            // $zohoDeal = $zoho->createZohoDeal($jsonData);
+            // if (!$zohoDeal->successful()) {
+            //     return "error somthing" . $zohoDeal;
+            // }
+            // $zohoDealArray = json_decode($zohoDeal, true);
+            // $data = $zohoDealArray['data'][0]['details'];
             $dealData = $jsonData['data'][0];
-            $deal = $db->createDeal($user, $accessToken, $data, $dealData);
+            $deal = $db->createDeal($user, $accessToken, $dealData);
             return response()->json($deal);
         }
 
@@ -315,7 +315,18 @@ class PipelineController extends Controller
             $zoho->access_token = $accessToken;
 
             $jsonData = $request->json()->all();
-            $zohoDeal = $zoho->updateZohoDeal($jsonData, $id);
+            $deal = $db->retrieveDealById($user,$accessToken,$id);
+            if(!$deal){
+                $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
+                if(!$deal){
+                    return response()->json(['error' => 'Deal Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+            if($deal->isDealCompleted){
+                $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
+            }else{
+                $zohoDeal= $zoho->createZohoDeal($jsonData);
+            }
 
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -332,7 +343,7 @@ class PipelineController extends Controller
             $zohoDeal_Array = json_decode($resp, true);
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
-            $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
+            $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
 
             return response()->json($zohoDealArray);
         } catch (\Throwable $th) {

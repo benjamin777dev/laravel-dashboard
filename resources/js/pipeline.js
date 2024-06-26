@@ -394,7 +394,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     const upperCaseMessage =
                         response.data[0].message.toUpperCase();
                     showToast(upperCaseMessage);
-                    getCreateForm(dbDealId);
+                    window.location.href = "/pipeline-view/" + dealId;
                     // window.location.reload();
                 }
             },
