@@ -716,7 +716,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->id]];
+            $conditions = [['contact_owner', $user->root_user_id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
 
             if ($search !== null && $search !== '') {
