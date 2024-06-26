@@ -19,9 +19,9 @@
                         id="validationDefault01" 
                         @if($deal['locked_s']) disabled @endif
                         required>
-                    <option value="" disabled {{ empty($deal['client_name_primary']) ? 'selected' : '' }}>Please select</option>
+                    <option value="" disabled {{ ($deal['client_name_primary']) ? 'selected' : '' }}>Please select</option>
                     @foreach($contacts as $contact)
-                        <option value="{{ $contact['first_name'] . ' ' . $contact['last_name'] }}" 
+                        <option value="{{ $contact}}" 
                             {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
                             {{ $contact['first_name'] }} {{ $contact['last_name'] }}
                         </option>

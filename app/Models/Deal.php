@@ -62,7 +62,7 @@ class Deal extends Model
 
     public function leadAgent()
     {
-        return $this->belongsTo(User::class, 'lead_agent', 'root_user_id');
+        return $this->belongsTo(User::class, 'lead_agent_id', 'root_user_id');
     }
 
     /**

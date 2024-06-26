@@ -754,7 +754,11 @@ class DatabaseService
 
             // Apply sorting if specified
             if ($sortValue && $sortType) {
-                $contacts->orderBy($sortValue, $sortType);
+                if ($sortValue == 'first_name,last_name') {
+                   $contacts->orderByRaw("CONCAT_WS(' ', first_name, last_name) $sortType");
+                } else {
+                    $contacts->orderBy($sortValue, $sortType);
+                }
             } else {
                 $contacts->orderBy('updated_at', 'desc');
             }
@@ -1063,10 +1067,10 @@ class DatabaseService
         }
     }
 
-    public function createDeal(User $user, $accessToken, $zohoDeal, $dealData)
+    public function createDeal(User $user, $accessToken, $dealData)
     {
         try {
-            Log::info("User Deatils" . json_encode($zohoDeal));
+            Log::info("User Deatils" . json_encode($dealData));
             if (isset($dealData['Client_Name_Only'])) {
                 $clientId = explode("||", $dealData['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
@@ -1080,8 +1084,8 @@ class DatabaseService
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
                 'userID' => $user->id,
-                'isInZoho' => true,
-                'zoho_deal_id' => $zohoDeal['id'],
+                'isInZoho' => false,
+                // 'zoho_deal_id' => $zohoDeal['id'],
                 'client_name_primary' => isset($dealData['Client_Name_Primary']) ? $dealData['Client_Name_Primary'] : null,
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
@@ -1137,56 +1141,61 @@ class DatabaseService
         }
     }
 
-    public function updateDeal(User $user, $accessToken, $deal, $id)
+    public function updateDeal(User $user, $accessToken, $zohoDeal, $DBdeal)
     {
         try {
             $helper = new Helper();
-            Log::info("User Details", $deal);
-            if ($deal['Client_Name_Only']) {
-                $clientId = explode("||", $deal['Client_Name_Only']);
+            Log::info("User Details", $zohoDeal);
+            if ($zohoDeal['Client_Name_Only']) {
+                $clientId = explode("||", $zohoDeal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
 
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
             }
-            $deal = Deal::updateOrCreate(['zoho_deal_id' => $id], [
-                'personal_transaction' => isset($deal['Personal_Transaction']) ? ($deal['Personal_Transaction'] == true ? 1 : 0) : null,
-                'double_ended' => isset($deal['Double_Ended']) ? ($deal['Double_Ended'] == true ? 1 : 0) : null,
-                'address' => isset($deal['Address']) ? $deal['Address'] : null,
-                'representing' => isset($deal['Representing']) ? $deal['Representing'] : null,
-                'client_name_only' => isset($deal['Client_Name_Only']) ? $deal['Client_Name_Only'] : null,
-                'commission' => isset($deal['Commission']) ? $deal['Commission'] : null,
-                'commission_flat_free' => isset($deal['Commission_Flat_Fee']) ? $deal['Commission_Flat_Fee'] : null,
-                'zip' => isset($deal['Zip']) ? $deal['Zip'] : null,
-                'client_name_primary' => isset($deal['Client_Name_Primary']) ? $deal['Client_Name_Primary'] : null,
-                'closing_date' => isset($deal['Closing_Date']) ? $helper->convertToUTC($deal['Closing_Date']) : null,
-                'stage' => isset($deal['Stage']) ? $deal['Stage'] : null,
-                'sale_price' => isset($deal['Sale_Price']) ? $deal['Sale_Price'] : null,
-                'city' => isset($deal['City']) ? $deal['City'] : null,
-                'state' => isset($deal['State']) ? $deal['State'] : null,
-                'pipeline1' => isset($deal['Pipeline1']) ? $deal['Pipeline1'] : null,
-                'ownership_type' => isset($deal['Ownership_Type']) ? $deal['Ownership_Type'] : null,
-                'deal_name' => isset($deal['Deal_Name']) ? $deal['Deal_Name'] : null,
-                'pipeline_probability' => isset($deal['Pipeline_Probability']) ? $deal['Pipeline_Probability'] : null,
-                'property_type' => isset($deal['Property_Type']) ? $deal['Property_Type'] : null,
-                'potential_gci' => isset($deal['Potential_GCI']) ? $deal['Potential_GCI'] : null,
+             $updatedDealData = [
+                'personal_transaction' => isset($zohoDeal['Personal_Transaction']) ? ($zohoDeal['Personal_Transaction'] == true ? 1 : 0) : null,
+                'double_ended' => isset($zohoDeal['Double_Ended']) ? ($zohoDeal['Double_Ended'] == true ? 1 : 0) : null,
+                'address' => isset($zohoDeal['Address']) ? $zohoDeal['Address'] : null,
+                'representing' => isset($zohoDeal['Representing']) ? $zohoDeal['Representing'] : null,
+                'client_name_only' => isset($zohoDeal['Client_Name_Only']) ? $zohoDeal['Client_Name_Only'] : null,
+                'commission' => isset($zohoDeal['Commission']) ? $zohoDeal['Commission'] : null,
+                'commission_flat_free' => isset($zohoDeal['Commission_Flat_Fee']) ? $zohoDeal['Commission_Flat_Fee'] : null,
+                'zip' => isset($zohoDeal['Zip']) ? $zohoDeal['Zip'] : null,
+                'client_name_primary' => isset($zohoDeal['Client_Name_Primary']) ? $zohoDeal['Client_Name_Primary'] : null,
+                'closing_date' => isset($zohoDeal['Closing_Date']) ? $helper->convertToUTC($zohoDeal['Closing_Date']) : null,
+                'stage' => isset($zohoDeal['Stage']) ? $zohoDeal['Stage'] : null,
+                'sale_price' => isset($zohoDeal['Sale_Price']) ? $zohoDeal['Sale_Price'] : null,
+                'city' => isset($zohoDeal['City']) ? $zohoDeal['City'] : null,
+                'state' => isset($zohoDeal['State']) ? $zohoDeal['State'] : null,
+                'pipeline1' => isset($zohoDeal['Pipeline1']) ? $zohoDeal['Pipeline1'] : null,
+                'ownership_type' => isset($zohoDeal['Ownership_Type']) ? $zohoDeal['Ownership_Type'] : null,
+                'deal_name' => isset($zohoDeal['Deal_Name']) ? $zohoDeal['Deal_Name'] : null,
+                'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : null,
+                'property_type' => isset($zohoDeal['Property_Type']) ? $zohoDeal['Property_Type'] : null,
+                'potential_gci' => isset($zohoDeal['Potential_GCI']) ? $zohoDeal['Potential_GCI'] : null,
 
-                'review_gen_opt_out' => isset($deal['Review_Gen_Opt_Out']) ? $deal['Review_Gen_Opt_Out'] : false,
-                'deadline_em_opt_out' => isset($deal['Deadline_Emails']) ? $deal['Deadline_Emails'] : false,
-                'status_rpt_opt_out' => isset($deal['Status_Reports']) ? $deal['Status_Reports'] : false,
-                'tm_preference' => isset($deal['TM_Preference']) ? $deal['TM_Preference'] : null,
-                'tm_name' => isset($deal['TM_Name']['name']) ? $deal['TM_Name']['name'] : null,
-                'tm_name_id' => isset($deal['TM_Name']['id']) ? $deal['TM_Name']['id'] : null,
-                'lead_agent' => isset($deal['Lead_Agent']['name']) ? $deal['Lead_Agent']['name'] : null,
-                'lead_agent_id' => isset($deal['Lead_Agent']['id']) ? $deal['Lead_Agent']['id'] : null,
+                'review_gen_opt_out' => isset($zohoDeal['Review_Gen_Opt_Out']) ? $zohoDeal['Review_Gen_Opt_Out'] : false,
+                'deadline_em_opt_out' => isset($zohoDeal['Deadline_Emails']) ? $zohoDeal['Deadline_Emails'] : false,
+                'status_rpt_opt_out' => isset($zohoDeal['Status_Reports']) ? $zohoDeal['Status_Reports'] : false,
+                'tm_preference' => isset($zohoDeal['TM_Preference']) ? $zohoDeal['TM_Preference'] : null,
+                'tm_name' => isset($zohoDeal['TM_Name']['name']) ? $zohoDeal['TM_Name']['name'] : null,
+                'tm_name_id' => isset($zohoDeal['TM_Name']['id']) ? $zohoDeal['TM_Name']['id'] : null,
+                'lead_agent' => isset($zohoDeal['Lead_Agent']['name']) ? $zohoDeal['Lead_Agent']['name'] : null,
+                'lead_agent_id' => isset($zohoDeal['Lead_Agent']['id']) ? $zohoDeal['Lead_Agent']['id'] : null,
                 'isDealCompleted' => true,
                 'contactId' => isset($contact) ? $contact->id : null,
-                'financing' => isset($deal['Financing']) ? $deal['Financing'] : null,
-                'lender_company' => isset($deal['Lender_Company']) ? $deal['Lender_Company'] : null,
-                'modern_mortgage_lender' => isset($deal['Modern_Mortgage_Lender']) ? $deal['Modern_Mortgage_Lender'] : null,
-            ]);
+                'financing' => isset($zohoDeal['Financing']) ? $zohoDeal['Financing'] : null,
+                'lender_company' => isset($zohoDeal['Lender_Company']) ? $zohoDeal['Lender_Company'] : null,
+                'modern_mortgage_lender' => isset($zohoDeal['Modern_Mortgage_Lender']) ? $zohoDeal['Modern_Mortgage_Lender'] : null,
+             ];
+            if($DBdeal->zoho_deal_id === null){
+                $updatedDealData['zoho_deal_id'] = $zohoDeal['id'];
+            }
+           
+            $zohoDeal = Deal::updateOrCreate(['id' => $DBdeal->id], $updatedDealData);
 
-            Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
-            return $deal;
+            Log::info("Retrieved Deal Contact From Database", ['deal' => $zohoDeal]);
+            return $zohoDeal;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
@@ -1254,10 +1263,11 @@ class DatabaseService
             Log::info("Retrieve Contacts From Database");
             $condition = [['contacts.contact_owner', $user->root_user_id]];
             if ($filter === "has_email") {
-                $condition[]=['contacts.has_email',1];
+                $condition[]=['contacts.has_email',true];
             }else if($filter==="has_address"){
-                $condition[]=['contacts.has_address',1];
+                $condition[]=['contacts.has_address',true];
             }
+            
             $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
@@ -1271,6 +1281,8 @@ class DatabaseService
                     'contacts.last_name',
                     'contacts.relationship_type',
                     'contacts.spouse_partner',
+                    'contacts.has_email',
+                    'contacts.has_address',
                     DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner) as partner_id')
                 )
                 ->with([
@@ -1286,7 +1298,7 @@ class DatabaseService
                     });
                 })
                 ->orderByRaw('CASE WHEN contacts.spouse_partner IS NULL THEN 0 ELSE 1 END')
-                ->orderByRaw('CONCAT(contacts.first_name, " ", contacts.last_name) ' . $sort)
+                ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
                 ->paginate();
 
             return $contacts;
