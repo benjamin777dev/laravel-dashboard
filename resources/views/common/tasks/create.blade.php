@@ -3,7 +3,7 @@
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <p class="modal-title dHeaderText">Create New Task</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         onclick="resetValidationTask('{{ $deal->id }}')" aria-label="Close"></button>
                 </div>
@@ -39,7 +39,7 @@
     <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
         <div class="modal-content p-1">
             <div class="modal-header border-0">
-                <p class="modal-title dHeaderText">Create New Tasks</p>
+                <p class="modal-title dHeaderText">Create New Task</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                     onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
             </div>
@@ -76,7 +76,7 @@
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
-                    <p class="modal-title dHeaderText">Create New Tasks</p>
+                    <p class="modal-title dHeaderText">Create New Task</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidationTask()"
                         aria-label="Close"></button>
                 </div>

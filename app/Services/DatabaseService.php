@@ -431,7 +431,10 @@ class DatabaseService
             $conditions = [['userID', $user->id],['isDealCompleted',true]];
 
             // Adjust query to include contactName table using join
-            $deals = Deal::where($conditions)->whereNotIn('stage', ['Dead-Lost To Competition', '', 'Dead-Contract Terminated']);
+            $deals = Deal::where($conditions)
+                ->whereNotIn('stage', 
+                    ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
+                );
 
             if ($search !== "") {
                 $searchTerms = urldecode($search);
@@ -522,20 +525,20 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Deals From Database");
-    
+
             $conditions = [['userID', $user->id], ['id', $dealId]];
-    
+
             // Adjust query to include contactName table using join
             $deals = NonTm::with('userData', 'dealData')->where($conditions)->first();
             Log::info("Deal Conditions", ['deals' => $conditions]);
-    
+
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
 
     public function retrieveContactById(User $user, $accessToken, $contactId)
     {
@@ -634,25 +637,38 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Tasks From Database");
-            $condition = [];
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
+        
             if ($tab == 'Overdue') {
-                $tasks
-                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
+                // These are any tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Upcoming') {
-                $tasks
-                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
-            } elseif ($tab == 'In Progress') {
-                $tasks->where([['due_date', null],['status','!=','Completed']]);
+                // These are any tasks that have a due date greater than or equal to today and are not complete
+                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Due Today') {
+                // These are any tasks that are due today and are not complete
+                $tasks->whereDate('due_date', now()->toDateString())
+                      ->where('status', '!=', 'Completed')
+                      ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
-                $tasks->where('status', 'Completed');
+                // These are tasks that are completed
+                $tasks->where('status', 'Completed')
+                      ->orderBy('due_date', 'desc');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
+        
+            // This will apply the updated_at ordering only if it's not already ordered by due_date
+            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'Due Today') {
+                $tasks = $tasks->orderBy('updated_at', 'desc');
+            }
+        
+            $tasks = $tasks->paginate(10);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
-        }
+        } 
     }
 
     public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
@@ -684,7 +700,7 @@ class DatabaseService
             Log::info("Retrieve Deals From Database");
             $condition = [
                 ['userID', $user->id],
-                
+
             ];
             if ($dealId) {
                 $condition[] = ['zoho_deal_id', $dealId];
@@ -707,12 +723,15 @@ class DatabaseService
 
             $conditions = [['contact_owner', $user->root_user_id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
-           
 
             if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
                 $contacts->where(function ($query) use ($searchTerms) {
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('last_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('phone', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mobile_phone', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
                         ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
@@ -896,7 +915,10 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at', 'desc')->get();
+            $tasks = Note::with('userData')
+                ->with('dealData')
+                ->where('owner', $user->id)
+                ->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -1020,7 +1042,7 @@ class DatabaseService
         }
     }
 
-    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType,$formType)
+    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType = null,$formType = null)
     {
     try {
     Log::info("Retrieve Submittal Contact From Database",[['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id],['formType', $formType]]);
@@ -1120,10 +1142,10 @@ class DatabaseService
         try {
             Log::info("User Deatils" . $user);
             $contact = Contact::create([
-                'last_name' => "CHR",
+                // 'last_name' => "CHR",
                 'isContactCompleted' => false,
                 'contact_owner' => $user->root_user_id,
-                'isInZoho' => true,
+                'isInZoho' => false,
                 'zoho_contact_id' => $zohoContactId,
             ]);
             Log::info("Retrieved Deal Contact From Database", ['contact' => $contact]);
@@ -1249,8 +1271,13 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contacts From Database");
-
-            $contacts = Contact::where('contacts.contact_owner', $user->root_user_id)
+            $condition = [['contacts.contact_owner', $user->root_user_id]];
+            if ($filter === "has_email") {
+                $condition[]=['contacts.has_email',1];
+            }else if($filter==="has_address"){
+                $condition[]=['contacts.has_address',1];
+            }
+            $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on(DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'), '=', 'contacts.zoho_contact_id');
@@ -1532,7 +1559,7 @@ class DatabaseService
     public function retreiveSubmittals($dealId="")
     {
         try {
-        
+
             $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
             return $submittalData;
         } catch (\Exception $e) {
@@ -1594,9 +1621,6 @@ class DatabaseService
         }
 
         $accessToken = $user->access_token;
-        // if (!$accessToken) {
-        //     throw new \Exception("Invalid user token");
-        // }
 
         // Retrieve query parameters
         $searchQuery = $request->input('q', '');
@@ -1604,51 +1628,55 @@ class DatabaseService
         $limit = $request->input('limit', 5);
         $offset = ($page - 1) * $limit;
 
+        // Fetch the modules and prepare data structure
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
+        $moduleIds = $filteredModules->pluck('zoho_module_id', 'api_name');
+
         $data = [];
-        $moduleIds = [];
+        $totalItems = 0;
 
         foreach ($filteredModules as $module) {
-            $moduleIds[$module->api_name] = $module->zoho_module_id;
-            $data[$module->api_name] = [];
-        }
-
-        foreach ($filteredModules as $module) {
+            $query = null;
             if ($module->api_name === 'Deals') {
-                // Retrieve Deals data based on search query if provided
-                $dealsQuery = Deal::query();
-                if ($searchQuery) {
-                    $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
-                }
-                $totalDeals = $dealsQuery->count();
-                $dealsData = $dealsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
-                if ($searchQuery || $dealsData->isNotEmpty()) {
-                    $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
-                        $deal['zoho_module_id'] = $moduleIds['Deals'];
-                        return $deal;
-                    });
-                }
+                $query = Deal::where('userID', $user->id);
             } elseif ($module->api_name === 'Contacts') {
-                // Retrieve Contacts data based on search query if provided
-                $contactsQuery = Contact::query();
-                if ($searchQuery) {
-                    $contactsQuery->where(function ($query) use ($searchQuery) {
-                        $query->where('first_name', 'like', "%$searchQuery%")
-                            ->orWhere('last_name', 'like', "%$searchQuery%");
-                    });
-                }
-                $totalContacts = $contactsQuery->count();
-                $contactsData = $contactsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
-                if ($searchQuery || $contactsData->isNotEmpty()) {
-                    $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
-                        $contact['zoho_module_id'] = $moduleIds['Contacts'];
-                        return $contact;
+                $query = Contact::where('contact_owner', $user->root_user_id);
+            }
+
+            if ($query && $searchQuery) {
+                $searchTerms = explode(' ', $searchQuery);
+                $query->where(function ($q) use ($searchTerms, $module) {
+                    foreach ($searchTerms as $term) {
+                        $q->where(function ($subQuery) use ($term, $module) {
+                            if ($module->api_name === 'Deals') {
+                                $subQuery->where('deal_name', 'like', "%$term%")
+                                        ->orWhere('address', 'like', "%$term%");
+                            } elseif ($module->api_name === 'Contacts') {
+                                $subQuery->where('first_name', 'like', "%$term%")
+                                        ->orWhere('last_name', 'like', "%$term%")
+                                        ->orWhere('email', 'like', "%$term%")
+                                        ->orWhere('phone', 'like', "%$term%")
+                                        ->orWhere('mobile', 'like', "%$term%")
+                                        ->orWhere('mailing_address', 'like', "%$term%");
+                            }
+                        });
+                    }
+                });
+            }
+
+            if ($query) {
+                $totalItems += $query->count();
+                $items = $query->orderBy('updated_at', 'desc')->offset($offset)->limit($limit)->get();
+                if ($items->isNotEmpty()) {
+                    $data[$module->api_name] = $items->map(function ($item) use ($moduleIds, $module) {
+                        $item['zoho_module_id'] = $moduleIds[$module->api_name];
+                        return $item;
                     });
                 }
             }
         }
 
-        // Add objects for Contacts and Deals with their respective data arrays
+        // Prepare response data
         $responseData = [];
         foreach ($data as $moduleName => $moduleData) {
             if (!empty($moduleData)) {
@@ -1662,9 +1690,10 @@ class DatabaseService
         // Return response with total count for pagination
         return response()->json([
             'items' => $responseData,
-            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0),
+            'total_count' => $totalItems,
         ]);
     }
+
 
     public function storeRolesIntoDB($contactRoles, $user)
     {
@@ -1756,6 +1785,8 @@ class DatabaseService
                 return \App\Models\Groups::mapZohoData($record, 'csv');
             case 'Contacts_X_Groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
+            case 'Tasks':
+                return \App\Models\Task::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1781,6 +1812,10 @@ class DatabaseService
                 case 'Groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
+                case 'Tasks':
+                    \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                    
                     // Add other cases as needed
             }
         } catch (\Exception $e) {
@@ -1835,7 +1870,7 @@ class DatabaseService
     public function createListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$dealId,$submittalType)
     {
     try {
-        
+
         $submittal = Submittals::create([
             'isSubmittalComplete' => "false",
             'userId' => $user->id,
@@ -1870,7 +1905,7 @@ class DatabaseService
     public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
     try {
-        
+
         $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
         if (!$submittal) {
             throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
@@ -1961,7 +1996,7 @@ class DatabaseService
     public function updateBuyerSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
         try {
-            
+
             $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
             if (!$submittal) {
                 throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");

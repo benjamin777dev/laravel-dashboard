@@ -97,22 +97,18 @@
 
     function convertInInteger(string) {
         try {
-            console.log("String",string);
-            if(string){
-                let integerPart = string.split('.')[0];
-                console.log("integerPart",integerPart);
-                if (integerPart.length > 4) {
-                    throw new Error("Input Error: Amount length must be exactly 4 characters");
-                }
-                let num = parseInt(integerPart);
+            console.log("String:", string);
+            if (string) {
+                // Parse the string to a floating-point number
+                let num = parseFloat(string);
                 if (isNaN(num)) {
                     throw new Error("Conversion Error: Invalid input");
                 }
                 return num;
             }
-            return null
+            return null;
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             throw new Error(error.message);
         }
     }

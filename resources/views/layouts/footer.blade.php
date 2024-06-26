@@ -37,7 +37,7 @@
     });
     function createTransaction(userContactData,contactData=null) {
         console.log(typeof userContactData,JSON.parse(JSON.stringify(userContactData)));
-       let contact =  JSON.parse(JSON.stringify(userContactData));
+       let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;
        let userContact = JSON.parse(JSON.stringify(userContactData));
         var formData = {
             "data": [{

@@ -17,56 +17,69 @@ use DataTables;
 
 class PipelineController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, DatabaseService $db, ZohoCRM $zoho)
     {
-        $db = new DatabaseService();
         $user = $this->user();
-        $zoho = new ZohoCRM();
         if (!$user) {
             return redirect('/login');
         }
 
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
-        $search = request()->query('search');
-        $sortField = $request->input('sort');
-        $sortType = $request->input('sortType');
-        $filter = $request->input('filter');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType, null, $filter);
 
-        // configure the necessary pipeline stats
-        $totalSalesVolume = 0;
-        $totalCommission = 0;
-        $averageCommission = 0;
-        $totalPotentialGCI = 0;
-        $totalProbability = 0;
-        $averageProbability = 0;
-        $totalProbableGCI = 0;
-        $dealCount = count($deals);
+        $inputs = $request->only(['search', 'sort', 'sortType', 'filter']);
 
-        // Calculate stats from deals
-        foreach ($deals as $deal) {
-            $totalSalesVolume += $deal->sale_price ?? 0; // Updated field name
-            $totalCommission += $deal->commission ?? 0; // Directly mapped
-            $totalPotentialGCI += (($deal->sale_price ?? 0) * ($deal->commission/100 ?? 0)) ?? 0; // Directly mapped
-            $totalProbability += $deal->pipeline_probability ?? 0; // Updated field name
-            $totalProbableGCI += 
-                (($deal->sale_price ?? 0) * ($deal->commission/100 ?? 0)) * ((($deal->pipeline_probability/100 ?? 0)));
-        }
+        $deals = $db->retrieveDeals($user, $accessToken, $inputs['search'] ?? null, $inputs['sort']?? null, $inputs['sortType']?? null, null, $inputs['filter']?? null);
 
-        // Calculate averages
-        $averageCommission = $dealCount > 0 ? $totalCommission / $dealCount : 0;
-        $averageProbability = $dealCount > 0 ? $totalProbability / $dealCount : 0;
+        $stats = $this->calculateDealStatistics($deals);
 
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        if (request()->ajax()) {
-            // If it's an AJAX request, return the pagination HTML
-            return view('pipeline.pipelineload', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+
+        $viewData = array_merge($stats, [
+            'deals' => $deals,
+            'userContact' => $userContact,
+            'allstages' => $allstages,
+            'retrieveModuleData' => $retrieveModuleData,
+            'getdealsTransaction' => $deals,
+        ]);
+
+        if ($request->ajax()) {
+            return view('pipeline.pipelineload', $viewData)->render();
         }
-        return view('pipeline.index', compact('deals', 'userContact', 'allstages', 'retrieveModuleData', 'getdealsTransaction', 'totalSalesVolume', 'averageCommission', 'totalPotentialGCI', 'averageProbability', 'totalProbableGCI'))->render();
+
+        return view('pipeline.index', $viewData)->render();
+    }
+
+    private function calculateDealStatistics($deals)
+    {
+        $totalSalesVolume = 0;
+        $totalCommission = 0;
+        $totalPotentialGCI = 0;
+        $totalProbability = 0;
+        $totalProbableGCI = 0;
+        $dealCount = count($deals);
+
+        foreach ($deals as $deal) {
+            $salePrice = $deal->sale_price ?? 0;
+            $commission = $deal->commission ?? 0;
+            $pipelineProbability = $deal->pipeline_probability ?? 0;
+
+            $totalSalesVolume += $salePrice;
+            $totalCommission += $commission;
+            $totalPotentialGCI += $salePrice * ($commission / 100);
+            $totalProbability += $pipelineProbability;
+            $totalProbableGCI += ($salePrice * ($commission / 100)) * ($pipelineProbability / 100);
+        }
+
+        return [
+            'totalSalesVolume' => $totalSalesVolume,
+            'averageCommission' => $dealCount > 0 ? $totalCommission / $dealCount : 0,
+            'totalPotentialGCI' => $totalPotentialGCI,
+            'averageProbability' => $dealCount > 0 ? $totalProbability / $dealCount : 0,
+            'totalProbableGCI' => $totalProbableGCI,
+        ];
     }
 
     public function getDeals(Request $request)
@@ -166,7 +179,7 @@ class PipelineController extends Controller
         $pipelineData = session('pipeline_data');
         $user = $this->user();
         if (!$user) {
-        return redirect('/login');
+            return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
@@ -195,7 +208,7 @@ class PipelineController extends Controller
         //     // If it's an AJAX request, return the pagination HTML
         //     return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
         // }
-        return view('pipeline.view', compact( 'deal','dealId','notesInfo','retrieveModuleData','tab'))->render();
+        return view('pipeline.view', compact('deal', 'dealId', 'notesInfo', 'retrieveModuleData', 'tab'))->render();
 
     }
 
@@ -208,24 +221,23 @@ class PipelineController extends Controller
         $pipelineData = session('pipeline_data');
         $user = $this->user();
         if (!$user) {
-        return redirect('/login');
+            return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-                
+
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
-        
+
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.detail', compact('users','contacts', 'deal', 'closingDate', 'allStages','dealId'))->render();
+        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId'))->render();
 
     }
 
-    
     public function showCreatePipeline(Request $request)
     {
         Log::info('Showing create pipeline form' . $request);
@@ -257,7 +269,7 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         // $allStages = config('variables.dealCreateStages');
         // $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.create', compact('dealId','deal','retrieveModuleData'));
+        return view('pipeline.create', compact('dealId', 'deal', 'retrieveModuleData'));
     }
 
     public function showCreatePipelineForm(Request $request)
@@ -294,10 +306,8 @@ class PipelineController extends Controller
         // $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         // $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.createForm', compact('deal','contacts','allStages','users'))->render();
+        return view('pipeline.createForm', compact('deal', 'contacts', 'allStages', 'users'))->render();
     }
-
-    
 
     public function createPipeline(Request $request)
     {

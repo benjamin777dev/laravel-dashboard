@@ -423,7 +423,10 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else {
+        } else if (commission.value.trim().length>4) {
+            commissionError.textContent = "Commission length must be exactly 4 characters.";
+            isValid = false;
+        }else {
             commissionError.textContent = "";
         }
 
@@ -435,8 +438,8 @@
         } else if (isNaN(final_purchase.value.trim())) {
             final_purchaseError.textContent = "Final Purchase must be a number.";
             isValid = false;
-        } else if (final_purchase.value.trim().length>4) {
-            final_purchaseError.textContent = "Final Purchase length must be exactly 4 characters.";
+        } else if (final_purchase.value.trim().length <= 0) {
+            final_purchaseError.textContent = "Final Purchase length must be greater than 0 characters.";
             isValid = false;
         }else {
             final_purchaseError.textContent = "";
@@ -447,8 +450,8 @@
             if (isNaN(amount_chr.value.trim())) {
                 amount_chrError.textContent = "Amount to CHR must be a number.";
                 isValid = false;
-            } else if (amount_chr.value.trim().length>4) {
-                amount_chrError.textContent = "Amount to CHR length must be exactly 4 characters.";
+            } else if (amount_chr.value.trim().length<=0) {
+                amount_chrError.textContent = "Amount to CHR length must be greater than 0 characters.";
                 isValid = false;
             }else {
                 amount_chrError.textContent = "";

@@ -2900,6 +2900,7 @@ body {
         background-color: #222;
         color: #fff;
         font-size: 12px;
+        mix-blend-mode: difference;
     }
 
     .bar-b {

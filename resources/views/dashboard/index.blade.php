@@ -20,9 +20,9 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        @if ($needsNewDate->isNotEmpty())
+        @if ($needsNewDate['count'] > 0)
             <div class="alert alert-danger text-center">
-                You have {{ $needsNewDate->count() }} bad dates!
+                You have {{ $needsNewDate['count'] }} bad dates! 
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
@@ -53,141 +53,320 @@
             @endcomponent
         </div>
 
-        <div class="row unset-bs-gutter-x">
-            <div class="col-lg-3 mb-4">
-                <div class="card card-body h-100 ">
-                    <p class="text-dark font-family-montserrat font-size-16 fw-bolder mb-0">My Pipeline</p>
-                    <div id="canvas-holder" style="width:100%">
-                        <canvas id="chart" width="100%" height="100%"></canvas>
+        
+        <div class="section pt-0 pb-0">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title text-center mb-4">My Pipeline</div>
+                                    <div id="canvas-holder" style="width:100%">
+                                        <canvas id="chart" width="100%" height="100%"></canvas>
+                                    </div>
+                                    <p class="dFont13 dMb5 dRangeText">${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title mb-4 text-center fw-bold">Monthly Pipeline Comparison</div>
+                                    <div class="stacked-bar-chart w-100 stacked-contain">
+                                        @php
+                                            $gcis = array_column($allMonths, 'gci');
+                                            $maxGCI = max($gcis);
+                                        @endphp
+                                        @foreach ($allMonths as $month => $data)
+                                            @php
+                                                $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 100 : 0;
+                                                $minWidth = $widthPercentage < 10 ? 'min-width: 2.5rem;' : ''; // Ensure minimum width for visibility
+                                            @endphp
+                                            <div class="row align-items-center">
+                                                <div class="col-3 text-center fw-bold">
+                                                    {{ Carbon\Carbon::parse($month)->format('M') }}
+                                                </div>
+                                                <div class="col-7">
+                                                    <div class="progress" style="height: 1.5rem;">
+                                                        <div class="progress-bar bg-dark text-white d-flex justify-content-center align-items-center" role="progressbar" style="width: {{ $widthPercentage }}%; {{ $minWidth }}" aria-valuenow="{{ $widthPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                                                            {{ '$' . number_format($data['gci'], 0) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 text-center fw-bold">
+                                                    {{ $data['deal_count'] }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title text-center mb-4">Upcoming Tasks</div>
+                                    
+                                    <button 
+                                        class="btn btn-sm btn-dark"
+                                        id="btnGroupAddon" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#staticBackdropforTask"
+                                    >
+                                        <i class="fas fa-plus plusicon"></i> New Task
+                                    </button>
+
+                                    <a href="/tasks" class="btn btn-sm btn-dark">View Tasks</a>
+                                    <div class="d-flex flex-column">
+                                        @if ($upcomingTasks->take(5)->count() > 0)
+                                            @foreach ($upcomingTasks->take(5) as $task)
+                                                <div class="card mb-2 shadow-sm border-0">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                                            <div class="w-100">
+                                                                <h5 class="m-0">
+                                                                    <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                                                                </h5>
+                                                                <small class="text-muted">
+                                                                    Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
+                                                                    related to
+                                                                    @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                                                                        </a>&nbsp;/&nbsp; 
+                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->dealData->deal_name ?? 'General' }}
+                                                                        </a>
+                                                                    @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->contactData->first_name ?? '' }}
+                                                                        </a>
+                                                                    @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                            {{ $task->dealData->deal_name ?? 'General' }}
+                                                                        </a>
+                                                                    @else
+                                                                        <span class="text-secondary">General</span>
+                                                                    @endif
+                                                                </small>
+                                                            </div>
+                                                            <div class="d-flex flex-md-shrink-0 mt-2 mt-md-0">
+                                                                @php
+                                                                    $taskzId = $task['zoho_task_id'];
+                                                                    $taskId = $task['id'];
+                                                                    $subject = $task['subject'];
+                                                                @endphp
+                                                                <button class="btn btn-dark btn-sm me-2 text-nowrap" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
+                                                                    <i class="fas fa-check"></i> Done
+                                                                </button>
+                                                                <button class="btn btn-secondary btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Delete Modal -->
+                                                <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body deletemodalBodyDiv">
+                                                                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
+                                                            </div>
+                                                            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button" onclick="deleteTask('{{ $task['zoho_task_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-grid gap-2 col-5">
+                                                                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
+                                                                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center">
+                                                <p>No recent tasks found</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <p class="fs-13 mb-0 text-center font-size-18 fw-bolder mt-auto">
-                        ${{ number_format($totalGciForDah, 2, '.', ',') }} of ${{ number_format($goal, 2, '.', ',') }}</p>
                 </div>
             </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="card card-body text-center h-100 card-body-padding0">
-                    <div
-                        class="container d-flex p-4 flex-column justify-content-center align-items-start gap-4 border rounded-3 bg-white shadow-sm">
-                        <p class="text-dark text-start font-family-montserrat font-size-16 fw-bolder line-height-18">Monthly
-                            Pipeline Comparison</p>
-                        <div class="stacked-bar-chart w-100 d-flex flex-column gap-1">
-                            @php
-                                $gcis = array_column($allMonths, 'gci');
-                                $maxGCI = max($gcis);
-                            @endphp
-                            @foreach ($allMonths as $month => $data)
-                                @php
-                                    $widthPercentage = $maxGCI != 0 ? ($data['gci'] / $maxGCI) * 91 : 0;
-                                @endphp
-                                <div class="row">
-                                    <div
-                                        class="col-md-2 align-self-center text-end text-muted small fw-bold font-montserrat fs-6">
-                                        {{ Carbon\Carbon::parse($month)->format('M') }}</div>
-                                    <div class="col-md-10 dashchartImg">
-                                        <div class="row dgraph-strip">
-                                            @php
-                                                $formattedGCI = str_replace(
-                                                    ['$', ','],
-                                                    '',
-                                                    number_format($data['gci'], 0),
-                                                );
-                                            @endphp
-                                            <div class="col-md-11 text-end bar-a"
-                                                style="width: {{ $formattedGCI < 1000 ? 'auto' : $widthPercentage . '%' }}">
-                                                {{ '$' . number_format($data['gci'], 0) }}
+        </div>
+            <div class="col-sm-12 dtasksection">
+                <div class="d-flex justify-content-between">
+                    <p class="dFont800 dFont15">Notes</p>
+                </div>
+                <div class="row">
+                <div class="d-flex flex-column">
+                        @if ($notes->count() > 0)
+                            @foreach ($notesInfo as $note)
+                                <div class="card mb-2 shadow-sm border-0">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                                            <div class="w-100">
+                                                <h5 class="m-0">
+                                                    <span class="text-dark">{{ $note['note_content'] ?? 'General Note' }}</span>
+                                                </h5>
+                                                <small class="text-muted">
+                                                    Created: {{ \Carbon\Carbon::parse($note['created_time'])->format('M d, Y') ?? '' }},
+                                                    related to
+                                                    @if ($note['related_to_type'] == 'Contacts' && isset($note->contactData->zoho_contact_id))
+                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $note->contactData->id ?? '' }}" class="text-primary">
+                                                            {{ $note->contactData->first_name ?? '' }} {{ $note->contactData->last_name ?? '' }}
+                                                        </a>
+                                                    @elseif ($note['related_to_type'] == 'Deals' && isset($note->dealData->zoho_deal_id))
+                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $note->dealData->id ?? '' }}" class="text-primary">
+                                                            {{ $note->dealData->deal_name ?? 'General Deal' }}
+                                                        </a>
+                                                    @else
+                                                        <span class="text-secondary">General</span>
+                                                    @endif
+                                                </small>
                                             </div>
-                                            <div class="col-md-1">
-                                                <p class="dtransactions-des text-nowrap">{{ $data['deal_count'] }}</p>
+                                            <div class="d-flex flex-md-shrink-0 mt-2 mt-md-0">
+                                                @php
+                                                    $taskzId = $note['zoho_note_id'];
+                                                    $taskId = $note['id'];
+                                                    $subject = $note['note_content'];
+                                                @endphp
+                                                <button class="btn btn-secondary btn-sm text-nowrap" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $note['zoho_note_id'] }}">                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModalId{{ $note['zoho_note_id'] }}" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 deleteModalHeaderDiv">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body deletemodalBodyDiv">
+                                                <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
+                                            </div>
+                                            <div class="modal-footer deletemodalFooterDiv justify-content-evenly border-0">
+                                                <div class="d-grid gap-2 col-5">
+                                                    <button type="button" onclick="deleteNote('{{ $note['zoho_note_id'] }}')" class="btn btn-secondary deleteModalBtn" data-bs-dismiss="modal">
+                                                        <i class="fas fa-trash-alt trashIcon"></i> Yes, delete
+                                                    </button>
+                                                </div>
+                                                <div class="d-grid gap-2 col-5">
+                                                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary goBackModalBtn">
+                                                        <img src="{{ URL::asset('/images/reply.svg') }}" data-bs-dismiss="modal" alt="R">No, go back
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
                             @endforeach
-                        </div>
+                        @else
+                            <div class="text-center">
+                                <p>No recent notes found</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 h-100 mb-4">
-                <div class="card card-body card-body-padding0" style="background: transparent;">
-                    <h4 class="text-start dFont600 mb-4">Notes</h4>
-                    @include('common.notes.view', [
-                        'notesInfo' => $notesInfo,
-                        'retrieveModuleData' => $retrieveModuleData,
-                    ])
+            <div class="table-responsive dtranstiontable mt-2" id="badDates">
+            @if ($needsNewDate['count'] > 0)
+                <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
+            @else
+                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+            @endif
+                
+                
+                <div class="dtabletranstion dtableHeader">
+                    <div>Transaction Name</div>
+                    <div>Client Name</div>
+                    <div>Stage</div>
+                    <div>Representing</div>
+                    <div>Sale Price</div>
+                    <div>Closing Date</div>
+                    <div>Commission</div>
+                    <div>Potential GCI</div>
+                    <div>Probability</div>
+                    <div>Probable GCI</div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 dtasksection p-4">
-                <div class="d-flex justify-content-between">
-                    <p class="dFont800 dFont15">Tasks</p>
-                    <button type="button"
-                        class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                        data-bs-toggle="modal" data-bs-target="#staticBackdropforTask" data-bs-whatever="@getbootstrap"><i
-                            class="fas fa-plus plusicon"></i> New Task</button>
-                </div>
-                <div class="row">
-                    <nav class="dtabs mt-3 ps-0">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-home" data-tab='In Progress' type="button" role="tab"
-                                aria-controls="nav-home" aria-selected="true" onclick="fetchData('In Progress')">In
-                                Progress</button>
-                            <button class="nav-link dtabsbtn" data-tab='Upcoming' id="nav-profile-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
-                                aria-selected="false" onclick="fetchData('Upcoming')">Upcoming</button>
-                            <button class="nav-link dtabsbtn" data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Overdue')">Overdue</button>
-                            <button class="nav-link dtabsbtn" data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
-                                data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
-                                aria-selected="false" onclick="fetchData('Completed')">Completed</button>
-                        </div>
-                    </nav>
-                    <div class="task-container">
-                        @php
-                        $headers = [
-                            '',
-                            'Subject',
-                            'Related To',
-                            'Due Date',
-                            'Options',
-                        ];
-                    @endphp
-                      @component('components.common-table', [
-                        'th' => $headers,
-                        'id'=>'datatable_tasks',
-                        'commonArr' =>$tasks,
-                        "type" =>"dash-tasks",
-                    ])
-                    @endcomponent
+                @if ($needsNewDate['count'] === 0)
+                    <div>
+                        <p class="text-center mt-4" colspan="12">No records found</p>
                     </div>
-                </div>
+                @else
+                    @foreach ($needsNewDate['deals'] as $deal)
+                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
+                        <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
+                                <div class="dTContactName">
+                                    <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
+                                        <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
+                                    </a>
+                                </div>
+                            <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
+                                <div class="dTContactName">
+                                    <span class="dlabel">Client Name:</span>
+                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
+                                    {{ $deal->client_name_primary ?? 'N/A' }}
+                                </div>
+                            </div>
+                            <div data-type="stage" data-value="{{ $deal['stage'] }}">
+                                <div class="dTContactName">
+                                    <span class="dlabel">Stage:</span>
+                                    <span style="font-weight:600;padding:5px;background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
+                                    >{{ $deal['stage'] }}</span>
+                                </div>
+                            </div>
+                            <div data-type="representing" data-value="{{ $deal['representing'] }}">
+                                <div class="dTContactName">
+                                    <span class="dlabel">Representing:</span>
+                                    {{ $deal['representing'] }}
+                                </div>
+                            </div>
+                            <div data-type="sale_price" data-value="{{ $deal['sale_price'] ?? 0 }}">
+                                <div class="dTContactName">
+                                    <span class="dlabel">Sale Price:</span>
+                                    ${{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}
+                                </div>
+                            </div>
+                            <div class="dTContactName">
+                                <span class="dlabel">Closing Date:</span>
+                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
+                                    id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
+                            </div>
+                            <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
+                                <div class="dTContactName"><span class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
+                            </div>
+                            <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
+                                <div class="dTContactName"><span class="dlabel">Potential GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
+                            </div>
+                            <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
+                                <div class="dTContactName"><span class="dlabel">Probability:</span>   {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
+                            </div>
+                            <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
+                                   
+                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span> ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
-            @php
-                 $headers = [
-                    'Transaction Name',
-                    'Client Name',
-                    'Stage',
-                    'Representing',
-                    'Sale Price',
-                    'Closing Date',
-                    'Commission',
-                    'Potential GCI',
-                    'Probability',
-                    'Probable GCI',
-                ];
-            @endphp
-              @component('components.common-table', [
-                'th' => $headers,
-                'id'=>'datatable_transaction',
-                'commonArr' =>$needsNewDate,
-                "type" =>"dash-transaction",
-            ])
-            @endcomponent
-           
         </div>
 
     </div>
@@ -204,6 +383,118 @@
 
 
 <script>
+
+    window.deleteNote = function(id) {
+        console.log("delete note called",id);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.note', ['id' => ':id']) }}".replace(':id', id),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                    }
+                })
+
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+
+    }
+
+    window.closeTask = function(id, indexId, subject) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status":"Completed"
+            }]
+        };
+
+        // console.log("ys check ot")
+        $.ajax({
+            url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                // Handle success response
+
+                if (response?.data[0]?.status == "success") {
+                     window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                showToastError("Something went wrong");
+                console.error(xhr.responseText, 'errrorroororooro');
+
+
+
+            }
+        })
+    }
+
+    window.deleteTask = function(id) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
+    }
+
+
+
+
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('btnBadDates').addEventListener('click', function() {
             const element = document.getElementById('badDates');
@@ -511,7 +802,7 @@
             valueLabel: {
                 fontSize: "24px", // Change font size here
                 formatter: function(value) {
-                    return Math.round(value) + "%";
+                    return Math.round(value * 10) / 10  + "%";
                 }
             },
             chartArea: {

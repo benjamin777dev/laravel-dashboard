@@ -3,7 +3,11 @@
         <p class="nproletext">Submittals</p>
         <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
             <i class="fas fa-plus plusicon"></i>
-            Add New Submittal
+            @if ($submittals->count() === 0)
+                Add New Submittal
+            @else
+                Show Submittal
+            @endif
         </div>
 
     </div>
@@ -93,8 +97,8 @@
             addSubmittal('buyer-submittal',deal);
         }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
             addSubmittal('listing-submittal',deal)
-        }else if(deal.representing === "Seller" && deal.tm_preference === "Non TM"){
-            addSubmittal('listing-submittal',deal,'Non TM');
+        }else if(deal.representing === "Seller" && deal.tm_preference === "Non-TM"){
+            addSubmittal('listing-submittal',deal,'Non-TM');
         }
     }
 
