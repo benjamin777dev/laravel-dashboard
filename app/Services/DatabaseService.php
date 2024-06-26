@@ -635,24 +635,26 @@ class DatabaseService
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
         
             if ($tab == 'Overdue') {
-                // these are any tasks that have a due date less than today and the task status isn't completed
-                $tasks->where([['due_date', '<', now()], ['status', '!=', 'Completed']])
+                // These are any tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Upcoming') {
-                // these are any tasks that have a due date greater or equal to now and are not complete
-                $tasks->where([['due_date', '>=', now()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'desc');
-            } elseif ($tab == 'In Progress') {
-                // these are any tasks that are in progress, regardless of due date
-                $tasks->where('status', 'In Progress')
+                // These are any tasks that have a due date greater than or equal to today and are not complete
+                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Due Today') {
+                // These are any tasks that are due today and are not complete
+                $tasks->whereDate('due_date', now()->toDateString())
+                      ->where('status', '!=', 'Completed')
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
-                // these are tasks that are completed
-                $tasks->where('status', 'Completed');
+                // These are tasks that are completed
+                $tasks->where('status', 'Completed')
+                      ->orderBy('due_date', 'desc');
             }
         
             // This will apply the updated_at ordering only if it's not already ordered by due_date
-            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'In Progress') {
+            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'Due Today') {
                 $tasks = $tasks->orderBy('updated_at', 'desc');
             }
         
@@ -714,14 +716,17 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->root_user_id]];
+            $conditions = [['contact_owner', $user->id]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
            
-
             if ($search !== null && $search !== '') {
                 $searchTerms = urldecode($search);
                 $contacts->where(function ($query) use ($searchTerms) {
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('last_name', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('phone', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mobile_phone', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
                         ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
@@ -891,7 +896,10 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $tasks = Note::with('userData')->with('dealData')->where('owner', $user->id)->orderBy('updated_at', 'desc')->get();
+            $tasks = Note::with('userData')
+                ->with('dealData')
+                ->where('owner', $user->id)
+                ->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -1589,10 +1597,7 @@ class DatabaseService
         }
 
         $accessToken = $user->access_token;
-        // if (!$accessToken) {
-        //     throw new \Exception("Invalid user token");
-        // }
-
+        
         // Retrieve query parameters
         $searchQuery = $request->input('q', '');
         $page = $request->input('page', 1);
@@ -1611,10 +1616,28 @@ class DatabaseService
         foreach ($filteredModules as $module) {
             if ($module->api_name === 'Deals') {
                 // Retrieve Deals data based on search query if provided
+                /*$dealsQuery = Deal::query();
+                if ($searchQuery) {
+                    $dealsQuery
+                        ->where('userID', $user->id)
+                        ->andWhere('deal_name', 'like', "%$searchQuery%");
+                }
+                */
                 $dealsQuery = Deal::query();
                 if ($searchQuery) {
-                    $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
+                    $searchTerms = explode(' ', $searchQuery);
+                
+                    $dealsQuery->where('userID', $user->id)
+                               ->where(function ($query) use ($searchTerms) {
+                                   foreach ($searchTerms as $term) {
+                                       $query->where(function ($subQuery) use ($term) {
+                                           $subQuery->where('deal_name', 'like', "%$term%")
+                                                    ->orWhere('address', 'like', "%$term%");
+                                       });
+                                   }
+                               });
                 }
+
                 $totalDeals = $dealsQuery->count();
                 $dealsData = $dealsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
@@ -1625,13 +1648,39 @@ class DatabaseService
                 }
             } elseif ($module->api_name === 'Contacts') {
                 // Retrieve Contacts data based on search query if provided
-                $contactsQuery = Contact::query();
+                /*$contactsQuery = Contact::query();
                 if ($searchQuery) {
-                    $contactsQuery->where(function ($query) use ($searchQuery) {
-                        $query->where('first_name', 'like', "%$searchQuery%")
-                            ->orWhere('last_name', 'like', "%$searchQuery%");
+                    $contactsQuery->where(function ($query) use ($searchQuery, $user) {
+                        $query->where('contact-owner', $user->root_user_id)
+                            ->orWhere('first_name', 'like', "%$searchQuery%")
+                            ->orWhere('last_name', 'like', "%$searchQuery%")
+                            ->orWhere('email', 'like', "%$searchQuery%")
+                            ->orWhere('phone', 'like', "%$searchQuery%")
+                            ->orWhere('mobile', 'like', "%$searchQuery%")
+                            ->orWhere('mailing_street', 'like', "%$searchQuery%");
                     });
+                }*/
+
+                $contactsQuery = Contact::query();
+
+                if ($searchQuery) {
+                    $searchTerms = explode(' ', $searchQuery);
+                    
+                    $contactsQuery->where('contact_owner', $user->root_user_id)
+                                ->where(function ($query) use ($searchTerms) {
+                                    foreach ($searchTerms as $term) {
+                                        $query->where(function ($subQuery) use ($term) {
+                                            $subQuery->where('first_name', 'like', "%$term%")
+                                                    ->orWhere('last_name', 'like', "%$term%")
+                                                    ->orWhere('email', 'like', "%$term%")
+                                                    ->orWhere('phone', 'like', "%$term%")
+                                                    ->orWhere('mobile', 'like', "%$term%")
+                                                    ->orWhere('mailing_street', 'like', "%$term%");
+                                        });
+                                    }
+                                });
                 }
+
                 $totalContacts = $contactsQuery->count();
                 $contactsData = $contactsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {

@@ -19,7 +19,7 @@ class TaskController extends Controller
 
         // Fetch tasks for each category
         $upcomingTasks = $db->retreiveTasks($user, $accessToken, 'Upcoming');
-        $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'In Progress');
+        $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'Due Today');
         $completedTasks = $db->retreiveTasks($user, $accessToken, 'Completed');
         $overdueTasks = $db->retreiveTasks($user, $accessToken, 'Overdue');
 
