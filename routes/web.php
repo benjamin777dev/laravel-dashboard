@@ -47,6 +47,10 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+Route::get('/dashboard-tasks', [DashboardController::class, 'retriveTaskforDatatable'])->name('dashboard.tasks')->middleware('auth');
+
+Route::get('/needsNewdate', [DashboardController::class, 'needNewDateMethod'])->middleware('auth');
+
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
@@ -68,6 +72,7 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
 Route::get('/contact_view', [ContactController::class, 'getContactJson'])->name('contact.get_contact')->middleware('auth');
+Route::post('/contact/update/{id}', [ContactController::class, 'updateContactField'])->name('contact.update')->middleware('auth');
 
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::get('/contact/create/form/{contactId}', [ContactController::class, 'contactCreateForm'])->name('contacts.create.form')->middleware('auth');
@@ -81,11 +86,13 @@ Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])-
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
 //notes fetch in json for contact
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');
+Route::get('/note-create/{contactId}', [ContactController::class, 'createNotesForContact'])->name('notes.create')->middleware('auth');
 Route::get('/deal/note/{dealId}', [PipelineController::class, 'retriveNotesForDeal'])->name('notes.fetch.deal')->middleware('auth');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline_view', [PipelineController::class, 'getDealsJson'])->name('pipeline.get_pipeline')->middleware('auth');
+Route::get('/note-create-pipe/{dealId}', [PipelineController::class, 'createNotesForDeal'])->name('notes.create.deal')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipeline'])->name('pipeline.view');
 Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
@@ -119,10 +126,11 @@ Auth::routes(['verify' => true]);
 Route::post('/aci_create', [PipelineController::class, 'createACI'])->middleware('auth');
 
 //nontm page route
+Route::get('/nontms/{dealId}', [NonTmController::class, 'index'])->middleware('auth');
 Route::post('/create-nontm', [NonTmController::class, 'createNontm'])->middleware('auth');
 Route::get('/nontm-create/{id}', [NonTmController::class, 'createNontmView'])->middleware('auth');
 Route::put('/nontm-update/{id}', [NonTmController::class, 'updateNonTm'])->middleware('auth');
-Route::get('/nontm-view/{id}', [NonTmController::class, 'index'])->middleware('auth');
+Route::get('/nontm-view/{id}', [NonTmController::class, 'getNonTm'])->middleware('auth');
 
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');

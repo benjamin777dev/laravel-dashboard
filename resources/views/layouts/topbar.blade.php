@@ -1,8 +1,8 @@
 <header id="page-topbar">
     <div class="navbar-header">
-        <div class="d-flex align-items-center">
+        <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box">
+            <div class="navbar-brand-box d-flex align-items-center justify-content-center">
                 <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{ URL::asset('build/images/logo.svg') }}" alt="" height="22">
@@ -15,7 +15,7 @@
                 <a href="{{ route('dashboard.index') }}" class="logo logo-light">
                     <span class="logo-sm" style="padding:0px 8px !important;">
                         {{-- <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="22"> --}}
-                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="" height="22">
+                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="" height="22" width="55px">
 
                     </span>
                     <span class="logo-lg" style='padding:0px 8px !important;'>
@@ -31,11 +31,11 @@
             </button>
 
                 <!-- App Search-->
-          <form class="app-search d-none d-lg-block p-0 mb-0">
+          <form class="app-search d-none d-lg-block p-0 pt-3 mb-0">
             <div class="position-relative search-input-design">
-                <select class="form-control " id="global-search" data-placeholder="@lang('Search')">
+                <div class="form-control " id="global-search">
                     <!-- Option to load data asynchronously -->
-                </select>
+                </div>
             </div>
         </form>
            
@@ -141,3 +141,16 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<script>
+    window.onload = function(){
+        $('#vertical-menu-btn').on('click', function (event) {
+            event.preventDefault();
+            $('body').toggleClass('sidebar-enable');
+            if ($(window).width() >= 992) {
+                $('body').toggleClass('vertical-collpsed');
+            } else {
+                $('body').removeClass('vertical-collpsed');
+            }
+        });
+    }
+</script>

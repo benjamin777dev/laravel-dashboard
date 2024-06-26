@@ -99,7 +99,7 @@
                     <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post" onsubmit="return validateNoteDash('')">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -115,7 +115,7 @@
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button type="button" id="validate-button" onclick="validateNoteDash('')"
+                        <button type="submit" id="validate-button"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -230,7 +230,6 @@
                 // Serialize the array to a JSON string
                 const mergedDataJson = JSON.stringify(mergedData);
                 mergerdata.value = mergedDataJson;
-                changeButton.type = "submit";
             }
             return isValid;
         }

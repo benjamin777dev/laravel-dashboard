@@ -8,15 +8,8 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-            <div class="nontm-cancel-btn">
-                <button>Cancel</button>
-
-            </div>
-            <div class="nontm-savenew-btn" onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',true)">
-                <button>Save and New</button>
-            </div>
             <div onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',false)" class="nontm-save-btn">
-                <button>Save</button>
+                <button>Update</button>
 
             </div>
         </div>

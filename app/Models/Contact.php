@@ -227,7 +227,7 @@ class Contact extends Model
             'mailing_city' => isset($data['Mailing_City']) ? $data['Mailing_City'] : null,
             'mailing_state' => isset($data['Mailing_State']) ? $data['Mailing_State'] : null,
             'mailing_zip' => isset($data['Mailing_Zip']) ? $data['Mailing_Zip'] : null,
-            'isContactCompleted' => isset($data['Is_Active']) ? (int)$data['Is_Active'] : 1,
+            'isContactCompleted' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
             'isInZoho' => isset($data['$state']) && $data['$state'] === 'save' ? 1 : 0,
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
             'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),

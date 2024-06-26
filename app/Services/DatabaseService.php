@@ -638,16 +638,16 @@ class DatabaseService
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
             if ($tab == 'Overdue') {
                 $tasks
-                    ->where('due_date', '<', now());
+                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
             } elseif ($tab == 'Upcoming') {
                 $tasks
-                    ->where('due_date', '>=', now());
+                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
             } elseif ($tab == 'In Progress') {
                 $tasks->where([['due_date', null],['status','!=','Completed']]);
             } elseif ($tab == 'Completed') {
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -1245,12 +1245,26 @@ class DatabaseService
         Log::info("Groups stored into database successfully.");
     }
 
-    public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = null)
+    public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
         try {
             Log::info("Retrieve Contacts From Database");
 
-            $contacts = Contact::where('contact_owner', $user->root_user_id)
+            $contacts = Contact::where('contacts.contact_owner', $user->root_user_id)
+                // Left join with contact table to get Secondary contact
+                ->leftJoin('contacts as c', function ($join) {
+                    $join->on(DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'), '=', 'contacts.zoho_contact_id');
+                })
+                ->select(
+                    'contacts.id',
+                    'contacts.contact_owner',
+                    'contacts.zoho_contact_id',
+                    'contacts.first_name',
+                    'contacts.last_name',
+                    'contacts.relationship_type',
+                    'contacts.spouse_partner',
+                    DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner) as partner_id')
+                )
                 ->with([
                     'groups' => function ($query) use ($filter) {
                         if ($filter) {
@@ -1261,11 +1275,10 @@ class DatabaseService
                 ->when($filter, function ($query) use ($filter) {
                     $query->whereHas('groups', function ($query) use ($filter) {
                         $query->where('groupId', $filter);
-                    })->orWhere($filter,true);
+                    });
                 })
-                ->when($sort, function ($query, $sort) {
-                    $query->orderBy('first_name', $sort);
-                })
+                ->orderByRaw('CASE WHEN contacts.spouse_partner IS NULL THEN 0 ELSE 1 END')
+                ->orderByRaw('CONCAT(contacts.first_name, " ", contacts.last_name) ' . $sort)
                 ->paginate();
 
             return $contacts;
@@ -1608,7 +1621,7 @@ class DatabaseService
                     $dealsQuery->where('deal_name', 'like', "%$searchQuery%");
                 }
                 $totalDeals = $dealsQuery->count();
-                $dealsData = $dealsQuery->offset($offset)->limit($limit)->get();
+                $dealsData = $dealsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $dealsData->isNotEmpty()) {
                     $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
                         $deal['zoho_module_id'] = $moduleIds['Deals'];
@@ -1625,7 +1638,7 @@ class DatabaseService
                     });
                 }
                 $totalContacts = $contactsQuery->count();
-                $contactsData = $contactsQuery->offset($offset)->limit($limit)->get();
+                $contactsData = $contactsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
                 if ($searchQuery || $contactsData->isNotEmpty()) {
                     $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
                         $contact['zoho_module_id'] = $moduleIds['Contacts'];
@@ -1931,6 +1944,7 @@ class DatabaseService
         $submittal->signInstallVendor = isset($submittalData["Sign_Install_Vendor_Info"]) ? $submittalData["Sign_Install_Vendor_Info"] : null;
         $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
         $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
+        $submittal->showPromotion = isset($submittalData["showPromotion"]) ? $submittalData["showPromotion"] : false;
         if ($isNew) {
            $submittal->isSubmittalComplete = $isNew;
         }

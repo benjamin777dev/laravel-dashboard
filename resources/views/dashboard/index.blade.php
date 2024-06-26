@@ -147,7 +147,22 @@
                         </div>
                     </nav>
                     <div class="task-container">
-                        @include('common.tasks', ['tasks' => $tasks])
+                        @php
+                        $headers = [
+                            '',
+                            'Subject',
+                            'Related To',
+                            'Due Date',
+                            'Options',
+                        ];
+                    @endphp
+                      @component('components.common-table', [
+                        'th' => $headers,
+                        'id'=>'datatable_tasks',
+                        'commonArr' =>$tasks,
+                        "type" =>"dash-tasks",
+                    ])
+                    @endcomponent
                     </div>
                 </div>
             </div>

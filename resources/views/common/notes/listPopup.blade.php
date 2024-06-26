@@ -4,7 +4,7 @@
     <ul class="list-group dnotesUl">
         @foreach ($notesInfo as $note)
             <li class="list-group-item border-0 mb-4 d-flex justify-content-between align-items-start dashboard-notes-list">
-                <div class="text-start" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
+                <div class="text-wrap" onclick="handleDeleteCheckbox('{{ $note['id'] }}')"
                     class="form-check-input checkbox{{ $note['id'] }}"
                     id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                     type="button" data-bs-toggle="modal"

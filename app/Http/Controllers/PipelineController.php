@@ -535,6 +535,24 @@ class PipelineController extends Controller
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'deal'))->render();
     }
 
+    public function createNotesForDeal()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $dealId = request()->route('dealId');
+        $accessToken = $user->getAccessToken();
+        $type = "Deals";
+        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        return view('common.notes.create', compact("retrieveModuleData","deal","type"))->render();
+    }
+
+
     public function addContactRole(Request $request)
     {
         $user = $this->user();

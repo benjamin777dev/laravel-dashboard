@@ -9,19 +9,19 @@
 <div class="container-fluid">
     <div class="submittaldiv">
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  ><i class="fas fa-save">
                 </i>
                 Cancel
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Save and New
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
@@ -98,11 +98,19 @@
     function convertInInteger(string) {
         try {
             console.log("String",string);
-            let num = parseInt(string.replace('$', ''));
-            if (isNaN(num)) {
-                throw new Error("Conversion Error: Invalid input");
+            if(string){
+                let integerPart = string.split('.')[0];
+                console.log("integerPart",integerPart);
+                if (integerPart.length > 4) {
+                    throw new Error("Input Error: Amount length must be exactly 4 characters");
+                }
+                let num = parseInt(integerPart);
+                if (isNaN(num)) {
+                    throw new Error("Conversion Error: Invalid input");
+                }
+                return num;
             }
-            return num;
+            return null
         } catch (error) {
             console.log(error);
             throw new Error(error.message);
@@ -127,7 +135,9 @@
     }
 
     function validateSubmittal(submittal,isNew) {
-        isValid = false
+        console.log(submittal);
+        isValid = true
+        // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
@@ -248,6 +258,7 @@
                 })
             }
         }else if(submittal.submittalType == 'listing-submittal'){
+            console.log("jasgdfjashj");
             // Get values from Basic Info section
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
@@ -263,6 +274,7 @@
             var bedsBathsTotal = $('#bedsBathsTotal').val();
             var tourURL = $('#tourURL').val();
             var usingCHR = $('#usingCHR').val();
+
 
             // Get values from CHR TM - Transaction Details and Preferences section
             var needOE = $('#needOE').val();
@@ -313,6 +325,7 @@
             var emailBlastReverseProspect = $('#emailBlastReverseProspect').prop('checked');
             var propertyHighlightVideo = $('#propertyHighlightVideo').prop('checked');
             var socialMediaImages = $('#socialMediaImages').prop('checked');
+            var showPromotion = $('#showPromotion').val();
             var socialMediaAds = $('#socialMediaAds').prop('checked');
             var priceImprovementPackage = $('#priceImprovementPackage').prop('checked');
             var customDomainName = $('#customDomainName').val();
@@ -335,21 +348,28 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
-
-            if (((transactionName && agentName && commingSoon && tmName && activeDate && agreementExecuted && bedsBathsTotal && usingCHR) !== '') && (price !== "$")) {
-                isValid = true;
-
-                if (showOtherListingForm !== "null") {
-                    if (stickyDots && featureCards && brochureLine) {
-                        isValid = true;
-                    } else {
-                        showToastError("Please fill in all the required fields in the PROPERTY PROMOTION - Print Requests section.");
-                        isValid = false;
-                    }
-                }
-            } else {
-                showToastError("Please fill in all the required fields.");
-                isValid = false;
+            // Select all div elements
+            const listingSubmittalsContainer = document.getElementById('listingSubmittal');
+            console.log("listingSubmittalsContainer",listingSubmittalsContainer);
+            if (listingSubmittalsContainer) {
+                const allDivs = listingSubmittalsContainer.querySelectorAll(':scope > div');
+                // Filter out divs that are hidden (display: none)
+                const visibleDivs = Array.from(allDivs).filter(div => window.getComputedStyle(div).display !== 'none');
+                console.log("visibleDivs",visibleDivs);
+                // Loop through each visible div and validate form fields within it
+                visibleDivs.forEach(div => {
+                    const validatedElements = div.querySelectorAll('.validate');
+                    console.log("validatedElements",validatedElements);
+                    validatedElements.forEach(element => {
+                        if (element.value.trim() === '') {
+                            const label = document.querySelector(`label[for="${element.id}"]`);
+                            const text = label ? label.innerHTML : "This field";
+                            showToastError(text + " cannot be empty");
+                            isValid = false;
+                        }
+                    });
+                });
+                
             }
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
@@ -453,6 +473,7 @@
                         "Sign_Install_Vendor_Info": signInstallVendor,
                         "Delivery_Only_Shipping_Address_Name": deliveryAddress,
                         "Fees_Charged_to_Seller_at_Closing": feesCharged,
+                        "showPromotion":showPromotion
                     }],
                     "_token": '{{ csrf_token() }}'
                 }

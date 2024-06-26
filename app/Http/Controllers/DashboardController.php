@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use DataTables;
 
 class DashboardController extends Controller
 {
@@ -103,6 +104,7 @@ class DashboardController extends Controller
                 ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
                 && !Str::startsWith($deal['stage'], 'Dead')
                 && $deal['stage'] !== 'Sold'
+                && $deal['stage'] !== "Under Contract"
             );
         
             // Debugging: Print if the deal needs a new date
@@ -229,6 +231,66 @@ class DashboardController extends Controller
         Log::info("Aci Records: ", $allACI->toArray());
         return $allACI;
     }
+
+    public function needNewDateMethod() {
+        $db = new DatabaseService();
+        $helper = new Helper();
+        $user = $this->user();
+        $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
+        if (!$user) {
+            return redirect('/login');
+        }
+          //Get Date Range
+          $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
+        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+         // Needs New Date
+         $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
+            $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+            $now = now();
+        
+            // Debugging: Print the deal details and dates
+            Log::info('Checking deal:', [
+                'deal_id' => $deal['id'],
+                'closing_date' => $deal['closing_date'],
+                'converted_closing_date' => $closingDate,
+                'now' => $now,
+                'end_date_30_days' => $endDate30Days,
+                'stage' => $deal['stage']
+            ]);
+        
+            $needsNewDate = (
+                ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
+                && !Str::startsWith($deal['stage'], 'Dead')
+                && $deal['stage'] !== 'Sold'
+                && $deal['stage'] !== "Under Contract"
+            );
+        
+            // Debugging: Print if the deal needs a new date
+            if ($needsNewDate) {
+                Log::info('Deal needs new date:', ['deal_id' => $deal['id']]);
+            }
+        
+            return $needsNewDate;
+        });
+        return Datatables::of($needsNewDate)->make(true);
+        
+    }
+
+    public function retriveTaskforDatatable() {
+        $db = new DatabaseService();
+        $helper = new Helper();
+        $user = $this->user();
+        $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
+        if (!$user) {
+            return redirect('/login');
+        }
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $db->retreiveTasks($user, $accessToken, $tab);
+        return Datatables::of($tasks)->make(true);
+        
+    }
+
+   
 
     //get notes data function
     private function retrieveNOTESFromZoho(User $user, $accessToken)
@@ -552,53 +614,36 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
 
-        Log::info("JSON TASK INPUT" . json_encode($jsonData));
+        Log::info("JSON TASK INPUT: " . json_encode($jsonData));
         $zoho = new ZohoCRM();
         $zoho->access_token = $accessToken;
-        $task = Task::where('zoho_task_id', $id)->first();
-        if (empty($task)) {
-            $task = Task::where('id', $id)->first();
+        $task = Task::where('zoho_task_id', $id)->first() ?? Task::where('id', $id)->first();
+
+        if (!$task) {
+            return response()->json(['error' => 'Task not found'], 404);
         }
+
         try {
             $response = $zoho->updateTask($jsonData, $task['zoho_task_id']);
             if (!$response->successful()) {
-                throw $response;
-            }
-            $requestData = $request->json()->all(); // Get JSON data from request
-            $data = $requestData['data'][0]; // Access the 'data' array
-            $subject = $data['Subject'] ?? null; // Get 'Subject' from data
-            $dueDate = $data['Due_Date'] ?? null; // Get 'Due_Date' from data
-            $whatId = $data['What_Id']['id'] ?? null; // Get 'What_Id' from data
-            $whoId = $data['Who_Id']['id'] ?? null; // Get 'What_Id' from data
-            $status = $data['Status'] ?? null; // Get 'What_Id' from data
-            $seModule = $data['$se_module'] ?? null;
-            if ($task) {
-                if ($dueDate !== null) {
-                    $task->due_date = $dueDate ?? $task->due_date;
-                }
-                if ($subject !== null) {
-                    $task->subject = $subject;
-                }
-                if ($whatId !== null) {
-                    $task->what_id = $whatId;
-                }
-                if ($seModule !== null) {
-                    $task->related_to = $seModule;
-                }
-                if ($whoId !== null) {
-                    $task->who_id = $whoId;
-                }
-                $task->status = $status ?? $task->status;
-                $task->save();
+                throw new \Exception("Zoho update failed");
             }
 
-            Log::info("Successful task update... " . $response);
-            return $response;
+            $data = $jsonData['data'][0];
+            $task->due_date = $data['Due_Date'] ?? $task->due_date;
+            $task->subject = $data['Subject'] ?? $task->subject;
+            $task->what_id = $data['What_Id']['id'] ?? $task->what_id;
+            $task->related_to = $data['$se_module'] ?? $task->related_to;
+            $task->who_id = $data['Who_Id']['id'] ?? $task->who_id;
+            $task->status = $data['Status'] ?? $task->status;
+            $task->save();
+
+            Log::info("Successful task update... ", ['response' => $response->json()]);
+            return response()->json($response->json());
         } catch (\Exception $e) {
-            Log::error("Error creating task: " . $e->getMessage());
-            return $e->getMessage();
+            Log::error("Error updating task: " . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
     }
 
     public function retrieveDealTransactionData(User $user, $accessToken)

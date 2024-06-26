@@ -17,6 +17,7 @@
                     data: null,
                     title: "Actions",
                     render: function(data, type, row) {
+                        console.log(data,'datais hereeee')
                         return `<a href="/pipeline-view/${data.id}" target='_blank'>
                         <img src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
                         <span class="tooltiptext"></span>
@@ -25,14 +26,18 @@
                             class="ppiplinecommonIcon" data-bs-toggle="modal"
                             data-bs-target="#newTaskModalId${data.id}" title="Add Task">
                         <span class="tooltiptext"></span>
+                         ${generateModalHtml(data)}
                     <img src="/images/sticky_note.svg" alt="Sticky note icon"
                             class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
-                            onclick="fetchNotesForDeal(${data.id},${data.zoho_deal_id})">
+                            onclick="fetchNotesForContact('${data.id}','${data.zoho_deal_id}','Deals')">
                         <span class="tooltiptext"></span>
+                         ${fetchNotesDeal(data.zoho_deal_id)}
                     <img src="/images/noteBtn.svg" alt="Note icon"
-                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                    onclick="createNotesForDeal('${data.id}','${data.zoho_deal_id}')"
+                            class="ppiplinecommonIcon"  data-bs-toggle="modal"
                             data-bs-target="#staticBackdropforNote_${data.id}">
                         <span class="tooltiptext"></span>
+                        <div class="createNoteModal"></div>
                         `;
                     }
                 },
@@ -263,6 +268,7 @@
                 });
             }
         });
+        
 
         $('#pipelineSearch').on('keyup', function() {
             table.search(this.value).draw();
@@ -274,6 +280,605 @@
             $('#pipelineSearch').val("");
             table.search("").draw();
         });
+
+
+        //transaction for dashboard
+        var tableDashboard = $('#datatable_transaction').DataTable({
+            paging: true,
+            searching: true,
+            "processing": true,
+            serverSide: true,
+            columns: [
+                {
+                    data: 'deal_name',
+                    title: "Transaction",
+                    render: function(data, type, row) {
+                        return `<span >${data}</span>`;
+                    }
+                },
+                {
+                    data: 'client_name_primary',
+                    title: "Client Name",
+                    render: function(data, type, row) {
+                        return `<span >${data}</span>`;
+                    }
+                },
+                {
+                    data: 'stage',
+                    title: "Status",
+                    render: function(data, type, row) {
+                        return `<span>${data}</span>`;
+                    }
+                },
+                {
+                    data: 'representing',
+                    title: "Representing",
+                    render: function(data, type, row) {
+                        return `<span >${data}</span>`;
+                    }
+                },
+                {
+                    data: 'sale_price',
+                    title: "Price",
+                    render: function(data, type, row) {
+                        console.log(data, 'datattas')
+                        return `<span >$${number_format(data, 0, '.', ',')}</span>`;
+                    }
+                },
+                {
+                    data: 'closing_date',
+                    title: "Close Date",
+                    render: function(data, type, row) {
+                        return `<span class="editable badDateInput" data-name="closing_date" data-id="${row.id}">${data}</span>`;
+                    }
+                },
+                {
+                    data: 'commission',
+                    title: "Commission",
+                    render: function(data, type, row) {
+                        return `<span >${data}%</span>`;
+                    }
+                },
+                {
+                    data: 'potential_gci',
+                    title: "Potential GCI",
+                    render: function(data, type, row) {
+                        return `<span >${data}</span>`;
+                    }
+                },
+                {
+                    data: 'pipeline_probability',
+                    title: "Probability",
+                    render: function(data, type, row) {
+                        return `<span >${data}%</span>`;
+                    }
+                },
+                {
+                    data: null,
+                    title: "Probable GCI",
+                    render: function(data, type, row) {
+                        // Calculate probable GCI
+                        var probableGCI = (row.sale_price ?? 0) * ((row.commission ?? 0) / 100) * ((row
+                            .pipeline_probability ?? 0) / 100);
+                        return `$${number_format(probableGCI, 0, '.', ',')}`; // Format probableGCI as currency
+                    }
+                }
+            ],
+            ajax: {
+                url: '/needsNewdate', // Ensure this URL is correct
+                type: 'GET', // or 'POST' depending on your server setup
+                "data": function(request) {
+                    request._token = "{{ csrf_token() }}";
+                    request.perPage = request.length;
+                    request.stage = $('#related_to_stage').val(),
+                    request.page = (request.start / request.length) + 1;
+                    request.search = request.search.value;
+
+                },
+                dataSrc: function(data) {
+                    return data?.data; // Return the data array or object from your response
+                }
+            },
+            initComplete: function() {
+                // Function to handle editing mode
+                var currentText;
+
+                function formatDate(dateString) {
+                    if (!dateString) return '';
+
+                    var date = new Date(dateString);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+
+                    return `${year}-${month}-${day}`;
+                }
+
+                function enterEditMode(element) {
+                    if ($(element).hasClass('editing')) {
+                        return; // Do nothing if already editing
+                    }
+
+                    // Close any other editing inputs
+                    $('#datatable_transaction tbody').find('input.edit-input, select.edit-input').each(
+                        function() {
+                            var newValue = $(this).val();
+                            var dataName = $(this).data('name');
+                            var dataId = $(this).data('id');
+                            $(this).replaceWith(
+                                `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                            );
+                        });
+
+                    currentText = $(element).text(); // Set currentText when entering edit mode
+                    var dataName = $(element).data('name');
+                    var dataId = $(element).data('id');
+
+                    // Replace span with input or select for editing
+                    if (dataName !== "closing_date" && dataName !== "stage" && dataName !== "representing") {
+                        $(element).replaceWith(
+                            `<input type="text" class="edit-input form-control" value="${currentText}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "closing_date") {
+                        $(element).replaceWith(
+                            `<input type="date" class="edit-input form-control badDateInput" value="${formatDate(currentText)}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "stage") {
+                        // Fetch stage options from backend (example)
+                        var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
+                        var selectOptions = stageOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    } else if (dataName === "representing") {
+                        // Fetch representing options from backend (example)
+                        var representingOptions = ['Buyer', 'Seller'];
+                        var selectOptions = representingOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    }
+
+                    // Focus on the input field or select dropdown
+                    $('#datatable_transaction tbody').find('input.edit-input, select.edit-input').focus();
+                }
+
+
+                // Function to handle exiting editing mode
+                function exitEditMode(inputElement) {
+                    var newValue = $(inputElement).val();
+                    var dataName = $(inputElement).data('name');
+                    var dataId = $(inputElement).data('id');
+
+                    // Replace input or select with span
+                    $(inputElement).replaceWith(
+                        `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                    ).removeClass('editing');
+
+                    // Check if the value has changed
+                    if (newValue !== currentText) {
+
+                        // Example AJAX call (replace with your actual endpoint and data):
+                        $.ajax({
+                            url: '/deals/update/' + dataId,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                id: dataId,
+                                field: dataName,
+                                value: newValue
+                            },
+                            success: function(response) {
+                                console.log('Updated successfully:', response);
+                                if (response?.message) {
+                                    showToast(response?.message);
+                                }
+                            },
+                            error: function(error) {
+                                console.error('Error updating:', error);
+                                showToastError(error?.responseJSON?.error);
+                            }
+                        });
+                    }
+                }
+
+                // Click event to enter editing mode
+                $('#datatable_transaction tbody').on('click', 'span.editable', function() {
+                    enterEditMode(this);
+                });
+
+                // Keyup event to exit editing mode on Enter
+                $('#datatable_transaction tbody').on('keyup', 'input.edit-input', function(event) {
+                    if (event.key === "Enter") {
+                        exitEditMode(this);
+                    }
+                });
+                // Handle onchange event for select
+                $('#datatable_transaction tbody').on('change', 'select.edit-input', function() {
+                    exitEditMode(this); // Exit edit mode when a selection is made
+                });
+
+                // Blur event to exit editing mode when clicking away
+                $('#datatable_transaction tbody').on('blur', 'input.edit-input', function() {
+                    exitEditMode(this);
+                });
+            }
+        });
+
+
+        var tableTasks = $('#datatable_tasks').DataTable({
+            paging: true,
+            searching: true,
+            "processing": true,
+            serverSide: true,
+            columns: [
+                {
+                    data: null,
+                    title: '<input type="checkbox" id="checkAll" />',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        return `<input onchange="triggerCheckbox('${row.zoho_task_id}')" type="checkbox"
+                                    class="task_checkbox" id="${row.zoho_task_id}" />`;
+                    }
+                },
+                {
+                    data: 'subject',
+                    title: 'Subject',
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="deal_name" data-id="${row.id}">${data}</span>`;
+                    }
+                },
+                {
+                    data: 'related_to',
+                    title: 'Related To',
+                    render: function(data, type, row) {
+                        return `<span class="editable" data-name="client_name_primary" data-id="${row.id}">${data}</span>`;
+                    }
+                },
+                {
+                    data: 'due_date',
+                    title: 'Due Date',
+                    render: function(data, type, row) {
+                        return  `<span class="editable" data-name="closing_date" data-id="${row.id}">${data}</span>`;
+                    }
+                },
+                {
+                    data: null,
+                    title: 'Options',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        return `<div class="d-flex btn-save-del">
+                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
+                                        id="update_changes" data-bs-toggle="modal"
+                                        onclick="updateTask('${row.zoho_task_id}','${row.id}')">
+                                        <i class="fas fa-hdd plusicon"></i>
+                                        Done
+                                    </div>
+                                    <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
+                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModalId${row.zoho_task_id}">
+                                        <i class="fas fa-trash-alt plusicon"></i>
+                                        Delete
+                                    </div>
+                                </div>`;
+                    }
+                }
+            ],
+            ajax: {
+                url: '/dashboard-tasks', // Ensure this URL is correct
+                type: 'GET', // or 'POST' depending on your server setup
+                "data": function(request) {
+                    request._token = "{{ csrf_token() }}";
+                    request.perPage = request.length;
+                    request.stage = $('#related_to_stage').val(),
+                    request.page = (request.start / request.length) + 1;
+                    request.search = request.search.value;
+
+                },
+                dataSrc: function(data) {
+                    console.log(data,'data is hreeeee')
+                    return data?.data; // Return the data array or object from your response
+                }
+            },
+            initComplete: function() {
+                // Function to handle editing mode
+                var currentText;
+
+                function formatDate(dateString) {
+                    if (!dateString) return '';
+
+                    var date = new Date(dateString);
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+
+                    return `${year}-${month}-${day}`;
+                }
+
+                function enterEditMode(element) {
+                    if ($(element).hasClass('editing')) {
+                        return; // Do nothing if already editing
+                    }
+
+                    // Close any other editing inputs
+                    $('#datatable_tasks tbody').find('input.edit-input, select.edit-input').each(
+                        function() {
+                            var newValue = $(this).val();
+                            var dataName = $(this).data('name');
+                            var dataId = $(this).data('id');
+                            $(this).replaceWith(
+                                `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                            );
+                        });
+
+                    currentText = $(element).text(); // Set currentText when entering edit mode
+                    var dataName = $(element).data('name');
+                    var dataId = $(element).data('id');
+
+                    // Replace span with input or select for editing
+                    if (dataName !== "closing_date" && dataName !== "stage" && dataName !== "representing") {
+                        $(element).replaceWith(
+                            `<input type="text" class="edit-input form-control" value="${currentText}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "closing_date") {
+                        $(element).replaceWith(
+                            `<input type="date" class="edit-input form-control" value="${formatDate(currentText)}" data-name="${dataName}" data-id="${dataId}">`
+                        ).addClass('editing');
+                    } else if (dataName === "stage") {
+                        // Fetch stage options from backend (example)
+                        var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
+                        var selectOptions = stageOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    } else if (dataName === "representing") {
+                        // Fetch representing options from backend (example)
+                        var representingOptions = ['Buyer', 'Seller'];
+                        var selectOptions = representingOptions.map(option => {
+                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
+                        }).join('');
+
+                        $(element).replaceWith(
+                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                    ${selectOptions}
+                </select>`
+                        ).addClass('editing');
+                    }
+
+                    // Focus on the input field or select dropdown
+                    $('#datatable_tasks tbody').find('input.edit-input, select.edit-input').focus();
+                }
+
+
+                // Function to handle exiting editing mode
+                function exitEditMode(inputElement) {
+                    var newValue = $(inputElement).val();
+                    var dataName = $(inputElement).data('name');
+                    var dataId = $(inputElement).data('id');
+
+                    // Replace input or select with span
+                    $(inputElement).replaceWith(
+                        `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                    ).removeClass('editing');
+
+                    // Check if the value has changed
+                    if (newValue !== currentText) {
+
+                        // Example AJAX call (replace with your actual endpoint and data):
+                        $.ajax({
+                            url: '/deals/update/' + dataId,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                id: dataId,
+                                field: dataName,
+                                value: newValue
+                            },
+                            success: function(response) {
+                                console.log('Updated successfully:', response);
+                                if (response?.message) {
+                                    showToast(response?.message);
+                                }
+                            },
+                            error: function(error) {
+                                console.error('Error updating:', error);
+                                showToastError(error?.responseJSON?.error);
+                            }
+                        });
+                    }
+                }
+
+                // Click event to enter editing mode
+                $('#datatable_tasks tbody').on('click', 'span.editable', function() {
+                    enterEditMode(this);
+                });
+
+                // Keyup event to exit editing mode on Enter
+                $('#datatable_tasks tbody').on('keyup', 'input.edit-input', function(event) {
+                    if (event.key === "Enter") {
+                        exitEditMode(this);
+                    }
+                });
+                // Handle onchange event for select
+                $('#datatable_tasks tbody').on('change', 'select.edit-input', function() {
+                    exitEditMode(this); // Exit edit mode when a selection is made
+                });
+
+                // Blur event to exit editing mode when clicking away
+                $('#datatable_tasks tbody').on('blur', 'input.edit-input', function() {
+                    exitEditMode(this);
+                });
+            }
+        });
+
+
+ function generateModalHtml(data) {
+            return `
+                <div class="modal fade" id="newTaskModalId${data.id}" tabindex="-1">
+                    <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+                        <div class="modal-content p-1">
+                            <div class="modal-header border-0">
+                                <p class="modal-title dHeaderText">Create New Tasks</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    onclick="resetValidationTask(${data.id})" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body dtaskbody">
+                                <p class="ddetailsText fw-normal">Details</p>
+                                <textarea name="subject" onkeyup="validateTextareaTask(${data.id});" id="darea${data.id}"
+                                    rows="4" class="dtextarea"></textarea>
+                                <div id="subject_error${data.id}" class="text-danger"></div>
+                                <label class="dRelatedText mb-2">Related to...</label>
+                                <div class="btn-group dmodalTaskDiv">
+                                    <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
+                                        <option value="${data.zoho_contact_id ? data.id : data?.zoho_deal_id}" selected>
+                                            ${data.last_name ?? data.deal_name}
+                                        </option>
+                                    </select>
+                                </div>
+                                <p class="dDueText">Date due</p>
+                                <input type="date" name="due_date" class="dmodalInput" />
+                            </div>
+                            <div class="modal-footer ">
+                                <button type="button" onclick="addCommonTask('${data.zoho_contact_id ? data.zoho_contact_id : data.zoho_deal_id}','${data.zoho_contact_id ? 'Contacts' : 'Deals'}')"
+                                    class="btn btn-secondary taskModalSaveBtn">
+                                    <i class="fas fa-save saveIcon"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        function fetchNotesDeal(dealId) {
+            return `
+                <div class="modal fade testing" onclick="event.preventDefault();"
+                    id="notefetchrelatedContact${dealId}" data-bs-backdrop="static"
+                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                        <div class="modal-content dtaskmodalContent">
+                            <div class="modal-header border-0">
+                                <p class="modal-title dHeaderText">Notes</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    onclick="resetValidation()" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="notesContainer${dealId}">
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+
+        window.validateNoteDash=function(id = null) {
+            console.log(window.groupLabel, window.whoid, 'checkouttttttt');
+            let noteText, relatedTo, changeButton
+            if (id) {
+                noteText = document.getElementById("note_text" + id).value;
+                relatedTo = document.getElementById("related_to" + id)?.value;
+                changeButton = document.getElementById('validate-button' + id);
+                let isValid = true;
+    
+                // Reset errors
+                document.getElementById("note_text_error" + id).innerText = "";
+                document.getElementById("related_to_error" + id).innerText = "";
+    
+                /* // Validate note text length
+                if (noteText.trim().length > 10) {
+                    document.getElementById("note_text_error"+id).innerText = "Note text must be 10 characters or less";
+                    isValid = false;
+                } */
+                // Validate note text
+                if (noteText.trim() === "") {
+                    document.getElementById("note_text_error" + id).innerText = "Note text is required";
+                    isValid = false;
+                }
+    
+                // Validate related to
+                if (relatedTo === "") {
+                    document.getElementById("related_to_error" + id).innerText = "Related to is required";
+                    document.getElementById("noteSelect" + id).style.display = "none";
+                    isValid = false;
+                }
+                if (isValid) {
+                    changeButton.type = "submit";
+                    document.getElementById("staticBackdropforNote_" + id).removeAttribute("onclick");
+                }
+                return isValid;
+            } else {
+                noteText = document.getElementById("note_text").value;
+                relatedTo = document.getElementById("related_to_note").value;
+                changeButton = document.getElementById('validate-button');
+                let isValid = true;
+    
+                // Reset errors
+                document.getElementById("note_text_error").innerText = "";
+                document.getElementById("related_to_error").innerText = "";
+                let mergerdata = document.getElementById('merged_data');
+                console.log(mergerdata, 'emrefkdjklfsd');
+                // Validate note text
+                if (noteText.trim() === "") {
+                    document.getElementById("note_text_error").innerText = "Note text is required";
+                    isValid = false;
+                } else {
+                    document.getElementById("note_text_error").innerText = "";
+                }
+    
+                // Validate related to
+                if (relatedTo === "") {
+                    document.getElementById("related_to_error").innerText = "Related to is required";
+                    isValid = false;
+                } else {
+                    document.getElementById("related_to_error").innerText = "";
+                }
+                if (isValid) {
+                    const mergedData = {
+                        groupLabel: window.groupLabel,
+                        whoid: window.whoid,
+                        relatedTo: window.relatedTo,
+                        moduleId: window.moduelID
+                    };
+                    // Serialize the array to a JSON string
+                    const mergedDataJson = JSON.stringify(mergedData);
+                    mergerdata.value = mergedDataJson;
+                }
+                return isValid;
+            }
+    
+    
+        }
+
+        function enableSelect(id) {
+            // Enable the select element before form submission
+            document.getElementById('noteSelect'+id).removeAttribute('disabled');
+            // Return true to allow form submission
+            return true;
+        }
 
 
  //contact data table code
@@ -295,14 +900,18 @@
                     class="ppiplinecommonIcon" data-bs-toggle="modal"
                     data-bs-target="#newTaskModalId${data.id}" title="Add Task">
                 <span class="tooltiptext"></span>
+                ${generateModalHtml(data)}
             <img src="/images/sticky_note.svg" alt="Sticky note icon"
                     class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
-                    onclick="fetchNotesForDeal(${data.id},${data.zoho_deal_id})">
+                    onclick="fetchNotesForContact('${data.id}','${data.zoho_contact_id}','Contacts')">
                 <span class="tooltiptext"></span>
+                ${fetchNotesDeal(data.zoho_contact_id)}
             <img src="/images/noteBtn.svg" alt="Note icon"
                     class="ppiplinecommonIcon" data-bs-toggle="modal"
+                    onclick="createNotesForContact('${data.id}','${data.zoho_contact_id}')"
                     data-bs-target="#staticBackdropforNote_${data.id}">
                 <span class="tooltiptext"></span>
+                <div class="createNoteModal"></div>
                 `;
             }
         },
@@ -338,7 +947,6 @@
             data: 'mailing_address',
             title: "Address",
             render: function(data, type, row) {
-                console.log(data, 'datattas')
                 return `<span class="editable" data-name="mailing_address" data-id="${row.id}">${data}</span>`;
             }
         },
@@ -425,11 +1033,11 @@
         function exitEditMode(inputElement) {
             var newValue = $(inputElement).val();
             var dataName = $(inputElement).data('name');
-            var dataId = $(inputElement).data('id');
+            var conId = $(inputElement).data('id');
 
             // Replace input or select with span
             $(inputElement).replaceWith(
-                `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+                `<span class="editable" data-name="${dataName}" data-id="${conId}">${newValue}</span>`
             ).removeClass('editing');
 
             // Check if the value has changed
@@ -437,13 +1045,13 @@
 
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
-                    url: '/deals/update/' + dataId,
+                    url: '/contact/update/' + conId,
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: {
-                        id: dataId,
+                        id: conId,
                         field: dataName,
                         value: newValue
                     },
@@ -497,3 +1105,107 @@
             $('#contactSort').val("");  
             tableContact.search("").draw();
         });
+
+//    contacts actions
+        window.createNotesForContact = function(id, conId){
+
+            event.preventDefault();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "/note-create/"+id,
+                method: "GET",
+                success: function(response) {
+                    // $('#notesContainer').append('<p>New Note Content</p>');
+                    let noteContainer = $(".createNoteModal");
+                    console.log(response, 'noteContainer')
+                    // Clear previous contents of note containe
+                    noteContainer.empty();
+                    const card = noteContainer.html(response);
+                    // // Show the modal after appending notes
+                    $("#staticBackdropforNote_" + id).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    showToastError(error);
+                    console.error("Ajax Error:", error);
+                }
+            });
+
+        }
+
+        window.fetchNotesForContact=function(id, conId,type) {
+            event.preventDefault();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            let urlfinal =type==="Deals" ?"/deal/note/" :"/note/";
+            $.ajax({
+                url: urlfinal+id,
+                method: "GET",
+                success: function(response) {
+                    // $('#notesContainer').append('<p>New Note Content</p>');
+                    let noteContainer = $("#notesContainer" + conId);
+                    console.log(response, 'noteContainer')
+                    // Clear previous contents of note containe
+                    noteContainer.empty();
+                    const card = noteContainer.html(response);
+                    // Loop through each note in the response array
+                    // response?.forEach(function(note) {
+                    //     // console.log(note, 'note')
+                    //     // Create HTML to display note content and creation time
+                    //     let data = `<div class="noteCardForContact">
+                    //                 <p>Note Content: ${note?.contact_data?.first_name} ${note?.contact_data?.last_name}</p>
+                    //                 <p>Note Content: ${note?.note_content}</p>
+                    //             </div>`;
+                    //     // Append the HTML to noteContainer
+                    //     noteContainer.append(data);
+                    //     console.log("testing", noteContainer)
+                    // });
+                    // // Show the modal after appending notes
+                    $("#notefetchrelatedContact" + conId).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    showToastError(error);
+                    console.error("Ajax Error:", error);
+                }
+            });
+    
+        }
+
+        //    deal actions
+        window.createNotesForDeal = function(id, conId){
+
+            event.preventDefault();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "/note-create-pipe/"+id,
+                method: "GET",
+                success: function(response) {
+                    // $('#notesContainer').append('<p>New Note Content</p>');
+                    let noteContainer = $(".createNoteModal");
+                    console.log(response, 'noteContainer')
+                    // Clear previous contents of note containe
+                    noteContainer.empty();
+                    const card = noteContainer.html(response);
+                    // // Show the modal after appending notes
+                    $("#staticBackdropforNote_" + id).modal('show');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    showToastError(error);
+                    console.error("Ajax Error:", error);
+                }
+            });
+
+        }
