@@ -5,9 +5,9 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" id="noteForm_close{{ $deal['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="enableSelect({{ $deal['id'] }})">
+                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -50,9 +50,9 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" id="noteForm_close{{ $contact['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="enableSelect({{ $contact['id'] }})">
+                 <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -79,7 +79,7 @@
                         <div id="related_to_error{{ $contact['id'] }}" class="text-danger"></div>
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
-                        <button  type="submit" id="validate-button{{ $contact['id'] }}"
+                        <button type="submit" id="validate-button{{ $contact['id'] }}"
                             onclick="validateNoteDash('{{ $contact['id'] }}')"
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
@@ -96,10 +96,10 @@
             <div class="modal-content noteModal">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
+                    <button type="button" id="noteForm_close" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post" onsubmit="return validateNoteDash('')">
+                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -128,8 +128,10 @@
 @endif
 <script>
     function enableSelect(id) {
+        
         // Enable the select element before form submission
         document.getElementById('noteSelect'+id).removeAttribute('disabled');
+        
         // Return true to allow form submission
         return true;
     }
@@ -160,9 +162,12 @@
 
     // validation function onsubmit
     function validateNoteDash(id = null) {
+        
+        
         console.log(window.groupLabel, window.whoid, 'checkouttttttt');
         let noteText, relatedTo, changeButton
         if (id) {
+            enableSelect(id);
             noteText = document.getElementById("note_text" + id).value;
             relatedTo = document.getElementById("related_to" + id).value;
             changeButton = document.getElementById('validate-button' + id);
@@ -189,11 +194,12 @@
                 document.getElementById("noteSelect" + id).style.display = "none";
                 isValid = false;
             }
-            if (isValid) {
-                changeButton.type = "submit";
-                document.getElementById("staticBackdropforNote_" + id).removeAttribute("onclick");
-            }
-            return isValid;
+            // if (isValid) {
+            //     changeButton.type = "submit";
+            //     document.getElementById("staticBackdropforNote_" + id).removeAttribute("onclick");
+            // }
+            console.log("isValid",isValid);
+            // return isValid;
         } else {
             noteText = document.getElementById("note_text").value;
             relatedTo = document.getElementById("related_to_note").value;
@@ -230,10 +236,28 @@
                 // Serialize the array to a JSON string
                 const mergedDataJson = JSON.stringify(mergedData);
                 mergerdata.value = mergedDataJson;
+                
             }
-            return isValid;
+            // return isValid;
         }
-
-
+        console.log("isValid",);
+        var formData = $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).serialize();
+        console.log(formData);
+        $.ajax({
+            type: 'POST',
+            url: $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).attr('action'),
+            data: formData,
+            success: function(data) {
+                let test =$('#' + (id ? 'noteForm_close' + id : 'noteForm_close'));
+                console.log(test,'testtest')
+                // handle success response
+                $('#' + (id ? 'noteForm_close' + id : 'noteForm_close'))[0].click();
+            },
+            error: function(xhr, status, error) {
+                // handle error response
+                console.log('Error saving note: ' + error);
+            }
+        });
+        return false;
     }
 </script>
