@@ -432,7 +432,7 @@ class DatabaseService
 
             // Adjust query to include contactName table using join
             $deals = Deal::where($conditions)
-                ->whereNotIn('stage', 
+                ->whereNotIn('stage',
                     ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
                 );
 
@@ -633,7 +633,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Tasks From Database");
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
-        
+
             if ($tab == 'Overdue') {
                 // These are any tasks that have a due date less than today and the task status isn't completed
                 $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
@@ -652,18 +652,18 @@ class DatabaseService
                 $tasks->where('status', 'Completed')
                       ->orderBy('due_date', 'desc');
             }
-        
+
             // This will apply the updated_at ordering only if it's not already ordered by due_date
             if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'Due Today') {
                 $tasks = $tasks->orderBy('updated_at', 'desc');
             }
-        
+
             $tasks = $tasks->paginate(10);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
-        } 
+        }
     }
 
     public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
@@ -1191,7 +1191,7 @@ class DatabaseService
             if($DBdeal->zoho_deal_id === null){
                 $updatedDealData['zoho_deal_id'] = $zohoDeal['id'];
             }
-           
+
             $zohoDeal = Deal::updateOrCreate(['id' => $DBdeal->id], $updatedDealData);
 
             Log::info("Retrieved Deal Contact From Database", ['deal' => $zohoDeal]);
@@ -1261,13 +1261,7 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contacts From Database");
-            $condition = [['contacts.contact_owner', $user->root_user_id]];
-            if ($filter === "has_email") {
-                $condition[]=['contacts.has_email',true];
-            }else if($filter==="has_address"){
-                $condition[]=['contacts.has_address',true];
-            }
-            
+            $condition = [['contacts.contact_owner', $user->root_user_id], ['contacts.zoho_contact_id', '!=', null]];
             $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
@@ -1287,15 +1281,19 @@ class DatabaseService
                 )
                 ->with([
                     'groups' => function ($query) use ($filter) {
-                        if ($filter) {
-                            $query->where('groupId', $filter);
-                        }
+                        // $query->where('groupId', $filter);
                     },
                 ])
                 ->when($filter, function ($query) use ($filter) {
-                    $query->whereHas('groups', function ($query) use ($filter) {
-                        $query->where('groupId', $filter);
-                    });
+                    if ($filter === "has_email") {
+                        $query->where('contacts.has_email', 1);
+                    } else if($filter==="has_address"){
+                        $query->where('contacts.has_address', 1);
+                    } else{
+                        $query->whereHas('groups', function ($query) use ($filter) {
+                            $query->where('groupId', $filter);
+                        });
+                    }
                 })
                 ->orderByRaw('CASE WHEN contacts.spouse_partner IS NULL THEN 0 ELSE 1 END')
                 ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
@@ -1808,7 +1806,7 @@ class DatabaseService
                 case 'Tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
                     break;
-                    
+
                     // Add other cases as needed
             }
         } catch (\Exception $e) {
