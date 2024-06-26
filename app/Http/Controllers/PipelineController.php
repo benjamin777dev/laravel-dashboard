@@ -163,27 +163,11 @@ class PipelineController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        // Log::info("deals and tab data " . $tab . $dealId);
-        // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-        // Log::info("Task Details: " . print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        // $attachments = $db->retreiveAttachment($deal->zoho_deal_id);
-        // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
-        // $contacts = $db->retreiveContactsJson($user, $accessToken);
-        // $users = User::all();
-        // $contactRoles = $db->retrieveRoles($user);
-        // $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-        // $allStages = config('variables.dealStages');
-        // $tab = request()->query('tab') ?? 'In Progress';
-        // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        // if (request()->ajax()) {
-        //     // If it's an AJAX request, return the pagination HTML
-        //     return view('common.tasks', compact('deal', 'tasks', 'retrieveModuleData', 'tab'))->render();
-        // }
+        
+        
+        
         return view('pipeline.view', compact('deal', 'dealId', 'notesInfo', 'retrieveModuleData', 'tab'))->render();
 
     }
@@ -305,14 +289,14 @@ class PipelineController extends Controller
             return response()->json($isIncompleteDeal);
         } else {
 
-            $zohoDeal = $zoho->createZohoDeal($jsonData);
-            if (!$zohoDeal->successful()) {
-                return "error somthing" . $zohoDeal;
-            }
-            $zohoDealArray = json_decode($zohoDeal, true);
-            $data = $zohoDealArray['data'][0]['details'];
+            // $zohoDeal = $zoho->createZohoDeal($jsonData);
+            // if (!$zohoDeal->successful()) {
+            //     return "error somthing" . $zohoDeal;
+            // }
+            // $zohoDealArray = json_decode($zohoDeal, true);
+            // $data = $zohoDealArray['data'][0]['details'];
             $dealData = $jsonData['data'][0];
-            $deal = $db->createDeal($user, $accessToken, $data, $dealData);
+            $deal = $db->createDeal($user, $accessToken, $dealData);
             return response()->json($deal);
         }
 
@@ -331,7 +315,18 @@ class PipelineController extends Controller
             $zoho->access_token = $accessToken;
 
             $jsonData = $request->json()->all();
-            $zohoDeal = $zoho->updateZohoDeal($jsonData, $id);
+            $deal = $db->retrieveDealById($user,$accessToken,$id);
+            if(!$deal){
+                $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
+                if(!$deal){
+                    return response()->json(['error' => 'Deal Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+            if($deal->isDealCompleted){
+                $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
+            }else{
+                $zohoDeal= $zoho->createZohoDeal($jsonData);
+            }
 
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -348,7 +343,7 @@ class PipelineController extends Controller
             $zohoDeal_Array = json_decode($resp, true);
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
-            $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $id);
+            $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
 
             return response()->json($zohoDealArray);
         } catch (\Throwable $th) {
@@ -509,7 +504,14 @@ class PipelineController extends Controller
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-        $contactRoles = $db->retrieveRoles($user);
+        //$contactRoles = $db->retrieveRoles($user);
+
+        // Ensure relationships are eager loaded
+        $deal->load('contactName', 'leadAgent', 'tmName');
+
+        // Fetch contact roles
+        $contactRoles = $deal->getContactRoles();
+
         return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }

@@ -162,6 +162,11 @@ class Contact extends Model
         return $this->belongsTo(User::class, 'contact_owner','root_user_id');
     }
 
+    public function spouseContact()
+    {
+        return $this->belongsTo(Contact::class, 'spouse_partner','zoho_contact_id');
+    }
+
     public function contactName()
     {
         return $this->belongsTo(Contact::class, 'contactId');
@@ -187,6 +192,23 @@ class Contact extends Model
     {
         return $this->hasMany(Contact::class, 'referred_id');
     }
+
+
+    public function getSpouse()
+    {
+        if (is_null($this->spouse_partner) || $this->spouse_partner == '') {
+            return null;
+        }
+
+        $spouseData = json_decode($this->spouse_partner, true);
+        $spouseId = is_array($spouseData) ? $spouseData['id'] ?? $spouseData : $spouseData;
+
+        return Contact::where('zoho_contact_id', $spouseId)->first();
+    }
+
+
+
+
 
     /**
      * Map Zoho data to contact model attributes.
