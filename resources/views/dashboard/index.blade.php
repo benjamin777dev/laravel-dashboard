@@ -500,17 +500,26 @@
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('btnBadDates').addEventListener('click', function() {
+        const btnBadDates = document.getElementById('btnBadDates');
+    if (btnBadDates) {
+        btnBadDates.addEventListener('click', function() {
             const element = document.getElementById('badDates');
-            const offset = 100; // Adjust this value as needed
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            if (element) {
+                const offset = 100; // Adjust this value as needed
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            } else {
+                console.log('No bad dates element found.');
+            }
         });
+    } else {
+        console.log('No btnBadDates element found.');
+    }
 
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')
