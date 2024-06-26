@@ -250,10 +250,9 @@
                     id="tmPreference" 
                     required 
                     onchange="setTmName(this)">
-                    <option value="CHR TM" {{$deal['tm_preference']=='CHR TM' ? 'selected' : '' }}>CHR TM</option>
-                    <option value="Non TM" {{$deal['tm_preference']=='Non TM' ? 'selected' : '' }}>Non TM</option>
+                    <option value="CHR TM" {{ trim($deal['tm_preference']) == 'CHR TM' ? 'selected' : '' }}>CHR TM</option>
+                    <option value="Non-TM" {{ trim($deal['tm_preference']) == 'Non-TM' ? 'selected' : '' }}>Non-TM</option>
                 </select>
-
             </div>
             <div class="col-md-6">
                 <label for="tmName" class="form-label nplabelText">TM Name</label>
@@ -321,8 +320,8 @@
 <div class="showsubmittal">
 </div>
 @endif
-{{-- Add Non TM --}}
-@if ($deal['tm_preference'] == 'Non TM')
+{{-- Add Non-TM --}}
+@if ($deal['tm_preference'] == 'Non-TM')
 <div class="showNonTm"></div>
 </div>
 @endif
@@ -356,7 +355,7 @@
         let tm_preference = document.getElementById("tmPreference").value;
         let tm_name_select = document.getElementById("tmName");
 
-        if (tm_preference === "Non TM") {
+        if (tm_preference === "Non-TM") {
             let user = users.find((val) => val.name === "File Management Team");
             console.log("TMUSERS", user);
             

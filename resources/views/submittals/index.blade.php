@@ -93,8 +93,8 @@
             addSubmittal('buyer-submittal',deal);
         }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
             addSubmittal('listing-submittal',deal)
-        }else if(deal.representing === "Seller" && deal.tm_preference === "Non TM"){
-            addSubmittal('listing-submittal',deal,'Non TM');
+        }else if(deal.representing === "Seller" && deal.tm_preference === "Non-TM"){
+            addSubmittal('listing-submittal',deal,'Non-TM');
         }
     }
 

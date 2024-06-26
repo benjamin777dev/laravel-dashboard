@@ -32,7 +32,7 @@
                 <div class="col-md-3 commonTextEllipsis">{{ $nontm['created_at'] }}</div>
                 <a class="col-md-1 text-end" href="/nontm-view/{{$nontm['id']}}"><div ><img
                         src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                        title="Non TM Details"></div></a> 
+                        title="Non-TM Details"></div></a> 
                         
             </div>
         @endforeach
