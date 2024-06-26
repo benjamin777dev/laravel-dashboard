@@ -196,7 +196,7 @@
                     <select class="form-select npinputinfo" id="tmPreference" required onchange="setTmName(this)">
                         <option value="CHR TM" {{ $deal['tm_preference'] == 'CHR TM' ? 'selected' : '' }}>CHR TM
                         </option>
-                        <option value="Non TM" {{ $deal['tm_preference'] == 'Non TM' ? 'selected' : '' }}>Non TM
+                        <option value="Non-TM" {{ $deal['tm_preference'] == 'Non-TM' ? 'selected' : '' }}>Non-TM
                         </option>
                     </select>
 
@@ -276,7 +276,7 @@
         let tm_preference = document.getElementById("tmPreference").value;
         let tm_name_select = document.getElementById("tmName");
 
-        if (tm_preference === "Non TM") {
+        if (tm_preference === "Non-TM") {
             let user = users.find((val) => val.name === "File Management Team");
             console.log("TMUSERS", user);
             

@@ -166,12 +166,12 @@
                 isValid = false
             }
             try {
-                var buyerFeesCharged = ($('#buyerFeesCharged').val()!="$")?convertInInteger($('#buyerFeesCharged').val()):null;
-                var buyerAmountChr = ($('#buyerAmountChr').val()!="$")?convertInInteger($('#buyerAmountChr').val()):null;
+                var buyerFeesCharged = ($('#buyerFeesCharged').val()!="")?convertInInteger($('#buyerFeesCharged').val()):null;
+                var buyerAmountChr = ($('#buyerAmountChr').val()!="")?convertInInteger($('#buyerAmountChr').val()):null;
             } catch (error) {
                 isValid = false;
                 showToastError(error.message)
-                return false 
+                return false
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -219,14 +219,7 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        getBuyerForm();
-                        showToast("Buyer Submittal updated successfully");
-                        if (response?.data && response.data[0]?.message) {
-                            // Convert message to uppercase and then display
-                            const upperCaseMessage = response.data[0].message.toUpperCase();
-                            
-                            // window.location.reload();
-                        }
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -346,8 +339,8 @@
                     });
                 });
             }
-            
-            
+
+
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
                 showToastError("Additional Email for confirmation should be in email format")
@@ -369,7 +362,7 @@
                 var feesCharged = ($('#feesCharged').val()!='$')?convertInInteger($('#feesCharged').val()):null;
             } catch (error) {
                 isValid = false;
-                showToastError(error.message) 
+                showToastError(error.message)
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -468,8 +461,7 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        getListingForm();
-                        showToast("Listing Submittal updated successfully");
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -480,6 +472,8 @@
             }
         }
     }
-   
+
 </script>
 @endsection
+
+

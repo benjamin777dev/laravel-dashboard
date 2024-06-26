@@ -1023,7 +1023,7 @@ class DatabaseService
         }
     }
 
-    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType,$formType)
+    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType = null,$formType = null)
     {
     try {
     Log::info("Retrieve Submittal Contact From Database",[['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id],['formType', $formType]]);
@@ -1602,102 +1602,62 @@ class DatabaseService
         }
 
         $accessToken = $user->access_token;
-        
+
         // Retrieve query parameters
         $searchQuery = $request->input('q', '');
         $page = $request->input('page', 1);
         $limit = $request->input('limit', 5);
         $offset = ($page - 1) * $limit;
 
+        // Fetch the modules and prepare data structure
         $filteredModules = Module::whereIn('api_name', ['Deals', 'Contacts'])->get();
+        $moduleIds = $filteredModules->pluck('zoho_module_id', 'api_name');
+
         $data = [];
-        $moduleIds = [];
+        $totalItems = 0;
 
         foreach ($filteredModules as $module) {
-            $moduleIds[$module->api_name] = $module->zoho_module_id;
-            $data[$module->api_name] = [];
-        }
-
-        foreach ($filteredModules as $module) {
+            $query = null;
             if ($module->api_name === 'Deals') {
-                // Retrieve Deals data based on search query if provided
-                /*$dealsQuery = Deal::query();
-                if ($searchQuery) {
-                    $dealsQuery
-                        ->where('userID', $user->id)
-                        ->andWhere('deal_name', 'like', "%$searchQuery%");
-                }
-                */
-                $dealsQuery = Deal::query();
-                if ($searchQuery) {
-                    $searchTerms = explode(' ', $searchQuery);
-                
-                    $dealsQuery->where('userID', $user->id)
-                               ->where(function ($query) use ($searchTerms) {
-                                   foreach ($searchTerms as $term) {
-                                       $query->where(function ($subQuery) use ($term) {
-                                           $subQuery->where('deal_name', 'like', "%$term%")
-                                                    ->orWhere('address', 'like', "%$term%");
-                                       });
-                                   }
-                               });
-                }
-
-                $totalDeals = $dealsQuery->count();
-                $dealsData = $dealsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
-                if ($searchQuery || $dealsData->isNotEmpty()) {
-                    $data['Deals'] = $dealsData->map(function ($deal) use ($moduleIds) {
-                        $deal['zoho_module_id'] = $moduleIds['Deals'];
-                        return $deal;
-                    });
-                }
+                $query = Deal::where('userID', $user->id);
             } elseif ($module->api_name === 'Contacts') {
-                // Retrieve Contacts data based on search query if provided
-                /*$contactsQuery = Contact::query();
-                if ($searchQuery) {
-                    $contactsQuery->where(function ($query) use ($searchQuery, $user) {
-                        $query->where('contact-owner', $user->root_user_id)
-                            ->orWhere('first_name', 'like', "%$searchQuery%")
-                            ->orWhere('last_name', 'like', "%$searchQuery%")
-                            ->orWhere('email', 'like', "%$searchQuery%")
-                            ->orWhere('phone', 'like', "%$searchQuery%")
-                            ->orWhere('mobile', 'like', "%$searchQuery%")
-                            ->orWhere('mailing_street', 'like', "%$searchQuery%");
-                    });
-                }*/
+                $query = Contact::where('contact_owner', $user->root_user_id);
+            }
 
-                $contactsQuery = Contact::query();
+            if ($query && $searchQuery) {
+                $searchTerms = explode(' ', $searchQuery);
+                $query->where(function ($q) use ($searchTerms, $module) {
+                    foreach ($searchTerms as $term) {
+                        $q->where(function ($subQuery) use ($term, $module) {
+                            if ($module->api_name === 'Deals') {
+                                $subQuery->where('deal_name', 'like', "%$term%")
+                                        ->orWhere('address', 'like', "%$term%");
+                            } elseif ($module->api_name === 'Contacts') {
+                                $subQuery->where('first_name', 'like', "%$term%")
+                                        ->orWhere('last_name', 'like', "%$term%")
+                                        ->orWhere('email', 'like', "%$term%")
+                                        ->orWhere('phone', 'like', "%$term%")
+                                        ->orWhere('mobile', 'like', "%$term%")
+                                        ->orWhere('mailing_address', 'like', "%$term%");
+                            }
+                        });
+                    }
+                });
+            }
 
-                if ($searchQuery) {
-                    $searchTerms = explode(' ', $searchQuery);
-                    
-                    $contactsQuery->where('contact_owner', $user->root_user_id)
-                                ->where(function ($query) use ($searchTerms) {
-                                    foreach ($searchTerms as $term) {
-                                        $query->where(function ($subQuery) use ($term) {
-                                            $subQuery->where('first_name', 'like', "%$term%")
-                                                    ->orWhere('last_name', 'like', "%$term%")
-                                                    ->orWhere('email', 'like', "%$term%")
-                                                    ->orWhere('phone', 'like', "%$term%")
-                                                    ->orWhere('mobile', 'like', "%$term%")
-                                                    ->orWhere('mailing_street', 'like', "%$term%");
-                                        });
-                                    }
-                                });
-                }
-
-                $totalContacts = $contactsQuery->count();
-                $contactsData = $contactsQuery->orderBy('updated_at','desc')->offset($offset)->limit($limit)->get();
-                if ($searchQuery || $contactsData->isNotEmpty()) {
-                    $data['Contacts'] = $contactsData->map(function ($contact) use ($moduleIds) {
-                        $contact['zoho_module_id'] = $moduleIds['Contacts'];
-                        return $contact;
+            if ($query) {
+                $totalItems += $query->count();
+                $items = $query->orderBy('updated_at', 'desc')->offset($offset)->limit($limit)->get();
+                if ($items->isNotEmpty()) {
+                    $data[$module->api_name] = $items->map(function ($item) use ($moduleIds, $module) {
+                        $item['zoho_module_id'] = $moduleIds[$module->api_name];
+                        return $item;
                     });
                 }
             }
         }
 
-        // Add objects for Contacts and Deals with their respective data arrays
+        // Prepare response data
         $responseData = [];
         foreach ($data as $moduleName => $moduleData) {
             if (!empty($moduleData)) {
@@ -1711,9 +1671,10 @@ class DatabaseService
         // Return response with total count for pagination
         return response()->json([
             'items' => $responseData,
-            'total_count' => isset($totalDeals) ? $totalDeals : (isset($totalContacts) ? $totalContacts : 0),
+            'total_count' => $totalItems,
         ]);
     }
+
 
     public function storeRolesIntoDB($contactRoles, $user)
     {

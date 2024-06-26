@@ -290,24 +290,48 @@ class ContactController extends Controller
 
             $contactOwnerArray = json_decode($request->contactOwner, true);
             // Validate the array
-            $validatedData1 = validator()->make($contactOwnerArray, [
-                'id' => 'required|numeric',
-                'Full_Name' => 'required|string|max:255',
-            ])->validate();
-            if (isset($request->reffered_by) && $request->reffered_by !== '') {
-                $refferedData = json_decode($request->reffered_by, true);
-                $validatedRefferedData = validator()->make($refferedData, [
+            $contactOwnerArray = json_decode($request->contactOwner, true);
+            if (!is_null($contactOwnerArray['id'])) {
+                $validatedData1 = validator()->make($contactOwnerArray, [
                     'id' => 'required|numeric',
                     'Full_Name' => 'required|string|max:255',
                 ])->validate();
+                Log::info('Validated contact owner', ['validatedData1' => $validatedData1]);
+            } else {
+                Log::warning('contactOwner id is null, skipping validation', ['contactOwnerArray' => $contactOwnerArray]);
+                $validatedData1 = $contactOwnerArray;
+            }
+
+            if (isset($request->reffered_by) && $request->reffered_by !== '') {
+                Log::info('Processing reffered_by', ['reffered_by' => $request->reffered_by]);
+                $refferedData = json_decode($request->reffered_by, true);
+
+                // Check if the 'id' is null
+                if (!is_null($refferedData['id'])) {
+                    $validatedRefferedData = validator()->make($refferedData, [
+                        'id' => 'required|numeric',
+                        'Full_Name' => 'required|string|max:255',
+                    ])->validate();
+                    Log::info('Validated reffered_by', ['validatedRefferedData' => $validatedRefferedData]);
+                } else {
+                    Log::warning('reffered_by id is null, skipping validation', ['refferedData' => $refferedData]);
+                    $validatedRefferedData = $refferedData;
+                }
             }
 
             if (isset($request->spouse_partner) && $request->spouse_partner !== '') {
                 $spouse_partner = json_decode($request->spouse_partner, true);
-                $validatedSpouse = validator()->make($spouse_partner, [
-                    'id' => 'required|numeric',
-                    'Full_Name' => 'required|string|max:255',
-                ])->validate();
+                // Check if the 'id' is null
+                if (!is_null($spouse_partner['id'])) {
+                    $validatedSpouse = validator()->make($spouse_partner, [
+                        'id' => 'required|numeric',
+                        'Full_Name' => 'required|string|max:255',
+                    ])->validate();
+                    Log::info('Validated spouse_partner', ['validatedSpouse' => $validatedSpouse]);
+                } else {
+                    Log::warning('spouse_partner id is null, skipping validation', ['spouse_partner' => $spouse_partner]);
+                    $validatedSpouse = $spouse_partner;
+                }
             }
 
             $input = $request->all();

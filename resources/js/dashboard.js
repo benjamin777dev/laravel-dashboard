@@ -56,7 +56,7 @@ window.closeTask = function(id, indexid, date) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-    
+
     var formData = {
         "data": [{
              "Subject": elementValue,
@@ -66,7 +66,7 @@ window.closeTask = function(id, indexid, date) {
 
     // console.log("ys check ot")
     $.ajax({
-        url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+        url: "/update-task/:id".replace(':id', id),
         method: 'PUT',
         contentType: 'application/json',
         dataType: 'json',

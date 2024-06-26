@@ -176,7 +176,7 @@ window.closeTask = function(id, indexId, subject) {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        
+
         var formData = {
             "data": [{
                 "Subject": subject,
@@ -186,7 +186,7 @@ window.closeTask = function(id, indexId, subject) {
 
         // console.log("ys check ot")
         $.ajax({
-            url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
             method: 'PUT',
             contentType: 'application/json',
             dataType: 'json',
@@ -247,7 +247,7 @@ window.closeTask = function(id, indexId, subject) {
             };
 
             $.ajax({
-                url: `https://zportal.coloradohomerealty.com/update-task/${id}`,
+                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
                 method: 'PUT',
                 contentType: 'application/json',
                 dataType: 'json',

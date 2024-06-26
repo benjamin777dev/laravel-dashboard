@@ -10,18 +10,18 @@
                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
                     related to
                      @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
-                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                        <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
                             {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
-                        </a>&nbsp;/&nbsp; 
-                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                        </a>&nbsp;/&nbsp;
+                        <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
                             {{ $task->dealData->deal_name ?? 'General' }}
                         </a>
                     @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
-                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                        <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
                             {{ $task->contactData->first_name ?? '' }}
                         </a>
                     @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
-                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                        <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
                             {{ $task->dealData->deal_name ?? 'General' }}
                         </a>
                     @else
@@ -29,7 +29,7 @@
                     @endif
                 </small>
             </div>
-            
+
             <div class="d-flex">
                 // if completed, don't show buttons
                 // but do show the completed date
