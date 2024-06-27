@@ -1129,7 +1129,7 @@ class ZohoCRM
     public function updateListingSubmittal($submittalId, $inputJson)
     {
         try {
-            Log::info('Creating Zoho contacts', [$inputJson]);
+            Log::info('Creating Zoho contacts', [$inputJson,$submittalId]);
 
             // Trigger workflows
             $inputJson['trigger'] = 'workflow';

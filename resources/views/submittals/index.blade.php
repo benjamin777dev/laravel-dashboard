@@ -83,7 +83,7 @@
 
 <script>
     var deal = @json($deal);
-    if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null){
+    if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null||deal.tm_preference=='Non-TM'){
         $('#addSubmittal').attr('disabled', true);
         $('#addSubmittal').addClass('btn-disabled');
     }else{
