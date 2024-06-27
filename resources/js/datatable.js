@@ -187,8 +187,7 @@
                 type: 'GET', // or 'POST' depending on your server setup
                 "data": function(request) {
                     request._token = "{{ csrf_token() }}";
-                    request.perPage = request.length;
-                    request.stage = $('#related_to_stage').val(),
+                    request.perPage = request.length; 
                     request.page = (request.start / request.length) + 1;
                     request.search = request.search.value;
                 },
@@ -242,7 +241,7 @@
                         ).addClass('editing');
                     } else if (dataName === "stage") {
                         // Fetch stage options from backend (example)
-                        var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
+                        var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active','Sold','Dead-Lost To Competition','Dead-Contract Terminated'];
                         var selectOptions = stageOptions.map(option => {
                             return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
                         }).join('');
@@ -1044,7 +1043,6 @@
                     request._token = "{{ csrf_token() }}";
                     request.perPage = request.length;
                     var contactSortValue = $('#contactSort').val();
-                    
                     var emailChecked = $('#filterEmail').prop('checked');
                     var mobileChecked = $('#filterMobile').prop('checked');
                     var abcdChecked = $('#filterABCD').prop('checked');

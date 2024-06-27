@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class PipelineController extends Controller
 {
@@ -115,13 +116,7 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         LOG::info('Access Token Decrypted' . $accessToken);
         $search = request()->query('search');
-        $sortField = $request->input('sort');
-        $sortType = $request->input('sortType');
-        $filter = $request->input('filter');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType, null, $filter);
-        $allstages = config('variables.dealStages');
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $deals = $db->retrieveDeals($user, $accessToken, $search);
         return Datatables::of($deals)->make(true);
        
     }
@@ -389,14 +384,43 @@ class PipelineController extends Controller
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
+            $id = $request->input('id');
+            $dbfield = $request->input('field');
+            $value = $request->input('value');
+            $rules = [
+                'id' => 'required|exists:deals,id',
+                'field' => 'required|in:sale_price,closing_date,commission,pipeline_probability',
+                'value' => 'nullable', // Allow the value to be nullable (empty)
+            ];
+    
+            $messages = [
+                'id.required' => 'Contact ID is required.',
+                'id.exists' => 'Invalid contact ID.',
+                'field.required' => 'Field type is required.',
+                'field.in' => 'Invalid field type.',
+                'value.email' => 'Invalid email format.',
+                'value.regex' => 'Invalid '.$dbfield .' phone format.',
+                'value.numeric' => ' number must be numeric.',
+            ];
+    
+            // Add custom validation for email format and phone number format if value is not empty
+            if (!empty($request->input('value'))) {
+                 if(in_array($request->input('field'), ['sale_price', 'commission', 'pipeline_probability'])) {
+                    $rules['value'] .= '|regex:/^\d+(\.\d{1})?$/'; // Numeric with optional one decimal place
+                }
+            }
+    
+            // Validate request inputs
+            $validator = Validator::make($request->all(), $rules, $messages);
+    
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+            }
+
             $zoho = new ZohoCRM();
  
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
-
-            $id = $request->input('id');
-            $dbfield = $request->input('field');
-            $value = $request->input('value');
             $field;
             if($dbfield==="deal_name"){
                 $field = "Deal_Name";
