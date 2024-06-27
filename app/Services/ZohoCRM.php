@@ -557,7 +557,7 @@ class ZohoCRM
     public function updateZohoDeal($inputJson, $id)
     {
         try {
-            Log::info('Creating Zoho Deal', $inputJson);
+            Log::info('Updating Zoho Deal', $inputJson);
 
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
@@ -571,7 +571,7 @@ class ZohoCRM
 
             // Check if the request was successful
             if (!$response->successful()) {
-                Log::error('Zoho Deal creation failed', ['response' => $responseData]);
+                Log::error('Zoho Deal update failed', ['response' => $responseData]);
 
                 // Check if the error message indicates the id is invalid and remove the contact from the database
                 if (isset($responseData['message']) && $responseData['message'] === "the id given seems to be invalid") {
@@ -579,16 +579,16 @@ class ZohoCRM
                     $db->removeDealFromDB($id);
                 }
 
-                throw new \Exception("Failed to create deal in ZohoCRM. Deal ID not found.");
+                throw new \Exception("Failed to update deal in ZohoCRM. Deal ID not found.");
             }
 
 
-            Log::info('Zoho deals creation successful', ['response' => $responseData]);
+            Log::info('Zoho deals update successful', ['response' => $responseData]);
 
             return $response;
 
         } catch (RequestException $exception) {
-            Log::error('Error creating Zoho deals', ['error' => $exception->getMessage()]);
+            Log::error('Error update Zoho deals', ['error' => $exception->getMessage()]);
             throw new \Exception($exception->getMessage());
         }
     }

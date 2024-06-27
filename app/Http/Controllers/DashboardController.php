@@ -42,9 +42,10 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
+ 
         $accessToken = $user->getAccessToken();
-        $goal = $user->goal ?? 250000;
+        $cRecord = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+        $goal = $cRecord->income_goal ?? 250000;
         $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
 
         $progress = $this->calculateProgress($deals, $goal);
