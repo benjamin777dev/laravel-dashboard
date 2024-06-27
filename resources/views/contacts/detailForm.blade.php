@@ -6,7 +6,7 @@
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Internal Information</p>
+            <p class="npinfoText">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault01" class="form-label nplabelText">First Name</label>
@@ -174,17 +174,16 @@
                         class="form-control npinputinfo" id="validationDefault11">
                 </div>
                 <div class="col-md-6">
-
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                         id="validationDefault13" style="display:none">
-                        <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
+                        <option value="" disabled {{ empty( $contact['spouseContact']) ? 'selected' : '' }}>Please select
                         </option>
-                        @if (!empty($spouseContact) && is_array($spouseContact))
+                        @if (!empty($contact['spouseContact']))
                             <option
-                                value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}"
+                                value="{{ json_encode(['id' => $contact['spouseContact']['zoho_contact_id'], 'Full_Name' => $contact['spouseContact']['first_name'] . ' ' . $contact['spouseContact']['last_name']]) }}"
                                 selected>
-                                {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
+                                {{ $contact['spouseContact']['first_name'] }} {{ $contact['spouseContact']['last_name'] }}
                             </option>
                         @endif
                         @if (!empty($contacts))

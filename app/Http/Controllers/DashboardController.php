@@ -547,8 +547,9 @@ class DashboardController extends Controller
         try {
             $response = $zoho->updateTask($jsonData, $task['zoho_task_id']);
             if (!$response->successful()) {
-                Log::error(['zoho_task_update_error', $response]);
-                throw new \Exception("Zoho update failed");
+                $error = $response->json();
+                Log::error('zoho_task_update_error', $error);
+                throw new \Exception($error['message']);
             }
 
             $data = $jsonData['data'][0];

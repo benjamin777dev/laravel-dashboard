@@ -461,7 +461,7 @@
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                showToastError("Something went wrong");
+                showToastError(xhr.responseJSON.error);
                 console.error(xhr.responseText, 'errrorroororooro');
 
 
