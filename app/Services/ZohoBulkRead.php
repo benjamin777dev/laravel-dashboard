@@ -10,12 +10,14 @@ use Carbon\Carbon;
 class ZohoBulkRead
 {
     protected $apiUrl = 'https://www.zohoapis.com/crm/bulk/v6/';
+    protected $serverUrl;
     protected $user;
 
     public function __construct(User $user)
     {
         $this->user = $user;
         $this->user->getAccessToken();
+        $this->serverUrl = config('app.url');
     }
 
     public function createBulkReadJob($module)
@@ -26,7 +28,7 @@ class ZohoBulkRead
                 'Content-Type' => 'application/json'
             ])->post($this->apiUrl . 'read', [
                 'callback' => [
-                    'url' => 'https://zportal.coloradohomerealty.com/api/webhook/csvcallback',
+                    'url' => $this->serverUrl.'/api/webhook/csvcallback',
                     'method' => 'post'
                 ],
                 'query' => [

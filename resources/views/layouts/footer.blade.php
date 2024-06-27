@@ -36,8 +36,8 @@
         
     });
     function createTransaction(userContactData,contactData=null) {
-        console.log(typeof userContactData,JSON.parse(JSON.stringify(userContactData)));
-       let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;
+        let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;
+        
        let userContact = JSON.parse(JSON.stringify(userContactData));
         var formData = {
             "data": [{
@@ -62,7 +62,7 @@
                 "id": contact.zoho_contact_id
             };
         }
-
+        console.log("formData",formData);
         $.ajax({
             url: '{{ url('/pipeline/create') }}',
             method: 'POST',

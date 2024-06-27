@@ -264,7 +264,6 @@
                 </select>`
                         ).addClass('editing');
                     }
-
                     // Focus on the input field or select dropdown
                     $('#datatable_pipe_transaction tbody').find('input.edit-input, select.edit-input').focus();
                 }

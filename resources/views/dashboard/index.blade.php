@@ -22,7 +22,7 @@
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         @if ($needsNewDate['count'] > 0)
             <div class="alert alert-danger text-center">
-                You have {{ $needsNewDate['count'] }} bad dates! 
+                You have {{ $needsNewDate['count'] }} bad dates!
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
@@ -47,10 +47,23 @@
                     </div>
                 </div>
             </div>
-            @component('components.dash-cards', [
-                'stageData' => $stageData,
-            ])
-            @endcomponent
+            <div class="col-ld-9 col-md-9 col-sm-12">
+                <div class="row dashboard-cards-resp">
+                    @foreach ($stageData as $stage => $data)
+                        <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols" data-stage="{{ $stage }}">
+                            <div class="card dash-card">
+                                <div class="card-body dash-front-cards">
+                                    <h5
+                                        class="card-title dTitle mb-0"
+                                        >{{ $stage }}</h5>
+                                    <p class="dSumValue">${{ $data['sum'] }}</p>
+                                    <p class="card-text dcountText">{{ $data['count'] }} Transactions</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
         
@@ -107,11 +120,11 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="card-title text-center mb-4">Upcoming Tasks</div>
-                                    
-                                    <button 
+
+                                    <button
                                         class="btn btn-sm btn-dark"
-                                        id="btnGroupAddon" 
-                                        data-bs-toggle="modal" 
+                                        id="btnGroupAddon"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#staticBackdropforTask"
                                     >
                                         <i class="fas fa-plus plusicon"></i> New Task
@@ -132,18 +145,18 @@
                                                                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
                                                                     related to
                                                                     @if ($task['related_to'] == 'Both' && isset($task->contactData->zoho_contact_id) && isset($task->dealData->zoho_deal_id))
-                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                        <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
                                                                             {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
-                                                                        </a>&nbsp;/&nbsp; 
-                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                        </a>&nbsp;/&nbsp;
+                                                                        <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
                                                                             {{ $task->dealData->deal_name ?? 'General' }}
                                                                         </a>
                                                                     @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
-                                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $task->contactData->id ?? '' }}" class="text-primary">
+                                                                        <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
                                                                             {{ $task->contactData->first_name ?? '' }}
                                                                         </a>
                                                                     @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
-                                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $task->dealData->id ?? '' }}" class="text-primary">
+                                                                        <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
                                                                             {{ $task->dealData->deal_name ?? 'General' }}
                                                                         </a>
                                                                     @else
@@ -227,11 +240,11 @@
                                                     Created: {{ \Carbon\Carbon::parse($note['created_time'])->format('M d, Y') ?? '' }},
                                                     related to
                                                     @if ($note['related_to_type'] == 'Contacts' && isset($note->contactData->zoho_contact_id))
-                                                        <a href="https://zportal.coloradohomerealty.com/contacts-view/{{ $note->contactData->id ?? '' }}" class="text-primary">
+                                                        <a href="{{ url('/contacts-view/' . $note->contactData->id ?? '') }}" class="text-primary">
                                                             {{ $note->contactData->first_name ?? '' }} {{ $note->contactData->last_name ?? '' }}
                                                         </a>
                                                     @elseif ($note['related_to_type'] == 'Deals' && isset($note->dealData->zoho_deal_id))
-                                                        <a href="https://zportal.coloradohomerealty.com/pipeline-view/{{ $note->dealData->id ?? '' }}" class="text-primary">
+                                                        <a href="{{ url('/pipeline-view/' . $note->dealData->id ?? '') }}" class="text-primary">
                                                             {{ $note->dealData->deal_name ?? 'General Deal' }}
                                                         </a>
                                                     @else
@@ -292,8 +305,7 @@
             @else
                 <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
             @endif
-                
-                
+
                 <div class="dtabletranstion dtableHeader">
                     <div>Transaction Name</div>
                     <div>Client Name</div>
@@ -360,7 +372,7 @@
                                 <div class="dTContactName"><span class="dlabel">Probability:</span>   {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
                             </div>
                             <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
-                                   
+
                                 <div class="dTContactName"><span class="dlabel">Probable GCI:</span> ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
                             </div>
                         </div>
@@ -425,7 +437,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        
+
         var formData = {
             "data": [{
                 "Subject": subject,
@@ -435,7 +447,7 @@
 
         // console.log("ys check ot")
         $.ajax({
-            url: "https://zportal.coloradohomerealty.com/update-task/:id".replace(':id', id),
+            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
             method: 'PUT',
             contentType: 'application/json',
             dataType: 'json',
@@ -496,17 +508,26 @@
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('btnBadDates').addEventListener('click', function() {
+        const btnBadDates = document.getElementById('btnBadDates');
+    if (btnBadDates) {
+        btnBadDates.addEventListener('click', function() {
             const element = document.getElementById('badDates');
-            const offset = 100; // Adjust this value as needed
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            if (element) {
+                const offset = 100; // Adjust this value as needed
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            } else {
+                console.log('No bad dates element found.');
+            }
         });
+    } else {
+        console.log('No btnBadDates element found.');
+    }
 
         var defaultTab = "{{ $tab }}";
         console.log(defaultTab, 'tab is here')

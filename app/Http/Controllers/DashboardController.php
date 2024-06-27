@@ -43,9 +43,10 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-
+ 
         $accessToken = $user->getAccessToken();
-        $goal = $user->goal ?? 250000;
+        $cRecord = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+        $goal = $cRecord->income_goal ?? 250000;
         $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
 
         $progress = $this->calculateProgress($deals, $goal);
@@ -880,10 +881,10 @@ class DashboardController extends Controller
             // Save the Note to the database
             $note->save();
             // Redirect back with a success message
-            return redirect()->back()->with('success', 'Note saved successfully!');
+            return $note;
         } catch (\Exception $e) {
             Log::error("Error creating notes:new " . $e->getMessage());
-            return redirect()->back()->with('error', 'Note Not saved successfully!');
+            // return redirect()->back()->with('error', 'Note Not saved successfully!');
             return "somthing went wrong" . $e->getMessage();
         }
     }

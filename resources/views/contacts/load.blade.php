@@ -49,7 +49,7 @@
                 @include('common.notes.create', ['contact' => $contact, 'type' => 'Contacts'])
             </div>
         </td>
-        <td>{{ $contact['first_name'] ?? $contact['last_name'] }}</td>
+        <td>{{ $contact['first_name']}} {{$contact['last_name'] }}</td>
         <td>{{ $contact['abcd'] ?? '-' }}</td>
         <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
         <td>
