@@ -203,12 +203,12 @@ class SubmittalController extends Controller
         if ($isIncompleteSubmittal) {
             return response()->json($isIncompleteSubmittal);
         } else {
-            $submittal = $zoho->createListingSubmittal($jsonData);
-            if (!$submittal->successful()) {
-                return "error something" . $submittal;
-            }
-            $submittalArray = json_decode($submittal, true);
-            $data = $submittalArray['data'][0]['details'];
+            // $submittal = $zoho->createListingSubmittal($jsonData);
+            // if (!$submittal->successful()) {
+            //     return "error something" . $submittal;
+            // }
+            // $submittalArray = json_decode($submittal, true);
+            // $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
             $deal = $db->createListingSubmittal($user, $accessToken, $data,$submittalData,$dealId,'listing-submittal');
             return response()->json($deal);
@@ -230,13 +230,22 @@ class SubmittalController extends Controller
         $submittalId = $request->route('submittalId');
         $isNew = $request->query('isNew');
         $jsonData = $request->json()->all();
-        $submittal = $zoho->updateListingSubmittal($submittalId,$jsonData);
+        $submittalData =$db->retrieveSubmittal($user, $accessToken, $submittalId);
+        if(!$submittalData){
+                $submittalData = $db->retrieveSubmittal($user, $accessToken, $submittalId);;
+            }
+        if($submittalData['isSubmittalCompleted']){
+            $submittal = $zoho->updateListingSubmittal($submittalData['zoho_submittal_id'],$jsonData);
+        }else{
+            $submittal = $zoho->createListingSubmittal($jsonData);
+        }
         if (!$submittal->successful()) {
             return "error something" . $submittal;
         }
         $submittalArray = json_decode($submittal, true);
         $data = $submittalArray['data'][0]['details'];
         $submittalData = $jsonData['data'][0];
+        $submittalData['id']=$submittalId;
         $deal = $db->updateListingSubmittal($user, $accessToken, $data,$submittalData,$isNew);
         return response()->json($deal);
     }
@@ -258,12 +267,12 @@ class SubmittalController extends Controller
         if ($isIncompleteSubmittal) {
             return response()->json($isIncompleteSubmittal);
         } else {
-            $submittal = $zoho->createBuyerSubmittal($jsonData);
-            if (!$submittal->successful()) {
-                return "error something" . $submittal;
-            }
-            $submittalArray = json_decode($submittal, true);
-            $data = $submittalArray['data'][0]['details'];
+            // $submittal = $zoho->createBuyerSubmittal($jsonData);
+            // if (!$submittal->successful()) {
+            //     return "error something" . $submittal;
+            // }
+            // $submittalArray = json_decode($submittal, true);
+            // $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
             $deal = $db->createListingSubmittal($user, $accessToken, $data,$submittalData,$dealId,'buyer-submittal');
             return response()->json($deal);
@@ -285,13 +294,19 @@ class SubmittalController extends Controller
         $submittalId = $request->route('submittalId');
         $isNew = $request->query('isNew');
         $jsonData = $request->json()->all();
-        $submittal = $zoho->updateBuyerSubmittal($submittalId,$jsonData);
+        $submittalData =$db->retrieveSubmittal($user, $accessToken, $submittalId);
+        if($submittalData['isSubmittalCompleted']){
+            $submittal = $zoho->updateBuyerSubmittal($submittalData['zoho_submittal_id'],$jsonData);
+        }else{
+            $submittal = $zoho->createBuyerSubmittal($jsonData);
+        }
         if (!$submittal->successful()) {
             return "error something" . $submittal;
         }
         $submittalArray = json_decode($submittal, true);
         $data = $submittalArray['data'][0]['details'];
         $submittalData = $jsonData['data'][0];
+        $submittalData['id']=$submittalId;
         $deal = $db->updateBuyerSubmittal($user, $accessToken, $data,$submittalData,$isNew);
         return response()->json($deal);
     }

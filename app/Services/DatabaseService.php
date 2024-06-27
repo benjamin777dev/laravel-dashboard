@@ -544,7 +544,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName');
+            $contacts = Contact::with('userData', 'contactName','spouseContact');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -591,7 +591,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName');
+            $contacts = Contact::with('userData', 'contactName','spouseContact');
 
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
@@ -644,13 +644,14 @@ class DatabaseService
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
                 // These are any tasks that are due today and are not complete
-                $tasks->whereDate('due_date', now()->toDateString())
+                $tasks
+                // ->whereDate('due_date', now()->toDateString())
                       ->where('status', '!=', 'Completed')
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
                 $tasks->where('status', 'Completed')
-                      ->orderBy('due_date', 'desc');
+                      ->orderBy('updated_at', 'desc');
             }
 
             // This will apply the updated_at ordering only if it's not already ordered by due_date
@@ -1866,7 +1867,7 @@ class DatabaseService
             'isSubmittalComplete' => "false",
             'userId' => $user->id,
             'isInZoho' => true,
-            'zoho_submittal_id' => $zohoSubmittal['id'],
+            // 'zoho_submittal_id' => $zohoSubmittal['id'],
             'dealId'=>$dealId,
             'submittalType'=>$submittalType,
             'submittalName'=>$submittalData['Name'],
@@ -1883,8 +1884,8 @@ class DatabaseService
     public function retrieveSubmittal(User $user, $accessToken, $submittalId)
     {
         try {
-            // Corrected the where clause syntax
-            $submittal = Submittals::where('id', $submittalId)->with('dealData')->first();
+            Log::info("submittalId", ['submittal' => $submittalId]);
+            $submittal = Submittals::where('id', $submittalId)->orWhere('zoho_submittal_id', $submittalId)->with('dealData')->first();
             Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
             return $submittal;
         } catch (\Exception $e) {
@@ -1892,14 +1893,14 @@ class DatabaseService
             throw $e;
         }
     }
-
+    
     public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
     try {
 
-        $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
+        $submittal = Submittals::where('id', $submittalData['id'])->orWhere('zoho_submittal_id', $submittalData['id'])->first();
         if (!$submittal) {
-            throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
+            throw new \Exception("Submittal not found for zoho_submittal_id: {$submittalData['id']}");
         }
         $submittal->dealId = isset($submittalData["Transaction_Name"]["id"]) ? $submittalData["Transaction_Name"]["id"] : null;
         $submittal->bedsBathsTotal = isset($submittalData["Beds_Baths_Total_Sq_Ft"]) ? $submittalData["Beds_Baths_Total_Sq_Ft"] : null;
@@ -1974,6 +1975,9 @@ class DatabaseService
         if ($isNew) {
            $submittal->isSubmittalComplete = $isNew;
         }
+        if ( $submittal->zoho_submittal_id === null) {
+           $submittal->zoho_submittal_id = isset($zohoSubmittal['id']) ? $zohoSubmittal['id'] : null;;
+        }
 
         $submittal->save();
         Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
@@ -1988,9 +1992,9 @@ class DatabaseService
     {
         try {
 
-            $submittal = Submittals::where('zoho_submittal_id', $zohoSubmittal['id'])->first();
+            $submittal = Submittals::where('zoho_submittal_id', $submittalData['id'])->orWhere('id', $submittalData['id'])->first();
             if (!$submittal) {
-                throw new \Exception("Submittal not found for zoho_submittal_id: {$zohoSubmittal['id']}");
+                throw new \Exception("Submittal not found for zoho_submittal_id: {$submittalData['id']}");
             }
             $submittal->dealId = isset($submittalData["Related_Transaction"]["id"]) ? $submittalData["Related_Transaction"]["id"] : null;
             $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
@@ -2016,6 +2020,9 @@ class DatabaseService
             $submittal->contractExecuted = isset($submittalData["Contract_Fully_Executed"]) ? $submittalData["Contract_Fully_Executed"] : null;
             if ($isNew) {
             $submittal->isSubmittalComplete = $isNew;
+            }
+            if ($submittal['zoho_submittal_id']===null) {
+            $submittal->zoho_submittal_id = isset($zohoSubmittal["id"]) ? $zohoSubmittal["id"] : null;;
             }
 
             $submittal->save();

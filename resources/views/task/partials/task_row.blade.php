@@ -31,19 +31,21 @@
             </div>
 
             <div class="d-flex">
-                // if completed, don't show buttons
-                // but do show the completed date
+               {{-- // if completed, don't show buttons
+                // but do show the completed date --}}
                 @php
                     $taskzId = $task['zoho_task_id'];
                     $taskId = $task['id'];
                     $subject = $task['subject'];
                 @endphp
+                @if($task['status']!="Completed")
                 <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $taskzId }}', '{{$taskId}}', '{{$subject}}')">
                     <i class="fas fa-check"></i> Done
                 </button>
                 <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
                     <i class="fas fa-trash-alt"></i> Delete
                 </button>
+                @endif
             </div>
         </div>
     </div>

@@ -19,7 +19,7 @@
                         id="validationDefault01" 
                         @if($deal['locked_s']) disabled @endif
                         required>
-                    <option value="" disabled {{ ($deal['client_name_primary']) ? 'selected' : '' }}>Please select</option>
+                    <option value="" disabled {{ empty($deal['client_name_primary']) ? 'selected' : '' }}>Please select</option>
                     @foreach($contacts as $contact)
                         <option value="{{ $contact}}" 
                             {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
@@ -75,7 +75,7 @@
                     id="validationDefault05"
                     @if($deal['locked_s']) disabled @endif 
                     required
-                    value="{{ $deal['sale_price'] }}">
+                    value="{{$deal['sale_price']=='0.00'?'':$deal['sale_price']}}">
             </div>
             <div class="col-md-6">
                 <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
@@ -169,7 +169,7 @@
                     id="validationDefault11" 
                     @if($deal['locked_s']) disabled @endif
                     required
-                    value="{{$deal['commission']}}">
+                    value="{{$deal['commission']=='0.00'?'':$deal['commission']}}">
             </div>
             <div class="col-md-6">
                 <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
@@ -316,10 +316,8 @@
 </div>
 
 {{-- Add New Submittal --}}
-@if ($deal['tm_preference'] == 'CHR TM')
 <div class="showsubmittal">
 </div>
-@endif
 {{-- Add Non-TM --}}
 @if ($deal['tm_preference'] == 'Non-TM')
 <div class="showNonTm"></div>

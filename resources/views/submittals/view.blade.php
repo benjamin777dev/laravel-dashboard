@@ -85,14 +85,18 @@
 
     function convertInInteger(string) {
         try {
-            console.log("String",string);
-            let num = parseInt(string.replace('$', ''));
-            if (isNaN(num)) {
-                throw new Error("Conversion Error: Invalid input");
+            console.log("String:", typeof string,string);
+            if (string!='') {
+                // Parse the string to a floating-point number
+                let num = parseFloat(string);
+                if (isNaN(num)) {
+                    throw new Error("Conversion Error: Invalid input");
+                }
+                return num;
             }
-            return num;
+            return null;
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             throw new Error(error.message);
         }
     }
@@ -115,7 +119,7 @@
     }
 
     function validateSubmittal(submittal,isNew) {
-        isValid = false
+        isValid = true
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
@@ -219,7 +223,8 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
+                        showToast("Submittal updated successfully");
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -357,10 +362,11 @@
             }
 
             try {
-                var price = ($('#price').val()!='$')?convertInInteger($('#price').val()):null;
-                var amountToCHR = ($('#amountToCHR').val()!='$')?convertInInteger($('#amountToCHR').val()):null;
-                var feesCharged = ($('#feesCharged').val()!='$')?convertInInteger($('#feesCharged').val()):null;
+                var price = ($('#price').val()!='')?convertInInteger($('#price').val()):null;
+                var amountToCHR = ($('#amountToCHR').val()!='')?convertInInteger($('#amountToCHR').val()):null;
+                var feesCharged = ($('#feesCharged').val()!='')?convertInInteger($('#feesCharged').val()):null;
             } catch (error) {
+                console.log(error);
                 isValid = false;
                 showToastError(error.message)
             }
@@ -461,7 +467,8 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.zoho_deal_id}') }}`;
+                        showToast("Submittal updated successfully");
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
