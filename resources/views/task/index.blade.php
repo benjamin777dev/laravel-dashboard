@@ -202,7 +202,7 @@ window.closeTask = function(id, indexId, subject) {
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                showToastError("Something went wrong");
+                showToastError(xhr.responseJSON.error);
                 console.error(xhr.responseText, 'errrorroororooro');
 
 
@@ -267,7 +267,7 @@ window.closeTask = function(id, indexId, subject) {
                     }
                 },
                 error: function(xhr, status, error) {
-                    showToastError("Something went wrong");
+                    showToastError(xhr.responseJSON.error);
                     console.error(xhr.responseText);
                 }
             });
@@ -375,7 +375,7 @@ window.closeTask = function(id, indexId, subject) {
                     showToast(response?.data[0]?.message.toUpperCase());
                 },
                 error: function(xhr, status, error) {
-                    showToastError(error);
+                    showToastError(xhr.responseJSON.error);
                     console.error(xhr.responseText);
                 }
             });

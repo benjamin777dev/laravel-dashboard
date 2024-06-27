@@ -8,20 +8,21 @@
 
 <div class="container-fluid">
     <div class="submittaldiv">
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  ><i class="fas fa-save">
+        <a href="{{ url('/pipeline-view/' . $submittal['dealData']['id']) }}">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  >
+                <i class="fas fa-times">
                 </i>
                 Cancel
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Save and New
             </div>
         </a>
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
@@ -97,8 +98,8 @@
 
     function convertInInteger(string) {
         try {
-            console.log("String:", string);
-            if (string) {
+            console.log("String:", typeof string,string);
+            if (string!='') {
                 // Parse the string to a floating-point number
                 let num = parseFloat(string);
                 if (isNaN(num)) {
@@ -184,8 +185,8 @@
                 isValid = false
             }
             try {
-                var buyerFeesCharged = ($('#buyerFeesCharged').val()!="$")?convertInInteger($('#buyerFeesCharged').val()):null;
-                var buyerAmountChr = ($('#buyerAmountChr').val()!="$")?convertInInteger($('#buyerAmountChr').val()):null;
+                var buyerFeesCharged = ($('#buyerFeesCharged').val()!="")?convertInInteger($('#buyerFeesCharged').val()):null;
+                var buyerAmountChr = ($('#buyerAmountChr').val()!="")?convertInInteger($('#buyerAmountChr').val()):null;
             } catch (error) {
                 isValid = false;
                 showToastError(error.message)
@@ -237,8 +238,8 @@
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        getBuyerForm();
                         showToast("Buyer Submittal updated successfully");
+                        window.location.href = "/pipeline-view/" + submittal['dealData']['id'];
                         if (response?.data && response.data[0]?.message) {
                             // Convert message to uppercase and then display
                             const upperCaseMessage = response.data[0].message.toUpperCase();
@@ -383,10 +384,11 @@
             }
 
             try {
-                var price = ($('#price').val()!='$')?convertInInteger($('#price').val()):null;
-                var amountToCHR = ($('#amountToCHR').val()!='$')?convertInInteger($('#amountToCHR').val()):null;
-                var feesCharged = ($('#feesCharged').val()!='$')?convertInInteger($('#feesCharged').val()):null;
+                var price = ($('#price').val()!='')?convertInInteger($('#price').val()):null;
+                var amountToCHR = ($('#amountToCHR').val()!='')?convertInInteger($('#amountToCHR').val()):null;
+                var feesCharged = ($('#feesCharged').val()!='')?convertInInteger($('#feesCharged').val()):null;
             } catch (error) {
+                console.log(error);
                 isValid = false;
                 showToastError(error.message) 
             }
@@ -480,15 +482,15 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/listing/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/listing/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        getListingForm();
                         showToast("Listing Submittal updated successfully");
+                        window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
                     },
                     error: function (xhr, status, error) {
                         // Handle error response

@@ -8,10 +8,13 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-            <div class="nontm-cancel-btn">
-                <button>Cancel</button>
-
-            </div>
+           <a href="{{ url('/pipeline-view/' . $dealData['id']) }}">
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  >
+                    <i class="fas fa-times">
+                    </i>
+                    Cancel
+                </div>
+            </a>
             <div class="nontm-savenew-btn" onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',true)">
                 <button>Save and New</button>
             </div>
@@ -423,7 +426,7 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else if (commission.value.trim().length>4) {
+        } else if (commission.value.trim().split('.')[0]&&commission.value.trim().length>4) {
             commissionError.textContent = "Commission length must be exactly 4 characters.";
             isValid = false;
         }else {

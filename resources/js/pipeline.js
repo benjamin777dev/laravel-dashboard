@@ -268,7 +268,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
         showToastError("Stage is required");
         isValid = false;
     }
-    if (sale_price === "") {
+    if (sale_price === "" || sale_price === "0.00") {
         showToastError("Sale Price is required");
         isValid = false;
     }
@@ -276,7 +276,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
         showToastError("Closing Date is required");
         isValid = false;
     }
-    if (commission === "") {
+    if (commission === "" || commission === "0.00") {
         showToastError("Commission is required");
         isValid = false;
     }
