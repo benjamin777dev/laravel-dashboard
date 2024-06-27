@@ -1266,7 +1266,7 @@ class DatabaseService
             $contacts = Contact::where($condition)
                 // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
-                    $join->on(DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'), '=', 'contacts.zoho_contact_id');
+                    $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
                 })
                 ->select(
                     'contacts.id',
@@ -1296,7 +1296,8 @@ class DatabaseService
                         });
                     }
                 })
-                ->orderByRaw('CASE WHEN contacts.spouse_partner IS NULL THEN 0 ELSE 1 END')
+                ->orderByRaw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner)')
+                ->orderByRaw('CASE WHEN contacts.spouse_partner IS NOT NULL THEN 1 ELSE 0 END')
                 ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
                 ->paginate();
 
