@@ -7,7 +7,7 @@
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" id="noteForm_close{{ $deal['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="return validateNoteDash('{{ $deal['id'] }}');">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
                         <button type="submit" id="validate-button{{ $deal['id'] }}"
-                            onclick="validateNoteDash('{{ $deal['id'] }}')"
+                            
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -52,7 +52,7 @@
                     <p class="modal-title dHeaderText">Note</p>
                     <button type="button" id="noteForm_close{{ $contact['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                 <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post">
+                 <form id="noteForm_dash{{ $contact['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="return validateNoteDash('{{ $contact['id'] }}');">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -80,7 +80,7 @@
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
                         <button type="submit" id="validate-button{{ $contact['id'] }}"
-                            onclick="validateNoteDash('{{ $contact['id'] }}')"
+                            
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -99,7 +99,7 @@
                     <button type="button" id="noteForm_close" onclick="resetFormAndHideSelectDashboard();" class="btn-close"
                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post">
+                <form id="noteForm_dash" action="{{ route('save.note') }}" method="post" onsubmit= "return validateNoteDash();">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -116,6 +116,7 @@
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
                         <button type="submit" id="validate-button"
+                           
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -161,9 +162,9 @@
     }
 
     // validation function onsubmit
-    function validateNoteDash(id = null) {
-        
-        
+    function validateNoteDash(id = null) { 
+        event.preventDefault();
+        let isValid = true       
         console.log(window.groupLabel, window.whoid, 'checkouttttttt');
         let noteText, relatedTo, changeButton
         if (id) {
@@ -171,7 +172,6 @@
             noteText = document.getElementById("note_text" + id).value;
             relatedTo = document.getElementById("related_to" + id).value;
             changeButton = document.getElementById('validate-button' + id);
-            let isValid = true;
 
             // Reset errors
             document.getElementById("note_text_error" + id).innerText = "";
@@ -204,7 +204,6 @@
             noteText = document.getElementById("note_text").value;
             relatedTo = document.getElementById("related_to_note").value;
             changeButton = document.getElementById('validate-button');
-            let isValid = true;
 
             // Reset errors
             document.getElementById("note_text_error").innerText = "";
@@ -241,7 +240,8 @@
             // return isValid;
         }
         console.log("isValid",);
-        var formData = $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).serialize();
+        if(isValid==true){
+            var formData = $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).serialize();
         console.log(formData);
         $.ajax({
             type: 'POST',
@@ -258,6 +258,8 @@
                 console.log('Error saving note: ' + error);
             }
         });
+        }
+        
         return false;
     }
 </script>
