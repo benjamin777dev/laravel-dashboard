@@ -6,7 +6,7 @@
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Internal Information</p>
+            <p class="npinfoText">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault01" class="form-label nplabelText">First Name</label>

@@ -8,10 +8,13 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-            <div class="nontm-cancel-btn">
-                <button>Cancel</button>
-
-            </div>
+           <a href="{{ url('/pipeline-view/' . $dealData['id']) }}">
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  >
+                    <i class="fas fa-times">
+                    </i>
+                    Cancel
+                </div>
+            </a>
             <div class="nontm-savenew-btn" onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',true)">
                 <button>Save and New</button>
             </div>

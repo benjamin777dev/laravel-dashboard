@@ -465,7 +465,7 @@
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
-                    showToastError("Something went wrong");
+                    showToastError(xhr.responseJSON.error);
                     console.error(xhr.responseText, 'errrorroororooro');
 
 
@@ -838,7 +838,7 @@ async function deleteTask(id = "", isremoveselected = false) {
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                showToastError(error);
+                showToastError(xhr.responseJSON.error);
                 console.error(xhr.responseText, 'errrorroororooro');
             }
         })
