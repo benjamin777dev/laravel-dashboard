@@ -544,7 +544,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName');
+            $contacts = Contact::with('userData', 'contactName','spouseContact');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -591,7 +591,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName');
+            $contacts = Contact::with('userData', 'contactName','spouseContact');
 
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
@@ -644,13 +644,14 @@ class DatabaseService
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
                 // These are any tasks that are due today and are not complete
-                $tasks->whereDate('due_date', now()->toDateString())
+                $tasks
+                // ->whereDate('due_date', now()->toDateString())
                       ->where('status', '!=', 'Completed')
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
                 $tasks->where('status', 'Completed')
-                      ->orderBy('due_date', 'desc');
+                      ->orderBy('updated_at', 'desc');
             }
         
             // This will apply the updated_at ordering only if it's not already ordered by due_date
