@@ -295,6 +295,9 @@ class SubmittalController extends Controller
         $isNew = $request->query('isNew');
         $jsonData = $request->json()->all();
         $submittalData =$db->retrieveSubmittal($user, $accessToken, $submittalId);
+        if(!$submittalData){
+                $submittalData = $db->retrieveSubmittal($user, $accessToken, $submittalId);;
+            }
         if($submittalData['isSubmittalCompleted']){
             $submittal = $zoho->updateBuyerSubmittal($submittalData['zoho_submittal_id'],$jsonData);
         }else{
