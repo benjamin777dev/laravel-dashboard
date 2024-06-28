@@ -340,7 +340,7 @@ class PipelineController extends Controller
                 return response()->json(['error' => 'Zoho Deal retrieval failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
-            $zohoDealA_rray = json_decode($resp, true);
+            $zohoDeal_Array = json_decode($resp, true);
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
