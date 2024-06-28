@@ -12,80 +12,231 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('submittals', function (Blueprint $table) {
-            $table->dropColumn('name');
-            $table->string('transactionName')->nullable();
-            $table->string('additionalEmail')->nullable();
-            $table->string('agentName')->nullable();
-            $table->string('commingSoon')->nullable();
-            $table->date('comingSoonDate')->nullable();
-            $table->string('tmName')->nullable();
-            $table->date('activeDate')->nullable();
-            $table->string('agreementExecuted')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
-            $table->date('photoDate')->nullable();
-            $table->string('photoURL')->nullable();
-            $table->string('bedsBathsTotal')->nullable();
-            $table->string('tourURL')->nullable();
-            $table->string('usingCHR')->nullable();
-            $table->string('needOE')->nullable();
-            $table->string('hasHOA')->nullable();
-            $table->string('includeInsights')->nullable();
-            $table->string('titleToOrderHOA')->nullable();
-            $table->string('mailoutNeeded')->nullable();
-            $table->string('powerOfAttnyNeeded')->nullable();
-            $table->string('hoaName')->nullable();
-            $table->string('hoaPhone')->nullable();
-            $table->string('hoaWebsite')->nullable();
-            $table->text('miscNotes')->nullable();
-            $table->string('scheduleSignInstall')->nullable();
-            $table->string('conciergeListing')->nullable();
-            $table->string('signInstallVendor')->nullable();
-            $table->text('draftShowingInstructions')->nullable();
-            $table->string('titleCompany')->nullable();
-            $table->string('closerNamePhone')->nullable();
-            $table->string('signInstallVendorOther')->nullable();
-            $table->date('signInstallDate')->nullable();
-            $table->string('reColorado')->nullable();
-            $table->string('navica')->nullable();
-            $table->string('ppar')->nullable();
-            $table->string('grandCounty')->nullable();
-            $table->string('ires')->nullable();
-            $table->text('mlsPrivateRemarks')->nullable();
-            $table->text('mlsPublicRemarks')->nullable();
-            $table->string('feesCharged')->nullable();
-            $table->string('referralToPay')->nullable();
-            $table->decimal('amountToCHR', 10, 2)->nullable();
-            $table->text('referralDetails')->nullable();
-            $table->string('matterport')->nullable();
-            $table->string('floorPlans')->nullable();
-            $table->string('threeDZillowTour')->nullable();
-            $table->string('onsiteVideo')->nullable();
-            $table->string('propertyWebsite')->nullable();
-            $table->string('emailBlastSphere')->nullable();
-            $table->string('emailBlastReverseProspect')->nullable();
-            $table->string('propertyHighlightVideo')->nullable();
-            $table->string('socialMediaImages')->nullable();
-            $table->string('socialMediaAds')->nullable();
-            $table->string('priceImprovementPackage')->nullable();
-            $table->string('customDomainName')->nullable();
-            $table->text('featuresNeededForVideo')->nullable();
-            $table->text('marketingNotes')->nullable();
-            $table->string('brochureLine')->nullable();
-            $table->string('brochurePrint')->nullable();
-            $table->text('bullets')->nullable();
-            $table->string('headlineForBrochure')->nullable();
-            $table->string('stickyDots')->nullable();
-            $table->string('qrCodeSheet')->nullable();
-            $table->string('qrCodeSignRider')->nullable();
-            $table->string('featureCards')->nullable();
-            $table->string('featureCardCopy')->nullable();
-            $table->date('brochureDeliveryDate')->nullable();
-            $table->string('deliveryAddress')->nullable();
-            $table->date('printedItemsPickupDate')->nullable();
-            $table->date('brochurePickupDate')->nullable();
-            $table->string('isSubmittalComplete')->nullable();
-            $table->string('submittalName')->nullable();
-            $table->string('submittalType')->nullable();
+            // Drop 'name' column if it exists
+            if (Schema::hasColumn('submittals', 'name')) {
+                $table->dropColumn('name');
+            }
+
+            // Add new columns if they do not already exist
+            if (!Schema::hasColumn('submittals', 'transactionName')) {
+                $table->string('transactionName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'additionalEmail')) {
+                $table->string('additionalEmail')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'agentName')) {
+                $table->string('agentName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'commingSoon')) {
+                $table->string('commingSoon')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'comingSoonDate')) {
+                $table->date('comingSoonDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'tmName')) {
+                $table->string('tmName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'activeDate')) {
+                $table->date('activeDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'agreementExecuted')) {
+                $table->string('agreementExecuted')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'price')) {
+                $table->decimal('price', 10, 2)->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'photoDate')) {
+                $table->date('photoDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'photoURL')) {
+                $table->string('photoURL')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'bedsBathsTotal')) {
+                $table->string('bedsBathsTotal')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'tourURL')) {
+                $table->string('tourURL')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'usingCHR')) {
+                $table->string('usingCHR')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'needOE')) {
+                $table->string('needOE')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'hasHOA')) {
+                $table->string('hasHOA')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'includeInsights')) {
+                $table->string('includeInsights')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'titleToOrderHOA')) {
+                $table->string('titleToOrderHOA')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'mailoutNeeded')) {
+                $table->string('mailoutNeeded')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'powerOfAttnyNeeded')) {
+                $table->string('powerOfAttnyNeeded')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'hoaName')) {
+                $table->string('hoaName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'hoaPhone')) {
+                $table->string('hoaPhone')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'hoaWebsite')) {
+                $table->string('hoaWebsite')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'miscNotes')) {
+                $table->text('miscNotes')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'scheduleSignInstall')) {
+                $table->string('scheduleSignInstall')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'conciergeListing')) {
+                $table->string('conciergeListing')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'signInstallVendor')) {
+                $table->string('signInstallVendor')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'draftShowingInstructions')) {
+                $table->text('draftShowingInstructions')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'titleCompany')) {
+                $table->string('titleCompany')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'closerNamePhone')) {
+                $table->string('closerNamePhone')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'signInstallVendorOther')) {
+                $table->string('signInstallVendorOther')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'signInstallDate')) {
+                $table->date('signInstallDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'reColorado')) {
+                $table->string('reColorado')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'navica')) {
+                $table->string('navica')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'ppar')) {
+                $table->string('ppar')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'grandCounty')) {
+                $table->string('grandCounty')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'ires')) {
+                $table->string('ires')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'mlsPrivateRemarks')) {
+                $table->text('mlsPrivateRemarks')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'mlsPublicRemarks')) {
+                $table->text('mlsPublicRemarks')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'feesCharged')) {
+                $table->string('feesCharged')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'referralToPay')) {
+                $table->string('referralToPay')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'amountToCHR')) {
+                $table->decimal('amountToCHR', 10, 2)->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'referralDetails')) {
+                $table->text('referralDetails')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'matterport')) {
+                $table->string('matterport')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'floorPlans')) {
+                $table->string('floorPlans')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'threeDZillowTour')) {
+                $table->string('threeDZillowTour')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'onsiteVideo')) {
+                $table->string('onsiteVideo')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'propertyWebsite')) {
+                $table->string('propertyWebsite')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'emailBlastSphere')) {
+                $table->string('emailBlastSphere')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'emailBlastReverseProspect')) {
+                $table->string('emailBlastReverseProspect')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'propertyHighlightVideo')) {
+                $table->string('propertyHighlightVideo')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'socialMediaImages')) {
+                $table->string('socialMediaImages')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'socialMediaAds')) {
+                $table->string('socialMediaAds')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'priceImprovementPackage')) {
+                $table->string('priceImprovementPackage')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'customDomainName')) {
+                $table->string('customDomainName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'featuresNeededForVideo')) {
+                $table->text('featuresNeededForVideo')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'marketingNotes')) {
+                $table->text('marketingNotes')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'brochureLine')) {
+                $table->string('brochureLine')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'brochurePrint')) {
+                $table->string('brochurePrint')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'bullets')) {
+                $table->text('bullets')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'headlineForBrochure')) {
+                $table->string('headlineForBrochure')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'stickyDots')) {
+                $table->string('stickyDots')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'qrCodeSheet')) {
+                $table->string('qrCodeSheet')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'qrCodeSignRider')) {
+                $table->string('qrCodeSignRider')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'featureCards')) {
+                $table->string('featureCards')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'featureCardCopy')) {
+                $table->string('featureCardCopy')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'brochureDeliveryDate')) {
+                $table->date('brochureDeliveryDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'deliveryAddress')) {
+                $table->string('deliveryAddress')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'printedItemsPickupDate')) {
+                $table->date('printedItemsPickupDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'brochurePickupDate')) {
+                $table->date('brochurePickupDate')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'isSubmittalComplete')) {
+                $table->string('isSubmittalComplete')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'submittalName')) {
+                $table->string('submittalName')->nullable();
+            }
+            if (!Schema::hasColumn('submittals', 'submittalType')) {
+                $table->string('submittalType')->nullable();
+            }
         });
     }
 
@@ -95,6 +246,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('submittals', function (Blueprint $table) {
+            // Drop the added columns
             $table->dropColumn([
                 'transactionName',
                 'additionalEmail',
@@ -170,6 +322,9 @@ return new class extends Migration
                 'submittalName',
                 'submittalType',
             ]);
+
+            // Restore the 'name' column
+            $table->string('name')->nullable();
         });
     }
 };

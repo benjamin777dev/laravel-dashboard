@@ -77,9 +77,9 @@
 
 </div>
 <script>
-      function generateRandom4DigitNumber() {
-            return Math.floor(1000 + Math.random() * 9000);
-        }
+    function generateRandom4DigitNumber() {
+        return Math.floor(1000 + Math.random() * 9000);
+    }
     window.addNonTm = function() {
         let formData = {
             "data": [{

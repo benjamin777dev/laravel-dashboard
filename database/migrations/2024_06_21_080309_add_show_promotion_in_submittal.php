@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('submittals', function (Blueprint $table) {
-            $table->boolean('showPromotion')->default(false);
+            if (!Schema::hasColumn('submittals', 'showPromotion')) {
+                $table->boolean('showPromotion')->default(false);
+            }
+           
+            
         });
     }
 

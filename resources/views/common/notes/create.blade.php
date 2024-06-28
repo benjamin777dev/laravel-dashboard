@@ -43,7 +43,7 @@
         </div>
     </div>
 @elseif(isset($type) && $type == 'Contacts')
-    <div class="modal fade" onclick="event.preventDefault();" id="staticBackdropforNote_{{ $contact['id'] }}"
+    <div class="modal fade" id="staticBackdropforNote_{{ $contact['id'] }}"
         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered deleteModal">
