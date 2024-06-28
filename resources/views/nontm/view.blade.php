@@ -9,7 +9,7 @@
         </div>
         <div class="non-btns">
            
-            <div class="nontm-save-btn" onclick="updateNonTm('{{ $dealData }}',true)" >
+            <div class="nontm-save-btn" onclick="updateNonTm({{ $dealData }},true)" >
                 <button>Update</button>
 
             </div>
@@ -551,7 +551,7 @@
     }
 
     window.updateNonTm = function(dealData, status) {
-        dealData = JSON.parse(dealData)
+        // dealData = JSON.parse(dealData)
         id=dealData.id
         if (!validateNonTm()) {
             return;
