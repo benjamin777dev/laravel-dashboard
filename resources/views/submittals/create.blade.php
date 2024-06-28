@@ -15,14 +15,9 @@
                 Cancel
             </div>
         </a>
+        
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Save and New
-            </div>
-        </a>
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
