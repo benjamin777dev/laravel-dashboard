@@ -135,10 +135,7 @@
                         if (row.stage === "Under Contract") {
                             return `<span>${formateDate(data) || "N/A"}</span>`;
                         } 
-                        if (data) {
-                            // Create a Date object from the ISO 8601 format string
-                          
-                
+                        if (data || row.closing_date ===null) {
                             // Return the formatted date
                             return `<span class="editable" data-name="closing_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
                         }
@@ -151,7 +148,7 @@
                         if (row.stage === "Under Contract") {
                             return `<span>${data || "N/A"}</span>`;
                         } 
-                        return `<span class="editable" data-name="commission" data-id="${row.id}">${data || "N/A"}%</span>`;
+                        return `<span class="editable" data-name="commission" data-id="${row.id}">${data || "N/A"}</span>`;
                     }
                 },
                 {
@@ -1241,9 +1238,7 @@
             method: "GET",
             success: function(response) {
                 let modalElement = $("#staticBackdropforNote_" + id);
-                if(modalElement.length!==0){
-                    $(".createNoteModal" + id).empty();
-                }
+                console.log(modalElement,'modalElementmodalElement')
                 // Insert the fetched note creation form into the modal container
                 let noteContainer = $(".createNoteModal" + id);
                 noteContainer.html(response);
