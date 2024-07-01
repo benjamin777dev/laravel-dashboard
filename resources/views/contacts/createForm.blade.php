@@ -183,9 +183,10 @@
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                         id="validationDefault13" >
+                        
                         <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
                         </option>
-                    @if (!empty($spouseContact) && is_array($spouseContact))
+                    @if (!empty($spouseContact))
                         <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
                             {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
                         </option>
@@ -194,7 +195,8 @@
                         @foreach ($contacts as $contactrefs)
                             <option
                                 value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                >
+                                data-id = {{$contactrefs['id']}}
+                                data-icon="fas fa-external-link-alt">
                                 {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
                             </option>
                         @endforeach
@@ -332,6 +334,8 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 <script>
     $(document).ready(function() {
         var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
@@ -359,9 +363,32 @@
         getReffered.select2({
             placeholder: 'Search...',
         })
+
+
+        function formatState(state) {
+            if (!state.id) {
+                return state.text;
+            }
+            var contactId = $(state.element).data('id');
+
+            var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
+            var $state = $(
+                '<span style="display: flex; justify-content: space-between; align-items: center;">' +
+                    '<span style="flex-grow: 1;">' + state.text + '</span>' +
+                    '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
+                    '<i class="' + $(state.element).data('icon') + '"></i>' +
+                '</a>' +
+                '</span>'
+            );
+            console.log("STATE", $state);
+            return $state;
+        }
+
         var getSpouse = $('#validationDefault13');
         getSpouse.select2({
             placeholder: 'Search...',
+            templateResult: formatState,
+            templateSelection: formatState
         }).on('select2:open', () => {
             // Remove existing button to avoid duplicates
             $('.select2-results .new-contact-btn').remove();
