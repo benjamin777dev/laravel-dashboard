@@ -9,7 +9,7 @@
                     <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
                     {{-- <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
                     id="validationDefault01" required value="{{ $deal['contactId'] }}"> --}}
-                    <select class="validate" style="display:none;" id="validationDefault01" required>
+                    <select style="display:none;" id="validationDefault01" required>
                         <option value="" disabled {{ empty( $deal['client_name_primary']) ? 'selected' : '' }}>Please select
                         </option>
                         @foreach ($contacts as $contact)
@@ -265,8 +265,9 @@
         var getClientName = $('#validationDefault01');
         getClientName.select2({
             placeholder: 'Search...',
-            selectionCssClass: 'validate'
-        });
+            //  containerCssClass: 'customSelect2'
+        })
+        getClientName.next('.select2-container').addClass('customSelect2');
 
         checkValidate(deal);
         setTmName();
