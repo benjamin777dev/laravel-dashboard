@@ -521,7 +521,7 @@ class DatabaseService
 
     }
 
-    public function retrieveDealDataById(User $user, $accessToken, $dealId)
+    public function retrieveNonTmById(User $user, $accessToken, $dealId)
     {
         try {
             Log::info("Retrieve Deals From Database");
@@ -1162,7 +1162,7 @@ class DatabaseService
                 'name' =>$dealData['Name'],
                 'userId' => $user->id,
                 'dealId' => $dealData['Related_Transaction']['id'],
-                'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
+                // 'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
                 'isNonTmCompleted' =>false,
             ]);
             Log::info("Retrieved Deal nontm From Database", ['nontm' => $nontm]);

@@ -22,7 +22,9 @@ return new class extends Migration
             $table->string('builderCommision')->nullable();
             $table->string('contractExecuted')->nullable();
             $table->string('buyerAgency')->nullable();
-            $table->string('formType')->nullable();
+            if (!Schema::hasColumn('submittals', 'formType')) {
+                $table->string('formType')->nullable();
+            }
         });
     }
 

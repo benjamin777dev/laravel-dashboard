@@ -453,9 +453,9 @@ div.dataTables_processing>div:last-child>div {
     outline: none;
 }
 
-.select2-container--default .select2-selection--single {
+/* .select2-container--default .select2-selection--single {
     border: none !important;
-}
+} */
 
 .select2-container--open .select2-dropdown--below {
     font-size: 12px !important;
@@ -1851,10 +1851,15 @@ body .vertical-collpsed span .logo-sm image {
 
 .nplabelText {
     color: #222;
+<<<<<<< HEAD
    
     font-size: 13px;
+=======
+    font-family: Montserrat;
+    font-size: 15px;
+>>>>>>> 6eb6b791669198d83bd4c7c835bf43f36f4b39e5
     font-style: normal;
-    font-weight: 350;
+    font-weight: 500;
     line-height: 19.5px;
 }
 
@@ -1862,7 +1867,7 @@ body .vertical-collpsed span .logo-sm image {
     padding: 4px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #afafaf;
+    border: 1px solid #000000;
     word-break: break-all;
     text-overflow: ellipsis;
 }
@@ -3058,9 +3063,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
     padding: 0;
 }
 
-.select2-selection.select2-selection--single {
+/* .select2-selection.select2-selection--single {
     border: 0 !important;
-}
+} */
 
 .select2-results__option {
     font-size: 12px;
@@ -3358,4 +3363,16 @@ input[type="button"]:hover {
 
 .lockedRow td {
     cursor: not-allowed;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px;
+    border: 1px solid #000000;
+    border-radius: 0.25rem;
+}
+
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+    height: 36px;
 }
