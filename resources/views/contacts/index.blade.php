@@ -22,7 +22,7 @@
                 <a >
                     <div>
                         @component('components.button', [
-                         'clickEvent' => 'createContact()',
+                         'id' => 'create_contact',
                          'label' => 'New Contact',
                          'icon' => 'fas fa-plus plusicon'
                      ])
@@ -33,7 +33,7 @@
                     <div>
                         <div>
                             @component('components.button', [
-                               'clickEvent' => 'createTransaction({{ $userContact }})',
+                               'id' => 'create_transaction',
                                'label' => 'New Transaction',
                                'icon' => 'fas fa-plus plusicon'
                            ])

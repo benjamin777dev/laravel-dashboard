@@ -1,4 +1,4 @@
-<div class="col-md-4 w-100">
+<div class="col-md-4 pt-5">
     @if ($notesInfo->isEmpty())
         <p class="text-center">No notes found.</p>
     @else

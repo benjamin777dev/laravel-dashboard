@@ -14,9 +14,9 @@
 
                 <div>
                     @component('components.button', [
-                        'clickEvent' => 'createTransaction()',
                         'label' => 'New Transaction',
-                        'icon' => 'fas fa-plus plusicon'
+                        'icon' => 'fas fa-plus plusicon',
+                        'id'=> "create_transaction"
                     ])
                     @endcomponent
                 </div>
@@ -24,7 +24,7 @@
                 
                 <div>
                     @component('components.button', [
-                        'clickEvent' => 'createSubmittals()',
+                        'id' => 'create_submittals',
                         'label' => 'New Submittal',
                         'icon' => 'fas fa-plus plusicon'
                     ])
@@ -144,6 +144,7 @@
 
 
     <script>
+      
         var prevSelectedColumn = null;
         var prevSortDirection = "";
         // Add an event listener to send search term as request

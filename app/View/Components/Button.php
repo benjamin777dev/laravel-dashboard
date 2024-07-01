@@ -10,15 +10,15 @@ class Button extends Component
 {
     public $label;
     public $icon;
-    public $clickEvent ="";
     public $attributes = "";
+    public $id = "";
 
     public function __construct()
     {
         $this->label = $label;
         $this->icon = $icon;
-        $this->clickEvent = $clickEvent;
         $this->attributes = $attributes;
+        $this->id = $id;
     }
 
     public function render(): View|Closure|string

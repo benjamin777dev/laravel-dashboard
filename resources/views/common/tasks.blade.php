@@ -34,6 +34,7 @@
                 <th scope="col">Related To</th>
                 <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
+               
             </tr>
         </thead>
         <tbody>
@@ -53,7 +54,7 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select
+                                <select style="width: 100px !important"
                                     onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')"
                                     class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
                                     id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
@@ -80,8 +81,10 @@
                                 @endif
                             />
                         </td>
-
+                     
+                          
                         <td>
+                            @if($task['status']!=="Completed")
                             <div class="d-flex btn-save-del">
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                     id="update_changes" data-bs-toggle="modal"
@@ -96,6 +99,7 @@
                                     Delete
                                 </div>
                             </div>
+                            @endif
                             {{-- delete Modal --}}
                             <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -185,6 +189,7 @@
                                 </div>
                             </div>
                         </td>
+                    
 
                     </tr>
                 @endforeach
@@ -618,6 +623,7 @@
         let updateColor = document.getElementById("removeBtn");
         var allCheckbox = document.getElementById('checkbox_all');
         var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        console.log(allCheckbox,'allCheckbox')
 
         checkboxes.forEach(function(checkbox) {
             // Set the state of each checkbox based on the state of the "checkbox_all"
@@ -630,6 +636,7 @@
                 state = false;
             }
         });
+        console.log(state,'statettete')
         if (state) {
             updateColor.style.backgroundColor = "#222";
         } else {

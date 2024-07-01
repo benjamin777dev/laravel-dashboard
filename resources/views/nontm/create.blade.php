@@ -485,12 +485,12 @@
             "data": [{
                 "Commission":commission? commission.value.trim():undefined,
                 "Final_Purchase_Price": final_purchase? final_purchase.value.trim():undefined,
-                "Any_Additional_Fees_Charged":window.values["Any Additional Fees Charged?"]? window.values["Any Additional Fees Charged?"]
+                "Any_Additional_Fees_Charged":window?.values["Any Additional Fees Charged?"]? window?.values["Any Additional Fees Charged?"]
                     ?.toUpperCase():undefined,
                 "Additional_Email_for_Confirmation":add_email? add_email.value.trim():undefined,
-                "Referral_Fee_Paid_Out":window.values['Referral Fee Paid Out?']? window.values['Referral Fee Paid Out?']?.toUpperCase():undefined,
+                "Referral_Fee_Paid_Out":window?.values['Referral Fee Paid Out?']? window?.values['Referral Fee Paid Out?']?.toUpperCase():undefined,
                 "Close_Date": close_date?close_date.value.trim():undefined,
-                "Home_Warranty_Paid_by_Agent":window.values['Home Warranty Paid Out Agent?']? window.values['Home Warranty Paid Out Agent?']?.toUpperCase():undefined,
+                "Home_Warranty_Paid_by_Agent":window.values['Home Warranty Paid Out Agent?']? window?.values['Home Warranty Paid Out Agent?']?.toUpperCase():undefined,
                 "CHR_Gives_Amount_to_Give":amount_chr? amount_chr.value.trim():undefined,
                 "Other_Commission_Notes":other_comm_notes.value? other_comm_notes.value.trim():undefined,
                 "Agent_Comments_Remarks_Instructions":agent_comments.value ? agent_comments.value.trim():undefined,

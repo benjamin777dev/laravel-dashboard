@@ -125,7 +125,7 @@ div.dataTables_processing>div:last-child>div {
     align-items: center;
     gap: 4px;
     border-radius: 16px;
-    background: #848484;
+    background: rgb(223, 223, 223);
     color: #fff;
     text-align: center;
    
@@ -2552,6 +2552,11 @@ body .vertical-collpsed span .logo-sm image {
     border-right: 1px solid #dfdfdf;
     border-bottom: 1px solid #efefef;
     background: #fff;
+}
+.commonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .dbgcommonFlex {

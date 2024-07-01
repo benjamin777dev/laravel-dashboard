@@ -19,7 +19,7 @@
 <div class="container-fluid">
     <div class="commonFlex ppipeDiv">
         <p class="pText">{{ $deal['deal_name'] }}</p>
-        <div class="npbtnsDiv">
+        <div class="npbtnsDiv p-2">
             {{-- <div class="input-group-text text-white justify-content-center npdeleteBtn" id="btnGroupAddon"
                 data-bs-toggle="modal" data-bs-target="#">
                 <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
@@ -36,7 +36,7 @@
     </div>
     <div class="row">
         <div class="col-md-8 col-sm-12 dtasksection">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between p-3">
                 <p class="dFont800 dFont15">Tasks</p>
                 <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                     id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $deal['id'] }}"><i
@@ -47,7 +47,7 @@
                
             </div>
             <div class="row">
-                <nav class="dtabs">
+                <nav >
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-home" onclick="fetchPipelineTasks('In Progress','{{$deal['id']}}')"
@@ -73,10 +73,11 @@
             </div>
         </div>
         @include('common.notes.view', [
-        'notesInfo' => $notesInfo,
-        'retrieveModuleData' => $retrieveModuleData,
-        'module' => 'Deals',
-        ])
+            'notesInfo' => $notesInfo,
+            'retrieveModuleData' => $retrieveModuleData,
+            'module' => 'Deals',
+            ])
+      
     </div>
     {{-- information form --}}
     <div class="updatePipelineform">

@@ -42,7 +42,7 @@
 
                 </div>
                 <div class="row">
-                    <nav class="dtabs">
+                    <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                              <button class="nav-link dtabsbtn" onclick="fetchContactTasks('In Progress','{{ $contact['id'] }}')"
                                     id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress'
