@@ -216,6 +216,10 @@
     $(document).ready(function() {
         let isLoading = false;
         let currentPage = 1;
+        let searchInput = $('#pipelineSearch');
+        console.log(searchInput, 'searchInput')
+        let csearch = $('#related_to_stage');
+        let filterVal = csearch.val();
         const baseUrl = '{{ url('/pipeline') }}';
         
         $(window).scroll(function() {
@@ -230,11 +234,16 @@
             isLoading = true;
             $('.spinner').show();
             currentPage++;
-            const nextPageUrl = `${baseUrl}?page=${currentPage}`;
-            
+            const nextPageUrl = `${baseUrl}/deals?page=${currentPage}`;
+            let search = searchInput.val();
             $.ajax({
                 url: nextPageUrl,
                 type: 'get',
+                data: {
+                    search: encodeURIComponent(search), // Pass correct parameters
+                    filter: csearch.val(), // Pass filter value
+                    // missingField: missingFeild, // Adjust as per your requirement
+                },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },

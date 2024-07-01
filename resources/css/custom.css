@@ -3388,3 +3388,18 @@ input[type="button"]:hover {
     .select2-selection__arrow {
     height: 36px;
 }
+
+/* Style the main container */
+.customSelect2 .select2-container {
+    border-left: 4px solid red;
+}
+
+/* Style the selection area */
+.customSelect2 .select2-selection {
+    border-left: 4px solid red;
+}
+
+/* Style the selection arrow */
+.customSelect2 .select2-selection__arrow {
+    border-left: 4px solid red;
+}

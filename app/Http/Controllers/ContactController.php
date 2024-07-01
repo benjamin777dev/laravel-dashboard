@@ -51,9 +51,6 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $spouseContact = session('spouseContact');
-
-        session()->forget('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
@@ -75,7 +72,8 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $spouseContact = session('spouseContact');
-
+        // print_r($spouseContact);
+        // die;
         session()->forget('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
