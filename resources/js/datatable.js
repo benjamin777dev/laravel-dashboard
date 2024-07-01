@@ -75,7 +75,7 @@
                             class="ppiplinecommonIcon"  data-bs-toggle="modal"
                             data-bs-target="#staticBackdropforNote_${data.id}">
                         <span class="tooltiptext"></span>
-                        <div class="createNoteModal"></div>
+                        <div class="createNoteModal${data.id}"></div>
                         `;
                     }
                 },
@@ -978,10 +978,10 @@
                         ${fetchNotesDeal(data.zoho_contact_id)}
                     <img src="/images/noteBtn.svg" alt="Note icon"
                             class="ppiplinecommonIcon" data-bs-toggle="modal"
-                            onclick="createNotesForContact('${data.id}','${data.zoho_contact_id}')"
+                            onclick="createNotesForContact('${data.id}')"
                             data-bs-target="#staticBackdropforNote_${data.id}">
                         <span class="tooltiptext"></span>
-                        <div class="createNoteModal"></div>
+                        <div class="createNoteModal${data.id}"></div>
                         `;
                     }
                 },
@@ -1222,35 +1222,44 @@
         });
 
 //    contacts actions
-        window.createNotesForContact = function(id, conId){
+    window.createNotesForContact = function(id) {
+        event.preventDefault();  // Prevent default action of the event (assuming it's a click event)
 
-            event.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: "/note-create/"+id,
-                method: "GET",
-                success: function(response) {
-                    // $('#notesContainer').append('<p>New Note Content</p>');
-                    let noteContainer = $(".createNoteModal");
-                    console.log(response, 'noteContainer')
-                    // Clear previous contents of note containe
-                    noteContainer.empty();
-                    const card = noteContainer.html(response);
-                    // // Show the modal after appending notes
-                    $("#staticBackdropforNote_" + id).modal('show');
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    showToastError(error);
-                    console.error("Ajax Error:", error);
-                }
-            });
+        // Clear existing modal content if any
+        $(".createNoteModal" + id).empty();
 
+        // Set up CSRF token for AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Make AJAX request to fetch the note creation form
+        $.ajax({
+            url: "/note-create/" + id,
+            method: "GET",
+            success: function(response) {
+                let modalElement = $("#staticBackdropforNote_" + id);
+                if(modalElement.length!==0){
+                    $(".createNoteModal" + id).empty();
+                }
+                // Insert the fetched note creation form into the modal container
+                let noteContainer = $(".createNoteModal" + id);
+                noteContainer.html(response);
+
+            // Show the modal if it's not already shown
+            if (!modalElement.hasClass('show')) {
+                modalElement.modal('show');
+            }
+        },
+        error: function(xhr, status, error) {
+            showToastError(error);  // Display error toast message
+            console.error("Ajax Error:", error);
         }
+    });
+}
+
 
         window.fetchNotesForContact=function(id, conId,type) {
             event.preventDefault();
@@ -1308,7 +1317,7 @@
                 method: "GET",
                 success: function(response) {
                     // $('#notesContainer').append('<p>New Note Content</p>');
-                    let noteContainer = $(".createNoteModal");
+                    let noteContainer = $(".createNoteModal"+id);
                     console.log(response, 'noteContainer')
                     // Clear previous contents of note containe
                     noteContainer.empty();

@@ -36,6 +36,8 @@ body {
     cursor: pointer;
 }
 
+
+
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
     display: grid;
@@ -101,6 +103,9 @@ div.dataTables_processing>div:last-child>div {
 }
 .dcontactBtns:hover {
     background: #222;
+}
+.dcontactBtns:hover {
+    background: #222 !important;
 }
 
 .plusicon {
@@ -800,6 +805,18 @@ body .vertical-collpsed span .logo-sm image {
 
 .submit_button {
     background-color: #222;
+}
+.submit_button:hover {
+    background-color: #222 !important;
+    outline: #222 !important;
+}
+.submit_button:focus-visible {
+    background-color: #222 !important;
+    outline: #222 !important;
+}
+.submit_button:active {
+    background-color: #222 !important;
+    outline: #222 !important;
 }
 
 @media (min-width: 768px) {
@@ -1851,13 +1868,8 @@ body .vertical-collpsed span .logo-sm image {
 
 .nplabelText {
     color: #222;
-<<<<<<< HEAD
    
     font-size: 13px;
-=======
-    font-family: Montserrat;
-    font-size: 15px;
->>>>>>> 6eb6b791669198d83bd4c7c835bf43f36f4b39e5
     font-style: normal;
     font-weight: 500;
     line-height: 19.5px;
