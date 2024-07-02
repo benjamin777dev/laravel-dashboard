@@ -9,9 +9,8 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipeline</p>
-            <div class="pipeline-btns-container">
-
+            <p class="ngText text-center">Pipeline</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
                 <div>
                     @component('components.button', [
                         'label' => 'New Transaction',

@@ -1658,6 +1658,10 @@ body .vertical-collpsed span .logo-sm image {
         align-items: center;
         margin-bottom: 24px;
     }
+
+    .mbottom{
+        margin-bottom: 8px !important;
+    }
 }
 
 @media (min-width: 351px) and (max-width: 767px) {
