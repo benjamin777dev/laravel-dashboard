@@ -121,6 +121,9 @@ div.dataTables_processing>div:last-child>div {
 .agent-info {
     padding: 1rem 1rem;
 }
+.nav.nav-tabs{
+    background-color: #6c6c6c !important;
+}
 
 .removebtn {
     display: flex;
@@ -130,7 +133,7 @@ div.dataTables_processing>div:last-child>div {
     align-items: center;
     gap: 4px;
     border-radius: 16px;
-    background: rgb(223, 223, 223);
+    background: rgb(165 158 158);
     color: #fff;
     text-align: center;
    
@@ -974,6 +977,11 @@ body .vertical-collpsed span .logo-sm image {
     }
     .unset-bs-gutter-x {
         --bs-gutter-x: 0;
+    }
+    .cus-grid{
+        display: grid !important;
+        gap: 3px !important;
+        text-align: center !important;
     }
 }
 

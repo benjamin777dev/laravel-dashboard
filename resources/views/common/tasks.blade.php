@@ -641,7 +641,7 @@
             updateColor.style.backgroundColor = "#222";
         } else {
 
-            updateColor.style.backgroundColor = "#dfdfdf";
+            updateColor.style.backgroundColor = "rgb(165 158 158)";
         }
     }
 

@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="justify-content-between align-items-center d-flex cus-grid">
             <p class="pText">Database</p>
             <div class="d-flex gap-1">
                 <a >
@@ -69,7 +69,7 @@
                 </div>
 
             </div>
-            <div class="d-flex gap-4">
+            <div class="d-flex gap-4 cus-grid">
                 <div>
                     @component('components.button', [
                        'attributes' => 'id=btnGroupAddon data-bs-toggle=modal data-bs-target=#filterModal',

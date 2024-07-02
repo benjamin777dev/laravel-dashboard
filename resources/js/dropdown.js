@@ -286,6 +286,42 @@ window.showDropdownForId = function (modalID, selectElement) {
     });
 };
 
+window.resetValidationTask = function(id) {
+    if (id) {
+        document.getElementById("subject_error" + id).innerHTML = "";
+        document.getElementById('darea' + id).value = "";
+    } else {
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById('darea').value = "";
+    }
+
+}
+
+window.validateTextareaTask = function(id) {
+    if (id) {
+        var textarea = document.getElementById('darea' + id);
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error" + id).innerHTML = "Please enter details";
+        } else {
+            document.getElementById("subject_error" + id).innerHTML = "";
+        }
+    } else {
+        var textarea = document.getElementById('darea');
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === '') {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML = "Please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+
+}
+
 window.addCommonTask = function (id = "", type = "") {
     var selectionId;
     if (window?.groupLabel === "Contacts") {
@@ -299,6 +335,7 @@ window.addCommonTask = function (id = "", type = "") {
 
     if (id) {
         var subject = document.getElementsByName("subject")[0].value;
+        console.log(subject,'subject')
         if (subject.trim() === "") {
             document.getElementById("subject_error" + id).innerHTML =
                 "Please enter details";
@@ -429,12 +466,13 @@ window.addCommonTask = function (id = "", type = "") {
         dataType: "json",
         data: JSON.stringify(formData),
         success: function (response) {
+            console.log(response,'responsejdhjkghsdugh')
             if (response?.data && response.data[0]?.message) {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                document.getElementById("btn_closing").click();
                 formData = "";
-                $(".btn-close").click();
                 // window.location.reload();
             } else {
                 showToastError("Response or message not found");

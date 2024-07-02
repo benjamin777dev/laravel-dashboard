@@ -66,14 +66,14 @@
                         <span class="tooltiptext"></span>
                          ${generateModalHtml(data)}
                     <img src="/images/sticky_note.svg" alt="Sticky note icon"
-                            class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
+                            class="ppiplinecommonIcon" title="Notes" data-bs-toggle="modal" data-bs-target="#"
                             onclick="fetchNotesForContact('${data.id}','${data.zoho_deal_id}','Deals')">
                         <span class="tooltiptext"></span>
                          ${fetchNotesDeal(data.zoho_deal_id)}
                     <img src="/images/noteBtn.svg" alt="Note icon"
                     onclick="createNotesForDeal('${data.id}','${data.zoho_deal_id}')"
                             class="ppiplinecommonIcon"  data-bs-toggle="modal"
-                            data-bs-target="#staticBackdropforNote_${data.id}">
+                            data-bs-target="#staticBackdropforNote_${data.id}" title="Add Note">
                         <span class="tooltiptext"></span>
                         <div class="createNoteModal${data.id}"></div>
                         `;
@@ -805,14 +805,14 @@
                         <div class="modal-content p-1">
                             <div class="modal-header border-0">
                                 <p class="modal-title dHeaderText">Create New Tasks</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                <button type="button" class="btn-close" id="btn_closing" data-bs-dismiss="modal"
                                     onclick="resetValidationTask(${data.id})" aria-label="Close"></button>
                             </div>
                             <div class="modal-body dtaskbody">
                                 <p class="ddetailsText fw-normal">Details</p>
                                 <textarea name="subject" onkeyup="validateTextareaTask(${data.id});" id="darea${data.id}"
                                     rows="4" class="dtextarea"></textarea>
-                                <div id="subject_error${data.id}" class="text-danger"></div>
+                                <div id="subject_error${data.zoho_contact_id ? data.id : data?.zoho_deal_id}" class="text-danger"></div>
                                 <label class="dRelatedText mb-2">Related to...</label>
                                 <div class="btn-group dmodalTaskDiv">
                                     <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">

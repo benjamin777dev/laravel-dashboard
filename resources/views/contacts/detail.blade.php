@@ -31,7 +31,7 @@
         </div>
         <div class="row">
             <div class="col-md-8 col-sm-12 dtasksection">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between mb-1">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                         id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $contact['id'] }}"><i

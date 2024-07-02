@@ -127,41 +127,9 @@
         });
 
     });
-    window.resetValidationTask = function(id) {
-        if (id) {
-            document.getElementById("subject_error" + id).innerHTML = "";
-            document.getElementById('darea' + id).value = "";
-        } else {
-            document.getElementById("subject_error").innerHTML = "";
-            document.getElementById('darea').value = "";
-        }
 
-    }
 
-    window.validateTextareaTask = function(id) {
-        if (id) {
-            var textarea = document.getElementById('darea' + id);
-            var textareaValue = textarea.value.trim();
-            // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("subject_error" + id).innerHTML = "Please enter details";
-            } else {
-                document.getElementById("subject_error" + id).innerHTML = "";
-            }
-        } else {
-            var textarea = document.getElementById('darea');
-            var textareaValue = textarea.value.trim();
-            // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("subject_error").innerHTML = "Please enter details";
-            } else {
-                document.getElementById("subject_error").innerHTML = "";
-            }
-        }
-
-    }
+  
     
     window.taskModuleSelected = function(selectedModule) {
         // console.log(accessToken,'accessToken')
