@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="col-lg-12 main-carousel">
-        <div id="carouselExampleControls" class="carousel slide " data-bs-ride="carousel"
+        <div id="carouselExampleControls" class="carousel slide " data-interval="false"
             style="display: flex;justify-content:space-between">
             <div class="corausal-req-mb48">
                 <p class="corausal-req-text">Non-TM Check Request Information</p>
@@ -513,10 +513,7 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else if (commission.value.trim().split('.')[0]&&commission.value.trim().length>4) {
-            commissionError.textContent = "Commission length must be exactly 4 characters.";
-            isValid = false;
-        }else {
+        } else {
             commissionError.textContent = "";
         }
 
