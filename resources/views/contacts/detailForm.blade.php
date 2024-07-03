@@ -65,16 +65,16 @@
                 <div class="row d-flex justify-content-center mt-100">
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                        <select id="choices-multiple-remove-button_test" placeholder="Select  Groups"
+                        <select id="choices-multiple-remove-button_test" placeholder="Select Groups"
                             multiple>
                             @foreach ($groups as $group)
                                 @php
                                     $selected = ''; // Initialize variable to hold 'selected' attribute
-                                    if (isset($contactsGroups[0]['groups'])) {
-                                        foreach ($contactsGroups[0]['groups'] as $contactGroup) {
+                                    if (isset($contact['groupsData'])) {
+                                        foreach ($contact['groupsData'] as $contactGroup) {
                                             if (
-                                                $group['zoho_group_id'] ===
-                                                $contactGroup['zoho_contact_group_id']
+                                                $group['id'] ===
+                                                $contactGroup['groupId']
                                             ) {
                                                 $selected = 'selected'; // If IDs match, mark the option as selected
                                                 break; // Exit loop once a match is found

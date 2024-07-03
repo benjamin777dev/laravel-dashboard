@@ -86,7 +86,7 @@ Route::get('/deal/note/{dealId}', [PipelineController::class, 'retriveNotesForDe
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipeline'])->name('pipeline.view');
-Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
+Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.detail.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipeline']);
 Route::get('/pipeline/create/form/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');

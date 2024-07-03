@@ -204,7 +204,7 @@ class ZohoCRM
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->patch($this->bulkUrl . "Contacts/$id?affected_data=true", $inputJson);
+            ])->patch($this->apiUrl . "Contacts/".$id, $inputJson);
 
             // Decode the response data
             $responseData = $response->json();
@@ -217,9 +217,9 @@ class ZohoCRM
                 if (isset($responseData['message']) && $responseData['message'] === "the id given seems to be invalid") {
                     $db = new DatabaseService();
                     $db->removeContactFromDB($id);
+                    throw new \Exception("Failed to create contact in ZohoCRM. Contact ID not found.");
                 }
 
-                throw new \Exception("Failed to create contact in ZohoCRM. Contact ID not found.");
             }
 
 
@@ -601,6 +601,20 @@ class ZohoCRM
             'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Deals/' . $id);
+
+        Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+
+        return $response;
+    }
+
+    public function getZohoContact($id)
+    {
+        Log::info('Creating Zoho Deal' . $id);
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->get($this->apiUrl . 'Contacts/' . $id);
 
         Log::info('Zoho deals data response: ' . print_r($response->body(), true));
 

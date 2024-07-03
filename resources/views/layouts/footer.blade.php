@@ -37,7 +37,7 @@
     function createTransaction(userContactData,contactData=null) {
         let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;
         
-       let userContact = JSON.parse(JSON.stringify(userContactData));
+       let userContact = {!! json_encode(auth()->user()->contactData) !!};
         var formData = {
             "data": [{
                 "Deal_Name": "{{ config('variables.dealName') }}",

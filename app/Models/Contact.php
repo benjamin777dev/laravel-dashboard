@@ -172,6 +172,10 @@ class Contact extends Model
         return $this->belongsTo(Contact::class, 'contactId');
     }
     
+    public function groupsData()
+    {
+        return $this->hasMany(ContactGroups::class, 'contactId');
+    }
     public function groups()
     {
         return $this->hasMany(ContactGroups::class, 'contactId');
