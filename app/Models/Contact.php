@@ -148,7 +148,8 @@ class Contact extends Model
         'feature_cards_or_sheets',            
         'termination_reason',                
         'transaction_manager',                
-        'auto_address',                      
+        'auto_address',     
+        'has_address'                 
     ];
 
     public static function getZohoContactInfo()
@@ -164,7 +165,7 @@ class Contact extends Model
 
     public function spouseContact()
     {
-        return $this->belongsTo(Contact::class, 'spouse_partner','zoho_contact_id');
+        return $this->belongsTo(Contact::class, 'spouse_partner', 'zoho_contact_id');
     }
 
     public function contactName()
@@ -203,11 +204,8 @@ class Contact extends Model
         if (is_null($this->spouse_partner) || $this->spouse_partner == '') {
             return null;
         }
-
-        $spouseData = json_decode($this->spouse_partner, true);
-        $spouseId = is_array($spouseData) ? $spouseData['id'] ?? $spouseData : $spouseData;
-
-        return Contact::where('zoho_contact_id', $spouseId)->first();
+    
+        return Contact::where('zoho_contact_id', $this->spouse_partner)->first();
     }
 
 
@@ -258,7 +256,7 @@ class Contact extends Model
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
             'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
-            'spouse_partner' => isset($data['Spouse_Partner']) ? json_encode($data['Spouse_Partner']) : null,
+            'spouse_partner' => isset($data['Spouse_Partner']) ? (is_array($data['Spouse_Partner']) ? $data['Spouse_Partner']['id'] : $data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
             'last_emailed' => $data['Last_Emailed'],
             'email_blast_opt_in' => isset($data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In']) ? (int)$data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In'] : null,
@@ -368,6 +366,7 @@ class Contact extends Model
             'termination_reason' => isset($data['Termination_Reason']) ? $data['Termination_Reason'] : null,
             'transaction_manager' => isset($data['Transaction_Manager']) ? $data['Transaction_Manager'] : null,
             'auto_address' => isset($data['Auto_Address']) ? $data['Auto_Address'] : null,
+            'has_address' => !empty($data['Mailing_Street']) && !empty($data['Mailing_City']) && !empty($data['Mailing_State']) && !empty($data['Mailing_Zip']),
         ];
         
         if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {
