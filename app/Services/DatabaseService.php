@@ -727,7 +727,7 @@ class DatabaseService
                         ->orWhere('last_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('phone', 'like', '%' . $searchTerms . '%')
                         ->orWhere('mobile', 'like', '%' . $searchTerms . '%')
-                        // ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mailing_address', 'like', '%' . $searchTerms . '%')
                         ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
