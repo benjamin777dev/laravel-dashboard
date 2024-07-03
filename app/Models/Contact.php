@@ -230,6 +230,13 @@ class Contact extends Model
         $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s')  : null;
         $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s')  : null;
 
+        $incomeGoal = isset($data['Income_Goal']) ? $data['Income_Goal'] : null;
+    
+        // Remove commas and dollar signs for easier numeric validation
+        if (!is_null($incomeGoal)) {
+            $incomeGoal = str_replace(['$', ','], '', $incomeGoal);
+        }
+
 
         $mappedData = [
             'zoho_contact_id' => $source === 'webhook' ? $data['id'] :  $data['Id'],
@@ -301,8 +308,7 @@ class Contact extends Model
             'salesforce_id' => isset($data['Salesforce_ID']) ? $data['Salesforce_ID'] : null,
             'mls_ires' => isset($data['MLS_IRES']) ? (int)$data['MLS_IRES'] : null,
             'outsourced_mktg_floorplans' => isset($data['Outsourced_Mktg_Floorplans']) ? (int)$data['Outsourced_Mktg_Floorplans'] : null,
-            'income_goal' => isset($data['Income_Goal']) ? $data['Income_Goal'] : null,
-            'chr_relationship' => isset($data['CHR_Relationship']) ? $data['CHR_Relationship'] : null,
+            'income_goal' => is_numeric($incomeGoal) ? $incomeGoal : 250000,
             'locked_s' => isset($data['Locked__s']) ? (int)$data['Locked__s'] : null,
             'tag' => isset($data['Tag']) ? json_encode($data['Tag']) : null,
             'import_batch' => isset($data['Import_Batch']) ? $data['Import_Batch'] : null,
