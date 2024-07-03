@@ -428,12 +428,13 @@ class DatabaseService
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [['userID', $user->id],['isDealCompleted',true]];
+            $conditions = [
+                ['userID', $user->id],
+                ['isDealCompleted',true]
+            ];
 
-            // Adjust query to include contactName table using join
             $deals = Deal::where($conditions)
-                ->whereNotIn('stage',
-                    ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
+                ->whereNotIn('stage', config('variables.dealPipelineStages')
                 );
 
             if ($search !== "") {
@@ -474,6 +475,7 @@ class DatabaseService
                     $query->whereBetween('closing_date', [$startOfNext30Days, $endOfNext30Days])->where('stage', '!=', 'Under Contract');
                 });
             }
+
             if ($filter) {
                 $conditions[] = ['stage', $filter];
             }
