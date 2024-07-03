@@ -88,6 +88,7 @@
             </div>
         </form>
     </div>
+    
     {{--CHR TM - Transaction Details and Preferences--}}
     <div class="col-md-12 col-sm-24 transactionForm" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
         <p class="npinfoText">CHR TM - Transaction Details and Preferences</p>
@@ -173,7 +174,8 @@
 
         </form>
     </div>
-        {{--CHR TM - Commission Details--}}
+    
+    {{--CHR TM - Commission Details--}}
     <div class="col-md-12 col-sm-24 commDetails" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
         <p class="npinfoText">CHR TM - Commission Details</p>
@@ -206,6 +208,7 @@
 
         </form>
     </div>
+    
     {{--CHR TM - Service Providers--}}
     <div class="col-md-12 col-sm-24 serviceProvider" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
@@ -273,6 +276,7 @@
 
         </form>
     </div>
+    
     {{--CHR TM - Select MLS--}}
     <div class="col-md-12 col-sm-24 selectMLS" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
@@ -346,6 +350,7 @@
 
         </form>
     </div>
+    
     {{--PROPERTY PROMOTION - Marketing Items--}}
     <div class="col-md-12 col-sm-24 promotionMarket" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
@@ -402,6 +407,7 @@
 
         </form>
     </div>
+    
     {{--PROPERTY PROMOTION - Notes--}}
     <div class="col-md-12 col-sm-24 promotionNote" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
@@ -416,6 +422,25 @@
 
         </form>
     </div>
+
+    {{--PROPERTY PROMOTION - Signs--}}
+    <div class="col-md-12 col-sm-24 promotionSign" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
+
+        <p class="npinfoText">PROPERTY PROMOTION - Signs</p>
+        <form class="row g-3">
+            <div class="col-md-6">
+                    <label for="qrCodeMainPanel" class="form-label nplabelText">QR Code Main Panel</label>
+                    <input type="checkbox" id="qrCodeMainPanel" <?php if
+                    ($submittal['qrCodeMainPanel']) { echo 'checked' ; } ?>>
+                </div>
+            \<div class="col-md-6">
+                <label for="qrCodeSignRider" class="form-label nplabelText">OLD QR Code Sign Rider</label>
+                <input type="checkbox" id="qrCodeSignRider" <?php if
+                ($submittal['qrCodeSignRider']) { echo 'checked' ; } ?>>
+            </div>
+        </form>
+    </div>
+    
     {{--PROPERTY PROMOTION - Print Requests--}}
     <div class="col-md-12 col-sm-24 promotionPrint" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
@@ -491,11 +516,6 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label for="qrCodeSignRider" class="form-label nplabelText">QR Code Sign Rider</label>
-                <input type="checkbox" id="qrCodeSignRider" <?php if
-                ($submittal['qrCodeSignRider']) { echo 'checked' ; } ?>>
-            </div>
-            <div class="col-md-6">
                 <label for="featureCards" class="form-label nplabelText">Feature Cards</label>
                 <select class="form-select npinputinfo validate" id="featureCards">
                     <option value="">--None--</option>
@@ -545,6 +565,7 @@
             $('.promotionOutside').show();
             $('.promotionMarket').show();
             $('.promotionNote').show();
+            $('.promotionSign').show();
             $('.promotionPrint').show();
 
         } else {
@@ -552,6 +573,7 @@
             $('.promotionOutside').hide();
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
+            $('.promotionSign').hide();
             $('.promotionPrint').hide();
         }
         putConditionOnForm();
@@ -568,6 +590,7 @@
             $('.promotionOutside').show();
             $('.promotionMarket').show();
             $('.promotionNote').show();
+            $('.promotionSign').show();
             $('.promotionPrint').show();
             $('.showPromotion').hide()
 
@@ -579,6 +602,7 @@
             $('.promotionOutside').hide();
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
+            $('.promotionSign').hide();
             $('.promotionPrint').hide();
             $('.selectMLS').append(`
                 <div class="col-md-6 showPromotion">
@@ -615,6 +639,7 @@
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
             $('.promotionPrint').hide();
+            $('.promotionSign').hide();
             $('#listingSubmittal').append(`
                 <div class="col-md-12 col-sm-24 surityChoose " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
                 justify-content: center;">
@@ -641,6 +666,7 @@
             $('.promotionMarket').show();
             $('.promotionNote').show();
             $('.promotionPrint').show();
+            $('.promotionSign').show();
             $('#listingSubmittal').append(`
                 <div class="col-md-12 col-sm-24 submitToCHR " style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display: flex;
                 justify-content: center;">
@@ -669,6 +695,8 @@
             $('.promotionMarket').hide();
             $('.promotionNote').hide();
             $('.promotionPrint').hide();
+            $('.promotionSign').hide();
+
         }
     }
     function isValidJSON(str) {

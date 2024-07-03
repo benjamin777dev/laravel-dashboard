@@ -87,7 +87,8 @@ class Submittals extends Model
         'printedItemsPickupDate',
         'brochurePickupDate',
         'isSubmittalComplete',
-        'formType'
+        'formType',
+        'qrCodeMainPanel'
     ];
 
     public static function getZohoContactInfo()
