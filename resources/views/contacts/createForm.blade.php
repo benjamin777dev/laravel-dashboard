@@ -68,27 +68,27 @@
                         <div>
                             <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
                             <select id="choices-multiple-remove-button" placeholder="Select Groups"
-                                multiple>
-                                @foreach ($groups as $group)
-                                    @php
-                                        $selected = ''; // Initialize variable to hold 'selected' attribute
-                                        if (isset($contactsGroups[0]['groups'])) {
-                                            foreach ($contactsGroups[0]['groups'] as $contactGroup) {
-                                                if (
-                                                    $group['zoho_group_id'] ===
-                                                    $contactGroup['zoho_contact_group_id']
-                                                ) {
-                                                    $selected = 'selected'; // If IDs match, mark the option as selected
-                                                    break; // Exit loop once a match is found
-                                                }
+                            multiple>
+                            @foreach ($groups as $group)
+                                @php
+                                    $selected = ''; // Initialize variable to hold 'selected' attribute
+                                    if (isset($contact['groupsData'])) {
+                                        foreach ($contact['groupsData'] as $contactGroup) {
+                                            if (
+                                                $group['id'] ===
+                                                $contactGroup['groupId']
+                                            ) {
+                                                $selected = 'selected'; // If IDs match, mark the option as selected
+                                                break; // Exit loop once a match is found
                                             }
                                         }
-                                    @endphp
-                                    <option value="{{ $group['zoho_group_id'] }}" {{ $selected }}>
-                                        {{ $group['name'] }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                    }
+                                @endphp
+                                <option value="{{ $group['zoho_group_id'] }}" {{ $selected }}>
+                                    {{ $group['name'] }}
+                                </option>
+                            @endforeach
+                        </select>
                         </div>
                     </div>
 

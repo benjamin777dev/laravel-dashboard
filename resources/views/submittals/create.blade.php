@@ -126,8 +126,11 @@
         return regex.test(url);
     }
 
-    function validateSubmittal(submittal,isNew) {
-        console.log(submittal);
+    window.validateSubmittal=function(submittal,isNew) {
+        console.log(submittal,'validahasekhfkusdhkfh');
+        if(typeof submittal == "string"){
+            submittal = JSON.parse(submittal)
+        }
         isValid = true
         // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
@@ -226,7 +229,7 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/buyer/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/buyer/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',

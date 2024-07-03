@@ -544,7 +544,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact');
+            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -726,8 +726,8 @@ class DatabaseService
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('last_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('phone', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('mobile_phone', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mobile', 'like', '%' . $searchTerms . '%')
+                        // ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
                         ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
@@ -1299,6 +1299,7 @@ class DatabaseService
                 ->orderByRaw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner)')
                 ->orderByRaw('CASE WHEN contacts.spouse_partner IS NOT NULL THEN 1 ELSE 0 END')
                 ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
+                ->orderBy('contacts.updated_at','desc')
                 ->paginate();
 
             return $contacts;

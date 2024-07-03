@@ -344,7 +344,6 @@ class PipelineController extends Controller
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
-
             return response()->json($zohoDealArray);
         } catch (\Throwable $th) {
             // Handle the exception here
