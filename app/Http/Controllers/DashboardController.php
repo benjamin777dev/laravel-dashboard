@@ -416,6 +416,7 @@ class DashboardController extends Controller
         $What_Id;
         $priority;
         $contact;
+        $seModule;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
@@ -423,6 +424,7 @@ class DashboardController extends Controller
         if (!empty($data['Who_Id']['id'])) {
             $whoid = $data['Who_Id']['id'] ?? null;
             $contact = Contact::where('zoho_contact_id', $data['Who_Id']['id'])->firstOrFail();
+            $seModule = "Contacts";
         }
         if (!empty($data['Status'])) {
             $status = $data['Status'] ?? null;
@@ -433,6 +435,7 @@ class DashboardController extends Controller
         }
         if (!empty($data['What_Id']['id'])) {
             $What_Id = $data['What_Id']['id'] ?? null;
+            $seModule = "Deals";
 
         }
         if (!empty($data['Priority'])) {
@@ -475,7 +478,7 @@ class DashboardController extends Controller
                 'created_by' => $user->id,
                 // 'priority' => $priority ?? null,
                 'created_time' => $created_time ?? null,
-                // 'related_to' => $related_to,
+                'related_to' => $seModule,
             ]);
             Log::info("Successful notes create... " . $task);
             return response()->json($responseArray, 201);

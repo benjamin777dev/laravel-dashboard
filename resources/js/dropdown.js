@@ -249,11 +249,11 @@ window.showDropdownForId = function (modalID, selectElement) {
                 console.log("Selected Data:", selectedData);
 
                 var selectedText;
-                if (selectedData.first_name && selectedData.last_name) {
+                if (selectedData?.first_name || selectedData?.last_name) {
                     selectedText =
                         selectedData.first_name + " " + selectedData.last_name;
                     console.log(
-                        "zoho_module_idddd:",
+                        "zoho_module_idddd:contact",
                         selectedData.zoho_module_id
                     );
                     console.log(
@@ -267,7 +267,7 @@ window.showDropdownForId = function (modalID, selectElement) {
                 } else {
                     selectedText = selectedData.deal_name;
                     console.log(
-                        "zoho_module_idddddd:",
+                        "zoho_module_idddddd:daealslsls",
                         selectedData.zoho_module_id
                     );
                     console.log("zoho_deal_id:", selectedData.zoho_deal_id);
@@ -285,6 +285,49 @@ window.showDropdownForId = function (modalID, selectElement) {
         element.innerHTML = element.title;
     });
 };
+
+window.updateText=function(newText, textfield, id, WhatSelectoneid = "", whoID = "") {
+    let dateLocal;
+    if (textfield === "date") {
+        dateLocal = document.getElementById('date_local' + id);
+        newText = newText?.substring(0, 10);
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    var formData = {
+        "data": [{
+            "Subject": textfield === "subject" ? newText : undefined,
+            "Due_Date": textfield === "date" ? newText : undefined,
+            "What_Id": WhatSelectoneid ? { "id": WhatSelectoneid } : undefined,
+            "Who_Id": whoID ? { "id": whoID } : undefined,
+            "$se_module": textfield === "Deals" || textfield === "Contacts" ? textfield : undefined,
+        }]
+    };
+
+    formData.data[0] = Object.fromEntries(
+        Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+    );
+
+    $.ajax({
+        url: "/update-task/"+id,
+        method: 'PUT',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            showToast(response?.data[0]?.message.toUpperCase());
+        },
+        error: function(xhr, status, error) {
+            showToastError(xhr.responseJSON.error);
+            console.error(xhr.responseText);
+        }
+    });
+}
 
 window.resetValidationTask = function(id) {
     if (id) {

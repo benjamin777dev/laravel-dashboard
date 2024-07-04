@@ -616,44 +616,23 @@
                     data: 'related_to',
                     title: 'Related To',
                     render: function(data, type, row) {
-                        setTimeout(() => {
-                            const selectElement = $(`#${"related_to_rem"+row.id}`);
-                            console.log(selectElement,'selectElementselectElement')
-                            showDropdownForId("", selectElement);
-                        }, 100);
-                        if (row.related_to === 'Contacts') {
-                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                    <select
-                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
-                                        class="form-select dealTaskSelect related_to_rem${row.id}"
-                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
-                                        <option value="${row?.contact_data?.zoho_contact_id}" selected>
-                                            ${row?.contact_data?.first_name
-                                                ?? ''} ${row?.contact_data?.last_name ?? 'General'}
-                                        </option>
-                                    </select>
-                                </div>`;
-                        } else if (row.related_to === 'Deals') {
-                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                    <select style="width: 100px !important"
-                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
-                                        class="form-select dealTaskSelect related_to_rem${row.id}"
-                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
-                                        <option value="${row.dealdata.zohodealid}" selected>
-                                            ${row.dealdata.dealname ?? 'General'}
-                                        </option>
-                                    </select>
-                                </div>`;
-                        } else {
-                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                    <select style="width: 100px !important"
-                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
-                                        class="form-select dealTaskSelect related_to_rem${row.id}"
-                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
-                                        <option value="" selected>General</option>
-                                    </select>
-                                </div>`;
-                        }
+                       if (row.related_to === 'Contacts') {
+            return `<select class="dealTaskSelect edit-select" data-module="Contacts" data-name="related_to" data-id="${row.id}">
+                        <option value="${row.contact_data?.zoho_contact_id}" selected>
+                            ${row.contact_data?.first_name ?? ''} ${row.contact_data?.last_name ?? 'General'}
+                        </option>
+                    </select>`;
+        } else if (row.related_to === 'Deals') {
+            return `<select class="dealTaskSelect edit-select" data-module="Deals" data-name="related_to" data-id="${row.id}">
+                        <option value="${row.dealdata.zohodealid}" selected>
+                            ${row.dealdata.dealname ?? 'General'}
+                        </option>
+                    </select>`;
+        } else {
+            return `<select class="dealTaskSelect" data-module="General edit-select" data-name="related_to" data-id="${row.id}">
+                        <option value="" selected>General</option>
+                    </select>`;
+        }
                        
                     }
                 },
@@ -662,7 +641,7 @@
                     title: 'Due Date',
                     render: function(data, type, row) {
                         console.log(data,'shdfhsdhf')
-                        return  `<span class="editable" data-name="closing_date" data-id="${row.id}">${data || "N/A"}</span>`;
+                        return  `<span class="editable" data-name="due_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
                     }
                 },
                 {
@@ -728,45 +707,38 @@
                     }
 
                     // Close any other editing inputs
-                    $('#datatable_tasks tbody').find('input.edit-input, select.edit-input').each(
+                    $('#datatable_tasks tbody').find('input.edit-input, select.dealTaskSelect').each(
                         function() {
                             var newValue = $(this).val();
                             var dataName = $(this).data('name');
                             var dataId = $(this).data('id');
+                            console.log(dataName,'sdfkhsdf')
+                            if(dataName!=="related_to"){
                             $(this).replaceWith(
                                 `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
                             );
+                        }
                         });
 
                     currentText = $(element).text(); // Set currentText when entering edit mode
                     var dataName = $(element).data('name');
                     var dataId = $(element).data('id');
+                    console.log(dataName,'dataname')
 
                     // Replace span with input or select for editing
-                    if (dataName !== "closing_date" && dataName !== "stage" && dataName !== "representing") {
+                    if (dataName !== "due_date" && dataName !== "related_to" && dataName !== "stage" && dataName !== "representing") {
                         $(element).replaceWith(
                             `<input type="text" class="edit-input form-control" value="${currentText}" data-name="${dataName}" data-id="${dataId}">`
                         ).addClass('editing');
-                    } else if (dataName === "closing_date") {
+                    } else if (dataName === "due_date") {
                         $(element).replaceWith(
                             `<input type="date" class="edit-input form-control" value="${formatDate(currentText)}" data-name="${dataName}" data-id="${dataId}">`
                         ).addClass('editing');
-                    } else if (dataName === "stage") {
+                    } else if (dataName === "related_to") {
+                        console.log('eyyeyeyyeyeyey')
                         // Fetch stage options from backend (example)
                         var stageOptions = ['Potential', 'Pre-Active', 'Under Contract', 'Active'];
                         var selectOptions = stageOptions.map(option => {
-                            return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
-                        }).join('');
-
-                        $(element).replaceWith(
-                            `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
-                    ${selectOptions}
-                </select>`
-                        ).addClass('editing');
-                    } else if (dataName === "representing") {
-                        // Fetch representing options from backend (example)
-                        var representingOptions = ['Buyer', 'Seller'];
-                        var selectOptions = representingOptions.map(option => {
                             return `<option value="${option}" ${currentText === option ? 'selected' : ''}>${option}</option>`;
                         }).join('');
 
@@ -787,18 +759,22 @@
                     var newValue = $(inputElement).val();
                     var dataName = $(inputElement).data('name');
                     var dataId = $(inputElement).data('id');
-
+                    var datamodule = $(inputElement).data('module');
+                    console.log(datamodule,'sdhfsdfg')
+                    if(dataName!=="related_to"){
                     // Replace input or select with span
                     $(inputElement).replaceWith(
                         `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
                     ).removeClass('editing');
+
+                }
 
                     // Check if the value has changed
                     if (newValue !== currentText) {
 
                         // Example AJAX call (replace with your actual endpoint and data):
                         $.ajax({
-                            url: '/update-task/' + dataId,
+                            url: '/update-task-contact/' + dataId,
                             type: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -806,7 +782,8 @@
                             data: {
                                 id: dataId,
                                 field: dataName,
-                                value: newValue
+                                value: newValue,
+                                module :datamodule ?? "",
                             },
                             success: function(response) {
                                 console.log('Updated successfully:', response);
@@ -842,7 +819,7 @@
                     }
                 });
                 // Handle onchange event for select
-                $('#datatable_tasks tbody').on('change', 'select.edit-input', function() {
+                $('#datatable_tasks tbody').on('change', 'select.edit-select', function() {
                     exitEditMode(this); // Exit edit mode when a selection is made
                 });
 
@@ -851,6 +828,110 @@
                     exitEditMode(this);
                 });
             }
+        });
+
+        tableTasks.on('draw.dt', function() {
+            $('.dealTaskSelect').each(function() {
+                $(this).select2({
+                    theme: "bootstrap-5",
+                    width: "resolve",
+                    ajax: {
+                        url: "/task/get-Modules",
+                        dataType: "json",
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term, // search term
+                                page: params.page || 1,
+                                limit: 5, // number of records to fetch initially
+                            };
+                        },
+                        processResults: function (data, params) {
+                            console.log(data.items, "showdropidddd");
+                            params.page = params.page || 1;
+                            return {
+                                results: data.items,
+                            };
+                        },
+                        cache: true,
+                    },
+                    templateResult: function (state) {
+                        var NoRecord = "No Records Found";
+                        if (
+                            (state?.children?.length === 0 &&
+                                state.text === "Contacts") ||
+                            (state?.children?.length === 0 &&
+                                state.text === "Deals")
+                        ) {
+                            return $(
+                                '<span id="' +
+                                    state.text +
+                                    '">' +
+                                    state.text +
+                                    "</span>" +
+                                    '<br><span class="no-records-found">' +
+                                    NoRecord +
+                                    "</span>"
+                            );
+                        }
+                        if (!state.id) {
+                            return state.text;
+                        }
+                        if (state.children) {
+                            return $(
+                                '<span id="' +
+                                    state.text +
+                                    '">' +
+                                    state.text +
+                                    "</span>"
+                            );
+                        }
+    
+                        if (state.first_name || state.last_name) {
+                            return $(
+                                '<span data-module="' +
+                                    state.zoho_module_id +
+                                    '" id="' +
+                                    state.zoho_contact_id +
+                                    '">' +
+                                    (state.first_name ?? "") +
+                                    " " +
+                                    (state.last_name ?? "") +
+                                    "</span>"
+                            );
+                        }
+    
+                        return $(
+                            '<span id="' +
+                                state.zoho_deal_id +
+                                '">' +
+                                state.deal_name +
+                                "</span>"
+                        );
+                    },
+                    templateSelection: function (state) {
+                        if (!state.id) {
+                            return state.text;
+                        }
+    
+                        if (state.first_name || state.last_name) {
+                            return (
+                                (state.first_name ?? "") +
+                                " " +
+                                (state.last_name ?? "")
+                            );
+                        }
+    
+                        return state.deal_name;
+                    },
+                })
+            });
+            let select2data = document.getElementsByClassName(
+                "select2-selection__rendered"
+            );
+            Array.from(select2data).forEach((element) => {
+                element.innerHTML = element.title;
+            });
         });
 
         window.deleteTask = function(id = "", isremoveselected = false) {

@@ -4,8 +4,12 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Task;
 use App\Models\Contact;
+use App\Models\Deal;
 use App\Services\DatabaseService;
 use DataTables;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
+use App\Services\ZohoCRM;
 
 class TaskController extends Controller
 {
@@ -84,11 +88,13 @@ class TaskController extends Controller
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
+          
             $id = $request->input('id');
             $dbfield = $request->input('field');
             $value = $request->input('value');
+            $module = $request->input('module');
             $rules = [
-                'id' => 'required|exists:deals,id',
+                'id' => 'required|exists:tasks,id',
                 'field' => 'required|in:subject,related_to,due_date',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
@@ -119,13 +125,10 @@ class TaskController extends Controller
             if($dbfield==="subject"){
                 $field = "Subject";
             }
-            if($dbfield==="related_to"){
-                $field = "Who_Id";
-            }
             if($dbfield==="due_date"){
                 $field = "Due_Date";
             }
-            
+            if ($dbfield !== 'related_to') {
             $jsonData = [
                 'data' => [
                     [
@@ -134,26 +137,50 @@ class TaskController extends Controller
                 ],
                 'skip_mandatory' => true,
             ];
-            
+
+        }
+             
+        if ($dbfield === 'related_to') {
+            $contact = Contact::findOrFail($value); // Using findOrFail to handle the case where the record is not found
+            print_r(json_encode($contact));
+            if ($contact->zoho_contact_id) {
+                $jsonData = [
+                    'data' => [
+                        [
+                            'Who_Id' => [
+                                'Id' => $contact->zoho_contact_id,
+                            ],
+                            '$se_module' => 'Contacts' // Corrected the syntax for '$se_module'
+                        ],
+                    ],
+                    'skip_mandatory' => true,
+                ];
+            } else {
+                $deal = Deal::findOrFail($value); // Using findOrFail to handle the case where the record is not found
+                $jsonData = [
+                    'data' => [
+                        [
+                            'What_Id' => [ // Corrected the key to 'What_Id'
+                                'Id' => $deal->zoho_deal_id,
+                            ],
+                            '$se_module' => 'Deals' // Corrected the module type to 'Deals'
+                        ],
+                    ],
+                    'skip_mandatory' => true,
+                ];
+            }
+        }        
+            print_r($jsonData['data'][0]['$se_module']);
+            die;
             $zohotask = $zoho->updateTask($jsonData, $task->zoho_task_id);
 
             if (!$zohotask->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-
-            $zohotaskArray = json_decode($zohotask, true);
-            $zohoDealData = $zohoDealArray['data'][0]['details'];
-            $resp = $zoho->getZohoDeal($zohoDealData['id']);
-
-            if (!$resp->successful()) {
-                return response()->json(['error' => 'Zoho Deal retrieval failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-
-            $zohoDeal_Array = json_decode($resp, true);
-            $zohoDealValues = $zohoDeal_Array['data'][0];
-            $data = $jsonData['data'];
-            $dealDatas =  $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
-            return response()->json(['data'=>$dealDatas,'message'=>"Successfully Updated"]);
+            $task->$dbfield = $value;
+            $task->save();
+            
+            return response()->json(['data'=>$task,'message'=>"Successfully Updated"]);
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
