@@ -86,6 +86,7 @@ window.checkValidate = function (deal) {
     } else {
         // If representing is not buyer, remove the additional fields
         $("#additionalFields").find(".additional-field").remove();
+        $("#additionalFields").find(".additional-field-lender").remove();
     }
 
     var probability = document.getElementById("validationDefault15");

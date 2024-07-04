@@ -740,13 +740,13 @@ class DatabaseService
             // Apply missing field conditions
             if ($missingField) {
                 if (isset($missingField['email']) && $missingField['email'] !== false) {
-                    $contacts->whereNull('email');
+                    $contacts->whereNull('email')->orWhere('email','==',' ');
                 }
                 if (isset($missingField['mobile']) && $missingField['mobile'] !== false) {
-                    $contacts->whereNull('phone');
+                    $contacts->whereNull('phone')->orWhere('phone','==',' ');
                 }
                 if (isset($missingField['abcd']) && $missingField['abcd'] !== false) {
-                    $contacts->whereNull('abcd');
+                    $contacts->whereNull('abcd')->orWhere('abcd','==',' ');
                 }
             }
 
@@ -898,7 +898,7 @@ class DatabaseService
         }
     }
 
-    public function retrieveNotes(User $user, $accessToken)
+    public function retrieveNotes(User $user, $accessToken,$paginate)
     {
 
         try {
@@ -906,7 +906,7 @@ class DatabaseService
             $tasks = Note::with('userData')
                 ->with('dealData')
                 ->where('owner', $user->id)
-                ->orderBy('updated_at', 'desc')->get();
+                ->orderBy('updated_at', 'desc')->paginate($paginate);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());

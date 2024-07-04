@@ -148,7 +148,8 @@ Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middl
 Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContact'])->name('task.contact')->middleware('auth');
 Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeline'])->name('task.pipeline')->middleware('auth');
 
-
+//Notes Route
+Route::get('/notes', [DashboardController::class, 'showNotes'])->name('show.notes')->middleware('auth');
 
 
 // Language Translation
