@@ -465,7 +465,12 @@ class PipelineController extends Controller
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-
+             // If the stage is "Under Contract", update the locked_s field separately in the database
+        if ($dbfield === "stage" && $value === "Under Contract") {
+            \DB::table('deals')
+                ->where('id', $id)
+                ->update(['locked_s' => 1]);
+        }
             $zohoDealArray = json_decode($zohoDeal, true);
             $zohoDealData = $zohoDealArray['data'][0]['details'];
             $resp = $zoho->getZohoDeal($zohoDealData['id']);

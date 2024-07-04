@@ -1223,7 +1223,7 @@
 
 //    contacts actions
         window.createNotesForContact = function(id, conId){
-
+            console.log('heyyy+++++')
             event.preventDefault();
             $.ajaxSetup({
                 headers: {
