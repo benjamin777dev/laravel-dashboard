@@ -331,6 +331,7 @@ class ContactController extends Controller
             $helper = new Helper();
             $accessToken = $user->getAccessToken();
             $zoho = new ZohoCRM();
+            $db = new DatabaseService();
             $zoho->access_token = $accessToken;
             $frontData = $request->all();
             if (!empty($frontData['data'])) {
@@ -604,7 +605,6 @@ class ContactController extends Controller
                     ];
                 }
             }
-
             if (empty($responseData["data"][0]["Groups"])) {
                 unset($responseData["data"][0]["Groups"]);
             }
@@ -663,6 +663,7 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
+            
             $contactInstance = Contact::where('id', $id)->first();
             if (!$contactInstance) {
                 return redirect('/contacts');
@@ -716,18 +717,30 @@ class ContactController extends Controller
                     $contactInstance->last_emailed = $validatedData['last_emailed'];
                 }
                 $contactInstance->save();
-                if (is_array($selectedGroupsarr) && count($selectedGroupsarr) !== 0) {
-                    foreach ($selectedGroupsarr as $group) {
-                        $groupsInstance = Groups::where('zoho_group_id', $group)->first();
-                        $contactGroup = ContactGroups::updateOrCreate(
-                            ['zoho_contact_group_id' => $group],
-                            [
-                                'ownerId' => $user->id,
-                                "contactId" => $contactInstance['id'] ?? null,
-                                "groupId" => $groupsInstance['id'] ?? null,
-                                "zoho_contact_group_id" => $group ?? null,
-                            ]
-                        );
+
+                $zohoContacts = $zoho->getZohoContact($contactInstance['zoho_contact_id']);
+                $zohoContact_Array = json_decode($zohoContacts, true);
+                
+                $zohoContactValues = $zohoContact_Array['data'][0];
+                
+                if (isset($zohoContactValues['Groups']) && is_array($zohoContactValues['Groups']) && count($zohoContactValues['Groups']) !== 0) {
+                    foreach ($zohoContactValues['Groups'] as $group) {
+                        
+                        if(isset($group['Groups'])){
+                            // Find the group instance in the database
+                            $groupsInstance = Groups::where('zoho_group_id', $group['Groups']['id'])->first();
+
+                            // Update or create a ContactGroup entry
+                            ContactGroups::updateOrCreate(
+                                ['zoho_contact_group_id' => $group['id']],
+                                [
+                                    'ownerId' => $user->id,
+                                    'contactId' => $contactInstance['id'] ?? null,
+                                    'groupId' => $groupsInstance['id'] ?? null,
+                                    'zoho_contact_group_id' => $group['id'] ?? null,
+                                ]
+                            );
+                        }
                     }
                 }
             }

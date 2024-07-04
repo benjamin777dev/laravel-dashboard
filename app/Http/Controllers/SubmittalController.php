@@ -274,7 +274,7 @@ class SubmittalController extends Controller
             // $submittalArray = json_decode($submittal, true);
             // $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
-            $deal = $db->createListingSubmittal($user, $accessToken,null,$submittalData,$dealId,'buyer-submittal');
+            $deal = $db->createListingSubmittal($user, $accessToken, null,$submittalData,$dealId,'buyer-submittal');
             return response()->json($deal);
         }
 

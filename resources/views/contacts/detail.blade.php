@@ -257,6 +257,7 @@
         let removeGroupsArr = [];
         multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
             var removedGroup = event.detail.value;
+            console.log(removedGroup,"removedGroup");
             if (selectedGroupsDefault.includes(removedGroup)) {
                 // Perform your API hit here
                 // console.log("API hit for removed group: " + removedGroup);

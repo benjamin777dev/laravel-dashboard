@@ -190,7 +190,7 @@
 
                 },
                 error: function(xhr, status, error) {
-                    showToastError(error)
+                    showToastError(xhr.responseText)
                 }
             });
         } else {

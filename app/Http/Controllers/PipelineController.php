@@ -30,9 +30,28 @@ class PipelineController extends Controller
 
         $inputs = $request->only(['search', 'sort', 'sortType', 'filter']);
 
-        $deals = $db->retrieveDeals($user, $accessToken, $inputs['search'] ?? null, $inputs['sort']?? null, $inputs['sortType']?? null, null, $inputs['filter']?? null);
+        $deals = $db->retrieveDeals(
+            $user, // user
+            $accessToken,  // access token 
+            $inputs['search'] ?? null, // search filters if exist
+            $inputs['sort']?? null,  // sort filter if exist
+            $inputs['sortType']?? null,  // sort type if exist
+            null,  // date filter (none)
+            $inputs['filter']?? null // filter
+        ); 
 
-        $stats = $this->calculateDealStatistics($deals);
+        $allDeals = $db->retrieveDeals(
+            $user, // user
+            $accessToken,  // access token 
+            null, // search filters if exist
+            null,  // sort filter if exist
+            null,  // sort type if exist
+            null,  // date filter (none)
+            null, // filter
+            true
+        ); 
+
+        $stats = $this->calculateDealStatistics($allDeals);
 
         $allstages = config('variables.dealStages');
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
@@ -364,7 +383,6 @@ class PipelineController extends Controller
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
-
             return response()->json($zohoDealArray);
         } catch (\Throwable $th) {
             // Handle the exception here

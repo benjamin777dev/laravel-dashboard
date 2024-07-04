@@ -914,7 +914,7 @@ class DashboardController extends Controller
     public function fetchNotes()
     {
         // Fetch notes from the database
-        $notes = Note::all(); // Or you can use any query based on your requirement
+        $notes = Note::latest()->take(10)->get();
 
         // Pass notes data to the Blade file
         return $notes;

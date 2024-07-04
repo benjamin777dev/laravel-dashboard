@@ -234,7 +234,7 @@
             isLoading = true;
             $('.spinner').show();
             currentPage++;
-            const nextPageUrl = `${baseUrl}/deals?page=${currentPage}`;
+            const nextPageUrl = `${baseUrl}?page=${currentPage}`;
             let search = searchInput.val();
             $.ajax({
                 url: nextPageUrl,

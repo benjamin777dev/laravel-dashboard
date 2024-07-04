@@ -220,15 +220,27 @@ class GroupController extends Controller
             $contact = Contact::where('zoho_contact_id',$jsonData['Contacts']['id'])->first();
 
             $group = Groups::where('zoho_group_id',$jsonData['Groups']['id'])->first();
-            $contactGroup = ContactGroups::create(
-                [
-                    'ownerId' => $user->id,
-                    "contactId" => $contact['id'] ?? null,
-                    "groupId" => $group['id'] ?? null,
-                    "zoho_contact_group_id" => $data['id'] ?? null
-                ]
-            );
-            return response()->json($contactGroup);
+            // Check if the record already exists
+            $existingContactGroup = ContactGroups::where('zoho_contact_group_id', $data['id'])->first();
+            if ($existingContactGroup) {
+               $existingContactGroup->ownerId = $user->id;
+               $existingContactGroup->contactId = $contact['id'] ?? null;
+               $existingContactGroup->groupId = $group['id'] ?? null;
+               $existingContactGroup->save();
+                return response()->json($existingContactGroup);
+            }else{
+                $contactGroup = ContactGroups::create(
+                    [
+                        'ownerId' => $user->id,
+                        "contactId" => $contact['id'] ?? null,
+                        "groupId" => $group['id'] ?? null,
+                        "zoho_contact_group_id" => $data['id'] ?? null
+                    ]
+                );
+                return response()->json($contactGroup);
+            }
+
+            
         } catch (\Throwable $e) {
             Log::error("Error" . $e->getMessage());
             throw $e;

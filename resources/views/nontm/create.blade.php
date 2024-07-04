@@ -8,7 +8,7 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-           <a href="{{ url('/pipeline-view/' . $dealData['id']) }}">
+           <a href="{{ url('/pipeline-view/' . $dealData['dealData']['id']) }}">
                 <div class="input-group-text text-white justify-content-center ppipeBtn"  >
                     <i class="fas fa-times">
                     </i>
@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="col-lg-12 main-carousel">
-        <div id="carouselExampleControls" class="carousel slide " data-bs-ride="carousel"
+        <div id="carouselExampleControls" class="carousel slide" data-interval="false"
             style="display: flex;justify-content:space-between">
             <div class="corausal-req-mb48">
                 <p class="corausal-req-text">Non-TM Check Request Information</p>

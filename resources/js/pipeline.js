@@ -319,7 +319,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     City: city,
                     State: state,
                     Zip: zip,
-                    Commission: parseInt(commission),
+                    Commission: parseFloat(commission),
                     Property_Type: property_type,
                     Ownership_Type: ownership_type,
                     Potential_GCI: potential_gci,
