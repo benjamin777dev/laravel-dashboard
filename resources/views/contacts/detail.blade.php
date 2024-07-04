@@ -44,27 +44,46 @@
                 <div class="row">
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                             <button class="nav-link dtabsbtn" onclick="fetchContactTasks('In Progress','{{ $contact['id'] }}')"
+                             <button class="nav-link dtabsbtn"
                                     id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress'
                                     type="button" role="tab" aria-controls="nav-home" aria-selected="true">In
                                     Progress</button>
-                             <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Upcoming','{{ $contact['id'] }}')"
+                             <button class="nav-link dtabsbtn"
                                     data-tab='Upcoming' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
                                     aria-selected="false">Upcoming</button>
-                            <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Overdue','{{ $contact['id'] }}')"
+                            <button class="nav-link dtabsbtn"
                                     data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Overdue</button>
-                            <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Completed','{{ $contact['id'] }}')"
+                            <button class="nav-link dtabsbtn"
                                     data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Completed</button>
                         </div>
                     </nav>
-                    <div class="contact-task-container">
-                    </div>
-
+                   
+                    @php
+                    $contactHeader = [
+                        "",
+                        "Subject",
+                        "Related To",
+                        "Due Date",
+                        "Options",
+                    ]
+                @endphp
+                   @component('components.common-table', [
+                    'th' => $contactHeader,
+                    'id'=>'datatable_tasks',
+                    'commonArr' =>$tasks,
+                    'retrieveModuleData'=>$retrieveModuleData,
+                    "type" =>"contact",
+                ])
+                @endcomponent
+                <div onclick="deleteTask('',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
+                    <i class="fas fa-trash-alt plusicon"></i>
+                    Delete Selected
+                </div>
                 </div>
                 
             </div>

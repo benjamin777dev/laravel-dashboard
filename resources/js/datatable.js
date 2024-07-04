@@ -394,7 +394,7 @@
                     data: 'closing_date',
                     title: "Close Date",
                     render: function(data, type, row) {
-                        return `<span class="editable badDateInput" data-name="closing_date" data-id="${row.id}">${data}</span>`;
+                        return `<span class="editable badDateInput" data-name="closing_date" data-id="${row.id}">${formateDate(data)}</span>`;
                     }
                 },
                 {
@@ -582,6 +582,12 @@
             }
         });
 
+      
+   
+        
+       
+        const urlParts = window.location.pathname.split('/'); // Split the URL by '/'
+        const contactId = urlParts.pop();
 
         var tableTasks = $('#datatable_tasks').DataTable({
             paging: true,
@@ -591,11 +597,11 @@
             columns: [
                 {
                     data: null,
-                    title: '<input type="checkbox" id="checkAll" />',
+                    title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
                     orderable: false,
                     searchable: false,
                     render: function(data, type, row) {
-                        return `<input onchange="triggerCheckbox('${row.zoho_task_id}')" type="checkbox"
+                        return `<input  type="checkbox"
                                     class="task_checkbox" id="${row.zoho_task_id}" />`;
                     }
                 },
@@ -603,21 +609,60 @@
                     data: 'subject',
                     title: 'Subject',
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="deal_name" data-id="${row.id}">${data}</span>`;
+                        return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
                     }
                 },
                 {
                     data: 'related_to',
                     title: 'Related To',
                     render: function(data, type, row) {
-                        return `<span class="editable" data-name="client_name_primary" data-id="${row.id}">${data}</span>`;
+                        setTimeout(() => {
+                            const selectElement = $(`#${"related_to_rem"+row.id}`);
+                            console.log(selectElement,'selectElementselectElement')
+                            showDropdownForId("", selectElement);
+                        }, 100);
+                        if (row.related_to === 'Contacts') {
+                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
+                                    <select
+                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
+                                        class="form-select dealTaskSelect related_to_rem${row.id}"
+                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
+                                        <option value="${row?.contact_data?.zoho_contact_id}" selected>
+                                            ${row?.contact_data?.first_name
+                                                ?? ''} ${row?.contact_data?.last_name ?? 'General'}
+                                        </option>
+                                    </select>
+                                </div>`;
+                        } else if (row.related_to === 'Deals') {
+                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
+                                    <select style="width: 100px !important"
+                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
+                                        class="form-select dealTaskSelect related_to_rem${row.id}"
+                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
+                                        <option value="${row.dealdata.zohodealid}" selected>
+                                            ${row.dealdata.dealname ?? 'General'}
+                                        </option>
+                                    </select>
+                                </div>`;
+                        } else {
+                            return `<div class="btn-group btnTaskSelects dealTaskfordropdown">
+                                    <select style="width: 100px !important"
+                                        onchange="testFun('${row.id}','related_to_rem','${row.zoho_task_id}')"
+                                        class="form-select dealTaskSelect related_to_rem${row.id}"
+                                        id="related_to_rem${row.id}" name="related_to_rem${row.id}">
+                                        <option value="" selected>General</option>
+                                    </select>
+                                </div>`;
+                        }
+                       
                     }
                 },
                 {
                     data: 'due_date',
                     title: 'Due Date',
                     render: function(data, type, row) {
-                        return  `<span class="editable" data-name="closing_date" data-id="${row.id}">${data}</span>`;
+                        console.log(data,'shdfhsdhf')
+                        return  `<span class="editable" data-name="closing_date" data-id="${row.id}">${data || "N/A"}</span>`;
                     }
                 },
                 {
@@ -643,15 +688,18 @@
                     }
                 }
             ],
+            
             ajax: {
-                url: '/dashboard-tasks', // Ensure this URL is correct
+                url: '/task/for/contact/'+contactId, // Ensure this URL is correct
                 type: 'GET', // or 'POST' depending on your server setup
                 "data": function(request) {
                     request._token = "{{ csrf_token() }}";
                     request.perPage = request.length;
                     request.stage = $('#related_to_stage').val(),
+                    request.tab = "In Progress";
                     request.page = (request.start / request.length) + 1;
                     request.search = request.search.value;
+                    console.log(request,'skdhfkshdfkhsdkfskddfjhsk')
 
                 },
                 dataSrc: function(data) {
@@ -750,7 +798,7 @@
 
                         // Example AJAX call (replace with your actual endpoint and data):
                         $.ajax({
-                            url: '/deals/update/' + dataId,
+                            url: '/update-task/' + dataId,
                             type: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -778,6 +826,14 @@
                 $('#datatable_tasks tbody').on('click', 'span.editable', function() {
                     enterEditMode(this);
                 });
+                $(document).on('change', '#checkAll', function() {
+                    $('.task_checkbox').prop('checked', $(this).prop('checked'));
+                });
+
+                $('.nav-link.dtabsbtn').on('click', function() {
+                    var tab = $(this).attr('data-tab');
+                    tableTasks.search(tab).draw();
+                });
 
                 // Keyup event to exit editing mode on Enter
                 $('#datatable_tasks tbody').on('keyup', 'input.edit-input', function(event) {
@@ -796,6 +852,147 @@
                 });
             }
         });
+
+        window.deleteTask = function(id = "", isremoveselected = false) {
+            let updateids = updateSelectedRowIds();
+
+            if (updateids === "" && id === 'remove_selected') {
+                return;
+            }
+            if (isremoveselected) {
+                id = undefined;
+            }
+
+            if (updateids !== "") {
+                const shouldDelete = saveForm();
+                if (!shouldDelete) {
+                    return;
+                }
+            }
+            if (id === undefined) {
+                id = updateids;
+            }
+
+            var ids = id.join(',');
+            console.log(ids,'idsss')
+            if(ids===""){
+                return;
+            }
+
+            $.ajaxSetup({
+                headers:{
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if (id) {
+                $.ajax({
+                    url: "/delete-task/"+ids,
+                    method: 'DELETE',
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        showToast("Deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+        }
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        window.updateSelectedRowIds=function() {
+            var selectedRowIds = [];
+            $('.task_checkbox:checked').each(function() {
+                selectedRowIds.push($(this).attr('id'));
+            });
+
+            return selectedRowIds;
+        }
+
+
+
+        window.toggleCheckAll = function(checkbox) {
+            var isChecked = $(checkbox).prop('checked');
+            $('.task_checkbox').prop('checked', isChecked);
+            let updateColor = document.getElementById("removeBtn");
+            // Update color based on allChecked
+            if (isChecked) {
+                updateColor.style.backgroundColor = "#222";
+            } else {
+                updateColor.style.backgroundColor = "rgb(165, 158, 158)";
+            }
+        }
+        
+
+        $('#datatable_tasks tbody').on('change', '.task_checkbox', function() {
+            var anyChecked = false;
+        
+            $('.task_checkbox').each(function() {
+                if ($(this).prop('checked')) {
+                    anyChecked = true;
+                    return false; // Exit loop early
+                }
+            });
+        
+            let updateColor = document.getElementById("removeBtn");
+            if (anyChecked) {
+                updateColor.style.backgroundColor = "#222";
+            } else {
+                updateColor.style.backgroundColor = "rgb(165, 158, 158)";
+            }
+        
+            // Check if all checkboxes are checked to set Check All checkbox
+            var allChecked = true;
+            $('.task_checkbox').each(function() {
+                if (!$(this).prop('checked')) {
+                    allChecked = false;
+                    return false; // Exit loop early
+                }
+            });
+        
+            $('#checkAll').prop('checked', allChecked);
+        });
+        
+        
+
+   
 
 
         function generateModalHtml(data) {
@@ -969,16 +1166,16 @@
                         <span class="tooltiptext"></span>
                         ${generateModalHtml(data)}
                     <img src="/images/sticky_note.svg" alt="Sticky note icon"
-                            class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#"
+                            class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#" title="Notes"
                             onclick="fetchNotesForContact('${data.id}','${data.zoho_contact_id}','Contacts')">
                         <span class="tooltiptext"></span>
                         ${fetchNotesDeal(data.zoho_contact_id)}
                     <img src="/images/noteBtn.svg" alt="Note icon"
-                            class="ppiplinecommonIcon" data-bs-toggle="modal"
+                            class="ppiplinecommonIcon" data-bs-toggle="modal" title="Add Note"
                             onclick="createNotesForContact('${data.id}')"
                             data-bs-target="#staticBackdropforNote_${data.id}">
                         <span class="tooltiptext"></span>
-                        <div class="createNoteModal${data.id}"></div>
+                        <div class="createNoteModal"></div>
                         `;
                     }
                 },
@@ -1219,40 +1416,34 @@
         });
 
 //    contacts actions
-    window.createNotesForContact = function(id) {
-        event.preventDefault();  // Prevent default action of the event (assuming it's a click event)
-
-        // Clear existing modal content if any
-        $(".createNoteModal" + id).empty();
-
-        // Set up CSRF token for AJAX requests
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // Make AJAX request to fetch the note creation form
-        $.ajax({
-            url: "/note-create/" + id,
-            method: "GET",
-            success: function(response) {
-                let modalElement = $("#staticBackdropforNote_" + id);
-                console.log(modalElement,'modalElementmodalElement')
-                // Insert the fetched note creation form into the modal container
-                let noteContainer = $(".createNoteModal" + id);
-                noteContainer.html(response);
-
-            // Show the modal if it's not already shown
-            if (!modalElement.hasClass('show')) {
-                modalElement.modal('show');
-            }
+window.createNotesForContact = function(id, conId){
+    console.log('heyyy+++++')
+    event.preventDefault();
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        url: "/note-create/"+id,
+        method: "GET",
+        success: function(response) {
+            // $('#notesContainer').append('<p>New Note Content</p>');
+            let noteContainer = $(".createNoteModal");
+            console.log(response, 'noteContainer')
+            // Clear previous contents of note containe
+            noteContainer.empty();
+            const card = noteContainer.html(response);
+            // // Show the modal after appending notes
+            $("#staticBackdropforNote_" + id).modal('show');
         },
         error: function(xhr, status, error) {
-            showToastError(error);  // Display error toast message
+            // Handle error
+            showToastError(error);
             console.error("Ajax Error:", error);
         }
     });
+
 }
 
 

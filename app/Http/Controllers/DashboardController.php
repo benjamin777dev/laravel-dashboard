@@ -306,7 +306,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         $tab = request()->query('tab') ?? 'In Progress';
-        $tasks = $db->retreiveTasks($user, $accessToken, $tab);
+        $tasks = $db->retreiveTasksJson($user, $accessToken, $tab);
         return Datatables::of($tasks)->make(true);
         
     }
@@ -408,19 +408,24 @@ class DashboardController extends Controller
         Log::info("Access Token,$accessToken");
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
-
+         
+        $subject;
+        $whoid;
+        $status;
+        $Due_Date;
+        $What_Id;
+        $priority;
+        $contact;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
-
         }
         if (!empty($data['Who_Id']['id'])) {
             $whoid = $data['Who_Id']['id'] ?? null;
-
+            $contact = Contact::where('zoho_contact_id', $data['Who_Id']['id'])->firstOrFail();
         }
         if (!empty($data['Status'])) {
             $status = $data['Status'] ?? null;
-
         }
         if (!empty($data['Due_Date'])) {
             $Due_Date = $data['Due_Date'] ?? null;
@@ -437,8 +442,8 @@ class DashboardController extends Controller
         }
 
         $created_time = Carbon::now();
-        $closed_time = $data['Closed_Time'] ?? null;
-        $related_to = $data['$se_module'] ?? null;
+        // $closed_time = $data['Closed_Time'] ?? null;
+        // $related_to = $data['$se_module'] ?? null;
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
         // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
@@ -459,18 +464,18 @@ class DashboardController extends Controller
             $Modified_Id = $data['Modified_By']['id'];
             // Create a new Task record using the Task model
             $task = Task::create([
-                'subject' => $subject,
+                'subject' =>  $subject ?? null,
                 'zoho_task_id' => $zoho_id,
                 'owner' => "1",
-                'status' => $status ?? "Not Started",
-                'who_id' => $whoid ?? null,
-                'due_date' => $Due_Date ?? null,
-                'what_id' => $What_Id ?? null,
-                'closed_time' => $closed_time ?? null,
+                'status' =>$status ?? null,
+                'who_id' => $contact['id'] ?? null,
+                'due_date' =>$Due_Date ?? null,
+                'what_id' =>$data['What_Id']['id'] ?? null,
+                // 'closed_time' => $closed_time ?? null,
                 'created_by' => $user->id,
-                'priority' => $priority ?? null,
+                // 'priority' => $priority ?? null,
                 'created_time' => $created_time ?? null,
-                'related_to' => $related_to,
+                // 'related_to' => $related_to,
             ]);
             Log::info("Successful notes create... " . $task);
             return response()->json($responseArray, 201);

@@ -164,8 +164,7 @@
     // validation function onsubmit
     function validateNoteDash(id = null) { 
         event.preventDefault();
-        let isValid = true       
-        console.log(window.groupLabel, window.whoid, 'checkouttttttt');
+        let isValid = true;     
         let noteText, relatedTo, changeButton
         if (id) {
             enableSelect(id);

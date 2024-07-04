@@ -672,27 +672,57 @@ class DatabaseService
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
+    public function retrieveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null, $tab = null)
     {
         try {
-
-            Log::info("Retrieve Tasks From Database");
-            $condition = [
-                ['owner', $user->id],
-            ];
+            // Initialize tasks query
+            $tasks = Task::query()->where('owner', $user->id);
+            print_r($tab);
+            die;
+    
+            // Apply tab-specific conditions
+            if ($tab == 'Overdue') {
+                // Tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Upcoming') {
+                // Tasks that have a due date greater than or equal to today and are not complete
+                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Due Today') {
+                // Tasks that are due today and are not complete
+                $tasks->whereDate('due_date', now()->toDateString())
+                      ->where('status', '!=', 'Completed')
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Completed') {
+                // Completed tasks
+                $tasks->where('status', 'Completed')
+                      ->orderBy('updated_at', 'desc');
+            } else {
+                // Default case: no specific tab selected (perhaps all tasks)
+                $tasks->orderBy('updated_at', 'desc');
+            }
+    
+            // Additional filters based on dealId and contactId
             if ($dealId) {
-                $condition[] = ['what_id', $dealId];
+                $tasks->where('what_id', $dealId);
             }
             if ($contactId) {
-                $condition[] = ['who_id', $contactId];
+                $tasks->where('who_id', $contactId);
             }
-            $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
+    
+            // Execute the query and return the results
+            $tasks = $tasks->get();
+    
+            Log::info("Retrieve Tasks From Database");
+    
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
+    
 
     public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
@@ -878,7 +908,7 @@ class DatabaseService
             } elseif ($tab == 'Completed') {
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
