@@ -103,7 +103,7 @@
                                         </g>
                                     </svg></label>
                                 <input type="date"
-                                    value="{{ isset($dealData['closed_date']) ? $dealData['closed_date'] : '' }}"
+                                    value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
                                     class="form-control nontm-input" id="close_date">
                                 <div id="close_date_error" class="text-danger">
 
@@ -124,7 +124,7 @@
                                         </g>
                                     </svg></label>
                                 <input type="text"
-                                    value="{{ isset($dealData['Commission']) ? $dealData['Commission'] : '' }}"
+                                    value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
                                     class="form-control nontm-input" id="commission">
                                 <div id="commission_error" class="text-danger">
 
@@ -140,9 +140,23 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseReferral" aria-expanded="true"
+                                        id="referralFee" data-bs-target="#collapseReferral" aria-expanded="true"
                                         aria-controls="collapseReferral" >
-                                        Referral Fee Paid Out?
+                                        Referral Fee Paid Out? <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
+                                            fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                                y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                        <div class="referralFee_error text-danger" id="referralFee_error">
+                                        </div>
                                     </button>
                                 </h2>
                                 <div id="collapseReferral" class="accordion-collapse collapse"
@@ -199,9 +213,23 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingTwo">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseHomeWarranty1" aria-expanded="false"
+                                        id="homeWarrenty" data-bs-target="#collapseHomeWarranty1" aria-expanded="false"
                                         aria-controls="collapseHomeWarranty1">
-                                        Home Warranty Paid Out Agent?
+                                        Home Warranty Paid Out Agent? <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
+                                            fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                                y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                        <div class="homeWarrenty_error text-danger" id="homeWarrenty_error">
+                                        </div>
                                     </button>
                                 </h2>
                                 <div id="collapseHomeWarranty1" class="accordion-collapse collapse"
@@ -242,10 +270,24 @@
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    <button id="additionalCharges" class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseAdditionalFee2" aria-expanded="false"
                                         aria-controls="collapseAdditionalFee2">
-                                        Any Additional Fees Charged?
+                                        Any Additional Fees Charged? <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
+                                            fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                                y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                        <div class="additionalCharges_error text-danger" id="additionalCharges_error">
+                                        </div>
                                     </button>
                                 </h2>
                                 <div id="collapseAdditionalFee2" class="accordion-collapse collapse"
@@ -305,7 +347,7 @@
                                     </g>
                                 </svg></label>
                             <input type="text"
-                                value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
+                                value="{{ isset($dealData['dealData']['sale_price']) ? $dealData['dealData']['sale_price'] : '' }}"
                                 placeholder="$" class="form-control nontm-input" id="final_purchase">
                             <div id="final_purchase_error" class="text-danger">
 
@@ -389,6 +431,7 @@
         final_purchase.addEventListener("keyup", validateNonTm);
         amount_chr.addEventListener("keyup", validateNonTm);
 
+
         // Select all radio buttons
         const radioButtons = document.querySelectorAll('input[type="radio"]');
 
@@ -461,16 +504,126 @@
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
         let amount_chr = document.getElementById("amount_chr");
+
         let related_transactionError = document.getElementById("related_transaction_error");
         let add_emailError = document.getElementById("add_email_error");
         let close_dateError = document.getElementById("close_date_error");
         let commissionError = document.getElementById("commission_error");
         let final_purchaseError = document.getElementById("final_purchase_error");
         let amount_chrError = document.getElementById("amount_chr_error");
-
+        /* let additionalCharges_error = document.getElementById("amount_chr_error");*/
 
         let isValid = true;
 
+        // Referral Fee Validation
+        const referralFeeChecked = document.querySelector('input[name="referralFee"]:checked');
+        if (referralFeeChecked && referralFeeChecked.value === "yes") {
+            if (document.getElementById('referralFeeAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeAmount_error').innerText = "Referral Fee Amount is required.";
+            } else {
+                document.getElementById('referralFeeAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('referralFeeBrokerage').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeBrokerage_error').innerText = "Referral Fee Brokerage Name is required.";
+            } else {
+                document.getElementById('referralFeeBrokerage_error').innerText = "";
+            }
+
+            if (document.getElementById('referralAgreement').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralAgreement_error').innerText = "Referral Fee Agreement Executed is required.";
+            } else {
+                document.getElementById('referralAgreement_error').innerText = "";
+            }
+
+            if (document.getElementById('hasW9Provided').value.trim() === "") {
+                isValid = false;
+                document.getElementById('hasW9Provided_error').innerText = "W-9 provision status is required.";
+            } else {
+                document.getElementById('hasW9Provided_error').innerText = "";
+            }
+        }else if((!referralFeeChecked)||referralFeeChecked.value === ""){
+            isValid = false;
+            document.getElementById('referralFee_error').innerText = "Referral Fee Paid Out? is required.";
+        }
+
+        // Home Warranty Validation
+        const homeWarrantyChecked = document.querySelector('input[name="homeWarranty"]:checked')
+        if (homeWarrantyChecked && homeWarrantyChecked.value === "yes") {
+            if (document.getElementById('homeWarrentyAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyAmount_error').innerText = "Home Warranty Amount is required.";
+            } else {
+                document.getElementById('homeWarrentyAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('homeWarrentyDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyDescription_error').innerText = "Home Warranty Description is required.";
+            } else {
+                document.getElementById('homeWarrentyDescription_error').innerText = "";
+            }
+        }else if((!homeWarrantyChecked)||homeWarrantyChecked.value === ""){
+            isValid = false;
+            document.getElementById('homeWarrenty_error').innerText = "Home Warranty Paid Out Agent? is required.";
+        }
+
+        // Additional Fees Validation
+        const additionalFeeChecked = document.querySelector('input[name="additionalFee"]:checked')
+        if (additionalFeeChecked && additionalFeeChecked.value === "yes") {
+            if (document.getElementById('additionalFeesAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeesAmount_error').innerText = "Additional Fees Amount is required.";
+            } else {
+                document.getElementById('additionalFeesAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('additionalFeesDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeesDescription_error').innerText = "Additional Fees Description is required.";
+            } else {
+                document.getElementById('additionalFeesDescription_error').innerText = "";
+            }
+        }else if((!additionalFeeChecked)||additionalFeeChecked.value === ""){
+            isValid = false;
+            document.getElementById('additionalCharges_error').innerText = "Any Additional Fees Charged? is required.";
+        }
+
+        document.querySelectorAll('input[name="referralFee"]').forEach((elem) => {
+            elem.addEventListener("change", function() {
+                if (this.value === "yes") {
+                    document.querySelector('.referralCustomFields').style.display = 'block';
+                } else {
+                    document.querySelector('.referralCustomFields').style.display = 'none';
+                }
+                validateNonTm();
+            });
+        });
+
+        document.querySelectorAll('input[name="homeWarranty"]').forEach((elem) => {
+            elem.addEventListener("change", function() {
+                if (this.value === "yes") {
+                    document.querySelector('.homeWarrentyFields').style.display = 'block';
+                } else {
+                    document.querySelector('.homeWarrentyFields').style.display = 'none';
+                }
+                validateNonTm();
+            });
+        });
+
+        document.querySelectorAll('input[name="additionalFee"]').forEach((elem) => {
+            elem.addEventListener("change", function() {
+                if (this.value === "yes") {
+                    document.querySelector('.additionalFeesFields').style.display = 'block';
+                } else {
+                    document.querySelector('.additionalFeesFields').style.display = 'none';
+                }
+                validateNonTm();
+            });
+        });
         // Validate related_transaction
         if (related_transaction.value.trim() === "" ) {
             related_transactionError.textContent = "Transaction Related cannot be empty.";

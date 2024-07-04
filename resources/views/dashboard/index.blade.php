@@ -283,6 +283,7 @@
                                     </div>
                             </div>
                             @endforeach
+                            <a href="{{ route('show.notes') }}" style="text-align:right;">see more...</a>
                         @else
                             <div class="text-center">
                                 <p>No recent notes found</p>
