@@ -1,11 +1,14 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Pipeline Create')
+@section('title', 'Agent Commander | Pipeline View')
 
 @section('content')
 @vite(['resources/css/pipeline.css'])
 @vite(['resources/js/toast.js'])
-
+{{-- @section('css')
+    <!-- Responsive Table css -->
+    <link href="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
+@endsection --}}
 
 @if (!isset($deal['deal_name']) && !isset($deal['deal_id']))
     <div class="container-fluid">
@@ -201,3 +204,11 @@
 </script>
 @endif
 @endsection
+{{-- @section('script')
+    <!-- Responsive Table js -->
+    <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
+
+    <!-- Init js -->
+    <script src="{{ URL::asset('build/js/pages/table-responsive.init.js') }}"></script>
+@endsection --}}
+

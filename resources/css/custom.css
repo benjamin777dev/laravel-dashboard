@@ -266,8 +266,8 @@ div.dataTables_processing>div:last-child>div {
 }
 
 .dtranstiontable {
-    background: rgba(255, 255, 255, 1);
-    padding: 20px;
+    /* background: rgba(255, 255, 255, 1);
+    padding: 20px; */
     border-radius: 5px;
 }
 #datatable_tasks_wrapper .dataTables_length{

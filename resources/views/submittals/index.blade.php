@@ -1,208 +1,163 @@
-<div class="table-responsive dtranstiontable mt-3">
-    <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
-        <p class="nproletext">Submittals</p>
-        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
-            <i class="fas fa-plus plusicon"></i>
-            @if ($submittals->count() === 0)
-                Add New Submittal
-            @else
-                Show Submittal
-            @endif
-        </div>
+<div class="row table-responsive dtranstiontable mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                
+                <!-- Table View -->
+                <div class="table-rep-plugin">
+                    <div class="table-responsive mb-0" data-pattern="priority-columns">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="card-title nproletext">Submittals</h4>
 
-    </div>
-    <div class="row npNom-TM-Table">
-        <div class="col-md-2 ">Submittal Name</div>
-        <div class="col-md-2 ">Submittal Type</div>
-        <div class="col-md-3 ">Owner</div>
-        <div class="col-md-3 ">Created Time</div>
-        <div class="col-md-1 "></div>
-    </div>
-    @if (count($submittals)==0)
-    <div>
-        <p class="text-center notesAsignedText">No Submittal assigned</p>
-    </div>
-    @else
-    @foreach($submittals as $submittal)
-    <div class="row npNom-TM-Body">
-        <div class="col-md-2 ">{{$submittal['submittalName']}}</div>
-        <div class="col-md-2 ">{{$submittal['submittalType']}}</div>
-        <div class="col-md-3 ">{{$submittal['userData']['name']}}</div>
-        <div class="col-md-3 commonTextEllipsis">{{$submittal['created_at']}}</div>
-        <div class="col-md-1 tooltip-wrapper">
-            <a href="{{ url('/submittal-view/' . $submittal['submittalType'] . '/' . $submittal['id']) }}" target="_blank">
-                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                    class="ppiplinecommonIcon" title="Submittal Details">
-                <span class="tooltiptext">Submittal Details</span>
-            </a>
-        </div>
-    </div>
-    @endforeach
-    @endif
-    @foreach($submittals as $submittal)
-    <div class="npNom-TM-Card">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <p class="npcommonheaderText">Submittal Name</p>
-                <p class="npcommontableBodytext">{{$submittal['submittalName']}}</p>
-            </div>
-            <div>
-                <p class="npcommonheaderText">Submittal Type</p>
-                <p class="npcommontableBodytext">{{$submittal['submittalType']}}</p>
-            </div>
-            <div>
-                <p class="npcommonheaderText">Owner</p>
-                <p class="npcommontableBodyDatetext">{{$submittal['closed_date']}}</p>
-            </div>
-        </div>
-        <div class="npCardPhoneDiv">
-            <p class="npcommonheaderText">Created Time</p>
-            <p class="npcommontableBodyDatetext">{{$submittal['created_at']}}</p>
-        </div>
-    </div>
-    @endforeach
-    {{-- <div class="dpagination">
-        <nav aria-label="..." class="dpaginationNav">
-            <ul class="pagination ppipelinepage d-flex justify-content-end">
-                <li class="page-item disabled">
-                    <a class="page-link">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                </li>
-            </ul>
-        </nav>
-    </div> --}}
+                            <div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormType()">
+                                <i class="fas fa-plus plusicon"></i>
+                                @if ($submittals->count() === 0)
+                                    Add New Submittal
+                                @else
+                                    Show Submittal
+                                @endif
+                            </div>
+                        </div>
+                        @if ($submittals->isEmpty())
+                            <p class="text-center notesAsignedText">No Submittal assigned</p>
+                        @else
+                            <table id="submittals-table" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Submittal Name</th>
+                                        <th>Submittal Type</th>
+                                        <th>Owner</th>
+                                        <th>Created Time</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($submittals as $submittal)
+                                        <tr>
+                                            <td>{{ $submittal['submittalName'] }}</td>
+                                            <td>{{ $submittal['submittalType'] }}</td>
+                                            <td>{{ $submittal['userData']['name'] }}</td>
+                                            <td>{{ $submittal['created_at'] }}</td>
+                                            <td class="text-center">
+                                                <a href="{{ url('/submittal-view/' . $submittal['submittalType'] . '/' . $submittal['id']) }}" target="_blank">
+                                                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon" title="Submittal Details">
+                                                    {{-- <span class="tooltiptext">Submittal Details</span> --}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
+                </div>
 
+                <!-- Card View -->
+                <div class="row mt-4">
+                    @forelse($submittals as $submittal)
+                        <div class="col-md-4 mb-3">
+                            <div class="npNom-TM-Card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="npcommonheaderText">Submittal Name</p>
+                                        <p class="npcommontableBodytext">{{ $submittal['submittalName'] }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="npcommonheaderText">Submittal Type</p>
+                                        <p class="npcommontableBodytext">{{ $submittal['submittalType'] }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="npcommonheaderText">Owner</p>
+                                        <p class="npcommontableBodyDatetext">{{ $submittal['userData']['name'] }}</p>
+                                    </div>
+                                </div>
+                                <div class="npCardPhoneDiv">
+                                    <p class="npcommonheaderText">Created Time</p>
+                                    <p class="npcommontableBodyDatetext">{{ $submittal['created_at'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <p class="text-center notesAsignedText">No Submittal assigned</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     var deal = @json($deal);
-    if(deal.representing==""||deal.tm_preference==""||deal.representing==null||deal.tm_preference==null||deal.tm_preference=='Non-TM'){
-        $('#addSubmittal').attr('disabled', true);
-        $('#addSubmittal').addClass('btn-disabled');
-    }else{
-        $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled')
+    if (deal.representing === "" || deal.tm_preference === "" || deal.representing === null || deal.tm_preference === null || deal.tm_preference === 'Non-TM') {
+        $('#addSubmittal').attr('disabled', true).addClass('btn-disabled');
+    } else {
+        $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled');
     }
+
     function showSubmittalFormType() {
-        console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
-        // deal = JSON.parse(deal);
+        console.log("SUBMITTAL DATA", deal.representing, deal.tm_preference);
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
-            addSubmittal('buyer-submittal',deal);
-        }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
-            addSubmittal('listing-submittal',deal)
-        }else if(deal.representing === "Seller" && deal.tm_preference === "Non-TM"){
-            addSubmittal('listing-submittal',deal,'Non-TM');
+            addSubmittal('buyer-submittal', deal);
+        } else if (deal.representing === "Seller" && deal.tm_preference === "CHR TM") {
+            addSubmittal('listing-submittal', deal);
+        } else if (deal.representing === "Seller" && deal.tm_preference === "Non-TM") {
+            addSubmittal('listing-submittal', deal, 'Non-TM');
         }
     }
 
-    function redirectUrl(submittalType=null,submittalData = null,formType =null){
-       const url = `{{ url('submittal-create/${submittalType}/${submittalData.id}?formType=${formType}')}}`
-       window.open(url,'_blank')
+    function redirectUrl(submittalType = null, submittalData = null, formType = null) {
+        const url = `{{ url('submittal-create/${submittalType}/${submittalData.id}?formType=${formType}') }}`;
+        window.open(url, '_blank');
     }
 
     function generateRandom4DigitNumber() {
-            return Math.floor(1000 + Math.random() * 9000);
-        }
+        return Math.floor(1000 + Math.random() * 9000);
+    }
 
-    function addSubmittal (type,deal,formType=null){
-        if(type == "buyer-submittal"){
-            var formData = {
-                "data": [{
-                    "Transaction_Name": {
-                        "id":deal.zoho_deal_id,
-                        "name":deal.deal_name
-                    },
-                    "TM_Name": deal.tmName,
-                    'Name':'BS-'+(generateRandom4DigitNumber()),
-                    "Owner": {
-                        "id": "{{ auth()->user()->root_user_id }}",
-                        "name": "{{ auth()->user()->name }}",
-                        "email": "{{ auth()->user()->email }}",
-                    },
-                    'formType':formType
-                }]
-            };
-            
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-                // Send AJAX request
-            $.ajax({
-                url: "/buyer/submittal/create/"+deal.zoho_deal_id,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    console.log("response",response);
-                    redirectUrl(type,response,formType)
-                    if (response?.data && response.data[0]?.message) {
-                        // Convert message to uppercase and then display
-                        const upperCaseMessage = response.data[0].message.toUpperCase();
-                        showToast(upperCaseMessage);
-                        // window.location.reload();
-                    }
+    function addSubmittal(type, deal, formType = null) {
+        let formData = {
+            "data": [{
+                "Transaction_Name": {
+                    "id": deal.zoho_deal_id,
+                    "name": deal.deal_name
                 },
-                error: function (xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                }
-            })
-        }else if(type == "listing-submittal"){
-            var formData = {
-                "data": [{
-                    "Transaction_Name": {
-                        "id":deal.zoho_deal_id,
-                        "name":deal.deal_name
-                    },
-                    "TM_Name": deal.tmName,
-                    'Name':'LS-'+(generateRandom4DigitNumber()),
-                    "Owner": {
-                        "id": "{{ auth()->user()->root_user_id }}",
-                        "name": "{{ auth()->user()->name }}",
-                        "email": "{{ auth()->user()->email }}",
-                    },
-                    'formType':formType
-                }]
-            };
-            
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-                // Send AJAX request
-            $.ajax({
-                url: "/listing/submittal/create/"+deal.zoho_deal_id,
-                type: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function (response) {
-                    console.log("response",response);
-                    redirectUrl(type,response,formType)
-                    if (response?.data && response.data[0]?.message) {
-                        // Convert message to uppercase and then display
-                        const upperCaseMessage = response.data[0].message.toUpperCase();
-                        showToast(upperCaseMessage);
-                        // window.location.reload();
-                    }
+                "TM_Name": deal.tmName,
+                'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "name": "{{ auth()->user()->name }}",
+                    "email": "{{ auth()->user()->email }}"
                 },
-                error: function (xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                }
-            })
-        }
+                'formType': formType
+            }]
+        };
 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: `/${type === "buyer-submittal" ? "buyer" : "listing"}/submittal/create/${deal.zoho_deal_id}`,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                console.log("response", response);
+                redirectUrl(type, response, formType);
+                if (response?.data && response.data[0]?.message) {
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    showToast(upperCaseMessage);
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+            }
+        });
     }
 </script>
