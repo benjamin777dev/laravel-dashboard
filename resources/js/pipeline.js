@@ -214,10 +214,10 @@ window.checkAdditionalValidation = function (deal) {
 
 window.updateDataDeal = function (dealId, dbDealId) {
     let isValid = true;
-    console.log(dealId);
     // Retrieve values from form fields
     var client_name_primary = $("#validationDefault01").val();
     client_name_primary = JSON.parse(client_name_primary);
+    console.log(client_name_primary);
     var representing = $("#validationDefault02").val();
     var deal_name = $("#validationDefault03").val();
     var stage = $("#validationDefault04").val();
@@ -252,7 +252,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
     var lender_company = $("#lender_company").val();
     var modern_mortgage_lender = $("#modern_mortgage_lender").val();
 
-    if (client_name_primary === "") {
+    if (client_name_primary === "" || client_name_primary === null) {
         showToastError("Client Name Primary is required");
         isValid = false;
     }
@@ -319,7 +319,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
                     City: city,
                     State: state,
                     Zip: zip,
-                    Commission: parseInt(commission),
+                    Commission: parseFloat(commission),
                     Property_Type: property_type,
                     Ownership_Type: ownership_type,
                     Potential_GCI: potential_gci,
@@ -584,7 +584,7 @@ window.addEventListener("DOMContentLoaded", function () {
                         update_message.textContent = response?.data[0]?.message;
                         // Show the modal
                         $(modalTarget).modal("show");
-                        window.location.reload();
+                        // window.location.reload();
                     }
                 }
             },
@@ -592,6 +592,7 @@ window.addEventListener("DOMContentLoaded", function () {
                 // Handle error response
                 document.getElementById("loaderOverlay").style.display = "none";
                 document.getElementById("loaderfor").style.display = "none";
+                showToastError(xhr.responseJSON.error);
                 console.error(xhr.responseText, "errrorroororooro");
             },
         });

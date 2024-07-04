@@ -24,7 +24,15 @@ class NonTm extends Model
         "agent_comments",
         "other_commission_notes",
         "zoho_nontm_id",
-        "isNonTmCompleted"
+        "isNonTmCompleted",
+        'referralFeeAmount',
+        'referralFeeBrokerage',
+        'referralAgreement',
+        'hasW9Provided',
+        'homeWarrentyAmount',
+        'homeWarrentyDescription',
+        'additionalFeesAmount',
+        'additionalFeesDescription'
     ];
 
     public static function getZohoContactInfo()

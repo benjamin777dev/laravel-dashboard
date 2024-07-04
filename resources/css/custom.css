@@ -36,6 +36,8 @@ body {
     cursor: pointer;
 }
 
+
+
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
     display: grid;
@@ -102,6 +104,9 @@ div.dataTables_processing>div:last-child>div {
 .dcontactBtns:hover {
     background: #222;
 }
+.dcontactBtns:hover {
+    background: #222 !important;
+}
 
 .plusicon {
     margin-right: 4px;
@@ -116,6 +121,9 @@ div.dataTables_processing>div:last-child>div {
 .agent-info {
     padding: 1rem 1rem;
 }
+.nav.nav-tabs{
+    background-color: #6c6c6c !important;
+}
 
 .removebtn {
     display: flex;
@@ -125,7 +133,7 @@ div.dataTables_processing>div:last-child>div {
     align-items: center;
     gap: 4px;
     border-radius: 16px;
-    background: #848484;
+    background: rgb(165 158 158);
     color: #fff;
     text-align: center;
    
@@ -258,9 +266,12 @@ div.dataTables_processing>div:last-child>div {
 }
 
 .dtranstiontable {
-    background: rgba(255, 255, 255, 1);
-    padding: 20px;
+    /* background: rgba(255, 255, 255, 1);
+    padding: 20px; */
     border-radius: 5px;
+}
+#datatable_tasks_wrapper .dataTables_length{
+    display: none;
 }
 
 .dselect {
@@ -282,10 +293,15 @@ div.dataTables_processing>div:last-child>div {
     margin:0 10px 0 10px;
   }
 
+  #datatable_tasks th{
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
     color: #fff;
-    background-color: #3b3b3b;
+    background-color: #6c6c6c !important;
 }
 
 .nav-link.active {
@@ -453,9 +469,9 @@ div.dataTables_processing>div:last-child>div {
     outline: none;
 }
 
-.select2-container--default .select2-selection--single {
+/* .select2-container--default .select2-selection--single {
     border: none !important;
-}
+} */
 
 .select2-container--open .select2-dropdown--below {
     font-size: 12px !important;
@@ -604,6 +620,11 @@ body .vertical-collpsed span .logo-sm image {
     background: #dfdfdf;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
     border-color: #cfcfcf;
+}
+
+.contact-task-container{
+    max-height: 350px;
+    overflow-y: auto;
 }
 
 .dnoteBodyText {
@@ -801,6 +822,18 @@ body .vertical-collpsed span .logo-sm image {
 .submit_button {
     background-color: #222;
 }
+.submit_button:hover {
+    background-color: #222 !important;
+    outline: #222 !important;
+}
+.submit_button:focus-visible {
+    background-color: #222 !important;
+    outline: #222 !important;
+}
+.submit_button:active {
+    background-color: #222 !important;
+    outline: #222 !important;
+}
 
 @media (min-width: 768px) {
     .calendarInput {
@@ -957,6 +990,11 @@ body .vertical-collpsed span .logo-sm image {
     }
     .unset-bs-gutter-x {
         --bs-gutter-x: 0;
+    }
+    .cus-grid{
+        display: grid !important;
+        gap: 3px !important;
+        text-align: center !important;
     }
 }
 
@@ -1641,6 +1679,10 @@ body .vertical-collpsed span .logo-sm image {
         align-items: center;
         margin-bottom: 24px;
     }
+
+    .mbottom{
+        margin-bottom: 8px !important;
+    }
 }
 
 @media (min-width: 351px) and (max-width: 767px) {
@@ -1854,7 +1896,7 @@ body .vertical-collpsed span .logo-sm image {
    
     font-size: 13px;
     font-style: normal;
-    font-weight: 350;
+    font-weight: 500;
     line-height: 19.5px;
 }
 
@@ -1862,7 +1904,7 @@ body .vertical-collpsed span .logo-sm image {
     padding: 4px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #afafaf;
+    border: 1px solid #000000;
     word-break: break-all;
     text-overflow: ellipsis;
 }
@@ -2553,6 +2595,11 @@ body .vertical-collpsed span .logo-sm image {
     border-bottom: 1px solid #efefef;
     background: #fff;
 }
+.commonFlex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 .dbgcommonFlex {
     display: flex;
@@ -3053,9 +3100,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
     padding: 0;
 }
 
-.select2-selection.select2-selection--single {
+/* .select2-selection.select2-selection--single {
     border: 0 !important;
-}
+} */
 
 .select2-results__option {
     font-size: 12px;
@@ -3353,4 +3400,31 @@ input[type="button"]:hover {
 
 .lockedRow td {
     cursor: not-allowed;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px;
+    border: 1px solid #000000;
+    border-radius: 0.25rem;
+}
+
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+    height: 36px;
+}
+
+/* Style the main container */
+.customSelect2 .select2-container {
+    border-left: 4px solid red;
+}
+
+/* Style the selection area */
+.customSelect2 .select2-selection {
+    border-left: 4px solid red;
+}
+
+/* Style the selection arrow */
+.customSelect2 .select2-selection__arrow {
+    border-left: 4px solid red;
 }

@@ -9,14 +9,13 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipeline</p>
-            <div class="pipeline-btns-container">
-
+            <p class="ngText text-center">Pipeline</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
                 <div>
                     @component('components.button', [
-                        'clickEvent' => 'createTransaction()',
                         'label' => 'New Transaction',
-                        'icon' => 'fas fa-plus plusicon'
+                        'icon' => 'fas fa-plus plusicon',
+                        'id'=> "create_transaction"
                     ])
                     @endcomponent
                 </div>
@@ -24,7 +23,7 @@
                 
                 <div>
                     @component('components.button', [
-                        'clickEvent' => 'createSubmittals()',
+                        'id' => 'create_submittals',
                         'label' => 'New Submittal',
                         'icon' => 'fas fa-plus plusicon'
                     ])
@@ -144,6 +143,7 @@
 
 
     <script>
+      
         var prevSelectedColumn = null;
         var prevSortDirection = "";
         // Add an event listener to send search term as request
@@ -224,6 +224,12 @@
     </script>
 
 @section('pipelineScript')
+@section('script')
+    <!-- Responsive Table js -->
+    <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
 
+    <!-- Init js -->
+    <script src="{{ URL::asset('build/js/pages/table-responsive.init.js') }}"></script>
+@endsection
 @endsection
 @endsection

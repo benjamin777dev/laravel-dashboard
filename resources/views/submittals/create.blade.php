@@ -15,14 +15,9 @@
                 Cancel
             </div>
         </a>
+        
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"   onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Save and New
-            </div>
-        </a>
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Save
             </div>
@@ -131,8 +126,11 @@
         return regex.test(url);
     }
 
-    function validateSubmittal(submittal,isNew) {
-        console.log(submittal);
+    window.validateSubmittal=function(submittal,isNew) {
+        console.log(submittal,'validahasekhfkusdhkfh');
+        if(typeof submittal == "string"){
+            submittal = JSON.parse(submittal)
+        }
         isValid = true
         // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
@@ -231,7 +229,7 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/buyer/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/buyer/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',

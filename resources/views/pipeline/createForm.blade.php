@@ -73,11 +73,11 @@
                 <div class="col-md-6">
                     <label for="validationDefault09" class="form-label nplabelText">State</label>
                     {{-- <select class="form-select npinputinfo" id="validationDefault09" required>
-                    <option selected disabled value=""></option>
+                    <option selected disabled value="CO"></option>
                     <option>...</option>
                 </select> --}}
                     <input type="text" class="form-control npinputinfo" id="validationDefault09" required
-                        value="{{ $deal['state'] }}">
+                        value="{{ $deal['state']?$deal['state']:'CO' }}">
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
@@ -265,7 +265,9 @@
         var getClientName = $('#validationDefault01');
         getClientName.select2({
             placeholder: 'Search...',
-        });
+            //  containerCssClass: 'customSelect2'
+        })
+        getClientName.next('.select2-container').addClass('customSelect2');
 
         checkValidate(deal);
         setTmName();

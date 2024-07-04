@@ -8,14 +8,15 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-            <div onclick="updateNonTm('{{ $dealData['zoho_nontm_id'] }}',false)" class="nontm-save-btn">
+           
+            <div class="nontm-save-btn" onclick="updateNonTm({{ $dealData }},true)" >
                 <button>Update</button>
 
             </div>
         </div>
     </div>
     <div class="col-lg-12 main-carousel">
-        <div id="carouselExampleControls" class="carousel slide " data-bs-ride="carousel"
+        <div id="carouselExampleControls" class="carousel slide " data-interval="false"
             style="display: flex;justify-content:space-between">
             <div class="corausal-req-mb48">
                 <p class="corausal-req-text">Non-TM Check Request Information</p>
@@ -133,7 +134,7 @@
                                 <h2 class="accordion-header" id="headingOne">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseReferral" aria-expanded="true"
-                                        aria-controls="collapseReferral">
+                                        aria-controls="collapseReferral" >
                                         Referral Fee Paid Out?
                                     </button>
                                 </h2>
@@ -142,17 +143,48 @@
                                     <div class="accordion-body">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="referralFee"
-                                                value="yes" id="referralYes">
-                                            <label class="form-check-label" for="referralYes">
+                                                value="yes" id="referralYes" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "YES" ? 'checked' : '' }}>
+
+                                            <label class="form-check-label" for="referralYes" >
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="referralFee"
-                                                value="no" id="referralNo">
+                                                value="no" id="referralNo" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "NO" ? 'checked' : '' }}>
                                             <label class="form-check-label" for="referralNo">
                                                 No
                                             </label>
+                                        </div>
+                                        <div class="referralCustomFields label-div-mb" style="margin-top:10px;display:none;">
+                                            <div class="referralFeeAmount label-div-mb">
+                                                <label for="referralFeeAmount" class="common-label">Referral Fee Amount</label>
+                                                <input type="text" value="{{ isset($dealData['referralFeeAmount']) ? $dealData['referralFeeAmount'] : '' }}"
+                                                    class="form-control" id="referralFeeAmount">
+                                                <div class="referralFeeAmount_error text-danger" id="referralFeeAmount_error">
+                                                </div>
+                                            </div>
+                                            <div class="referralFeeBrokerage label-div-mb">
+                                                <label for="referralFeeBrokerage" class="common-label">Referral Fee Brokerage Name</label>
+                                                <input type="text" value="{{ isset($dealData['referralFeeBrokerage']) ? $dealData['referralFeeBrokerage'] : '' }}"
+                                                    class="form-control" id="referralFeeBrokerage">
+                                                <div class="referralFeeBrokerage_error text-danger" id="referralFeeBrokerage_error">
+                                                </div>
+                                            </div>
+                                            <div class="referralAgreement label-div-mb">
+                                                <label for="referralAgreement" class="common-label">Referral Fee Agreement Executed</label>
+                                                <input type="text" value="{{ isset($dealData['referralAgreement']) ? $dealData['referralAgreement'] : '' }}"
+                                                    class="form-control" id="referralAgreement">
+                                                <div class="referralAgreement_error text-danger" id="referralAgreement_error">
+                                                </div>
+                                            </div>
+                                            <div class="hasW9Provided label-div-mb">
+                                                <label for="hasW9Provided" class="common-label">Has the W-9 been provided</label>
+                                                <input type="text" value="{{ isset($dealData['hasW9Provided']) ? $dealData['hasW9Provided'] : '' }}"
+                                                    class="form-control" id="hasW9Provided">
+                                                <div class="hasW9Provided_error text-danger" id="hasW9Provided_error">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -170,17 +202,33 @@
                                     <div class="accordion-body">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="homeWarranty"
-                                                value="yes" id="homeWarrantyYes">
+                                                value="yes" id="homeWarrantyYes" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "YES" ? 'checked' : '' }}>
                                             <label class="form-check-label" for="homeWarrantyYes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="homeWarranty"
-                                                value="no" id="homeWarrantyNo">
+                                                value="no" id="homeWarrantyNo" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "NO" ? 'checked' : '' }}>
                                             <label class="form-check-label" for="homeWarrantyNo">
                                                 No
                                             </label>
+                                        </div>
+                                        <div class="homeWarrentyFields label-div-mb" style="margin-top:10px;display:none;">
+                                            <div class="homeWarrentyAmount label-div-mb">
+                                                <label for="homeWarrentyAmount" class="common-label"> Home Warranty Amount</label>
+                                                <input type="text" value="{{ isset($dealData['homeWarrentyAmount']) ? $dealData['homeWarrentyAmount'] : '' }}"
+                                                    class="form-control" id="homeWarrentyAmount">
+                                                <div class="homeWarrentyAmount_error text-danger" id="homeWarrentyAmount_error">
+                                                </div>
+                                            </div>
+                                            <div class="homeWarrentyDescription label-div-mb">
+                                                <label for="homeWarrentyDescription" class="common-label">Home Warranty Description</label>
+                                                <input type="text" value="{{ isset($dealData['homeWarrentyDescription']) ? $dealData['homeWarrentyDescription'] : '' }}"
+                                                    class="form-control" id="homeWarrentyDescription">
+                                                <div class="homeWarrentyDescription_error text-danger" id="homeWarrentyDescription_error">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -198,23 +246,39 @@
                                     <div class="accordion-body">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="additionalFee"
-                                                value="yes" id="additionalFeeYes">
+                                                value="yes" id="additionalFeeYes" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "YES" ? 'checked' : '' }}>
                                             <label class="form-check-label" for="additionalFeeYes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="additionalFee"
-                                                value="no" id="additionalFeeNo">
+                                                value="no" id="additionalFeeNo" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "NO" ? 'checked' : '' }}>
                                             <label class="form-check-label" for="additionalFeeNo">
                                                 No
                                             </label>
+                                        </div>
+                                        <div class="additionalFeesFields label-div-mb" style="margin-top:10px;display:none;">
+                                            <div class="additionalFeesAmount label-div-mb">
+                                                <label for="additionalFeesAmount" class="common-label">Additional Fees Amount?</label>
+                                                <input type="text" value="{{ isset($dealData['additionalFeesAmount']) ? $dealData['additionalFeesAmount'] : '' }}"
+                                                    class="form-control" id="additionalFeesAmount">
+                                                <div class="additionalFeesAmount_error text-danger" id="additionalFeesAmount_error">
+                                                </div>
+                                            </div>
+                                            <div class="additionalFeesDescription label-div-mb">
+                                                <label for="additionalFeesDescription" class="common-label">Additional Fees Description</label>
+                                                <input type="text" value="{{ isset($dealData['additionalFeesDescription']) ? $dealData['additionalFeesDescription'] : '' }}"
+                                                    class="form-control" id="additionalFeesDescription">
+                                                <div class="additionalFeesDescription_error text-danger" id="additionalFeesDescription_error">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        
                     </div>
                 </div>
                 <div class="carousel-item main_form_div">
@@ -324,6 +388,15 @@
         // Initialize an object to store the values
         window.values = {};
 
+        radioButtons.forEach(radioButton => {
+            if (radioButton.checked) {
+                const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+                const value = radioButton.value;
+                window.values[question] = value;
+                openNewFields();
+            }
+           
+        });
         // Add event listener to each radio button
         radioButtons.forEach(radioButton => {
             radioButton.addEventListener('change', event => {
@@ -331,12 +404,36 @@
                     .textContent.trim();
                 const value = event.target.value;
                 window.values[question] = value;
+                openNewFields();
                 console.log(values, 'valuesis hreeee')
             });
         });
 
     }
 
+    window.openNewFields=function(field){
+        let referralData =window.values['Referral Fee Paid Out?']
+        let homeWarrentyData =window.values['Home Warranty Paid Out Agent?']
+        let additionalFees =window.values['Any Additional Fees Charged?']
+        console.log("Referral Fee Paid Out?",);
+        if(referralData==="yes"){
+            $(".referralCustomFields").show();
+        }else{
+            $(".referralCustomFields").hide();
+        } 
+
+        if(homeWarrentyData==="yes"){
+            $(".homeWarrentyFields").show();
+        }else{
+            $(".homeWarrentyFields").hide();
+        } 
+
+        if(additionalFees==="yes"){
+            $(".additionalFeesFields").show();
+        }else{
+            $(".additionalFeesFields").hide();
+        } 
+    }
     function isValidUrl(url) {
         var regex = new RegExp(
             '^(https?:\\/\\/)' + // protocol
@@ -416,9 +513,6 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else if (commission.value.trim().split('.')[0]&&commission.value.trim().length>4) {
-            commissionError.textContent = "Commission length must be exactly 4 characters.";
-            isValid = false;
         } else {
             commissionError.textContent = "";
         }
@@ -431,8 +525,8 @@
         } else if (isNaN(final_purchase.value.trim())) {
             final_purchaseError.textContent = "Final Purchase must be a number.";
             isValid = false;
-        } else if (final_purchase.value.trim().length>4) {
-            final_purchaseError.textContent = "Final Purchase length must be exactly 4 characters.";
+        } else if (final_purchase.value.trim().length <= 0) {
+            final_purchaseError.textContent = "Final Purchase length must be greater than 0 characters.";
             isValid = false;
         }else {
             final_purchaseError.textContent = "";
@@ -443,8 +537,8 @@
             if (isNaN(amount_chr.value.trim())) {
                 amount_chrError.textContent = "Amount to CHR must be a number.";
                 isValid = false;
-            } else if (amount_chr.value.trim().length>4) {
-                amount_chrError.textContent = "Amount to CHR length must be exactly 4 characters.";
+            } else if (amount_chr.value.trim().length<=0) {
+                amount_chrError.textContent = "Amount to CHR length must be greater than 0 characters.";
                 isValid = false;
             }else {
                 amount_chrError.textContent = "";
@@ -453,7 +547,9 @@
         return isValid;
     }
 
-    window.updateNonTm = function(id, status) {
+    window.updateNonTm = function(dealData, status) {
+        // dealData = JSON.parse(dealData)
+        id=dealData.id
         if (!validateNonTm()) {
             return;
         }
@@ -465,8 +561,16 @@
         let final_purchase = document.getElementById("final_purchase");
         let amount_chr = document.getElementById("amount_chr");
         // let additonal_fee = document.getElementById("additonal_fee");
-        let agent_comments = document.getElementById("agent_comments");
         let other_comm_notes = document.getElementById("other_comm_notes");
+        let agent_comments = document.getElementById("agent_comments");
+        let referralFeeAmount = document.getElementById("referralFeeAmount");
+        let referralFeeBrokerage = document.getElementById("referralFeeBrokerage");
+        let referralAgreement = document.getElementById("referralAgreement");
+        let hasW9Provided = document.getElementById("hasW9Provided");
+        let homeWarrentyAmount = document.getElementById("homeWarrentyAmount");
+        let homeWarrentyDescription = document.getElementById("homeWarrentyDescription");
+        let additionalFeesAmount = document.getElementById("additionalFeesAmount");
+        let additionalFeesDescription = document.getElementById("additionalFeesDescription");
         var selectedOption = related_transaction.options[related_transaction.selectedIndex];
         // Get the value and text of the selected option
         var selectedValue = selectedOption.value;
@@ -477,10 +581,20 @@
                 "Final_Purchase_Price": final_purchase? final_purchase.value.trim():undefined,
                 "Any_Additional_Fees_Charged":window.values["Any Additional Fees Charged?"]? window.values["Any Additional Fees Charged?"]
                     ?.toUpperCase():undefined,
+                "Additional_Fees_Amount":additionalFeesAmount.value.trim()? additionalFeesAmount.value.trim()
+                    :undefined,
+                "Additional_Fees_Description":additionalFeesDescription.value.trim()? additionalFeesDescription.value.trim()
+                    :undefined,
                 "Additional_Email_for_Confirmation":add_email? add_email.value.trim():undefined,
                 "Referral_Fee_Paid_Out":window.values['Referral Fee Paid Out?']? window.values['Referral Fee Paid Out?']?.toUpperCase():undefined,
+                "Referral_Fee_Amount":referralFeeAmount.value.trim()? referralFeeAmount.value.trim():undefined,
+                "Referral_Fee_Brokerage_Name":referralFeeBrokerage.value.trim()? referralFeeBrokerage.value.trim():undefined,
+                "Referral_Fee_Agreement_Executed":referralAgreement.value.trim()? referralAgreement.value.trim():undefined,
+                "Has_the_W-9_been_provided":hasW9Provided.value.trim()? hasW9Provided.value.trim():undefined,
                 "Close_Date": close_date?close_date.value.trim():undefined,
                 "Home_Warranty_Paid_by_Agent":window.values['Home Warranty Paid Out Agent?']? window.values['Home Warranty Paid Out Agent?']?.toUpperCase():undefined,
+                "Home_Warranty_Amount":homeWarrentyAmount.value.trim()? homeWarrentyAmount.value.trim():undefined,
+                "Home_Warranty_Description":homeWarrentyDescription.value.trim()? homeWarrentyDescription.value.trim():undefined,
                 "CHR_Gives_Amount_to_Give":amount_chr? amount_chr.value.trim():undefined,
                 "Other_Commission_Notes":other_comm_notes.value? other_comm_notes.value.trim():undefined,
                 "Agent_Comments_Remarks_Instructions":agent_comments.value ? agent_comments.value.trim():undefined,
@@ -509,6 +623,7 @@
                     // Convert message to uppercase and then display
                     const upperCaseMessage = response.data[0].message.toUpperCase();
                     showToast(upperCaseMessage);
+                    window.location.href = "/pipeline-view/" + dealData.deal_data.id;
                 }
             },
             error: function(xhr, status, error) {

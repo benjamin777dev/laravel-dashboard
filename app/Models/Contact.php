@@ -148,7 +148,8 @@ class Contact extends Model
         'feature_cards_or_sheets',            
         'termination_reason',                
         'transaction_manager',                
-        'auto_address',                      
+        'auto_address',     
+        'has_address'                 
     ];
 
     public static function getZohoContactInfo()
@@ -164,7 +165,7 @@ class Contact extends Model
 
     public function spouseContact()
     {
-        return $this->belongsTo(Contact::class, 'spouse_partner','zoho_contact_id');
+        return $this->belongsTo(Contact::class, 'spouse_partner', 'zoho_contact_id');
     }
 
     public function contactName()
@@ -172,6 +173,10 @@ class Contact extends Model
         return $this->belongsTo(Contact::class, 'contactId');
     }
     
+    public function groupsData()
+    {
+        return $this->hasMany(ContactGroups::class, 'contactId');
+    }
     public function groups()
     {
         return $this->hasMany(ContactGroups::class, 'contactId');
@@ -199,11 +204,8 @@ class Contact extends Model
         if (is_null($this->spouse_partner) || $this->spouse_partner == '') {
             return null;
         }
-
-        $spouseData = json_decode($this->spouse_partner, true);
-        $spouseId = is_array($spouseData) ? $spouseData['id'] ?? $spouseData : $spouseData;
-
-        return Contact::where('zoho_contact_id', $spouseId)->first();
+    
+        return Contact::where('zoho_contact_id', $this->spouse_partner)->first();
     }
 
 
@@ -227,6 +229,13 @@ class Contact extends Model
         $data['License_Start_Date'] = isset($data['License_Start_Date']) ? Carbon::parse($data['License_Start_Date'])->format('Y-m-d H:i:s') : null;
         $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s')  : null;
         $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s')  : null;
+
+        $incomeGoal = isset($data['Income_Goal']) ? $data['Income_Goal'] : null;
+    
+        // Remove commas and dollar signs for easier numeric validation
+        if (!is_null($incomeGoal)) {
+            $incomeGoal = str_replace(['$', ','], '', $incomeGoal);
+        }
 
 
         $mappedData = [
@@ -254,7 +263,7 @@ class Contact extends Model
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
             'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
-            'spouse_partner' => isset($data['Spouse_Partner']) ? json_encode($data['Spouse_Partner']) : null,
+            'spouse_partner' => isset($data['Spouse_Partner']) ? (is_array($data['Spouse_Partner']) ? $data['Spouse_Partner']['id'] : $data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
             'last_emailed' => $data['Last_Emailed'],
             'email_blast_opt_in' => isset($data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In']) ? (int)$data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In'] : null,
@@ -299,8 +308,7 @@ class Contact extends Model
             'salesforce_id' => isset($data['Salesforce_ID']) ? $data['Salesforce_ID'] : null,
             'mls_ires' => isset($data['MLS_IRES']) ? (int)$data['MLS_IRES'] : null,
             'outsourced_mktg_floorplans' => isset($data['Outsourced_Mktg_Floorplans']) ? (int)$data['Outsourced_Mktg_Floorplans'] : null,
-            'income_goal' => isset($data['Income_Goal']) ? $data['Income_Goal'] : null,
-            'chr_relationship' => isset($data['CHR_Relationship']) ? $data['CHR_Relationship'] : null,
+            'income_goal' => is_numeric($incomeGoal) ? $incomeGoal : 250000,
             'locked_s' => isset($data['Locked__s']) ? (int)$data['Locked__s'] : null,
             'tag' => isset($data['Tag']) ? json_encode($data['Tag']) : null,
             'import_batch' => isset($data['Import_Batch']) ? $data['Import_Batch'] : null,
@@ -364,6 +372,7 @@ class Contact extends Model
             'termination_reason' => isset($data['Termination_Reason']) ? $data['Termination_Reason'] : null,
             'transaction_manager' => isset($data['Transaction_Manager']) ? $data['Transaction_Manager'] : null,
             'auto_address' => isset($data['Auto_Address']) ? $data['Auto_Address'] : null,
+            'has_address' => !empty($data['Mailing_Street']) && !empty($data['Mailing_City']) && !empty($data['Mailing_State']) && !empty($data['Mailing_Zip']),
         ];
         
         if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {

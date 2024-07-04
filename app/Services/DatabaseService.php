@@ -428,12 +428,13 @@ class DatabaseService
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [['userID', $user->id],['isDealCompleted',true]];
+            $conditions = [
+                ['userID', $user->id],
+                ['isDealCompleted',true]
+            ];
 
-            // Adjust query to include contactName table using join
             $deals = Deal::where($conditions)
-                ->whereNotIn('stage',
-                    ['Dead-Lost To Competition', 'Sold', 'Dead-Contract Terminated']
+                ->whereNotIn('stage', config('variables.dealPipelineStages')
                 );
 
             if ($search !== "") {
@@ -477,6 +478,7 @@ class DatabaseService
                     $query->whereBetween('closing_date', [$startOfNext30Days, $endOfNext30Days])->where('stage', '!=', 'Under Contract');
                 });
             }
+
             if ($filter) {
                 $conditions[] = ['stage', $filter];
             }
@@ -521,7 +523,7 @@ class DatabaseService
 
     }
 
-    public function retrieveDealDataById(User $user, $accessToken, $dealId)
+    public function retrieveNonTmById(User $user, $accessToken, $dealId)
     {
         try {
             Log::info("Retrieve Deals From Database");
@@ -549,7 +551,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact');
+            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -672,27 +674,57 @@ class DatabaseService
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
+    public function retrieveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null, $tab = null)
     {
         try {
-
-            Log::info("Retrieve Tasks From Database");
-            $condition = [
-                ['owner', $user->id],
-            ];
+            // Initialize tasks query
+            $tasks = Task::query()->where('owner', $user->id);
+            print_r($tab);
+            die;
+    
+            // Apply tab-specific conditions
+            if ($tab == 'Overdue') {
+                // Tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Upcoming') {
+                // Tasks that have a due date greater than or equal to today and are not complete
+                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Due Today') {
+                // Tasks that are due today and are not complete
+                $tasks->whereDate('due_date', now()->toDateString())
+                      ->where('status', '!=', 'Completed')
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Completed') {
+                // Completed tasks
+                $tasks->where('status', 'Completed')
+                      ->orderBy('updated_at', 'desc');
+            } else {
+                // Default case: no specific tab selected (perhaps all tasks)
+                $tasks->orderBy('updated_at', 'desc');
+            }
+    
+            // Additional filters based on dealId and contactId
             if ($dealId) {
-                $condition[] = ['what_id', $dealId];
+                $tasks->where('what_id', $dealId);
             }
             if ($contactId) {
-                $condition[] = ['who_id', $contactId];
+                $tasks->where('who_id', $contactId);
             }
-            $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
+    
+            // Execute the query and return the results
+            $tasks = $tasks->get();
+    
+            Log::info("Retrieve Tasks From Database");
+    
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
+    
 
     public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
@@ -731,8 +763,8 @@ class DatabaseService
                     $query->where('first_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('last_name', 'like', '%' . $searchTerms . '%')
                         ->orWhere('phone', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('mobile_phone', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('mailing_street', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mobile', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('mailing_address', 'like', '%' . $searchTerms . '%')
                         ->orWhere('email', 'like', '%' . $searchTerms . '%');
                 });
             }
@@ -878,7 +910,7 @@ class DatabaseService
             } elseif ($tab == 'Completed') {
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -1162,7 +1194,7 @@ class DatabaseService
                 'name' =>$dealData['Name'],
                 'userId' => $user->id,
                 'dealId' => $dealData['Related_Transaction']['id'],
-                'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
+                // 'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
                 'isNonTmCompleted' =>false,
             ]);
             Log::info("Retrieved Deal nontm From Database", ['nontm' => $nontm]);
@@ -1349,6 +1381,7 @@ class DatabaseService
                 ->orderByRaw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner)')
                 ->orderByRaw('CASE WHEN contacts.spouse_partner IS NOT NULL THEN 1 ELSE 0 END')
                 ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
+                ->orderBy('contacts.updated_at','desc')
                 ->paginate();
 
             return $contacts;

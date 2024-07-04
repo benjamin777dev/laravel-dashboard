@@ -96,7 +96,7 @@ Route::get('/pipeline_view', [PipelineController::class, 'getDealsJson'])->name(
 Route::get('/note-create-pipe/{dealId}', [PipelineController::class, 'createNotesForDeal'])->name('notes.create.deal')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipeline'])->name('pipeline.view');
-Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.view');
+Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.detail.view');
 Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreatePipeline']);
 Route::get('/pipeline/create/form/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');
@@ -158,7 +158,8 @@ Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class,
 
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
-Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContact'])->name('task.contact')->middleware('auth');
+Route::post('/update-task-contact/{id}', [HomeController::class, 'updateTask'])->name('update.tasks')->middleware('auth');
+Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContactJson'])->name('task.contact')->middleware('auth');
 Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeline'])->name('task.pipeline')->middleware('auth');
 
 
