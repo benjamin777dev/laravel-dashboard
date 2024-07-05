@@ -1,13 +1,13 @@
-name: Laravel CI/CD Pipeline
+name: zPortal Production Release
 
 on:
   push:
     branches:
-      - main # Trigger the workflow on push events to the main branch
+      - develop # Trigger the workflow on push events to the develop branch
 
 jobs:
   deploy:
-    runs-on: self-hosted # Utilizes your self-hosted GitHub Actions runner
+    runs-on: self-hosted 
 
     steps:
     - name: Checkout Repository
@@ -26,12 +26,12 @@ jobs:
     # Add any additional steps for building/testing your application here
     - name: Copy Files to Web Directory
       run: |
-        rm -rf /home/master/applications/jpcwcfpmsv/public_html/public/build/*
-        rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/jpcwcfpmsv/public_html
+        rm -rf /home/master/applications/zportalstaging/public_html/public/build/*
+        rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/zportalstaging/public_html
 
     - name: Laravel Specific Commands
       run: |
-        cd /home/master/applications/jpcwcfpmsv/public_html
+        cd /home/master/applications/zportalstaging//public_html
         php artisan config:clear # Clear Configuration Cache
         php artisan config:cache # Cache configuration
         php artisan cache:clear # Clear cache

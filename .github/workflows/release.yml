@@ -1,0 +1,39 @@
+name: zPortal Production Release
+
+on:
+  push:
+    branches:
+      - main # Trigger the workflow on push events to the main branch
+
+jobs:
+  deploy:
+    runs-on: self-hosted 
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install PHP Dependencies
+      run: |
+        composer install --no-interaction --prefer-dist --optimize-autoloader
+    
+    - name: Install JavaScript Dependencies
+      run: |
+        npm install
+        rm -rf ./public/build/*
+        npm run build
+
+    # Add any additional steps for building/testing your application here
+    - name: Copy Files to Web Directory
+      run: |
+        rm -rf /home/master/applications/jpcwcfpmsv/public_html/public/build/*
+        rsync -av --exclude='.git/' ${GITHUB_WORKSPACE}/ /home/master/applications/jpcwcfpmsv/public_html
+
+    - name: Laravel Specific Commands
+      run: |
+        cd /home/master/applications/jpcwcfpmsv/public_html
+        php artisan config:clear # Clear Configuration Cache
+        php artisan config:cache # Cache configuration
+        php artisan cache:clear # Clear cache
+        php artisan migrate --force # Run migrations
+        chmod +x artisan
