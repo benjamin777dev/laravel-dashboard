@@ -1636,7 +1636,7 @@ class DatabaseService
     {
         try {
 
-            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
+            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->get();
             return $submittalData;
         } catch (\Exception $e) {
             Log::error("Error retrieving Submittals: " . $e->getMessage());

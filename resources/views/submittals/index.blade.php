@@ -1,3 +1,7 @@
+@section('css')
+  
+        @vite(['resources/css/custom.css'])
+@endsection
 <div class="row table-responsive dtranstiontable mt-3">
     <div class="col-12">
         <div class="card">
@@ -21,33 +25,19 @@
                         @if ($submittals->isEmpty())
                             <p class="text-center notesAsignedText">No Submittal assigned</p>
                         @else
-                            <table id="submittals-table" class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Submittal Name</th>
-                                        <th>Submittal Type</th>
-                                        <th>Owner</th>
-                                        <th>Created Time</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($submittals as $submittal)
-                                        <tr>
-                                            <td>{{ $submittal['submittalName'] }}</td>
-                                            <td>{{ $submittal['submittalType'] }}</td>
-                                            <td>{{ $submittal['userData']['name'] }}</td>
-                                            <td>{{ $submittal['created_at'] }}</td>
-                                            <td class="text-center">
-                                                <a href="{{ url('/submittal-view/' . $submittal['submittalType'] . '/' . $submittal['id']) }}" target="_blank">
-                                                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon" title="Submittal Details">
-                                                    {{-- <span class="tooltiptext">Submittal Details</span> --}}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        @php
+                        $contactHeader = [
+                            "Submittal Name",
+                            "Submittal Type",
+                            "Owner",
+                            "Created Time",
+                        ]
+                      @endphp
+                       @component('components.common-table', [
+                        'th' => $contactHeader,
+                        'id'=>'datatable_submittal',
+                        "type" =>"submittal",
+                      ])
                         @endif
                     </div>
                 </div>
@@ -88,7 +78,71 @@
     </div>
 </div>
 
+
 <script>
+    console.log("yes working")
+    $(document).ready(function() {
+        const urlPartss = window.location.pathname.split('/'); // Split the URL by '/'
+        const dealId = urlPartss.pop();
+         $('#datatable_submittal').DataTable({
+    paging: true,
+    searching: true,
+    "processing": true,
+    serverSide: true,
+    columns: [
+        {
+            data: 'submittalName',
+            title: 'Submittal Name',
+            render: function(data, type, row) {
+                return `<span class="editable" data-name="submittalName" data-id="${row.id}">${data}</span>`;
+            }
+        },
+        {
+            data: 'submittalType',
+            title: 'Submittal Type',
+            render: function(data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+            }
+},
+        {
+            data: 'userData.name',
+            title: 'Owner',
+            render: function(data, type, row) {
+                console.log(data,'shdfhsdhf')
+                return  `<span class="editable" data-name="phone" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'created_at',
+            title: 'Created Time',
+            render: function(data, type, row) {
+                console.log(data,'shdfhsdhf')
+                return  `<span class="editable" data-name="created_at" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+            }
+        },
+      
+    ],
+    
+    ajax: {
+        url: '/submittal/'+dealId, // Ensure this URL is correct
+        type: 'GET', // or 'POST' depending on your server setup
+        "data": function(request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            request.stage = $('#related_to_stage').val(),
+            request.tab = "In Progress";
+            request.page = (request.start / request.length) + 1;
+            request.search = request.search.value;
+            console.log(request,'skdhfkshdfkhsdkfskddfjhsk')
+
+        },
+        dataSrc: function(data) {
+            console.log(data,'data is hreeeee')
+            return data?.data; // Return the data array or object from your response
+        }
+    },
+});
+});
     var deal = @json($deal);
     if (deal.representing === "" || deal.tm_preference === "" || deal.representing === null || deal.tm_preference === null || deal.tm_preference === 'Non-TM') {
         $('#addSubmittal').attr('disabled', true).addClass('btn-disabled');
@@ -160,4 +214,6 @@
             }
         });
     }
+
+
 </script>

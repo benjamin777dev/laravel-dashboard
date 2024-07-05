@@ -988,8 +988,8 @@
                     </select>`;
         }
                        
-                    }
-                },
+    }
+ },
                 {
                     data: 'due_date',
                     title: 'Due Date',
@@ -1188,6 +1188,7 @@
                 });
                 // Handle onchange event for select
                 $('#datatable_tasks1 tbody').on('change', 'select.edit-select_pipe', function() {
+                    console.log("yessdfhskdhfskdhfksjfh")
                     exitEditMode(this); // Exit edit mode when a selection is made
                 });
 
@@ -1196,6 +1197,8 @@
                     exitEditMode(this);
                 });
             }
+
+            
         });
 
         tableTaskspipe.on('draw.dt', function() {

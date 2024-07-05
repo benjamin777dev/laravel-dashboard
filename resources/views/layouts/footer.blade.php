@@ -20,6 +20,9 @@
         button.addEventListener('click', function() {
             sidebar.classList.toggle('show');
         });
+
+        setTimeout(() => {
+
             const modalSelectMap = [{
             modalID: 'global-search',
             selectElementId: 'global-search'
@@ -32,6 +35,8 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdown(modalID, selectElement);
         });
+            
+        }, 1000);
         
     });
     function createTransaction(userContactData,contactData=null) {
