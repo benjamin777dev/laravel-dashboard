@@ -328,7 +328,7 @@
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
 
-        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(event) {
+        document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
                 selectedGroupsArr.push(selectedGroups);
@@ -352,7 +352,7 @@
             }
         });
 
-        document.getElementById('contact_detail_form').appendChild(hiddenInput);
+        document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
         
         var getReffered = $('#validationDefault14');
         getReffered.select2({

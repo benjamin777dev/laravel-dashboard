@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Deal;
 use App\Services\DatabaseService;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
@@ -435,6 +436,7 @@ class DashboardController extends Controller
         }
         if (!empty($data['What_Id']['id'])) {
             $What_Id = $data['What_Id']['id'] ?? null;
+            $deal = Deal::where('zoho_deal_id', $data['What_Id']['id'])->firstOrFail();
             $seModule = "Deals";
 
         }
@@ -473,7 +475,7 @@ class DashboardController extends Controller
                 'status' =>$status ?? null,
                 'who_id' => $contact['id'] ?? null,
                 'due_date' =>$Due_Date ?? null,
-                'what_id' =>$data['What_Id']['id'] ?? null,
+                'what_id' =>$deal['id'] ?? null,
                 // 'closed_time' => $closed_time ?? null,
                 'created_by' => $user->id,
                 // 'priority' => $priority ?? null,

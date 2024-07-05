@@ -273,6 +273,9 @@ div.dataTables_processing>div:last-child>div {
 #datatable_tasks_wrapper .dataTables_length{
     display: none;
 }
+#datatable_tasks1_wrapper .dataTables_length{
+    display: none;
+}
 
 .dselect {
     width: 161px;
@@ -294,6 +297,10 @@ div.dataTables_processing>div:last-child>div {
   }
 
   #datatable_tasks th{
+    background-color: #fff !important;
+    color: #000 !important;
+  }
+  #datatable_tasks1 th{
     background-color: #fff !important;
     color: #000 !important;
   }

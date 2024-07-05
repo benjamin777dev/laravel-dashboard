@@ -160,6 +160,7 @@ Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class,
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
 Route::post('/update-task-contact/{id}', [TaskController::class, 'updateTask'])->name('update.tasks')->middleware('auth');
 Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContactJson'])->name('task.contact')->middleware('auth');
+Route::get('/task/for/pipe/{dealId}', [TaskController::class, 'taskForPipeJson'])->name('task.pipe')->middleware('auth');
 Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeline'])->name('task.pipeline')->middleware('auth');
 
 

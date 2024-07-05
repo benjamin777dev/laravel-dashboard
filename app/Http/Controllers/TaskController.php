@@ -80,6 +80,27 @@ class TaskController extends Controller
     
     }
 
+    public function taskForPipeJson()
+    {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $tab = request()->query('search') ?? 'In Progress';
+        $accessToken = $user->getAccessToken();
+        $dealId = request()->route('dealId');
+        $deal = Deal::findOrFail($dealId);
+       
+        if (!$deal) {
+            return redirect('/deal');
+        } 
+        $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->id);
+        return Datatables::of($tasks)->make(true);
+    
+    }
+
     public function updateTask(Request $request){
         try {
             $user = $this->user();
@@ -95,7 +116,7 @@ class TaskController extends Controller
             $module = $request->input('module');
             $rules = [
                 'id' => 'required|exists:tasks,id',
-                'field' => 'required|in:subject,related_to,due_date',
+                'field' => 'required|in:subject,related_to,due_date,done_task',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
     
@@ -125,10 +146,23 @@ class TaskController extends Controller
             if($dbfield==="subject"){
                 $field = "Subject";
             }
+            if($dbfield==="done_task"){
+                $field = "Status";
+            }
             if($dbfield==="due_date"){
                 $field = "Due_Date";
             }
             if ($dbfield !== 'related_to') {
+                if($field ==="Status"){
+                    $jsonData = [
+                        'data' => [
+                            [
+                              $field =>"Completed",
+                            ],
+                        ],
+                        'skip_mandatory' => true,
+                    ];
+                }else{
             $jsonData = [
                 'data' => [
                     [
@@ -137,18 +171,20 @@ class TaskController extends Controller
                 ],
                 'skip_mandatory' => true,
             ];
+        }
 
         }
-             
+       
+        $deal;
+        $contact;
         if ($dbfield === 'related_to') {
-            $contact = Contact::findOrFail($value); // Using findOrFail to handle the case where the record is not found
-            print_r(json_encode($contact));
-            if ($contact->zoho_contact_id) {
+            $contact = Contact::find($value); // Using findOrFail to handle the case where the record is no
+            if (!empty($contact->zoho_contact_id)) {
                 $jsonData = [
                     'data' => [
                         [
                             'Who_Id' => [
-                                'Id' => $contact->zoho_contact_id,
+                                'id' => $contact->zoho_contact_id,
                             ],
                             '$se_module' => 'Contacts' // Corrected the syntax for '$se_module'
                         ],
@@ -156,12 +192,12 @@ class TaskController extends Controller
                     'skip_mandatory' => true,
                 ];
             } else {
-                $deal = Deal::findOrFail($value); // Using findOrFail to handle the case where the record is not found
+                $deal = Deal::find($value); // Using findOrFail to handle the case where the record is not found
                 $jsonData = [
                     'data' => [
                         [
                             'What_Id' => [ // Corrected the key to 'What_Id'
-                                'Id' => $deal->zoho_deal_id,
+                                'id' => $deal->zoho_deal_id,
                             ],
                             '$se_module' => 'Deals' // Corrected the module type to 'Deals'
                         ],
@@ -169,15 +205,31 @@ class TaskController extends Controller
                     'skip_mandatory' => true,
                 ];
             }
-        }        
-            print_r($jsonData['data'][0]['$se_module']);
-            die;
+        }         
+             
             $zohotask = $zoho->updateTask($jsonData, $task->zoho_task_id);
 
             if (!$zohotask->successful()) {
-                return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->json(['error' => 'Zoho task update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            if(!empty($field) && $field === "Status"){
+                $dbfield = "status";
+                $value = "Completed";
             }
             $task->$dbfield = $value;
+            if(!empty($jsonData['data'][0]['$se_module'])){
+                $task->related_to =  $jsonData['data'][0]['$se_module'];
+
+            }
+
+            if(!empty($jsonData['data'][0]['Who_Id']['id'])){
+                $task->who_id =  $contact->id;
+            }
+           
+            if(!empty($jsonData['data'][0]['What_Id']['id'])){
+                $task->who_id =  $deal->id;
+            }
+            
             $task->save();
             
             return response()->json(['data'=>$task,'message'=>"Successfully Updated"]);

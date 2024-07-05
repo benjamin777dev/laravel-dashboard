@@ -514,7 +514,9 @@ window.addCommonTask = function (id = "", type = "") {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
-                document.getElementById("btn_closing").click();
+                document.getElementById("closing_btnnnnn").click();
+                $('#datatable_tasks1').DataTable().ajax.reload();
+                $('#datatable_tasks')?.DataTable().ajax.reload();
                 formData = "";
                 // window.location.reload();
             } else {
@@ -525,6 +527,8 @@ window.addCommonTask = function (id = "", type = "") {
             // Handle error response
             console.log(xhr);
             showToastError(error);
+            $('#datatable_tasks').DataTable().ajax.reload();
+            $('#datatable_tasks1').DataTable().ajax.reload();
         },
     });
 };
