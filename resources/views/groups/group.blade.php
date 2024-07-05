@@ -1,9 +1,9 @@
 @vite(['resources/js/toast.js'])
-<div class="table-responsive dbgTable">
-    <table class="table dbgHeaderTable">
-        <thead>
+<div class="table-responsive dbgTable groupTable">
+    <table class="table dbgHeaderTable ">
+        <thead class ="">
             <tr class="dFont700 dFont10 groups-view">
-                <th scope="col">
+                <th class= "sticky-col sticky-head " scope="col">
                     <div class="dbgcommonFlex">
                         <p class="mb-0">Name</p>
                         <img src="{{ URL::asset('/images/swap_vert.svg') }}" class="ppiplineSwapIcon"
@@ -11,7 +11,7 @@
                     </div>
                 </th>
                 @foreach ($shownGroups as $shownGroup)
-                    <th scope="col">
+                    <th scope="col" class="sticky-head">
                         <div class="dbgheaderFlex">
                             <p class="mb-0">{{ count($shownGroup['contacts']) }}</p>
                             <div class="checkboxText">
