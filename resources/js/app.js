@@ -7,44 +7,46 @@ Contact: themesbrand@gmail.com
 File: Main Js File
 */
 
-
 (function ($) {
+    "use strict";
 
-    'use strict';
-
-    var language = localStorage.getItem('language');
+    var language = localStorage.getItem("language");
     // Default Language
-    var default_lang = 'en';
+    var default_lang = "en";
 
     function setLanguage(lang) {
         if (document.getElementById("header-lang-img")) {
-            if (lang == 'en') {
-                document.getElementById("header-lang-img").src = "/build/images/flags/us.jpg";
-            } else if (lang == 'sp') {
-                document.getElementById("header-lang-img").src = "/build/images/flags/spain.jpg";
+            if (lang == "en") {
+                document.getElementById("header-lang-img").src =
+                    "/build/images/flags/us.jpg";
+            } else if (lang == "sp") {
+                document.getElementById("header-lang-img").src =
+                    "/build/images/flags/spain.jpg";
+            } else if (lang == "gr") {
+                document.getElementById("header-lang-img").src =
+                    "/build/images/flags/germany.jpg";
+            } else if (lang == "it") {
+                document.getElementById("header-lang-img").src =
+                    "/build/images/flags/italy.jpg";
+            } else if (lang == "ru") {
+                document.getElementById("header-lang-img").src =
+                    "/build/images/flags/russia.jpg";
             }
-            else if (lang == 'gr') {
-                document.getElementById("header-lang-img").src = "/build/images/flags/germany.jpg";
-            }
-            else if (lang == 'it') {
-                document.getElementById("header-lang-img").src = "/build/images/flags/italy.jpg";
-            }
-            else if (lang == 'ru') {
-                document.getElementById("header-lang-img").src = "/build/images/flags/russia.jpg";
-            }
-            localStorage.setItem('language', lang);
-            language = localStorage.getItem('language');
+            localStorage.setItem("language", lang);
+            language = localStorage.getItem("language");
             getLanguage();
         }
     }
 
     // Multi language setting
     function getLanguage() {
-        (language == null) ? setLanguage(default_lang) : false;
-        $.getJSON('/build/lang/' + language + '.json', function (lang) {
-            $('html').attr('lang', language);
+        language == null ? setLanguage(default_lang) : false;
+        $.getJSON("/build/lang/" + language + ".json", function (lang) {
+            $("html").attr("lang", language);
             $.each(lang, function (index, val) {
-                (index === 'head') ? $(document).attr("title", val['title']) : false;
+                index === "head"
+                    ? $(document).attr("title", val["title"])
+                    : false;
                 $("[key='" + index + "']").text(val);
             });
         });
@@ -56,14 +58,14 @@ File: Main Js File
     }
 
     function initLeftMenuCollapse() {
-        $('#vertical-menu-btn').on('click', function (event) {
+        $("#vertical-menu-btn").on("click", function (event) {
             event.preventDefault();
-            $('body').toggleClass('sidebar-enable');
+            $("body").toggleClass("sidebar-enable");
             if ($(window).width() >= 992) {
-                console.log($('body'))
-                $('body')[0].toggleClass('vertical-collpsed');
+                console.log($("body"));
+                $("body").toggleClass("vertical-collpsed");
             } else {
-                $('body')[0].removeClass('vertical-collpsed');
+                $("body").removeClass("vertical-collpsed");
             }
         });
     }
@@ -79,7 +81,13 @@ File: Main Js File
                 $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
                 $(this).parent().parent().parent().addClass("mm-active");
                 $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
-                $(this).parent().parent().parent().parent().parent().addClass("mm-active");
+                $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("mm-active");
             }
         });
     }
@@ -87,11 +95,18 @@ File: Main Js File
     function initMenuItemScroll() {
         // focus active menu in left sidebar
         $(document).ready(function () {
-            if ($("#sidebar-menu").length > 0 && $("#sidebar-menu .mm-active .active").length > 0) {
-                var activeMenu = $("#sidebar-menu .mm-active .active").offset().top;
+            if (
+                $("#sidebar-menu").length > 0 &&
+                $("#sidebar-menu .mm-active .active").length > 0
+            ) {
+                var activeMenu = $("#sidebar-menu .mm-active .active").offset()
+                    .top;
                 if (activeMenu > 300) {
                     activeMenu = activeMenu - 300;
-                    $(".vertical-menu .simplebar-content-wrapper").animate({ scrollTop: activeMenu }, "slow");
+                    $(".vertical-menu .simplebar-content-wrapper").animate(
+                        { scrollTop: activeMenu },
+                        "slow"
+                    );
                 }
             }
         });
@@ -106,8 +121,21 @@ File: Main Js File
                 $(this).parent().parent().addClass("active");
                 $(this).parent().parent().parent().addClass("active");
                 $(this).parent().parent().parent().parent().addClass("active");
-                $(this).parent().parent().parent().parent().parent().addClass("active");
-                $(this).parent().parent().parent().parent().parent().parent().addClass("active");
+                $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("active");
+                $(this)
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .parent()
+                    .addClass("active");
             }
         });
     }
@@ -115,14 +143,21 @@ File: Main Js File
     function initFullScreen() {
         $('[data-bs-toggle="fullscreen"]').on("click", function (e) {
             e.preventDefault();
-            $('body').toggleClass('fullscreen-enable');
-            if (!document.fullscreenElement && /* alternative standard method */ !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+            $("body").toggleClass("fullscreen-enable");
+            if (
+                !document.fullscreenElement &&
+                /* alternative standard method */ !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement
+            ) {
+                // current working methods
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen();
                 } else if (document.documentElement.mozRequestFullScreen) {
                     document.documentElement.mozRequestFullScreen();
                 } else if (document.documentElement.webkitRequestFullscreen) {
-                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                    document.documentElement.webkitRequestFullscreen(
+                        Element.ALLOW_KEYBOARD_INPUT
+                    );
                 }
             } else {
                 if (document.cancelFullScreen) {
@@ -134,52 +169,65 @@ File: Main Js File
                 }
             }
         });
-        document.addEventListener('fullscreenchange', exitHandler);
+        document.addEventListener("fullscreenchange", exitHandler);
         document.addEventListener("webkitfullscreenchange", exitHandler);
         document.addEventListener("mozfullscreenchange", exitHandler);
         function exitHandler() {
-            if (!document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
-                console.log('pressed');
-                $('body').removeClass('fullscreen-enable');
+            if (
+                !document.webkitIsFullScreen &&
+                !document.mozFullScreen &&
+                !document.msFullscreenElement
+            ) {
+                console.log("pressed");
+                $("body").removeClass("fullscreen-enable");
             }
         }
     }
 
     function initRightSidebar() {
         // right side-bar toggle
-        $('.right-bar-toggle').on('click', function (e) {
-            $('body').toggleClass('right-bar-enabled');
+        $(".right-bar-toggle").on("click", function (e) {
+            $("body").toggleClass("right-bar-enabled");
         });
 
-        $(document).on('click', 'body', function (e) {
-            if ($(e.target).closest('.right-bar-toggle, .right-bar').length > 0) {
+        $(document).on("click", "body", function (e) {
+            if (
+                $(e.target).closest(".right-bar-toggle, .right-bar").length > 0
+            ) {
                 return;
             }
 
-            $('body').removeClass('right-bar-enabled');
+            $("body").removeClass("right-bar-enabled");
             return;
         });
     }
 
     function initDropdownMenu() {
         if (document.getElementById("topnav-menu-content")) {
-            var elements = document.getElementById("topnav-menu-content").getElementsByTagName("a");
+            var elements = document
+                .getElementById("topnav-menu-content")
+                .getElementsByTagName("a");
             for (var i = 0, len = elements.length; i < len; i++) {
                 elements[i].onclick = function (elem) {
                     if (elem.target.getAttribute("href") === "#") {
                         elem.target.parentElement.classList.toggle("active");
                         elem.target.nextElementSibling.classList.toggle("show");
                     }
-                }
+                };
             }
             window.addEventListener("resize", updateMenu);
         }
     }
 
     function updateMenu() {
-        var elements = document.getElementById("topnav-menu-content").getElementsByTagName("a");
+        var elements = document
+            .getElementById("topnav-menu-content")
+            .getElementsByTagName("a");
         for (var i = 0, len = elements.length; i < len; i++) {
-            if (elements[i].parentElement.getAttribute("class") === "nav-item dropdown active") {
+            if (
+                elements[i].parentElement.getAttribute("class") ===
+                "nav-item dropdown active"
+            ) {
                 elements[i].parentElement.classList.remove("active");
                 if (elements[i].nextElementSibling !== null) {
                     elements[i].nextElementSibling.classList.remove("show");
@@ -189,26 +237,32 @@ File: Main Js File
     }
 
     function initComponents() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
 
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="popover"]')
+        );
         var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-            return new bootstrap.Popover(popoverTriggerEl)
+            return new bootstrap.Popover(popoverTriggerEl);
         });
 
-        var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
+        var offcanvasElementList = [].slice.call(
+            document.querySelectorAll(".offcanvas")
+        );
         var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
-            return new bootstrap.Offcanvas(offcanvasEl)
-        })
+            return new bootstrap.Offcanvas(offcanvasEl);
+        });
     }
 
     function initPreloader() {
-        $(window).on('load', function () {
-            $('#status').fadeOut();
-            $('#preloader').delay(350).fadeOut('slow');
+        $(window).on("load", function () {
+            $("#status").fadeOut();
+            $("#preloader").delay(350).fadeOut("slow");
         });
     }
 
@@ -216,86 +270,131 @@ File: Main Js File
         if (window.sessionStorage) {
             var alreadyVisited = sessionStorage.getItem("is_visited");
             if (!alreadyVisited) {
-                if ($('html').attr('dir') === 'rtl' && $('html').attr('data-bs-theme') === 'dark') {
-                    $("#dark-rtl-mode-switch").prop('checked', true);
-                    $("#light-mode-switch").prop('checked', false);
-                    sessionStorage.setItem("is_visited", "dark-rtl-mode-switch");
+                if (
+                    $("html").attr("dir") === "rtl" &&
+                    $("html").attr("data-bs-theme") === "dark"
+                ) {
+                    $("#dark-rtl-mode-switch").prop("checked", true);
+                    $("#light-mode-switch").prop("checked", false);
+                    sessionStorage.setItem(
+                        "is_visited",
+                        "dark-rtl-mode-switch"
+                    );
                     updateThemeSetting(alreadyVisited);
-                } else if ($('html').attr('dir') === 'rtl') {
-                    $("#rtl-mode-switch").prop('checked', true);
-                    $("#light-mode-switch").prop('checked', false);
+                } else if ($("html").attr("dir") === "rtl") {
+                    $("#rtl-mode-switch").prop("checked", true);
+                    $("#light-mode-switch").prop("checked", false);
                     sessionStorage.setItem("is_visited", "rtl-mode-switch");
                     updateThemeSetting(alreadyVisited);
-                } else if ($('html').attr('data-bs-theme') === 'dark') {
-                    $("#dark-mode-switch").prop('checked', true);
-                    $("#light-mode-switch").prop('checked', false);
+                } else if ($("html").attr("data-bs-theme") === "dark") {
+                    $("#dark-mode-switch").prop("checked", true);
+                    $("#light-mode-switch").prop("checked", false);
                     sessionStorage.setItem("is_visited", "dark-mode-switch");
                     updateThemeSetting(alreadyVisited);
                 } else {
                     sessionStorage.setItem("is_visited", "light-mode-switch");
                 }
             } else {
-                $(".right-bar input:checkbox").prop('checked', false);
-                $("#" + alreadyVisited).prop('checked', true);
+                $(".right-bar input:checkbox").prop("checked", false);
+                $("#" + alreadyVisited).prop("checked", true);
             }
         }
-        $("#light-mode-switch, #dark-mode-switch, #rtl-mode-switch, #dark-rtl-mode-switch").on("change", function (e) {
+        $(
+            "#light-mode-switch, #dark-mode-switch, #rtl-mode-switch, #dark-rtl-mode-switch"
+        ).on("change", function (e) {
             updateThemeSetting(e.target.id);
         });
 
         // show password input value
-        $("#password-addon").on('click', function () {
-            if ($(this).siblings('input').length > 0) {
-                $(this).siblings('input').attr('type') == "password" ? $(this).siblings('input').attr('type', 'input') : $(this).siblings('input').attr('type', 'password');
+        $("#password-addon").on("click", function () {
+            if ($(this).siblings("input").length > 0) {
+                $(this).siblings("input").attr("type") == "password"
+                    ? $(this).siblings("input").attr("type", "input")
+                    : $(this).siblings("input").attr("type", "password");
             }
-        })
+        });
     }
 
     function updateThemeSetting(id) {
-        if ($("#light-mode-switch").prop("checked") == true && id === "light-mode-switch") {
+        if (
+            $("#light-mode-switch").prop("checked") == true &&
+            id === "light-mode-switch"
+        ) {
             $("html").removeAttr("dir");
             $("#dark-mode-switch").prop("checked", false);
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
-            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
-                $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.css');
-            $('html').attr('data-bs-theme', 'light');
-            if ($("#app-style").attr('href') != '/build/css/app.min.css')
-                $("#app-style").attr('href', '/build/css/app.min.css');
+            if (
+                $("#bootstrap-style").attr("href") !=
+                "/build/css/bootstrap.min.css"
+            )
+                $("#bootstrap-style").attr(
+                    "href",
+                    "/build/css/bootstrap.min.css"
+                );
+            $("html").attr("data-bs-theme", "light");
+            if ($("#app-style").attr("href") != "/build/css/app.min.css")
+                $("#app-style").attr("href", "/build/css/app.min.css");
             sessionStorage.setItem("is_visited", "light-mode-switch");
-        } else if ($("#dark-mode-switch").prop("checked") == true && id === "dark-mode-switch") {
+        } else if (
+            $("#dark-mode-switch").prop("checked") == true &&
+            id === "dark-mode-switch"
+        ) {
             $("html").removeAttr("dir");
             $("#light-mode-switch").prop("checked", false);
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
-            $('html').attr('data-bs-theme', 'dark');
-            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.css')
-                $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.css');
-            if ($("#app-style").attr('href') != '/build/css/app.min.css')
-                $("#app-style").attr('href', '/build/css/app.min.css');
+            $("html").attr("data-bs-theme", "dark");
+            if (
+                $("#bootstrap-style").attr("href") !=
+                "/build/css/bootstrap.min.css"
+            )
+                $("#bootstrap-style").attr(
+                    "href",
+                    "/build/css/bootstrap.min.css"
+                );
+            if ($("#app-style").attr("href") != "/build/css/app.min.css")
+                $("#app-style").attr("href", "/build/css/app.min.css");
             sessionStorage.setItem("is_visited", "dark-mode-switch");
-        } else if ($("#rtl-mode-switch").prop("checked") == true && id === "rtl-mode-switch") {
+        } else if (
+            $("#rtl-mode-switch").prop("checked") == true &&
+            id === "rtl-mode-switch"
+        ) {
             $("#light-mode-switch").prop("checked", false);
             $("#dark-mode-switch").prop("checked", false);
             $("#dark-rtl-mode-switch").prop("checked", false);
-            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
-                $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.rtl.css');
-            if ($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
-                $("#app-style").attr('href', '/build/css/app.min.rtl.css');
-            $("html").attr("dir", 'rtl');
-            $('html').attr('data-bs-theme', 'light');
+            if (
+                $("#bootstrap-style").attr("href") !=
+                "/build/css/bootstrap.min.rtl.css"
+            )
+                $("#bootstrap-style").attr(
+                    "href",
+                    "/build/css/bootstrap.min.rtl.css"
+                );
+            if ($("#app-style").attr("href") != "/build/css/app.min.rtl.css")
+                $("#app-style").attr("href", "/build/css/app.min.rtl.css");
+            $("html").attr("dir", "rtl");
+            $("html").attr("data-bs-theme", "light");
             sessionStorage.setItem("is_visited", "rtl-mode-switch");
-        }
-        else if ($("#dark-rtl-mode-switch").prop("checked") == true && id === "dark-rtl-mode-switch") {
+        } else if (
+            $("#dark-rtl-mode-switch").prop("checked") == true &&
+            id === "dark-rtl-mode-switch"
+        ) {
             $("#light-mode-switch").prop("checked", false);
             $("#rtl-mode-switch").prop("checked", false);
             $("#dark-mode-switch").prop("checked", false);
-            if ($("#bootstrap-style").attr('href') != '/build/css/bootstrap.min.rtl.css')
-                $("#bootstrap-style").attr('href', '/build/css/bootstrap.min.rtl.css');
-            if ($("#app-style").attr('href') != '/build/css/app.min.rtl.css')
-                $("#app-style").attr('href', '/build/css/app.min.rtl.css');
-            $("html").attr("dir", 'rtl');
-            $('html').attr('data-bs-theme', 'dark');
+            if (
+                $("#bootstrap-style").attr("href") !=
+                "/build/css/bootstrap.min.rtl.css"
+            )
+                $("#bootstrap-style").attr(
+                    "href",
+                    "/build/css/bootstrap.min.rtl.css"
+                );
+            if ($("#app-style").attr("href") != "/build/css/app.min.rtl.css")
+                $("#app-style").attr("href", "/build/css/app.min.rtl.css");
+            $("html").attr("dir", "rtl");
+            $("html").attr("data-bs-theme", "dark");
             sessionStorage.setItem("is_visited", "dark-rtl-mode-switch");
         }
     }
@@ -304,20 +403,26 @@ File: Main Js File
         // Auto Loader
         if (language != null && language !== default_lang)
             setLanguage(language);
-        $('.language').on('click', function (e) {
-            setLanguage($(this).attr('data-lang'));
+        $(".language").on("click", function (e) {
+            setLanguage($(this).attr("data-lang"));
         });
     }
 
     function initCheckAll() {
-        $('#checkAll').on('change', function () {
-            $('.table-check .form-check-input').prop('checked', $(this).prop("checked"));
+        $("#checkAll").on("change", function () {
+            $(".table-check .form-check-input").prop(
+                "checked",
+                $(this).prop("checked")
+            );
         });
-        $('.table-check .form-check-input').change(function () {
-            if ($('.table-check .form-check-input:checked').length == $('.table-check .form-check-input').length) {
-                $('#checkAll').prop('checked', true);
+        $(".table-check .form-check-input").change(function () {
+            if (
+                $(".table-check .form-check-input:checked").length ==
+                $(".table-check .form-check-input").length
+            ) {
+                $("#checkAll").prop("checked", true);
             } else {
-                $('#checkAll').prop('checked', false);
+                $("#checkAll").prop("checked", false);
             }
         });
     }
@@ -340,5 +445,4 @@ File: Main Js File
     }
 
     init();
-
-})(jQuery)
+})(jQuery);
