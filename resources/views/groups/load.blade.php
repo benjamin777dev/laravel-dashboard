@@ -1,10 +1,11 @@
 @foreach ($contacts as $contact)
 <tr class="table-data">
-    <td class="text-start">
+    <td class="text-start sticky-col first-col">
         @if($contact->relationship_type == 'Secondary')
             <i class="fa fa-caret-right"></i>
         @endif
-        {{$contact->first_name ?? ''}} {{$contact->last_name ?? ''}}
+       <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank" style="color:black;">{{ $contact->first_name ?? '' }} {{ $contact->last_name ?? '' }}</a>
+
     </td>
 
     @foreach ($shownGroups as $index => $shownGroup)

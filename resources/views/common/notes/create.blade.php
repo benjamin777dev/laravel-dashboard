@@ -247,10 +247,10 @@
             url: $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).attr('action'),
             data: formData,
             success: function(data) {
-                let test =$('#' + (id ? 'noteForm_close' + id : 'noteForm_close'));
-                console.log(test,'testtest')
+                showToast("Note added Successfully")
                 // handle success response
                 $('#' + (id ? 'noteForm_close' + id : 'noteForm_close'))[0].click();
+                window.location.reload();
             },
             error: function(xhr, status, error) {
                 // handle error response

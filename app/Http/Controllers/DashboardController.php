@@ -63,7 +63,7 @@ class DashboardController extends Controller
         $tasks = $this->db->retreiveTasks($user, $accessToken, $tab);
         $upcomingTasks = $this->db->retreiveTasks($user, $accessToken, 'Upcoming');
          
-        $notesInfo = $this->db->retrieveNotes($user, $accessToken);
+        $notesInfo = $this->db->retrieveNotes($user, $accessToken,10);
         $notes = $this->fetchNotes();
         $userContact = $this->db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
 
@@ -1021,6 +1021,27 @@ class DashboardController extends Controller
             $saveInDB = $db->storeRolesIntoDB($contactRoles, $this->user());
             Log::info("contactRoles " . print_r($saveInDB, true));
             return response()->json($saveInDB, 201);
+        } catch (\Exception $e) {
+            Log::error("Error creating notes: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function showNotes(Request $request)
+    {
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho = new ZohoCRM();
+        $db = new DatabaseService();
+        $zoho->access_token = $accessToken;
+        try {
+            $notesInfo = $this->db->retrieveNotes($user, $accessToken,'');
+            $notes = $this->fetchNotes();
+            Log::info("notesInfo " . print_r($notesInfo, true));
+            return view('common.notes.showMoreNotes', compact('notesInfo','notes'));
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw $e;
