@@ -1,4 +1,4 @@
-name: zPortal Production Release
+name: Production
 
 on:
   push:
