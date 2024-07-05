@@ -1,9 +1,10 @@
 <div class="row " id="listingSubmittal">
+    <h4 class="card-title">Listing Submittal Information</h4>
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Listing Submittal Information</h4>
-                <p class="card-title-desc">Basic Info</p>
+                <h4 class="card-title">Basic Info</h4>
+                {{-- <p class="card-title-desc">Basic Info</p> --}}
 
                 <form class="row g-3" id="additionalFields">
                     <div class="col-md-6 ">
