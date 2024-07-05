@@ -53,26 +53,67 @@
                 <nav >
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link dtabsbtn active" id="nav-home-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-home" onclick="fetchPipelineTasks('In Progress','{{$deal['id']}}')"
+                            data-bs-target="#nav-home"
                             data-tab='In Progress' type="button" role="tab" aria-controls="nav-home"
                             aria-selected="true">In
                             Progress</button>
                         <button class="nav-link dtabsbtn" data-tab='Upcoming'
-                            onclick="fetchPipelineTasks('Upcoming','{{$deal['id']}}')" id="nav-profile-tab"
+                             id="nav-profile-tab"
                             data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
                             aria-controls="nav-profile" aria-selected="false">Upcoming</button>
                         <button class="nav-link dtabsbtn" data-tab='Overdue'
-                            onclick="fetchPipelineTasks('Overdue','{{$deal['id']}}')" id="nav-contact-tab" data-bs-toggle="tab"
+                             id="nav-contact-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                             aria-selected="false">Overdue</button>
                         <button class="nav-link dtabsbtn" data-tab='Completed'
-                            onclick="fetchPipelineTasks('Completed','{{$deal['id']}}')" id="nav-contact-tab" data-bs-toggle="tab"
+                             id="nav-contact-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                             aria-selected="false">Completed</button>
                     </div>
                 </nav>
-               <div class="pipeline-task-container">
+                @php
+                $contactHeader = [
+                    "",
+                    "Subject",
+                    "Related To",
+                    "Due Date",
+                    "Options",
+                ]
+            @endphp
+               @component('components.common-table', [
+                'th' => $contactHeader,
+                'id'=>'datatable_tasks1',
+                "type" =>"pipeline",
+            ])
+            @endcomponent
+            <div onclick="deleteTask('',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
+                <i class="fas fa-trash-alt plusicon"></i>
+                Delete Selected
+            </div>
+            <div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header border-0">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
+                        </div>
+                        <div class="modal-footer justify-content-evenly border-0">
+                            <div class="d-grid gap-2 col-5">
+                                <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-trash-alt"></i> Yes, delete
+                                </button>
+                            </div>
+                            <div class="d-grid gap-2 col-5">
+                                <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
+                                    <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
             </div>
         </div>
         @include('common.notes.view', [
@@ -86,6 +127,7 @@
     <div class="updatePipelineform">
        
     </div>
+
     
 </div>
 
@@ -110,6 +152,7 @@
 ])
 
 
+
 @vite(['resources/js/pipeline.js'])
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js">
@@ -118,13 +161,10 @@
 <script>
     var dealId = @json($dealId);
     var deal = @json($deal);
-    $(document).ready(function() {
+    $(document).ready(function(){
+    
         fetchPipelineTasks('In Progress',dealId)
         getCreateForm();
-        
-        
-    });
-    $(document).ready(function(){
         var defaultTab = "{{ $tab }}";
         localStorage.setItem('status', defaultTab);
         // Retrieve the status from local storage
@@ -163,6 +203,41 @@
         if (activeTab) {
             activeTab.classList.add('active');
         }
+
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+    
     })
     function fetchPipelineTasks(tab, dealId) {
         // Make AJAX call
@@ -204,11 +279,4 @@
 </script>
 @endif
 @endsection
-{{-- @section('script')
-    <!-- Responsive Table js -->
-    <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
-
-    <!-- Init js -->
-    <script src="{{ URL::asset('build/js/pages/table-responsive.init.js') }}"></script>
-@endsection --}}
 

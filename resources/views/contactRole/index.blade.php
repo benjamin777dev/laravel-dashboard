@@ -40,4 +40,3 @@
     <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
 
     <!-- Init js -->
-    <script src="{{ URL::asset('build/js/pages/table-responsive.init.js') }}"></script>

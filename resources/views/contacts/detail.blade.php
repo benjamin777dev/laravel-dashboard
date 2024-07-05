@@ -235,7 +235,7 @@
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
 
-        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(
+        document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(
             event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
@@ -255,7 +255,7 @@
         })
         // Add event listener for remove button
         let removeGroupsArr = [];
-        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+        multipleCancelButton?.passedElement?.element.addEventListener('removeItem', function(event) {
             var removedGroup = event.detail.value;
             console.log(removedGroup,"removedGroup");
             if (selectedGroupsDefault.includes(removedGroup)) {
@@ -268,7 +268,7 @@
 
 
         // This will log an array of selected values
-        document.getElementById('contact_detail_form').appendChild(hiddenInput);
+        document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
 
         var getReffered = $('#validationDefault14')
         getReffered.select2({

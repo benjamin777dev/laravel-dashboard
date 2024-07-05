@@ -4,7 +4,7 @@
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    <button type="button" id="closing_btnnnnn" class="btn-close" data-bs-dismiss="modal"
                         onclick="resetValidationTask('{{ $deal->id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
@@ -40,7 +40,7 @@
         <div class="modal-content p-1">
             <div class="modal-header border-0">
                 <p class="modal-title dHeaderText">Create New Task</p>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                <button type="button" id="closing_btnnnnn" class="btn-close" data-bs-dismiss="modal"
                     onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">

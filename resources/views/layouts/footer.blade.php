@@ -20,8 +20,7 @@
         button.addEventListener('click', function() {
             sidebar.classList.toggle('show');
         });
-
-        const modalSelectMap = [{
+            const modalSelectMap = [{
             modalID: 'global-search',
             selectElementId: 'global-search'
         }, ];
@@ -81,4 +80,7 @@
             }
         });
     }
+    
 </script>
+
+
