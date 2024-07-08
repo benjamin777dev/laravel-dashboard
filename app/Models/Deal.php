@@ -36,7 +36,7 @@ class Deal extends Model
         'chr_name', 'under_contract', 'modified_time', 'probability', 'transaction_code',
         'cda_notes', 'contract_time_of_day_deadline', 'sales_cycle_duration',
         'commission_flat_fee', 'check_received', 'locked_s', 'create_date',
-        'original_listing_price', 'tag', 'approval_state', 'status_reports',
+        'original_listing_price', 'tag', 'approval_state', 'status_reports','primary_contact',
     ];
 
     public function userData()

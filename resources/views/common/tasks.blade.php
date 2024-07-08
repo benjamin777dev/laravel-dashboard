@@ -32,6 +32,7 @@
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
+                <th scope="col">Detail</th>
                 <th scope="col">Related To</th>
                 <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
@@ -48,8 +49,16 @@
                             <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                 id="editableText{{ $task['id'] }}">
                                 {{ $task['subject'] ?? 'N/A' }}
-                                <i class="fas fa-pencil-alt pencilIcon"
+                                <i class="fas fa-pencil-alt pencilIcon editSubject"
                                     onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableText{{ $task['id'] }}')"></i>
+                            </p>
+                        </td>
+                        <td>
+                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
+                                id="editableText{{ $task['id'] }}">
+                                {{ $task['detail'] ?? 'N/A' }}
+                                <i class="fas fa-pencil-alt pencilIcon editDetail"
+                                    onclick="makeEditable('{{ $task['id'] }}','detail','{{ $task['zoho_task_id'] }}','editableText{{ $task['id'] }}')"></i>
                             </p>
                         </td>
                         <td>
@@ -212,36 +221,31 @@
         </div>
         @include('common.pagination', ['module' => $tasks])
     </div>
-<!-- Bootstrap Modal with Custom Class -->
-<div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
-            </div>
-            <div class="modal-footer justify-content-evenly border-0">
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-trash-alt"></i> Yes, delete
-                    </button>
+    <!-- Bootstrap Modal with Custom Class -->
+    <div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="d-grid gap-2 col-5">
-                    <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
-                        <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
-                    </button>
+                <div class="modal-body">
+                    <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
+                </div>
+                <div class="modal-footer justify-content-evenly border-0">
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-trash-alt"></i> Yes, delete
+                        </button>
+                    </div>
+                    <div class="d-grid gap-2 col-5">
+                        <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
+                            <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-
-
-    
-</div>
+    </div>  
 </div>
 
 <script>
@@ -525,96 +529,95 @@
     }
 
     const ui = {
-    confirm: async (message) => createConfirm(message)
-};
+        confirm: async (message) => createConfirm(message)
+    };
 
-const createConfirm = (message) => {
-    console.log("message", message);
-    return new Promise((complete, failed) => {
-        $('#confirmMessage').text(message);
+    const createConfirm = (message) => {
+        console.log("message", message);
+        return new Promise((complete, failed) => {
+            $('#confirmMessage').text(message);
 
-        $('#confirmYes').off('click').on('click', () => {
-            $('#confirmModal').modal('hide');
-            complete(true);
+            $('#confirmYes').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(true);
+            });
+
+            $('#confirmNo').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(false);
+            });
+
+            $('#confirmModal').modal('show');
         });
+    };
 
-        $('#confirmNo').off('click').on('click', () => {
-            $('#confirmModal').modal('hide');
-            complete(false);
-        });
+    const saveForm = async () => {
+        console.log(ui);
+        const confirm = await ui.confirm('Are you sure you want to do this?');
 
-        $('#confirmModal').modal('show');
-    });
-};
+        if (confirm) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
-const saveForm = async () => {
-    console.log(ui);
-    const confirm = await ui.confirm('Are you sure you want to do this?');
-
-    if (confirm) {
-        return true;
-    } else {
-        return false;
-    }
-};
-
-async function deleteTask(id = "", isremoveselected = false) {
-    let updateids = removeAllSelected();
-    
-    if (updateids === "" && id === 'remove_selected') {
-        return;
-    }
-    if (isremoveselected) {
-        id = undefined;
-    }
-    
-    if (updateids !== "") {
-        console.log("id, isremoveselected", updateids, isremoveselected, id);
-        const shouldDelete = await saveForm();
-        if (!shouldDelete) {
-            console.log("User cancelled delete");
+    async function deleteTask(id = "", isremoveselected = false) {
+        let updateids = removeAllSelected();
+        
+        if (updateids === "" && id === 'remove_selected') {
             return;
         }
-    }
-    if (id === undefined) {
-        id = updateids;
-    }
-    //remove duplicate ids
-    ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
-    console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh');
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        if (isremoveselected) {
+            id = undefined;
         }
-    });
-    try {
-        if (id) {
-            $.ajax({
-                url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
-                method: 'DELETE', // Change to DELETE method
-                contentType: 'application/json',
-                dataType: 'JSON',
-                data: {
-                    'id': id,
-                    '_token': '{{ csrf_token() }}',
-                },
-                success: function(response) {
-                    // Handle success response
-                    showToast("deleted successfully");
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
+        
+        if (updateids !== "") {
+            console.log("id, isremoveselected", updateids, isremoveselected, id);
+            const shouldDelete = await saveForm();
+            if (!shouldDelete) {
+                console.log("User cancelled delete");
+                return;
+            }
         }
-    } catch (err) {
-        console.error("error", err);
+        if (id === undefined) {
+            id = updateids;
+        }
+        //remove duplicate ids
+        ids = id.replace(/(\b\w+\b)(?=.*\b\1\b)/g, '').replace(/^,|,$/g, '');
+        console.log(ids, 'idsdsdfjsdfjksdhftestsetiejdh');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        try {
+            if (id) {
+                $.ajax({
+                    url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', ids),
+                    method: 'DELETE', // Change to DELETE method
+                    contentType: 'application/json',
+                    dataType: 'JSON',
+                    data: {
+                        'id': id,
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        showToast("deleted successfully");
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("error", err);
+        }
     }
-}
-
 
     function toggleAllCheckboxes() {
         // console.log("yes it")
@@ -677,7 +680,61 @@ async function deleteTask(id = "", isremoveselected = false) {
 
                 // Create the pencil icon element
                 const pencilIcon = document.createElement('i');
-                pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
+                pencilIcon.className = 'fas fa-pencil-alt pencilIcon editSubject';
+                pencilIcon.onclick = function() {
+                    makeEditable(id, textfield, zohoID, newParagraph.id);
+                };
+
+                // Append the pencil icon to the new paragraph
+                newParagraph.appendChild(pencilIcon);
+
+                return newParagraph;
+            }
+
+            // Create a new input element
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.id = 'editableInput' + id;
+            newInput.value = originalText;
+            textElement.parentNode.replaceChild(newInput, textElement);
+
+            const inputElement = document.getElementById('editableInput' + id);
+            inputElement.focus();
+
+            // Handler function for replacing input with paragraph
+            function replaceInputWithParagraph() {
+                const newParagraph = createParagraph(id, inputElement.value);
+                inputElement.parentNode.replaceChild(newParagraph, inputElement);
+            }
+
+            inputElement.addEventListener('blur', function() {
+                const newText = inputElement.value.trim();
+                replaceInputWithParagraph();
+            });
+
+            inputElement.addEventListener('change', function() {
+                const newText = inputElement.value.trim();
+                if (newText !== originalText) {
+                    updateText(newText, textfield, zohoID);
+                }
+                replaceInputWithParagraph();
+            });
+        }
+
+        if (textfield === "detail") {
+            const textElement = document.getElementById(textid);
+            const originalText = textElement.textContent.trim();
+
+            // Function to create a new paragraph element
+            function createParagraph(id, text) {
+                const newParagraph = document.createElement('p');
+                newParagraph.id = 'editableText' + id;
+                newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
+                newParagraph.textContent = text;
+
+                // Create the pencil icon element
+                const pencilIcon = document.createElement('i');
+                pencilIcon.className = 'fas fa-pencil-alt pencilIcon editDetail';
                 pencilIcon.onclick = function() {
                     makeEditable(id, textfield, zohoID, newParagraph.id);
                 };
