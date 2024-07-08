@@ -216,9 +216,8 @@ window.checkAdditionalValidation = function (deal) {
 window.updateDataDeal = function (dealId, dbDealId) {
     let isValid = true;
     // Retrieve values from form fields
-    var client_name_primary = $("#validationDefault01").val();
-    client_name_primary = JSON.parse(client_name_primary);
-    console.log(client_name_primary);
+    var client_name_primary = window.selectedGroupsArr;
+
     var representing = $("#validationDefault02").val();
     var deal_name = $("#validationDefault03").val();
     var stage = $("#validationDefault04").val();
@@ -253,7 +252,16 @@ window.updateDataDeal = function (dealId, dbDealId) {
     var lender_company = $("#lender_company").val();
     var modern_mortgage_lender = $("#modern_mortgage_lender").val();
 
-    if (client_name_primary === "" || client_name_primary === null) {
+    let json_client_name_primary = [];
+    console.log("client_name_primary", client_name_primary);
+    for (let i = 0; i < client_name_primary.length; i++) {
+        const element = client_name_primary[i];
+        json_client_name_primary.push(element);
+    }
+
+    console.log("json_client_name_primary", json_client_name_primary);
+
+    if (client_name_primary.length <= 0) {
         showToastError("Client Name Primary is required");
         isValid = false;
     }
@@ -356,17 +364,21 @@ window.updateDataDeal = function (dealId, dbDealId) {
                 full_name: lead_agent.name ?? "",
             };
         }
-        if (client_name_primary) {
-            (formData.data[0].Client_Name_Primary =
-                (client_name_primary.first_name || "") +
-                " " +
-                (client_name_primary.last_name || "")),
-                (formData.data[0].Client_Name_Only =
-                    (client_name_primary.first_name || "") +
-                    " " +
-                    (client_name_primary.last_name || "") +
-                    " || " +
-                    client_name_primary.zoho_contact_id);
+
+        if (json_client_name_primary.length > 0) {
+            for (
+                let index = 0;
+                index < json_client_name_primary.length;
+                index++
+            ) {
+                const element = json_client_name_primary[index];
+                formData.data[0].Primary_Contact = [];
+                formData.data[0].Primary_Contact.push({
+                    Primary_Contact: {
+                        id: element,
+                    },
+                });
+            }
         }
         // Add TM_Name if tm_name is defined
         if (tm_name) {

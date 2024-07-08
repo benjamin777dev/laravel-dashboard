@@ -8,7 +8,6 @@
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
             <p class="npinfoText">Contact Details</p>
             <div class="row g-3">
-
                 <div class="col-md-6">
                     <label for="validationDefault01" class="form-label nplabelText">First Name</label>
                     <input type="text" name="first_name" value="{{ $contact['first_name'] }}"
@@ -293,8 +292,6 @@
 
             </div>
         </div>
-
-
         <div>
             <button class="submit_button btn btn-primary" id="submit_button" type="submit">Create</button>
         </div>
@@ -315,8 +312,6 @@
                 <div class="checkBox-Design">
                     <input type="checkbox" />
                     <p class="mb-0">GroupOne</p>
-
-
                 </div>
                 <div id="related_to_error" class="text-danger"></div>
             </div>

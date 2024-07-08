@@ -8,17 +8,15 @@
             <p>NON-TM CHECK REQUEST WIZARD</p>
         </div>
         <div class="non-btns">
-           <a href="{{ url('/pipeline-view/' . $dealData['dealData']['id']) }}">
+            <a href="{{ url('/pipeline-view/' . $dealData['dealData']['id']) }}">
                 <div class="input-group-text text-white justify-content-center ppipeBtn"  >
                     <i class="fas fa-times">
                     </i>
                     Cancel
                 </div>
             </a>
-            
-            <div class="nontm-save-btn" onclick="updateNonTm({{ $dealData }},true)" >
-                <button>Save</button>
-
+            <div class="ppipeBtn" onclick="updateNonTm({{ $dealData }},true)">
+                <i class="fas fa-save saveIcon"></i> Save 
             </div>
         </div>
     </div>
@@ -498,6 +496,71 @@
         if(additionalFees==''||additionalFees == null){
             isValid = false;
             showToastError('Any Additional Fees Charged?')
+        }
+
+
+        if (document.querySelector('input[name="referralFee"]:checked').value === "yes") {
+            if (document.getElementById('referralFeeAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeAmount_error').innerText = "Referral Fee Amount is required.";
+            } else {
+                document.getElementById('referralFeeAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('referralFeeBrokerage').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeBrokerage_error').innerText = "Referral Fee Brokerage Name is required.";
+            } else {
+                document.getElementById('referralFeeBrokerage_error').innerText = "";
+            }
+
+            if (document.getElementById('referralAgreement').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralAgreement_error').innerText = "Referral Fee Agreement Executed is required.";
+            } else {
+                document.getElementById('referralAgreement_error').innerText = "";
+            }
+
+            if (document.getElementById('hasW9Provided').value.trim() === "") {
+                isValid = false;
+                document.getElementById('hasW9Provided_error').innerText = "W-9 provision status is required.";
+            } else {
+                document.getElementById('hasW9Provided_error').innerText = "";
+            }
+        }
+
+        // Home Warranty Validation
+        if (document.querySelector('input[name="homeWarranty"]:checked').value === "yes") {
+            if (document.getElementById('homeWarrentyAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyAmount_error').innerText = "Home Warranty Amount is required.";
+            } else {
+                document.getElementById('homeWarrentyAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('homeWarrentyDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyDescription_error').innerText = "Home Warranty Description is required.";
+            } else {
+                document.getElementById('homeWarrentyDescription_error').innerText = "";
+            }
+        }
+
+        // Additional Fees Validation
+        if (document.querySelector('input[name="additionalFees"]:checked').value === "yes") {
+            if (document.getElementById('additionalFeeAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeeAmount_error').innerText = "Additional Fees Amount is required.";
+            } else {
+                document.getElementById('additionalFeeAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('additionalFeeDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeeDescription_error').innerText = "Additional Fees Description is required.";
+            } else {
+                document.getElementById('additionalFeeDescription_error').innerText = "";
+            }
         }
 
         // Validate related_transaction

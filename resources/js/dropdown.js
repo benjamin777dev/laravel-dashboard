@@ -300,8 +300,14 @@ window.addCommonTask = function (id = "", type = "") {
 
     if (id) {
         var subject = document.getElementsByName("subject")[0].value;
+        var detail = document.getElementsByName("detail")[0].value;
         if (subject.trim() === "") {
             document.getElementById("subject_error" + id).innerHTML =
+                "Please enter subject";
+            return;
+        }
+        if (detail.trim() === "") {
+            document.getElementById("detail_error" + id).innerHTML =
                 "Please enter details";
             return;
         }
@@ -317,6 +323,7 @@ window.addCommonTask = function (id = "", type = "") {
                 data: [
                     {
                         Subject: subject,
+                        Detail: detail,
                         // "Who_Id": {
                         //     "id": whoId
                         // },
@@ -338,6 +345,7 @@ window.addCommonTask = function (id = "", type = "") {
                 data: [
                     {
                         Subject: subject !== "" ? subject : undefined,
+                        Detail: detail !== "" ? detail : undefined,
                         // "Who_Id": {
                         //     "id": whoId
                         // },
@@ -357,8 +365,14 @@ window.addCommonTask = function (id = "", type = "") {
         }
     } else {
         var subject = document.getElementsByName("subject")[0].value;
+        var detail = document.getElementsByName("detail")[0].value;
         if (subject.trim() === "") {
             document.getElementById("subject_error").innerHTML =
+                "Please enter subject";
+            return;
+        }
+        if (detail.trim() === "") {
+            document.getElementById("detail_error").innerHTML =
                 "Please enter details";
             return;
         }
@@ -371,6 +385,7 @@ window.addCommonTask = function (id = "", type = "") {
                 data: [
                     {
                         Subject: subject !== "" ? subject : undefined,
+                        Detail: detail !== "" ? detail : undefined,
                         // "Who_Id": {
                         //     "id": whoId
                         // },
@@ -392,6 +407,7 @@ window.addCommonTask = function (id = "", type = "") {
                 data: [
                     {
                         Subject: subject !== "" ? subject : undefined,
+                        Detail: detail !== "" ? detail : undefined,
                         // "Who_Id": {
                         //     "id": whoId
                         // },

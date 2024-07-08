@@ -1176,7 +1176,7 @@ class DatabaseService
                 'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : null,
                 'property_type' => isset($zohoDeal['Property_Type']) ? $zohoDeal['Property_Type'] : null,
                 'potential_gci' => isset($zohoDeal['Potential_GCI']) ? $zohoDeal['Potential_GCI'] : null,
-
+                'primary_contact'=>isset($zohoDeal['Primary_Contact']) ? $zohoDeal['Primary_Contact'] : null,
                 'review_gen_opt_out' => isset($zohoDeal['Review_Gen_Opt_Out']) ? $zohoDeal['Review_Gen_Opt_Out'] : false,
                 'deadline_em_opt_out' => isset($zohoDeal['Deadline_Emails']) ? $zohoDeal['Deadline_Emails'] : false,
                 'status_rpt_opt_out' => isset($zohoDeal['Status_Reports']) ? $zohoDeal['Status_Reports'] : false,
