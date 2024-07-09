@@ -102,15 +102,15 @@
     @include('common.group.editModal', ['groups' => $ownerGroups])
 
     <script>
-        window.onload = function() {
-            let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
-        $(window).scroll(function() {
-            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-                if (nextPageUrl) {
-                    loadMorePosts();
-                }
-            }
-        });
+        // window.onload = function() {
+        //     let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
+        // $(window).scroll(function() {
+        //     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+        //         if (nextPageUrl) {
+        //             loadMorePosts();
+        //         }
+        //     }
+        // });
 
         function loadMorePosts() {
             $('.spinner').show();

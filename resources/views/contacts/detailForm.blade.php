@@ -1,12 +1,15 @@
 <div class="row">
+    <div class='card'>
+
+   
     <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
         method="POST" onsubmit="return validateContactForm();">
         @csrf
         @method('PUT')
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Contact Details</p>
+            >
+            <p class="npinfoText p-2">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault01" class="form-label nplabelText">First Name</label>
@@ -95,8 +98,8 @@
         </div>
         {{-- Contact Preferences --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Contact Preferences</p>
+            >
+            <p class="npinfoText p-2">Contact Preferences</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault08" class="form-label nplabelText">Relationship Type</label>
@@ -204,8 +207,8 @@
 
         {{-- Primary Contact’s Address --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Mailing Address</p>
+            >
+            <p class="npinfoText p-2">Mailing Address</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault13" class="form-label nplabelText">Address line 1</label>
@@ -243,8 +246,8 @@
 
         {{-- Business Information --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Business Information</p>
+            >
+            <p class="npinfoText p-2">Business Information</p>
             <div class="row g-3">
                 <div>
                     <label for="validationDefault19" class="form-label nplabelText">Business Name</label>
@@ -276,9 +279,10 @@
             </div>
         </div>
         <div>
-            <button type = "submit" class="submit_button btn btn-primary" id="submit_button" type="button">Update Contact</button>
+            <button type = "submit" class="submit_button btn btn-primary mt-3" id="submit_button" type="button">Update Contact</button>
         </div>
     </form>
+    </div>
 </div>
 {{-- view group secton --}}
 <div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -316,112 +320,130 @@
 ])
 <script>
     $(document).ready(function() {
-        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-            removeItemButton: true,
-            maxItemCount: null,
-            searchResultLimit: 500,
-            renderChoiceLimit: -1,
-        });
-
-        let selectedGroupsArr = [];         
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'selectedGroups';
-
-        document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
-            var selectedGroups = event.detail.value;
-            if (!selectedGroupsArr.includes(selectedGroups)) {
-                selectedGroupsArr.push(selectedGroups);
-            } else {
-                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-            }
-            hiddenInput.value = JSON.stringify(selectedGroupsArr);
-            console.log(selectedGroupsArr);
-        });
-
-        let selectedGroupsDefault = [];
-        $("#choices-multiple-remove-button_test option:selected").each(function() {
-            selectedGroupsDefault.push($(this).val());
-        });
-
-        let removeGroupsArr = [];
-        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-            var removedGroup = event.detail.value;
-            if (selectedGroupsDefault.includes(removedGroup)) {
-                deleteAssignGroup(removedGroup);
-            }
-        });
-
-        document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
-        
-        var getReffered = $('#validationDefault14');
-        getReffered.select2({
-            placeholder: 'Search...',
-        })
-        function formatState(state) {
-            if (!state.id) {
-                return state.text;
-            }
-            var contactId = $(state.element).data('id');
-
-            var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
-            var $state = $(
-                '<span style="display: flex; justify-content: space-between; align-items: center;">' +
-                    '<span style="flex-grow: 1;">' + state.text + '</span>' +
-                    '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
-                    '<i class="' + $(state.element).data('icon') + '"></i>' +
-                '</a>' +
-                '</span>'
-            );
-            console.log("STATE", $state);
-            return $state;
-        }
-
-        var getSpouse = $('#validationDefault13');
-        getSpouse.select2({
-            placeholder: 'Search...',
-            templateResult: formatState,
-            templateSelection: formatState
-        }).on('select2:open', () => {
-            $('.select2-results .new-contact-btn').remove();
-            $(".select2-results").prepend(
-                '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-            );
-        });
-
-        window.openContactModalAndCloseSelect = function() {
-            $("#createContactModal").modal('show');
-            getSpouse.select2('close'); // Close the select2 dropdown
-        }
-
-        $('#contact_detail_form').submit(function(event) {
-            event.preventDefault();
-            var formData = $(this).serialize();
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    showToast("Contact update successfully")
-                    updateContactform();
-                },
-                error: function(xhr, status, error) {
-                    getCreateForm();
-                    console.error('Error in contact creation:', error, xhr.responseJSON, status);
-                    showToastError(xhr.responseJSON?.message)
-                }
-            });
-        });
+    var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+        removeItemButton: true,
+        maxItemCount: null,
+        searchResultLimit: 500,
+        renderChoiceLimit: -1,
     });
 
-    function validateContactForm() {
-        let last_name = $("#last_name").val();
-        if (last_name.trim() === "") {
-            showToastError('Please enter last name');
-            return false;
+    let selectedGroupsArr = [];         
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'selectedGroups';
+
+    document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
+        var selectedGroups = event.detail.value;
+        if (!selectedGroupsArr.includes(selectedGroups)) {
+            selectedGroupsArr.push(selectedGroups);
+        } else {
+            selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
         }
-        $('#contactOwner').removeAttr('disabled');
-        return true;
+        hiddenInput.value = JSON.stringify(selectedGroupsArr);
+        console.log(selectedGroupsArr);
+    });
+
+    let selectedGroupsDefault = [];
+    $("#choices-multiple-remove-button_test option:selected").each(function() {
+        selectedGroupsDefault.push($(this).val());
+    });
+
+    let removeGroupsArr = [];
+    multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+        var removedGroup = event.detail.value;
+        if (selectedGroupsDefault.includes(removedGroup)) {
+            deleteAssignGroup(removedGroup);
+        }
+    });
+
+    document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
+    
+    var getReffered = $('#validationDefault14');
+    getReffered.select2({
+        placeholder: 'Search...',
+    }).on('select2:open', () => {
+        $(document).on('scroll.select2', function() {
+            getReffered.select2('close');
+        });
+    }).on('select2:close', () => {
+        $(document).off('scroll.select2');
+    });
+
+    function formatState(state) {
+        if (!state.id) {
+            return state.text;
+        }
+        var contactId = $(state.element).data('id');
+
+        var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
+        var $state = $(
+            '<span style="display: flex; justify-content: space-between; align-items: center;">' +
+                '<span style="flex-grow: 1;">' + state.text + '</span>' +
+                '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
+                '<i class="' + $(state.element).data('icon') + '"></i>' +
+            '</a>' +
+            '</span>'
+        );
+        console.log("STATE", $state);
+        return $state;
     }
+
+    var getSpouse = $('#validationDefault13');
+    getSpouse.select2({
+        placeholder: 'Search...',
+        templateResult: formatState,
+        templateSelection: formatState
+    }).on('select2:open', () => {
+        $('.select2-results .new-contact-btn').remove();
+        $(".select2-results").prepend(
+            '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+        );
+
+        // Add scroll event listener to close Select2 on scroll
+        $(document).on('scroll.select2', function() {
+            getSpouse.select2('close');
+        });
+    }).on('select2:close', () => {
+        // Remove scroll event listener when Select2 is closed
+        $(document).off('scroll.select2');
+    });
+
+    window.openContactModalAndCloseSelect = function() {
+        $("#createContactModal").modal('show');
+        getSpouse.select2('close'); // Close the select2 dropdown
+    }
+
+    $('#contact_detail_form').submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                showToast("Contact update successfully");
+                updateContactform();
+            },
+            error: function(xhr, status, error) {
+                getCreateForm();
+                console.error('Error in contact creation:', error, xhr.responseJSON, status);
+                showToastError(xhr.responseJSON?.message);
+            }
+        });
+    });
+});
+
+function validateContactForm() {
+    let last_name = $("#last_name").val();
+    if (last_name.trim() === "") {
+        showToastError('Please enter last name');
+        return false;
+    }
+    $('#contactOwner').removeAttr('disabled');
+    return true;
+}
+
+
+
 </script>

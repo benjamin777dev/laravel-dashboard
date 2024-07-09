@@ -136,10 +136,10 @@
                 <div class="carousel-item">
 
                     <div class="main_form_div">
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion custom" id="accordionExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    <button class="accordion-button custom" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseReferral" aria-expanded="true"
                                         aria-controls="collapseReferral" >
                                         Referral Fee Paid Out?
@@ -322,7 +322,7 @@
 
                         </div>
                     </div>
-                    <div>
+                    <div class='pb-4'>
                         <label for="payable" class="common-label">Checks Payable to</label>
                         <select name="additional_charge" id="additonal_fee"
                             class="form-select second-step-common-select select-mb24" id="">

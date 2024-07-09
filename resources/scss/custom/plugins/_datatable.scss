@@ -24,14 +24,14 @@ div.dataTables_wrapper {
 table {
   &.dataTable {
     border-collapse: collapse !important;
-    &.dtr-inline.collapsed>tbody>tr>td {
+    &.dtr-inline.collapsed > tbody > tr > td {
       position: relative;
 
       &.dtr-control {
         padding-left: 30px;
 
         &:before {
-          top: 50%;
+          top: 39%;
           left: 5px;
           height: 14px;
           width: 14px;
@@ -52,3 +52,10 @@ table {
     }
   }
 }
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+

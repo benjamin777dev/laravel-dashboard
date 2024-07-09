@@ -3435,3 +3435,11 @@ input[type="button"]:hover {
 .customSelect2 .select2-selection__arrow {
     border-left: 4px solid red;
 }
+
+.accordion-button.custom{
+    padding: 20px;
+}
+
+.accordion.custom{
+    padding: 32px;
+}
