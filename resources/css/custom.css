@@ -3436,7 +3436,6 @@ input[type="button"]:hover {
     border-left: 4px solid red;
 }
 
-<<<<<<< HEAD
 .accordion-button.custom{
     padding: 20px;
 }
@@ -3444,7 +3443,7 @@ input[type="button"]:hover {
 .accordion.custom{
     padding: 32px;
 }
-=======
+
 .wrapper {
     position: relative;
     border: 1px solid black;
@@ -3478,4 +3477,3 @@ input[type="button"]:hover {
 .sticky-col.sticky-header {
     z-index: 3; 
 } */
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044

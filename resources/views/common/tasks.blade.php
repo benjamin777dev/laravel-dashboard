@@ -249,17 +249,9 @@
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-    </div>
-</div>
-
-
-
-=======
     </div>  
 </div>
 
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -576,22 +568,14 @@
 
     async function deleteTask(id = "", isremoveselected = false) {
         let updateids = removeAllSelected();
-<<<<<<< HEAD
-
-=======
         
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
         if (updateids === "" && id === 'remove_selected') {
             return;
         }
         if (isremoveselected) {
             id = undefined;
         }
-<<<<<<< HEAD
-
-=======
         
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
         if (updateids !== "") {
             console.log("id, isremoveselected", updateids, isremoveselected, id);
             const shouldDelete = await saveForm();
@@ -638,10 +622,6 @@
             console.error("error", err);
         }
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
 
     function toggleAllCheckboxes() {
         // console.log("yes it")

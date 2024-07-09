@@ -473,12 +473,8 @@ class DashboardController extends Controller
             $Modified_Id = $data['Modified_By']['id'];
             // Create a new Task record using the Task model
             $task = Task::create([
-<<<<<<< HEAD
-                'subject' =>  $subject ?? null,
-=======
                 'subject' => $subject,
                 'detail' => $detail,
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
                 'zoho_task_id' => $zoho_id,
                 'owner' => "1",
                 'status' =>$status ?? null,

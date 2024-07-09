@@ -134,20 +134,11 @@
                 <div class="carousel-item">
 
                     <div class="main_form_div">
-<<<<<<< HEAD
-                        <div class="accordion custom" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button custom" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseReferral" aria-expanded="true"
-                                        aria-controls="collapseReferral" >
-=======
                         <div class="accordion" id="accordionExample">
                             <!-- Referral Fee Paid Out -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReferral" aria-expanded="false" aria-controls="collapseReferral">
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
                                         Referral Fee Paid Out?
                                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">

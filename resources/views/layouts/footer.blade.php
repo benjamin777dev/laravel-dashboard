@@ -14,46 +14,41 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    var button = document.querySelector('.navbar-toggler');
-        var sidebar = document.querySelector('.vertical-menu');
+        var button = document.querySelector('.navbar-toggler');
+            var sidebar = document.querySelector('.vertical-menu');
 
-        button.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
+            button.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+
+            setTimeout(() => {
+
+                const modalSelectMap = [{
+                modalID: 'global-search',
+                selectElementId: 'global-search'
+                }, ];
+
+                modalSelectMap.forEach(({
+                    modalID,
+                    selectElementId
+                }) => {
+                    const selectElement = $(`#${selectElementId}`);
+                    showDropdown(modalID, selectElement);
+                });
+
+
+            $('#vertical-menu-btn').on('click', function (event) {
+                event.preventDefault();
+                $('body').toggleClass('sidebar-enable');
+                if ($(window).width() >= 992) {
+                    console.log($('body'))
+                    $('body').toggleClass('vertical-collpsed');
+                } else {
+                    $('body').removeClass('vertical-collpsed');
+                }
+            });
+
         });
-
-        setTimeout(() => {
-
-            const modalSelectMap = [{
-            modalID: 'global-search',
-            selectElementId: 'global-search'
-        }, ];
-
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
-        });
-<<<<<<< HEAD
-<<<<<<< HEAD
-        
-=======
-
-          $('#vertical-menu-btn').on('click', function (event) {
-            event.preventDefault();
-            $('body').toggleClass('sidebar-enable');
-            if ($(window).width() >= 992) {
-                console.log($('body'))
-                $('body').toggleClass('vertical-collpsed');
-            } else {
-                $('body').removeClass('vertical-collpsed');
-            }
-        });
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
-=======
-
->>>>>>> 0ab3b7fd3737dc00043f5b1f119f3a4c796255ca
     });
     function createTransaction(userContactData,contactData=null) {
         let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;

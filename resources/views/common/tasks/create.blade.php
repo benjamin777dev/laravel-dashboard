@@ -8,13 +8,6 @@
                         onclick="resetValidationTask('{{ $deal->id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
-<<<<<<< HEAD
-                    <p class="ddetailsText fw-normal">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="darea{{ $deal['id'] }}"
-                        rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error{{ $deal['id'] }}" class="text-danger"></div>
-                    <label class="dRelatedText mb-2">Related to...</label>
-=======
                     <p class="ddetailsText">Subject</p>
                     <input name="subject" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="sarea{{ $deal['id'] }}"
                         rows="4" class="dtextarea"></input>
@@ -24,7 +17,6 @@
                         rows="4" class="dtextarea"></textarea>
                     <div id="detail_error{{ $deal['id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
                             <option value="{{ $deal['zoho_deal_id'] }}" selected>
@@ -56,13 +48,6 @@
                     onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">
-<<<<<<< HEAD
-                <p class="ddetailsText fw-normal">Details</p>
-                <textarea name="subject" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="darea{{ $contact['id'] }}"
-                    rows="4" class="dtextarea"></textarea>
-                <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
-                <label class="dRelatedText mb-2">Related to...</label>
-=======
                 <p class="ddetailsText">Subject</p>
                 <input name="subject" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="sarea{{ $contact['id'] }}"
                     rows="4" class="dtextarea"></input>
@@ -72,7 +57,6 @@
                     rows="4" class="dtextarea"></textarea>
                 <div id="detail_error{{ $contact['id'] }}" class="text-danger"></div>
                 <p class="dRelatedText">Related to...</p>
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
                 <div class="btn-group dmodalTaskDiv">
                     <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
                         <option value="{{ $contact['zoho_contact_id'] }}" selected>
@@ -105,12 +89,6 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
-<<<<<<< HEAD
-                    <p class="ddetailsText fw-bolder">Details</p>
-                    <textarea name="subject" onkeyup="validateTextareaTask()" id="darea" rows="4" class="dtextarea"></textarea>
-                    <div id="subject_error" class="text-danger"></div>
-                    <label class="dRelatedText mb-2">Related to...</label>
-=======
                     <p class="ddetailsText">Subject</p>
                     <input name="subject" onkeyup="validateTextareaTask()" id="sarea" rows="4" class="dtextarea"></input>
                     <div id="subject_error" class="text-danger"></div>
@@ -118,7 +96,6 @@
                     <textarea name="detail" onkeyup="validateTextareaTask()" id="darea" rows="4" class="dtextarea"></textarea>
                     <div id="detail_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" id="related_to_rem_create"
                             name="related_to_task_dashboard" aria-label="Select Transaction">
@@ -161,8 +138,6 @@
         });
 
     });
-<<<<<<< HEAD
-=======
     window.resetValidationTask = function(id) {
         if (id) {
             document.getElementById("subject_error" + id).innerHTML = "";
@@ -175,12 +150,8 @@
              document.getElementById("detail_error").innerHTML = "";
             document.getElementById('darea').value = "";
         }
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
 
-
-<<<<<<< HEAD
-  
-=======
+    }
     window.validateTextareaTask = function(id) {
         if (id) {
             var textarea = document.getElementById('darea' + id);
@@ -225,7 +196,6 @@
         }
 
     }
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
     
     window.taskModuleSelected = function(selectedModule) {
         // console.log(accessToken,'accessToken')

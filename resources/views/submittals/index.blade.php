@@ -22,9 +22,7 @@
                                 @endif
                             </div>
                         </div>
-                        @if ($submittals->isEmpty())
-                            <p class="text-center notesAsignedText">No Submittal assigned</p>
-                        @else
+                      
                         @php
                         $contactHeader = [
                             "Submittal Name",
@@ -38,7 +36,6 @@
                         'id'=>'datatable_submittal',
                         "type" =>"submittal",
                       ])
-                        @endif
                     </div>
                 </div>
 

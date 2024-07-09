@@ -378,11 +378,7 @@ window.addCommonTask = function (id = "", type = "") {
 
     if (id) {
         var subject = document.getElementsByName("subject")[0].value;
-<<<<<<< HEAD
-        console.log(subject,'subject')
-=======
         var detail = document.getElementsByName("detail")[0].value;
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
         if (subject.trim() === "") {
             document.getElementById("subject_error" + id).innerHTML =
                 "Please enter subject";

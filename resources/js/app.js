@@ -58,18 +58,13 @@ File: Main Js File
     }
 
     function initLeftMenuCollapse() {
-        $("#vertical-menu-btn").on("click", function (event) {
+        $('#vertical-menu-btn').on('click', function (event) {
             event.preventDefault();
-            $("body").toggleClass("sidebar-enable");
+            $('body').toggleClass('sidebar-enable');
             if ($(window).width() >= 992) {
                 $('body').toggleClass('vertical-collpsed');
             } else {
                 $('body').removeClass('vertical-collpsed');
-
-                console.log($("body"));
-                $("body").toggleClass("vertical-collpsed");
-            } else {
-                $("body").removeClass("vertical-collpsed");
             }
         });
     }
