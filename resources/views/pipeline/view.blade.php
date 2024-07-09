@@ -25,7 +25,7 @@
                 <img src="{{ URL::asset('/images/delete.svg') }}" alt="Delete">
                 Delete
             </div> --}}
-            <a onclick="updateDataDeal('{{ $deal['id'] }}')">
+            <a id = "updateDeal" onclick="updateDataDeal('{{ $deal['id'] }}')">
                 <div class="input-group-text text-white justify-content-center ppipeBtn" id="savebutton"
                     data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-edit">
                     </i>

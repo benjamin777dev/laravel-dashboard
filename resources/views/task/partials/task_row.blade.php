@@ -3,8 +3,11 @@
     <div class="card-body p-3">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="m-0">
+                <h5 class="m-0">
                     <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
+                </h5>
+                <h6 class="m-0">
+                    <span class="text-dark">Detail: {{ $task['detail'] ?? 'General Detail' }}</span>
                 </h6>
                 <small class="text-muted">
                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
