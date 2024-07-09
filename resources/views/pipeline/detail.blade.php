@@ -38,7 +38,7 @@
                                     }
                                 }
                             @endphp
-                            <option value="{{ $contact['zoho_contact_id'] }}" {{ $selected }}>
+                            <option friday="friday" id="{{ $contact['zoho_contact_id'] }}" value="{{ $contact['zoho_contact_id'] }}" {{ $selected }} data-primary-contact="{{ json_encode($deal['Primary_Contact']) }}">
                                 {{ $contact['first_name'] }} {{ $contact['last_name'] }}
                             </option>
                         @endforeach
@@ -366,6 +366,70 @@
         fetchContactRole();
         getSubmittals();
         getNonTms();
+
+
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+        });
+        window.selectedGroupsArr = [];
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'selectedGroups';
+        hiddenInput.className  = 'validate';
+        document.getElementById('choices-multiple-remove-button').addEventListener('addItem', function(event) {
+            var selectedGroups = event.detail.value;
+            if (!selectedGroupsArr.includes(selectedGroups)) {
+                selectedGroupsArr.push({Primary_Contact:{id:selectedGroups}});
+            } else {
+                // If the value already exists, remove it from the array
+                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+            }
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+            console.log(selectedGroupsArr);
+
+        });
+        let selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        })
+        
+        // Add event listener for remove button
+        let removeGroupsArr = [];
+        
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedItemId = event.detail.value;
+            var removedItemData = null
+
+            console.log(event);
+            var removedItem={}
+            console.log("removedItemId",removedItemId);
+            deal.primary_contact = JSON.parse(deal.primary_contact)
+            var removedItemData = deal.primary_contact.find((val)=>val.Primary_Contact.id===removedItemId)
+           
+            console.log("removedItemData",removedItemData);
+            
+            if (selectedGroupsDefault.includes(removedItemData.Primary_Contact.id)) {
+                removedItem._delete=null
+                removedItem.id=removedItemData.id
+                removedItem.Primary_Contact=removedItemData.Primary_Contact
+                console.log("removedItem",removedItem);
+                // Perform your API hit here
+                // console.log("API hit for removed group: " + removedGroup);
+                selectedGroupsArr.push(removedItem);
+                $("#updateDeal").click();
+            }
+
+        });
+        document.getElementById('additionalFields').appendChild(hiddenInput);
+        var choicesDiv = document.querySelector('.choices[data-type="select-multiple"]');
+        if (choicesDiv) {
+            choicesDiv.classList.add('validate');
+        }
+        
+    })
+    
+   
+    $(document).ready(function() {
         var getLeadAgent = $('#leadAgent');
         getLeadAgent.select2({placeholder:"Searching.."});
         var getClientName = $('#validationDefault01');
