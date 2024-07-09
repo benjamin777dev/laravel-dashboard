@@ -260,7 +260,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
     }
 
     console.log("json_client_name_primary", json_client_name_primary);
-
+    // return;
     if (client_name_primary.length <= 0) {
         showToastError("Client Name Primary is required");
         isValid = false;
@@ -373,11 +373,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
             ) {
                 const element = json_client_name_primary[index];
                 formData.data[0].Primary_Contact = [];
-                formData.data[0].Primary_Contact.push({
-                    Primary_Contact: {
-                        id: element,
-                    },
-                });
+                formData.data[0].Primary_Contact.push(element);
             }
         }
         // Add TM_Name if tm_name is defined
