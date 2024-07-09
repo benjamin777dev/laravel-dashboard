@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title', 'Agent Commander | Contact Create')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 @section('content')
     @vite(['resources/css/custom.css'])
     @vite(['resources/js/toast.js'])

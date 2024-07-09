@@ -62,16 +62,14 @@ File: Main Js File
             event.preventDefault();
             $("body").toggleClass("sidebar-enable");
             if ($(window).width() >= 992) {
-<<<<<<< HEAD
                 $('body').toggleClass('vertical-collpsed');
             } else {
                 $('body').removeClass('vertical-collpsed');
-=======
+
                 console.log($("body"));
                 $("body").toggleClass("vertical-collpsed");
             } else {
                 $("body").removeClass("vertical-collpsed");
->>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
             }
         });
     }

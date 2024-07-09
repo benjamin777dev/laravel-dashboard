@@ -51,5 +51,7 @@
     <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
     @vite(['resources/js/dropdown.js'])
     @vite(['resources/js/datatable.js'])
+
+    @vite(['resources/js/contactroledatatable.js'])
  @endsection
     

@@ -51,16 +51,16 @@ var table = $('#datatable_pipe_transaction').DataTable({
     serverSide: true,
     columns: [
         {
-        data: null,
-        title: "Actions",
-        render: function (data, type, row) {
-            let lockIcon = "";
-            if (data.stage === "Under Contract") {
-                lockIcon = `<i class="fas fa-lock"></i>`;
-            } else {
-                lockIcon = `<span class="lock-placeholder"></span>`;
-            }
-            return `<div class="icon-container">
+            data: null,
+            title: "Actions",
+            render: function (data, type, row) {
+                let lockIcon = "";
+                if (data.stage === "Under Contract") {
+                    lockIcon = `<i class="fas fa-lock"></i>`;
+                } else {
+                    lockIcon = `<span class="lock-placeholder"></span>`;
+                }
+                return `<div class="icon-container">
                 ${lockIcon}
                 <a href="/pipeline-view/${data.id}" target='_blank'>
                     <img src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon" title="Transaction Details">
@@ -83,108 +83,108 @@ var table = $('#datatable_pipe_transaction').DataTable({
                 <span class="tooltiptext"></span>
                 <div class="createNoteModal${data.id}"></div>
             </div>`;
-        }
+            }
 
-    },
-    {
-        data: 'deal_name',
-        title: "Transaction",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
-                return `<span>${data || "N/A"}</span>`;
-            }
-            return `<span class="editable" data-name="deal_name" data-id="${row.id}" title="Click to edit">${data || "N/A"}</span>
+        },
+        {
+            data: 'deal_name',
+            title: "Transaction",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="deal_name" data-id="${row.id}" title="Click to edit">${data || "N/A"}</span>
                     <br><span class="editable fs-6" data-name="address" data-id="${row.id}" title="Click to edit">${row.address || "Address not available"}</span>`;
-        }
-    },
-    {
-        data: 'client_name_primary',
-        title: "Client Name",
-        render: function (data, type, row) {
-            return `<span>${data || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'stage',
-        title: "Status",
-        render: function (data, type, row) {
-            console.log(data, 'sdfsdhfshd')
-            if (row.stage === "Under Contract") {
-                return `<span style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}">${data || "N/A"}</span>`;
             }
-            return `<span class="editable" data-name="stage" style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}" data-id="${row.id}">${data || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'representing',
-        title: "Representing",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
+        },
+        {
+            data: 'client_name_primary',
+            title: "Client Name",
+            render: function (data, type, row) {
                 return `<span>${data || "N/A"}</span>`;
             }
-            return `<span class="editable" data-name="representing" data-id="${row.id}">${data || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'sale_price',
-        title: "Price",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
+        },
+        {
+            data: 'stage',
+            title: "Status",
+            render: function (data, type, row) {
+                console.log(data, 'sdfsdhfshd')
+                if (row.stage === "Under Contract") {
+                    return `<span style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}">${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="stage" style="color:${getTextColorForStage(data)}; background-color:${getColorForStage(data)}" data-id="${row.id}">${data || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'representing',
+            title: "Representing",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="representing" data-id="${row.id}">${data || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'sale_price',
+            title: "Price",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="sale_price" data-id="${row.id}">$${number_format(data, 0, '.', ',') || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'closing_date',
+            title: "Close Date",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${formateDate(data) || "N/A"}</span>`;
+                }
+                if (data || row.closing_date === null) {
+                    // Return the formatted date
+                    return `<span class="editable" data-name="closing_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+                }
+            }
+        },
+        {
+            data: 'commission',
+            title: "Commission",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="commission" data-id="${row.id}">${data || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'potential_gci',
+            title: "Potential GCI",
+            render: function (data, type, row) {
                 return `<span>${data || "N/A"}</span>`;
             }
-            return `<span class="editable" data-name="sale_price" data-id="${row.id}">$${number_format(data, 0, '.', ',') || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'closing_date',
-        title: "Close Date",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
-                return `<span>${formateDate(data) || "N/A"}</span>`;
+        },
+        {
+            data: 'pipeline_probability',
+            title: "Probability",
+            render: function (data, type, row) {
+                if (row.stage === "Under Contract") {
+                    return `<span>${data || "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="pipeline_probability" data-id="${row.id}">${data || "N/A"}%</span>`;
             }
-            if (data || row.closing_date === null) {
-                // Return the formatted date
-                return `<span class="editable" data-name="closing_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+        },
+        {
+            data: null,
+            title: "Probable GCI",
+            render: function (data, type, row) {
+                // Calculate probable GCI
+                var probableGCI = (row.sale_price ?? 0) * ((row.commission ?? 0) / 100) * ((row
+                    .pipeline_probability ?? 0) / 100);
+                return `$${number_format(probableGCI, 0, '.', ',')}`; // Format probableGCI as currency
             }
         }
-    },
-    {
-        data: 'commission',
-        title: "Commission",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
-                return `<span>${data || "N/A"}</span>`;
-            }
-            return `<span class="editable" data-name="commission" data-id="${row.id}">${data || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'potential_gci',
-        title: "Potential GCI",
-        render: function (data, type, row) {
-            return `<span>${data || "N/A"}</span>`;
-        }
-    },
-    {
-        data: 'pipeline_probability',
-        title: "Probability",
-        render: function (data, type, row) {
-            if (row.stage === "Under Contract") {
-                return `<span>${data || "N/A"}</span>`;
-            }
-            return `<span class="editable" data-name="pipeline_probability" data-id="${row.id}">${data || "N/A"}%</span>`;
-        }
-    },
-    {
-        data: null,
-        title: "Probable GCI",
-        render: function (data, type, row) {
-            // Calculate probable GCI
-            var probableGCI = (row.sale_price ?? 0) * ((row.commission ?? 0) / 100) * ((row
-                .pipeline_probability ?? 0) / 100);
-            return `$${number_format(probableGCI, 0, '.', ',')}`; // Format probableGCI as currency
-        }
-    }
     ],
     ajax: {
         url: '/pipeline_view', // Ensure this URL is correct
@@ -1081,7 +1081,8 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                             `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
                         );
                     }
-                });
+                }
+            );
 
             currentText = $(element).text(); // Set currentText when entering edit mode
             var dataName = $(element).data('name');
@@ -1103,7 +1104,7 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                 $(element).replaceWith(
                     `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
                     ${selectOptions}
-                </select>`
+                    </select>`
                 ).addClass('editing');
             }
 
@@ -1195,6 +1196,7 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
         });
         // Handle onchange event for select
         $('#datatable_tasks1 tbody').on('change', 'select.edit-select_pipe', function () {
+            console.log("yessdfhskdhfskdhfksjfh")
             exitEditMode(this); // Exit edit mode when a selection is made
         });
 
@@ -1203,6 +1205,218 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
             exitEditMode(this);
         });
     }
+
+
+});
+
+tableTaskspipe.on('draw.dt', function () {
+    $('.dealSelectPipe').each(function () {
+        $(this).select2({
+            theme: "bootstrap-5",
+            width: "resolve",
+            ajax: {
+                url: "/task/get-Modules",
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page || 1,
+                        limit: 5, // number of records to fetch initially
+                    };
+                },
+                processResults: function (data, params) {
+                    console.log(data.items, "showdropidddd");
+                    params.page = params.page || 1;
+                    return {
+                        results: data.items,
+                    };
+                },
+                cache: true,
+            },
+            templateResult: function (state) {
+                var NoRecord = "No Records Found";
+                if (
+                    (state?.children?.length === 0 &&
+                        state.text === "Contacts") ||
+                    (state?.children?.length === 0 &&
+                        state.text === "Deals")
+                ) {
+                    return $(
+                        '<span id="' +
+                        state.text +
+                        '">' +
+                        state.text +
+                        "</span>" +
+                        '<br><span class="no-records-found">' +
+                        NoRecord +
+                        "</span>"
+                    );
+                }
+                if (!state.id) {
+                    return state.text;
+                }
+                if (state.children) {
+                    return $(
+                        '<span id="' +
+                        state.text +
+                        '">' +
+                        state.text +
+                        "</span>"
+                    );
+                }
+
+                if (state.first_name || state.last_name) {
+                    return $(
+                        '<span data-module="' +
+                        state.zoho_module_id +
+                        '" id="' +
+                        state.zoho_contact_id +
+                        '">' +
+                        (state.first_name ?? "") +
+                        " " +
+                        (state.last_name ?? "") +
+                        "</span>"
+                    );
+                }
+
+                return $(
+                    '<span id="' +
+                    state.zoho_deal_id +
+                    '">' +
+                    state.deal_name +
+                    "</span>"
+                );
+            },
+            templateSelection: function (state) {
+                if (!state.id) {
+                    return state.text;
+                }
+
+                if (state.first_name || state.last_name) {
+                    return (
+                        (state.first_name ?? "") +
+                        " " +
+                        (state.last_name ?? "")
+                    );
+                }
+
+                return state.deal_name;
+            },
+        })
+    });
+    let select2data = document.getElementsByClassName(
+        "select2-selection__rendered"
+    );
+    Array.from(select2data).forEach((element) => {
+        element.innerHTML = element.title;
+    });
+});
+
+window.deleteTask = function (id = "", isremoveselected = false) {
+    let updateids = updateSelectedRowIds();
+
+    if (updateids === "" && id === 'remove_selected') {
+        return;
+    }
+    if (isremoveselected) {
+        id = undefined;
+    }
+
+    // Focus on the input field or select dropdown
+    $('#datatable_tasks1 tbody').find('input.edit-input, select.edit-input').focus();
+}
+
+
+// Function to handle exiting editing mode
+function exitEditMode(inputElement) {
+    var newValue = $(inputElement).val();
+    var dataName = $(inputElement).data('name');
+    var dataId = $(inputElement).data('id');
+    var datamodule = $(inputElement).data('module');
+    console.log(datamodule, 'sdhfsdfg')
+    if (dataName !== "related_to" && dataName !== "done_task") {
+        // Replace input or select with span
+        $(inputElement).replaceWith(
+            `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
+        ).removeClass('editing');
+
+    }
+
+    // Check if the value has changed
+    if (newValue !== currentText || dataName === "done_task") {
+
+        // Example AJAX call (replace with your actual endpoint and data):
+        $.ajax({
+            url: '/update-task-contact/' + dataId,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                id: dataId,
+                field: dataName,
+                value: newValue,
+                module: datamodule ?? "",
+            },
+            success: function (response) {
+                console.log('Updated successfully:', response);
+                if (response?.message) {
+                    showToast(response?.message);
+                    $('#datatable_tasks1').DataTable().ajax.reload();
+                }
+            },
+            error: function (error) {
+                console.error('Error updating:', error);
+                showToastError(error?.responseJSON?.error);
+                $('#datatable_tasks1').DataTable().ajax.reload();
+            }
+        });
+    }
+}
+
+// Click event to enter editing mode
+$('#datatable_tasks1 tbody').on('click', 'span.editable', function () {
+    enterEditMode(this);
+});
+$(document).on('change', '#checkAll', function () {
+    $('.task_checkbox').prop('checked', $(this).prop('checked'));
+});
+
+$('#update_changes_pipe').on("click", function () {
+    console.log("yesusususuus")
+    exitEditMode(this);
+})
+
+$('#delete_task_pipe').on("click", function () {
+    let dataid = $(this).data('id');
+    window.deleteTask(dataid)
+})
+
+$('.taskModalSaveBtn').on('click', function () {
+    console.log('testshddhfshdf');
+});
+
+$('.nav-link.dtabsbtn').on('click', function () {
+    var tab = $(this).attr('data-tab');
+    console.log(tab, 'tabbb')
+    tableTaskspipe.search(tab).draw();
+});
+
+// Keyup event to exit editing mode on Enter
+$('#datatable_tasks1 tbody').on('keyup', 'input.edit-input', function (event) {
+    if (event.key === "Enter") {
+        exitEditMode(this);
+    }
+});
+// Handle onchange event for select
+$('#datatable_tasks1 tbody').on('change', 'select.edit-select_pipe', function () {
+    exitEditMode(this); // Exit edit mode when a selection is made
+});
+
+// Blur event to exit editing mode when clicking away
+$('#datatable_tasks1 tbody').on('blur', 'input.edit-input', function () {
+    exitEditMode(this);
 });
 
 tableTaskspipe.on('draw.dt', function () {

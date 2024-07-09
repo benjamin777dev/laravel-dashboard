@@ -20,6 +20,9 @@
         button.addEventListener('click', function() {
             sidebar.classList.toggle('show');
         });
+
+        setTimeout(() => {
+
             const modalSelectMap = [{
             modalID: 'global-search',
             selectElementId: 'global-search'
@@ -32,6 +35,7 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdown(modalID, selectElement);
         });
+<<<<<<< HEAD
 <<<<<<< HEAD
         
 =======
@@ -47,6 +51,9 @@
             }
         });
 >>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
+=======
+
+>>>>>>> 0ab3b7fd3737dc00043f5b1f119f3a4c796255ca
     });
     function createTransaction(userContactData,contactData=null) {
         let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;

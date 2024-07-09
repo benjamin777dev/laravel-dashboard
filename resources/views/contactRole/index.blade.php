@@ -38,5 +38,3 @@
 </div> <!-- end row -->
     <!-- Responsive Table js -->
     <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
-
-    <!-- Init js -->
