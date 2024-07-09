@@ -31,6 +31,7 @@
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
                         id="checkbox_task" /></th>
                 <th scope="col">Subject</th>
+                <th scope="col">Detail</th>
                 <th scope="col">Related To</th>
                 <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
@@ -48,8 +49,16 @@
                             <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
                                 id="editableText{{ $task['id'] }}">
                                 {{ $task['subject'] ?? 'N/A' }}
-                                <i class="fas fa-pencil-alt pencilIcon"
+                                <i class="fas fa-pencil-alt pencilIcon editSubject"
                                     onclick="makeEditable('{{ $task['id'] }}','subject','{{ $task['zoho_task_id'] }}','editableText{{ $task['id'] }}')"></i>
+                            </p>
+                        </td>
+                        <td>
+                            <p class="dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText"
+                                id="editableText{{ $task['id'] }}">
+                                {{ $task['detail'] ?? 'N/A' }}
+                                <i class="fas fa-pencil-alt pencilIcon editDetail"
+                                    onclick="makeEditable('{{ $task['id'] }}','detail','{{ $task['zoho_task_id'] }}','editableText{{ $task['id'] }}')"></i>
                             </p>
                         </td>
                         <td>
@@ -240,11 +249,17 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
 </div>
 
 
 
+=======
+    </div>  
+</div>
+
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var defaultTab = "{{ $tab }}";
@@ -561,14 +576,22 @@
 
     async function deleteTask(id = "", isremoveselected = false) {
         let updateids = removeAllSelected();
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
         if (updateids === "" && id === 'remove_selected') {
             return;
         }
         if (isremoveselected) {
             id = undefined;
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
         if (updateids !== "") {
             console.log("id, isremoveselected", updateids, isremoveselected, id);
             const shouldDelete = await saveForm();
@@ -615,7 +638,10 @@
             console.error("error", err);
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
 
     function toggleAllCheckboxes() {
         // console.log("yes it")
@@ -680,7 +706,61 @@
 
                 // Create the pencil icon element
                 const pencilIcon = document.createElement('i');
-                pencilIcon.className = 'fas fa-pencil-alt pencilIcon';
+                pencilIcon.className = 'fas fa-pencil-alt pencilIcon editSubject';
+                pencilIcon.onclick = function() {
+                    makeEditable(id, textfield, zohoID, newParagraph.id);
+                };
+
+                // Append the pencil icon to the new paragraph
+                newParagraph.appendChild(pencilIcon);
+
+                return newParagraph;
+            }
+
+            // Create a new input element
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.id = 'editableInput' + id;
+            newInput.value = originalText;
+            textElement.parentNode.replaceChild(newInput, textElement);
+
+            const inputElement = document.getElementById('editableInput' + id);
+            inputElement.focus();
+
+            // Handler function for replacing input with paragraph
+            function replaceInputWithParagraph() {
+                const newParagraph = createParagraph(id, inputElement.value);
+                inputElement.parentNode.replaceChild(newParagraph, inputElement);
+            }
+
+            inputElement.addEventListener('blur', function() {
+                const newText = inputElement.value.trim();
+                replaceInputWithParagraph();
+            });
+
+            inputElement.addEventListener('change', function() {
+                const newText = inputElement.value.trim();
+                if (newText !== originalText) {
+                    updateText(newText, textfield, zohoID);
+                }
+                replaceInputWithParagraph();
+            });
+        }
+
+        if (textfield === "detail") {
+            const textElement = document.getElementById(textid);
+            const originalText = textElement.textContent.trim();
+
+            // Function to create a new paragraph element
+            function createParagraph(id, text) {
+                const newParagraph = document.createElement('p');
+                newParagraph.id = 'editableText' + id;
+                newParagraph.classList = "dFont900 dFont14 d-flex justify-content-between dMt16 dSubjectText";
+                newParagraph.textContent = text;
+
+                // Create the pencil icon element
+                const pencilIcon = document.createElement('i');
+                pencilIcon.className = 'fas fa-pencil-alt pencilIcon editDetail';
                 pencilIcon.onclick = function() {
                     makeEditable(id, textfield, zohoID, newParagraph.id);
                 };

@@ -32,7 +32,21 @@
             const selectElement = $(`#${selectElementId}`);
             showDropdown(modalID, selectElement);
         });
+<<<<<<< HEAD
         
+=======
+
+          $('#vertical-menu-btn').on('click', function (event) {
+            event.preventDefault();
+            $('body').toggleClass('sidebar-enable');
+            if ($(window).width() >= 992) {
+                console.log($('body'))
+                $('body').toggleClass('vertical-collpsed');
+            } else {
+                $('body').removeClass('vertical-collpsed');
+            }
+        });
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044
     });
     function createTransaction(userContactData,contactData=null) {
         let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;

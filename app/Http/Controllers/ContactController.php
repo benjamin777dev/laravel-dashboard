@@ -402,7 +402,7 @@ class ContactController extends Controller
                     }
                     if (!empty($validEmai)) {
                         $contactInstanceforJson->email = $validEmail ?? null;
-
+                        $contactInstanceforJson->has_email = true;
                     }
                     if (!empty($frontData['data'][0]['Email'])) {
                         $contactInstanceforJson->email = $frontData['data'][0]['Email'] ?? null;
@@ -531,6 +531,7 @@ class ContactController extends Controller
             if (isset($input['secondry_address']) && $input['secondry_address'] !== '') {
                 $rules['secondry_address'] = 'required|string|max:255';
             }
+            
             // Validate the request data using the defined rules
             $validatedData = $request->validate($rules);
 
@@ -605,6 +606,20 @@ class ContactController extends Controller
                     ];
                 }
             }
+             if($responseData['data'][0]['Email']!=''){
+                $responseData['data'][0]['Has_Email']=true;
+                $validatedData['has_email'] =true;
+            }else{
+                 $responseData['data'][0]['Has_Email']=false;
+                $validatedData['has_email'] =false;
+            }
+            if($responseData['data'][0]['Mailing_Street']!=''||$responseData['data'][0]['Mailing_City']!=''||$responseData['data'][0]['Mailing_State']!=''||$responseData['data'][0]['Mailing_Zip']!=''){
+                $responseData['data'][0]['Has_Address']=true;
+                $validatedData['has_address'] =true;
+            }else{
+                 $responseData['data'][0]['Has_Address']=false;
+                $validatedData['has_address'] =false;
+            }
             if (empty($responseData["data"][0]["Groups"])) {
                 unset($responseData["data"][0]["Groups"]);
             }
@@ -663,7 +678,7 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
-            
+           
             $contactInstance = Contact::where('id', $id)->first();
             if (!$contactInstance) {
                 return redirect('/contacts');
@@ -706,6 +721,8 @@ class ContactController extends Controller
                 $contactInstance->lead_source_detail = $validatedData['lead_source_detail'] ?? null;
                 $contactInstance->envelope_salutation = $validatedData['envelope_salutation'] ?? null;
                 $contactInstance->relationship_type = $validatedData['relationship_type'] ?? null;
+                $contactInstance->has_email =$validatedData['has_email']??null;
+                $contactInstance->has_address =$validatedData['has_address']??null;
                 $contactInstance->isContactCompleted = true;
                 $contactInstance->isInZoho = true;
 

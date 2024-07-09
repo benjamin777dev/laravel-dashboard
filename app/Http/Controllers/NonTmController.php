@@ -141,7 +141,7 @@ class NonTmController extends Controller
             'hasW9Provided' => isset($jsonData['data'][0]['Has_the_W-9_been_provided']) ? $jsonData['data'][0]['Has_the_W-9_been_provided'] : null,
             'homeWarrentyAmount' => isset($jsonData['data'][0]['Home_Warranty_Amount']) ? $jsonData['data'][0]['Home_Warranty_Amount'] : null,
             'homeWarrentyDescription' => isset($jsonData['data'][0]['Home_Warranty_Description']) ? $jsonData['data'][0]['Home_Warranty_Description'] : null,
-            'additionalFeesAmount' => isset($jsonData['data'][0]['Additonal_Fees_Amount']) ? $jsonData['data'][0]['Additional_Fees_Amount'] : null,
+            'additionalFeesAmount' => isset($jsonData['data'][0]['Additonal_Fees_Amount']) ? $jsonData['data'][0]['Additonal_Fees_Amount'] : null,
             'additionalFeesDescription' => isset($jsonData['data'][0]['Additional_Fees_Description']) ? $jsonData['data'][0]['Additional_Fees_Description'] : null,
             'isNonTmCompleted' => ($status == true) ? true : false,
             "dealId" => isset($jsonData['data'][0]['Related_Transaction']['id']) ? $jsonData['data'][0]['Related_Transaction']['id'] : null,

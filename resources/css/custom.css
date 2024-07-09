@@ -3436,6 +3436,7 @@ input[type="button"]:hover {
     border-left: 4px solid red;
 }
 
+<<<<<<< HEAD
 .accordion-button.custom{
     padding: 20px;
 }
@@ -3443,3 +3444,38 @@ input[type="button"]:hover {
 .accordion.custom{
     padding: 32px;
 }
+=======
+.wrapper {
+    position: relative;
+    border: 1px solid black;
+    white-space: nowrap;
+}
+
+.sticky-col {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    background-color: #fff; /* Adjust as needed */
+    z-index: 1;
+    border-right: 1px solid #ddd; /* Optional: Add border for better separation */
+}
+
+.groupTable {
+    max-height: 400px; /* Adjust as needed */
+    margin-top: 20px; /* Optional: add margin to adjust table position */
+    position: relative;
+}
+
+/* .sticky-head {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: #fff; 
+    z-index: 1;
+    border-bottom: 1px solid #ddd; 
+}
+
+.sticky-col.sticky-header {
+    z-index: 3; 
+} */
+>>>>>>> a0526608e2d820022d25ce62cdb41a585e059044

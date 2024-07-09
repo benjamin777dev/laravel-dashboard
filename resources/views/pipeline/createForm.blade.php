@@ -5,21 +5,35 @@
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
             <p class="npinfoText">Transaction Details</p>
             <form class="row g-3" id="additionalFields">
-                <div class="col-md-6 selectSearch">
-                    <label for="validationDefault01" class="form-label nplabelText">Client Name</label>
-                    {{-- <input type="text" placeholder="Enter Client’s name" class="form-control npinputinfo"
-                    id="validationDefault01" required value="{{ $deal['contactId'] }}"> --}}
-                    <select style="display:none;" id="validationDefault01" required>
-                        <option value="" disabled {{ empty( $deal['client_name_primary']) ? 'selected' : '' }}>Please select
-                        </option>
+                <div class="row d-flex justify-content-center mt-100">
+                <div>
+                    <label for="validationDefault02" class="form-label nplabelText mt-2">Client Name</label>
+                    <select id="choices-multiple-remove-button" class ="validate" placeholder="Select Client Name"
+                        multiple>
                         @foreach ($contacts as $contact)
-                            <option value="{{ $contact }}"
-                                {{ $deal['client_name_primary'] == $contact['first_name'] . ' ' . $contact['last_name'] ? 'selected' : '' }}>
+                            @php
+                                $selected = ''; // Initialize variable to hold 'selected' attribute
+                                if (isset($deal['primary_contact'])) {
+                                    $primary_contact = json_decode($deal['primary_contact'], true); // Decode the primary contact JSON string into an array
+
+                                    foreach ($primary_contact as $primaryContact) {
+                                        if (
+                                            isset($primaryContact['Primary_Contact']['id']) &&
+                                            $primaryContact['Primary_Contact']['id'] === $contact['zoho_contact_id']
+                                        ) {
+                                            $selected = 'selected'; // If IDs match, mark the option as selected
+                                            break; // Exit loop once a match is found
+                                        }
+                                    }
+                                }
+                            @endphp
+                            <option value="{{ $contact['zoho_contact_id'] }}" {{ $selected }}>
                                 {{ $contact['first_name'] }} {{ $contact['last_name'] }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+            </div>
                 <div class="col-md-6">
                     <label for="validationDefault02" class="form-label nplabelText">Representing</label>
                     <select class="form-select npinputinfo validate" id="validationDefault02" required
@@ -271,6 +285,34 @@
 
         checkValidate(deal);
         setTmName();
+
+
+
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+        });
+        window.selectedGroupsArr = [];
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'selectedGroups';
+        hiddenInput.className  = 'validate';
+        document.getElementById('choices-multiple-remove-button').addEventListener('change', function(event) {
+            var selectedGroups = event.detail.value;
+            if (!selectedGroupsArr.includes(selectedGroups)) {
+                selectedGroupsArr.push(selectedGroups);
+            } else {
+                // If the value already exists, remove it from the array
+                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+            }
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+            console.log(selectedGroupsArr);
+
+        });
+        document.getElementById('additionalFields').appendChild(hiddenInput);
+        var choicesDiv = document.querySelector('.choices[data-type="select-multiple"]');
+        if (choicesDiv) {
+            choicesDiv.classList.add('validate');
+        }
     });
     window.setTmName = function () {
         var users = @json($users);

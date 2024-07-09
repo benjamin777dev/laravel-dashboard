@@ -130,7 +130,7 @@
                                         <i class="fas fa-plus plusicon"></i> New Task
                                     </button>
 
-                                    <a href="/tasks" class="btn btn-sm btn-dark">View Tasks</a>
+                                    <a href="/task" class="btn btn-sm btn-dark">View Tasks</a>
                                     <div class="d-flex flex-column">
                                         @if ($upcomingTasks->take(5)->count() > 0)
                                             @foreach ($upcomingTasks->take(5) as $task)
@@ -141,6 +141,9 @@
                                                                 <h5 class="m-0">
                                                                     <span class="text-dark">{{ $task['subject'] ?? 'General Task' }}</span>
                                                                 </h5>
+                                                                <h6 class="m-0">
+                                                                    <span class="text-dark">Detail: {{ $task['detail'] ?? 'General Detail' }}</span>
+                                                                </h6>
                                                                 <small class="text-muted">
                                                                     Due: {{ \Carbon\Carbon::parse($task['due_date'])->format('M d, Y') ?? 'N/A' }},
                                                                     related to
@@ -290,6 +293,7 @@
                                     </div>
                             </div>
                             @endforeach
+                            <a href="{{ route('show.notes') }}" style="text-align:right;">see more...</a>
                         @else
                             <div class="text-center">
                                 <p>No recent notes found</p>

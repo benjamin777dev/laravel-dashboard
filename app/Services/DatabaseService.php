@@ -775,13 +775,13 @@ class DatabaseService
             // Apply missing field conditions
             if ($missingField) {
                 if (isset($missingField['email']) && $missingField['email'] !== false) {
-                    $contacts->whereNull('email');
+                    $contacts->whereNull('email')->orWhere('email','==',' ');
                 }
                 if (isset($missingField['mobile']) && $missingField['mobile'] !== false) {
-                    $contacts->whereNull('phone');
+                    $contacts->whereNull('phone')->orWhere('phone','==',' ');
                 }
                 if (isset($missingField['abcd']) && $missingField['abcd'] !== false) {
-                    $contacts->whereNull('abcd');
+                    $contacts->whereNull('abcd')->orWhere('abcd','==',' ');
                 }
             }
 
@@ -978,7 +978,7 @@ class DatabaseService
         }
     }
 
-    public function retrieveNotes(User $user, $accessToken)
+    public function retrieveNotes(User $user, $accessToken,$paginate)
     {
 
         try {
@@ -986,7 +986,7 @@ class DatabaseService
             $tasks = Note::with('userData')
                 ->with('dealData')
                 ->where('owner', $user->id)
-                ->orderBy('updated_at', 'desc')->get();
+                ->orderBy('updated_at', 'desc')->paginate($paginate);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -1256,7 +1256,7 @@ class DatabaseService
                 'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : null,
                 'property_type' => isset($zohoDeal['Property_Type']) ? $zohoDeal['Property_Type'] : null,
                 'potential_gci' => isset($zohoDeal['Potential_GCI']) ? $zohoDeal['Potential_GCI'] : null,
-
+                'primary_contact'=>isset($zohoDeal['Primary_Contact']) ? $zohoDeal['Primary_Contact'] : null,
                 'review_gen_opt_out' => isset($zohoDeal['Review_Gen_Opt_Out']) ? $zohoDeal['Review_Gen_Opt_Out'] : false,
                 'deadline_em_opt_out' => isset($zohoDeal['Deadline_Emails']) ? $zohoDeal['Deadline_Emails'] : false,
                 'status_rpt_opt_out' => isset($zohoDeal['Status_Reports']) ? $zohoDeal['Status_Reports'] : false,

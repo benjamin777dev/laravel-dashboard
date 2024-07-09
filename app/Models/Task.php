@@ -23,6 +23,7 @@ class Task extends Model
         'what_id',
         'status',
         'subject',
+        'detail',
         'owner',
         'zoho_task_id',
         'created_time',
