@@ -211,15 +211,15 @@
             <p class="npinfoText">Mailing Address</p>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="validationDefault01" class="form-label nplabelText">Address line 1</label>
+                    <label for="validationDefault01" class="form-label nplabelText">Address</label>
                     <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
                         class="form-control npinputinfo" id="validationDefault03">
                 </div>
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <label for="validationDefault02" class="form-label nplabelText">Address line 2</label>
                     <input type="text" name="address_line2" class="form-control npinputinfo"
                         id="validationDefault02">
-                </div>
+                </div> --}}
 
                 <div class="col-md-6">
                     <label for="validationDefault03" class="form-label nplabelText">City</label>

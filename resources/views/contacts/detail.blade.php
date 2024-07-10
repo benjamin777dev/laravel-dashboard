@@ -205,51 +205,7 @@
             }
         });
 
-        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-            removeItemButton: true,
-            maxItemCount: null,
-            searchResultLimit: 500,
-            renderChoiceLimit: -1,
-        });
-        let selectedGroupsArr = [];         
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'selectedGroups';
-
-        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(
-            event) {
-            var selectedGroups = event.detail.value;
-            if (!selectedGroupsArr.includes(selectedGroups)) {
-                selectedGroupsArr.push(selectedGroups);
-            } else {
-                // If the value already exists, remove it from the array
-                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-            }
-            hiddenInput.value = JSON.stringify(selectedGroupsArr);
-            console.log(selectedGroupsArr);
-
-        });
-        //selected groups default
-        let selectedGroupsDefault = [];
-        $("#choices-multiple-remove-button_test option:selected").each(function() {
-            selectedGroupsDefault.push($(this).val());
-        })
-        // Add event listener for remove button
-        let removeGroupsArr = [];
-        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-            var removedGroup = event.detail.value;
-            console.log(removedGroup,"removedGroup");
-            if (selectedGroupsDefault.includes(removedGroup)) {
-                // Perform your API hit here
-                // console.log("API hit for removed group: " + removedGroup);
-                deleteAssignGroup(removedGroup);
-            }
-
-        });
-
-
-        // This will log an array of selected values
-        document.getElementById('contact_detail_form').appendChild(hiddenInput);
+        
 
         var getReffered = $('#validationDefault14')
         getReffered.select2({
