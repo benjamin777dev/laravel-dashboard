@@ -108,6 +108,7 @@
         @php
             $transHeader = [
                 "",
+                "",
                 "Transaction",
                 "Client Name",
                 "Status",

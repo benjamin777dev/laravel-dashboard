@@ -224,16 +224,14 @@
                 </div>
             </div>
         </div>
-            <div class="col-sm-12 dtasksection">
-                <div class="d-flex justify-content-between">
-                    <p class="dFont800 dFont15">Notes</p>
-                </div>
-                <div class="row">
-                <div class="d-flex flex-column">
+        <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mt-0">Notes</h4>
+                    <div class="d-flex flex-column">
                         @if ($notes->count() > 0)
                             @foreach ($notesInfo as $note)
-                                <div class="card mb-2 shadow-sm border-0">
-                                    <div class="card-body p-3">
+                                <div class=" mb-2 ">
+                                    <div class="p-3">
                                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                                             <div class="w-100">
                                                 <h5 class="m-0">
@@ -301,7 +299,10 @@
                         @endif
                     </div>
                 </div>
+                </div>
             </div>
+
+          
 
             <div class="table-responsive dtranstiontable mt-2" id="badDates">
             @if ($needsNewDate['count'] > 0)
@@ -311,6 +312,7 @@
             @endif
             @php
                  $transHeader = [
+                    "",
                 "Transaction",
                 "Client Name",
                 "Status",

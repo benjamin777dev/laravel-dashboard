@@ -17,19 +17,17 @@
     <div id="loader" style="display: none;">
         <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid"> 
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        <div class="col-sm-12 dtasksection">
-            <div class="d-flex justify-content-between">
-                <p class="dFont800 dFont15">Notes</p>
-            </div>
-            <div class="row">
-                <div class="d-flex flex-column">
+        <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mt-0">Notes</h4>
+                    <div class="d-flex flex-column">
                     @if ($notes->count() > 0)
                         @foreach ($notesInfo as $note)
-                            <div class="card mb-2 shadow-sm border-0">
-                                <div class="card-body p-3">
+                            <div class="">
+                                <div class=" p-3">
                                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                                         <div class="w-100">
                                             <h5 class="m-0">
@@ -95,8 +93,9 @@
                         </div>
                     @endif
                 </div>
+                </div>
             </div>
-        </div>
+
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">

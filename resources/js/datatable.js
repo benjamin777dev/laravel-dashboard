@@ -51,6 +51,12 @@ var table = $('#datatable_pipe_transaction').DataTable({
     serverSide: true,
     columns: [
         {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: ''
+        },
+        {
             data: null,
             title: "Actions",
             render: function (data, type, row) {
@@ -199,6 +205,7 @@ var table = $('#datatable_pipe_transaction').DataTable({
             return data?.data; // Return the data array or object from your response
         }
     },
+  
     initComplete: function () {
         // Function to handle editing mode
         var currentText;
@@ -341,6 +348,9 @@ var table = $('#datatable_pipe_transaction').DataTable({
 });
 
 
+
+
+
 $('#pipelineSearch').on('keyup', function () {
     table.search(this.value).draw();
 });
@@ -362,10 +372,16 @@ var tableDashboard = $('#datatable_transaction').DataTable({
     serverSide: true,
     columns: [
         {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: ''
+        },
+        {
             data: 'deal_name',
             title: "Transaction",
             render: function (data, type, row) {
-                return `<span >${data}</span>`;
+                return `<span class='icon-container' >${data}</span>`;
             }
         },
         {
@@ -1830,7 +1846,14 @@ var tableContact = $('#datatable_contact').DataTable({
     responsive: true,
     serverSide: true,
     order: [0, 'desac'],
-    columns: [{
+    columns: [
+        {
+            className: 'dt-control',
+            orderable: false,
+            data: null,
+            defaultContent: ''
+        },
+        {
         data: null,
         title: "Actions",
         render: function (data, type, row) {

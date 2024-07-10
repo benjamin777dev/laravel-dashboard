@@ -92,6 +92,7 @@
         @php
             $contactHeader = [
                 "",
+                "",
                 "Full name",
                 "ABCD",
                 "Relationship Type",
