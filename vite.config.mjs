@@ -42,6 +42,8 @@ export default defineConfig({
                 'resources/js/toast.js',
                 'resources/js/dropdown.js',
                 'resources/js/datatable.js',
+                'resources/js/contactroledatatable.js',
+                'resources/js/submittaldatatable.js',
             ],
             refresh: true,
         }),
