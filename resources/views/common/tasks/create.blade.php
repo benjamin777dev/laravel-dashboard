@@ -5,17 +5,17 @@
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        onclick="resetValidationTask('{{ $deal->id }}')" aria-label="Close"></button>
+                        onclick="resetValidationTask('{{ $deal->zoho_deal_id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
                     <p class="ddetailsText">Subject</p>
-                    <input name="subject" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="sarea{{ $deal['id'] }}"
+                    <input name="subject" onkeyup="validateTextareaTask('{{ $deal->zoho_deal_id }}');" id="sarea{{ $deal['zoho_deal_id'] }}"
                         rows="4" class="dtextarea"></input>
-                        <div id="subject_error{{ $deal['id'] }}" class="text-danger"></div>
+                        <div id="subject_error{{ $deal['zoho_deal_id'] }}" class="text-danger"></div>
                     <p class="ddetailsText">Details</p>
-                    <textarea name="detail" onkeyup="validateTextareaTask('{{ $deal->id }}');" id="darea{{ $deal['id'] }}"
+                    <textarea name="detail" onkeyup="validateTextareaTask('{{ $deal->zoho_deal_id }}');" id="darea{{ $deal['zoho_deal_id'] }}"
                         rows="4" class="dtextarea"></textarea>
-                    <div id="detail_error{{ $deal['id'] }}" class="text-danger"></div>
+                    <div id="detail_error{{ $deal['zoho_deal_id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
                         <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">
@@ -45,17 +45,17 @@
             <div class="modal-header border-0">
                 <p class="modal-title dHeaderText">Create New Task</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    onclick="resetValidationTask('{{ $contact->id }}')" aria-label="Close"></button>
+                    onclick="resetValidationTask('{{ $contact->zoho_contact_id }}')" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">
                 <p class="ddetailsText">Subject</p>
-                <input name="subject" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="sarea{{ $contact['id'] }}"
+                <input name="subject" onkeyup="validateTextareaTask('{{ $contact->zoho_contact_id }}');" id="sarea{{ $contact['zoho_contact_id'] }}"
                     rows="4" class="dtextarea"></input>
-                    <div id="subject_error{{ $contact['id'] }}" class="text-danger"></div>
+                    <div id="subject_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                 <p class="ddetailsText">Details</p>
-                <textarea name="detail" onkeyup="validateTextareaTask('{{ $contact->id }}');" id="darea{{ $contact['id'] }}"
+                <textarea name="detail" onkeyup="validateTextareaTask('{{ $contact->zoho_contact_id }}');" id="darea{{ $contact['zoho_contact_id'] }}"
                     rows="4" class="dtextarea"></textarea>
-                <div id="detail_error{{ $contact['id'] }}" class="text-danger"></div>
+                <div id="detail_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                 <p class="dRelatedText">Related to...</p>
                 <div class="btn-group dmodalTaskDiv">
                     <select class="form-select dmodaltaskSelect" id="related_to" name="related_to" aria-label="Select Transaction">

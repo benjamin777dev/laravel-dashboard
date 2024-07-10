@@ -1,9 +1,9 @@
 <div class="table-responsive">
     <div class="container-fluid">
         <div class="col-md-12">
-          <table id="example" class="table bg-grey table-bordered nowrap" cellspacing="0" width="100%">
-              <thead class="thead_con_design">
-                  <tr>
+            <table id="example" class="table bg-grey table-bordered nowrap" cellspacing="0" width="100%">
+                <thead class="thead_con_design">
+                    <tr>
                     <th>
                         <div></div>
                     </th>
@@ -25,7 +25,7 @@
                             </div>
                         </div>
                     </th>
-    
+
                     <th>
                         <div onclick="toggleSort('stage',this)" class="commonFlex">
                         <p class="mb-0">Status&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
@@ -35,7 +35,7 @@
                         </div>
                         </div>
                     </th>
-    
+
                     <th>
                         <div onclick="toggleSort('representing',this)" class="commonFlex">
                         <p class="mb-0">Representing</p>
@@ -45,8 +45,8 @@
                         </div>
                         </div>
                     </th>
-    
-    
+
+
                     <th>
                         <div onclick="toggleSort('sale_price',this)" class="commonFlex">
                         <p class="mb-0">Price</p>
@@ -56,7 +56,7 @@
                         </div>
                         </div>
                     </th>
-    
+
                     <th>
                         <div onclick="toggleSort('closing_date',this)" class="commonFlex">
                         <p class="mb-0">Close Date</p>
@@ -92,7 +92,7 @@
                             <i class="bx bx-caret-down down-arrow"></i>
                         </div>
                             </div>
-    
+
                     </th>
                     <th>
                         <div onclick="toggleSort('closing_date',this)" class="commonFlex">
@@ -103,8 +103,8 @@
                         </div>
                         </div>
                     </th>
-                  </tr>
-              </thead>
+                    </tr>
+                </thead>
                 <tbody class="table_pipeline">
                     @include('pipeline.pipelineload', ['module' => $deals])
                     <tr class="spinner" style="display: none;">
@@ -115,7 +115,7 @@
                         </td>
                     </tr>
                 </tbody>
-          </table>
+            </table>
         </div>
       </div>
 </div>
@@ -214,6 +214,25 @@
 </div>
 <script>
     $(document).ready(function() {
+
+        document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('mouseenter', function () {
+                const tooltip = this.querySelector('.tooltiptext');
+                const tableRect = document.getElementById('example').getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                if (tooltipRect.right > tableRect.right) {
+                    tooltip.style.left = 'auto';
+                    tooltip.style.right = '0';
+                    tooltip.style.transform = 'none';
+                } else {
+                    tooltip.style.left = '50%';
+                    tooltip.style.right = 'auto';
+                    tooltip.style.transform = 'translateX(-50%)';
+                }
+            });
+        });
+
         let isLoading = false;
         let currentPage = 1;
         let searchInput = $('#pipelineSearch');

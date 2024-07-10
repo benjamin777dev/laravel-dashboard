@@ -1,54 +1,63 @@
 @foreach ($contacts as $contact)
     <tr>
         <td>
-
-            <div class="tooltip-wrapper">
-                <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
-                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
-                        title="Contact Details">
-                    <span class="tooltiptext">Contact Details</span>
-                </a>
-            </div>
-
-            <div class="tooltip-wrapper">
-                <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon" class="ppiplinecommonIcon"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $contact['id'] }}" title="Add Task">
-                <span class="tooltiptext">Add Task</span>
-                {{-- task create model --}}
-                @include('common.tasks.create', ['contact' => $contact, 'type' => 'Contacts'])
-            </div>
-            <div class="tooltip-wrapper">
-                <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon"
-                    data-bs-toggle="modal" data-bs-target="#"
-                    onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
-                <span class="tooltiptext">View Notes</span>
-                {{-- fetch details notes related 0 --}}
-                <div class="modal fade testing" onclick="event.preventDefault();"
-                    id="notefetchrelatedContact{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
-                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                        <div class="modal-content dtaskmodalContent">
-                            <div class="modal-header border-0">
-                                <p class="modal-title dHeaderText">Notes</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    onclick="resetValidation()" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body dtaskbody" id="notesContainer{{ $contact['zoho_contact_id'] }}">
-
-                            </div>
-
-
+            <table>
+                <tr>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <a href="{{ url('/contacts-view/' . $contact['id']) }}" target="_blank">
+                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon" class="ppiplinecommonIcon"
+                                    title="Contact Details">
+                                <span class="tooltiptext">Contact Details</span>
+                            </a>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </td>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/splitscreen.svg') }}" alt="Split screen icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $contact['id'] }}" title="Add Task">
+                            <span class="tooltiptext">Add Task</span>
+                            {{-- task create model --}}
+                            @include('common.tasks.create', ['contact' => $contact, 'type' => 'Contacts'])
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/sticky_note.svg') }}" alt="Sticky note icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#"
+                                onclick="fetchNotesForContact('{{ $contact['id'] }}','{{ $contact['zoho_contact_id'] }}')">
+                            <span class="tooltiptext">View Notes</span>
+                            {{-- fetch details notes related 0 --}}
+                            <div class="modal fade testing" onclick="event.preventDefault();"
+                                id="notefetchrelatedContact{{ $contact['zoho_contact_id'] }}" data-bs-backdrop="static"
+                                data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered deleteModal">
+                                    <div class="modal-content dtaskmodalContent">
+                                        <div class="modal-header border-0">
+                                            <p class="modal-title dHeaderText">Notes</p>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                onclick="resetValidation()" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body dtaskbody" id="notesContainer{{ $contact['zoho_contact_id'] }}">
 
-            <div class="tooltip-wrapper">
-                <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
-                    data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
-                <span class="tooltiptext">Add Note</span>
-                @include('common.notes.create', ['contact' => $contact, 'type' => 'Contacts'])
-            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tooltip-wrapper">
+                            <img src="{{ URL::asset('/images/noteBtn.svg') }}" alt="Note icon" class="ppiplinecommonIcon"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
+                            <span class="tooltiptext">Add Note</span>
+                            @include('common.notes.create', ['contact' => $contact, 'type' => 'Contacts'])
+                        </div>
+                    </td>
+                </tr>
+            </table> 
         </td>
         <td>{{ $contact['first_name']}} {{$contact['last_name'] }}</td>
         <td>{{ $contact['abcd'] ?? '-' }}</td>
