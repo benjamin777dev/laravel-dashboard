@@ -87,7 +87,7 @@ class GroupController extends Controller
                 'zoho_group_id' => $data['id']
             ]);
 
-            return redirect('/group')->with('success', 'Group added successfully');
+            return redirect('/group')->with('message', 'Group added successfully');
         } catch (\Throwable $e) {
             Log::error("Error creating group: " . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'An error occurred while creating the group.']);

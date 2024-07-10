@@ -208,15 +208,15 @@
             <p class="npinfoText">Mailing Address</p>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="validationDefault13" class="form-label nplabelText">Address line 1</label>
+                    <label for="validationDefault13" class="form-label nplabelText">Address</label>
                     <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
                         class="form-control npinputinfo" id="validationDefault13">
                 </div>
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <label for="validationDefault14" class="form-label nplabelText">Address line 2</label>
                     <input type="text" name="address_line2" class="form-control npinputinfo"
                         id="validationDefault14">
-                </div>
+                </div> --}}
                 <div class="col-md-6">
                     <label for="validationDefault15" class="form-label nplabelText">City</label>
                     <input type="text" value="{{ $contact['mailing_city'] }}" name="city"
@@ -316,7 +316,7 @@
 ])
 <script>
     $(document).ready(function() {
-                var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
             removeItemButton: true,
             maxItemCount: null,
             searchResultLimit: 500,
