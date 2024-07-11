@@ -198,7 +198,8 @@
                 <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
                 <input type="text" 
                     class="form-control npinputinfo" 
-                    id="validationDefault15" 
+                    id="validationDefault15"
+                    @if($deal['locked_s']) disabled @endif 
                     required
                     value="{{$deal['pipeline_probability']}}">
             </div>
@@ -260,7 +261,8 @@
             <div class="col-md-6">
                 <label for="tmPreference" class="form-label nplabelText">TM Preference</label>
                 <select class="form-select npinputinfo" 
-                    id="tmPreference" 
+                    id="tmPreference"
+                    @if($deal['locked_s']) disabled @endif 
                     required 
                     onchange="setTmName(this)">
                     <option value="CHR TM" {{ trim($deal['tm_preference']) == 'CHR TM' ? 'selected' : '' }}>CHR TM</option>
@@ -369,7 +371,7 @@
             console.log(selectedGroupsArr);
 
         });
-        let selectedGroupsDefault = [];
+        window.selectedGroupsDefault = [];
         $("#choices-multiple-remove-button option:selected").each(function() {
             selectedGroupsDefault.push($(this).val());
         })
