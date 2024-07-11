@@ -181,13 +181,11 @@
                         <td>
                         </td>
                         <td>
-                            <div class="tooltip-wrapper">
-                                <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                    <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
-                                        class="ppiplinecommonIcon" title="Transaction Details">
-                                    <span class="tooltiptext">Transaction Details</span>
-                                </a>
-                            </div>
+                            <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+                                <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
+                                    class="ppiplinecommonIcon">
+                            </a>
+                            
                         </td>
                         <td>
                             <div class="tooltip-wrapper">
@@ -342,3 +340,8 @@
     </div>
 @endif
 
+<script>
+    $(document).ready(function(){
+       $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>

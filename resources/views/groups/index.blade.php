@@ -4,6 +4,27 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
+    @if(session('message'))
+    <div class="alert alert-info">
+        {{ session('message') }}
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <div class="container full-width-container">
         <div class="dbgroupsFlex">
             <p class="ngText">Database Groups</p>

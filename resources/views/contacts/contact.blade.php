@@ -1,8 +1,8 @@
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 ">
     <div class="col col-contact">
         <div class="webResponsiveDiv">
-            <table id="example" style="width: 100vw;" class="table table-nowrap"
-                cellspacing="0" width="100%">
+            <table id="example" class="table bg-grey table-bordered nowrap" cellspacing="0" width="100%">
+              
                 @if ($apend === false)
                     <thead class="thead_con_design">
                         <tr>
