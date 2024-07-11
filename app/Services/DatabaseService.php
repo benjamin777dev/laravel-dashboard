@@ -796,10 +796,10 @@ class DatabaseService
             $tasks = Task::where('what_id', $dealId)->with(['dealData']);
             if ($tab == 'Overdue') {
                 $tasks
-                    ->where('due_date', '<', now());
+                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
             } elseif ($tab == 'Upcoming') {
                 $tasks
-                    ->where('due_date', '>=', now());
+                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
             } elseif ($tab == 'In Progress') {
                 $tasks->where([['due_date', null],['status','!=','Completed']]);
             } elseif ($tab == 'Completed') {
@@ -821,10 +821,10 @@ class DatabaseService
             $tasks = Task::where('who_id', $dealId)->with(['contactData']);
             if ($tab == 'Overdue') {
                 $tasks
-                    ->where('due_date', '<', now());
+                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
             } elseif ($tab == 'Upcoming') {
                 $tasks
-                    ->where('due_date', '>=', now());
+                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
             } elseif ($tab == 'In Progress') {
                 $tasks->where([['due_date', null],['status','!=','Completed']]);
             } elseif ($tab == 'Completed') {

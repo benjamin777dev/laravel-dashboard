@@ -315,6 +315,8 @@
     'type' => 'Contacts',
 ])
 <script>
+    contact=@json($contact);
+    groups = @json($groups);
     $(document).ready(function() {
         var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
             removeItemButton: true,
@@ -349,10 +351,15 @@
         let removeGroupsArr = [];
         multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
             var removedGroup = event.detail.value;
+            contact.groups_data = contact.groups_data
+            console.log("contact.groups_data",contact.groups_data);
+            var removedContactgroupId = groups.find((val)=>val.zoho_group_id===removedGroup)
+            var removedItemData = contact.groups_data.find((val)=>val.groupId===removedContactgroupId.id&&val.contactId === contact.id)
+            console.log("removedItemData",removedItemData,selectedGroupsDefault);
             if (selectedGroupsDefault.includes(removedGroup)) {
                 // Perform your API hit here
                 // console.log("API hit for removed group: " + removedGroup);
-                deleteAssignGroup(removedGroup);
+                deleteAssignGroup(removedItemData.zoho_contact_group_id);
             }
 
         });

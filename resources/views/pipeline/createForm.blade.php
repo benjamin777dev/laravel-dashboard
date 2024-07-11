@@ -296,16 +296,48 @@
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
         hiddenInput.className  = 'validate';
-        document.getElementById('choices-multiple-remove-button').addEventListener('change', function(event) {
+        document.getElementById('choices-multiple-remove-button').addEventListener('addItem', function(event) {
             var selectedGroups = event.detail.value;
             if (!selectedGroupsArr.includes(selectedGroups)) {
-                selectedGroupsArr.push(selectedGroups);
+                selectedGroupsArr.push({Primary_Contact:{id:selectedGroups}});
             } else {
                 // If the value already exists, remove it from the array
                 selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
             }
             hiddenInput.value = JSON.stringify(selectedGroupsArr);
             console.log(selectedGroupsArr);
+
+        });
+        window.selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        })
+        
+        // Add event listener for remove button
+        let removeGroupsArr = [];
+        
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedItemId = event.detail.value;
+            var removedItemData = null
+
+            console.log(event);
+            var removedItem={}
+            console.log("removedItemId",removedItemId);
+            deal.primary_contact = JSON.parse(deal.primary_contact)
+            var removedItemData = deal.primary_contact.find((val)=>val.Primary_Contact.id===removedItemId)
+           
+            console.log("removedItemData",removedItemData);
+            
+            if (selectedGroupsDefault.includes(removedItemData.Primary_Contact.id)) {
+                removedItem._delete=null
+                removedItem.id=removedItemData.id
+                removedItem.Primary_Contact=removedItemData.Primary_Contact
+                console.log("removedItem",removedItem);
+                // Perform your API hit here
+                // console.log("API hit for removed group: " + removedGroup);
+                selectedGroupsArr.push(removedItem);
+                $("#updateDeal").click();
+            }
 
         });
         document.getElementById('additionalFields').appendChild(hiddenInput);
