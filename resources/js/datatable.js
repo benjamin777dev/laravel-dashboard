@@ -1050,107 +1050,8 @@ var tableTasks = $('#datatable_tasks').DataTable({
 });
 
 tableTasks.on('draw.dt', function () {
-    $('.dealTaskSelect').each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 &&
-                        state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>" +
-                        '<br><span class="no-records-found">' +
-                        NoRecord +
-                        "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                        state.zoho_module_id +
-                        '" id="' +
-                        state.zoho_contact_id +
-                        '">' +
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "") +
-                        "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                    state.zoho_deal_id +
-                    '">' +
-                    state.deal_name +
-                    "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        })
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealTaskSelect");
+    window.showDropdownForId("",dealTask);
 });
 
 var tableTaskspipe = $('#datatable_tasks1').DataTable({
@@ -1422,113 +1323,14 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
 });
 
 tableTaskspipe.on('draw.dt', function () {
-    $('.dealSelectPipe').each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 &&
-                        state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>" +
-                        '<br><span class="no-records-found">' +
-                        NoRecord +
-                        "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                        state.zoho_module_id +
-                        '" id="' +
-                        state.zoho_contact_id +
-                        '">' +
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "") +
-                        "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                    state.zoho_deal_id +
-                    '">' +
-                    state.deal_name +
-                    "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        })
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealSelectPipe");
+    window.showDropdownForId("",dealTask);
+ 
 });
 
 
 window.deleteTask = async function (id = "", isremoveselected = false) {
     let updateids = updateSelectedRowIds();
-    console.log(id,'iiddddididididi')
 
     if (updateids === "" && id === 'remove_selected') {
         return;
@@ -1567,8 +1369,8 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
     });
 
     if (id) {
-        $("#datatable_contact_processing").css("display", "block");
-        $("#datatable_pipe_transaction").css("display", "block");
+        $("#datatable_tasks1_processing").css("display", "block");
+        $("#datatable_tasks_processing").css("display", "block");
         $.ajax({
             url: "/delete-task/" + ids,
             method: 'DELETE',
@@ -1581,8 +1383,9 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
             success: function (response) {
                 showToast("Deleted successfully");
                 $('#datatable_tasks1').DataTable().ajax.reload();
-                $("#datatable_contact_processing").css("display", "none");
-                $("#datatable_pipe_transaction").css("display", "none");
+                $('#datatable_tasks').DataTable().ajax.reload();
+                $("#datatable_tasks1_processing").css("display", "none");
+                $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
                 showToastError(xhr.responseText);

@@ -14,8 +14,6 @@
                 </p>
                 
         <form class="row g-3" id="additionalFields">
-            
-            
             <div class="row d-flex justify-content-center mt-100">
                 <div>
                     <label for="validationDefault02" class="form-label nplabelText mt-2">Client Name</label>
@@ -173,7 +171,6 @@
                 </select>
             </div>
         </form>
-    
             </div>
         </div>
 
@@ -471,6 +468,38 @@
     
    
     $(document).ready(function() {
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
         var getLeadAgent = $('#leadAgent');
         getLeadAgent.select2({placeholder:"Searching.."});
         var getClientName = $('#validationDefault01');
