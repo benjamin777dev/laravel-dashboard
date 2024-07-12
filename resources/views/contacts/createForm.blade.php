@@ -357,7 +357,13 @@
         var getReffered = $('#validationDefault14')
         getReffered.select2({
             placeholder: 'Search...',
-        })
+        }).on('select2:open', () => {
+        $(document).on('scroll.select2', function() {
+            getReffered.select2('close');
+        });
+    }).on('select2:close', () => {
+        $(document).off('scroll.select2');
+    });
 
 
         function formatState(state) {
@@ -385,14 +391,24 @@
             templateResult: formatState,
             templateSelection: formatState
         }).on('select2:open', () => {
-            // Remove existing button to avoid duplicates
-            $('.select2-results .new-contact-btn').remove();
+        $('.select2-results .new-contact-btn').remove();
+        $(".select2-results").prepend(
+            '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+        );
 
-            // Append the button
-            $(".select2-results").prepend(
-                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-            );
+        // Add scroll event listener to close Select2 on scroll
+        $(document).on('scroll.select2', function() {
+            getSpouse.select2('close');
         });
+    }).on('select2:close', () => {
+        // Remove scroll event listener when Select2 is closed
+        $(document).off('scroll.select2');
+    });
+
+    window.openContactModalAndCloseSelect = function() {
+        $("#createContactModal").modal('show');
+        getSpouse.select2('close'); // Close the select2 dropdown
+    };
 
         window.openContactModal = function() {
             $("#createContactModal").modal('show');
