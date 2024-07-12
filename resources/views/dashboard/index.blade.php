@@ -18,7 +18,7 @@
         <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
     </div>
     <div class="container-fluid">
-        <div class="loader" id="loaderfor" style="display: none;"></div>
+                <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         @if ($needsNewDate['count'] > 0)
             <div class="alert alert-danger text-center">
@@ -65,8 +65,6 @@
                 </div>
             </div>
         </div>
-
-        
         <div class="section pt-0 pb-4">
             <div class="row">
                 <div class="col-md-12">
@@ -224,6 +222,7 @@
                 </div>
             </div>
         </div>
+
         <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mt-0">Notes</h4>
@@ -298,43 +297,9 @@
                             </div>
                         @endif
                     </div>
+                
                 </div>
-                </div>
-            </div>
-
-          
-
-            <div class=" dtranstiontable mt-2" id="badDates">
-            @if ($needsNewDate['count'] > 0)
-                <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
-            @else
-                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
-            @endif
-            @php
-                 $transHeader = [
-                    "",
-                "Transaction",
-                "Client Name",
-                "Status",
-                "Representing",
-                "Price",
-                "Close Date",
-                "Commission",
-                "Potential GCI",
-                "Probability",
-                "Probable GCI"
-            ]
-            @endphp
-            @component('components.common-table', [
-                'th' => $transHeader,
-                'id'=>'datatable_transaction',
-                'commonArr' =>$needsNewDate,
-                "type" =>"dash-pipe-transaction",
-             ])
-             @endcomponent
-            </div>
         </div>
-
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">
