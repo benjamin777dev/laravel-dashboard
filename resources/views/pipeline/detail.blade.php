@@ -342,30 +342,68 @@
     </div>
 </div>
 {{-- contact roles --}}
-<div class="contact_role_table_pipeline">                     
-</div>
+@php
+            $contactRoleHeader = [
+                "Role",
+                "Name",
+                "Phone",
+                "Email",
+            ]
+        @endphp
+        <div class="dtranstiontable mt-2" id="badDates">
+                @component('components.common-table', [
+                    'th' => $contactRoleHeader,
+                    'id' => 'contact_role_table_pipeline',
+                ])
+                @endcomponent
+       
+        </div>
 
 {{-- Add New Submittal --}}
-<div class="showsubmittal">
-    
+@php
+            $submittalTableHeader = [
+                "Submittal Name",
+                "Submittal Type",
+                "Owner",
+                "Created Time",
+            ]
+        @endphp
+<div class="showsubmittalTable">
+                @component('components.common-table', [
+                    'th' => $submittalTableHeader,
+                    'id' => 'submittal_table_pipeline',
+                ])
+                @endcomponent
+       
 </div>
 {{-- Add Non-TM --}}
+@php
+            $nonTMTableHeader = [
+                "Number",
+                "Close Date",
+                "Created Time",
+                "No Non-TM assigned",
+            ]
+        @endphp
 @if ($deal['tm_preference'] == 'Non-TM')
-<div class="showNonTm"></div>
+<div class="showNonTmTable"></div>
+@component('components.common-table', [
+                    'th' => $nonTMTableHeader,
+                    'id' => 'nonTm_table_pipeline',
+                ])
+                @endcomponent
+       
 </div>
 @endif
 @vite(['resources/js/pipeline.js'])
-{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"> --}}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-@vite(['resources/js/submittaldatatable.js'])
+
+
 <script>
     dealId = @json($dealId);
     deal=@json($deal);
     $(document).ready(function() {
-        fetchContactRole();
-        getSubmittals();
-        getNonTms();
 
 
         var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
@@ -476,43 +514,8 @@
             tm_name_select.appendChild(option);
         }
     };
-    function fetchContactRole() {
-        $.ajax({
-            url: `{{ url('/get/deal/contact/role/${dealId}')}}`,
-            method: 'GET',
-            success: function(data) {
-                const card = $('.contact_role_table_pipeline').html(data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-    function getSubmittals () {
-        $.ajax({
-            url: `{{ url('/submittal/${dealId}')}}`,
-            type: 'GET',
-            success: function (response) {
-                $(".showsubmittal").html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            },
-        });
-    };
-    function getNonTms () {
-        $.ajax({
-            url: `{{ url('/nontms/${dealId}')}}`,
-            type: 'GET',
-            success: function (response) {
-                $(".showNonTm").html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-            },
-        });
-    };
+
+  
+
 
 </script>

@@ -52,6 +52,5 @@
     @vite(['resources/js/dropdown.js'])
     @vite(['resources/js/datatable.js'])
 
-    @vite(['resources/js/contactroledatatable.js'])
  @endsection
     

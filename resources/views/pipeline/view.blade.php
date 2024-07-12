@@ -125,7 +125,7 @@
     </div>
     {{-- information form --}}
     <div class="updatePipelineform">
-       
+       @include('pipeline.detail')
     </div>
 
     
@@ -259,22 +259,22 @@
         });
 
     }
-    function getCreateForm() {
-        $.ajax({
-            url: `{{ url('/pipeline/detail/form/') }}/${dealId}`,
-            method: 'GET',
-            success: function(data) {
-                 if (data.redirect) {
-                    window.location.href = data.redirect;
-                }else{
-                    $('.updatePipelineform').html(data);
-                }                 
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
+    // function getCreateForm() {
+    //     $.ajax({
+    //         url: `{{ url('/pipeline/detail/form/') }}/${dealId}`,
+    //         method: 'GET',
+    //         success: function(data) {
+    //              if (data.redirect) {
+    //                 window.location.href = data.redirect;
+    //             }else{
+    //                 $('.updatePipelineform').html(data);
+    //             }                 
+    //         },
+    //         error: function(xhr, status, error) {
+    //             console.error('Error:', error);
+    //         }
+    //     });
+    // }
     
 </script>
 @endif

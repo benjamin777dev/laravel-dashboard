@@ -1,4 +1,5 @@
-
+const urlParts = window.location.pathname.split('/'); // Split the URL by '/'
+const contactId = urlParts.pop();
 function number_format(number, decimals, dec_point, thousands_sep) {
     // Function to format number with commas for thousands and specified decimals
     number = parseFloat(number).toFixed(decimals);
@@ -347,8 +348,191 @@ var table = $('#datatable_pipe_transaction').DataTable({
     }
 });
 
+//contact role table pipeline
+var tableContactRole = $('#contact_role_table_pipeline').DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    columns: [
+        // {
+        //     className: 'dt-control',
+        //     orderable: false,
+        //     data: null,
+        //     defaultContent: ''
+        // },
+       
+        {
+            data: 'name',
+            title: "Name",
+            render: function (data, type, row) {
+               
+                return `<span class='icon-container' >${data}</span>`
+            }
+        },
+        {
+            data: 'role',
+            title: "Role",
+            render: function (data, type, row) {
+                return `<span>${data}</span>`;
+            }
+        },
+        {
+            data: 'phone',
+            title: "Phone",
+            render: function (data, type, row) {
+                return `<span>${data}</span>`;
+            }
+        },
+        {
+            data: 'email',
+            title: "Email",
+            render: function (data, type, row) {
+                
+                return `<span>${data}</span>`;
+            }
+        },
+
+    ],
+    ajax: {
+        url: `/get/deal/contact/role/${contactId}`, // Ensure this URL is correct
+        type: 'GET', // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            request.page = (request.start / request.length) + 1;
+            request.search = request.search.value;
+        },
+        dataSrc: function (data) {
+            return data?.data; // Return the data array or object from your response
+        }
+    },
 
 
+  
+    
+});
+
+//submittal table pipeline
+
+var subbmittalPipelineTable = $('#submittal_table_pipeline').DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    columns: [
+        {
+            data: 'submittalName',
+            title: 'Submittal Name',
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalName" data-id="${row.id}">${data}</span>`;
+            }
+        },
+        {
+            data: 'submittalType',
+            title: 'Submittal Type',
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+            }
+        },
+        {
+            data: 'user_data.name',
+            title: 'Owner',
+            render: function (data, type, row) {
+                console.log(data, 'shdfhsdhf')
+                return `<span class="editable" data-name="phone" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+            }
+        },
+        {
+            data: 'created_at',
+            title: 'Created Time',
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="created_at" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+            }
+        },
+
+    ],
+
+    ajax: {
+        url: '/submittal/' + contactId, // Ensure this URL is correct
+        type: 'GET', // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            request.stage = $('#related_to_stage').val(),
+            request.tab = "In Progress";
+            request.page = (request.start / request.length) + 1;
+            request.search = request.search.value;
+
+        },
+        dataSrc: function (data) {
+            console.log(data, 'data is hreeeee')
+            return data?.data; // Return the data array or object from your response
+        }
+    },
+});
+
+//non-TM table pipeline
+var subbmittalPipelineTable = $('#nonTm_table_pipeline').DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    columns: [
+        {
+            data: 'name',
+            title: 'Number',
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalName" data-id="${row.id}">${data}</span>`;
+            }
+        },
+        {
+            data: 'closed_date',
+            title: 'Close Date',
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+            }
+        },
+        {
+            data: 'created_at',
+            title: 'Created Time',
+            render: function (data, type, row) {
+                console.log(data, 'shdfhsdhf')
+                return `<span class="editable" data-name="phone" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
+            }
+        },
+        {
+            data: null,
+            title: '',
+            render: function (data, type, row) {
+                return `<a class="col-md-1" href="/nontm-view/${row.id}"><div ><img
+                        src="/images/open.svg" alt="Open icon" class="ppiplinecommonIcon"
+                        title="Non-TM Details"></div></a> 
+                `
+                ;
+            }
+        },
+
+    ],
+
+    ajax: {
+        url: '/nontms/' + contactId, // Ensure this URL is correct
+        type: 'GET', // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            request.stage = $('#related_to_stage').val(),
+            request.tab = "In Progress";
+            request.page = (request.start / request.length) + 1;
+            request.search = request.search.value;
+
+        },
+        dataSrc: function (data) {
+            console.log('data', data)
+            return data?.data; // Return the data array or object from your response
+        }
+    },
+});
 
 
 $('#pipelineSearch').on('keyup', function () {
@@ -609,8 +793,7 @@ var tableDashboard = $('#datatable_transaction').DataTable({
 
 
 
-const urlParts = window.location.pathname.split('/'); // Split the URL by '/'
-const contactId = urlParts.pop();
+
 
 var tableTasks = $('#datatable_tasks').DataTable({
     paging: true,

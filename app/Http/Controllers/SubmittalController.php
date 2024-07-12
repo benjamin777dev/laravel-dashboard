@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use DataTables;
 
 
 
@@ -32,7 +33,10 @@ class SubmittalController extends Controller
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-            return view('submittals.index', compact('deal','submittals'))->render();
+            // echo "<>"
+            // return view('submittals.index', compact('deal','submittals'))->render(); 
+            return Datatables::of($submittals)->make(true);
+
         } catch (\Throwable $th) {
             return $th;
             throw $th;
