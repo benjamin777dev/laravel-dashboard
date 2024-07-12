@@ -319,114 +319,14 @@
     'type' => 'Contacts',
 ])
 <script>
+    contact=@json($contact);
+    groups = @json($groups);
     $(document).ready(function() {
-        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-            removeItemButton: true,
-            maxItemCount: null,
-            searchResultLimit: 500,
-            renderChoiceLimit: -1,
-        });
-        let selectedGroupsArr = [];         
-        const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'selectedGroups';
-
-        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(
-            event) {
-            var selectedGroups = event.detail.value;
-            if (!selectedGroupsArr.includes(selectedGroups)) {
-                selectedGroupsArr.push(selectedGroups);
-            } else {
-                // If the value already exists, remove it from the array
-                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-            }
-            hiddenInput.value = JSON.stringify(selectedGroupsArr);
-            console.log(selectedGroupsArr);
-
-        });
-        //selected groups default
-        let selectedGroupsDefault = [];
-        $("#choices-multiple-remove-button_test option:selected").each(function() {
-            selectedGroupsDefault.push($(this).val());
-        })
-        // Add event listener for remove button
-        let removeGroupsArr = [];
-        multipleCancelButton?.passedElement?.element?.addEventListener('removeItem', function(event) {
-            var removedGroup = event.detail.value;
-            if (selectedGroupsDefault.includes(removedGroup)) {
-                // Perform your API hit here
-                // console.log("API hit for removed group: " + removedGroup);
-                deleteAssignGroup(removedGroup);
-            }
-
-        });
-        // This will log an array of selected values
-        document.getElementById('contact_detail_form').appendChild(hiddenInput);
-        var getReffered = $('#validationDefault14')
-        getReffered.select2({
-            placeholder: 'Search...',
-        })
-        function formatState(state) {
-            if (!state.id) {
-                return state.text;
-            }
-            var contactId = $(state.element).data('id');
-
-            var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
-            var $state = $(
-                '<span style="display: flex; justify-content: space-between; align-items: center;">' +
-                    '<span style="flex-grow: 1;">' + state.text + '</span>' +
-                    '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
-                    '<i class="' + $(state.element).data('icon') + '"></i>' +
-                '</a>' +
-                '</span>'
-            );
-            console.log("STATE", $state);
-            return $state;
-        }
-
-        var getSpouse = $('#validationDefault13');
-        getSpouse.select2({
-            placeholder: 'Search...',
-            templateResult: formatState,
-            templateSelection: formatState
-        }).on('select2:open', () => {
-            // Remove existing button to avoid duplicates
-            $('.select2-results .new-contact-btn').remove();
-
-            // Append the button
-            $(".select2-results").prepend(
-                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-            );
-        });
-
-        window.openContactModal = function() {
-            $("#createContactModal").modal('show');
-        }
-        $('#contact_detail_form').submit(function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            // Serialize form data
-            var formData = $(this).serialize();
-            // console.log(JSON.parse(formData));
-            // return;
-            // AJAX post request
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: formData,
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    showToast("Contact update successfully")
-                    updateContactform();
-                },
-                error: function(xhr, status, error) {
-                    getCreateForm();
-                    console.error('Error in contact creation:', error,xhr.responseJSON, status);
-                    showToastError(xhr.responseJSON?.message)
-                }
-            });
-        });
+    var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+        removeItemButton: true,
+        maxItemCount: null,
+        searchResultLimit: 500,
+        renderChoiceLimit: -1,
     });
 
     let selectedGroupsArr = [];         
@@ -442,7 +342,6 @@
             selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
         }
         hiddenInput.value = JSON.stringify(selectedGroupsArr);
-        console.log(selectedGroupsArr);
     });
 
     let selectedGroupsDefault = [];
@@ -486,7 +385,6 @@
             '</a>' +
             '</span>'
         );
-        console.log("STATE", $state);
         return $state;
     }
 
@@ -529,7 +427,7 @@
             },
             error: function(xhr, status, error) {
                 getCreateForm();
-                console.error('Error in contact creation:', error, xhr.responseJSON, status);
+                // console.error('Error in contact creation:', error, xhr.responseJSON, status);
                 showToastError(xhr.responseJSON?.message);
             }
         });

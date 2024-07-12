@@ -304,7 +304,7 @@
 
           
 
-            <div class="table-responsive dtranstiontable mt-2" id="badDates">
+            <div class=" dtranstiontable mt-2" id="badDates">
             @if ($needsNewDate['count'] > 0)
                 <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
             @else

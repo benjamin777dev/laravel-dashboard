@@ -63,6 +63,7 @@ class PipelineController extends Controller
             'allstages' => $allstages,
             'retrieveModuleData' => $retrieveModuleData,
             'getdealsTransaction' => $deals,
+            'allDeals'=>$allDeals,
         ]);
 
         if ($request->ajax()) {
@@ -197,16 +198,23 @@ class PipelineController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
+        $users = User::all();
         $zoho->access_token = $accessToken;
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $allStages = config('variables.dealStages');
+
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         
         
         
-        return view('pipeline.view', compact('deal', 'dealId', 'notesInfo', 'retrieveModuleData', 'tab'))->render();
+        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab'))->render();
+
 
     }
 
@@ -366,7 +374,7 @@ class PipelineController extends Controller
             }else{
                 $zohoDeal= $zoho->createZohoDeal($jsonData);
             }
-
+            Log::error("zoho deal response",[$zohoDeal]);
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
@@ -685,7 +693,9 @@ class PipelineController extends Controller
 
         // Fetch contact roles
         $contactRoles = $deal->getContactRoles();
+        return Datatables::of($contactRoles)->make(true);
 
-        return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
+
+        // return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }

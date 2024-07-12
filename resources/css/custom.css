@@ -540,6 +540,7 @@ div.dataTables_processing>div:last-child>div {
 .dnotesBottomIcon {
     position: fixed;
     bottom: 63px;
+    z-index: 999999;
     right: 26px;
     padding: 19px;
     background: #222;

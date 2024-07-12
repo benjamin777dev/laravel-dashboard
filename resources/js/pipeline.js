@@ -1,6 +1,6 @@
 // Function to add or remove validation class
 window.toggleValidation = function (element, addValidation) {
-    console.log(element, addValidation, "Toggle");
+    // console.log(element, addValidation, "Toggle");
     if (addValidation) {
         element.classList.add("validate");
     } else {
@@ -261,7 +261,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
 
     console.log("json_client_name_primary", json_client_name_primary);
     // return;
-    if (client_name_primary.length <= 0) {
+    if (client_name_primary.length <= 0 && window.selectedGroupsDefault <= 0) {
         showToastError("Client Name Primary is required");
         isValid = false;
     }
