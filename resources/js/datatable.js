@@ -859,13 +859,13 @@ var tableTasks = $('#datatable_tasks').DataTable({
                 if (row.status !== "Completed") {
                     return `<div class="d-flex btn-save-del">
                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                        id="update_changes" data-name="done_task" data-id="${row.id}"
+                                        id="update_changes" onclick="doneTask(this)" data-name="done_task" data-id="${row.id}"
                                         >
                                         <i class="fas fa-hdd plusicon"></i>
                                         Done
                                     </div>
                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                        id="btnGroupAddon" data-bs-toggle="modal"
+                                        id="btnGroupAddon"  onclick="deleteTaskContact(this)"  data-bs-toggle="modal" data-id="${row.zoho_task_id}"
                                         data-bs-target="#deleteModalId${row.zoho_task_id}">
                                         <i class="fas fa-trash-alt plusicon"></i>
                                         Delete
@@ -957,6 +957,16 @@ var tableTasks = $('#datatable_tasks').DataTable({
         }
 
 
+        window.doneTask = function(e){
+            exitEditMode(e);
+        }
+
+        window.deleteTaskContact = function(e){
+            let dataid = $(e).data('id');
+            window.deleteTask(dataid);
+        }
+
+
         // Function to handle exiting editing mode
         function exitEditMode(inputElement) {
             var newValue = $(inputElement).val();
@@ -1012,12 +1022,6 @@ var tableTasks = $('#datatable_tasks').DataTable({
             $('.task_checkbox').prop('checked', $(this).prop('checked'));
         });
 
-        $('#update_changes').on("click", function () {
-            exitEditMode(this);
-        })
-
-
-
         $('.taskModalSaveBtn').on('click', function () {
             console.log('testshddhfshdf');
         });
@@ -1046,107 +1050,8 @@ var tableTasks = $('#datatable_tasks').DataTable({
 });
 
 tableTasks.on('draw.dt', function () {
-    $('.dealTaskSelect').each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 &&
-                        state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>" +
-                        '<br><span class="no-records-found">' +
-                        NoRecord +
-                        "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                        state.zoho_module_id +
-                        '" id="' +
-                        state.zoho_contact_id +
-                        '">' +
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "") +
-                        "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                    state.zoho_deal_id +
-                    '">' +
-                    state.deal_name +
-                    "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        })
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealTaskSelect");
+    window.showDropdownForId("",dealTask);
 });
 
 var tableTaskspipe = $('#datatable_tasks1').DataTable({
@@ -1213,13 +1118,13 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                 if (row.status !== "Completed") {
                     return `<div class="d-flex btn-save-del">
                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
-                                        id="update_changes_pipe" data-name="done_task" data-id="${row.id}"
+                                        id="update_changes_pipe" onclick="doneTaskpipe(this)" data-name="done_task" data-id="${row.id}"
                                         >
                                         <i class="fas fa-hdd plusicon"></i>
                                         Done
                                     </div>
                                     <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline deletebtn"
-                                        id="delete_task_pipe" data-id="${row.zoho_task_id}" data-bs-toggle="modal"
+                                        id="delete_task_pipe" onclick="deleteTaskpipe(this)" data-id="${row.zoho_task_id}" data-bs-toggle="modal"
                                         data-bs-target="#deleteModalId${row.zoho_task_id}">
                                         <i class="fas fa-trash-alt plusicon"></i>
                                         Delete
@@ -1262,6 +1167,16 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
             var day = ('0' + date.getDate()).slice(-2);
 
             return `${year}-${month}-${day}`;
+        }
+
+        window.doneTaskpipe=function(e){
+                exitEditMode(e);
+        }
+
+        window.deleteTaskpipe = function(e){
+            let dataid = $(e).data('id');
+            window.deleteTask(dataid);
+        
         }
 
         function enterEditMode(element) {
@@ -1348,6 +1263,7 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                         if (response?.message) {
                             showToast(response?.message);
                             $('#datatable_tasks1').DataTable().ajax.reload();
+                            
                         }
                     },
                     error: function (error) {
@@ -1368,14 +1284,11 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
         });
 
         $('#update_changes_pipe').on("click", function () {
-            console.log("yesusususuus")
+            console.log("hello testingggg")
             exitEditMode(this);
         })
 
-        $('#delete_task_pipe').on("click", function () {
-            let dataid = $(this).data('id');
-            window.deleteTask(dataid)
-        })
+       
 
         $('.taskModalSaveBtn').on('click', function () {
             console.log('testshddhfshdf');
@@ -1383,8 +1296,9 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
 
         $('.nav-link.dtabsbtn').on('click', function () {
             var tab = $(this).attr('data-tab');
-            console.log(tab, 'tabbb')
+            // console.log(tab, 'tabbb')
             tableTaskspipe.search(tab).draw();
+            
         });
 
         // Keyup event to exit editing mode on Enter
@@ -1409,320 +1323,13 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
 });
 
 tableTaskspipe.on('draw.dt', function () {
-    $('.dealSelectPipe').each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 &&
-                        state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>" +
-                        '<br><span class="no-records-found">' +
-                        NoRecord +
-                        "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                        state.zoho_module_id +
-                        '" id="' +
-                        state.zoho_contact_id +
-                        '">' +
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "") +
-                        "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                    state.zoho_deal_id +
-                    '">' +
-                    state.deal_name +
-                    "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        })
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealSelectPipe");
+    window.showDropdownForId("",dealTask);
+ 
 });
 
-window.deleteTask = function (id = "", isremoveselected = false) {
-    let updateids = updateSelectedRowIds();
 
-    if (updateids === "" && id === 'remove_selected') {
-        return;
-    }
-    if (isremoveselected) {
-        id = undefined;
-    }
-
-    // Focus on the input field or select dropdown
-    $('#datatable_tasks1 tbody').find('input.edit-input, select.edit-input').focus();
-}
-
-
-// Function to handle exiting editing mode
-function exitEditMode(inputElement) {
-    var newValue = $(inputElement).val();
-    var dataName = $(inputElement).data('name');
-    var dataId = $(inputElement).data('id');
-    var datamodule = $(inputElement).data('module');
-    console.log(datamodule, 'sdhfsdfg')
-    if (dataName !== "related_to" && dataName !== "done_task") {
-        // Replace input or select with span
-        $(inputElement).replaceWith(
-            `<span class="editable" data-name="${dataName}" data-id="${dataId}">${newValue}</span>`
-        ).removeClass('editing');
-
-    }
-
-    // Check if the value has changed
-    if (newValue !== currentText || dataName === "done_task") {
-
-        // Example AJAX call (replace with your actual endpoint and data):
-        $.ajax({
-            url: '/update-task-contact/' + dataId,
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                id: dataId,
-                field: dataName,
-                value: newValue,
-                module: datamodule ?? "",
-            },
-            success: function (response) {
-                console.log('Updated successfully:', response);
-                if (response?.message) {
-                    showToast(response?.message);
-                    $('#datatable_tasks1').DataTable().ajax.reload();
-                }
-            },
-            error: function (error) {
-                console.error('Error updating:', error);
-                showToastError(error?.responseJSON?.error);
-                $('#datatable_tasks1').DataTable().ajax.reload();
-            }
-        });
-    }
-}
-
-// Click event to enter editing mode
-$('#datatable_tasks1 tbody').on('click', 'span.editable', function () {
-    enterEditMode(this);
-});
-$(document).on('change', '#checkAll', function () {
-    $('.task_checkbox').prop('checked', $(this).prop('checked'));
-});
-
-$('#update_changes_pipe').on("click", function () {
-    console.log("yesusususuus")
-    exitEditMode(this);
-})
-
-$('#delete_task_pipe').on("click", function () {
-    let dataid = $(this).data('id');
-    window.deleteTask(dataid)
-})
-
-$('.taskModalSaveBtn').on('click', function () {
-    console.log('testshddhfshdf');
-});
-
-$('.nav-link.dtabsbtn').on('click', function () {
-    var tab = $(this).attr('data-tab');
-    console.log(tab, 'tabbb')
-    tableTaskspipe.search(tab).draw();
-});
-
-// Keyup event to exit editing mode on Enter
-$('#datatable_tasks1 tbody').on('keyup', 'input.edit-input', function (event) {
-    if (event.key === "Enter") {
-        exitEditMode(this);
-    }
-});
-// Handle onchange event for select
-$('#datatable_tasks1 tbody').on('change', 'select.edit-select_pipe', function () {
-    exitEditMode(this); // Exit edit mode when a selection is made
-});
-
-// Blur event to exit editing mode when clicking away
-$('#datatable_tasks1 tbody').on('blur', 'input.edit-input', function () {
-    exitEditMode(this);
-});
-
-tableTaskspipe.on('draw.dt', function () {
-    $('.dealSelectPipe').each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 &&
-                        state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>" +
-                        '<br><span class="no-records-found">' +
-                        NoRecord +
-                        "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                        state.text +
-                        '">' +
-                        state.text +
-                        "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                        state.zoho_module_id +
-                        '" id="' +
-                        state.zoho_contact_id +
-                        '">' +
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "") +
-                        "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                    state.zoho_deal_id +
-                    '">' +
-                    state.deal_name +
-                    "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") +
-                        " " +
-                        (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        })
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
-});
-
-window.deleteTask = function (id = "", isremoveselected = false) {
+window.deleteTask = async function (id = "", isremoveselected = false) {
     let updateids = updateSelectedRowIds();
 
     if (updateids === "" && id === 'remove_selected') {
@@ -1733,7 +1340,7 @@ window.deleteTask = function (id = "", isremoveselected = false) {
     }
 
     if (updateids !== "") {
-        const shouldDelete = saveForm();
+        const shouldDelete = await saveForm();
         if (!shouldDelete) {
             return;
         }
@@ -1742,6 +1349,7 @@ window.deleteTask = function (id = "", isremoveselected = false) {
         id = updateids;
     }
     let ids;
+    console.log(id,'id is here')
     if (Array.isArray(id)) {
         ids = id.join(',');
     } else if (typeof id === 'string') {
@@ -1761,6 +1369,8 @@ window.deleteTask = function (id = "", isremoveselected = false) {
     });
 
     if (id) {
+        $("#datatable_tasks1_processing").css("display", "block");
+        $("#datatable_tasks_processing").css("display", "block");
         $.ajax({
             url: "/delete-task/" + ids,
             method: 'DELETE',
@@ -1773,6 +1383,9 @@ window.deleteTask = function (id = "", isremoveselected = false) {
             success: function (response) {
                 showToast("Deleted successfully");
                 $('#datatable_tasks1').DataTable().ajax.reload();
+                $('#datatable_tasks').DataTable().ajax.reload();
+                $("#datatable_tasks1_processing").css("display", "none");
+                $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
                 showToastError(xhr.responseText);

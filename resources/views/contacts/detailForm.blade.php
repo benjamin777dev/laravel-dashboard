@@ -369,6 +369,7 @@
     }).on('select2:close', () => {
         $(document).off('scroll.select2');
     });
+});
 
     function formatState(state) {
         if (!state.id) {
@@ -432,7 +433,6 @@
             }
         });
     });
-});
 
 function validateContactForm() {
     let last_name = $("#last_name").val();

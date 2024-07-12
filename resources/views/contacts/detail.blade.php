@@ -41,6 +41,7 @@
                     </div>
 
                 </div>
+                @include("common.confirmdeletemodal")
                 <div class="row">
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -124,11 +125,44 @@
 @endsection
 <script>
     var contactId = @json($contactId);
-    $(document).ready(function() {
+  window.onload = function() {
         updateContactform();
         fetchContactTasks('In Progress',contactId)
+
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
         
-    });
+    };
 
     function updateContactform() {
         $.ajax({

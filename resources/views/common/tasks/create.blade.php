@@ -4,7 +4,7 @@
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closing_btnnnnn"
                         onclick="resetValidationTask('{{ $deal->zoho_deal_id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
@@ -45,7 +45,7 @@
             <div class="modal-header border-0">
                 <p class="modal-title dHeaderText">Create New Task</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    onclick="resetValidationTask('{{ $contact->zoho_contact_id }}')" aria-label="Close"></button>
+                    onclick="resetValidationTask('{{ $contact->zoho_contact_id }}')" id="closing_btnnnnn" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">
                 <p class="ddetailsText">Subject</p>

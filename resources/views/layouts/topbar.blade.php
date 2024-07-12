@@ -1,3 +1,4 @@
+
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
@@ -141,16 +142,5 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<script>
-    window.onload = function(){
-        $('#vertical-menu-btn').on('click', function (event) {
-            event.preventDefault();
-            $('body').toggleClass('sidebar-enable');
-            if ($(window).width() >= 992) {
-                $('body').toggleClass('vertical-collpsed');
-            } else {
-                $('body').removeClass('vertical-collpsed');
-            }
-        });
-    }
-</script>
+
+
