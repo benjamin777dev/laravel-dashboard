@@ -1183,6 +1183,7 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                                         <i class="fas fa-trash-alt plusicon"></i>
                                         Delete
                                     </div>
+        
                                 </div>`;
                 }
                 return "";
