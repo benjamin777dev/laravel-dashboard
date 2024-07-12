@@ -396,7 +396,7 @@
         // Add event listener for remove button
         let removeGroupsArr = [];
         
-        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+        multipleCancelButton?.passedElement?.element?.addEventListener('removeItem', function(event) {
             var removedItemId = event.detail.value;
             var removedItemData = null
 

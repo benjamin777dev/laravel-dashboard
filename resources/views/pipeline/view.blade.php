@@ -163,7 +163,7 @@
     var deal = @json($deal);
     $(document).ready(function(){
     
-        fetchPipelineTasks('In Progress',dealId)
+        // fetchPipelineTasks('In Progress',dealId)
         getCreateForm();
         var defaultTab = "{{ $tab }}";
         localStorage.setItem('status', defaultTab);

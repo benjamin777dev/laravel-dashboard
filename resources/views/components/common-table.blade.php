@@ -31,8 +31,8 @@
 
 
 @section('script')
-    <!-- Required datatable js -->
-    <script src="{{ URL::asset('build/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<!-- Required datatable js -->
+<script src="{{ URL::asset('build/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('build/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <!-- Buttons examples -->
     <script src="{{ URL::asset('build/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -51,7 +51,7 @@
     <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
     @vite(['resources/js/dropdown.js'])
     @vite(['resources/js/datatable.js'])
-
-    @vite(['resources/js/contactroledatatable.js'])
+    
+    @vite(['resources/js/submittaldatatable.js'])
  @endsection
     

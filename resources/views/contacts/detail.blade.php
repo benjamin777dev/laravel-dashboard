@@ -84,6 +84,30 @@
                     <i class="fas fa-trash-alt plusicon"></i>
                     Delete Selected
                 </div>
+                <div class="modal fade custom-confirm-modal" id="confirmModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header border-0">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="confirmMessage">Please confirm you’d like to delete this item.</p>
+                            </div>
+                            <div class="modal-footer justify-content-evenly border-0">
+                                <div class="d-grid gap-2 col-5">
+                                    <button type="button" id="confirmYes" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-trash-alt"></i> Yes, delete
+                                    </button>
+                                </div>
+                                <div class="d-grid gap-2 col-5">
+                                    <button type="button" id="confirmNo" class="btn btn-primary" data-bs-dismiss="modal">
+                                        <img src="{{ URL::asset('/images/reply.svg') }}" alt="R"> No, go back
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
                 
             </div>
@@ -127,6 +151,39 @@
     $(document).ready(function() {
         updateContactform();
         fetchContactTasks('In Progress',contactId)
+
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
         
     });
 

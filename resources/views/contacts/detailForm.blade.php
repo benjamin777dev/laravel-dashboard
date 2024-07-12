@@ -351,7 +351,7 @@
         })
         // Add event listener for remove button
         let removeGroupsArr = [];
-        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+        multipleCancelButton?.passedElement?.element?.addEventListener('removeItem', function(event) {
             var removedGroup = event.detail.value;
             if (selectedGroupsDefault.includes(removedGroup)) {
                 // Perform your API hit here
@@ -360,8 +360,6 @@
             }
 
         });
-
-
         // This will log an array of selected values
         document.getElementById('contact_detail_form').appendChild(hiddenInput);
         var getReffered = $('#validationDefault14')
@@ -536,7 +534,6 @@
             }
         });
     });
-});
 
 function validateContactForm() {
     let last_name = $("#last_name").val();

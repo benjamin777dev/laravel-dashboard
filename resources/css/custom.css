@@ -62,6 +62,10 @@ div.dataTables_processing>div:last-child>div {
         background: #222;
 }
 
+#page-topbar{
+    z-index: 999999 !important;
+}
+
 .navbar-toggler {
     margin-left: 15px;
 }
