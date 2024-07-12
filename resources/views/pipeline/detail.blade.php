@@ -369,14 +369,15 @@
             <h2 class="pText">Submittal</h2>
         </div>
         <div class="col-auto text-end">
-            <button class="input-group-text npcontactbtn btn btn-sm btn-primary" id="addSubmittal" onclick="showSubmittalFormType()">
-                <i class="fas fa-plus plusicon"></i>
-                @if ($submittals->count() === 0)
-                    Add New Submittal
-                @else
-                    Show Submittal
-                @endif
-            </button>
+        <button class="input-group-text npcontactbtn btn btn-sm btn-primary" style="{{ ($deal['tm_preference'] == 'Non-TM') ? 'cursor:not-allowed;' : '' }}" id="addSubmittal" onclick="showSubmittalFormType()">
+    <i class="fas fa-plus plusicon"></i>
+    @if ($submittals->count() === 0)
+        Add New Submittal
+    @else
+        Show Submittal
+    @endif
+</button>
+
         </div>
     </div>
 </div>
