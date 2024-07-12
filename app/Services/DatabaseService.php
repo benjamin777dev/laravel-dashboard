@@ -999,7 +999,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->get();
+            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -1012,7 +1012,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->get();
+            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());

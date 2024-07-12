@@ -408,7 +408,7 @@
         // Remove scroll event listener when Select2 is closed
         $(document).off('scroll.select2');
     });
-
+    });
     window.openContactModalAndCloseSelect = function() {
         $("#createContactModal").modal('show');
         getSpouse.select2('close'); // Close the select2 dropdown

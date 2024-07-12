@@ -207,13 +207,13 @@ class PipelineController extends Controller
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $allStages = config('variables.dealStages');
-
+        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         
         
         
-        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab'))->render();
+        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals'))->render();
 
 
     }
@@ -237,10 +237,10 @@ class PipelineController extends Controller
 
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
-
+        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId'))->render();
+        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId','submittals'))->render();
 
     }
 
