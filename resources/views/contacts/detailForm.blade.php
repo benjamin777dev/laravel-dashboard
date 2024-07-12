@@ -319,6 +319,8 @@
     'type' => 'Contacts',
 ])
 <script>
+    contact=@json($contact);
+    groups = @json($groups);
     $(document).ready(function() {
     var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
         removeItemButton: true,

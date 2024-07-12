@@ -63,6 +63,7 @@ class PipelineController extends Controller
             'allstages' => $allstages,
             'retrieveModuleData' => $retrieveModuleData,
             'getdealsTransaction' => $deals,
+            'allDeals'=>$allDeals,
         ]);
 
         if ($request->ajax()) {
@@ -373,7 +374,7 @@ class PipelineController extends Controller
             }else{
                 $zohoDeal= $zoho->createZohoDeal($jsonData);
             }
-
+            Log::error("zoho deal response",[$zohoDeal]);
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }

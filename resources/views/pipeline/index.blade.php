@@ -19,15 +19,11 @@
                     ])
                     @endcomponent
                 </div>
-                
-                
-                <div>
-                    @component('components.button', [
-                        'id' => 'create_submittals',
-                        'label' => 'New Submittal',
-                        'icon' => 'fas fa-plus plusicon'
-                    ])
-                    @endcomponent
+                <div class="input-group-text text-white justify-content-center pTransactionBtn"
+                    data-bs-toggle="modal" data-bs-target="#chooseTransactionModal">
+                    <i class="fas fa-plus plusicon">
+                    </i>
+                    New Submittal
                 </div>
             </div>
         </div>
@@ -138,6 +134,7 @@
                 </div>
             @endif
         </div>
+        @include('submittals.chooseTransaction',['deals'=>$allDeals])
     </div>
     @vite(['resources/js/pipeline.js'])
 
