@@ -951,6 +951,9 @@ var tableTasks = $("#datatable_tasks").DataTable({
             data: "subject",
             title: "Subject",
             render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data}</span>`;
+                }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
             },
         },
@@ -958,30 +961,54 @@ var tableTasks = $("#datatable_tasks").DataTable({
             data: "related_to",
             title: "Related To",
             render: function (data, type, row) {
-                if (row.related_to === "Contacts") {
-                    return `<select class="dealTaskSelect edit-select" " data-name="related_to" data-id="${
-                        row.id
-                    }">
+                if (row?.status === "Completed") {
+                    if (row.related_to === "Contacts") {
+                        return `<select class="form-select">
                         <option value="${
                             row.contact_data?.zoho_contact_id
                         }" selected>
                             ${row.contact_data?.first_name ?? ""} ${
-                        row.contact_data?.last_name ?? "General"
-                    }
+                            row.contact_data?.last_name ?? "General"
+                        }
                         </option>
                     </select>`;
-                } else if (row.related_to === "Deals") {
-                    return `<select class="dealTaskSelect edit-select"  data-name="related_to" data-id="${
-                        row.id
-                    }">
+                    } else if (row.related_to === "Deals") {
+                        return `<select class="form-select">
                         <option value="${row.dealdata.zohodealid}" selected>
                             ${row.dealdata.dealname ?? "General"}
                         </option>
                     </select>`;
-                } else {
-                    return `<select class="dealTaskSelect" data-module="General edit-select" data-name="related_to" data-id="${row.id}">
+                    } else {
+                        return `<select class="form-select" >
                         <option value="" selected>General</option>
                     </select>`;
+                    }
+                } else {
+                    if (row.related_to === "Contacts") {
+                        return `<select class="dealTaskSelect edit-select" " data-name="related_to" data-id="${
+                            row.id
+                        }">
+                        <option value="${
+                            row.contact_data?.zoho_contact_id
+                        }" selected>
+                            ${row.contact_data?.first_name ?? ""} ${
+                            row.contact_data?.last_name ?? "General"
+                        }
+                        </option>
+                    </select>`;
+                    } else if (row.related_to === "Deals") {
+                        return `<select class="dealTaskSelect edit-select"  data-name="related_to" data-id="${
+                            row.id
+                        }">
+                        <option value="${row.dealdata.zohodealid}" selected>
+                            ${row.dealdata.dealname ?? "General"}
+                        </option>
+                    </select>`;
+                    } else {
+                        return `<select class="dealTaskSelect" data-module="General edit-select" data-name="related_to" data-id="${row.id}">
+                        <option value="" selected>General</option>
+                    </select>`;
+                    }
                 }
             },
         },
@@ -989,7 +1016,9 @@ var tableTasks = $("#datatable_tasks").DataTable({
             data: "due_date",
             title: "Due Date",
             render: function (data, type, row) {
-                console.log(data, "shdfhsdhf");
+                if (row?.status === "Completed") {
+                    return `<span >${formateDate(data) || "N/A"}</span>`;
+                }
                 return `<span class="editable" data-name="due_date" data-id="${
                     row.id
                 }">${formateDate(data) || "N/A"}</span>`;
@@ -1219,104 +1248,8 @@ var tableTasks = $("#datatable_tasks").DataTable({
 });
 
 tableTasks.on("draw.dt", function () {
-    $(".dealTaskSelect").each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 && state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                            state.text +
-                            '">' +
-                            state.text +
-                            "</span>" +
-                            '<br><span class="no-records-found">' +
-                            NoRecord +
-                            "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                            state.text +
-                            '">' +
-                            state.text +
-                            "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                            state.zoho_module_id +
-                            '" id="' +
-                            state.zoho_contact_id +
-                            '">' +
-                            (state.first_name ?? "") +
-                            " " +
-                            (state.last_name ?? "") +
-                            "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                        state.zoho_deal_id +
-                        '">' +
-                        state.deal_name +
-                        "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") + " " + (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        });
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealTaskSelect");
+    window.showDropdownForId("", dealTask);
 });
 
 var tableTaskspipe = $("#datatable_tasks1").DataTable({
@@ -1339,6 +1272,9 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
             data: "subject",
             title: "Subject",
             render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data}</span>`;
+                }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
             },
         },
@@ -1346,30 +1282,54 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
             data: "related_to",
             title: "Related To",
             render: function (data, type, row) {
-                if (row.related_to === "Contacts") {
-                    return `<select class="dealSelectPipe edit-select_pipe" " data-name="related_to" data-id="${
-                        row.id
-                    }">
+                if (row?.status === "Completed") {
+                    if (row.related_to === "Contacts") {
+                        return `<select class="form-select">
                         <option value="${
                             row.contact_data?.zoho_contact_id
                         }" selected>
                             ${row.contact_data?.first_name ?? ""} ${
-                        row.contact_data?.last_name ?? "General"
-                    }
+                            row.contact_data?.last_name ?? "General"
+                        }
                         </option>
                     </select>`;
-                } else if (row.related_to === "Deals") {
-                    return `<select class="dealSelectPipe edit-select_pipe"  data-name="related_to" data-id="${
-                        row.id
-                    }">
+                    } else if (row.related_to === "Deals") {
+                        return `<select class="form-select" >
                         <option value="${row.deal_data.zoho_deal_id}" selected>
                             ${row.deal_data.deal_name ?? "General"}
                         </option>
                     </select>`;
-                } else {
-                    return `<select class="dealSelectPipe edit-select_pipe" data-module="General" data-name="related_to" data-id="${row.id}">
+                    } else {
+                        return `<select class="form-select" data-module="General">
                         <option value="" selected>General</option>
                     </select>`;
+                    }
+                } else {
+                    if (row.related_to === "Contacts") {
+                        return `<select class="dealSelectPipe edit-select_pipe" " data-name="related_to" data-id="${
+                            row.id
+                        }">
+                        <option value="${
+                            row.contact_data?.zoho_contact_id
+                        }" selected>
+                            ${row.contact_data?.first_name ?? ""} ${
+                            row.contact_data?.last_name ?? "General"
+                        }
+                        </option>
+                    </select>`;
+                    } else if (row.related_to === "Deals") {
+                        return `<select class="dealSelectPipe edit-select_pipe"  data-name="related_to" data-id="${
+                            row.id
+                        }">
+                        <option value="${row.deal_data.zoho_deal_id}" selected>
+                            ${row.deal_data.deal_name ?? "General"}
+                        </option>
+                    </select>`;
+                    } else {
+                        return `<select class="dealSelectPipe edit-select_pipe" data-module="General" data-name="related_to" data-id="${row.id}">
+                        <option value="" selected>General</option>
+                    </select>`;
+                    }
                 }
             },
         },
@@ -1377,6 +1337,9 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
             data: "due_date",
             title: "Due Date",
             render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span>${formateDate(data) || "N/A"}</span>`;
+                }
                 console.log(data, "shdfhsdhf");
                 return `<span class="editable" data-name="due_date" data-id="${
                     row.id
@@ -1403,6 +1366,7 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
                                         <i class="fas fa-trash-alt plusicon"></i>
                                         Delete
                                     </div>
+        
                                 </div>`;
                 }
                 return "";
@@ -1618,111 +1582,15 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
 });
 
 tableTaskspipe.on("draw.dt", function () {
-    $(".dealSelectPipe").each(function () {
-        $(this).select2({
-            theme: "bootstrap-5",
-            width: "resolve",
-            ajax: {
-                url: "/task/get-Modules",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page || 1,
-                        limit: 5, // number of records to fetch initially
-                    };
-                },
-                processResults: function (data, params) {
-                    console.log(data.items, "showdropidddd");
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                    };
-                },
-                cache: true,
-            },
-            templateResult: function (state) {
-                var NoRecord = "No Records Found";
-                if (
-                    (state?.children?.length === 0 &&
-                        state.text === "Contacts") ||
-                    (state?.children?.length === 0 && state.text === "Deals")
-                ) {
-                    return $(
-                        '<span id="' +
-                            state.text +
-                            '">' +
-                            state.text +
-                            "</span>" +
-                            '<br><span class="no-records-found">' +
-                            NoRecord +
-                            "</span>"
-                    );
-                }
-                if (!state.id) {
-                    return state.text;
-                }
-                if (state.children) {
-                    return $(
-                        '<span id="' +
-                            state.text +
-                            '">' +
-                            state.text +
-                            "</span>"
-                    );
-                }
-
-                if (state.first_name || state.last_name) {
-                    return $(
-                        '<span data-module="' +
-                            state.zoho_module_id +
-                            '" id="' +
-                            state.zoho_contact_id +
-                            '">' +
-                            (state.first_name ?? "") +
-                            " " +
-                            (state.last_name ?? "") +
-                            "</span>"
-                    );
-                }
-
-                return $(
-                    '<span id="' +
-                        state.zoho_deal_id +
-                        '">' +
-                        state.deal_name +
-                        "</span>"
-                );
-            },
-            templateSelection: function (state) {
-                if (!state.id) {
-                    return state.text;
-                }
-
-                if (state.first_name || state.last_name) {
-                    return (
-                        (state.first_name ?? "") + " " + (state.last_name ?? "")
-                    );
-                }
-
-                return state.deal_name;
-            },
-        });
-    });
-    let select2data = document.getElementsByClassName(
-        "select2-selection__rendered"
-    );
-    Array.from(select2data).forEach((element) => {
-        element.innerHTML = element.title;
-    });
+    let dealTask = $(".dealSelectPipe");
+    window.showDropdownForId("", dealTask);
 });
 
 window.deleteTask = async function (id = "", isremoveselected = false) {
     let updateids = updateSelectedRowIds();
-    console.log(id, "iiddddididididi");
+    console.log(updateids, "udpaiddd");
 
-    if (updateids === "" && id === "remove_selected") {
+    if (updateids.length === 0 && id === "remove_selected") {
         return;
     }
     if (isremoveselected) {
@@ -1759,8 +1627,8 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
     });
 
     if (id) {
-        $("#datatable_contact_processing").css("display", "block");
-        $("#datatable_pipe_transaction").css("display", "block");
+        $("#datatable_tasks1_processing").css("display", "block");
+        $("#datatable_tasks_processing").css("display", "block");
         $.ajax({
             url: "/delete-task/" + ids,
             method: "DELETE",
@@ -1773,8 +1641,9 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
             success: function (response) {
                 showToast("Deleted successfully");
                 $("#datatable_tasks1").DataTable().ajax.reload();
-                $("#datatable_contact_processing").css("display", "none");
-                $("#datatable_pipe_transaction").css("display", "none");
+                $("#datatable_tasks").DataTable().ajax.reload();
+                $("#datatable_tasks1_processing").css("display", "none");
+                $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
                 showToastError(xhr.responseText);
