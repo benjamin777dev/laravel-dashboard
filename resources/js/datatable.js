@@ -815,6 +815,10 @@ var tableTasks = $('#datatable_tasks').DataTable({
             data: 'subject',
             title: 'Subject',
             render: function (data, type, row) {
+                if(row?.status==="Completed"){
+                    return `<span >${data}</span>`;
+    
+                    }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
             }
         },
@@ -822,6 +826,25 @@ var tableTasks = $('#datatable_tasks').DataTable({
             data: 'related_to',
             title: 'Related To',
             render: function (data, type, row) {
+                if(row?.status==="Completed"){
+                if (row.related_to === 'Contacts') {
+                    return `<select class="form-select">
+                        <option value="${row.contact_data?.zoho_contact_id}" selected>
+                            ${row.contact_data?.first_name ?? ''} ${row.contact_data?.last_name ?? 'General'}
+                        </option>
+                    </select>`;
+                } else if (row.related_to === 'Deals') {
+                    return `<select class="form-select">
+                        <option value="${row.dealdata.zohodealid}" selected>
+                            ${row.dealdata.dealname ?? 'General'}
+                        </option>
+                    </select>`;
+                } else {
+                    return `<select class="form-select" >
+                        <option value="" selected>General</option>
+                    </select>`;
+                }
+            }else{
                 if (row.related_to === 'Contacts') {
                     return `<select class="dealTaskSelect edit-select" " data-name="related_to" data-id="${row.id}">
                         <option value="${row.contact_data?.zoho_contact_id}" selected>
@@ -839,6 +862,7 @@ var tableTasks = $('#datatable_tasks').DataTable({
                         <option value="" selected>General</option>
                     </select>`;
                 }
+            }
 
             }
         },
@@ -846,7 +870,9 @@ var tableTasks = $('#datatable_tasks').DataTable({
             data: 'due_date',
             title: 'Due Date',
             render: function (data, type, row) {
-                console.log(data, 'shdfhsdhf')
+                if(row?.status==="Completed"){
+                    return `<span >${formateDate(data) || "N/A"}</span>`;
+                    }
                 return `<span class="editable" data-name="due_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
             }
         },
@@ -1074,6 +1100,10 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
             data: 'subject',
             title: 'Subject',
             render: function (data, type, row) {
+                if(row?.status==="Completed"){
+                return `<span >${data}</span>`;
+
+                }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
             }
         },
@@ -1081,6 +1111,26 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
             data: 'related_to',
             title: 'Related To',
             render: function (data, type, row) {
+                 if(row?.status==="Completed"){
+                if (row.related_to === 'Contacts') {
+                    return `<select class="form-select">
+                        <option value="${row.contact_data?.zoho_contact_id}" selected>
+                            ${row.contact_data?.first_name ?? ''} ${row.contact_data?.last_name ?? 'General'}
+                        </option>
+                    </select>`;
+                } else if (row.related_to === 'Deals') {
+                    return `<select class="form-select" >
+                        <option value="${row.deal_data.zoho_deal_id}" selected>
+                            ${row.deal_data.deal_name ?? 'General'}
+                        </option>
+                    </select>`;
+                } else {
+                    return `<select class="form-select" data-module="General">
+                        <option value="" selected>General</option>
+                    </select>`;
+                }
+
+            }else{
                 if (row.related_to === 'Contacts') {
                     return `<select class="dealSelectPipe edit-select_pipe" " data-name="related_to" data-id="${row.id}">
                         <option value="${row.contact_data?.zoho_contact_id}" selected>
@@ -1098,6 +1148,7 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
                         <option value="" selected>General</option>
                     </select>`;
                 }
+            }
 
             }
         },
@@ -1105,6 +1156,9 @@ var tableTaskspipe = $('#datatable_tasks1').DataTable({
             data: 'due_date',
             title: 'Due Date',
             render: function (data, type, row) {
+                if(row?.status==="Completed"){
+                    return `<span>${formateDate(data) || "N/A"}</span>`;
+                }
                 console.log(data, 'shdfhsdhf')
                 return `<span class="editable" data-name="due_date" data-id="${row.id}">${formateDate(data) || "N/A"}</span>`;
             }
@@ -1331,8 +1385,9 @@ tableTaskspipe.on('draw.dt', function () {
 
 window.deleteTask = async function (id = "", isremoveselected = false) {
     let updateids = updateSelectedRowIds();
+    console.log(updateids,'udpaiddd')
 
-    if (updateids === "" && id === 'remove_selected') {
+    if (updateids.length === 0 && id === 'remove_selected') {
         return;
     }
     if (isremoveselected) {

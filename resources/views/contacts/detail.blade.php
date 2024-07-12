@@ -81,7 +81,7 @@
                     "type" =>"contact",
                 ])
                 @endcomponent
-                <div onclick="deleteTask('',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
+                <div onclick="deleteTask('remove_selected',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
                     <i class="fas fa-trash-alt plusicon"></i>
                     Delete Selected
                 </div>
