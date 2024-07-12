@@ -342,6 +342,9 @@
     </div>
 </div>
 {{-- contact roles --}}
+<div>
+    <h2 class='pText pt-3'> Contact Role </h2>
+</div>
 @php
             $contactRoleHeader = [
                 "Role",
@@ -360,14 +363,24 @@
         </div>
 
 {{-- Add New Submittal --}}
-<div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormType()">
-        <i class="fas fa-plus plusicon"></i>
-        @if ($submittals->count() === 0)
-            Add New Submittal
-        @else
-            Show Submittal
-        @endif
+<div class="container b-0 pt-3">
+    <div class="row justify-content-between mb-3">
+        <div class="col">
+            <h2 class="pText">Submittal</h2>
+        </div>
+        <div class="col-auto text-end">
+            <button class="input-group-text npcontactbtn btn btn-sm btn-primary" id="addSubmittal" onclick="showSubmittalFormType()">
+                <i class="fas fa-plus plusicon"></i>
+                @if ($submittals->count() === 0)
+                    Add New Submittal
+                @else
+                    Show Submittal
+                @endif
+            </button>
+        </div>
     </div>
+</div>
+
 @php
             $submittalTableHeader = [
                 "Submittal Name",
@@ -385,6 +398,8 @@
        
 </div>
 {{-- Add Non-TM --}}
+
+
 @php
             $nonTMTableHeader = [
                 "Number",
@@ -394,6 +409,16 @@
             ]
         @endphp
 @if ($deal['tm_preference'] == 'Non-TM')
+<div>
+    <h2 class='pText pt-3'> Non-TM </h2>
+</div>
+<div class="d-flex justify-content-end mb-3">
+    <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
+                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-plus plusicon"></i>
+                Add Non-TM Check request
+            </button>
+</div>
 <div class="showNonTmTable"></div>
 @component('components.common-table', [
                     'th' => $nonTMTableHeader,
@@ -530,8 +555,55 @@
     //     $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled');
     // }
 
+    function generateRandom4DigitNumber() {
+        return Math.floor(1000 + Math.random() * 9000);
+    }
+    window.addNonTm = function() {
+        let formData = {
+            "data": [{
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "full_name": "{{ auth()->user()->name }}"
+                },
+                "Exchange_Rate": 1,
+                "Currency": "USD",
+                "Related_Transaction": {
+                    "id": "{{ $deal->zoho_deal_id }}",
+                    "name": "{{ $deal->deal_name }}"
+                },
+                "Name": 'N'+(generateRandom4DigitNumber()),
+                "$zia_owner_assignment": "owner_recommendation_unavailable",
+                "zia_suggested_users": {}
+            }],
+            "skip_mandatory": false
+        }
+        console.log(formData, 'sdfjsdfjsd');
+        
+        $.ajax({
+            url: '/create-nontm',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response) {
+                    const url = `{{ url('/nontm-create/${response?.id}') }}`
+                    window.open(url,'_blank')
+                    // window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        })
+    }
+
     function showSubmittalFormType() {
-        console.log("SUBMITTAL DATA", deal.representing, deal.tm_preference);
+        console.log("SUBMITTAL DATA", deal.representing);
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
             addSubmittal('buyer-submittal', deal);
@@ -552,48 +624,52 @@
     }
 
     function addSubmittal(type, deal, formType = null) {
-        let formData = {
-            "data": [{
-                "Transaction_Name": {
-                    "id": deal.zoho_deal_id,
-                    "name": deal.deal_name
-                },
-                "TM_Name": deal.tmName,
-                'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}",
-                    "name": "{{ auth()->user()->name }}",
-                    "email": "{{ auth()->user()->email }}"
-                },
-                'formType': formType
-            }]
-        };
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $.ajax({
-            url: `/submittal/create/${type === "buyer-submittal" ? "buyer" : "listing"}/${deal.zoho_deal_id}`,
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function (response) {
-                console.log("response", response);
-                redirectUrl(type, response, formType);
-                if (response?.data && response.data[0]?.message) {
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                }
+    let formData = {
+        "data": [{
+            "Transaction_Name": {
+                "id": deal.zoho_deal_id,
+                "name": deal.deal_name
             },
-            error: function (xhr) {
-                console.error(xhr.responseText);
+            "TM_Name": deal.tmName,
+            'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
+            "Owner": {
+                "id": "{{ auth()->user()->root_user_id }}",
+                "name": "{{ auth()->user()->name }}",
+                "email": "{{ auth()->user()->email }}"
+            },
+            'formType': formType
+        }]
+    };
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    const baseUrl = window.location.origin;
+    const endpoint = `${type === "buyer-submittal" ? "buyer" : "listing"}/submittal/create`;
+    const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function (response) {
+            console.log("response", response);
+            redirectUrl(type, response, formType);
+            if (response?.data && response.data[0]?.message) {
+                const upperCaseMessage = response.data[0].message.toUpperCase();
+                showToast(upperCaseMessage);
             }
-        });
-    }
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+        }
+    });
+}
     function setTmName() {
         var users = @json($users);
 

@@ -155,7 +155,6 @@
             });
         }
 
-        }
         window.fetchData = function(sortField = null) {
             // Get selected filter value
             const filterSelect = document.getElementById('validationDefault05');
