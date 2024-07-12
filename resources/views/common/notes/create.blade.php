@@ -5,9 +5,9 @@
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Note</p>
-                    <button type="button" id="noteForm_close{{ $deal['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" id="noteForm_close{{ $deal['id'] }}" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetFormAndHideSelectDashboard();"></button>
                 </div>
-                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit="return validateNoteDash('{{ $deal['id'] }}');">
+                <form id="noteForm_dash{{ $deal['id'] }}" action="{{ route('save.note') }}" method="post" onsubmit = "return validateNoteDash('{{ $deal['id'] }}');">
                     @csrf
                     @method('POST')
                     <div class="modal-body dtaskbody">
@@ -33,7 +33,6 @@
                     </div>
                     <div class="modal-footer dNoteFooter border-0">
                         <button type="submit" id="validate-button{{ $deal['id'] }}"
-                            
                             class="btn btn-secondary dNoteModalmarkBtn">
                             <i class="fas fa-save saveIcon"></i> Add Note
                         </button>
@@ -110,7 +109,7 @@
                         <div class="btn-group dmodalTaskDiv">
                             <select class="form-select dmodaltaskSelect" id="related_to_note" name="related_to"
                                 aria-label="Select Transaction">
-                        </select>
+                            </select>
                         </div>
                         <div id="related_to_error" class="text-danger"></div>
                     </div>
@@ -129,6 +128,7 @@
 @endif
 <script>
     function enableSelect(id) {
+        console.log("idddd",id);
         
         // Enable the select element before form submission
         document.getElementById('noteSelect'+id).removeAttribute('disabled');
@@ -162,10 +162,11 @@
     }
 
     // validation function onsubmit
-    function validateNoteDash(id = null) { 
+    function validateNoteDash(id = null) {
         event.preventDefault();
-        let isValid = true;     
-        let noteText, relatedTo, changeButton
+        let isValid = true;
+        let noteText, relatedTo, changeButton;
+
         if (id) {
             enableSelect(id);
             noteText = document.getElementById("note_text" + id).value;
@@ -176,11 +177,6 @@
             document.getElementById("note_text_error" + id).innerText = "";
             document.getElementById("related_to_error" + id).innerText = "";
 
-            /* // Validate note text length
-            if (noteText.trim().length > 10) {
-                document.getElementById("note_text_error"+id).innerText = "Note text must be 10 characters or less";
-                isValid = false;
-            } */
             // Validate note text
             if (noteText.trim() === "") {
                 document.getElementById("note_text_error" + id).innerText = "Note text is required";
@@ -193,12 +189,7 @@
                 document.getElementById("noteSelect" + id).style.display = "none";
                 isValid = false;
             }
-            // if (isValid) {
-            //     changeButton.type = "submit";
-            //     document.getElementById("staticBackdropforNote_" + id).removeAttribute("onclick");
-            // }
-            console.log("isValid",isValid);
-            // return isValid;
+
         } else {
             noteText = document.getElementById("note_text").value;
             relatedTo = document.getElementById("related_to_note").value;
@@ -207,8 +198,10 @@
             // Reset errors
             document.getElementById("note_text_error").innerText = "";
             document.getElementById("related_to_error").innerText = "";
+
             let mergerdata = document.getElementById('merged_data');
             console.log(mergerdata, 'emrefkdjklfsd');
+
             // Validate note text
             if (noteText.trim() === "") {
                 document.getElementById("note_text_error").innerText = "Note text is required";
@@ -224,6 +217,7 @@
             } else {
                 document.getElementById("related_to_error").innerText = "";
             }
+
             if (isValid) {
                 const mergedData = {
                     groupLabel: window.groupLabel,
@@ -231,34 +225,34 @@
                     relatedTo: window.relatedTo,
                     moduleId: window.moduelID
                 };
-                // Serialize the array to a JSON string
                 const mergedDataJson = JSON.stringify(mergedData);
                 mergerdata.value = mergedDataJson;
-                
             }
-            // return isValid;
         }
-        console.log("isValid",);
-        if(isValid==true){
+
+        if (isValid) {
             var formData = $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).serialize();
-        console.log(formData);
-        $.ajax({
-            type: 'POST',
-            url: $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).attr('action'),
-            data: formData,
-            success: function(data) {
-                showToast("Note added Successfully")
-                // handle success response
-                $('#' + (id ? 'noteForm_close' + id : 'noteForm_close'))[0].click();
-                window.location.reload();
-            },
-            error: function(xhr, status, error) {
-                // handle error response
-                console.log('Error saving note: ' + error);
-            }
-        });
+            console.log(formData);
+
+            $.ajax({
+                type: 'POST',
+                url: $('#' + (id ? 'noteForm_dash' + id : 'noteForm_dash')).attr('action'),
+                data: formData,
+                success: function(data) {
+                    console.log('AJAX success response:', data);
+                    showToast("Note added Successfully");
+                    $('#' + (id ? 'noteForm_close' + id : 'noteForm_close'))[0].click();
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX error response:', xhr.responseText);
+                    console.log('Error status:', status);
+                    console.log('Error saving note:', error);
+                }
+            });
         }
-        
+
         return false;
     }
+
 </script>
