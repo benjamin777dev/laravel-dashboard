@@ -73,13 +73,13 @@
                     ]
                 @endphp
                    @component('components.common-table', [
-                    'th' => $contactHeader,
-                    'id'=>'datatable_tasks',
-                    'commonArr' =>$tasks,
-                    'retrieveModuleData'=>$retrieveModuleData,
-                    "type" =>"contact",
-                ])
-                @endcomponent
+                        'th' => $contactHeader,
+                        'id'=>'datatable_tasks',
+                        'commonArr' =>$tasks,
+                        'retrieveModuleData'=>$retrieveModuleData,
+                        "type" =>"contact",
+                    ])
+                    @endcomponent
                 <div onclick="deleteTask('',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
                     <i class="fas fa-trash-alt plusicon"></i>
                     Delete Selected

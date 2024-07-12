@@ -818,11 +818,7 @@ class DashboardController extends Controller
         Log::info("CHECK NOTES", $request->all());
         $contactId = $request->query('conID');
         $related_to_ = json_decode($request->input('related_to'), true);
-        // Validate the incoming request data
-        // $request->validate([
-        //     'note_text' => 'required|string',
-        //     'merged_data' => 'required|string'
-        // ]);
+
         $mergedData = json_decode($request->input('merged_data'), true);
         $note_text = $request->input('note_text');
         $related_to = "";
@@ -832,17 +828,9 @@ class DashboardController extends Controller
             $related_to_parent = $request->input('related_to_parent');
             $moduleId = $related_to_['zoho_module_id'] ?? null;
         } else {
-
             $related_to = $mergedData['groupLabel'] ?? null;
             $related_to_parent = $mergedData['relatedTo'] ?? null;
             $moduleId = $mergedData['moduleId'] ?? null;
-            if ($related_to === "Contacts") {
-                $related_to_parent = $related_to_parent;
-            }
-            if ($related_to === "Deals") {
-                $related_to_parent = $related_to_parent;
-            }
-
         }
         $user = $this->user();
         if (!$user) {
@@ -870,22 +858,18 @@ class DashboardController extends Controller
         ];
         $recordId = $related_to_parent;
         $apiName = $related_to;
-        Log::info("CHECK nOTES", $jsonData, $recordId, $apiName);
+        Log::info("CHECK NOTES", $jsonData, $recordId, $apiName);
         try {
             $response = $zoho->createNoteData($jsonData, $recordId, $apiName);
-
             if (!$response->successful()) {
                 Log::error("Error creating notes:");
-                return "error somthing" . $response;
+                return "error something" . $response;
             }
             $data = json_decode($response, true);
             $zoho_node_id = $data['data'][0]['details']['id'];
             $deal = $db->retrieveDealByZohoId($user, $accessToken, $recordId);
-            // dd($deal);
             $contact = $db->retrieveContactByZohoId($user, $accessToken, $recordId);
-            // Create a new Note instance
             $note = new Note();
-            // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
             $note->related_to_module_id = $moduleId;
             $note->zoho_note_id = $zoho_node_id;
             $note->owner = $user->id;
@@ -894,16 +878,14 @@ class DashboardController extends Controller
             $note->related_to_type = $apiName;
             $note->related_to_parent_record_id = $recordId;
             $note->note_content = $note_text;
-            // Save the Note to the database
             $note->save();
-            // Redirect back with a success message
-            return $note;
+            return response()->json(['success' => true, 'note' => $note], 200);
         } catch (\Exception $e) {
-            Log::error("Error creating notes:new " . $e->getMessage());
-            // return redirect()->back()->with('error', 'Note Not saved successfully!');
-            return "somthing went wrong" . $e->getMessage();
+            Log::error("Error creating notes: " . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
+
     public function markAsDone(Request $request)
     {
         $user = $this->user();

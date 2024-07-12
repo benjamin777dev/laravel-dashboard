@@ -155,7 +155,7 @@
 
 @vite(['resources/js/pipeline.js'])
 
-{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"> --}}
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
@@ -163,8 +163,7 @@
     var deal = @json($deal);
     $(document).ready(function(){
     
-        // fetchPipelineTasks('In Progress',dealId)
-        getCreateForm();
+       
         var defaultTab = "{{ $tab }}";
         localStorage.setItem('status', defaultTab);
         // Retrieve the status from local storage
@@ -259,22 +258,7 @@
         });
 
     }
-    // function getCreateForm() {
-    //     $.ajax({
-    //         url: `{{ url('/pipeline/detail/form/') }}/${dealId}`,
-    //         method: 'GET',
-    //         success: function(data) {
-    //              if (data.redirect) {
-    //                 window.location.href = data.redirect;
-    //             }else{
-    //                 $('.updatePipelineform').html(data);
-    //             }                 
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error('Error:', error);
-    //         }
-    //     });
-    // }
+   
     
 </script>
 @endif
