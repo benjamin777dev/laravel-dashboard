@@ -37,7 +37,16 @@
                 });
 
 
-
+            $('#vertical-menu-btn').on('click', function (event) {
+                event.preventDefault();
+                $('body').toggleClass('sidebar-enable');
+                if ($(window).width() >= 992) {
+                    console.log($('body'))
+                    $('body').toggleClass('vertical-collpsed');
+                } else {
+                    $('body').removeClass('vertical-collpsed');
+                }
+            });
 
         });
     });
