@@ -101,26 +101,9 @@
             </div>
 
         </div>
-        @php
-            $transHeader = [
-                "",
-                "",
-                "Transaction",
-                "Client Name",
-                "Status",
-                "Representing",
-                "Price",
-                "Close Date",
-                "Commission",
-                "Potential GCI",
-                "Probability",
-                "Probable GCI"
-            ]
-        @endphp
         <div class="transaction-container">
             @if (count($deals) > 0)
             @component('components.common-table', [
-                'th' => $transHeader,
                 'id'=>'datatable_pipe_transaction',
                 'commonArr' =>$deals,
                 "type" =>"dash-pipe-transaction",

@@ -345,17 +345,9 @@
 <div>
     <h2 class='pText pt-3'> Contact Role </h2>
 </div>
-@php
-            $contactRoleHeader = [
-                "Role",
-                "Name",
-                "Phone",
-                "Email",
-            ]
-        @endphp
+
         <div class="dtranstiontable mt-2" id="badDates">
                 @component('components.common-table', [
-                    'th' => $contactRoleHeader,
                     'id' => 'contact_role_table_pipeline',
                 ])
                 @endcomponent
@@ -385,17 +377,9 @@
     </div>
 </div>
 
-@php
-            $submittalTableHeader = [
-                "Submittal Name",
-                "Submittal Type",
-                "Owner",
-                "Created Time",
-            ]
-        @endphp
+
 <div class="showsubmittalTable">
                 @component('components.common-table', [
-                    'th' => $submittalTableHeader,
                     'id' => 'submittal_table_pipeline',
                 ])
                 @endcomponent
@@ -404,14 +388,7 @@
 {{-- Add Non-TM --}}
 
 
-@php
-            $nonTMTableHeader = [
-                "Number",
-                "Close Date",
-                "Created Time",
-                "No Non-TM assigned",
-            ]
-        @endphp
+
 @if ($deal['tm_preference'] == 'Non-TM')
 <div class="mt-3 d-flex justify-content-between">
     <div class="">
@@ -429,7 +406,6 @@
 
 <div class="showNonTmTable"></div>
 @component('components.common-table', [
-                    'th' => $nonTMTableHeader,
                     'id' => 'nonTm_table_pipeline',
                 ])
                 @endcomponent

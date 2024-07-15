@@ -23,16 +23,8 @@
                             </div>
                         </div>
                       
-                        @php
-                        $contactHeader = [
-                            "Submittal Name",
-                            "Submittal Type",
-                            "Owner",
-                            "Created Time",
-                        ]
-                      @endphp
+                   
                        @component('components.common-table', [
-                        'th' => $contactHeader,
                         'id'=>'datatable_submittal',
                         "type" =>"submittal",
                       ])

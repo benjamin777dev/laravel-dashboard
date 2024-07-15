@@ -17,13 +17,6 @@
         <div class="card">
             <div class="card-body">
                 <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100">
-                    <thead>
-                        <tr>
-                            @foreach ($th as $thname)
-                                <th>{{ $thname }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
                 </table>
 
             </div>

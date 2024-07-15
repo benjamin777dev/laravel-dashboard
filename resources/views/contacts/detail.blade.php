@@ -63,18 +63,7 @@
                                     aria-selected="false">Completed</button>
                         </div>
                     </nav>
-                   
-                    @php
-                    $contactHeader = [
-                        "",
-                        "Subject",
-                        "Related To",
-                        "Due Date",
-                        "Options",
-                    ]
-                @endphp
                    @component('components.common-table', [
-                    'th' => $contactHeader,
                     'id'=>'datatable_tasks',
                     'commonArr' =>$tasks,
                     'retrieveModuleData'=>$retrieveModuleData,
