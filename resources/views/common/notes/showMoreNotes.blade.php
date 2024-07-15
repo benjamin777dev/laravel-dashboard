@@ -23,6 +23,13 @@
         <div class="col-sm-12 dtasksection">
             <div class="d-flex justify-content-between">
                 <p class="dFont800 dFont15">Notes</p>
+                <button
+                    class="btn btn-sm btn-dark"
+                    id="btnGroupAddon"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdropforNote"
+                >
+                    <i class="fas fa-plus plusicon"></i> Add Note
+                </button>
             </div>
             <div class="row">
                 <div class="d-flex flex-column">
@@ -108,6 +115,10 @@
     @include('common.notes.create')
 @endsection
 <script>
+    window.onload = function(){
+        let selectID = $('#related_to_note');
+           showDropdown("",selectID);
+    }
     window.deleteNote = function(id) {
         console.log("delete note called",id);
         $.ajaxSetup({

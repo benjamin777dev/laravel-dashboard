@@ -108,7 +108,7 @@
                         <div id="note_text_error" class="text-danger"></div>
                         <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
-                            <select class="form-select dmodaltaskSelect" id="related_to_note" name="related_to"
+                            <select class="form-select dmodaltaskSelect" id="related_to_note" name="related_to_note"
                                 aria-label="Select Transaction">
                         </select>
                         </div>
@@ -166,11 +166,12 @@
         event.preventDefault();
         let isValid = true       
         console.log(window.groupLabel, window.whoid, 'checkouttttttt');
-        let noteText, relatedTo, changeButton
+        let noteText, relatedToNote, changeButton
+        window.relatedTo;
         if (id) {
             enableSelect(id);
             noteText = document.getElementById("note_text" + id).value;
-            relatedTo = document.getElementById("related_to" + id).value;
+            relatedToNote = document.getElementById("related_to" + id).value;
             changeButton = document.getElementById('validate-button' + id);
 
             // Reset errors
@@ -189,7 +190,7 @@
             }
 
             // Validate related to
-            if (relatedTo === "") {
+            if (relatedToNote === "") {
                 document.getElementById("related_to_error" + id).innerText = "Related to is required";
                 document.getElementById("noteSelect" + id).style.display = "none";
                 isValid = false;
@@ -202,7 +203,7 @@
             // return isValid;
         } else {
             noteText = document.getElementById("note_text").value;
-            relatedTo = document.getElementById("related_to_note").value;
+            relatedToNote = document.getElementById("related_to_note").value;
             changeButton = document.getElementById('validate-button');
 
             // Reset errors
@@ -219,7 +220,7 @@
             }
 
             // Validate related to
-            if (relatedTo === "") {
+            if (relatedToNote === "") {
                 document.getElementById("related_to_error").innerText = "Related to is required";
                 isValid = false;
             } else {

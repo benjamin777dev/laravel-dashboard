@@ -45,9 +45,9 @@ window.showDropdown = function (showDropdown, selectElement) {
                             '" id="' +
                             state.zoho_contact_id +
                             '">' +
-                            state.first_name +
+                            (state.first_name ?? "") +
                             " " +
-                            state.last_name +
+                            (state.last_name ?? "") +
                             "</span>"
                     );
                 }
@@ -83,7 +83,9 @@ window.showDropdown = function (showDropdown, selectElement) {
                 }
 
                 if (state.first_name || state.last_name) {
-                    return state.first_name + " " + state.last_name;
+                    return (
+                        (state.first_name ?? "") + " " + (state.last_name ?? "")
+                    );
                 }
 
                 return state.deal_name;
@@ -95,6 +97,9 @@ window.showDropdown = function (showDropdown, selectElement) {
             options.multiple = true;
             options.maximumSelectionLength = 1; // Use `maximumSelectionLength` instead of `maximumSelectionSize`
             options.placeholder = "Search...";
+        } else if (showDropdown === "staticBackdropforNote") {
+            options.placeholder = "Search...";
+            options.width = "resolve";
         } else {
             options.placeholder = "General";
             options.width = "resolve";
@@ -306,11 +311,7 @@ window.addCommonTask = function (id = "", type = "") {
                 "Please enter subject";
             return;
         }
-        if (detail.trim() === "") {
-            document.getElementById("detail_error" + id).innerHTML =
-                "Please enter details";
-            return;
-        }
+
         // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         // var whoId = window.selectedTransation
         // if (whoId === undefined) {
@@ -371,11 +372,7 @@ window.addCommonTask = function (id = "", type = "") {
                 "Please enter subject";
             return;
         }
-        if (detail.trim() === "") {
-            document.getElementById("detail_error").innerHTML =
-                "Please enter details";
-            return;
-        }
+
         var seModule = type;
         var WhatSelectoneid = selectionId;
         console.log("WHAT ID", WhatSelectoneid);

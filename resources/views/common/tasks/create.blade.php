@@ -13,7 +13,7 @@
                         rows="4" class="dtextarea"></input>
                         <div id="subject_error{{ $deal['zoho_deal_id'] }}" class="text-danger"></div>
                     <p class="ddetailsText">Details</p>
-                    <textarea name="detail" onkeyup="validateTextareaTask('{{ $deal->zoho_deal_id }}');" id="darea{{ $deal['zoho_deal_id'] }}"
+                    <textarea name="detail" id="darea{{ $deal['zoho_deal_id'] }}"
                         rows="4" class="dtextarea"></textarea>
                     <div id="detail_error{{ $deal['zoho_deal_id'] }}" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
@@ -53,7 +53,7 @@
                     rows="4" class="dtextarea"></input>
                     <div id="subject_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                 <p class="ddetailsText">Details</p>
-                <textarea name="detail" onkeyup="validateTextareaTask('{{ $contact->zoho_contact_id }}');" id="darea{{ $contact['zoho_contact_id'] }}"
+                <textarea name="detail" id="darea{{ $contact['zoho_contact_id'] }}"
                     rows="4" class="dtextarea"></textarea>
                 <div id="detail_error{{ $contact['zoho_contact_id'] }}" class="text-danger"></div>
                 <p class="dRelatedText">Related to...</p>
@@ -93,7 +93,7 @@
                     <input name="subject" onkeyup="validateTextareaTask()" id="sarea" rows="4" class="dtextarea"></input>
                     <div id="subject_error" class="text-danger"></div>
                     <p class="ddetailsText">Details</p>
-                    <textarea name="detail" onkeyup="validateTextareaTask()" id="darea" rows="4" class="dtextarea"></textarea>
+                    <textarea name="detail"id="darea" rows="4" class="dtextarea"></textarea>
                     <div id="detail_error" class="text-danger"></div>
                     <p class="dRelatedText">Related to...</p>
                     <div class="btn-group dmodalTaskDiv">
@@ -141,32 +141,21 @@
         if (id) {
             document.getElementById("subject_error" + id).innerHTML = "";
             document.getElementById('sarea' + id).value = "";
-            document.getElementById("detail_error" + id).innerHTML = "";
-            document.getElementById('darea' + id).value = "";
+            
         } else {
             document.getElementById("subject_error").innerHTML = "";
             document.getElementById('sarea').value = "";
-             document.getElementById("detail_error").innerHTML = "";
-            document.getElementById('darea').value = "";
+            
         }
 
     }
 
     window.validateTextareaTask = function(id) {
         if (id) {
-            var textarea = document.getElementById('darea' + id);
             var subjectarea = document.getElementById('sarea' + id);
             
-            var textareaValue = textarea.value.trim();
              var subjectareaValue = subjectarea.value.trim();
             // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("detail_error" + id).innerHTML = "Please enter details";
-            } else {
-                document.getElementById("detail_error" + id).innerHTML = "";
-            }
-
             if (subjectareaValue === '') {
                 // Show error message or perform validation logic
                 document.getElementById("subject_error" + id).innerHTML = "Please enter subject";
@@ -174,19 +163,10 @@
                 document.getElementById("subject_error" + id).innerHTML = "";
             }
         } else {
-            var textarea = document.getElementById('darea');
             var subjectarea = document.getElementById('sarea');
-            var textareaValue = textarea.value.trim();
             var subjectareaValue = subjectarea.value.trim();
 
             // Check if textarea value is empty
-            if (textareaValue === '') {
-                // Show error message or perform validation logic
-                document.getElementById("detail_error").innerHTML = "Please enter details";
-            } else {
-                document.getElementById("detail_error").innerHTML = "";
-            }
-
             if (subjectareaValue === '') {
                 // Show error message or perform validation logic
                 document.getElementById("subject_error").innerHTML = "Please enter subject";

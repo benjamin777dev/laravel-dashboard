@@ -7,8 +7,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id ="contact_spouse_create_form">
+                <form class="row" id ="contact_spouse_create_form" action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}"
+        method="POST">
                     @csrf
+                    @method('POST')
                     {{-- Layout --}}
                     <!-- <div class="mb-3 row">
                         <label for="layout_design" class="col-sm-2 col-form-label nplabelText text-end">
@@ -152,8 +154,8 @@
        
         document.getElementById('contact_spouse_create_form').appendChild(hiddenInput);
         $('#contact_spouse_create_form').submit(function(event) {
+            event.preventDefault(); 
             if (!validateSpouseContactForm()) {
-                event.preventDefault(); 
                 return; 
             }
 
@@ -163,16 +165,16 @@
             // return;
             // AJAX post request
             $.ajax({
-                url: '{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}',
                 type: 'POST',
+                url: $(this).attr('action'),
                 data: formData,
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
                     showToast("Spouse create successfully")
-                    getCreateForm();
+                    window.location = window.location.href;
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
+                    console.error('Error:', xhr);
                     showToastError("Spouse creation failed")
                 }
             });

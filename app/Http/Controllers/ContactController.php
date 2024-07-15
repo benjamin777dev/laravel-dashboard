@@ -94,7 +94,7 @@ class ContactController extends Controller
             }
         }
 
-        return view('contacts.createForm', compact('contact','retrieveModuleData','contacts',  'users', 'spouseContact',  'contactId', 'groups', 'contactsGroups'));
+        return view('contacts.createForm', compact('contact','retrieveModuleData','contacts',  'users', 'spouseContact',  'contactId', 'groups', 'contactsGroups'))->render();
 
     }
 
@@ -850,7 +850,7 @@ class ContactController extends Controller
         $contact = $db->createSpouseContact($user, $accessToken, $data['id'], $inputData['data'][0]);
         session(['spouseContact' => $contact]);
         // Redirect to the route without passing the contact object
-        return redirect()->route('contacts.create', ['contactId' => $contactId]);
+        return redirect()->back()->withInput()->with('success', 'Spouse contact created successfully');
     }
 
 }
