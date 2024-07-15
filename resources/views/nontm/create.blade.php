@@ -20,17 +20,24 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-12 main-carousel">
-        <div id="carouselExampleControls" class="carousel slide" data-interval="false"
-            style="display: flex;justify-content:space-between">
+    <div class="row mt-4 justify-content-center">
+        <div class="col-sm-12 col-md-8 carausel-custom">
+            <div class="card pb-4">
+                <div class="card-body">
+                <div id="carouselExampleControls" class="carousel slide " data-interval="false"
+            >
             <div class="corausal-req-mb48">
-                <p class="corausal-req-text">Non-TM Check Request Information</p>
+            <h4 class='card-title corausal-req-text'>Non-TM Check Request Information</h4>
+
             </div>
-            <div class="carousel-indicators">
+            <div class="row carousel-indicators ">
+                <div class="col-md-4">
                 <div class="prev_btn">
                     <a href=""><span class="prev">
                             < Previous</span></a>
                 </div>
+                </div>
+                <div class="col-md-5">
                 <div class="bullets">
                     <button type="button" data-bs-target="#carouselExampleControls" data-bs-slide-to="0" class="active"
                         aria-current="true" aria-label="Slide 1"></button>
@@ -41,14 +48,20 @@
                     <button type="button" data-bs-target="#carouselExampleControls" data-bs-slide-to="3"
                         aria-label="Slide 4"></button>
                 </div>
+                </div>
+                <div class="col-md-3">
                 <div class="next_btn">
                     <a href=""><span class="next">Next ></span></a>
                 </div>
+                </div>
+               
+               
+                
             </div>
             <div class="carousel-inner">
 
                 <div class="carousel-item active">
-                    <div class="main_form_div">
+                    <div class=" 1st-form">
                         <div class="related_trxn label-div-mb">
                             <label for="relatedto" class="common-label">Related Transaction <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
@@ -85,47 +98,48 @@
                             <div class="add_email_error text-danger" id="add_email_error">
                             </div>
                         </div>
-                        <div class="close-date-comm">
-                            <div class="close-date-nontm">
-                                <label for="close_date" class="common-label">Close Date <svg
-                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
-                                        fill="none">
-                                        <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                            y="0" width="19" height="18">
-                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                        </mask>
-                                        <g mask="url(#mask0_2151_10662)">
-                                            <path
-                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                fill="#AC5353" />
-                                        </g>
-                                    </svg></label>
-                                <input type="date"
-                                    value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
-                                    class="form-control nontm-input" id="close_date">
-                                <div id="close_date_error" class="text-danger">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 p-3">
+                                <div class="close-date-nontm">
+                                        <label for="close_date" class="common-label">Close Date <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
+                                                fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                                    y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                        <input type="date"
+                                            value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
+                                            class="form-control nontm-input" id="close_date">
+                                        <div id="close_date_error" class="text-danger">
 
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6 commission-nontm">
-                                <label for="commission" class="common-label">Commission % <svg
-                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                        viewBox="0 0 19 18" fill="none">
-                                        <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                            x="0" y="0" width="19" height="18">
-                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                        </mask>
-                                        <g mask="url(#mask0_2151_10662)">
-                                            <path
-                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                fill="#AC5353" />
-                                        </g>
-                                    </svg></label>
-                                <input type="text"
-                                    value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
-                                    class="form-control nontm-input" id="commission">
-                                <div id="commission_error" class="text-danger">
-
+                                <div class="col-sm-12 col-md-6 p-3">
+                                    <label for="commission" class="common-label">Commission % <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                    x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                        <input type="text"
+                                            value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
+                                            class="form-control nontm-input" id="commission">
+                                        <div id="commission_error" class="text-danger">
                                 </div>
                             </div>
                         </div>
@@ -133,7 +147,7 @@
                 </div>
                 <div class="carousel-item">
 
-                    <div class="main_form_div">
+                <div class="main_form_div">
                         <div class="accordion" id="accordionExample">
                             <!-- Referral Fee Paid Out -->
                             <div class="accordion-item">
@@ -267,43 +281,50 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="carousel-item main_form_div">
-                    <div class="close-date-comm select-mb24">
-                        <div class="close-date-nontm">
-                            <label for="close_date" class="common-label">Final Purchase Price <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
-                                    fill="none">
-                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                        y="0" width="19" height="18">
-                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                    </mask>
-                                    <g mask="url(#mask0_2151_10662)">
-                                        <path
-                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                            fill="#AC5353" />
-                                    </g>
-                                </svg></label>
-                            <input type="text"
-                                value="{{ isset($dealData['dealData']['sale_price']) ? $dealData['dealData']['sale_price'] : '' }}"
-                                placeholder="$" class="form-control nontm-input" id="final_purchase">
-                            <div id="final_purchase_error" class="text-danger">
+                <div class="carousel-item ">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6 p-3">
+                            <div class="close-date-nontm">
+                                <label for="close_date" class="common-label">Final Purchase Price <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
+                                        fill="none">
+                                        <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="19" height="18">
+                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                        </mask>
+                                        <g mask="url(#mask0_2151_10662)">
+                                            <path
+                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                fill="#AC5353" />
+                                        </g>
+                                    </svg></label>
+                                <input type="text"
+                                    value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
+                                    placeholder="$" class="form-control nontm-input" id="final_purchase">
+                                <div id="final_purchase_error" class="text-danger">
 
+                                </div>
                             </div>
                         </div>
-                        <div class="col-6 commission-nontm">
-                            <label for="commission" class="common-label">Amount to CHR GIves</label>
-                            <input type="text"
-                                value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
-                                placeholder="$" class="form-control nontm-input" id="amount_chr">
-                                <div id="amount_chr_error" class="text-danger">
+                        <div class="col-sm-12 col-md-6 p-3">
+                            <div class=" commission-nontm">
+                                <label for="commission" class="common-label">Amount to CHR GIves</label>
+                                <input type="text"
+                                    value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
+                                    placeholder="$" class="form-control nontm-input" id="amount_chr">
+                                    <div id="amount_chr_error" class="text-danger">
+
+                                </div>
 
                             </div>
-
                         </div>
                     </div>
-                    <div class='pb-4'>
+                    <div class="close-date-comm select-mb24">
+                       
+                        
+                    </div>
+                    <div>
                         <label for="payable" class="common-label">Checks Payable to</label>
                         <select name="additional_charge" id="additonal_fee"
                             class="form-select second-step-common-select select-mb24" id="">
@@ -313,7 +334,7 @@
 
                 </div>
                 <div class="carousel-item">
-                    <div class="main_form_div">
+                    <div class="">
                         <div class="commission-nontm select-mb24">
                             <label for="commission" class="common-label">Agent Comments/Remarks/Instructions</label>
                             <input type="textarea"
@@ -339,6 +360,9 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
+        </div>
+                </div>
+            </div>
         </div>
     </div>
 

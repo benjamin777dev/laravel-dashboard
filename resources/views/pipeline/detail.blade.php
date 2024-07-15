@@ -356,9 +356,9 @@
 
 {{-- Add New Submittal --}}
 
-<div class=" mt-3 d-flex justify-content-between ">
+<div class="p-4 d-flex justify-content-between ">
     <div class="">
-        <h2 class='pText mx-2'> Submittal </h2>
+        <h2 class='pText mt-3 text-center'> Submittal </h2>
     </div>
     <div class=" text-end">
     <button class="input-group-text npcontactbtn btn btn-sm btn-primary" style="{{ ($deal['tm_preference'] == 'Non-TM') ? 'cursor:not-allowed;' : '' }}" id="addSubmittal" onclick="showSubmittalFormType()">
@@ -390,9 +390,9 @@
 
 
 @if ($deal['tm_preference'] == 'Non-TM')
-<div class="mt-3 d-flex justify-content-between">
+<div class="p-4 d-flex justify-content-between">
     <div class="">
-        <h2 class=' pText mx-2'> Non-TM </h2>
+        <h2 class='mt-3 pText '> Non-TM </h2>
     </div>
     <div class=" text-end">
         <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
