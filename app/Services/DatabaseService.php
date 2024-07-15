@@ -1265,14 +1265,20 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contacts From Database");
-            $condition = [['contacts.contact_owner', $user->root_user_id], ['contacts.zoho_contact_id', '!=', null]];
+
+            $condition = [
+                ['contacts.contact_owner', $user->root_user_id],
+                ['contacts.zoho_contact_id', '!=', null]
+            ];
+
             $contacts = Contact::where($condition)
-                // Left join with contact table to get Secondary contact
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
                 })
                 ->select(
                     'contacts.id',
+                    'contacts.email',
+                    'contacts.auto_address',
                     'contacts.contact_owner',
                     'contacts.zoho_contact_id',
                     'contacts.first_name',
@@ -1283,26 +1289,22 @@ class DatabaseService
                     'contacts.has_address',
                     DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner) as partner_id')
                 )
-                ->with([
-                    'groups' => function ($query) use ($filter) {
-                        // $query->where('groupId', $filter);
-                    },
-                ])
                 ->when($filter, function ($query) use ($filter) {
                     if ($filter === "has_email") {
-                        $query->where('contacts.has_email', 1);
-                    } else if($filter==="has_address"){
-                        $query->where('contacts.has_address', 1);
-                    } else{
+                        $query->where('contacts.email', '!=', null);
+                    } elseif ($filter === "has_address") {
+                        $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
+                    } else {
                         $query->whereHas('groups', function ($query) use ($filter) {
                             $query->where('groupId', $filter);
                         });
                     }
                 })
-                ->orderByRaw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner)')
-                ->orderByRaw('CASE WHEN contacts.spouse_partner IS NOT NULL THEN 1 ELSE 0 END')
-                ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort")
-                ->orderBy('contacts.updated_at','desc')
+                ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END') // Primary contacts first
+                ->orderByRaw('CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END') // Secondary contacts after their primary
+                ->orderBy('contacts.relationship_type', 'asc') // Then order alphabetically within each group
+                ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort") // Then order by first_name and last_name
+                ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
                 ->paginate();
 
             return $contacts;
@@ -1898,7 +1900,7 @@ class DatabaseService
             throw $e;
         }
     }
-    
+
     public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
     {
     try {
