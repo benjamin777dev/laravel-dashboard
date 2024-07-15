@@ -1,5 +1,5 @@
 
-<div class="row" style="background-color: white">
+<div class="row">
     <div class="col-md-6 col-sm-12">
 
         <div class="card">
@@ -363,13 +363,13 @@
         </div>
 
 {{-- Add New Submittal --}}
-<div class="container b-0 pt-3">
-    <div class="row justify-content-between mb-3">
-        <div class="col">
-            <h2 class="pText">Submittal</h2>
-        </div>
-        <div class="col-auto text-end">
-        <button class="input-group-text npcontactbtn btn btn-sm btn-primary" style="{{ ($deal['tm_preference'] == 'Non-TM') ? 'cursor:not-allowed;' : '' }}" id="addSubmittal" onclick="showSubmittalFormType()">
+
+<div class=" mt-3 d-flex justify-content-between ">
+    <div class="">
+        <h2 class='pText mx-2'> Submittal </h2>
+    </div>
+    <div class=" text-end">
+    <button class="input-group-text npcontactbtn btn btn-sm btn-primary" style="{{ ($deal['tm_preference'] == 'Non-TM') ? 'cursor:not-allowed;' : '' }}" id="addSubmittal" onclick="showSubmittalFormType()">
     <i class="fas fa-plus plusicon"></i>
     @if ($submittals->count() === 0)
         Add New Submittal
@@ -377,6 +377,9 @@
         Show Submittal
     @endif
 </button>
+    </div>
+</div>
+
 
         </div>
     </div>
@@ -410,16 +413,20 @@
             ]
         @endphp
 @if ($deal['tm_preference'] == 'Non-TM')
-<div>
-    <h2 class='pText pt-3'> Non-TM </h2>
+<div class="mt-3 d-flex justify-content-between">
+    <div class="">
+        <h2 class=' pText mx-2'> Non-TM </h2>
+    </div>
+    <div class=" text-end">
+        <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
+                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus plusicon"></i>
+                    Add Non-TM Check request
+                </button>
+    </div>
 </div>
-<div class="d-flex justify-content-end mb-3">
-    <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
-                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-plus plusicon"></i>
-                Add Non-TM Check request
-            </button>
-</div>
+
+
 <div class="showNonTmTable"></div>
 @component('components.common-table', [
                     'th' => $nonTMTableHeader,
