@@ -89,23 +89,10 @@
             </div>
         </div>
 
-        @php
-            $contactHeader = [
-                "",
-                "",
-                "Full name",
-                "ABCD",
-                "Relationship Type",
-                "Email",
-                "Mobile",
-                "Phone",
-                "Envelope"
-            ]
-        @endphp
+    
 
         <div class="contactlist overflow-auto" id="contactlist">
             @component('components.common-table', [
-                'th' => $contactHeader,
                 'id'=>'datatable_contact',
                 'commonArr' =>$contacts,
                 'retrieveModuleData'=>$retrieveModuleData,

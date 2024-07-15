@@ -1,6 +1,5 @@
 <!-- ========== Left Sidebar Start ========== -->
 <div class="vertical-menu">
-
     <div data-simplebar="init" class="h-100">
         <div class="simplebar-wrapper" style="margin: 0px;">
             <div class="simplebar-height-auto-observer-wrapper">
@@ -34,13 +33,13 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a  class="has-arrow waves-effect">
+                                        <a class="has-arrow waves-effect" onclick="mmShow(this)" >
                                             {{-- <i class="bx bx-user-circle"></i> --}}
                                             <img src="{{ URL::asset('/images/contacts.svg') }}" class="sidebarIcons" alt="C">
 
                                             <span key="t-database">@lang('Database')</span>
                                         </a>
-                                        <ul class="sub-menu" aria-expanded="true">
+                                        <ul class="sub-menu mm-collapse" id="showDropdown" aria-expanded="true">
                                             {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('Contacts')</a></li> --}}
                                             <li><a href="{{ route('contacts.index') }}" key="t-database">@lang('Contacts')</a></li> 
                                             {{-- <li><a href="{{ route('contacts.index') }}" key="t-Contacts">@lang('testing route')</a></li> --}}
@@ -576,4 +575,21 @@
         </div>
     </div>
 </div>
+
+<script>
+    window.mmShow = function(e){
+     let dropdownId = document.getElementById("showDropdown");
+    
+    // Check if the element already has the class
+    let isActive = dropdownId.classList.contains("mm-active");
+
+    // Toggle classes based on the current state
+    if (!isActive) {
+        dropdownId.classList.add("mm-active", "mm-show");
+    } else {
+        dropdownId.classList.remove("mm-active", "mm-show");
+    }
+    }
+</script>
+
 <!-- Left Sidebar End -->
