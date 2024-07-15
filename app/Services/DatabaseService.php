@@ -1262,7 +1262,6 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
-        DB::enableQueryLog();
         try {
             Log::info("Retrieve Contacts From Database");
 
@@ -1306,7 +1305,7 @@ class DatabaseService
                 ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort") // Then order by first_name and last_name
                 ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
                 ->paginate();
-            Log::info("Query Log", DB::getQueryLog());
+
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
