@@ -6,7 +6,14 @@
         <form class="row g-3" id="additionalFields">
             <div class="col-md-6 ">
                 <label for="transactionName" class="form-label nplabelText">Transaction Name</label>
-                <select class="form-select npinputinfo validate" id="transactionName" required>
+                <select class="form-select npinputinfo validate" id="transactionNameShow" required disabled>
+                    @foreach($deals as $currDeal)
+                    <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                        {{$currDeal['deal_name']}}
+                    </option>
+                    @endforeach
+                </select>
+                <select class="form-select npinputinfo validate" id="transactionName" required hidden>
                     @foreach($deals as $currDeal)
                     <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
                         {{$currDeal['deal_name']}}
@@ -408,20 +415,7 @@
         </form>
     </div>
     
-    {{--PROPERTY PROMOTION - Notes--}}
-    <div class="col-md-12 col-sm-24 promotionNote" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
-
-        <p class="npinfoText">PROPERTY PROMOTION - Notes</p>
-        <form class="row g-3">
-            <p class="npinfoText">Is there anything else Marketing Team
-                Should know?</p>
-            <div class="col-md-6">
-                <label for="marketingNotes" class="form-label nplabelText">Please add your Notes</label>
-                <textarea class="form-control" id="marketingNotes" aria-label="With textarea">{{$submittal['marketingNotes']}}</textarea>
-            </div>
-
-        </form>
-    </div>
+   
 
     {{--PROPERTY PROMOTION - Signs--}}
     <div class="col-md-12 col-sm-24 promotionSign" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
@@ -433,7 +427,7 @@
                     <input type="checkbox" id="qrCodeMainPanel" <?php if
                     ($submittal['qrCodeMainPanel']) { echo 'checked' ; } ?>>
                 </div>
-            \<div class="col-md-6">
+            <div class="col-md-6">
                 <label for="qrCodeSignRider" class="form-label nplabelText">OLD QR Code Sign Rider</label>
                 <input type="checkbox" id="qrCodeSignRider" <?php if
                 ($submittal['qrCodeSignRider']) { echo 'checked' ; } ?>>
@@ -548,6 +542,21 @@
             <div class="col-md-6">
                 <label for="brochurePickupDate" class="form-label nplabelText">Brochure Pick Up or PDF Date</label>
                 <input type="date" class="form-control npinputinfo" id="brochurePickupDate" required value="{{$submittal['brochurePickupDate']}}">
+            </div>
+
+        </form>
+    </div>
+
+     {{--PROPERTY PROMOTION - Notes--}}
+    <div class="col-md-12 col-sm-24 promotionNote" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
+
+        <p class="npinfoText">PROPERTY PROMOTION - Notes</p>
+        <form class="row g-3">
+            <p class="npinfoText">Is there anything else Marketing Team
+                Should know?</p>
+            <div class="col-md-6">
+                <label for="marketingNotes" class="form-label nplabelText">Please add your Notes</label>
+                <textarea class="form-control" id="marketingNotes" aria-label="With textarea">{{$submittal['marketingNotes']}}</textarea>
             </div>
 
         </form>
@@ -672,7 +681,7 @@
                 justify-content: center;">
                     <div class="col-md-3">
                         <a>
-                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{json_encode($submittal)}},true)"><i class="fas fa-save">
+                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                                 </i>
                                 Save and Submit to CHR
                             </div>

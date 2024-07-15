@@ -647,7 +647,7 @@ class DatabaseService
             } elseif ($tab == 'Due Today') {
                 // These are any tasks that are due today and are not complete
                 $tasks
-                // ->whereDate('due_date', now()->toDateString())
+                ->whereDate('due_date', now()->toDateString())
                       ->where('status', '!=', 'Completed')
                       ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
@@ -1095,6 +1095,7 @@ class DatabaseService
                 'contactId' => isset($contact->id) ? $contact->id : null,
                 'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
+                'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -1520,7 +1521,7 @@ class DatabaseService
 
             Log::info("Retrieve NonTm From Database");
 
-            $NonTm = NonTm::where('dealId', $dealId)->get();
+            $NonTm = NonTm::where([['dealId', $dealId],['isNonTmCompleted',true]])->get();
             Log::info("Retrieved NonTm From Database", ['NonTm' => $NonTm->toArray()]);
             return $NonTm;
         } catch (\Exception $e) {
@@ -1556,7 +1557,7 @@ class DatabaseService
     {
         try {
 
-            $submittalData = Submittals::where('dealId', $dealId)->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
+            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
             return $submittalData;
         } catch (\Exception $e) {
             Log::error("Error retrieving Submittals: " . $e->getMessage());
@@ -1634,9 +1635,9 @@ class DatabaseService
         foreach ($filteredModules as $module) {
             $query = null;
             if ($module->api_name === 'Deals') {
-                $query = Deal::where('userID', $user->id);
+                $query = Deal::where([['userID', $user->id],['isDealCompleted',true]]);
             } elseif ($module->api_name === 'Contacts') {
-                $query = Contact::where('contact_owner', $user->root_user_id);
+                $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]]);
             }
 
             if ($query && $searchQuery) {

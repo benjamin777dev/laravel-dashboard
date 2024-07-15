@@ -52,7 +52,6 @@
             url: `{{ url('/contact/create/form/') }}/${contactId}`,
             method: 'GET',
             success: function(response) {   
-                console.log(response,"response") 
                 if (response.redirect) {
                     window.location.href = response.redirect;
                 }else{

@@ -1,14 +1,19 @@
 <div class="table-responsive dtranstiontable mt-3">
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Submittals</p>
-        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+        @if ($submittals->count() === 0)
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+                <i class="fas fa-plus plusicon"></i>
+                    Add New Submittal
+            </div>
+         @else
+         <a href="{{ url('/submittal-view/' . $submittals[0]['submittalType'] . '/' . $submittals[0]['id']) }}" target="_blank">
+            <div class="input-group-text npcontactbtn" id="addSubmittal">
             <i class="fas fa-plus plusicon"></i>
-            @if ($submittals->count() === 0)
-                Add New Submittal
-            @else
                 Show Submittal
-            @endif
-        </div>
+            </div>
+        </a>
+        @endif
 
     </div>
     <div class="row npNom-TM-Table">
@@ -205,4 +210,5 @@
         }
 
     }
+
 </script>

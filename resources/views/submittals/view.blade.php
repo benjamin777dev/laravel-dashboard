@@ -9,7 +9,7 @@
 <div class="container-fluid">
     <div class="submittaldiv">
         <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},false)"><i class="fas fa-save">
+            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                 </i>
                 Update
             </div>

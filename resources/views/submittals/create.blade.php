@@ -237,7 +237,7 @@
                     success: function (response) {
                         console.log("response",response);
                         showToast("Buyer Submittal updated successfully");
-                        window.location.href = "/pipeline-view/" + submittal['dealData']['id'];
+                        window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
                         if (response?.data && response.data[0]?.message) {
                             // Convert message to uppercase and then display
                             const upperCaseMessage = response.data[0].message.toUpperCase();

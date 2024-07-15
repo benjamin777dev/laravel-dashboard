@@ -318,7 +318,7 @@ class DashboardController extends Controller
             // Create a new Task record using the Task model
             $task = Task::create([
                 'subject' => $subject,
-                'detail' => $detail,
+                'detail' => $detail?? null,
                 'zoho_task_id' => $zoho_id,
                 'owner' => "1",
                 'status' => $status ?? "Not Started",
