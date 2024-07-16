@@ -81,6 +81,11 @@ class Deal extends Model
         return $this->belongsTo(Contact::class, 'client_name_id', 'zoho_contact_id');
     }
 
+    public function submittals()
+    {
+        return $this->hasMany(Submittals::class, 'dealId', 'zoho_deal_id');
+    }
+
     public function getClientFromClientNameOnly()
     {
         if (is_null($this->client_name_only) || $this->client_name_only == '') {

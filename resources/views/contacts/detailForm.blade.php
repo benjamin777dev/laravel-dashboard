@@ -280,6 +280,7 @@
         </div>
     </form>
 </div>
+@include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
 <div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -314,6 +315,7 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
+@vite(['resources/js/pipeline.js'])   
 <script>
     contact=@json($contact);
     groups = @json($groups);
@@ -441,6 +443,79 @@
         }
         $('#contactOwner').removeAttr('disabled');
         return true;
+    }
+    var prevSelectedColumn = null;
+    window.fetchData=function(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+            clickedColumn = "") {
+            let searchValue = searchInput.val()??"";
+            if (resetall === "reset_all") {
+                document.getElementById("loaderOverlay").style.display = "block";
+                document.getElementById('loaderfor').style.display = "block";
+                $("#pipelineSearch").val("");
+                $("#related_to_stage").val("");
+                searchValue = "";
+                sortValue = "";
+                filter = "";
+            }
+            $.ajax({
+                url: '{{ url('/pipeline/deals') }}',
+                method: 'GET',
+                data: {
+                    search: encodeURIComponent(searchValue),
+                    sort: sortValue || "",
+                    sortType: sortType || "",
+                    filter: filter
+                },
+
+                success: function(data) {
+                    if (resetall === "reset_all") {
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
+                    }
+                   
+                    const card = $('.transaction-container').html(data);
+                    if(card){
+                        if (prevSelectedColumn !== null) {
+                        if (prevSortDirection === "asc") {
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                        } else {
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                        }
+                    }
+                    if (sortType === "asc") {
+                        $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                    } else {
+                        $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                    }
+
+                    // Update the previously selected column and its sorting direction
+                    prevSelectedColumn = clickedColumn;
+                    prevSortDirection = sortType;
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    if (resetall === "reset_all") {
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
+                    }
+                    console.error('Error:', error);
+                }
+            });
+        }
+    window.fetchDeal = function(sortField, sortDirection, resetall = "", clickedCoulmn) {
+        let searchInput = $('#pipelineSearch');
+        let sortInput = $('#pipelineSort');
+        let ppipelineTableBody = $('.psearchandsort');
+        let ptableCardDiv = $('.ptableCardDiv');
+        let selectedModule = $('#related_to_stage');
+        let selectedText = selectedModule.val();
+        // Call fetchData with the updated parameters
+        fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
     }
 
 </script>

@@ -291,55 +291,82 @@
         var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
             removeItemButton: true,
         });
+
+        // Initialize arrays
         window.selectedGroupsArr = [];
+        window.selectedGroupsDefault = [];
+        // Parse deal.primary_contact to ensure it's an array of objects
+        deal.primary_contact = JSON.parse(deal.primary_contact);
+
+        // Create and append hidden input
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'selectedGroups';
-        hiddenInput.className  = 'validate';
+        hiddenInput.className = 'validate';
+        document.getElementById('choices-multiple-remove-button').appendChild(hiddenInput);
+
+        // Populate selectedGroupsDefault and selectedGroupsArr with initially selected options
+        $("#choices-multiple-remove-button option:selected").each(function() {
+            const val = $(this).val();
+            selectedGroupsDefault.push(val);
+            selectedGroupsArr.push({ Primary_Contact: { id: val } });
+        });
+        hiddenInput.value = JSON.stringify(selectedGroupsArr);
+
+        // Add event listener for add button
         document.getElementById('choices-multiple-remove-button').addEventListener('addItem', function(event) {
             var selectedGroups = event.detail.value;
-            if (!selectedGroupsArr.includes(selectedGroups)) {
-                selectedGroupsArr.push({Primary_Contact:{id:selectedGroups}});
-            } else {
-                // If the value already exists, remove it from the array
-                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+
+            // Check if the selected group is already in the array
+            if (!selectedGroupsArr.some(item => item.Primary_Contact.id === selectedGroups)) {
+                // Add the new item to the array
+                selectedGroupsArr.push({ Primary_Contact: { id: selectedGroups } });
             }
+
             hiddenInput.value = JSON.stringify(selectedGroupsArr);
             console.log(selectedGroupsArr);
-
         });
-        window.selectedGroupsDefault = [];
-        $("#choices-multiple-remove-button option:selected").each(function() {
-            selectedGroupsDefault.push($(this).val());
-        })
-        
+
         // Add event listener for remove button
-        let removeGroupsArr = [];
-        
         multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
             var removedItemId = event.detail.value;
-            var removedItemData = null
+            var removedItemData = null;
 
-            console.log(event);
-            var removedItem={}
-            console.log("removedItemId",removedItemId);
-            deal.primary_contact = JSON.parse(deal.primary_contact)
-            var removedItemData = deal.primary_contact.find((val)=>val.Primary_Contact.id===removedItemId)
-           
-            console.log("removedItemData",removedItemData);
+            // console.log(event);
+            console.log("removedItemId", removedItemId);
+
             
-            if (selectedGroupsDefault.includes(removedItemData.Primary_Contact.id)) {
-                removedItem._delete=null
-                removedItem.id=removedItemData.id
-                removedItem.Primary_Contact=removedItemData.Primary_Contact
-                console.log("removedItem",removedItem);
-                // Perform your API hit here
-                // console.log("API hit for removed group: " + removedGroup);
+
+            // Find the removed item in deal.primary_contact array
+            removedItemData = deal.primary_contact.find((val) => val.Primary_Contact.id === removedItemId);
+            console.log("removedItemData", removedItemData);
+
+            // Check if the removed item is in selectedGroupsDefault
+            if (removedItemData && selectedGroupsDefault.includes(removedItemData.Primary_Contact.id)) {
+                console.log("IF CONDITION");
+                var removedItem = {
+                    _delete: null,
+                    id: removedItemData.id,
+                    Primary_Contact: removedItemData.Primary_Contact
+                };
+                console.log("removedItem", removedItem);
+
+                // Add the removed item to the array for API hit
                 selectedGroupsArr.push(removedItem);
+
+                // Trigger the click event for the updateDeal button
                 $("#updateDeal").click();
+            } else {
+                console.log("ELSE CONDITION");
+                // Remove the item from selectedGroupsArr
+                selectedGroupsArr = selectedGroupsArr.filter(item => item.Primary_Contact.id !== removedItemId);
             }
 
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+            console.log(selectedGroupsArr);
         });
+
+
         document.getElementById('additionalFields').appendChild(hiddenInput);
         var choicesDiv = document.querySelector('.choices[data-type="select-multiple"]');
         if (choicesDiv) {

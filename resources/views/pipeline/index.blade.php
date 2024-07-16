@@ -93,7 +93,7 @@
                 </div>
             @endif
         </div>
-        @include('submittals.chooseTransaction',['deals'=>$allDeals])
+        @include('submittals.chooseTransaction',['deals'=>$submittalDeals])
     </div>
     @vite(['resources/js/pipeline.js'])
 
@@ -103,7 +103,7 @@
         var prevSelectedColumn = null;
         var prevSortDirection = "";
         // Add an event listener to send search term as request
-        function fetchData(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+        window.fetchData=function(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
             clickedColumn = "") {
             let searchValue = searchInput.val().trim();
             if (resetall === "reset_all") {

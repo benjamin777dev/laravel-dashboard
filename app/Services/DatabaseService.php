@@ -437,11 +437,12 @@ class DatabaseService
                 ->whereNotIn('stage', config('variables.dealPipelineStages')
                 );
 
-            if ($search !== "") {
+            if ($search&&$search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
-                        ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%');
+                        ->orWhere('client_name_primary', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('Primary_contact', 'like', '%"id":"' . $searchTerms . '"%');
                 });
             }
 
@@ -483,9 +484,9 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             if ($all) {
-                $deals = $deals->where($conditions)->get();
+                $deals = $deals->where($conditions)->with('submittals')->get();
             } else {
-                $deals = $deals->where($conditions)->paginate(10);
+                $deals = $deals->where($conditions)->with('submittals')->paginate(10);
             }
             return $deals;
         } catch (\Exception $e) {
@@ -494,6 +495,45 @@ class DatabaseService
         }
 
     }
+
+    public function retrieveSubmittalDeals(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Deals From Database");
+
+            // Define the conditions for the query
+            $conditions = [
+                ['userID', $user->id],
+                ['isDealCompleted', true],
+                ['tm_preference', '!=', 'Non-TM']
+            ];
+
+            // Retrieve deals based on the conditions and ensure zoho_deal_id is not in submittals dealId
+            $submittalsDealIds = DB::table('submittals')->whereNotNull('dealId')->pluck('dealId');
+             Log::info("SUBMITTALDEALIDS", ['query' => $submittalsDealIds->toArray()]);
+
+            $dealsQuery = Deal::where($conditions)
+                ->whereNotIn('stage', config('variables.dealPipelineStages'))
+                ->whereNotIn('zoho_deal_id', $submittalsDealIds->filter())
+                ->orderBy('updated_at', 'desc');
+
+            // Log the raw SQL query for debugging
+            Log::info("SQL Query", ['query' => $dealsQuery->toSql()]);
+
+            // Execute the query and retrieve the results
+            $deals = $dealsQuery->get();
+
+            Log::info("Deal Conditions", ['conditions' => $conditions]);
+            Log::info("Retrieved Deals", ['deals' => $deals->toArray()]);
+
+            return $deals;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deals: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
 
     public function retrieveDealById(User $user, $accessToken, $dealId)
     {
