@@ -157,16 +157,12 @@ class DashboardController extends Controller
     private function getMonthlyGCI($deals)
     {
         // Filter deals to exclude 'Dead' and 'Sold' stages and ensure they fall within the next 12-month period
-        $filteredDeals = $deals->filter(function ($deal) {
-            return $this->masterFilter($deal) 
-                && !Str::startsWith($deal['stage'], 'Dead') 
-                && $deal['stage'] !== 'Sold';
-        });
-
+        $filteredDeals = $deals;
         // Group deals by month and calculate the total GCI for each month
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
             return Carbon::parse($this->helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
+            Log::info("MONTHLYGCI",[$dealsGroup]);
             return $dealsGroup->sum('pipeline1');
         });
 
@@ -230,13 +226,16 @@ class DashboardController extends Controller
 
     private function totalGCIForDash($deals, $goal)
     {
-        $filteredDeals = $deals->filter(function ($deal) {
-            return !Str::startsWith($deal['stage'], 'Dead-Lost To Competition')
-                && $deal['stage'] !== 'Sold'
-                && $this->masterFilter($deal);
-        });
-
-        return $filteredDeals->sum('pipeline1');
+        $filteredDeals = $deals;
+        $totalProbableGCI = 0;
+        foreach ($filteredDeals as $deal ) {
+            $salePrice = $deal->sale_price ?? 0;
+            $commission = $deal->commission ?? 0;
+            $pipelineProbability = $deal->pipeline_probability ?? 0;
+            $totalProbableGCI += ($salePrice * ($commission / 100)) * ($pipelineProbability / 100);
+        }
+       
+        return $totalProbableGCI;
     }
 
     private function calculateStageProgress($deals, $goal)

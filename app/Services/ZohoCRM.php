@@ -579,7 +579,9 @@ class ZohoCRM
                     $db->removeDealFromDB($id);
                 }
 
-                throw new \Exception("Failed to update deal in ZohoCRM. Deal ID not found.");
+                if (!(isset($responseData['message']) && $responseData['message'] === "duplicate association")) {
+                    throw new \Exception("Failed to update deal in ZohoCRM. Deal ID not found.");
+                }
             }
 
 

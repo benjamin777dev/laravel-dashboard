@@ -7,6 +7,9 @@
                     <th>
                         <div></div>
                     </th>
+                    <th>
+                        <div></div>
+                    </th>
                     <th class="sorting sorting_asc">
                         <div onclick="toggleSort('deal_name',this)" class="commonFlex">
                         <p class="mb-0">Transaction</p>
@@ -212,9 +215,15 @@
 </div>
 
 </div>
+@php
+    $contactId = isset($contactId) ? $contactId : null;
+@endphp
 <script>
+    var contactId;
+    @if($contactId)
+        contactId = @json($contactId);
+    @endif  
     $(document).ready(function() {
-
         document.querySelectorAll('.tooltip-wrapper').forEach(wrapper => {
             wrapper.addEventListener('mouseenter', function () {
                 const tooltip = this.querySelector('.tooltiptext');
@@ -254,14 +263,17 @@
             $('.spinner').show();
             currentPage++;
             const nextPageUrl = `${baseUrl}?page=${currentPage}`;
-            let search = searchInput.val();
+            let search = searchInput.val()??"";
+            if(contactId){
+                search = contactId
+            }
             $.ajax({
                 url: nextPageUrl,
                 type: 'get',
                 data: {
-                    search: encodeURIComponent(search), // Pass correct parameters
-                    filter: csearch.val(), // Pass filter value
-                    // missingField: missingFeild, // Adjust as per your requirement
+                    search: encodeURIComponent(search)??"", // Pass correct parameters
+                    filter: csearch.val()??"", // Pass filter value
+                    contactId:contactId??""
                 },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
