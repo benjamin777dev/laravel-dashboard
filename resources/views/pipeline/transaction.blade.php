@@ -1,3 +1,4 @@
+@if (count($deals) > 0)
 <div class="table-responsive">
     <div class="container-fluid">
         <div class="col-md-12">
@@ -215,6 +216,7 @@
 </div>
 
 </div>
+@endif
 @php
     $contactId = isset($contactId) ? $contactId : null;
 @endphp

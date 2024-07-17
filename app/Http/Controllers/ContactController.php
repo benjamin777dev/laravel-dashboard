@@ -42,6 +42,24 @@ class ContactController extends Controller
         return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend'));
     }
 
+    public function contactList(Request $request)
+    {
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $search = request()->query('search');
+        $sortField = $request->input('sort');
+        $sortType = $request->input('sortType');
+        $filter = $request->input('filter');
+        $missingFeild = $request->input('missingField');
+        $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
+        $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
+        
+        return response()->json(['contacts'=>$contacts]);
+    }
+
     public function showCreateContactForm()
     {
         $user = $this->user();
@@ -237,6 +255,16 @@ class ContactController extends Controller
                         return response()->json(['error' => 'Mobile must contain only numbers', 'status' => 401], 500);
                     }
                 }
+
+                $salutation = "";
+                if (isset($frontData['data'][0]['Salutation'])) {
+                    $salutation = $frontData['data'][0]['Salutation'];  
+                } 
+
+                $abcd = "";
+                if (isset($frontData['data'][0]['ABCD'])) {
+                    $abcd = $frontData['data'][0]['ABCD'];  
+                } 
                 $validEmail = "";
                 if (isset($frontData['data'][0]['Email'])) {
 
@@ -272,6 +300,14 @@ class ContactController extends Controller
                     }
                     if (!empty($mobile)) {
                         $contactInstanceforJson->mobile = $mobile ?? null;
+
+                    }
+                    if (!empty($salutation)) {
+                        $contactInstanceforJson->salutation_s = $salutation ?? null;
+
+                    }
+                    if (!empty($abcd)) {
+                        $contactInstanceforJson->abcd = $abcd ?? null;
 
                     }
                     if (!empty($validEmai)) {
@@ -548,6 +584,9 @@ class ContactController extends Controller
             }
             if (empty($responseData['data'][0]['Secondary_Email'])) {
                 unset($responseData['data'][0]['Secondary_Email']);
+            }
+            if (empty($responseData['data'][0]['Salutation'])) {
+                unset($responseData['data'][0]['Salutation']);
             }
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
@@ -852,7 +891,9 @@ class ContactController extends Controller
         $contact = $db->createSpouseContact($user, $accessToken, $data['id'], $inputData['data'][0]);
         session(['spouseContact' => $contact]);
         // Redirect to the route without passing the contact object
-        return redirect()->back()->withInput()->with('success', 'Spouse contact created successfully');
+        return response()->json([
+            'spouseContact'=>$contact
+        ]);
     }
 
 }
