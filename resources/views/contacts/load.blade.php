@@ -60,7 +60,29 @@
             </table> 
         </td>
         <td>{{ $contact['first_name']}} {{$contact['last_name'] }}</td>
-        <td>{{ $contact['abcd'] ?? '-' }}</td>
+        <td>
+            <div class="d-flex gap-2">
+            @php
+                $abcds = [
+                    '--None--',
+                    'A+',
+                    'A',
+                    'B',
+                    'C',
+                    'D',
+                ];
+            @endphp
+            <select class="form-select"
+                required
+                onchange="updateContact('{{ $contact['zoho_contact_id'] }}',null,this.value)">
+                @foreach ($abcds as $abcd)
+                    <option value="{{ $abcd }}" {{  $contact['abcd'] == $abcd ? 'selected' : '' }}>
+                        {{ $abcd }}
+                    </option>
+                @endforeach
+            </select>
+            </div>
+        </td>
         <td>{{ $contact['relationship_type'] ?? 'N/A' }}</td>
         <td>
             <div class="datamailDiv px-0">
@@ -120,7 +142,12 @@
                 </div>
             </div>
         </td>
-        <td>{{ $contact['salutation_s'] ?? 'N/A' }}</td>
+        <td><div class="d-flex gap-2"
+                onclick="editText('{{ $contact['zoho_contact_id'] }}','salutation_s','{{ $contact['salutation_s'] ?? 'N/A' }}')">
+                <p id="salutation_s{{ $contact['zoho_contact_id'] }}" class="card-text">
+                    {{ $contact['salutation_s'] ?? 'N/A' }}</p>
+            </div>
+        </td>
 
 
 
