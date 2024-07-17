@@ -2091,6 +2091,8 @@ body .vertical-collpsed span .logo-sm image {
     bottom: 20px;
     margin-bottom: -3rem;
     justify-content: space-between;
+    margin-inline: 0 !important;
+    
 }
 
 .carousel-indicators a {
