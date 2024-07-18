@@ -1936,24 +1936,28 @@ body .vertical-collpsed span .logo-sm image {
     gap: 24px;
     align-self: stretch;
 }
-
-/* .carousel {
+ .carousel { 
     display: flex;
     padding: 20px;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    /* gap: 24px; */
-    /* flex: 1 0 0; */
-    /* border-radius: 8px;
-    background: #fff; */
-    /* max-width: 750px; */
-    /* min-height: 459px; */
-    /* width: 100%; */
+    /* align-items: flex-start;
+    gap: 24px; 
+    flex: 1 0 0;
+    border-radius: 8px;
+    background: #fff; 
+    max-width: 750px; 
+     min-height: 459px; 
+     width: 100%;  
+     box-shadow: 0px 2px 10px 0px #cecece; */
+} 
+.carousel-item.active {
+    padding: 25px;
+}
 
-    /* layoutCardsShadow */
-    /* box-shadow: 0px 2px 10px 0px #cecece; */
-/* } */
+.carousel-control-prev, .carousel-control-next {
+    display: none !important;
+}
 
 .corausal-req-text {
     color: #000;
@@ -2089,8 +2093,9 @@ body .vertical-collpsed span .logo-sm image {
 
 .carousel-indicators {
     /* bottom: 20px; */
-    margin-bottom: -1rem;
+    margin-bottom: 10px;
     justify-content:inherit;
+    
 }
 
 .carousel-indicators a {
