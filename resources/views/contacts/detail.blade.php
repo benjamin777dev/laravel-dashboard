@@ -31,7 +31,7 @@
         </div>
         <div class="row">
             <div class="col-md-8 col-sm-12 dtasksection">
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between mb-1">
                     <p class="dFont800 dFont15">Tasks</p>
                     <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
                         id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#newTaskModalId{{ $contact['id'] }}"><i
@@ -41,30 +41,39 @@
                     </div>
 
                 </div>
+                @include("common.confirmdeletemodal")
                 <div class="row">
-                    <nav class="dtabs">
+                    <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                             <button class="nav-link dtabsbtn" onclick="fetchContactTasks('In Progress','{{ $contact['id'] }}')"
+                             <button class="nav-link dtabsbtn"
                                     id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" data-tab='In Progress'
                                     type="button" role="tab" aria-controls="nav-home" aria-selected="true">In
                                     Progress</button>
-                             <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Upcoming','{{ $contact['id'] }}')"
+                             <button class="nav-link dtabsbtn"
                                     data-tab='Upcoming' id="nav-profile-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
                                     aria-selected="false">Upcoming</button>
-                            <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Overdue','{{ $contact['id'] }}')"
+                            <button class="nav-link dtabsbtn"
                                     data-tab='Overdue' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Overdue</button>
-                            <button class="nav-link dtabsbtn"  onclick="fetchContactTasks('Completed','{{ $contact['id'] }}')"
+                            <button class="nav-link dtabsbtn"
                                     data-tab='Completed' id="nav-contact-tab" data-bs-toggle="tab"
                                     data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact"
                                     aria-selected="false">Completed</button>
                         </div>
                     </nav>
-                    <div class="contact-task-container">
-                    </div>
-
+                   @component('components.common-table', [
+                    'id'=>'datatable_tasks',
+                    'commonArr' =>$tasks,
+                    'retrieveModuleData'=>$retrieveModuleData,
+                    "type" =>"contact",
+                ])
+                @endcomponent
+                <div onclick="deleteTask('remove_selected',true)" class="input-group-text text-white justify-content-center removebtn dFont400 dFont13 col-lg-3" id="removeBtn">
+                    <i class="fas fa-trash-alt plusicon"></i>
+                    Delete Selected
+                </div>
                 </div>
                 
             </div>
@@ -105,11 +114,44 @@
 @endsection
 <script>
     var contactId = @json($contactId);
-    $(document).ready(function() {
+  window.onload = function() {
         updateContactform();
         fetchContactTasks('In Progress',contactId)
+
+        const ui = {
+            confirm: async (message) => createConfirm(message)
+        };
+        const createConfirm = (message) => {
+            console.log("message", message);
+            return new Promise((complete, failed) => {
+                $('#confirmMessage').text(message);
+    
+                $('#confirmYes').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(true);
+                });
+    
+                $('#confirmNo').off('click').on('click', () => {
+                    $('#confirmModal').modal('hide');
+                    complete(false);
+                });
+    
+                $('#confirmModal').modal('show');
+            });
+        };
+
+        window.saveForm = async function (){
+            console.log(ui);
+            const confirm = await ui.confirm('Are you sure you want to do this?');
+    
+            if (confirm) {
+                return true;
+            } else {
+                return false;
+            }
+        };
         
-    });
+    };
 
     function updateContactform() {
         $.ajax({

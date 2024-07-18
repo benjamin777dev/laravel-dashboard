@@ -1,5 +1,6 @@
-<div class="col-md-4">
-    <h4 class="text-start dFont600 mb-4">Notes</h4>
+<div class="col-md-4 
+">
+<h4 class="text-start dFont600 mb-4">Notes</h4>
     @if ($notesInfo->isEmpty())
         <p class="text-center">No notes found.</p>
     @else
@@ -10,7 +11,7 @@
                         data-bs-target="#staticBackdropnoteupdate{{ $note['id'] }}">
                     <div class="text-start"
                         class="form-check-input checkbox{{ $note['id'] }}"
-                        id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
+                        id="editButton{{ $note['id'] }}" class="btn btn-primary position-fixed bottom-5 end-0 p-3 bg-dark rounded-circle"
                         type="button" >
                         @if ($note['related_to_type'] === 'Deals'&& $note['dealData'])
                         <div onclick = "event.stopPropagation();">

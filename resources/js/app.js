@@ -57,18 +57,17 @@ File: Main Js File
         $("#side-menu").metisMenu();
     }
 
-    function initLeftMenuCollapse() {
-        $("#vertical-menu-btn").on("click", function (event) {
-            event.preventDefault();
-            $("body").toggleClass("sidebar-enable");
-            if ($(window).width() >= 992) {
-                console.log($("body"));
-                $("body").toggleClass("vertical-collpsed");
-            } else {
-                $("body").removeClass("vertical-collpsed");
-            }
-        });
-    }
+    // function initLeftMenuCollapse() {
+    //     $('#vertical-menu-btn').on('click', function (event) {
+    //         event.preventDefault();
+    //         $('body').toggleClass('sidebar-enable');
+    //         if ($(window).width() >= 992) {
+    //             $('body').toggleClass('vertical-collpsed');
+    //         } else {
+    //             $('body').removeClass('vertical-collpsed');
+    //         }
+    //     });
+    // }
 
     function initActiveMenu() {
         // === following js will activate the menu in left side bar based on url ====
@@ -428,8 +427,8 @@ File: Main Js File
     }
 
     function init() {
-        initMetisMenu();
-        initLeftMenuCollapse();
+        // initMetisMenu();
+        // initLeftMenuCollapse();
         initActiveMenu();
         initMenuItemScroll();
         initHoriMenuActive();

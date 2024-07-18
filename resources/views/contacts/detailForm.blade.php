@@ -1,12 +1,15 @@
 <div class="row">
+    <div class='card'>
+
+   
     <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
         method="POST" onsubmit="return validateContactForm();">
         @csrf
         @method('PUT')
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Contact Details</p>
+            >
+            <p class="npinfoText p-2">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault01" class="form-label nplabelText">First Name</label>
@@ -95,8 +98,8 @@
         </div>
         {{-- Contact Preferences --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Contact Preferences</p>
+            >
+            <p class="npinfoText p-2">Contact Preferences</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault08" class="form-label nplabelText">Relationship Type</label>
@@ -207,8 +210,8 @@
 
         {{-- Primary Contact’s Address --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Mailing Address</p>
+            >
+            <p class="npinfoText p-2">Mailing Address</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="address" class="form-label nplabelText">Address</label>
@@ -246,8 +249,8 @@
 
         {{-- Business Information --}}
         <div class="col-md-6 col-sm-12"
-            style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
-            <p class="npinfoText">Business Information</p>
+            >
+            <p class="npinfoText p-2">Business Information</p>
             <div class="row g-3">
                 <div>
                     <label for="validationDefault19" class="form-label nplabelText">Business Name</label>
@@ -279,9 +282,10 @@
             </div>
         </div>
         <div>
-            <button type = "submit" class="submit_button btn btn-primary" id="submit_button" type="button">Update Contact</button>
+            <button type = "submit" class="submit_button btn btn-primary mt-3" id="submit_button" type="button">Update Contact</button>
         </div>
     </form>
+    </div>
 </div>
 @include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}

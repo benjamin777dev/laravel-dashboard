@@ -16,21 +16,29 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        <div class="commonFlex ppipeDiv">
+        <div class="justify-content-between align-items-center d-flex cus-grid">
             <p class="pText">Database</p>
-            <div class="commonFlex cpbutton">
-                <a onclick="createContact();">
-                    <div class="input-group-text text-white justify-content-center ppipeBtn" id="btnGroupAddon"
-                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                        </i>
-                        New Contact
-                    </div>
+            <div class="d-flex gap-1">
+                <a >
+                    <div>
+                        @component('components.button', [
+                         'id' => 'create_contact',
+                         'label' => 'New Contact',
+                         'icon' => 'fas fa-plus plusicon'
+                     ])
+                     @endcomponent
+                 </div>
                 </a>
                 <a onclick="createTransaction({{ $userContact }});">
-                    <div class="input-group-text text-white justify-content-center ppipeBtn"
-                        data-bs-toggle="modal" data-bs-target="#"><i class="fas fa-plus plusicon">
-                        </i>
-                        New Transaction
+                    <div>
+                        <div>
+                            @component('components.button', [
+                               'id' => 'create_transaction',
+                               'label' => 'New Transaction',
+                               'icon' => 'fas fa-plus plusicon'
+                           ])
+                           @endcomponent
+                       </div>
                     </div>
                 </a>
             </div>
@@ -38,7 +46,7 @@
 
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="contactSearch" oninput="fetchContact(event)" />
+                <input placeholder="Search" class="psearchInput" id="contactSearch" />
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
@@ -48,7 +56,7 @@
                 @endphp
                 <div class="row" style="gap:24px;flex-wrap:nowrap;">
                     <div class="psortFilterDiv">
-                        <select name="abcd_class" onchange="fetchContact(event)" class="psearchInput" id="contactSort">
+                        <select name="abcd_class" class="psearchInput" id="contactSort">
                             <option selected value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
                                 <option value="{{ $abcdIndex }}">{{ $abcdIndex }}</option>
@@ -61,20 +69,36 @@
                 </div>
 
             </div>
-            <div class="d-flex gap-4">
-                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#filterModal"> <i class="fas fa-filter"></i>
-                    Filter
-                </div>
-                <div class="input-group-text cursor-pointer pfilterBtn col-md-6" id="btnGroupAddon" data-bs-toggle="modal"
-                    data-bs-target="#" onclick="applyFilter('reset')"> <i class="fas fa-sync"></i>
-                    Reset All
-                </div>
+            <div class="d-flex gap-4 cus-grid">
+                <div>
+                    @component('components.button', [
+                       'attributes' => 'id=btnGroupAddon data-bs-toggle=modal data-bs-target=#filterModal',
+                       'label' => 'Filter',
+                       'icon' => 'fas fa-filter'
+                   ])
+                   @endcomponent
+               </div>
+               <div>
+                      @component('components.button', [
+                       'clickEvent' => 'applyFilter(\'reset\')',
+                       'label' => 'Reset All',
+                       'icon' => 'fas fa-sync'
+                   ])
+                   @endcomponent
+               </div>
             </div>
         </div>
 
+    
+
         <div class="contactlist overflow-auto" id="contactlist">
-            @include('contacts.contact', ['contacts' => $contacts])
+            @component('components.common-table', [
+                'id'=>'datatable_contact',
+                'commonArr' =>$contacts,
+                'retrieveModuleData'=>$retrieveModuleData,
+                "type" =>"contact",
+            ])
+            @endcomponent
             <!-- Filter Modal -->
 
         </div>
@@ -84,7 +108,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="staticBackdropLabel">Missing Fields</h1>
-                        <button type="button" onclick="resetFilters()"
+                        <button type="button"
                             class="btn btn-secondary w-auto filterClosebtn m-4">Reset</button>
                         <button id="close_btn" type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="Close"></button>
@@ -104,7 +128,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary w-auto filterClosebtn"
                             data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="pfilterBtn w-auto" onclick="applyFilter()">Filter</button>
+                        <button type="button" class="pfilterBtn w-auto">Filter</button>
                     </div>
                 </div>
             </div>
@@ -132,7 +156,8 @@
 
     }
 
-    function applyFilter(reset) {
+    function applyFilter(reset="") {
+        console.log('yesshdhfshdf');
         let email = document.getElementById('filterEmail').checked;
         let mobile = document.getElementById('filterMobile').checked;
         let abcd = document.getElementById('filterABCD').checked;

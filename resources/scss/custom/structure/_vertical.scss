@@ -214,7 +214,7 @@
 
     // Side menu
     .vertical-menu {
-        position: absolute;
+        position: fixed;
         width: $sidebar-collapsed-width !important;
         z-index: 5;
 
@@ -405,7 +405,7 @@ body[data-sidebar="dark"] {
     }
     // Enlarge menu
     &.vertical-collpsed {
-        min-height: 1760px;
+        // min-height: 1760px;
         // Side menu
         .vertical-menu {
 

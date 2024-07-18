@@ -3,11 +3,11 @@ name: Staging
 on:
   push:
     branches:
-      - develop # Trigger the workflow on push events to the develop branch
+      - skote-develop # Trigger the workflow on push events to the skote-develop branch
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted
 
     steps:
     - name: Checkout Repository
@@ -16,7 +16,7 @@ jobs:
     - name: Install PHP Dependencies
       run: |
         composer install --no-interaction --prefer-dist --optimize-autoloader
-    
+
     - name: Install JavaScript Dependencies
       run: |
         npm install

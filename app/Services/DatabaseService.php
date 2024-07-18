@@ -486,7 +486,7 @@ class DatabaseService
             if ($all) {
                 $deals = $deals->where($conditions)->with('submittals')->get();
             } else {
-                $deals = $deals->where($conditions)->with('submittals')->paginate(10);
+                $deals = $deals->where($conditions)->with('submittals')->get();
             }
             return $deals;
         } catch (\Exception $e) {
@@ -709,27 +709,57 @@ class DatabaseService
         }
     }
 
-    public function retreiveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null)
+    public function retrieveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null, $tab = null)
     {
         try {
-
-            Log::info("Retrieve Tasks From Database");
-            $condition = [
-                ['owner', $user->id],
-            ];
+            // Initialize tasks query
+            $tasks = Task::query()->where('owner', $user->id);
+            print_r($tab);
+            die;
+    
+            // Apply tab-specific conditions
+            if ($tab == 'Overdue') {
+                // Tasks that have a due date less than today and the task status isn't completed
+                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Upcoming') {
+                // Tasks that have a due date greater than or equal to today and are not complete
+                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Due Today') {
+                // Tasks that are due today and are not complete
+                $tasks->whereDate('due_date', now()->toDateString())
+                      ->where('status', '!=', 'Completed')
+                      ->orderBy('due_date', 'asc');
+            } elseif ($tab == 'Completed') {
+                // Completed tasks
+                $tasks->where('status', 'Completed')
+                      ->orderBy('updated_at', 'desc');
+            } else {
+                // Default case: no specific tab selected (perhaps all tasks)
+                $tasks->orderBy('updated_at', 'desc');
+            }
+    
+            // Additional filters based on dealId and contactId
             if ($dealId) {
-                $condition[] = ['what_id', $dealId];
+                $tasks->where('what_id', $dealId);
             }
             if ($contactId) {
-                $condition[] = ['who_id', $contactId];
+                $tasks->where('who_id', $contactId);
             }
-            $tasks = Task::where($condition)->orderBy('updated_at', 'desc')->get();
+    
+            // Execute the query and return the results
+            $tasks = $tasks->get();
+    
+            Log::info("Retrieve Tasks From Database");
+    
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
+    
 
     public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
@@ -814,20 +844,65 @@ class DatabaseService
             throw $e;
         }
     }
-
-    public function retreiveContactsJson(User $user, $accessToken)
+    public function retreiveContactsJson(User $user, $accessToken, $search = null, $stage = null,$filterobj=null)
     {
         try {
+            Log::info("Retrieve contacts from database");
+    
+            $query = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc');
+    
+            if (!empty($search)) {
+                $searchTerms = urldecode($search);
+                $query->where(function ($query) use ($searchTerms) {
+                    $query->where('last_name', 'like', '%' . $searchTerms . '%')
+                          ->orWhere('email', 'like', '%' . $searchTerms . '%')
+                          ->orWhere('phone', 'like', '%' . $searchTerms . '%');
+                });
+            }
+           
+            if ($filterobj) {
+                // Check for email filter
+                if (isset($filterobj['email']) && $filterobj['email']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('email')->orWhere('email', '');
+                    });
+                }
+    
+                // Check for mobile filter
+                if (isset($filterobj['mobile']) && $filterobj['mobile']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('phone')->orWhere('phone', '');
+                    });
+                }
+    
+                // Check for abcd filter
+                if (isset($filterobj['abcd']) && $filterobj['abcd']) {
+                    $query->where(function ($query) {
+                        $query->whereNull('abcd')->orWhere('abcd', '');
+                    });
+                }
+            }
 
-            Log::info("Retrieve contacts From Database");
-            $Contacts = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc')->get();
-            return $Contacts;
+            // Additional condition for stage
+            if (!empty($stage)) {
+                $searchStage = urldecode($stage);
+                $query->where(function ($query) use ($searchStage) {
+                $query->orWhere('abcd', 'like', '%' . $searchStage . '%');
+            });
+            }
+    
+            $contacts = $query->get();
+    
+            Log::info("Retrieved " . $contacts->count() . " contacts.");
+    
+            return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
-
         }
     }
+    
+    
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
@@ -845,7 +920,7 @@ class DatabaseService
             } elseif ($tab == 'Completed') {
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -870,7 +945,7 @@ class DatabaseService
             } elseif ($tab == 'Completed') {
                 $tasks->where('status', 'Completed');
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -959,7 +1034,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->get();
+            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -972,7 +1047,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->get();
+            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -1599,9 +1674,10 @@ class DatabaseService
     {
         try {
 
-            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->paginate(5);
+            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
             return $submittalData;
         } catch (\Exception $e) {
+
             Log::error("Error retrieving Submittals: " . $e->getMessage());
             throw $e;
         }

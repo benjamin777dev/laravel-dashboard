@@ -1,8 +1,9 @@
+
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box">
+            <div class="navbar-brand-box d-flex align-items-center justify-content-center">
                 <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{ URL::asset('build/images/logo.svg') }}" alt="" height="22">
@@ -15,7 +16,7 @@
                 <a href="{{ route('dashboard.index') }}" class="logo logo-light">
                     <span class="logo-sm" style="padding:0px 8px !important;">
                         {{-- <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="22"> --}}
-                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="" height="22">
+                        <img src="{{ URL::asset('/images/CHR.svg') }}" alt="" height="22" width="55px">
 
                     </span>
                     <span class="logo-lg" style='padding:0px 8px !important;'>
@@ -28,17 +29,19 @@
 
             <button class="navbar-toggler" id="vertical-menu-btn" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-fw fa-bars"></i>
-        </button>
+            </button>
 
-            <!-- App Search-->
-            <div class="search-input-design">
-                <div class="app-search d-none d-lg-block" id="global-search" >
-                    
+                <!-- App Search-->
+          <form class="app-search d-none d-lg-block p-0 pt-3 mb-0">
+            <div class="position-relative search-input-design">
+                <div class="form-control " id="global-search">
+                    <!-- Option to load data asynchronously -->
                 </div>
-            </div> 
-
-            
+            </div>
+        </form>
+           
         </div>
+      
 
         <div class="d-flex ">
                 <div class="dropdown d-inline-block">
@@ -139,3 +142,5 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+

@@ -24,31 +24,38 @@ div.dataTables_wrapper {
 table {
   &.dataTable {
     border-collapse: collapse !important;
-    &.dtr-inline.collapsed>tbody>tr>td {
+    &.dtr-inline.collapsed > tbody > tr > td {
       position: relative;
 
       &.dtr-control {
         padding-left: 30px;
 
         &:before {
-          top: 50%;
-          left: 5px;
-          height: 14px;
-          width: 14px;
-          margin-top: -9px;
+          top: 39%;
+          left: 15px;
+          height: 21px;
+          width: 21px;
+          margin-top: -14px;
           display: block;
           position: absolute;
-          color: $white;
-          border: 2px solid $white;
+          color: #fff;
+          border: 2px solid #fff;
           border-radius: 14px;
           box-sizing: content-box;
           text-align: center;
           text-indent: 0 !important;
-          line-height: 14px;
-          content: '+';
+          line-height: 21px;
+          content: "+";
           background-color: $primary;
         }
       }
     }
   }
 }
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+

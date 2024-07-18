@@ -1,10 +1,10 @@
 @if (isset($type) && $type == 'Deals')
     <div class="modal fade" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+            <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closing_btnnnnn"
                         onclick="resetValidationTask('{{ $deal->zoho_deal_id }}')" aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
@@ -40,12 +40,12 @@
     </div>
 @elseif(isset($type) && $type == 'Contacts')
 <div class="modal fade" id="newTaskModalId{{ $contact->id }}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered deleteModal">
-        <div class="modal-content dtaskmodalContent">
+    <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+        <div class="modal-content p-1">
             <div class="modal-header border-0">
                 <p class="modal-title dHeaderText">Create New Task</p>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    onclick="resetValidationTask('{{ $contact->zoho_contact_id }}')" aria-label="Close"></button>
+                    onclick="resetValidationTask('{{ $contact->zoho_contact_id }}')" id="closing_btnnnnn" aria-label="Close"></button>
             </div>
             <div class="modal-body dtaskbody">
                 <p class="ddetailsText">Subject</p>
@@ -79,10 +79,10 @@
     </div>
 </div>
 @else
-    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false"
+    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"
         tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered deleteModal">
-            <div class="modal-content dtaskmodalContent">
+        <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
+            <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidationTask()"
@@ -114,6 +114,7 @@
             </div>
         </div>
     </div>
+   
 @endif
 
 <script>
@@ -149,7 +150,6 @@
         }
 
     }
-
     window.validateTextareaTask = function(id) {
         if (id) {
             var subjectarea = document.getElementById('sarea' + id);
