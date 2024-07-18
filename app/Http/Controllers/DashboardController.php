@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\Note;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Deal;
 use App\Services\DatabaseService;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
@@ -13,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use DataTables;
 
 class DashboardController extends Controller
 {
@@ -207,6 +209,151 @@ class DashboardController extends Controller
         }
     }
 
+    private function retrieveACIFromZoho(User $user, $accessToken)
+    {
+        $allACI = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $criteria = "(CHR_Agent:equals:$user->zoho_id)";
+        $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
+        Log::info("Retrieving aci for criteria: $criteria");
+
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getACIData($criteria, $fields, $page, 200);
+                if (!$response->successful()) {
+                    Log::error("Error retrieving aci: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful aci fetch... Page: " . $page);
+                $responseData = $response->json();
+                $aciData = collect($responseData['data'] ?? []);
+                $allACI = $allACI->concat($aciData);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error retrieving aci: " . $e->getMessage());
+            return $allACI;
+        }
+
+        Log::info("Total aci records: " . $allACI->count());
+        Log::info("Aci Records: ", $allACI->toArray());
+        return $allACI;
+    }
+
+    public function needNewDateMethod() {
+        $db = new DatabaseService();
+        $helper = new Helper();
+        $user = $this->user();
+        $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
+        if (!$user) {
+            return redirect('/login');
+        }
+          //Get Date Range
+          $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
+        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+         // Needs New Date
+         $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
+            $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+            $now = now();
+        
+            // Debugging: Print the deal details and dates
+            Log::info('Checking deal:', [
+                'deal_id' => $deal['id'],
+                'closing_date' => $deal['closing_date'],
+                'converted_closing_date' => $closingDate,
+                'now' => $now,
+                'end_date_30_days' => $endDate30Days,
+                'stage' => $deal['stage']
+            ]);
+        
+            $needsNewDate = (
+                ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))
+                && !Str::startsWith($deal['stage'], 'Dead')
+                && $deal['stage'] !== 'Sold'
+                && $deal['stage'] !== "Under Contract"
+            );
+        
+            // Debugging: Print if the deal needs a new date
+            if ($needsNewDate) {
+                Log::info('Deal needs new date:', ['deal_id' => $deal['id']]);
+            }
+        
+            return $needsNewDate;
+        });
+        return Datatables::of($needsNewDate)->make(true);
+        
+    }
+
+    public function retriveTaskforDatatable() {
+        $db = new DatabaseService();
+        $helper = new Helper();
+        $user = $this->user();
+        $accessToken = $user->getAccessToken(); // Ensure we have a valid access token
+        if (!$user) {
+            return redirect('/login');
+        }
+        $tab = request()->query('tab') ?? 'In Progress';
+        $tasks = $db->retreiveTasksJson($user, $accessToken, $tab);
+        return Datatables::of($tasks)->make(true);
+        
+    }
+
+   
+
+    //get notes data function
+    private function retrieveNOTESFromZoho(User $user, $accessToken)
+    {
+        $allNotes = collect();
+        $page = 1;
+        $hasMorePages = true;
+
+        $startDateTime = now()->subDays(7)->toIso8601String(); // Get start date/time (7 days ago) in ISO 8601 format
+        $endDateTime = now()->toIso8601String(); // Get current date/time in ISO 8601 format
+        $criteria = "(Owner:equals:$user->root_user_id)";
+        $fields = "Note_Content,Created_Time,Owner,Parent_Id";
+        Log::info("Retrieving notes for criteria: $criteria");
+
+        $zoho = new ZohoCRM();
+        $zoho->access_token = $accessToken;
+
+        try {
+            while ($hasMorePages) {
+                $response = $zoho->getNotesData($criteria, $fields, $page, 200);
+                if (!$response->successful()) {
+                    Log::error("Error retrieving notes: " . $response->body());
+                    // Handle unsuccessful response
+                    $hasMorePages = false;
+                    break;
+                }
+
+                Log::info("Successful notes fetch... Page: " . $page);
+                $responseData = $response->json();
+                $allNotes = collect($responseData['data'] ?? []);
+                $allNotes = $allNotes->concat($allNotes);
+
+                $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'] >= 1;
+                $page++;
+            }
+        } catch (\Exception $e) {
+            Log::error("Error retrieving notes: " . $e->getMessage());
+            return $allNotes;
+        }
+
+        Log::info("Total notes records: " . $allNotes->count());
+        Log::info("notes Records: ", $allNotes->toArray());
+        return $allNotes;
+    }
+
     private function calculateProgress($deals, $goal)
     {
         $filteredDeals = $deals->filter(function ($deal) {
@@ -261,11 +408,18 @@ class DashboardController extends Controller
         Log::info("Access Token,$accessToken");
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
-
+         
+        $subject;
+        $whoid;
+        $status;
+        $Due_Date;
+        $What_Id;
+        $priority;
+        $contact;
+        $seModule;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
-
         }
         if (!empty($data['Detail'])) {
             $detail = $data['Detail'] ?? null;
@@ -273,11 +427,11 @@ class DashboardController extends Controller
         }
         if (!empty($data['Who_Id']['id'])) {
             $whoid = $data['Who_Id']['id'] ?? null;
-
+            $contact = Contact::where('zoho_contact_id', $data['Who_Id']['id'])->firstOrFail();
+            $seModule = "Contacts";
         }
         if (!empty($data['Status'])) {
             $status = $data['Status'] ?? null;
-
         }
         if (!empty($data['Due_Date'])) {
             $Due_Date = $data['Due_Date'] ?? null;
@@ -285,6 +439,8 @@ class DashboardController extends Controller
         }
         if (!empty($data['What_Id']['id'])) {
             $What_Id = $data['What_Id']['id'] ?? null;
+            $deal = Deal::where('zoho_deal_id', $data['What_Id']['id'])->firstOrFail();
+            $seModule = "Deals";
 
         }
         if (!empty($data['Priority'])) {
@@ -294,8 +450,8 @@ class DashboardController extends Controller
         }
 
         $created_time = Carbon::now();
-        $closed_time = $data['Closed_Time'] ?? null;
-        $related_to = $data['$se_module'] ?? null;
+        // $closed_time = $data['Closed_Time'] ?? null;
+        // $related_to = $data['$se_module'] ?? null;
 
         $criteria = "(CHR_Agent:equals:$user->zoho_id)";
         // $fields = "Closing_Date,Current_Year,Agent_Check_Amount,CHR_Agent,IRS_Reported_1099_Income_For_This_Transaction,Stage,Total";
@@ -320,15 +476,15 @@ class DashboardController extends Controller
                 'detail' => $detail?? null,
                 'zoho_task_id' => $zoho_id,
                 'owner' => "1",
-                'status' => $status ?? "Not Started",
-                'who_id' => $whoid ?? null,
-                'due_date' => $Due_Date ?? null,
-                'what_id' => $What_Id ?? null,
-                'closed_time' => $closed_time ?? null,
+                'status' =>$status ?? null,
+                'who_id' => $contact['id'] ?? null,
+                'due_date' =>$Due_Date ?? null,
+                'what_id' =>$deal['id'] ?? null,
+                // 'closed_time' => $closed_time ?? null,
                 'created_by' => $user->id,
-                'priority' => $priority ?? null,
+                // 'priority' => $priority ?? null,
                 'created_time' => $created_time ?? null,
-                'related_to' => $related_to,
+                'related_to' => $seModule,
             ]);
             Log::info("Successful notes create... " . $task);
             return response()->json($responseArray, 201);
@@ -661,11 +817,7 @@ class DashboardController extends Controller
         Log::info("CHECK NOTES", $request->all());
         $contactId = $request->query('conID');
         $related_to_ = json_decode($request->input('related_to'), true);
-        // Validate the incoming request data
-        // $request->validate([
-        //     'note_text' => 'required|string',
-        //     'merged_data' => 'required|string'
-        // ]);
+
         $mergedData = json_decode($request->input('merged_data'), true);
         $note_text = $request->input('note_text');
         $related_to = "";
@@ -675,17 +827,9 @@ class DashboardController extends Controller
             $related_to_parent = $request->input('related_to_parent');
             $moduleId = $related_to_['zoho_module_id'] ?? null;
         } else {
-
             $related_to = $mergedData['groupLabel'] ?? null;
             $related_to_parent = $mergedData['relatedTo'] ?? null;
             $moduleId = $mergedData['moduleId'] ?? null;
-            if ($related_to === "Contacts") {
-                $related_to_parent = $related_to_parent;
-            }
-            if ($related_to === "Deals") {
-                $related_to_parent = $related_to_parent;
-            }
-
         }
         $user = $this->user();
         if (!$user) {
@@ -713,22 +857,18 @@ class DashboardController extends Controller
         ];
         $recordId = $related_to_parent;
         $apiName = $related_to;
-        Log::info("CHECK nOTES", $jsonData, $recordId, $apiName);
+        Log::info("CHECK NOTES", $jsonData, $recordId, $apiName);
         try {
             $response = $zoho->createNoteData($jsonData, $recordId, $apiName);
-
             if (!$response->successful()) {
                 Log::error("Error creating notes:");
-                return "error somthing" . $response;
+                return "error something" . $response;
             }
             $data = json_decode($response, true);
             $zoho_node_id = $data['data'][0]['details']['id'];
             $deal = $db->retrieveDealByZohoId($user, $accessToken, $recordId);
-            // dd($deal);
             $contact = $db->retrieveContactByZohoId($user, $accessToken, $recordId);
-            // Create a new Note instance
             $note = new Note();
-            // You may want to change 'deal_id' to 'id' or add a new column if you want to associate notes directly with deals.
             $note->related_to_module_id = $moduleId;
             $note->zoho_note_id = $zoho_node_id;
             $note->owner = $user->id;
@@ -737,16 +877,14 @@ class DashboardController extends Controller
             $note->related_to_type = $apiName;
             $note->related_to_parent_record_id = $recordId;
             $note->note_content = $note_text;
-            // Save the Note to the database
             $note->save();
-            // Redirect back with a success message
-            return $note;
+            return response()->json(['success' => true, 'note' => $note], 200);
         } catch (\Exception $e) {
-            Log::error("Error creating notes:new " . $e->getMessage());
-            // return redirect()->back()->with('error', 'Note Not saved successfully!');
-            return "somthing went wrong" . $e->getMessage();
+            Log::error("Error creating notes: " . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
+
     public function markAsDone(Request $request)
     {
         $user = $this->user();

@@ -55,7 +55,6 @@ class Task extends Model
     {
         return $this->belongsTo(Deal::class, 'what_id','id');
     }
-
     public function contactData()
     {
         return $this->belongsTo(Contact::class, 'who_id','id');

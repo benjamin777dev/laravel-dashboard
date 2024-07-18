@@ -14,36 +14,41 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    var button = document.querySelector('.navbar-toggler');
-        var sidebar = document.querySelector('.vertical-menu');
+        var button = document.querySelector('.navbar-toggler');
+            var sidebar = document.querySelector('.vertical-menu');
 
-        button.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-        });
+            button.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
 
-        const modalSelectMap = [{
-            modalID: 'global-search',
-            selectElementId: 'global-search'
-        }, ];
+            setTimeout(() => {
 
-        modalSelectMap.forEach(({
-            modalID,
-            selectElementId
-        }) => {
-            const selectElement = $(`#${selectElementId}`);
-            showDropdown(modalID, selectElement);
-        });
+                const modalSelectMap = [{
+                modalID: 'global-search',
+                selectElementId: 'global-search'
+                }, ];
 
-          $('#vertical-menu-btn').on('click', function (event) {
-            event.preventDefault();
-            $('body').toggleClass('sidebar-enable');
-            if ($(window).width() >= 992) {
-                console.log($('body'))
-                $('body').toggleClass('vertical-collpsed');
-            } else {
-                $('body').removeClass('vertical-collpsed');
-            }
-        });
+                modalSelectMap.forEach(({
+                    modalID,
+                    selectElementId
+                }) => {
+                    const selectElement = $(`#${selectElementId}`);
+                    showDropdown(modalID, selectElement);
+                });
+
+            },1000); 
+
+            $('#vertical-menu-btn').on('click', function (event) {
+                event.preventDefault();
+                $('body').toggleClass('sidebar-enable');
+                if ($(window).width() >= 992) {
+                    console.log($('body'))
+                    $('body').toggleClass('vertical-collpsed');
+                } else {
+                    $('body').removeClass('vertical-collpsed');
+                }
+            });
+
     });
     function createTransaction(userContactData,contactData=null) {
         let contact =  contactData ? JSON.parse(JSON.stringify(contactData)) : null;
@@ -93,4 +98,7 @@
             }
         });
     }
+    
 </script>
+
+

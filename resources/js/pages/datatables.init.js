@@ -7,7 +7,10 @@ File: Datatables Js File
 */
 
 $(document).ready(function() {
-    $('#datatable').DataTable();
+    $('#datatable_transaction').DataTable();
+    $('#datatable_contact').DataTable();
+
+  
 
     //Buttons examples
     var table = $('#datatable-buttons').DataTable({

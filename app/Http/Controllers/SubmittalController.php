@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use DataTables;
 
 
 
@@ -32,7 +33,10 @@ class SubmittalController extends Controller
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-            return view('submittals.index', compact('deal','submittals'))->render();
+            // echo "<>"
+            // return view('submittals.index', compact('deal','submittals'))->render(); 
+            return Datatables::of($submittals)->make(true);
+
         } catch (\Throwable $th) {
             return $th;
             throw $th;
@@ -160,7 +164,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listing', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)
@@ -182,7 +186,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.buyer', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.buyersubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
     }
 
     public function createListingSubmittal(Request $request)

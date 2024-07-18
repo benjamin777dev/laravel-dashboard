@@ -1,20 +1,20 @@
 <script>
-        if (window.location.href.includes("tasks")) {
-    var taskIDtest = [];
-    var selectElementfortask;
-    var tasks = @json($tasks);
-    tasks?.data?.forEach((task) => {
-        taskIDtest.push(task?.id)
-    })
-    var modalSelectMaptsk1 = []
-    taskIDtest.forEach((id) => {
-        modalSelectMaptsk1.push({
-            modalID: id,
-            selectElementfortask: 'related_to_rem' + id
+    if (window.location.href.includes("tasks")) {
+        var taskIDtest = [];
+        var selectElementfortask;
+        var tasks = @json($tasks);
+        tasks?.data?.forEach((task) => {
+            taskIDtest.push(task?.id)
         })
-    });
+        var modalSelectMaptsk1 = []
+        taskIDtest.forEach((id) => {
+            modalSelectMaptsk1.push({
+                modalID: id,
+                selectElementfortask: 'related_to_rem' + id
+            })
+        });
 
-    modalSelectMaptsk1.forEach(({
+        modalSelectMaptsk1.forEach(({
             modalID,
             selectElementfortask
         }) => {
@@ -23,10 +23,9 @@
         });
 
     }
-   
 </script>
-<div class="table-responsive dresponsivetable">
-    <table class="table dtableresp table-nowrap">
+<div class="table-responsive mt-3 ms-0">
+    <table class="table dtableresp py-2 px-3 table-nowrap">
         <thead>
             <tr class="dFont700 dFont10 dtableHeaderTr">
                 <th scope="col"><input type="checkbox" onclick="toggleAllCheckboxes()" id="checkbox_all"
@@ -36,6 +35,7 @@
                 <th scope="col">Related To</th>
                 <th scope="col">Due Date</th>
                 <th scope="col">Options</th>
+               
             </tr>
         </thead>
         <tbody>
@@ -63,7 +63,7 @@
                         </td>
                         <td>
                             <div class="btn-group btnTaskSelects dealTaskfordropdown">
-                                <select
+                                <select style="width: 100px !important"
                                     onchange="testFun('{{ $task['id'] }}','related_to_rem','{{ $task['zoho_task_id'] }}')"
                                     class="form-select dealTaskSelect related_to_rem{{ $task['id'] }}"
                                     id="related_to_rem{{ $task['id'] }}" name="related_to_rem{{ $task['id'] }}">
@@ -90,8 +90,10 @@
                                 @endif
                             />
                         </td>
-
+                     
+                          
                         <td>
+                            @if($task['status']!=="Completed")
                             <div class="d-flex btn-save-del">
                                 <div class="input-group-text dFont800 dFont11 text-white justify-content-center align-items-baseline savebtn"
                                     id="update_changes" data-bs-toggle="modal"
@@ -106,6 +108,7 @@
                                     Delete
                                 </div>
                             </div>
+                            @endif
                             {{-- delete Modal --}}
                             <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -195,6 +198,7 @@
                                 </div>
                             </div>
                         </td>
+                    
 
                     </tr>
                 @endforeach
@@ -211,7 +215,7 @@
         </tbody>
 
     </table>
-    
+
 
     <div class="dpagination">
         <div onclick="deleteTask('',true)"
@@ -425,7 +429,7 @@
     }
 
     function updateTask(id, indexid) {
-        
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -451,11 +455,11 @@
                     if (response?.data[0]?.status == "success") {
                         // console.log(response?.data[0], 'sdfjkshdjkfshd')
                         // Get the button element by its ID
-                        if (!document.getElementById('saveModalId'+id).classList.contains('show')) {
+                        if (!document.getElementById('saveModalId' + id).classList.contains('show')) {
                             var button = document.getElementById('update_changes');
                             var update_message = document.getElementById('updated_message');
                             // Get the modal target element by its ID
-                            var modalTarget = document.getElementById('saveModalId'+id);
+                            var modalTarget = document.getElementById('saveModalId' + id);
                             console.log(modalTarget, 'modalTarget')
                             // Set the data-bs-target attribute of the button to the ID of the modal
                             button.setAttribute('data-bs-target', '#' + modalTarget.id);
@@ -625,6 +629,7 @@
         let updateColor = document.getElementById("removeBtn");
         var allCheckbox = document.getElementById('checkbox_all');
         var checkboxes = document.querySelectorAll('input[class="task_checkbox"]');
+        console.log(allCheckbox,'allCheckbox')
 
         checkboxes.forEach(function(checkbox) {
             // Set the state of each checkbox based on the state of the "checkbox_all"
@@ -637,11 +642,12 @@
                 state = false;
             }
         });
+        console.log(state,'statettete')
         if (state) {
             updateColor.style.backgroundColor = "#222";
         } else {
 
-            updateColor.style.backgroundColor = "#dfdfdf";
+            updateColor.style.backgroundColor = "rgb(165 158 158)";
         }
     }
 

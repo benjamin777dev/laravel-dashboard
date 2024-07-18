@@ -302,6 +302,8 @@
                 }
             });
         }
+
+    $('#datatable').DataTable();
     });
     window.fetchNotesForDeal=function(id, dealId) {
         event.preventDefault();

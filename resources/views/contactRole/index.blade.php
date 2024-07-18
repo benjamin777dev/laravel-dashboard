@@ -1,52 +1,40 @@
-{{-- contact roles --}}
-<div class="table-responsive dtranstiontable mt-3">
-    <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
-        <p class="nproletext">Contact Roles</p>
-    </div>
-    <div class="row npNom-TM-Table">
-        <div class="col-md-1 "></div>
-        <div class="col-md-2 ">Role</div>
-        <div class="col-md-2 ">Name</div>
-        <div class="col-md-3 ">Phone</div>
-        <div class="col-md-3 ">Email</div>
-    </div>
-    @if ($contactRoles->isEmpty())
-    <div>
-        <p class="text-center notesAsignedText">No Contact Role assigned</p>
-    </div>
-    @else
-    @foreach($contactRoles as $role)
-    <div class="row npNom-TM-Body">
-        <div class="col-md-1 commonTextEllipsis"></div>
-        <div class="col-md-2">{{ $role['role'] }}</div>
-        <div class="col-md-2">{{ $role['name'] }}</div>
-        <div class="col-md-3">{{ $role['phone'] ?? 'N/A' }}</div>
-        <div class="col-md-3 commonTextEllipsis">{{ $role['email'] ?? 'N/A' }}</div>
-    </div>
-    @endforeach
-    @endif
-    <div class="ptableCardDiv">
-        @foreach ($contactRoles as $role)
-        <div class="npRoleCard vprolecard">
-            <div>
-                <p class="npcommonheaderText">Role</p>
-                <p class="npcommontableBodytext">{{ $role['role'] }}</p>
-            </div>
-            <div class="d-flex justify-content-between align-items-center npCardPhoneDiv">
-                <div>
-                    <p class="npcommonheaderText">Name</p>
-                    <p class="npcommontableBodyDatetext">{{ $role['name'] }}</p>
+
+<div class="row table-responsive dtranstiontable mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title nproletext">Contact Roles</h4>
+                <div class="table-rep-plugin">
+                    <div class="table-responsive mb-0" data-pattern="priority-columns">
+                        @if ($contactRoles->isEmpty())
+                            <p class="text-center notesAsignedText">No Contact Role assigned</p>
+                        @else
+                            <table id="tech-companies-1" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th data-priority="1">Role</th>
+                                        <th data-priority="3">Name</th>
+                                        <th data-priority="1">Phone</th>
+                                        <th data-priority="3">Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($contactRoles as $role)
+                                        <tr>
+                                            <td>{{ $role['role'] }}</td>
+                                            <td>{{ $role['name'] }}</td>
+                                            <td>{{ $role['phone'] ?? 'N/A' }}</td>
+                                            <td>{{ $role['email'] ?? 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
                 </div>
-                <div>
-                    <p class="npcommonheaderText">Phone</p>
-                    <p class="npcommontableBodyDatetext">{{ $role['phone'] ?? 'N/A' }}</p>
-                </div>
-            </div>
-            <div>
-                <p class="npcommonheaderText">Email</p>
-                <p class="npcommontableBodyDatetext">{{ $role['email'] ?? 'N/A' }}</p>
             </div>
         </div>
-        @endforeach
-    </div>
-</div>
+    </div> <!-- end col -->
+</div> <!-- end row -->
+    <!-- Responsive Table js -->
+    <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>

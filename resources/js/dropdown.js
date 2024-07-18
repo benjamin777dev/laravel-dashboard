@@ -1,4 +1,5 @@
 window.showDropdown = function (showDropdown, selectElement) {
+    console.log("showDropdown", showDropdown);
     selectElement.empty();
     selectElement.each(function () {
         const options = {
@@ -112,9 +113,12 @@ window.showDropdown = function (showDropdown, selectElement) {
                 console.log("Selected Data:", selectedData);
 
                 var selectedText;
-                if (selectedData.first_name && selectedData.last_name) {
+                if (selectedData.first_name || selectedData.last_name) {
                     selectedText =
-                        selectedData.first_name + " " + selectedData.last_name;
+                        (selectedData.first_name ?? "") +
+                        " " +
+                        (selectedData.last_name ?? "");
+                    console.log("Selected Text:", selectedText);
                     console.log("zoho_module_id:", selectedData.zoho_module_id);
                     console.log(
                         "zoho_contact_id:",
@@ -254,11 +258,11 @@ window.showDropdownForId = function (modalID, selectElement) {
                 console.log("Selected Data:", selectedData);
 
                 var selectedText;
-                if (selectedData.first_name && selectedData.last_name) {
+                if (selectedData?.first_name || selectedData?.last_name) {
                     selectedText =
                         selectedData.first_name + " " + selectedData.last_name;
                     console.log(
-                        "zoho_module_idddd:",
+                        "zoho_module_idddd:contact",
                         selectedData.zoho_module_id
                     );
                     console.log(
@@ -272,7 +276,7 @@ window.showDropdownForId = function (modalID, selectElement) {
                 } else {
                     selectedText = selectedData.deal_name;
                     console.log(
-                        "zoho_module_idddddd:",
+                        "zoho_module_idddddd:daealslsls",
                         selectedData.zoho_module_id
                     );
                     console.log("zoho_deal_id:", selectedData.zoho_deal_id);
@@ -291,8 +295,99 @@ window.showDropdownForId = function (modalID, selectElement) {
     });
 };
 
+window.updateText = function (
+    newText,
+    textfield,
+    id,
+    WhatSelectoneid = "",
+    whoID = ""
+) {
+    let dateLocal;
+    if (textfield === "date") {
+        dateLocal = document.getElementById("date_local" + id);
+        newText = newText?.substring(0, 10);
+    }
+
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+
+    var formData = {
+        data: [
+            {
+                Subject: textfield === "subject" ? newText : undefined,
+                Due_Date: textfield === "date" ? newText : undefined,
+                What_Id: WhatSelectoneid ? { id: WhatSelectoneid } : undefined,
+                Who_Id: whoID ? { id: whoID } : undefined,
+                $se_module:
+                    textfield === "Deals" || textfield === "Contacts"
+                        ? textfield
+                        : undefined,
+            },
+        ],
+    };
+
+    formData.data[0] = Object.fromEntries(
+        Object.entries(formData.data[0]).filter(
+            ([_, value]) => value !== undefined
+        )
+    );
+
+    $.ajax({
+        url: "/update-task/" + id,
+        method: "PUT",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(formData),
+        success: function (response) {
+            showToast(response?.data[0]?.message.toUpperCase());
+        },
+        error: function (xhr, status, error) {
+            showToastError(xhr.responseJSON.error);
+            console.error(xhr.responseText);
+        },
+    });
+};
+
+window.resetValidationTask = function (id) {
+    if (id) {
+        document.getElementById("subject_error" + id).innerHTML = "";
+        document.getElementById("darea" + id).value = "";
+    } else {
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById("darea").value = "";
+    }
+};
+
+window.validateTextareaTask = function (id) {
+    if (id) {
+        var textarea = document.getElementById("darea" + id);
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === "") {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error" + id).innerHTML =
+                "Please enter details";
+        } else {
+            document.getElementById("subject_error" + id).innerHTML = "";
+        }
+    } else {
+        var textarea = document.getElementById("darea");
+        var textareaValue = textarea.value.trim();
+        // Check if textarea value is empty
+        if (textareaValue === "") {
+            // Show error message or perform validation logic
+            document.getElementById("subject_error").innerHTML =
+                "Please enter details";
+        } else {
+            document.getElementById("subject_error").innerHTML = "";
+        }
+    }
+};
+
 window.addCommonTask = function (id = "", type = "") {
-    // console.log(window.groupLabel, type,id, 'selction type is here');
     var selectionId;
     if (window?.groupLabel === "Contacts") {
         type = window.groupLabel;
@@ -435,6 +530,7 @@ window.addCommonTask = function (id = "", type = "") {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
     });
+
     $.ajax({
         url: "/create-task",
         type: "POST",
@@ -442,12 +538,15 @@ window.addCommonTask = function (id = "", type = "") {
         dataType: "json",
         data: JSON.stringify(formData),
         success: function (response) {
+            console.log(response, "responsejdhjkghsdugh");
             if (response?.data && response.data[0]?.message) {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                document.getElementById("closing_btnnnnn").click();
+                $("#datatable_tasks1").DataTable().ajax.reload();
+                $("#datatable_tasks")?.DataTable().ajax.reload();
                 formData = "";
-                $(".btn-close").click();
                 // window.location.reload();
             } else {
                 showToastError("Response or message not found");
@@ -457,6 +556,8 @@ window.addCommonTask = function (id = "", type = "") {
             // Handle error response
             console.log(xhr);
             showToastError(error);
+            $("#datatable_tasks").DataTable().ajax.reload();
+            $("#datatable_tasks1").DataTable().ajax.reload();
         },
     });
 };
