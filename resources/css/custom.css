@@ -7,10 +7,10 @@ body {
 .bg-black {
     background-color: #000000 !important;
 }
-.card{
+.card {
     margin-bottom: 0 !important;
 }
-.card-body-padding0{
+.card-body-padding0 {
     padding: 0 !important;
 }
 
@@ -27,7 +27,7 @@ body {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -36,8 +36,6 @@ body {
     cursor: pointer;
 }
 
-
-
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
     display: grid;
@@ -45,24 +43,25 @@ body {
     gap: 24px;
 }
 
-.table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before{
+.table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
     background-color: #222 !important;
 }
 
 .table th {
-     background-color: #222;
-     color: #fff;
+    background-color: #222;
+    color: #fff;
 }
 
-.dataTables_filter{
+.dataTables_filter {
     display: none;
 }
 
-div.dataTables_processing>div:last-child>div {
-        background: #222;
+div.dataTables_processing > div:last-child > div {
+    background: #222;
 }
 
-#page-topbar{
+#page-topbar {
     z-index: 999999 !important;
 }
 
@@ -98,12 +97,10 @@ div.dataTables_processing>div:last-child>div {
 }
 
 .dcontactBtns {
-  
     border: 1px solid #222;
     background: #222;
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     border-radius: 16px !important;
-
 }
 .dcontactBtns:hover {
     background: #222;
@@ -125,7 +122,7 @@ div.dataTables_processing>div:last-child>div {
 .agent-info {
     padding: 1rem 1rem;
 }
-.nav.nav-tabs{
+.nav.nav-tabs {
     background-color: #6c6c6c !important;
 }
 
@@ -140,7 +137,7 @@ div.dataTables_processing>div:last-child>div {
     background: rgb(165 158 158);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -150,7 +147,6 @@ div.dataTables_processing>div:last-child>div {
 .page-item.active {
     background-color: #3b3b3b;
 }
-
 
 .ddaterangepicker {
     border: none;
@@ -196,7 +192,7 @@ div.dataTables_processing>div:last-child>div {
 
 .dtableHeaderTr th {
     color: #333;
-   
+
     font-size: 14px !important;
     font-style: normal;
     font-weight: 900;
@@ -215,7 +211,7 @@ div.dataTables_processing>div:last-child>div {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -233,7 +229,7 @@ div.dataTables_processing>div:last-child>div {
     background: #848484;
     color: var(--white, #fff);
     text-align: center;
-   
+
     font-size: 12px !important;
     font-style: normal;
     font-weight: 800;
@@ -250,7 +246,7 @@ div.dataTables_processing>div:last-child>div {
 }
 
 .page-link.active,
-.active>.page-link {
+.active > .page-link {
     background-color: #222 !important;
     border: 1px solid #222;
 }
@@ -274,10 +270,10 @@ div.dataTables_processing>div:last-child>div {
     padding: 20px; */
     border-radius: 5px;
 }
-#datatable_tasks_wrapper .dataTables_length{
+#datatable_tasks_wrapper .dataTables_length {
     display: none;
 }
-#datatable_tasks1_wrapper .dataTables_length{
+#datatable_tasks1_wrapper .dataTables_length {
     display: none;
 }
 
@@ -295,19 +291,19 @@ div.dataTables_processing>div:last-child>div {
     border-radius: 5px;
 }
 
-.kontribusi{
+.kontribusi {
     border-radius: 10px;
-    margin:0 10px 0 10px;
-  }
+    margin: 0 10px 0 10px;
+}
 
-  #datatable_tasks th{
+#datatable_tasks th {
     background-color: #fff !important;
     color: #000 !important;
-  }
-  #datatable_tasks1 th{
+}
+#datatable_tasks1 th {
     background-color: #fff !important;
     color: #000 !important;
-  }
+}
 
 .dtabsbtn {
     padding: 8px 16px 8px 16px;
@@ -331,7 +327,7 @@ div.dataTables_processing>div:last-child>div {
     vertical-align: middle;
     padding: 16px, 12px, 16px, 12px;
 }
-.navbar-header{
+.navbar-header {
     align-items: unset;
 }
 
@@ -426,7 +422,7 @@ div.dataTables_processing>div:last-child>div {
 
 .notesAsignedText {
     color: #222;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -436,7 +432,6 @@ div.dataTables_processing>div:last-child>div {
 }
 
 /* / / / create task modal  / / / */
-
 
 .dHeaderText {
     color: #343a40;
@@ -479,7 +474,6 @@ div.dataTables_processing>div:last-child>div {
 .dtextarea:focus-visible {
     outline: none;
 }
-
 
 /* .select2-container--default .select2-selection--single {
     border: none !important;
@@ -546,7 +540,6 @@ div.dataTables_processing>div:last-child>div {
     padding: 19px;
     background: #222;
     border-radius: 50%;
-   
 }
 
 .groupAddButton {
@@ -635,7 +628,7 @@ body .vertical-collpsed span .logo-sm image {
     border-color: #cfcfcf;
 }
 
-.contact-task-container{
+.contact-task-container {
     max-height: 350px;
     overflow-y: auto;
 }
@@ -723,7 +716,7 @@ body .vertical-collpsed span .logo-sm image {
     align-self: stretch;
     color: #222;
     text-align: center;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -743,7 +736,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #222;
     color: #fff;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -763,7 +756,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #fff;
     color: var(--Brand, #222);
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -788,7 +781,7 @@ body .vertical-collpsed span .logo-sm image {
     align-self: stretch;
     color: #222;
     text-align: center;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -895,7 +888,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .dcardSubject {
         color: #222;
-       
+
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -913,7 +906,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .dcardsTransactionText {
         color: #3f3f3f;
-       
+
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -923,7 +916,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .dcardsselectdiv {
         color: #222;
-       
+
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -933,7 +926,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .dcardsTaskText {
         color: #3f3f3f;
-       
+
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -1004,14 +997,12 @@ body .vertical-collpsed span .logo-sm image {
     .unset-bs-gutter-x {
         --bs-gutter-x: 0;
     }
-    .cus-grid{
+    .cus-grid {
         display: grid !important;
         gap: 3px !important;
         text-align: center !important;
     }
 }
-
-
 
 @media (min-width: 320px) and (max-width: 398px) {
     .dtabsbtn {
@@ -1037,7 +1028,7 @@ body .vertical-collpsed span .logo-sm image {
 /* Dashboard transactions table css */
 .dtHeaderName {
     color: #fff;
-   
+
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1053,7 +1044,7 @@ body .vertical-collpsed span .logo-sm image {
     flex: 1 0 0;
     align-self: stretch;
     color: #000;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1080,7 +1071,6 @@ body .vertical-collpsed span .logo-sm image {
     }
 
     .dTCardDate {
-       
         font-size: 14px;
         font-style: normal;
         font-weight: 800;
@@ -1094,7 +1084,7 @@ body .vertical-collpsed span .logo-sm image {
         align-self: stretch;
         padding-block: 5px;
         color: #222;
-       
+
         font-size: 14px;
         font-style: normal;
         font-weight: 350;
@@ -1107,7 +1097,7 @@ body .vertical-collpsed span .logo-sm image {
         gap: 5px;
         align-self: stretch;
         color: #222;
-       
+
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
@@ -1120,12 +1110,13 @@ body .vertical-collpsed span .logo-sm image {
 
 .submittaldiv {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     align-items: center;
 }
 
-.submittalType {
-    padding-bottom: 20px;
+.actions {
+    display: flex;
+    gap: 10px;
 }
 
 .progressCardsContainer {
@@ -1144,7 +1135,7 @@ body .vertical-collpsed span .logo-sm image {
     text-align: center;
 
     /* dashStatsNumber */
-   
+
     font-size: 30px;
     font-style: normal;
     font-weight: 900;
@@ -1155,7 +1146,7 @@ body .vertical-collpsed span .logo-sm image {
     align-self: stretch;
     color: #000;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1214,7 +1205,7 @@ body .vertical-collpsed span .logo-sm image {
 
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1242,7 +1233,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #848484;
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1265,7 +1256,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1321,7 +1312,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .cpinput {
     color: #222;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -1352,7 +1343,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1382,7 +1373,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -1462,7 +1453,7 @@ body .vertical-collpsed span .logo-sm image {
 /* new pipeline common table css */
 .npcommonheaderText {
     color: #3f3f3f;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 350;
@@ -1472,7 +1463,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .npcommontableBodytext {
     color: #222;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -1492,7 +1483,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .npcommontableBodyDatetext {
     color: #222;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1526,7 +1517,6 @@ body .vertical-collpsed span .logo-sm image {
     padding: 14px 12px;
     color: #fff;
 
-   
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1545,7 +1535,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #222;
     padding: 14px 12px;
     color: #fff;
-   
+
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -1571,7 +1561,7 @@ body .vertical-collpsed span .logo-sm image {
 .groups-view th {
     color: #000;
     flex: 1;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1586,7 +1576,7 @@ body .vertical-collpsed span .logo-sm image {
 .npcontacts-Body td {
     color: #000;
     flex: 1;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -1600,7 +1590,7 @@ body .vertical-collpsed span .logo-sm image {
 .npRoleBody {
     color: #222;
     padding: 16px 12px;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -1608,7 +1598,6 @@ body .vertical-collpsed span .logo-sm image {
 }
 
 @media (max-width: 767px) {
-
     .ppipelineTable,
     .dtabletranstion,
     .npcontacts-Table,
@@ -1693,7 +1682,7 @@ body .vertical-collpsed span .logo-sm image {
         margin-bottom: 24px;
     }
 
-    .mbottom{
+    .mbottom {
         margin-bottom: 8px !important;
     }
 }
@@ -1730,7 +1719,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .pTableTransText {
         color: #8f8f8f;
-       
+
         font-size: 11px;
         font-style: normal;
         font-weight: 600;
@@ -1741,7 +1730,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .pTableNameText {
         color: #222;
-       
+
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1796,7 +1785,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .pTableTransText {
         color: #8f8f8f;
-       
+
         font-size: 11px;
         font-style: normal;
         font-weight: 600;
@@ -1807,7 +1796,7 @@ body .vertical-collpsed span .logo-sm image {
 
     .pTableNameText {
         color: #222;
-       
+
         font-size: 14px;
         font-style: normal;
         font-weight: 900;
@@ -1869,7 +1858,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #dfdfdf;
     color: #222;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1888,7 +1877,7 @@ body .vertical-collpsed span .logo-sm image {
     cursor: pointer;
     color: #fff;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -1897,7 +1886,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .npinfoText {
     color: #222;
-   
+
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -1906,7 +1895,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .nplabelText {
     color: #222;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 500;
@@ -1936,7 +1925,7 @@ body .vertical-collpsed span .logo-sm image {
     gap: 24px;
     align-self: stretch;
 }
- .carousel { 
+.carousel {
     display: flex;
     padding: 20px;
     flex-direction: column;
@@ -1950,12 +1939,13 @@ body .vertical-collpsed span .logo-sm image {
      min-height: 459px; 
      width: 100%;  
      box-shadow: 0px 2px 10px 0px #cecece; */
-} 
+}
 .carousel-item.active {
     padding: 25px;
 }
 
-.carousel-control-prev, .carousel-control-next {
+.carousel-control-prev,
+.carousel-control-next {
     display: none !important;
 }
 
@@ -2094,8 +2084,7 @@ body .vertical-collpsed span .logo-sm image {
 .carousel-indicators {
     /* bottom: 20px; */
     margin-bottom: 10px;
-    justify-content:inherit;
-    
+    justify-content: inherit;
 }
 
 .carousel-indicators a {
@@ -2137,7 +2126,8 @@ body .vertical-collpsed span .logo-sm image {
     line-height: normal;
 }
 
-.additional_email {}
+.additional_email {
+}
 
 .close-date-comm {
     display: flex;
@@ -2248,7 +2238,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .nproletext {
     color: #222;
-   
+
     font-size: 15px;
     font-style: normal;
     font-weight: 800;
@@ -2260,7 +2250,7 @@ body .vertical-collpsed span .logo-sm image {
 }
 
 .npcontactbtn:hover {
-  background-color: #222;
+    background-color: #222;
 }
 
 .npcontactbtn {
@@ -2273,7 +2263,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #222;
     color: #fff;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2364,7 +2354,7 @@ body .vertical-collpsed span .logo-sm image {
     background-color: #dfdfdf;
     color: #000 !important;
     text-align: center;
-   
+
     font-size: 20px;
     font-style: normal;
     font-weight: 900;
@@ -2433,7 +2423,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .ncText {
     color: #222;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -2452,7 +2442,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #222;
     color: #fff;
     text-align: center;
-   
+
     font-size: 11.4px;
     font-style: normal;
     font-weight: 800;
@@ -2469,7 +2459,6 @@ body .vertical-collpsed span .logo-sm image {
 }
 
 @media (min-width: 320px) and (max-width: 475px) {
-
     .dbgroupsFlex,
     .pipeline-btns-container {
         display: block;
@@ -2492,7 +2481,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .ngText {
     color: #000;
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 900;
@@ -2516,7 +2505,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2541,7 +2530,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2570,7 +2559,7 @@ body .vertical-collpsed span .logo-sm image {
     border-right: #8f8f8f;
     background: #222;
     color: #fff;
-   
+
     font-size: 11px;
     font-style: normal;
     font-weight: 900;
@@ -2583,7 +2572,7 @@ body .vertical-collpsed span .logo-sm image {
     border-bottom: 1px solid var(--Skiding-btns-back, #efefef);
     background: #fff;
     color: #222;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 350;
@@ -2627,7 +2616,7 @@ body .vertical-collpsed span .logo-sm image {
     display: flex;
     justify-content: space-between;
     align-items: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 900;
@@ -2669,7 +2658,7 @@ body .vertical-collpsed span .logo-sm image {
 .gdropdown-btn {
     flex: 1 0 0;
     color: #848484;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2714,7 +2703,7 @@ body .vertical-collpsed span .logo-sm image {
     border: 1px solid #cecece;
     flex: 1 0 0;
     color: #848484;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -2745,7 +2734,7 @@ body .vertical-collpsed span .logo-sm image {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
     color: #fff;
     text-align: center;
-   
+
     font-size: 14px;
     font-style: normal;
     font-weight: 800;
@@ -2807,7 +2796,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #fff;
     color: #222;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2823,7 +2812,7 @@ body .vertical-collpsed span .logo-sm image {
     color: #253c5b;
 
     text-align: center;
-   
+
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2833,7 +2822,7 @@ body .vertical-collpsed span .logo-sm image {
 
 .viewMapP {
     text-align: center;
-   
+
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -2856,7 +2845,7 @@ body .vertical-collpsed span .logo-sm image {
     background: #222;
     color: #fff;
     text-align: center;
-   
+
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -2935,7 +2924,7 @@ body .vertical-collpsed span .logo-sm image {
     color: #222;
 
     /* title-md */
-   
+
     font-size: 16px;
     font-style: normal;
     font-weight: 800;
@@ -2961,7 +2950,6 @@ body {
 }
 
 .stacked-bar-chart {
-
     /* [class*="bar-"] {
         /* padding: 5px; */
     /* } */
@@ -2991,7 +2979,7 @@ body {
 .dmonth-design {
     color: #7f7f7f;
     text-align: right;
-   
+
     font-size: 12px;
     font-style: normal;
     font-weight: 800;
@@ -2999,9 +2987,6 @@ body {
 }
 
 .dtransactions-des {
-
-
-
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -3021,8 +3006,6 @@ body {
     background: #fff;
     box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);
 }
-
-
 
 .dashchartImg {
     padding-inline: 20px;
@@ -3367,7 +3350,10 @@ input[type="button"]:hover {
     padding: 0 !important;
 }
 
-.search-input-design .select2-container .select2-selection--multiple .select2-search__field {
+.search-input-design
+    .select2-container
+    .select2-selection--multiple
+    .select2-search__field {
     margin: 0 !important;
 }
 
@@ -3392,12 +3378,14 @@ input[type="button"]:hover {
     /* Adjust padding to match form-control */
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
     line-height: 24px;
     /* Adjust line height */
 }
 
-.select2-container--default .select2-results>.select2-results__options {
+.select2-container--default .select2-results > .select2-results__options {
     max-height: 200px;
     overflow-y: hidden;
 }
@@ -3451,11 +3439,11 @@ input[type="button"]:hover {
     border-left: 4px solid red;
 }
 
-.accordion-button.custom{
+.accordion-button.custom {
     padding: 20px;
 }
 
-.accordion.custom{
+.accordion.custom {
     padding: 32px;
 }
 
