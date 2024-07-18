@@ -406,11 +406,7 @@ window.addCommonTask = function (id = "", type = "") {
                 "Please enter subject";
             return;
         }
-        if (detail.trim() === "") {
-            document.getElementById("detail_error" + id).innerHTML =
-                "Please enter details";
-            return;
-        }
+
         // var whoSelectoneid = document.getElementsByName("who_id")[0].value;
         // var whoId = window.selectedTransation
         // if (whoId === undefined) {
@@ -471,11 +467,7 @@ window.addCommonTask = function (id = "", type = "") {
                 "Please enter subject";
             return;
         }
-        if (detail.trim() === "") {
-            document.getElementById("detail_error").innerHTML =
-                "Please enter details";
-            return;
-        }
+
         var seModule = type;
         var WhatSelectoneid = selectionId;
         console.log("WHAT ID", WhatSelectoneid);

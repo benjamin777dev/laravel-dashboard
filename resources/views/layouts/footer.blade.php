@@ -70,6 +70,8 @@
         };
 
         if (contactData) {
+            formData.data[0]["Primary_Contact"]=[]
+            formData.data[0]["Primary_Contact"].push({Primary_Contact:{id:contact.zoho_contact_id}})
             formData.data[0]["Client_Name_Primary"] = contact.first_name + " " + contact.last_name;
             formData.data[0]["Client_Name_Only"] = contact.first_name + " " + contact.last_name + " || " + contact.zoho_contact_id;
             formData.data[0]["Contact"] = {

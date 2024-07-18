@@ -37,6 +37,8 @@ class Deal extends Model
         'cda_notes', 'contract_time_of_day_deadline', 'sales_cycle_duration',
         'commission_flat_fee', 'check_received', 'locked_s', 'create_date',
         'original_listing_price', 'tag', 'approval_state', 'status_reports','primary_contact',
+        'coOpAgentCHRFit', 'coOpAgentCompany', 'coOpAgentEmail', 'coOpAgentFirstName',
+        'coOpAgentLastName', 'coOpAgentPhone', 'coOpAgentEBLetterSent', 'teamPartnership'
     ];
 
     public function userData()
@@ -77,6 +79,11 @@ class Deal extends Model
     public function clientContact()
     {
         return $this->belongsTo(Contact::class, 'client_name_id', 'zoho_contact_id');
+    }
+
+    public function submittals()
+    {
+        return $this->hasMany(Submittals::class, 'dealId', 'zoho_deal_id');
     }
 
     public function getClientFromClientNameOnly()
@@ -211,6 +218,13 @@ class Deal extends Model
             'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
             'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
+            'coOpAgentCHRFit' => isset($data['Co_Op_Agent_CHR_Fit']) ? (int) $data['Co_Op_Agent_CHR_Fit'] : null,
+            'coOpAgentEBLetterSent' => isset($data['EB_Letter_Sent']) ? (int) $data['EB_Letter_Sent'] : null,
+            'coOpAgentCompany' => $data['Co_Op_Agent_Company'] ?? null,
+            'coOpAgentEmail' => $data['Co_Op_Agent_Email'] ?? null,
+            'coOpAgentFirstName' => $data['Co_Op_Agent_First_Name'] ?? null,
+            'coOpAgentLastName' => $data['Co_Op_Agent_Last_Name'] ?? null,
+            'coOpAgentPhone' => $data['Co_Op_Agent_Phone'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,
             'created_by' => json_encode($data['Created_By']) ?? null,
             'created_by_email' => $data['Created_By']['email'] ?? null,
@@ -274,6 +288,7 @@ class Deal extends Model
             'status_reports' => (int) ($data['Status_Reports'] ?? null),
             'status_rpt_opt_out' => (int) ($data['status_rpt_opt_out'] ?? 0),
             'tag' => json_encode($data['Tag'] ?? null),
+            'teamPartnership' => $source == "webhook" ? $data['Team_Partnership']['id'] : ($data['Team_Partnership'] ?? null),
             'tm_audit_complete' => (int) ($data['TM_Audit_Complete'] ?? null),
             'tm_name' => $data['TM_Name']['name'] ?? null,
             'tm_name_id' => $source == "webhook" ? ($data['TM_Name']['id'] ?? null) : ($data['TM_Name'] ?? null),

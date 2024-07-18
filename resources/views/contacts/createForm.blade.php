@@ -185,23 +185,28 @@
                         
                         <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
                         </option>
-                    @if (!empty($spouseContact))
-                        <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
-                            {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
-                        </option>
-                    @endif
-                    @if (!empty($contacts))
-                        @foreach ($contacts as $contactrefs)
-                            <option
-                                value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                data-id = {{$contactrefs['id']}}
-                                data-icon="fas fa-external-link-alt">
-                                {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                        @if (!empty($spouseContact))
+                            <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
+                                {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
                             </option>
-                        @endforeach
-                    @endif
+                        @endif
+                        @if (!empty($contacts))
+                            @foreach ($contacts as $contactrefs)
+                                <option
+                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                    data-id = {{$contactrefs['id']}}
+                                    data-icon="fas fa-external-link-alt">
+                                    {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                </option>
+                            @endforeach
+                        @endif
 
                     </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="envelope_salutation" class="form-label nplabelText">Envelope Salutation</label>
+                    <input type="text" value="{{ $contact['salutation_s'] }}" name="envelope_salutation"
+                        class="form-control npinputinfo" id="envelope_salutation">
                 </div>
             </div>
         </div>
@@ -387,7 +392,35 @@
 
         var getSpouse = $('#validationDefault13');
         getSpouse.select2({
-            placeholder: 'Search...',
+             placeholder: 'Search...',
+            ajax: {
+                url: '/contact/list', // replace with your AJAX URL
+                dataType: 'json',
+                delay: 250, // wait 250ms before sending the request
+                data: function(params) {
+                    return {
+                        q: params.term, // search query
+                        page: params.page
+                    };
+                },
+                processResults: function(data,params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: $.map(data.contacts.data, function(contact) {
+                            return {
+                                id: contact.zoho_contact_id,
+                                text: (contact.first_name??"") + ' ' + (contact.last_name??""),
+                                Full_Name: (contact.first_name??"") + ' ' + (contact.last_name??"")
+                            };
+                        }),
+                        pagination: {
+                            more: (params.page * 10) < data.contacts.total
+                        }
+                    };
+                },
+                cache: true
+            },
+           
             templateResult: formatState,
             templateSelection: formatState
         }).on('select2:open', () => {
@@ -409,6 +442,7 @@
         $("#createContactModal").modal('show');
         getSpouse.select2('close'); // Close the select2 dropdown
     };
+
 
         window.openContactModal = function() {
             $("#createContactModal").modal('show');

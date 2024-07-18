@@ -1,109 +1,53 @@
 <div class="row " id="listingSubmittal">
-    <h4 class="card-title">Listing Submittal Information</h4>
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Basic Info</h4>
-                {{-- <p class="card-title-desc">Basic Info</p> --}}
-
-                <form class="row g-3" id="additionalFields">
-                    <div class="col-md-6 ">
-                        <label for="transactionName" class="form-label nplabelText">Transaction Name</label>
-                        <select class="form-select npinputinfo validate" id="transactionName" required>
-                            @foreach ($deals as $currDeal)
-                                <option value="{{ $currDeal }}"
-                                    {{ $currDeal['deal_name'] == $submittal['dealData']['deal_name'] ? 'selected' : '' }}>
-                                    {{ $currDeal['deal_name'] }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="additionalEmail" class="form-label nplabelText">Additional Email for
-                            confirmation</label>
-                        <input type="text" class="form-control npinputinfo" id="additionalEmail" required
-                            value="{{ $submittal['additionalEmail'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="agentName" class="form-label nplabelText">Agent Name on Material</label>
-                        <input type="text" class="form-control npinputinfo validate" id="agentName" required
-                            value="{{ $submittal['agentName'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="commingSoon" class="form-label nplabelText">Coming Soon?</label>
-                        <select class="form-select npinputinfo validate" id="commingSoon">
-                            <option value="">--None--
-                            </option>
-                            <option value="Yes" {{ $submittal['commingSoon'] == 'Yes' ? 'selected' : '' }}>Yes
-                            </option>
-                            <option value="No" {{ $submittal['commingSoon'] == 'No' ? 'selected' : '' }}>No</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="comingSoonDate" class="form-label nplabelText">Coming Soon MLS date</label>
-                        <input type="date" class="form-control npinputinfo " id="comingSoonDate" required
-                            value="{{ $submittal['comingSoonDate'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="tmName" class="form-label nplabelText">TM Name</label>
-                        <input type="text" class="form-control npinputinfo validate" id="tmName" required
-                            value="{{ $submittal['dealData']['tmName']['name'] }}">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="activeDate" class="form-label nplabelText">Active Date</label>
-                        <input type="date" class="form-control npinputinfo validate" id="activeDate" required
-                            value="{{ $submittal['activeDate'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="agreementExecuted" class="form-label nplabelText">Listing Agreement Executed?
-                        </label>
-                        <select class="form-select npinputinfo validate" id="agreementExecuted">
-                            <option value="">--None--
-                            </option>
-                            <option value="Yes" {{ $submittal['agreementExecuted'] == 'Yes' ? 'selected' : '' }}>Yes
-                            </option>
-                            <option value="No" {{ $submittal['agreementExecuted'] == 'No' ? 'selected' : '' }}>No
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="price" class="form-label nplabelText">Price</label>
-                        <input type="text" class="form-control npinputinfo validate" id="price" required
-                            placeholder = "$" value="{{ $submittal['price'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="photoDate" class="form-label nplabelText">Photo Date</label>
-                        <input type="date" class="form-control npinputinfo " id="photoDate" required
-                            value="{{ $submittal['photoDate'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="photoURL" class="form-label nplabelText">Photo URL</label>
-                        <input type="text" class="form-control npinputinfo" id="photoURL" required
-                            value="{{ $submittal['photoURL'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="bedsBathsTotal" class="form-label nplabelText">Beds,baths,total sq.ft.</label>
-                        <input type="text" class="form-control npinputinfo validate" id="bedsBathsTotal" required
-                            value="{{ $submittal['bedsBathsTotal'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="tourURL" class="form-label nplabelText">3D Tour URL</label>
-                        <input type="text" class="form-control npinputinfo" id="tourURL" required
-                            value="{{ $submittal['tourURL'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="usingCHR" class="form-label nplabelText">Using CHR TM </label>
-                        <select class="form-select npinputinfo validate" id="usingCHR"
-                            onchange="putConditionOnForm()">
-                            <option value="">--None--
-                            </option>
-                            <option value="Yes" {{ $submittal['usingCHR'] == 'Yes' ? 'selected' : '' }}>Yes
-                            </option>
-                            <option value="No" {{ $submittal['usingCHR'] == 'No' ? 'selected' : '' }}>No</option>
-                        </select>
-                    </div>
-                </form>
+    <p>Listing Submittal Information</p>
+    {{-- Basic Info --}}
+    <div class="col-md-12 col-sm-24" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
+        <p class="npinfoText">Basic Info</p>
+        <form class="row g-3" id="additionalFields">
+            <div class="col-md-6 ">
+                <label for="transactionName" class="form-label nplabelText">Transaction Name</label>
+                <select class="form-select npinputinfo validate" id="transactionNameShow" required disabled>
+                    @foreach($deals as $currDeal)
+                    <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                        {{$currDeal['deal_name']}}
+                    </option>
+                    @endforeach
+                </select>
+                <select class="form-select npinputinfo validate" id="transactionName" required hidden>
+                    @foreach($deals as $currDeal)
+                    <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                        {{$currDeal['deal_name']}}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="additionalEmail" class="form-label nplabelText">Additional Email for
+                    confirmation</label>
+                <input type="text" class="form-control npinputinfo" id="additionalEmail" required value="{{$submittal['additionalEmail']}}">
+            </div>
+            <div class="col-md-6">
+                <label for="agentName" class="form-label nplabelText">Agent Name on Material</label>
+                <input type="text" class="form-control npinputinfo validate" id="agentName" required value="{{$submittal['agentName']}}">
+            </div>
+            <div class="col-md-6">
+                <label for="commingSoon" class="form-label nplabelText">Coming Soon?</label>
+                <select class="form-select npinputinfo validate" id="commingSoon">
+                    <option value="">--None--
+                    </option>
+                    <option value="Yes" {{$submittal['commingSoon']=="Yes" ?'selected':''}}>Yes
+                    </option>
+                    <option value="No" {{$submittal['commingSoon']=="No" ?'selected':''}}>No</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="comingSoonDate" class="form-label nplabelText">Coming Soon MLS date</label>
+                <input type="date" class="form-control npinputinfo " id="comingSoonDate" required value="{{$submittal['comingSoonDate']}}">
+            </div>
+            <div class="col-md-6">
+                <label for="tmName" class="form-label nplabelText">TM Name</label>
+                <input type="text" class="form-control npinputinfo validate" id="tmName" required value="{{$submittal['dealData']['tmName']['name']}}">
+            </div>
 
             </div>
         </div>
@@ -335,7 +279,53 @@
             </div>
         </div>
 
+            <div class="col-md-6">
+                <label for="emailBlastSphere" class="form-label nplabelText">Email Blast to Sphere</label>
+                <input type="checkbox" id="emailBlastSphere" <?php if
+                ($submittal['emailBlastSphere']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-6">
+                <label for="emailBlastReverseProspect" class="form-label nplabelText">Email Blast to Reverse
+                    Prospect
+                    List</label>
+                <input type="checkbox" id="emailBlastReverseProspect" <?php if
+                ($submittal['emailBlastReverseProspect']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-6">
+                <label for="propertyHighlightVideo" class="form-label nplabelText">Property Highlight Video</label>
+                <input type="checkbox" id="propertyHighlightVideo" <?php if
+                ($submittal['propertyHighlightVideo']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-6">
+                <label for="socialMediaImages" class="form-label nplabelText">Social Media Images</label>
+                <input type="checkbox" id="socialMediaImages" <?php if
+                ($submittal['socialMediaImages']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-6">
+                <label for="socialMediaAds" class="form-label nplabelText">Social Media Ads</label>
+                <input type="checkbox" id="socialMediaAds" <?php if
+                ($submittal['socialMediaAds']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-12">
+                <label for="priceImprovementPackage" class="form-label nplabelText">Price Improvement
+                    Package</label>
+                <input type="checkbox" id="priceImprovementPackage" <?php if
+                ($submittal['priceImprovementPackage']) { echo 'checked' ; } ?>>
+            </div>
+            <div class="col-md-12">
+                <label for="customDomainName" class="form-label nplabelText">Custom Domain Name</label>
+                <input type="text" class="form-control npinputinfo" id="customDomainName" required value="{{$submittal['customDomainName']}}">
+            </div>
+            <div class="col-md-12">
+                <label for="featuresNeededForVideo" class="form-label nplabelText">8-12 Features Needed for
+                    Video</label>
+                <textarea class="form-control" id="featuresNeededForVideo" aria-label="With textarea">{{$submittal['featuresNeededForVideo']}}</textarea>
+            </div>
+
+        </form>
     </div>
+    
+   
 
     {{-- CHR TM - Select MLS --}}
     <div class="col-12 selectMLS">
@@ -343,13 +333,23 @@
             <div class="card-body">
                 <h4 class="card-title">CHR TM - Select MLS</h4>
 
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="reColorado" class="form-label nplabelText">REColorado</label>
-                        <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
+        <p class="npinfoText">PROPERTY PROMOTION - Signs</p>
+        <form class="row g-3">
+            <div class="col-md-6">
+                    <label for="qrCodeMainPanel" class="form-label nplabelText">QR Code Main Panel</label>
+                    <input type="checkbox" id="qrCodeMainPanel" <?php if
+                    ($submittal['qrCodeMainPanel']) { echo 'checked' ; } ?>>
+                </div>
+            <div class="col-md-6">
+                <label for="qrCodeSignRider" class="form-label nplabelText">OLD QR Code Sign Rider</label>
+                <input type="checkbox" id="qrCodeSignRider" <?php if
+                ($submittal['qrCodeSignRider']) { echo 'checked' ; } ?>>
+            </div>
+        </form>
+    </div>
+    
+    {{--PROPERTY PROMOTION - Print Requests--}}
+    <div class="col-md-12 col-sm-24 promotionPrint" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
                     <div class="col-md-6">
                         <label for="navica" class="form-label nplabelText">Navica</label>
@@ -392,316 +392,21 @@
 
     </div>
 
-    {{-- PROPERTY PROMOTION - Outside Services --}}
-    <div class="col-12 promotionOutside" style="display: none">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">PROPERTY PROMOTION - Outside Services</h4>
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="matterport" class="form-label nplabelText">Matterport</label>
-                        <input type="checkbox" id="matterport" <?php if ($submittal['matterport']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
+     {{--PROPERTY PROMOTION - Notes--}}
+    <div class="col-md-12 col-sm-24 promotionNote" style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03); display:none">
 
-                    <div class="col-md-6">
-                        <label for="floorPlans" class="form-label nplabelText">Floor Plans</label>
-                        <input type="checkbox" id="floorPlans" required <?php if ($submittal['floorPlans']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="threeDZillowTour" class="form-label nplabelText">3D Zillow Tour</label>
-                        <input type="checkbox" id="threeDZillowTour" <?php if ($submittal['threeDZillowTour']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="onsiteVideo" class="form-label nplabelText">Onsite Video</label>
-                        <input type="checkbox" id="onsiteVideo" <?php if ($submittal['onsiteVideo']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-
-                </form>
-
+        <p class="npinfoText">PROPERTY PROMOTION - Notes</p>
+        <form class="row g-3">
+            <p class="npinfoText">Is there anything else Marketing Team
+                Should know?</p>
+            <div class="col-md-6">
+                <label for="marketingNotes" class="form-label nplabelText">Please add your Notes</label>
+                <textarea class="form-control" id="marketingNotes" aria-label="With textarea">{{$submittal['marketingNotes']}}</textarea>
             </div>
-        </div>
 
+        </form>
     </div>
 
-    {{-- PROPERTY PROMOTION - Marketing Items --}}
-    <div class="col-12 promotionMarket" style="display: none">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">PROPERTY PROMOTION - Marketing Items</h4>
-
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="propertyWebsite" class="form-label nplabelText">Property Website</label>
-                        <input type="checkbox" id="propertyWebsite" <?php if ($submittal['propertyWebsite']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="emailBlastSphere" class="form-label nplabelText">Email Blast to Sphere</label>
-                        <input type="checkbox" id="emailBlastSphere" <?php if ($submittal['emailBlastSphere']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="emailBlastReverseProspect" class="form-label nplabelText">Email Blast to Reverse
-                            Prospect
-                            List</label>
-                        <input type="checkbox" id="emailBlastReverseProspect" <?php if ($submittal['emailBlastReverseProspect']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="propertyHighlightVideo" class="form-label nplabelText">Property Highlight
-                            Video</label>
-                        <input type="checkbox" id="propertyHighlightVideo" <?php if ($submittal['propertyHighlightVideo']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="socialMediaImages" class="form-label nplabelText">Social Media Images</label>
-                        <input type="checkbox" id="socialMediaImages" <?php if ($submittal['socialMediaImages']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="socialMediaAds" class="form-label nplabelText">Social Media Ads</label>
-                        <input type="checkbox" id="socialMediaAds" <?php if ($submittal['socialMediaAds']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="priceImprovementPackage" class="form-label nplabelText">Price Improvement
-                            Package</label>
-                        <input type="checkbox" id="priceImprovementPackage" <?php if ($submittal['priceImprovementPackage']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="customDomainName" class="form-label nplabelText">Custom Domain Name</label>
-                        <input type="text" class="form-control npinputinfo" id="customDomainName" required
-                            value="{{ $submittal['customDomainName'] }}">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="featuresNeededForVideo" class="form-label nplabelText">8-12 Features Needed for
-                            Video</label>
-                        <textarea class="form-control" id="featuresNeededForVideo" aria-label="With textarea">{{ $submittal['featuresNeededForVideo'] }}</textarea>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
-    </div>
-
-    {{-- PROPERTY PROMOTION - Notes --}}
-    <div class="col-12 promotionNote" style="display: none">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">PROPERTY PROMOTION - Notes</h4>
-
-                <form class="row g-3">
-                    <p class="npinfoText">Is there anything else Marketing Team
-                        Should know?</p>
-                    <div class="col-md-6">
-                        <label for="marketingNotes" class="form-label nplabelText">Please add your Notes</label>
-                        <textarea class="form-control" id="marketingNotes" aria-label="With textarea">{{ $submittal['marketingNotes'] }}</textarea>
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
-    </div>
-    {{-- PROPERTY PROMOTION - Signs --}}
-    <div class="col-12 promotionSign" style="display: none">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">PROPERTY PROMOTION - Signs</h4>
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="qrCodeMainPanel" class="form-label nplabelText">QR Code Main Panel</label>
-                        <input type="checkbox" id="qrCodeMainPanel" <?php if ($submittal['qrCodeMainPanel']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                    \<div class="col-md-6">
-                        <label for="qrCodeSignRider" class="form-label nplabelText">OLD QR Code Sign Rider</label>
-                        <input type="checkbox" id="qrCodeSignRider" <?php if ($submittal['qrCodeSignRider']) {
-                            echo 'checked';
-                        } ?>>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-
-    </div>
-    {{-- PROPERTY PROMOTION - Print Requests --}}
-    <div class="col-12 promotionPrint" style="display: none">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">PROPERTY PROMOTION - Print Requests</h4>
-
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="brochureLine" class="form-label nplabelText">Brochure Line - Top Right Brochure
-                            Preview
-                            button</label>
-                        <select class="form-select npinputinfo validate" id="brochureLine">
-                            <option value="">--None--
-                            </option>
-                            <option value="No Brochure"
-                                {{ $submittal['brochureLine'] == 'No Brochure' ? 'selected' : '' }}>No Brochure
-                            </option>
-                            <option
-                                value="A-Line - 2 Page Horizontal"{{ $submittal['brochureLine'] == 'A-Line - 2 Page Horizontal' ? 'selected' : '' }}>
-                                A-Line - 2 Page Horizontal</option>
-                            <option value="A-Line - 2 Page Vertical"
-                                {{ $submittal['brochureLine'] == 'A-Line - 2 Page Vertical' ? 'selected' : '' }}>A-Line - 2
-                                Page Vertical
-                            </option>
-                            <option value="A-Line - 4 Page"
-                                {{ $submittal['brochureLine'] == 'A-Line - 4 Page' ? 'selected' : '' }}>A-Line - 4 Page'
-                            </option>
-                            <option value="A-Line - 8 Page - Delivery Only"
-                                {{ $submittal['brochureLine'] == 'A-Line - 8 Page - Delivery Only' ? 'selected' : '' }}>
-                                A-Line - 8 Page - Delivery Only
-                            </option>
-                            <option value="B-Line - 2 Page"
-                                {{ $submittal['brochureLine'] == 'B-Line - 2 Page' ? 'selected' : '' }}>B-Line - 2 Page
-                            </option>
-                            <option value="B-Line - 4 Page"
-                                {{ $submittal['brochureLine'] == 'B-Line - 4 Page' ? 'selected' : '' }}>B-Line - 4 Page
-                            </option>
-                            <option value="B-Line - 8 Page - Delivery Only"
-                                {{ $submittal['brochureLine'] == 'B-Line - 8 Page - Delivery Only' ? 'selected' : '' }}>
-                                B-Line - 8 Page - Delivery Only
-                            </option>
-                            <option value="C-Line - 2 Page"
-                                {{ $submittal['brochureLine'] == 'C-Line - 2 Page' ? 'selected' : '' }}>C-Line - 2 Page
-                            </option>
-                            <option value="C-Line - 4 Page"
-                                {{ $submittal['brochureLine'] == 'C-Line - 4 Page' ? 'selected' : '' }}>C-Line - 4 Page
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="brochurePrint" class="form-label nplabelText">Brochure - Print, Deliver or
-                            PDF</label>
-                        <select class="form-select npinputinfo" id="brochurePrint">
-                            <option value="">--None--</option>
-                            @foreach ($broucherPrint as $brochure)
-                                <option value="{{ $brochure }}"
-                                    {{ $submittal['brochurePrint'] == $brochure ? 'selected' : '' }}>
-                                    {{ $brochure }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="bullets" class="form-label nplabelText">12 bullets, 4 words per bullet</label>
-                        <textarea class="form-control" id="bullets" aria-label="With textarea">{{ $submittal['bullets'] }}</textarea>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="headlineForBrochure" class="form-label nplabelText">4 Word Headline - If Opting
-                            for
-                            A-Line
-                            Brochure</label>
-                        <input type="text" class="form-control npinputinfo" id="headlineForBrochure" required
-                            value="{{ $submittal['headlineForBrochure'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="stickyDots" class="form-label nplabelText">Sticky Dots</label>
-                        <select class="form-select npinputinfo validate" id="stickyDots">
-                            <option value="">--None--</option>
-                            <option value="1 Per Feature Card - $.75 each"
-                                {{ $submittal['stickyDots'] == "1 Per Feature Card - $.75 each" ? 'selected' : '' }}>1
-                                Per Feature Card - $.75 each
-                            </option>
-                            <option value="2 Per Feature Card - $.75 each"
-                                {{ $submittal['stickyDots'] == "2 Per Feature Card - $.75 each" ? 'selected' : '' }}>2
-                                Per Feature Card - $.75 each</option>
-                            <option value="No Dots" {{ $submittal['stickyDots'] == 'No Dots' ? 'selected' : '' }}>No
-                                Dots</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="qrCodeSheet" class="form-label nplabelText">QR Code Sheet</label>
-                        <select class="form-select npinputinfo" id="qrCodeSheet">
-                            <option value="">--None--</option>
-                            <option value="Print 1 at Alamo - $1"
-                                {{ $submittal['qrCodeSheet'] == "Print 1 at Alamo - $1" ? 'selected' : '' }}>Print 1 at
-                                Alamo - $1
-                            </option>
-                            <option value="Print 2 at Alamo - $2"
-                                {{ $submittal['qrCodeSheet'] == "Print 2 at Alamo - $2" ? 'selected' : '' }}>Print 2 at
-                                Alamo - $2</option>
-                            <option value="PDF - I'll Print it Myself"
-                                {{ $submittal['qrCodeSheet'] == "PDF - I'll Print it Myself" ? 'selected' : '' }}>PDF -
-                                I'll Print it Myself</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="featureCards" class="form-label nplabelText">Feature Cards</label>
-                        <select class="form-select npinputinfo validate" id="featureCards">
-                            <option value="">--None--</option>
-                            @foreach ($featuresCard as $currfeaturesCard)
-                                <option value="{{ $currfeaturesCard }}"
-                                    {{ $submittal['featureCards'] == $currfeaturesCard ? 'selected' : '' }}>
-                                    {{ $currfeaturesCard }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="featureCardCopy" class="form-label nplabelText">Add Feature Card Copy</label>
-                        <input type="text" class="form-control npinputinfo" id="featureCardCopy" required
-                            value="{{ $submittal['featureCardCopy'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="brochureDeliveryDate" class="form-label nplabelText">Delivery Only - Brochure
-                            Date</label>
-                        <input type="date" class="form-control npinputinfo" id="brochureDeliveryDate" required
-                            value="{{ $submittal['brochureDeliveryDate'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="deliveryAddress" class="form-label nplabelText">Delivery Only - Shipping Address &
-                            Name</label>
-                        <input type="text" class="form-control npinputinfo" id="deliveryAddress" required
-                            value="{{ $submittal['deliveryAddress'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="printedItemsPickupDate" class="form-label nplabelText">Printed Items Pick Up or
-                            PDF
-                            Date</label>
-                        <input type="date" class="form-control npinputinfo" id="printedItemsPickupDate" required
-                            value="{{ $submittal['printedItemsPickupDate'] }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="brochurePickupDate" class="form-label nplabelText">Brochure Pick Up or PDF
-                            Date</label>
-                        <input type="date" class="form-control npinputinfo" id="brochurePickupDate" required
-                            value="{{ $submittal['brochurePickupDate'] }}">
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
-    </div>
 </div>
 <script>
     var showOtherListingForm = @json($listingSubmittaltype);
@@ -822,7 +527,7 @@
                 justify-content: center;">
                     <div class="col-md-3">
                         <a>
-                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{ json_encode($submittal) }},true)"><i class="fas fa-save">
+                            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
                                 </i>
                                 Save and Submit to CHR
                             </div>

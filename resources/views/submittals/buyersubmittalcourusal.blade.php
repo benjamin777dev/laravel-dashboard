@@ -1,4 +1,4 @@
-<div class="row justify-content-center">
+<div class="row justify-content-center" id="listingSubmittal">
     <div class="col-xl-8 align-items-center">
         <div class="card">
             <div class="card-body p-0">
@@ -50,7 +50,7 @@
                                         </g>
                                     </svg></label>
                                 <div class="nontm-select-div">
-                                    <select name="related_transaction" id="transactionName" class="nontm-select">
+                                    <select name="related_transaction" id="transactionName" class="nontm-select validate_err">
                                         @foreach ($deals as $currDeal)
                                             <option value="{{ $currDeal }}"
                                                 {{ $currDeal['deal_name'] == $submittal['dealData']['deal_name'] ? 'selected' : '' }}>
@@ -66,7 +66,7 @@
                             </div>
                             <div class="additional_email label-div-mb">
                                 <label for="add_email" class="common-label">Additional Email for Confirmation </label>
-                                <input type="email" value="{{ $submittal['additionalEmail'] }}" id="additionalEmail"
+                                <input type="email" class="form-control" value="{{ $submittal['additionalEmail'] }}" id="additionalEmail"
                                     class="form-control" placeholder="Enter email" id="add_email">
                                 <div class="add_email_error text-danger" id="add_email_error">
                                 </div>
@@ -85,10 +85,8 @@
                                                 fill="#AC5353" />
                                         </g>
                                     </svg></label>
-                                <input type="text" value="{{ $submittal['agentName'] }}" class="form-control"
-                                    placeholder="" id="agentName">
-                                <div class="add_email_error text-danger" id="add_email_error">
-                                </div>
+                                <input type="text" class="validate_err form-control" value="{{ $submittal['agentName'] }}" 
+                                    placeholder="Enter agent Name" id="agentName" />
                             </div>
                             <label for="commingSoon" class="common-label">Comming Soon? <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
@@ -105,7 +103,7 @@
                                 </svg></label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio" id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'checked' : '' }}
+                                    <input type="radio"  id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'checked' : '' }}
                                         name="radio">
                                     <label class="form-check-label"  for="formCheck1">
                                         Yes
@@ -129,7 +127,7 @@
 
                                 </div>
                             </div>
-                            <div class="additional_email label-div-mb">
+                            <div class="label-div-mb">
                                 <label for="dealData" class="common-label">Tm Name <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
@@ -144,7 +142,7 @@
                                         </g>
                                     </svg></label>
                                 <input type="text" value="{{ $submittal['dealData']['tmName']['name'] }}"
-                                    class="form-control" placeholder="" id="tmName">
+                                    class="form-control validate_err" placeholder="" id="tmName">
                                 <div class="tmName_err text-danger" id="tmName_err">
                                 </div>
                             </div>
@@ -163,7 +161,7 @@
                                         </g>
                                     </svg></label>
                                 <input type="date" value="{{ $submittal['activeDate'] }}"
-                                    class="form-control nontm-input" id="activeDate">
+                                    class="form-control nontm-input validate_err" id="activeDate">
                                 <div id="activeDate_err" class="text-danger">
 
                                 </div>
@@ -205,7 +203,7 @@
                                 <div class="close-date-nontm col-lg-6 label-div-mb">
                                     <label for="price" class="common-label">Price</label>
                                     <input type="text" value="{{ $submittal['price'] }}" placeholder="$"
-                                        class="form-control nontm-input" id="price">
+                                        class="form-control nontm-input validate_err" id="price">
                                     <div id="final_purchase_error" class="text-danger">
 
                                     </div>
@@ -228,13 +226,12 @@
                             <div class="additional_email label-div-mb">
                                 <label for="bedsBathsTotal" class="common-label">Beds,baths,total sq.ft.</label>
                                 <input type="text" value="{{ $submittal['bedsBathsTotal'] }}"
-                                    class="form-control" placeholder="" id="bedsBathsTotal">
-                                <div class="add_email_error text-danger" id="add_email_error">
-                                </div>
+                                    class="form-control validate_err" placeholder="" id="bedsBathsTotal">
+                               
                             </div>
                             <div class="additional_email label-div-mb">
                                 <label for="tourURL" class="common-label">3D Tour URL</label>
-                                <input type="text" value="{{ $submittal['tourURL'] }}" class="form-control"
+                                <input type="text" value="{{ $submittal['tourURL'] }}" class="form-control validate_err"
                                     placeholder="" id="tourURL">
                                 
                             </div>
@@ -284,7 +281,7 @@
                                     <div class='pb-4'>
                                         <label for="additonal_fee" class="common-label">Referral to Pay</label>
                                         <select name="additional_charge" id="additonal_fee"
-                                            class="form-select second-step-common-select select-mb24" id="">
+                                            class="form-select second-step-common-select select-mb24 validate_err" id="">
                                             <option value="" selected>None</option>
                                             <option value="Yes"
                                                 {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
@@ -301,7 +298,7 @@
                                     <label for="amountToCHR" class="common-label">Amount to CHR Gives</label>
                                     <input name="amountToCHR" placeholder = "$"
                                         value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
-                                        class="form-control second-step-common-select select-mb24">
+                                        class="form-control second-step-common-select select-mb24 validate_err">
                                     </input>
                                 </div>
                                 <div class="col-lg-6 commission-nontm label-div-mb">
@@ -309,7 +306,7 @@
                                         <label for="referralDetails" class="common-label">Referral Details</label>
                                         <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
                                             id="referralDetails"
-                                            class="form-control second-step-common-select select-mb24">
+                                            class="form-control second-step-common-select select-mb24 validate_err">
                                         </input>
                                     </div>
 
@@ -395,19 +392,19 @@
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="titleCompany">Title Company</label>
                                     <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
-                                        id="titleCompany" class="form-control second-step-common-select select-mb24">
+                                        id="titleCompany" class="form-control second-step-common-select select-mb24 validate_err">
                                 </div>
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="closerNamePhone">Closer Name & Phone</label>
                                     <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
                                         id="closerNamePhone"
-                                        class="form-control second-step-common-select select-mb24">
+                                        class="form-control second-step-common-select select-mb24 validate_err">
                                 </div>
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="signInstallVendorOther">Sign Install Vendor (if Other)</label>
                                     <input value="{{ $submittal['signInstallVendorOther'] }}"
                                         name="signInstallVendorOther" id="signInstallVendorOther"
-                                        class="form-control second-step-common-select select-mb24">
+                                        class="form-control second-step-common-select select-mb24 validate_err">
                                 </div>
                                 <div class="close-date-nontm label-div-mb">
                                     <label for="signInstallDate" class="common-label">Sign Install Date<svg
@@ -836,12 +833,26 @@
         button1.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button1.setAttribute('data-bs-slide-to', (slideIndex - 1).toString());
         button1.setAttribute('aria-label', 'Slide ' + slideIndex.toString());
+        button1.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'CHR TM - Transaction Details and Preferences';
+            }
+        })
 
         var button2 = document.createElement('button');
         button2.type = 'button';
         button2.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button2.setAttribute('data-bs-slide-to', slideIndex.toString());
         button2.setAttribute('aria-label', 'Slide ' + (slideIndex + 1).toString());
+        button2.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'CHR TM - Transaction Details and Preferences';
+            }
+        })
 
         var carouselIndicators = document.querySelector('.carousel-indicators');
         carouselIndicators.appendChild(button1);
@@ -1183,48 +1194,105 @@
         button1.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button1.setAttribute('data-bs-slide-to', (slideIndex - 7).toString());
         button1.setAttribute('aria-label', 'Slide ' + (slideIndex - 7).toString());
+        button1.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Outside Services';
+            }
+        })
 
         var button2 = document.createElement('button');
         button2.type = 'button';
         button2.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button2.setAttribute('data-bs-slide-to', (slideIndex - 6).toString());
         button2.setAttribute('aria-label', 'Slide ' + (slideIndex - 6).toString());
+        button2.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Marketing Items';
+            }
+        })
 
         var button3 = document.createElement('button');
         button3.type = 'button';
         button3.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button3.setAttribute('data-bs-slide-to', (slideIndex - 5).toString());
         button3.setAttribute('aria-label', 'Slide ' + (slideIndex - 5).toString());
+        button3.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Marketing Items';
+            }
+        })
 
         var button4 = document.createElement('button');
         button4.type = 'button';
         button4.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button4.setAttribute('data-bs-slide-to', (slideIndex - 4).toString());
         button4.setAttribute('aria-label', 'Slide ' + (slideIndex - 4).toString());
+        button4.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Print Requests';
+            }
+        })
 
         var button5 = document.createElement('button');
         button5.type = 'button';
         button5.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button5.setAttribute('data-bs-slide-to', (slideIndex - 3).toString());
         button5.setAttribute('aria-label', 'Slide ' + (slideIndex - 3).toString());
+        button5.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Print Requests';
+            }
+        })
 
         var button6 = document.createElement('button');
         button6.type = 'button';
         button6.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button6.setAttribute('data-bs-slide-to', (slideIndex - 2).toString());
         button6.setAttribute('aria-label', 'Slide ' + (slideIndex - 2).toString());
+        button6.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Print Requests';
+            }
+        })
 
         var button7 = document.createElement('button');
         button7.type = 'button';
         button7.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button7.setAttribute('data-bs-slide-to', (slideIndex - 1).toString());
         button7.setAttribute('aria-label', 'Slide ' + (slideIndex - 1).toString());
+        button7.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Print Requests';
+            }
+        })
+
 
         var button8 = document.createElement('button');
         button8.type = 'button';
         button8.setAttribute('data-bs-target', '#carouselExampleIndicators');
         button8.setAttribute('data-bs-slide-to', slideIndex.toString());
         button8.setAttribute('aria-label', 'Slide ' + slideIndex.toString());
+        button8.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Notes';
+            }
+        })
 
         var carouselIndicators = document.querySelector('.carousel-indicators');
         carouselIndicators.appendChild(button1);
@@ -1257,9 +1325,10 @@
         return true;
     }
 
-    window.validateSubmittal = function(isNew = true) {
-        let submittal = @json($submittal);
+    window.validateSubmittal = function(isNew=true) {
+         let submittal = @json($submittal);
         isValid = true
+        // submittal = JSON.parse(submittal)
         if (submittal.submittalType == 'buyer-submittal') {
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
@@ -1315,7 +1384,7 @@
                 var buyerFeesCharged = ($('#buyerFeesCharged').val() != "") ? convertInInteger($(
                     '#buyerFeesCharged').val()) : null;
                 var buyerAmountChr = ($('#buyerAmountChr').val() != "") ? convertInInteger($('#buyerAmountChr')
-                    .val()) : null;
+                .val()) : null;
             } catch (error) {
                 isValid = false;
                 showToastError(error.message)
@@ -1384,6 +1453,7 @@
                 })
             }
         } else if (submittal.submittalType == 'listing-submittal') {
+            console.log("jasgdfjashj");
             // Get values from Basic Info section
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
@@ -1478,13 +1548,13 @@
             console.log("listingSubmittalsContainer", listingSubmittalsContainer);
             if (listingSubmittalsContainer) {
                 const allDivs = listingSubmittalsContainer.querySelectorAll(':scope > div');
+
                 // Filter out divs that are hidden (display: none)
                 const visibleDivs = Array.from(allDivs).filter(div => window.getComputedStyle(div).display !==
                     'none');
-                console.log("visibleDivs", visibleDivs);
                 // Loop through each visible div and validate form fields within it
                 visibleDivs.forEach(div => {
-                    const validatedElements = div.querySelectorAll('.validate');
+                    const validatedElements = div.querySelectorAll('.validate_err');
                     console.log("validatedElements", validatedElements);
                     validatedElements.forEach(element => {
                         if (element.value.trim() === '') {
@@ -1498,13 +1568,11 @@
 
             }
 
-          
-
             if ((additionalEmail != '') && (!(isValidEmail(additionalEmail)))) {
                 showToastError("Additional Email for confirmation should be in email format")
                 isValid = false
-                
             }
+            console.log("photo url", isValidUrl(photoURL));
             if ((photoURL != '') && (!(isValidUrl(photoURL)))) {
                 showToastError("Photo URL should be in URL format")
                 isValid = false
@@ -1517,9 +1585,9 @@
             try {
                 var price = ($('#price').val() != '') ? convertInInteger($('#price').val()) : null;
                 var amountToCHR = ($('#amountToCHR').val() != '') ? convertInInteger($('#amountToCHR').val()) :
-                    null;
+                null;
                 var feesCharged = ($('#feesCharged').val() != '') ? convertInInteger($('#feesCharged').val()) :
-                    null;
+                null;
             } catch (error) {
                 console.log(error);
                 isValid = false;

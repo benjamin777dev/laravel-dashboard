@@ -51,6 +51,11 @@ class PipelineController extends Controller
             true
         ); 
 
+        $submittalDeals = $db->retrieveSubmittalDeals(
+            $user, // user
+            $accessToken,  // access token 
+        ); 
+
         $stats = $this->calculateDealStatistics($allDeals);
 
         $allstages = config('variables.dealStages');
@@ -64,6 +69,7 @@ class PipelineController extends Controller
             'retrieveModuleData' => $retrieveModuleData,
             'getdealsTransaction' => $deals,
             'allDeals'=>$allDeals,
+            'submittalDeals'=>$submittalDeals,
         ]);
 
         if ($request->ajax()) {
@@ -362,6 +368,7 @@ class PipelineController extends Controller
             $zoho->access_token = $accessToken;
 
             $jsonData = $request->json()->all();
+            Log::info("zoho deal Request on creation",[$jsonData]);
             $deal = $db->retrieveDealById($user,$accessToken,$id);
             if(!$deal){
                 $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
@@ -374,7 +381,7 @@ class PipelineController extends Controller
             }else{
                 $zohoDeal= $zoho->createZohoDeal($jsonData);
             }
-            Log::error("zoho deal response",[$zohoDeal]);
+            Log::info("zoho deal response",[$zohoDeal]);
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }

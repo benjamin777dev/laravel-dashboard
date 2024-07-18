@@ -2,11 +2,20 @@
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Non-TM Check request</p>
         <div class="dropdown">
+            @if ($nontms->count() === 0)
             <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
                 id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-plus plusicon"></i>
-                Add Non-TM Check request
+                    Add Non-TM Check request                
             </button>
+            @else
+                <a href = "/nontm-view/{{$nontms[0]['id']}}" target="_blank">
+                   <div class="input-group-text npcontactbtn" id="showNonTm">
+                        <i class="fas fa-plus plusicon"></i>
+                        Show Non-TM Check request
+                    </div>
+                </a>
+            @endif
 
         </div>
 

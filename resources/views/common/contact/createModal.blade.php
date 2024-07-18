@@ -4,11 +4,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold">Quick Create: Contact</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" id="closeSpouseContactModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id ="contact_spouse_create_form">
+                <form class="row" id ="contact_spouse_create_form" action="{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}"
+                    method="POST">
                     @csrf
+                    @method('POST')
                     {{-- Layout --}}
                     <!-- <div class="mb-3 row">
                         <label for="layout_design" class="col-sm-2 col-form-label nplabelText text-end">
@@ -117,9 +119,15 @@
                     <div class="modal-footer">
                         <div>
                             <button type="submit" class="btn btn-secondary taskModalSaveBtn" id="spouse_submit_button" >
-                                <i class="fas fa-save saveIcon"></i> Save Changes
+                                <i class="fas fa-save saveIcon"></i> Save
                             </button>
                         </div>
+                        <div>
+                            <button type="submit" class="btn btn-secondary taskModalSaveBtn" id="spouse_submit_and_associate_button" >
+                                <i class="fas fa-save saveIcon"></i> Save & Associate
+                            </button>
+                        </div>
+                        <input type="hidden" id="clickedButton" name="clickedButton" />
                     </div>
 
                 </form>
@@ -151,34 +159,62 @@
         });
        
         document.getElementById('contact_spouse_create_form').appendChild(hiddenInput);
+
+        $('#spouse_submit_button').on('click', function() {
+            $('#clickedButton').val('spouse_submit_button');
+        });
+
+        $('#spouse_submit_and_associate_button').on('click', function() {
+            $('#clickedButton').val('spouse_submit_and_associate_button');
+        });
+
         $('#contact_spouse_create_form').submit(function(event) {
+            event.preventDefault(); 
             if (!validateSpouseContactForm()) {
-                event.preventDefault(); 
                 return; 
             }
 
-            // Serialize form data
             var formData = $(this).serialize();
-            // console.log(JSON.parse(formData));
-            // return;
-            // AJAX post request
+            var clickedButton = $('#clickedButton').val();
+            if (clickedButton === 'spouse_submit_button') {
+                createSpouseContact(formData, false);
+            } else if (clickedButton === 'spouse_submit_and_associate_button') {
+                createSpouseContact(formData, true);
+            }
+            });
+        })
+
+        function createSpouseContact(formData, associate) {
+            console.log("formData, associate",formData, associate);
             $.ajax({
-                url: '{{ route('contact.spouse.create', ['contactId' => $contact->id]) }}',
                 type: 'POST',
+                url: $('#contact_spouse_create_form').attr('action'),
                 data: formData,
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
-                    showToast("Spouse create successfully")
-                    getCreateForm();
+                let newContact = response.spouseContact
+                if (associate) {
+                    var newOption = $('<option>')
+                    .val(JSON.stringify({
+                        id: newContact.zoho_contact_id,
+                        Full_Name: (newContact.first_name??"") + ' ' + (newContact.last_name??"")
+                    }))
+                    .prop('selected', true)
+                    .text((newContact.first_name??"") + ' ' + (newContact.last_name??""));
+                    // Add the new option to the select box
+                    $('#validationDefault13').append(newOption);
+                }
+                $('#contact_spouse_create_form')[0].reset();
+                $("#closeSpouseContactModal").click();
+                showToast("Spouse create successfully")
+                // window.location = window.location.href;
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                    showToastError("Spouse creation failed")
+                console.error('Error:', xhr);
+                showToastError("Spouse creation failed")
                 }
             });
-        });
-    })    
-    
+        }
     function validateSpouseContactForm() {
         let last_name = $("#spouseLastName").val();
         let email = $("#spouseEmail").val();
