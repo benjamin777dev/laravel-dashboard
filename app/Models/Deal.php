@@ -339,7 +339,7 @@ class Deal extends Model
             'status_reports' => (int) ($data['Status_Reports'] ?? null),
             'status_rpt_opt_out' => (int) ($data['status_rpt_opt_out'] ?? 0),
             'tag' => json_encode($data['Tag'] ?? null),
-            'teamPartnership' => $source == "webhook" ? $data['Team_Partnership']['id'] : ($data['Team_Partnership'] ?? null),
+            'teamPartnership' => $source == "webhook" ? ($data['Team_Partnership']['id'] ?? null) : ($data['Team_Partnership'] ?? null),
             'tm_audit_complete' => (int) ($data['TM_Audit_Complete'] ?? null),
             'tm_name' => $data['TM_Name']['name'] ?? null,
             'tm_name_id' => $source == "webhook" ? ($data['TM_Name']['id'] ?? null) : ($data['TM_Name'] ?? null),
