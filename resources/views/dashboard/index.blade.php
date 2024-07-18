@@ -222,10 +222,19 @@
                 </div>
             </div>
         </div>
-        <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title mt-0">Notes</h4>
-                    <div class="d-flex flex-column">
+            <div class="col-sm-12 dtasksection">
+                <div class="d-flex justify-content-between">
+                    <p class="dFont800 dFont15">Notes</p>
+                    <button
+                        class="btn btn-sm btn-dark"
+                        id="btnGroupAddon"
+                        data-bs-toggle="modal" data-bs-target="#staticBackdropforNote"
+                    >
+                        <i class="fas fa-plus plusicon"></i> Add Note
+                    </button>
+                </div>
+                <div class="row">
+                <div class="d-flex flex-column">
                         @if ($notes->count() > 0)
                             @foreach ($notesInfo as $note)
                                 <div class=" mb-2 ">

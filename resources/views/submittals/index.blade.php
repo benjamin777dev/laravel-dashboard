@@ -1,17 +1,19 @@
-@section('css')
-  
-        @vite(['resources/css/custom.css'])
-@endsection
-<div class="row table-responsive dtranstiontable mt-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                
-                <!-- Table View -->
-                <div class="table-rep-plugin">
-                    <div class="table-responsive mb-0" data-pattern="priority-columns">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="card-title nproletext">Submittals</h4>
+<div class="table-responsive dtranstiontable mt-3">
+    <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
+        <p class="nproletext">Submittals</p>
+        @if ($submittals->count() === 0)
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+                <i class="fas fa-plus plusicon"></i>
+                    Add New Submittal
+            </div>
+         @else
+         <a href="{{ url('/submittal-view/' . $submittals[0]['submittalType'] . '/' . $submittals[0]['id']) }}" target="_blank">
+            <div class="input-group-text npcontactbtn" id="addSubmittal">
+            <i class="fas fa-plus plusicon"></i>
+                Show Submittal
+            </div>
+        </a>
+        @endif
 
                             <div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormType()">
                                 <i class="fas fa-plus plusicon"></i>
@@ -159,50 +161,5 @@
     function generateRandom4DigitNumber() {
         return Math.floor(1000 + Math.random() * 9000);
     }
-
-    function addSubmittal(type, deal, formType = null) {
-        let formData = {
-            "data": [{
-                "Transaction_Name": {
-                    "id": deal.zoho_deal_id,
-                    "name": deal.deal_name
-                },
-                "TM_Name": deal.tmName,
-                'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
-                "Owner": {
-                    "id": "{{ auth()->user()->root_user_id }}",
-                    "name": "{{ auth()->user()->name }}",
-                    "email": "{{ auth()->user()->email }}"
-                },
-                'formType': formType
-            }]
-        };
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $.ajax({
-            url: `/${type === "buyer-submittal" ? "buyer" : "listing"}/submittal/create/${deal.zoho_deal_id}`,
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function (response) {
-                console.log("response", response);
-                redirectUrl(type, response, formType);
-                if (response?.data && response.data[0]?.message) {
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                }
-            },
-            error: function (xhr) {
-                console.error(xhr.responseText);
-            }
-        });
-    }
-
 
 </script>

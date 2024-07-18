@@ -140,18 +140,15 @@
     @endsection
     @section('script')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const passwordInput = document.getElementById("userpassword");
-            const togglePasswordButton = document.querySelector(".toggle-password");
-
-            togglePasswordButton.addEventListener("click", function() {
-                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-                passwordInput.setAttribute("type", type);
-
-                // Change eye icon based on password visibility
-                const eyeIcon = togglePasswordButton.querySelector("i");
-                eyeIcon.classList.toggle("mdi-eye-outline");
-                eyeIcon.classList.toggle("mdi-eye-off-outline");
+        $(document).ready(function() {
+            $('.toggle-password').on('click', function() {
+                $(this).children('i').toggleClass('mdi-eye-outline mdi-eye-off-outline');
+                var input = $('#userpassword');
+                if ($(this).children('i').hasClass('mdi-eye-outline')) {
+                    input.attr('type', 'password');
+                } else {
+                    input.attr('type', 'text');
+                }
             });
         });
     </script>

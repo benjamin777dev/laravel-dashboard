@@ -32,7 +32,6 @@
             url: `{{ url('/pipeline/create/form/') }}/${dealId}`,
             method: 'GET',
             success: function(response) {   
-                console.log(response,"response") 
                 if (response.redirect) {
                     window.location.href = response.redirect;
                 }else{

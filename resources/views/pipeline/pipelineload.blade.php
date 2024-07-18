@@ -70,6 +70,23 @@
                     </tr>
                 </table>
             </td>
+             <td>
+                @if(!($deal['tm_preference']=='Non-TM' && $deal['representing']=='Buyer'))
+                    @if (!$deal->submittals()->exists() || $deal->submittals->isEmpty())
+                        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType({{$deal}})">
+                            <i class="fas fa-plus plusicon"></i>
+                                Add New Submittal
+                        </div>
+                    @else
+                    <a href="{{ url('/submittal-view/' . $deal->submittals['0']['submittalType'] . '/' . $deal->submittals[0]['id']) }}" target="_blank">
+                        <div class="input-group-text npcontactbtn" id="addSubmittal">
+                        <i class="fas fa-plus plusicon"></i>
+                            Show Submittal
+                        </div>
+                    </a>
+                    @endif
+                @endif
+            </td>
             <td>
                 <p class="pdealName"
                     id="deal_name{{ $deal['zoho_deal_id'] }}">{{ $deal['deal_name'] ?? 'N/A' }}</p>
@@ -180,6 +197,7 @@
                     <tr>
                         <td>
                         </td>
+                        
                         <td>
                             <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
                                 <img src="{{ URL::asset('/images/open.svg') }}" alt="Open icon"
@@ -237,6 +255,21 @@
                         </td>
                     </tr>
                 </table>
+            </td>
+            <td>
+                @if (!$deal->submittals()->exists() || $deal->submittals->isEmpty())
+                    <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType({{$deal}})">
+                        <i class="fas fa-plus plusicon"></i>
+                            Add New Submittal
+                    </div>
+                @else
+                <a href="{{ url('/submittal-view/' . $deal->submittals['0']['submittalType'] . '/' . $deal->submittals[0]['id']) }}" target="_blank">
+                    <div class="input-group-text npcontactbtn" id="addSubmittal">
+                    <i class="fas fa-plus plusicon"></i>
+                        Show Submittal
+                    </div>
+                </a>
+                @endif
             </td>
             <td>
                 <p class="pdealName"
@@ -344,4 +377,122 @@
     $(document).ready(function(){
        $('[data-toggle="tooltip"]').tooltip()
     })
+
+    function showSubmittalFormType(deal) {
+        console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
+        // deal = JSON.parse(deal);
+        let submittalData;
+        if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
+            addSubmittal('buyer-submittal',deal);
+        }else if(deal.representing === "Seller" && deal.tm_preference === "CHR TM"){
+            addSubmittal('listing-submittal',deal)
+        }else if(deal.representing === "Seller" && deal.tm_preference === "Non-TM"){
+            addSubmittal('listing-submittal',deal,'Non-TM');
+        }
+    }
+
+    function redirectUrl(submittalType=null,submittalData = null,formType =null){
+       const url = `{{ url('submittal-create/${submittalType}/${submittalData.id}?formType=${formType}')}}`
+       window.open(url,'_blank')
+    }
+
+    function generateRandom4DigitNumber() {
+            return Math.floor(1000 + Math.random() * 9000);
+        }
+
+    function addSubmittal (type,deal,formType=null){
+        if(type == "buyer-submittal"){
+            var formData = {
+                "data": [{
+                    "Transaction_Name": {
+                        "id":deal.zoho_deal_id,
+                        "name":deal.deal_name
+                    },
+                    "TM_Name": deal.tmName,
+                    'Name':'BS-'+(generateRandom4DigitNumber()),
+                    "Owner": {
+                        "id": "{{ auth()->user()->root_user_id }}",
+                        "name": "{{ auth()->user()->name }}",
+                        "email": "{{ auth()->user()->email }}",
+                    },
+                    'formType':formType
+                }]
+            };
+            
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+                // Send AJAX request
+            $.ajax({
+                url: "/buyer/submittal/create/"+deal.zoho_deal_id,
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log("response",response);
+                    redirectUrl(type,response,formType)
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                        // window.location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }else if(type == "listing-submittal"){
+            var formData = {
+                "data": [{
+                    "Transaction_Name": {
+                        "id":deal.zoho_deal_id,
+                        "name":deal.deal_name
+                    },
+                    "TM_Name": deal.tmName,
+                    'Name':'LS-'+(generateRandom4DigitNumber()),
+                    "Owner": {
+                        "id": "{{ auth()->user()->root_user_id }}",
+                        "name": "{{ auth()->user()->name }}",
+                        "email": "{{ auth()->user()->email }}",
+                    },
+                    'formType':formType
+                }]
+            };
+            
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+                // Send AJAX request
+            $.ajax({
+                url: "/listing/submittal/create/"+deal.zoho_deal_id,
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log("response",response);
+                    redirectUrl(type,response,formType)
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                        // window.location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }
+
+    }
+
 </script>

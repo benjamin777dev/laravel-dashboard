@@ -179,28 +179,31 @@
                 <div class="col-md-6">
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                        id="validationDefault13" style="display:none">
-                        <option value="" disabled {{ empty( $contact['spouseContact']) ? 'selected' : '' }}>Please select
+                        id="validationDefault13" >
+                        <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
                         </option>
-                        @if (!empty($contact['spouseContact']))
-                            <option
-                                value="{{ json_encode(['id' => $contact['spouseContact']['zoho_contact_id'], 'Full_Name' => $contact['spouseContact']['first_name'] . ' ' . $contact['spouseContact']['last_name']]) }}"
-                                selected>
-                                {{ $contact['spouseContact']['first_name'] }} {{ $contact['spouseContact']['last_name'] }}
+                        @if (!empty($spouseContact))
+                            <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
+                                {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
                             </option>
                         @endif
                         @if (!empty($contacts))
                             @foreach ($contacts as $contactrefs)
                                 <option
-                                value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
-                                data-id = {{$contactrefs['id']}}
-                                data-icon="fas fa-external-link-alt">
-                                {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
-                            </option>
+                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                    data-id = {{$contactrefs['id']}}
+                                    data-icon="fas fa-external-link-alt">
+                                    {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                                </option>
                             @endforeach
                         @endif
 
                     </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="envelope_salutation" class="form-label nplabelText">Envelope Salutation</label>
+                    <input type="text" value="{{ $contact['salutation_s'] }}" name="envelope_salutation"
+                        class="form-control npinputinfo" id="envelope_salutation">
                 </div>
             </div>
         </div>
@@ -211,9 +214,9 @@
             <p class="npinfoText p-2">Mailing Address</p>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label for="validationDefault13" class="form-label nplabelText">Address</label>
+                    <label for="address" class="form-label nplabelText">Address</label>
                     <input type="text" value="{{ $contact['mailing_address'] }}" name="address_line1"
-                        class="form-control npinputinfo" id="validationDefault13">
+                        class="form-control npinputinfo" id="address">
                 </div>
                 {{-- <div class="col-md-6">
                     <label for="validationDefault14" class="form-label nplabelText">Address line 2</label>
@@ -284,6 +287,7 @@
     </form>
     </div>
 </div>
+@include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
 <div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -318,131 +322,235 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
+@vite(['resources/js/pipeline.js'])   
 <script>
     contact=@json($contact);
     groups = @json($groups);
     $(document).ready(function() {
-    var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-        removeItemButton: true,
-        maxItemCount: null,
-        searchResultLimit: 500,
-        renderChoiceLimit: -1,
-    });
-
-    let selectedGroupsArr = [];         
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'selectedGroups';
-
-    document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
-        var selectedGroups = event.detail.value;
-        if (!selectedGroupsArr.includes(selectedGroups)) {
-            selectedGroupsArr.push(selectedGroups);
-        } else {
-            selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-        }
-        hiddenInput.value = JSON.stringify(selectedGroupsArr);
-    });
-
-    let selectedGroupsDefault = [];
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsDefault.push($(this).val());
-    });
-
-    let removeGroupsArr = [];
-    multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-        var removedGroup = event.detail.value;
-        if (selectedGroupsDefault.includes(removedGroup)) {
-            deleteAssignGroup(removedGroup);
-        }
-    });
-
-    document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
-    
-    var getReffered = $('#validationDefault14');
-    getReffered.select2({
-        placeholder: 'Search...',
-    }).on('select2:open', () => {
-        $(document).on('scroll.select2', function() {
-            getReffered.select2('close');
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+            removeItemButton: true,
+            maxItemCount: null,
+            searchResultLimit: 500,
+            renderChoiceLimit: -1,
         });
-    }).on('select2:close', () => {
-        $(document).off('scroll.select2');
-    });
-});
+        let selectedGroupsArr = [];         
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'selectedGroups';
 
-    function formatState(state) {
-        if (!state.id) {
-            return state.text;
-        }
-        var contactId = $(state.element).data('id');
-
-        var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
-        var $state = $(
-            '<span style="display: flex; justify-content: space-between; align-items: center;">' +
-                '<span style="flex-grow: 1;">' + state.text + '</span>' +
-                '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
-                '<i class="' + $(state.element).data('icon') + '"></i>' +
-            '</a>' +
-            '</span>'
-        );
-        return $state;
-    }
-
-    var getSpouse = $('#validationDefault13');
-    getSpouse.select2({
-        placeholder: 'Search...',
-        templateResult: formatState,
-        templateSelection: formatState
-    }).on('select2:open', () => {
-        $('.select2-results .new-contact-btn').remove();
-        $(".select2-results").prepend(
-            '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-        );
-
-        // Add scroll event listener to close Select2 on scroll
-        $(document).on('scroll.select2', function() {
-            getSpouse.select2('close');
-        });
-    }).on('select2:close', () => {
-        // Remove scroll event listener when Select2 is closed
-        $(document).off('scroll.select2');
-    });
-    window.openContactModalAndCloseSelect = function() {
-        $("#createContactModal").modal('show');
-        getSpouse.select2('close'); // Close the select2 dropdown
-    }
-
-    $('#contact_detail_form').submit(function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                showToast("Contact update successfully");
-                updateContactform();
-            },
-            error: function(xhr, status, error) {
-                getCreateForm();
-                // console.error('Error in contact creation:', error, xhr.responseJSON, status);
-                showToastError(xhr.responseJSON?.message);
+        document.getElementById('choices-multiple-remove-button_test').addEventListener('change', function(
+            event) {
+            var selectedGroups = event.detail.value;
+            if (!selectedGroupsArr.includes(selectedGroups)) {
+                selectedGroupsArr.push(selectedGroups);
+            } else {
+                // If the value already exists, remove it from the array
+                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
             }
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+            console.log(selectedGroupsArr);
+
+        });
+        //selected groups default
+        let selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button_test option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        })
+        // Add event listener for remove button
+        let removeGroupsArr = [];
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedGroup = event.detail.value;
+            contact.groups_data = contact.groups_data
+            console.log("contact.groups_data",contact.groups_data);
+            var removedContactgroupId = groups.find((val)=>val.zoho_group_id===removedGroup)
+            var removedItemData = contact.groups_data.find((val)=>val.groupId===removedContactgroupId.id&&val.contactId === contact.id)
+            console.log("removedItemData",removedItemData,selectedGroupsDefault);
+            if (selectedGroupsDefault.includes(removedGroup)) {
+                // Perform your API hit here
+                // console.log("API hit for removed group: " + removedGroup);
+                deleteAssignGroup(removedItemData.zoho_contact_group_id);
+            }
+
+        });
+
+
+        // This will log an array of selected values
+        document.getElementById('contact_detail_form').appendChild(hiddenInput);
+        var getReffered = $('#validationDefault14')
+        getReffered.select2({
+            placeholder: 'Search...',
+        })
+        function formatState(state) {
+            if (!state.id) {
+                return state.text;
+            }
+            var contactId = $(state.element).data('id');
+
+            var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
+            var $state = $(
+                '<span style="display: flex; justify-content: space-between; align-items: center;">' +
+                    '<span style="flex-grow: 1;">' + state.text + '</span>' +
+                    '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
+                    '<i class="' + $(state.element).data('icon') + '"></i>' +
+                '</a>' +
+                '</span>'
+            );
+            console.log("STATE", $state);
+            return $state;
+        }
+
+        var getSpouse = $('#validationDefault13');
+        getSpouse.select2({
+             placeholder: 'Search...',
+            ajax: {
+                url: '/contact/list', // replace with your AJAX URL
+                dataType: 'json',
+                delay: 250, // wait 250ms before sending the request
+                data: function(params) {
+                    return {
+                        q: params.term, // search query
+                        page: params.page
+                    };
+                },
+                processResults: function(data,params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: $.map(data.contacts.data, function(contact) {
+                            return {
+                                id: contact.zoho_contact_id,
+                                text: (contact.first_name??"") + ' ' + (contact.last_name??""),
+                                Full_Name: (contact.first_name??"") + ' ' + (contact.last_name??"")
+                            };
+                        }),
+                        pagination: {
+                            more: (params.page * 10) < data.contacts.total
+                        }
+                    };
+                },
+                cache: true
+            },
+           
+            templateResult: formatState,
+            templateSelection: formatState
+        }).on('select2:open', () => {
+            // Remove existing button to avoid duplicates
+            $('.select2-results .new-contact-btn').remove();
+
+            // Append the button
+            $(".select2-results").prepend(
+                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+            );
+        });
+
+        window.openContactModal = function() {
+            $("#createContactModal").modal('show');
+        }
+        $('#contact_detail_form').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Serialize form data
+            var formData = $(this).serialize();
+            // console.log(JSON.parse(formData));
+            // return;
+            // AJAX post request
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                dataType: 'json', // Expect JSON response
+                success: function(response) {
+                    showToast("Contact update successfully")
+                    updateContactform();
+                },
+                error: function(xhr, status, error) {
+                    getCreateForm();
+                    console.error('Error in contact creation:', error,xhr.responseJSON, status);
+                    showToastError(xhr.responseJSON?.message)
+                }
+            });
         });
     });
-
-function validateContactForm() {
-    let last_name = $("#last_name").val();
-    if (last_name.trim() === "") {
-        showToastError('Please enter last name');
-        return false;
+    function validateContactForm() {
+        let last_name = $("#last_name").val();
+        if (last_name.trim() === "") {
+            showToastError('Please enter last name');
+            return false;
+        }
+        $('#contactOwner').removeAttr('disabled');
+        return true;
     }
-    $('#contactOwner').removeAttr('disabled');
-    return true;
-}
+    var prevSelectedColumn = null;
+    window.fetchData=function(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+            clickedColumn = "") {
+            let searchValue = searchInput.val()??"";
+            if (resetall === "reset_all") {
+                document.getElementById("loaderOverlay").style.display = "block";
+                document.getElementById('loaderfor').style.display = "block";
+                $("#pipelineSearch").val("");
+                $("#related_to_stage").val("");
+                searchValue = "";
+                sortValue = "";
+                filter = "";
+            }
+            $.ajax({
+                url: '{{ url('/pipeline/deals') }}',
+                method: 'GET',
+                data: {
+                    search: encodeURIComponent(searchValue),
+                    sort: sortValue || "",
+                    sortType: sortType || "",
+                    filter: filter
+                },
 
+                success: function(data) {
+                    if (resetall === "reset_all") {
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
+                    }
+                   
+                    const card = $('.transaction-container').html(data);
+                    if(card){
+                        if (prevSelectedColumn !== null) {
+                        if (prevSortDirection === "asc") {
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                        } else {
+                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                        }
+                    }
+                    if (sortType === "asc") {
+                        $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                    } else {
+                        $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                        $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                    }
 
+                    // Update the previously selected column and its sorting direction
+                    prevSelectedColumn = clickedColumn;
+                    prevSortDirection = sortType;
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    if (resetall === "reset_all") {
+                        document.getElementById("loaderOverlay").style.display = "none";
+                        document.getElementById('loaderfor').style.display = "none";
+                    }
+                    console.error('Error:', error);
+                }
+            });
+        }
+    window.fetchDeal = function(sortField, sortDirection, resetall = "", clickedCoulmn) {
+        let searchInput = $('#pipelineSearch');
+        let sortInput = $('#pipelineSort');
+        let ppipelineTableBody = $('.psearchandsort');
+        let ptableCardDiv = $('.ptableCardDiv');
+        let selectedModule = $('#related_to_stage');
+        let selectedText = selectedModule.val();
+        // Call fetchData with the updated parameters
+        fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
+    }
 
 </script>

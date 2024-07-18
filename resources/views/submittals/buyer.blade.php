@@ -6,7 +6,14 @@
 
             <div class="col-md-6 ">
                 <label for="relatedTransaction" class="form-label nplabelText">Related Transaction</label>
-                <select class="form-select npinputinfo validate" id="relatedTransaction" required>
+                <select class="form-select npinputinfo validate" id="relatedTransactionShow" required disabled>
+                    @foreach($deals as $currDeal)
+                    <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                        {{$currDeal['deal_name']}}
+                    </option>
+                    @endforeach
+                </select>
+                <select class="form-select npinputinfo validate" id="relatedTransaction" required hidden>
                     @foreach($deals as $currDeal)
                     <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
                         {{$currDeal['deal_name']}}
@@ -37,7 +44,7 @@
             </div>
             <div class="col-md-6">
                 <label for="buyerClosingDate" class="form-label nplabelText">Closing Date</label>
-                <input type="date" class="form-control npinputinfo validate" id="buyerClosingDate" required value="{{$submittal['buyerClosingDate']}}">
+                <input type="date" class="form-control npinputinfo validate" id="buyerClosingDate" required value="{{$submittal['buyerClosingDate']?$submittal['buyerClosingDate']:$submittal['dealData']['closing_date']}}">
             </div>
             <div class="col-md-6">
                 <label for="buyerPowerAttny" class="form-label nplabelText">Power of Attny Needed?</label>

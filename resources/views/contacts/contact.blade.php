@@ -74,7 +74,7 @@
                             </th>    
                             <th scope="col">
                                 <div onclick="sortContact('Salutation_s',this)" class="commonFlex">
-                                    <p class="mb-0">Envelope</p>
+                                    <p class="mb-0">Envelope Salutation</p>
                                     <div class="d-flex flex-column">
                                     <i class="bx bx-caret-up up-arrow"></i>
                                     <i class="bx bx-caret-down down-arrow"></i>
@@ -378,14 +378,15 @@
 
     }
 
-    function updateContact(zohoID, name) {
+    function updateContact(zohoID, name, selectedValue=null) {
         console.log(name, zohoID, 'tresdkjfklshdlfhsldf');
         let elementId = document.getElementById(name + zohoID);
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
         let formData = {
             "data": [{
-                "Missing_ABCD": true,
+                "Missing_ABCD": selectedValue?false:true,
+                "ABCD":selectedValue??undefined,
                 "Owner": {
                     "id": '{{ auth()->user()->root_user_id }}',
                     "full_name": '{{ auth()->user()->name }}'
@@ -397,6 +398,7 @@
                 "Mobile": name == "mobile" || name == "mobile_web" ? elementId?.textContent : undefined,
                 // "ABCD": "",
                 "Email": name == "email" || name == "email_web" ? elementId?.textContent : undefined,
+                "Salutation": name == "envelope_salutation" || name == "salutation_s" ? elementId?.textContent : undefined,
                 "zia_suggested_users": []
             }],
             "skip_mandatory": true

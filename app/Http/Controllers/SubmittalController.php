@@ -164,7 +164,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listing', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)
@@ -186,7 +186,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.buyer', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.buyersubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
     }
 
     public function createListingSubmittal(Request $request)

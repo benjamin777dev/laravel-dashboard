@@ -37,6 +37,8 @@ class Deal extends Model
         'cda_notes', 'contract_time_of_day_deadline', 'sales_cycle_duration',
         'commission_flat_fee', 'check_received', 'locked_s', 'create_date',
         'original_listing_price', 'tag', 'approval_state', 'status_reports','primary_contact',
+        'coOpAgentCHRFit', 'coOpAgentCompany', 'coOpAgentEmail', 'coOpAgentFirstName',
+        'coOpAgentLastName', 'coOpAgentPhone', 'coOpAgentEBLetterSent', 'teamPartnership'
     ];
 
     public function userData()
@@ -79,6 +81,11 @@ class Deal extends Model
         return $this->belongsTo(Contact::class, 'client_name_id', 'zoho_contact_id');
     }
 
+    public function submittals()
+    {
+        return $this->hasMany(Submittals::class, 'dealId', 'zoho_deal_id');
+    }
+
     public function getClientFromClientNameOnly()
     {
         if (is_null($this->client_name_only) || $this->client_name_only == '') {
@@ -93,6 +100,37 @@ class Deal extends Model
         $clientId = trim($clientData[1]);
 
         return Contact::where('zoho_contact_id', $clientId)->first();
+    }
+
+    public function getClientFromPrimaryContact()
+    {
+        // Decode the primary contact JSON array
+        $primary_contacts = json_decode($this->primary_contact, true);
+
+        // Initialize an array to hold the contact data
+        $contacts = [];
+
+        // Check if the JSON decoding was successful and if it's an array
+        if (json_last_error() === JSON_ERROR_NONE && is_array($primary_contacts)) {
+            // Iterate over the array to get each contact data
+            foreach ($primary_contacts as $contact) {
+                if (isset($contact['Primary_Contact']['id'])) {
+                    // Get the client ID from the primary contact
+                    $clientId = $contact['Primary_Contact']['id'];
+                    
+                    // Find the contact in the database
+                    $contactData = Contact::where('zoho_contact_id', $clientId)->first();
+
+                    // Add the contact data to the array if found
+                    if ($contactData) {
+                        $contacts[] = $contactData;
+                    }
+                }
+            }
+        }
+
+        // Return the array of contact data
+        return $contacts;
     }
 
     public function getContactRoles()
@@ -118,6 +156,26 @@ class Deal extends Model
             }
         }
 
+        $clientFromPrimaryContact = $this->getClientFromPrimaryContact();
+        if ($clientFromPrimaryContact) {
+            foreach ($clientFromPrimaryContact as $contact) {
+                $roles->push(
+                    ['name' => $contact->first_name . ' ' . $contact->last_name,
+                        'role' => 'Client',
+                        'phone' => $contact->phone,
+                        'email' => $contact->email,
+                    ]);
+                $spouse = $contact->getSpouse();
+                if ($spouse) {
+                    $roles->push([
+                        'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                        'role' => 'Client',
+                        'phone' => $spouse->phone,
+                        'email' => $spouse->email]);
+                }
+            }
+           
+        }
         // Lead Agent and CHR Agent
         $leadAgent = $this->leadAgent;
         $contactName = $this->contactName;
@@ -211,6 +269,13 @@ class Deal extends Model
             'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
             'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
+            'coOpAgentCHRFit' => isset($data['Co_Op_Agent_CHR_Fit']) ? (int) $data['Co_Op_Agent_CHR_Fit'] : null,
+            'coOpAgentEBLetterSent' => isset($data['EB_Letter_Sent']) ? (int) $data['EB_Letter_Sent'] : null,
+            'coOpAgentCompany' => $data['Co_Op_Agent_Company'] ?? null,
+            'coOpAgentEmail' => $data['Co_Op_Agent_Email'] ?? null,
+            'coOpAgentFirstName' => $data['Co_Op_Agent_First_Name'] ?? null,
+            'coOpAgentLastName' => $data['Co_Op_Agent_Last_Name'] ?? null,
+            'coOpAgentPhone' => $data['Co_Op_Agent_Phone'] ?? null,
             'create_date' => $data['Create_Date'] ?? null,
             'created_by' => json_encode($data['Created_By']) ?? null,
             'created_by_email' => $data['Created_By']['email'] ?? null,
@@ -274,6 +339,7 @@ class Deal extends Model
             'status_reports' => (int) ($data['Status_Reports'] ?? null),
             'status_rpt_opt_out' => (int) ($data['status_rpt_opt_out'] ?? 0),
             'tag' => json_encode($data['Tag'] ?? null),
+            'teamPartnership' => $source == "webhook" ? $data['Team_Partnership']['id'] : ($data['Team_Partnership'] ?? null),
             'tm_audit_complete' => (int) ($data['TM_Audit_Complete'] ?? null),
             'tm_name' => $data['TM_Name']['name'] ?? null,
             'tm_name_id' => $source == "webhook" ? ($data['TM_Name']['id'] ?? null) : ($data['TM_Name'] ?? null),
