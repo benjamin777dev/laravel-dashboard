@@ -8,32 +8,37 @@
 
 <div class="container-fluid">
     <div class="submittaldiv">
-        <a href="{{ url('/pipeline-view/' . $submittal['dealData']['id']) }}">
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  >
-                <i class="fas fa-times">
-                </i>
-                Cancel
-            </div>
-        </a>
+        <div class="submittalType">
+            <h4 id="submittalType" style="font-weight:bold">
+                @if($submittalType == "buyer-submittal")
+                    Buyer Submittal
+                @elseif($submittalType == "listing-submittal")
+                    Listing Submittal
+                @else
+                    No Submittal Type Selected
+                @endif
+            </h4>
+        </div>
+        <div class = "actions">
+            <a href="{{ url('/pipeline-view/' . $submittal['dealData']['id']) }}">
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  >
+                    <i class="fas fa-times">
+                    </i>
+                    Cancel
+                </div>
+            </a>
+            
+            <a>
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
+                    </i>
+                    Save
+                </div>
+            </a>
+        </div>
         
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Save
-            </div>
-        </a>
     </div>
 
-    <div class="submittalType">
-        <label for="submittalType" class="form-label nplabelText">Submittal Type</label>
-        <select class="form-select npinputinfo" id="submittalType" onchange="showSubmittalForm(this)" disabled>
-            <option value="Buyer Submittal" {{$submittalType=="buyer-submittal" ?'selected':''}}>Buyer Submittal
-            </option>
-            <option value="Listing Submittal" {{$submittalType=="listing-submittal" ?'selected':''}}>Listing
-                Submittal</option>
-        </select>
-
-    </div>
+    
     {{-- Listing Submittals--}}
     <div class="listingForm">
 
@@ -55,7 +60,8 @@
     var showOtherListingForm = @json($listingSubmittaltype);
     var submittalId = @json($submittalId);
     $(document).ready(function(){
-        var subForm = $('#submittalType').val();
+        var subForm = $('#submittalType').text().trim();
+        console.log("subForm",subForm);
         if(subForm == "Listing Submittal"){
             getListingForm();
         }else if(subForm == "Buyer Submittal"){

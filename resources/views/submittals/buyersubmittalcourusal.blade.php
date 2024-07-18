@@ -2,7 +2,7 @@
     <div class="col-xl-8 align-items-center">
         <div class="card">
             <div class="card-body p-0">
-                <h4 class="card-title p-3" id="title-corousal">CHR TM -Basic Information</h4>
+                <h4 class="card-title p-3" id="title-corousal">CHR TM - Basic Information</h4>
 
                 <div id="carouselExampleIndicators" class="carousel slide" data-interval="false">
                     <div class="carousel-indicators">
@@ -48,7 +48,8 @@
                                                 d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
                                                 fill="#AC5353" />
                                         </g>
-                                    </svg></label>
+                                    </svg>
+                                </label>
                                 <div class="nontm-select-div">
                                     <select name="related_transaction" id="transactionName" class="nontm-select validate_err">
                                         @foreach ($deals as $currDeal)

@@ -486,7 +486,7 @@ class DatabaseService
             if ($all) {
                 $deals = $deals->where($conditions)->with('submittals')->get();
             } else {
-                $deals = $deals->where($conditions)->with('submittals')->paginate(10);
+                $deals = $deals->where($conditions)->with('submittals')->get();
             }
             return $deals;
         } catch (\Exception $e) {

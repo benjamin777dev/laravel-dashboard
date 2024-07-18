@@ -470,65 +470,14 @@
             });
         });
     });
-
-    let selectedGroupsArr = [];         
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'selectedGroups';
-
-    document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
-        var selectedGroups = event.detail.value;
-        if (!selectedGroupsArr.includes(selectedGroups)) {
-            selectedGroupsArr.push(selectedGroups);
-        } else {
-            selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+    function validateContactForm() {
+        let last_name = $("#last_name").val();
+        if (last_name.trim() === "") {
+            showToastError('Please enter last name');
+            return false;
         }
-        hiddenInput.value = JSON.stringify(selectedGroupsArr);
-    });
-
-    let selectedGroupsDefault = [];
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsDefault.push($(this).val());
-    });
-
-    let removeGroupsArr = [];
-    multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-        var removedGroup = event.detail.value;
-        if (selectedGroupsDefault.includes(removedGroup)) {
-            deleteAssignGroup(removedGroup);
-        }
-    });
-
-    document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
-    
-    var getReffered = $('#validationDefault14');
-    getReffered.select2({
-        placeholder: 'Search...',
-    }).on('select2:open', () => {
-        $(document).on('scroll.select2', function() {
-            getReffered.select2('close');
-        });
-    }).on('select2:close', () => {
-        $(document).off('scroll.select2');
-    });
-});
-
-    function formatState(state) {
-        if (!state.id) {
-            return state.text;
-        }
-        var contactId = $(state.element).data('id');
-
-        var contactUrl = "{{ url('/contacts-view/') }}"+"/"+ contactId;
-        var $state = $(
-            '<span style="display: flex; justify-content: space-between; align-items: center;">' +
-                '<span style="flex-grow: 1;">' + state.text + '</span>' +
-                '<a href="' + contactUrl + '" target="_blank" style="margin-left: 8px; color: inherit;">' +
-                '<i class="' + $(state.element).data('icon') + '"></i>' +
-            '</a>' +
-            '</span>'
-        );
-        return $state;
+        $('#contactOwner').removeAttr('disabled');
+        return true;
     }
     var prevSelectedColumn = null;
     window.fetchData=function(sortValue, sortType, filter = null, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
@@ -603,61 +552,5 @@
         // Call fetchData with the updated parameters
         fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
     }
-
-    var getSpouse = $('#validationDefault13');
-    getSpouse.select2({
-        placeholder: 'Search...',
-        templateResult: formatState,
-        templateSelection: formatState
-    }).on('select2:open', () => {
-        $('.select2-results .new-contact-btn').remove();
-        $(".select2-results").prepend(
-            '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-        );
-
-        // Add scroll event listener to close Select2 on scroll
-        $(document).on('scroll.select2', function() {
-            getSpouse.select2('close');
-        });
-    }).on('select2:close', () => {
-        // Remove scroll event listener when Select2 is closed
-        $(document).off('scroll.select2');
-    });
-    window.openContactModalAndCloseSelect = function() {
-        $("#createContactModal").modal('show');
-        getSpouse.select2('close'); // Close the select2 dropdown
-    }
-
-    $('#contact_detail_form').submit(function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                showToast("Contact update successfully");
-                updateContactform();
-            },
-            error: function(xhr, status, error) {
-                getCreateForm();
-                // console.error('Error in contact creation:', error, xhr.responseJSON, status);
-                showToastError(xhr.responseJSON?.message);
-            }
-        });
-    });
-
-function validateContactForm() {
-    let last_name = $("#last_name").val();
-    if (last_name.trim() === "") {
-        showToastError('Please enter last name');
-        return false;
-    }
-    $('#contactOwner').removeAttr('disabled');
-    return true;
-}
-
-
 
 </script>
