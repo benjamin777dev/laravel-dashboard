@@ -102,6 +102,37 @@ class Deal extends Model
         return Contact::where('zoho_contact_id', $clientId)->first();
     }
 
+    public function getClientFromPrimaryContact()
+    {
+        // Decode the primary contact JSON array
+        $primary_contacts = json_decode($this->primary_contact, true);
+
+        // Initialize an array to hold the contact data
+        $contacts = [];
+
+        // Check if the JSON decoding was successful and if it's an array
+        if (json_last_error() === JSON_ERROR_NONE && is_array($primary_contacts)) {
+            // Iterate over the array to get each contact data
+            foreach ($primary_contacts as $contact) {
+                if (isset($contact['Primary_Contact']['id'])) {
+                    // Get the client ID from the primary contact
+                    $clientId = $contact['Primary_Contact']['id'];
+                    
+                    // Find the contact in the database
+                    $contactData = Contact::where('zoho_contact_id', $clientId)->first();
+
+                    // Add the contact data to the array if found
+                    if ($contactData) {
+                        $contacts[] = $contactData;
+                    }
+                }
+            }
+        }
+
+        // Return the array of contact data
+        return $contacts;
+    }
+
     public function getContactRoles()
     {
         $roles = collect();
@@ -125,6 +156,26 @@ class Deal extends Model
             }
         }
 
+        $clientFromPrimaryContact = $this->getClientFromPrimaryContact();
+        if ($clientFromPrimaryContact) {
+            foreach ($clientFromPrimaryContact as $contact) {
+                $roles->push(
+                    ['name' => $contact->first_name . ' ' . $contact->last_name,
+                        'role' => 'Client',
+                        'phone' => $contact->phone,
+                        'email' => $contact->email,
+                    ]);
+                $spouse = $contact->getSpouse();
+                if ($spouse) {
+                    $roles->push([
+                        'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                        'role' => 'Client',
+                        'phone' => $spouse->phone,
+                        'email' => $spouse->email]);
+                }
+            }
+           
+        }
         // Lead Agent and CHR Agent
         $leadAgent = $this->leadAgent;
         $contactName = $this->contactName;
