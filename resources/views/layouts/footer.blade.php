@@ -36,7 +36,7 @@
                     showDropdown(modalID, selectElement);
                 });
 
-            },1000);
+            },1000); 
 
             $('#vertical-menu-btn').on('click', function (event) {
                 event.preventDefault();

@@ -3,7 +3,7 @@ name: Staging
 on:
   push:
     branches:
-      - skote-develop # Trigger the workflow on push events to the skote-develop branch
+      - develop # Trigger the workflow on push events to the skote-develop branch
 
 jobs:
   deploy:

@@ -82,22 +82,15 @@ class ContactGroups extends Model
 
     public static function mapZohoData(array $data, string $source)
     {
-        // Initialize the mapped data array
         $mappedData = [];
-
-        // Determine the ID key based on the source
         $idKey = $source === "webhook" ? $data['id'] : $data['Id'];
-
-        // Lookup the existing record in the database
         $contactGroup = self::where('zoho_contact_group_id', $idKey)->first();
 
-        // Helper function to map fields
         $mapField = function ($field, $sourceField = null) use ($data, $contactGroup, $source, &$mappedData) {
             if ($sourceField === null) {
                 $sourceField = $field;
             }
 
-            // Handle boolean fields specifically
             $booleanFields = ['email_opt_out'];
             if (in_array($field, $booleanFields)) {
                 if (array_key_exists($sourceField, $data)) {
@@ -106,12 +99,10 @@ class ContactGroups extends Model
                     $mappedData[$field] = $contactGroup->$field;
                 }
             } else {
-                // Handle date/time fields
                 if (array_key_exists($sourceField, $data)) {
                     if (in_array($field, ['last_activity_time', 'created_time', 'modified_time'])) {
                         $mappedData[$field] = Carbon::parse($data[$sourceField])->toDateTimeString();
                     } else {
-                        // Handle JSON objects vs. simple values
                         if ($source === 'webhook' && is_array($data[$sourceField]) && isset($data[$sourceField]['id'])) {
                             $mappedData[$field] = $data[$sourceField]['id'];
                         } else {
@@ -124,7 +115,6 @@ class ContactGroups extends Model
             }
         };
 
-        // Map the fields
         $fieldsToMap = [
             'name' => 'Name',
             'email' => 'Email',
@@ -161,10 +151,22 @@ class ContactGroups extends Model
         }
 
         foreach ($webhookFieldsToMap as $field => $sourceField) {
-            $mapField($field, $sourceField);
+            $sourceFieldParts = explode('.', $sourceField);
+            $value = $data;
+            foreach ($sourceFieldParts as $part) {
+                if (isset($value[$part])) {
+                    $value = $value[$part];
+                } else {
+                    $value = null;
+                    break;
+                }
+            }
+            $mappedData[$field] = $value;
         }
 
-        // Handle contact and group lookups
+        Log::info("Contact ID in data: " . ($mappedData['contacts_id'] ?? 'Not found'));
+        Log::info("Group ID in data: " . ($mappedData['groups_id'] ?? 'Not found'));
+
         $foundUser = isset($mappedData['contacts_id']) 
             ? Contact::where('zoho_contact_id', $mappedData['contacts_id'])->first() 
             : null;
@@ -172,21 +174,22 @@ class ContactGroups extends Model
             ? Groups::where('zoho_group_id', $mappedData['groups_id'])->first() 
             : null;
 
-        // Set contactId and groupId based on lookups
+        Log::info("Found User: " . ($foundUser ? $foundUser->id : 'Not found'));
+        Log::info("Found Group: " . ($foundGroup ? $foundGroup->id : 'Not found'));
+
         $mappedData['contactId'] = $foundUser ? $foundUser->id : $mappedData['contacts_id'] ?? null;
         $mappedData['groupId'] = $foundGroup ? $foundGroup->id : $mappedData['groups_id'] ?? null;
-
         $mappedData['zoho_contact_group_id'] = $idKey;
 
-        // Handle owner lookup
         $zOwner = $source === "webhook" ? $data["Owner"]['id'] : $data['Owner'];
         $eUser = User::where("root_user_id", $zOwner)->first();
 
         $mappedData['ownerId'] = $eUser ? $eUser->id : $zOwner;
 
-        //Log::info("Mapped Data: ", ['data' => $mappedData]);
-
         return $mappedData;
     }
+
+
+    
 
 }
