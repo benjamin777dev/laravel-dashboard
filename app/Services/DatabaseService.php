@@ -17,6 +17,7 @@ use App\Models\Note;
 use App\Models\Submittals;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\TeamAndPartnership;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -1826,6 +1827,8 @@ class DatabaseService
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
             case 'Tasks':
                 return \App\Models\Task::mapZohoData($record, 'csv');
+            case 'Teams_And_Partners':
+                return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1853,6 +1856,9 @@ class DatabaseService
                     break;
                 case 'Tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                case 'Teams_And_Partners':
+                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['zoho_teams_and_partners_id']);
                     break;
 
                     // Add other cases as needed
