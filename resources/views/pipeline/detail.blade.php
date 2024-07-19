@@ -176,8 +176,6 @@
 
 
     </div>
-
-
     <div class="col-md-6 col-sm-12">
         <div class="card">
             <div class="card-body">
@@ -341,6 +339,89 @@
         </form>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-12 col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">TM Co-Op Agent Information</h4>
+                <form class="row g-3" id="additionalFields">
+                    <div class="col-md-6">
+                        <label for="coOpAgentFirstName" class="form-label nplabelText">Co-Op Agent First Name</label>
+                        <input type="text" 
+                            class="form-control npinputinfo validate" 
+                            id="coOpAgentFirstName" 
+                            required 
+                            @if($deal['locked_s']) disabled @endif
+                            value="{{$deal['coOpAgentFirstName']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="coOpAgentLastName" class="form-label nplabelText">Co-Op Agent Last Name</label>
+                        <input type="text" 
+                            class="form-control npinputinfo validate" 
+                            id="coOpAgentLastName" 
+                            required 
+                            @if($deal['locked_s']) disabled @endif
+                            value="{{$deal['coOpAgentLastName']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="coOpAgentEmail" class="form-label nplabelText">Co-Op Agent Email</label>
+                        <input type="text" 
+                            class="form-control npinputinfo validate" 
+                            id="coOpAgentEmail" 
+                            required 
+                            @if($deal['locked_s']) disabled @endif
+                            value="{{$deal['coOpAgentEmail']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="coOpAgentPhone" class="form-label nplabelText">Co-Op Agent Phone</label>
+                        <input type="text" 
+                            class="form-control npinputinfo validate" 
+                            id="coOpAgentPhone" 
+                            required 
+                            @if($deal['locked_s']) disabled @endif
+                            value="{{$deal['coOpAgentPhone']}}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="coOpAgentCompany" class="form-label nplabelText">Co-Op Agent Company</label>
+                        <input type="text" 
+                            class="form-control npinputinfo validate" 
+                            id="coOpAgentCompany" 
+                            required 
+                            @if($deal['locked_s']) disabled @endif
+                            value="{{$deal['coOpAgentCompany']}}">
+                    </div>
+                    <div></div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" 
+                            type="checkbox" 
+                            value="" 
+                            id="coOpAgentCHRFit" 
+                            @if($deal['locked_s']) disabled @endif
+                            @if($deal['coOpAgentCHRFit']) checked @endif
+                            >
+                        <label class="form-check-label nplabelText" for="coOpAgentCHRFit">
+                            Co-Op Agent CHR Fit?
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-check-input" 
+                            type="checkbox" 
+                            value="" 
+                            id="coOpAgentEBLetterSent" 
+                            @if($deal['locked_s']) disabled @endif
+                            @if($deal['coOpAgentEBLetterSent']) checked @endif
+                            >
+                        <label class="form-check-label nplabelText" for="coOpAgentEBLetterSent">
+                            EB Letter Sent
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+    </div>
+</div>
 {{-- contact roles --}}
 <div>
     <h2 class='pText pt-3'> Contact Role </h2>
@@ -361,14 +442,20 @@
         <h2 class='pText mt-3 text-center'> Submittal </h2>
     </div>
     <div class=" text-end">
-    <button class="input-group-text npcontactbtn btn btn-sm btn-primary" style="{{ ($deal['tm_preference'] == 'Non-TM') ? 'cursor:not-allowed;' : '' }}" id="addSubmittal" onclick="showSubmittalFormType()">
-    <i class="fas fa-plus plusicon"></i>
-    @if ($submittals->count() === 0)
-        Add New Submittal
-    @else
-        Show Submittal
-    @endif
-</button>
+        @if ($submittals->count() === 0)
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+                <i class="fas fa-plus plusicon"></i>
+                    Add New Submittal
+            </div>
+         @else
+         <a href="{{ url('/submittal-view/' . $submittals[0]['submittalType'] . '/' . $submittals[0]['id']) }}" target="_blank">
+            <div class="input-group-text npcontactbtn" id="addSubmittal">
+            <i class="fas fa-plus plusicon"></i>
+                Show Submittal
+            </div>
+        </a>
+        @endif
+        
     </div>
 </div>
 
