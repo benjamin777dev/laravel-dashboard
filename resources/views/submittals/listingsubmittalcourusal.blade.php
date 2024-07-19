@@ -28,15 +28,19 @@
                             data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"
                             aria-label="Slide 5"></button>
                         <button type="button"
-                            onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Select MLS'"
+                            onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Service Providers'"
                             data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5"
                             aria-label="Slide 6"></button>
+                        <button type="button"
+                            onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Select MLS'"
+                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6"
+                            aria-label="Slide 7"></button>
 
                     </div>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active">
                             <div class="related_trxn label-div-mb">
-                                <label for="deal_name" class="common-label">Transaction Name <svg
+                                <label for="transactionName" class="common-label">Transaction Name <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
@@ -88,7 +92,8 @@
                                 <input type="text" class="validate_err form-control" value="{{ $submittal['agentName'] }}" 
                                     placeholder="Enter agent Name" id="agentName" />
                             </div>
-                            <label for="commingSoon" class="common-label">Comming Soon? <svg
+                            <label for="commingSoon" class="common-label">Comming Soon? 
+                                <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                     viewBox="0 0 19 18" fill="none">
                                     <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
@@ -100,19 +105,20 @@
                                             d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
                                             fill="#AC5353" />
                                     </g>
-                                </svg></label>
+                                </svg>
+                            </label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio"  id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'checked' : '' }}
-                                        name="radio">
-                                    <label class="form-check-label"  for="formCheck1">
+                                    <input type="radio"  id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'selected' : '' }}
+                                        name="commingSoon">
+                                    <label class="form-check-label"  for="commingSoon_yes">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
                                     <input type="radio" id="commingSoon_no" {{ $submittal['commingSoon'] == 'No' ? 'selected' : '' }}
-                                        name="radio">
-                                    <label class="form-check-label" for="formCheck1">
+                                        name="commingSoon">
+                                    <label class="form-check-label" for="commingSoon_no">
                                         No
                                     </label>
                                 </div>
@@ -180,21 +186,22 @@
                                                     d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
                                                     fill="#AC5353" />
                                             </g>
-                                        </svg></label>
+                                        </svg>
+                                    </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
                                             <input type="radio" id="agreementExecuted_yes"
-                                                {{ $submittal['agreementExecuted'] == 'Yes' ? 'checked' : '' }}
-                                                name="radio">
-                                            <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                {{ $submittal['agreementExecuted'] == 'Yes' ? 'selected' : '' }}
+                                                name="agreementExecuted">
+                                            <label class="form-check-label" for="agreementExecuted_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
                                             <input type="radio" id="agreementExecuted_no"
-                                                {{ $submittal['agreementExecuted'] == 'No' ? 'checked' : '' }}
-                                                name="radio">
-                                            <label class="form-check-label" for="formCheck1">
+                                                {{ $submittal['agreementExecuted'] == 'No' ? 'selected' : '' }}
+                                                name="agreementExecuted">
+                                            <label class="form-check-label" for="agreementExecuted_no">
                                                 No
                                             </label>
                                         </div>
@@ -211,32 +218,38 @@
                             </div>
 
                         </div>
-                        <div class="carousel-item">
-                            <div class="close-date-nontm label-div-mb">
-                                <label for="photoDate" class="common-label">Photo Date</label>
-                                <input type="date" value="{{ $submittal['photoDate'] }}"
-                                    class="form-control nontm-input" id="photoDate">
+                        <div class="carousel-item ">
+                            <div class="row">
+                                <div class='col-lg-6 label-div-mb'>
+                                    <div class="close-date-nontm label-div-mb">
+                                        <label for="photoDate" class="common-label">Photo Date</label>
+                                        <input type="date" value="{{ $submittal['photoDate'] }}"
+                                            class="form-control nontm-input" id="photoDate">
+                                    </div>
+                                    <div class="additional_email label-div-mb">
+                                        <label for="photoURL" class="common-label">Photo Url</label>
+                                        <input type="text" value="{{ $submittal['photoURL'] }}" class="form-control"
+                                            placeholder="" id="photoURL">
+                                        
+                                    </div>
+                                </div>
+                                <div class='col-lg-6 label-div-mb'>
+                                    <div class="additional_email label-div-mb">
+                                        <label for="bedsBathsTotal" class="common-label">Beds,baths,total sq.ft.</label>
+                                        <input type="text" value="{{ $submittal['bedsBathsTotal'] }}"
+                                            class="form-control validate_err" placeholder="" id="bedsBathsTotal">
+                                    
+                                    </div>
+                                    <div class="additional_email label-div-mb">
+                                        <label for="tourURL" class="common-label">3D Tour URL</label>
+                                        <input type="text" value="{{ $submittal['tourURL'] }}" class="form-control validate_err"
+                                            placeholder="" id="tourURL">
+                                        
+                                    </div>
+                                </div>
                             </div>
-                            <div class="additional_email label-div-mb">
-                                <label for="photoURL" class="common-label">Photo Url</label>
-                                <input type="text" value="{{ $submittal['photoURL'] }}" class="form-control"
-                                    placeholder="" id="photoURL">
-                                
-                            </div>
-                            <div class="additional_email label-div-mb">
-                                <label for="bedsBathsTotal" class="common-label">Beds,baths,total sq.ft.</label>
-                                <input type="text" value="{{ $submittal['bedsBathsTotal'] }}"
-                                    class="form-control validate_err" placeholder="" id="bedsBathsTotal">
-                               
-                            </div>
-                            <div class="additional_email label-div-mb">
-                                <label for="tourURL" class="common-label">3D Tour URL</label>
-                                <input type="text" value="{{ $submittal['tourURL'] }}" class="form-control validate_err"
-                                    placeholder="" id="tourURL">
-                                
-                            </div>
-
-                            <label for="usingCHR" class="common-label">Using CHR TM <svg
+                            <label for="usingCHR" class="common-label">Using CHR TM 
+                                <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                     viewBox="0 0 19 18" fill="none">
                                     <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
@@ -248,20 +261,21 @@
                                             d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
                                             fill="#AC5353" />
                                     </g>
-                                </svg></label>
+                                </svg>
+                            </label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
                                     <input onclick="addFormSlide(true)" id="usingCHR_yes"
-                                        {{ $submittal['usingCHR'] == 'Yes' ? 'checked' : '' }} type="radio"
-                                        name="radio">
+                                        {{ $submittal['usingCHR'] == 'Yes' ? 'selected' : '' }} type="radio"
+                                        name="usingCHR">
                                     <label class="form-check-label" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
                                     <input onclick="addFormSlide(false)" id="usingCHR_no"
-                                        {{ $submittal['usingCHR'] == 'No' ? 'checked' : '' }} type="radio"
-                                        name="radio">
+                                        {{ $submittal['usingCHR'] == 'No' ? 'selected' : '' }} type="radio"
+                                        name="usingCHR">
                                     <label class="form-check-label" for="formCheck1">
                                         No
                                     </label>
@@ -273,15 +287,15 @@
                                 <div class='col-lg-6 label-div-mb'>
                                     <label for="feesCharged" class="common-label">Fees Charged to Seller at
                                         Closing</label>
-                                    <input name="feesCharged" value="{{ $submittal['feesCharged'] }}"
-                                        id="feesCharged" class="form-control second-step-common-select select-mb24">
+                                    <input type="text" name="feesCharged" value="{{ $submittal['feesCharged'] }}"
+                                        id="feesCharged" class="form-control " placeholder="$">
                                     </input>
                                 </div>
                                 <div class="col-lg-6 commission-nontm label-div-mb">
                                     <div class='pb-4'>
                                         <label for="additonal_fee" class="common-label">Referral to Pay</label>
                                         <select name="additional_charge" id="additonal_fee"
-                                            class="form-select second-step-common-select select-mb24 validate_err" id="">
+                                            class="form-select validate_err" id="">
                                             <option value="" selected>None</option>
                                             <option value="Yes"
                                                 {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
@@ -298,7 +312,7 @@
                                     <label for="amountToCHR" class="common-label">Amount to CHR Gives</label>
                                     <input name="amountToCHR" placeholder = "$"
                                         value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
-                                        class="form-control second-step-common-select select-mb24 validate_err">
+                                        class="form-control validate_err">
                                     </input>
                                 </div>
                                 <div class="col-lg-6 commission-nontm label-div-mb">
@@ -306,7 +320,7 @@
                                         <label for="referralDetails" class="common-label">Referral Details</label>
                                         <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
                                             id="referralDetails"
-                                            class="form-control second-step-common-select select-mb24 validate_err">
+                                            class="form-control  validate_err">
                                         </input>
                                     </div>
 
@@ -316,7 +330,21 @@
                         <div class="carousel-item">
                             <div class="row">
                                 <div class="col-lg-6 label-div-mb">
-                                    <label for="scheduleSignInstall">Schedule Sign Install</label>
+                                    <label for="scheduleSignInstall">Schedule Sign Install
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
                                     <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
@@ -339,6 +367,46 @@
                                     </div>
 
                                 </div>
+                                 <div class="col-lg-6 label-div-mb">
+                                    <label for="">Draft Showing Instructions?
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
+                                    <div class="row">
+                                        <div class="d-flex gap-2">
+                                            <div class="mb-3">
+                                                <input type="radio" id="draftShowingInstructions_yes"
+                                                    {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
+                                                    name="radio">
+                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="radio" id="draftShowingInstructions_no"
+                                                    {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
+                                                    name="radio">
+                                                <label class="form-check-label" for="formCheck1">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="conciergeListing">Concierge Listing (Optional)</label>
                                     <div class="row">
@@ -363,70 +431,53 @@
                                     </div>
 
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6 label-div-mb">
-                                    <label for="">Draft Showing Instructions?</label>
-                                    <div class="row">
-                                        <div class="d-flex gap-2">
-                                            <div class="mb-3">
-                                                <input type="radio" id="draftShowingInstructions_yes"
-                                                    {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
-                                                    Yes
-                                                </label>
-                                            </div>
-                                            <div class="mb-3">
-                                                <input type="radio" id="draftShowingInstructions_no"
-                                                    {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" for="formCheck1">
-                                                    No
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="titleCompany">Title Company</label>
                                     <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
-                                        id="titleCompany" class="form-control second-step-common-select select-mb24 validate_err">
-                                </div>
-                                <div class="col-lg-6 label-div-mb">
-                                    <label for="closerNamePhone">Closer Name & Phone</label>
-                                    <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
-                                        id="closerNamePhone"
-                                        class="form-control second-step-common-select select-mb24 validate_err">
-                                </div>
-                                <div class="col-lg-6 label-div-mb">
-                                    <label for="signInstallVendorOther">Sign Install Vendor (if Other)</label>
-                                    <input value="{{ $submittal['signInstallVendorOther'] }}"
-                                        name="signInstallVendorOther" id="signInstallVendorOther"
-                                        class="form-control second-step-common-select select-mb24 validate_err">
-                                </div>
-                                <div class="close-date-nontm label-div-mb">
-                                    <label for="signInstallDate" class="common-label">Sign Install Date<svg
-                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                            viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path
-                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                    fill="#AC5353" />
-                                            </g>
-                                        </svg></label>
-                                    <input type="date" value="{{ $submittal['signInstallDate'] }}"
-                                        class="form-control nontm-input" id="signInstallDate">
-                                    <div id="signInstallDate_err" class="text-danger">
-
-                                    </div>
+                                        id="titleCompany" class="form-control validate_err">
                                 </div>
                             </div>
+                            <div class="close-date-nontm label-div-mb">
+                                <label for="signInstallDate">Sign Install Date</label>
+                                <input type="date" value="{{ $submittal['signInstallDate'] }}"
+                                    class="form-control nontm-input" id="signInstallDate">
+                                <div id="signInstallDate_err" class="text-danger">
+                                </div>
+                            </div>
+                            <div class="label-div-mb">
+                                <label for="closerNamePhone">Closer Name & Phone
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                        viewBox="0 0 19 18" fill="none">
+                                        <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                            maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                        </mask>
+                                        <g mask="url(#mask0_2151_10662)">
+                                            <path
+                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                fill="#AC5353" />
+                                        </g>
+                                    </svg>
+                                </label>
+                                <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
+                                    id="closerNamePhone"
+                                    class="form-control validate_err">
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="label-div-mb">
+                                <label for="signInstallVendor">Sign Install Vendor Info</label>
+                                <input value="{{ $submittal['signInstallVendor'] }}"
+                                    name="signInstallVendor" id="signInstallVendor"
+                                    class="form-control validate_err">
+                            </div> 
+                            <div class="label-div-mb">
+                                <label for="signInstallVendorOther">Sign Install Vendor (if Other)</label>
+                                <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                    name="signInstallVendorOther" id="signInstallVendorOther"
+                                    class="form-control validate_err">
+                            </div>   
                         </div>
                         <div class="carousel-item">
                             <div class="row mb-4">
@@ -560,7 +611,7 @@
 
         var innrtHtml = `<div class="row">
                         <div class="gap-2 col-lg-6">
-                            <label for="add_email" class="common-label">Need O&E <svg
+                            <label for="needO&E" class="common-label">Need O&E <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -576,13 +627,13 @@
                                <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="needOE_yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="needOE_yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" name="radio">
+                                                <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" name="needO&E">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -591,7 +642,7 @@
                                     </div>
                         </div>
                         <div class="gap-2 col-lg-6 label-div-mb">
-                            <label for="add_email" class="common-label">Has HOA? <svg
+                            <label for="hasHOA" class="common-label">Has HOA? <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -607,13 +658,13 @@
                              <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="hasHOA_yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="hasHOA_yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="hasHOA_no" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="hasHOA_no" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -625,7 +676,7 @@
 
                     <div class="row">
                         <div class="gap-2 col-lg-6">
-                            <label for="add_email" class="common-label">Include Insights in Intro? <svg
+                            <label for="includeInsights" class="common-label">Include Insights in Intro? <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -641,13 +692,13 @@
                               <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="includeInsights_yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="includeInsights_yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input id="includeInsights_no" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="radio">
+                                                <input id="includeInsights_no" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -656,7 +707,7 @@
                                     </div>
                         </div>
                         <div class="gap-2 col-lg-6 label-div-mb">
-                            <label for="add_email" class="common-label">Title to Order HOA docs? <svg
+                            <label for="titleToOrderHOA" class="common-label">Title to Order HOA docs? <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -672,19 +723,19 @@
                                <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="titleToOrderHOA_yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_no" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="titleToOrderHOA_no" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
                                              <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_tbd" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="titleToOrderHOA_tbd" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
                                                 <label class="form-check-label" for="formCheck1">
                                                     TBD
                                                 </label>
@@ -696,7 +747,7 @@
 
                     <div class="row">
                         <div class="gap-2 col-lg-6">
-                            <label for="add_email" class="common-label">Mailout Needed? <svg
+                            <label for="mailoutNeeded" class="common-label">Mailout Needed? <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -712,13 +763,13 @@
                              <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="mailoutNeeded_yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="mailoutNeeded_yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="mailoutNeeded_no" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="mailoutNeeded_no" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -727,7 +778,7 @@
                                     </div>
                         </div>
                         <div class="gap-2 col-lg-6 label-div-mb">
-                            <label for="add_email" class="common-label">Power of Attny Needed? <svg
+                            <label for="powerOfAttnyNeeded" class="common-label">Power of Attny Needed? <svg
                                         xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                         viewBox="0 0 19 18" fill="none">
                                         <mask id="mask0_2151_10662" style="mask-type:alpha"
@@ -743,13 +794,13 @@
                               <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="powerOfAttnyNeeded_yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="powerOfAttnyNeeded_yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="powerOfAttnyNeeded">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="powerOfAttnyNeeded_no" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="radio">
+                                                <input type="radio" id="powerOfAttnyNeeded_no" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="powerOfAttnyNeeded">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -790,17 +841,17 @@
                                 </div>
                             </div>
                                <div class="gap-2 col-lg-6 label-div-mb">
-                            <label for="add_email" class="common-label">Are you ready to continue to Property Promotion?</label>
+                            <label for="hoaName" class="common-label">Are you ready to continue to Property Promotion?</label>
                                <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" onclick="propertyParmotion(false)" name="radio">
+                                                <input type="radio" onclick="propertyParmotion(false)" name="hoaName">
                                                 <label class="form-check-label"  for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" onclick="propertyParmotion(true)" name="radio" checked>
+                                                <input type="radio" onclick="propertyParmotion(true)" name="hoaName" checked>
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
