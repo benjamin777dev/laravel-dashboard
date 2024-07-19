@@ -8,24 +8,28 @@
 
 <div class="container-fluid">
     <div class="submittaldiv">
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Update
-            </div>
-        </a>
+        <div class="submittalType">
+            <h4 id="submittalType" style="font-weight:bold">
+                @if($submittalType == "buyer-submittal")
+                    Buyer Submittal
+                @elseif($submittalType == "listing-submittal")
+                    Listing Submittal
+                @else
+                    No Submittal Type Selected
+                @endif
+            </h4>
+        </div>
+        <div class = "actions">
+            
+            <a>
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal(true)"><i class="fas fa-save">
+                    </i>
+                    Update
+                </div>
+            </a>
+        </div>
     </div>
 
-    <div class="submittalType">
-        <label for="submittalType" class="form-label nplabelText">Submittal Type</label>
-        <select class="form-select npinputinfo" id="submittalType" onchange="showSubmittalForm(this)" disabled>
-            <option value="Buyer Submittal" {{$submittalType=="buyer-submittal" ?'selected':''}}>Buyer Submittal
-            </option>
-            <option value="Listing Submittal" {{$submittalType=="listing-submittal" ?'selected':''}}>Listing
-                Submittal</option>
-        </select>
-
-    </div>
     {{-- Listing Submittals--}}
     <div class="listingForm">
 
@@ -47,7 +51,8 @@
     var showOtherListingForm = @json($listingSubmittaltype);
     var submittalId = @json($submittalId);
     $(document).ready(function(){
-        var subForm = $('#submittalType').val();
+        var subForm = $('#submittalType').text().trim();
+        console.log("subForm",subForm);
         if(subForm == "Listing Submittal"){
             getListingForm();
         }else if(subForm == "Buyer Submittal"){
@@ -118,7 +123,8 @@
         return regex.test(url);
     }
 
-    function validateSubmittal(submittal,isNew) {
+    window.validateSubmittal=function(isNew) {
+        let submittal = @json($submittal);
         isValid = true
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
@@ -234,40 +240,41 @@
                 })
             }
         }else if(submittal.submittalType == 'listing-submittal'){
+            console.log("jasgdfjashj");
             // Get values from Basic Info section
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
             var agentName = $('#agentName').val();
-            var commingSoon = $('#commingSoon').val();
+            var commingSoon = $('input[name="commingSoon"]:checked').val();
             var comingSoonDate = $('#comingSoonDate').val();
             var tmName = $('#tmName').val();
             var activeDate = $('#activeDate').val();
-            var agreementExecuted = $('#agreementExecuted').val();
+            var agreementExecuted = $('input[name="agreementExecuted"]:checked').val();
             var price = $('#price').val();
             var photoDate = $('#photoDate').val();
             var photoURL = $('#photoURL').val();
             var bedsBathsTotal = $('#bedsBathsTotal').val();
             var tourURL = $('#tourURL').val();
-            var usingCHR = $('#usingCHR').val();
+            var usingCHR = $('input[name="usingCHR"]:checked').val();
 
 
             // Get values from CHR TM - Transaction Details and Preferences section
-            var needOE = $('#needOE').val();
-            var hasHOA = $('#hasHOA').val();
-            var includeInsights = $('#includeInsights').val();
-            var titleToOrderHOA = $('#titleToOrderHOA').val();
-            var mailoutNeeded = $('#mailoutNeeded').val();
-            var powerOfAttnyNeeded = $('#powerOfAttnyNeeded').val();
+            var needOE = $('input[name="needO&E"]:checked').val();
+            var hasHOA = $('input[name="hasHOA"]:checked').val();
+            var includeInsights = $('input[name="includeInsights"]:checked').val();
+            var titleToOrderHOA = $('input[name="titleToOrderHOA"]:checked').val();
+            var mailoutNeeded = $('input[name="mailoutNeeded"]:checked').val();
+            var powerOfAttnyNeeded =$('input[name="powerOfAttnyNeeded"]:checked').val();
             var hoaName = $('#hoaName').val();
             var hoaPhone = $('#hoaPhone').val();
             var hoaWebsite = $('#hoaWebsite').val();
             var miscNotes = $('#miscNotes').val();
 
             // Get values from CHR TM - Service Providers section
-            var scheduleSignInstall = $('#scheduleSignInstall').val();
-            var conciergeListing = $('#conciergeListing').val();
+            var scheduleSignInstall = $('input[name="scheduleSignInstall"]:checked').val();
+            var conciergeListing = $('input[name="conciergeListing"]:checked').val();
             var signInstallVendor = $('#signInstallVendor').val();
-            var draftShowingInstructions = $('#draftShowingInstructions').val();
+            var draftShowingInstructions = $('input[name="draftShowingInstructions"]:checked').val();
             var titleCompany = $('#titleCompany').val();
             var closerNamePhone = $('#closerNamePhone').val();
             var signInstallVendorOther = $('#signInstallVendorOther').val();
@@ -300,7 +307,7 @@
             var emailBlastReverseProspect = $('#emailBlastReverseProspect').prop('checked');
             var propertyHighlightVideo = $('#propertyHighlightVideo').prop('checked');
             var socialMediaImages = $('#socialMediaImages').prop('checked');
-            var showPromotion = $('#showPromotion').val();
+            var showPromotion = $('input[name="showPromotion"]:checked').val();
             var socialMediaAds = $('#socialMediaAds').prop('checked');
             var priceImprovementPackage = $('#priceImprovementPackage').prop('checked');
             var customDomainName = $('#customDomainName').val();
@@ -323,6 +330,7 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
+            // Select all div elements
             const listingSubmittalsContainer = document.getElementById('listingSubmittal');
             console.log("listingSubmittalsContainer",listingSubmittalsContainer);
             if (listingSubmittalsContainer) {
@@ -343,9 +351,8 @@
                         }
                     });
                 });
+                
             }
-
-
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
                 showToastError("Additional Email for confirmation should be in email format")
@@ -368,7 +375,7 @@
             } catch (error) {
                 console.log(error);
                 isValid = false;
-                showToastError(error.message)
+                showToastError(error.message) 
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -460,15 +467,15 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/listing/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/listing/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        showToast("Submittal updated successfully");
-                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
+                        showToast("Listing Submittal updated successfully");
+                        window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
