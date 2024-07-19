@@ -182,6 +182,7 @@ div.dataTables_processing > div:last-child > div {
 
 .dtasksection {
     background: rgba(255, 255, 255, 1);
+    padding: 25px;
 }
 
 .dtableHeaderTr {
