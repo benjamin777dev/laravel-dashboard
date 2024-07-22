@@ -3,9 +3,8 @@
         <div class="card">
             <div class="card-body p-0">
                 <h4 class="card-title p-3" id="title-corousal">CHR TM -Basic Information</h4>
-
                 <div id="carouselExampleIndicators" class="carousel slide" data-interval="false">
-                    <div class="carousel-indicators">
+                    <div class="carousel-indicators justify-content-center">
                         <button type="button"
                             onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Basic Information'"
                             data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
@@ -92,7 +91,7 @@
                                 <input type="text" class="validate_err form-control" value="{{ $submittal['agentName'] }}" 
                                     placeholder="Enter agent Name" id="agentName" />
                             </div>
-                            <label for="commingSoon" class="common-label">Coming Soon? 
+                            <label for="commingSoon" id="commingSoon"class="common-label">Coming Soon? 
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                     viewBox="0 0 19 18" fill="none">
@@ -166,7 +165,7 @@
                                                 fill="#AC5353" />
                                         </g>
                                     </svg></label>
-                                <input type="date" value="{{ $submittal['activeDate'] }}"
+                                <input type="date" id="activeDate" value="{{ $submittal['activeDate'] }}"
                                     class="form-control nontm-input validate_err" id="activeDate">
                                 <div id="activeDate_err" class="text-danger">
 
@@ -208,7 +207,21 @@
                                     </div>
                                 </div>
                                 <div class="close-date-nontm col-lg-6 label-div-mb">
-                                    <label for="price" class="common-label">Price</label>
+                                    <label for="price" class="common-label">Price
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
                                     <input type="text" value="{{ $submittal['price'] }}" placeholder="$"
                                         class="form-control nontm-input validate_err" id="price">
                                     <div id="final_purchase_error" class="text-danger">
@@ -282,7 +295,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item item-default">
                             <div class="row">
                                 <div class='col-lg-6 label-div-mb'>
                                     <label for="feesCharged" class="common-label">Fees Charged to Seller at
@@ -327,7 +340,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item item-default1">
                             <div class="row">
                                 <div class="col-lg-6 label-div-mb">
                                     <label for="scheduleSignInstall">Schedule Sign Install
@@ -351,7 +364,7 @@
                                                 <input type="radio" id="scheduleSignInstall_yes" value="Yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="form-check-label" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -389,7 +402,7 @@
                                                 <input type="radio" id="draftShowingInstructions_yes" value="Yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="form-check-label" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -465,7 +478,7 @@
                                     class="form-control validate_err">
                             </div>
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item item-default2">
                             <div class="label-div-mb">
                                 <label for="signInstallVendor">Sign Install Vendor Info</label>
                                 <input value="{{ $submittal['signInstallVendor'] }}"
@@ -479,7 +492,7 @@
                                     class="form-control validate_err">
                             </div>   
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item item-default3">
                             <div class="row mb-4">
                                 <div class="col-lg-4 d-flex gap-2">
                                     <div>REColorado</div>
@@ -527,16 +540,6 @@
                             </div>
                         </div>
                     </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
                 </div>
             </div>
         </div>
@@ -545,14 +548,22 @@
 <script>
     $(document).ready(function(){
         let usingChrValue = $('input[name="usingCHR"]:checked').val();
-        addFormSlide(usingChrValue?true:false)
-        let showPromotionValue = $('input[name="showPromotion"]').val();
+        console.log(usingChrValue);
+        if(usingChrValue){
+            addFormSlide(true)
+        }
+        let showPromotionValue = $('input[name="showPromotion"]:checked').val();
         console.log("showPromotionValue",showPromotionValue);
         if(showPromotionValue){
-            propertyParmotion(false)
+            propertyParmotion(showPromotionValue=='1'?false:true)
         }
     })
     function addFormSlide(state, test = null) {
+        
+        var itemDefault = document.querySelector('.item-default');
+        var itemDefault1 = document.querySelector('.item-default1');
+        var itemDefault2 = document.querySelector('.item-default2');
+        var itemDefault3 = document.querySelector('.item-default3');
         var existingItem1 = document.querySelector('.carousel-item.item1');
         var existingItem2 = document.querySelector('.carousel-item.item2');
         var existingItem3 = document.querySelector('.carousel-item.item3');
@@ -563,25 +574,31 @@
         var existingItem8 = document.querySelector('.carousel-item.item8');
         var existingItem9 = document.querySelector('.carousel-item.item9');
         var existingItem10 = document.querySelector('.carousel-item.item10');
-        var existingButton1 = document.querySelector('[data-bs-slide-to="6"]');
-        var existingButton2 = document.querySelector('[data-bs-slide-to="7"]');
-        var existingButton3 = document.querySelector('[data-bs-slide-to="8"]');
-        var existingButton4 = document.querySelector('[data-bs-slide-to="9"]');
-        var existingButton5 = document.querySelector('[data-bs-slide-to="10"]');
-        var existingButton6 = document.querySelector('[data-bs-slide-to="11"]');
-        var existingButton7 = document.querySelector('[data-bs-slide-to="12"]');
-        var existingButton8 = document.querySelector('[data-bs-slide-to="13"]');
-        if (existingButton3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 &&
-            existingItem9 && existingItem10 && state) {
-            console.log('yes hereee')
-            existingItem3.remove();
-            existingItem4.remove();
-            existingItem5.remove();
-            existingItem6.remove();
-            existingItem7.remove();
-            existingItem8.remove();
-            existingItem9.remove();
-            existingItem10.remove();
+        var existingButton1 = document.querySelector('[data-bs-slide-to="3"]');
+        var existingButton2 = document.querySelector('[data-bs-slide-to="4"]');
+        var existingButton3 = document.querySelector('[data-bs-slide-to="5"]');
+        var existingButton4 = document.querySelector('[data-bs-slide-to="6"]');
+        var existingButton5 = document.querySelector('[data-bs-slide-to="7"]');
+        var existingButton6 = document.querySelector('[data-bs-slide-to="8"]');
+        var existingButton7 = document.querySelector('[data-bs-slide-to="9"]');
+        var existingButton8 = document.querySelector('[data-bs-slide-to="10"]');
+        var existingButton9 = document.querySelector('[data-bs-slide-to="11"]');
+        var existingButton10 = document.querySelector('[data-bs-slide-to="12"]');
+        var existingButton11 = document.querySelector('[data-bs-slide-to="13"]');
+        var existingButton12 = document.querySelector('[data-bs-slide-to="14"]');
+        var existingButton13 = document.querySelector('[data-bs-slide-to="15"]');
+        var existingButton14 = document.querySelector('[data-bs-slide-to="16"]');
+        if (existingItem3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 &&
+            existingItem9 && existingItem10 && state && !existingItem2 && !existingItem1) {
+            console.log('yes hereee1')
+            existingItem3?.remove();
+            existingItem4?.remove();
+            existingItem5?.remove();
+            existingItem6?.remove();
+            existingItem7?.remove();
+            existingItem8?.remove();
+            existingItem9?.remove();
+            existingItem10?.remove();
             existingButton1?.remove();
             existingButton2?.remove();
             existingButton3?.remove();
@@ -590,17 +607,95 @@
             existingButton6?.remove();
             existingButton7?.remove();
             existingButton8?.remove();
+            // existingButton9?.remove();
+            showChrdefault();
+        }
+        if (existingItem2 && existingItem1 && state) {
+            existingItem3?.remove();
+            existingItem4?.remove();
+            existingItem5?.remove();
+            existingItem6?.remove();
+            existingItem7?.remove();
+            existingItem8?.remove();
+            existingItem9?.remove();
+            existingItem10?.remove();
+            existingButton7?.remove();
+            existingButton8?.remove();
+            existingButton9?.remove();
+            existingButton10?.remove();
+            existingButton11?.remove();
+            existingButton12?.remove();
+            existingButton13?.remove();
+            existingButton14?.remove();
+          
         }
         if (!state) {
-            if (!existingItem1 && !existingItem2) {
+             console.log('triggerererer',existingItem1,existingItem2,itemDefault,itemDefault1,itemDefault2,itemDefault3)
+            if(!existingItem1 && !existingItem2){
+                console.log('yes hereee2')
+                itemDefault.remove();
+                itemDefault1.remove();
+                itemDefault2.remove();
+                itemDefault3.remove();
+                existingButton2.remove();
+                existingButton1.remove();
+                existingButton3.remove();
+                existingButton4.remove();
                 showPropertyCarousalItem();
             }
+
+            if (existingItem3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 && existingItem9 && existingItem10) {
+                console.log('yes hereee3')
+                // console.log('chal rha hai')
+                existingItem3.remove();
+                existingItem4.remove();
+                existingItem5.remove();
+                existingItem6.remove();
+                existingItem7.remove();
+                existingItem8.remove();
+                existingItem9.remove();
+                existingItem10.remove();
+                existingButton7?.remove();
+                existingButton8?.remove();
+                existingButton9?.remove();
+                existingButton10?.remove();
+                existingButton11?.remove();
+                existingButton12?.remove();
+                existingButton13?.remove();
+                existingButton14?.remove();
+                //here next
+                itemDefault?.remove();
+                itemDefault1?.remove();
+                itemDefault2.remove();
+                itemDefault3?.remove();
+                existingItem1?.remove();
+                existingItem1?.remove();
+                existingButton2?.remove();
+                existingButton1?.remove();
+                existingButton3?.remove();
+                existingButton4?.remove();
+                existingButton5?.remove();
+                existingButton6?.remove();
+                showPropertyCarousalItem();
+                       
+            }
+           
             // State is false, remove carousel items if they exist
-            if (existingItem1 && existingItem2) {
-                existingItem1.remove();
-                existingItem2.remove();
+            if (existingItem1 && existingItem2 && itemDefault && itemDefault1 && itemDefault2 && itemDefault3 && !existingItem8 && !existingItem9 && !existingItem10) {
+                console.log('yes hereee4',existingItem9)
+                itemDefault?.remove();
+                existingItem1?.remove();
+                existingItem2?.remove();
                 existingButton1?.remove();
                 existingButton2?.remove();
+                existingButton3?.remove();
+                existingButton4?.remove();
+                existingButton5?.remove();
+                existingButton6?.remove();
+                existingButton7?.remove();
+                itemDefault1?.remove();
+                itemDefault2?.remove();
+                itemDefault3?.remove();
                 showPropertyCarousalItem();
             }
             return;
@@ -919,6 +1014,336 @@
         carouselIndicators.appendChild(button2);
     }
 
+    function showChrdefault(){
+       
+        var carouselItem = document.createElement('div');
+        var carouselItem2 = document.createElement('div');
+        var carouselItem3 = document.createElement('div');
+        var carouselItem4 = document.createElement('div');
+      
+        carouselItem.className = 'carousel-item item-default';
+        carouselItem2.className = 'carousel-item item-default1';
+        carouselItem3.className = 'carousel-item item-default2';
+        carouselItem4.className = 'carousel-item item-default3';
+
+        var innrtHtml = `
+                            <div class="row">
+                                <div class='col-lg-6 label-div-mb'>
+                                    <label for="feesCharged" class="common-label">Fees Charged to Seller at
+                                        Closing</label>
+                                    <input type="text" name="feesCharged" value="{{ $submittal['feesCharged'] }}"
+                                        id="feesCharged" class="form-control " placeholder="$">
+                                    </input>
+                                </div>
+                                <div class="col-lg-6 commission-nontm label-div-mb">
+                                    <div class='pb-4'>
+                                        <label for="additonal_fee" class="common-label">Referral to Pay</label>
+                                        <select name="additional_charge" id="additonal_fee"
+                                            class="form-select validate_err" id="">
+                                            <option value="" selected>None</option>
+                                            <option value="Yes"
+                                                {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
+                                            </option>
+                                            <option value="No"
+                                                {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class='pb-4 col-lg-6 label-div-mb'>
+                                    <label for="amountToCHR" class="common-label">Amount to CHR Gives</label>
+                                    <input name="amountToCHR" placeholder = "$"
+                                        value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
+                                        class="form-control validate_err">
+                                    </input>
+                                </div>
+                                <div class="col-lg-6 commission-nontm label-div-mb">
+                                    <div class='pb-4'>
+                                        <label for="referralDetails" class="common-label">Referral Details</label>
+                                        <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
+                                            id="referralDetails"
+                                            class="form-control  validate_err">
+                                        </input>
+                                    </div>
+
+                                </div>
+                            </div>`;
+
+        var innrtHtml2 = ` <div class="row">
+                                <div class="col-lg-6 label-div-mb">
+                                    <label for="scheduleSignInstall">Schedule Sign Install
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
+                                    <div class="row">
+                                        <div class="d-flex gap-2">
+                                            <div class="mb-3">
+                                                <input type="radio" id="scheduleSignInstall_yes"
+                                                    {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
+                                                    name="scheduleSignInstall">
+                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="radio" id="scheduleSignInstall_no"
+                                                    {{ $submittal['scheduleSignInstall'] == 'No' ? 'checked' : '' }}
+                                                    name="scheduleSignInstall">
+                                                <label class="form-check-label" for="formCheck1">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                 <div class="col-lg-6 label-div-mb">
+                                    <label for="">Draft Showing Instructions?
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
+                                    <div class="row">
+                                        <div class="d-flex gap-2">
+                                            <div class="mb-3">
+                                                <input type="radio" id="draftShowingInstructions_yes"
+                                                    {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
+                                                    name="draftShowingInstructions">
+                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="radio" id="draftShowingInstructions_no"
+                                                    {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
+                                                    name="draftShowingInstructions">
+                                                <label class="form-check-label" for="formCheck1">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 label-div-mb">
+                                    <label for="conciergeListing">Concierge Listing (Optional)</label>
+                                    <div class="row">
+                                        <div class="d-flex gap-2">
+                                            <div class="mb-3"> 
+                                                <input type="radio" id="conciergeListing_yes"
+                                                    {{ $submittal['conciergeListing'] == 'Yes' ? 'checked' : '' }}
+                                                    name="conciergeListing">
+                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="radio" id="conciergeListing_no"
+                                                    {{ $submittal['conciergeListing'] == 'No' ? 'checked' : '' }}
+                                                    name="conciergeListing">
+                                                <label class="form-check-label" for="formCheck1">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-6 label-div-mb">
+                                    <label for="titleCompany">Title Company</label>
+                                    <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
+                                        id="titleCompany" class="form-control validate_err">
+                                </div>
+                            </div>
+                            <div class="close-date-nontm label-div-mb">
+                                <label for="signInstallDate">Sign Install Date</label>
+                                <input type="date" value="{{ $submittal['signInstallDate'] }}"
+                                    class="form-control nontm-input" id="signInstallDate">
+                                <div id="signInstallDate_err" class="text-danger">
+                                </div>
+                            </div>
+                            <div class="label-div-mb">
+                                <label for="closerNamePhone">Closer Name & Phone
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                        viewBox="0 0 19 18" fill="none">
+                                        <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                            maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                        </mask>
+                                        <g mask="url(#mask0_2151_10662)">
+                                            <path
+                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                fill="#AC5353" />
+                                        </g>
+                                    </svg>
+                                </label>
+                                <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
+                                    id="closerNamePhone"
+                                    class="form-control validate_err">
+                            </div>`;
+        var innrtHtml3 = `  <div class="label-div-mb">
+                                <label for="signInstallVendor">Sign Install Vendor Info</label>
+                                <input value="{{ $submittal['signInstallVendor'] }}"
+                                    name="signInstallVendor" id="signInstallVendor"
+                                    class="form-control validate_err">
+                            </div> 
+                            <div class="label-div-mb">
+                                <label for="signInstallVendorOther">Sign Install Vendor (if Other)</label>
+                                <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                    name="signInstallVendorOther" id="signInstallVendorOther"
+                                    class="form-control validate_err">
+                            </div> 
+`;
+
+        var innrtHtml4 = ` <div class="row mb-4">
+                                <div class="col-lg-4 d-flex gap-2">
+                                    <div>REColorado</div>
+                                    <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
+                                        echo 'checked';
+                                    } ?>></div>
+                                </div>
+                                <div class="col-lg-4 d-flex gap-2">
+                                    <div>Navica</div>
+                                    <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
+                                        echo 'checked';
+                                    } ?>></div>
+                                </div>
+                                <div class="col-lg-4 d-flex gap-2">
+                                    <div>PPAR</div>
+                                    <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
+                                        echo 'checked';
+                                    } ?>></div>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-lg-4 d-flex gap-2">
+                                    <div>Grand County</div>
+                                    <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
+                                        echo 'checked';
+                                    } ?>></div>
+                                </div>
+                                <div class="col-lg-4 d-flex gap-2">
+                                    <div>IRES</div>
+                                    <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
+                                        echo 'checked';
+                                    } ?>></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6 label-div-mb">
+                                    <label for="mlsPrivateRemarks" class="common-label">MLS public remarks</label>
+                                    <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
+                                </div>
+                                <div class="col-lg-6 label-div-mb">
+
+                                    <label for="commission" class="common-label">MLS private remarks</label>
+                                    <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
+                                </div>
+                            </div>`;
+
+        // Set inner HTML content of carouselItem
+        carouselItem.innerHTML = innrtHtml;
+        carouselItem2.innerHTML = innrtHtml2;
+        carouselItem3.innerHTML = innrtHtml3;
+        carouselItem4.innerHTML = innrtHtml4;
+
+        // Append the new carousel items to the carousel inner
+        var carouselInner = document.querySelector('.carousel-inner');
+        carouselInner.appendChild(carouselItem);
+        carouselInner.appendChild(carouselItem2);
+        carouselInner.appendChild(carouselItem3);
+        carouselInner.appendChild(carouselItem4);
+
+        // Update the carousel indicators (optional, if you want to show navigation bullets)
+        var slideIndex = $('.carousel-item').length - 1;
+
+        // Create the slide buttons for carousel indicators
+        var button1 = document.createElement('button');
+        button1.type = 'button';
+        button1.setAttribute('data-bs-target', '#carouselExampleIndicators');
+        button1.setAttribute('data-bs-slide-to', (slideIndex - 3).toString());
+        button1.setAttribute('aria-label', 'Slide ' + (slideIndex - 3).toString());
+        button1.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'CHR TM - Commission Details';
+            }
+        })
+
+        var button2 = document.createElement('button');
+        button2.type = 'button';
+        button2.setAttribute('data-bs-target', '#carouselExampleIndicators');
+        button2.setAttribute('data-bs-slide-to', (slideIndex - 2).toString());
+        button2.setAttribute('aria-label', 'Slide ' + (slideIndex - 2).toString());
+        button2.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'CHR TM - Service Providers';
+            }
+        })
+
+        var button3 = document.createElement('button');
+        button3.type = 'button';
+        button3.setAttribute('data-bs-target', '#carouselExampleIndicators');
+        button3.setAttribute('data-bs-slide-to', (slideIndex - 1).toString());
+        button3.setAttribute('aria-label', 'Slide ' + (slideIndex - 1).toString());
+        button3.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'CHR TM - Service Providers';
+            }
+        })
+
+        var button4 = document.createElement('button');
+        button4.type = 'button';
+        button4.setAttribute('data-bs-target', '#carouselExampleIndicators');
+        button4.setAttribute('data-bs-slide-to', slideIndex.toString());
+        button4.setAttribute('aria-label', 'Slide ' + slideIndex.toString());
+        button4.addEventListener('click', function() {
+        // Change the inner HTML of 'title-corousal' element
+        const titleCorousal = document.getElementById('title-corousal');
+        if (titleCorousal) {
+                titleCorousal.innerHTML = 'PROPERTY PROMOTION - Notes';
+            }
+        })
+
+        var carouselIndicators = document.querySelector('.carousel-indicators');
+        carouselIndicators.appendChild(button1);
+        carouselIndicators.appendChild(button2);
+        carouselIndicators.appendChild(button3);
+        carouselIndicators.appendChild(button4);
+
+    }
+
     function showPropertyCarousalItem() {
         let existingItem1 = document.querySelector('.carousel-item.item3');
         let existingItem2 = document.querySelector('.carousel-item.item4');
@@ -1102,19 +1527,35 @@
                         `;
 
         var innrtHtml4 = `<div class="label-div-mb"><label for="add_email" class="common-label">Brochure Design - <b>Click for
-                                options<b></label>
+                                options<b>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                    viewBox="0 0 19 18" fill="none">
+                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                        x="0" y="0" width="19" height="18">
+                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_2151_10662)">
+                                        <path
+                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                            fill="#AC5353" />
+                                    </g>
+                                </svg>
+                            </label>
                             <div class="nontm-select-div">
-                                <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                    @foreach ($broucherPrint as $broucherprint)
-                                        <option value="{{ $broucherprint }}"
-                                            {{ $broucherprint == $submittal->brochurePrint ? 'selected' : '' }}>
-                                            {{ $broucherprint }}
+                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select">
+                                    @foreach ($broucherLines as $brochureLine)
+                                        <option value="{{ $brochureLine }}"
+                                            {{ $brochureLine == $submittal->brochureLine ? 'selected' : '' }}>
+                                            {{ $brochureLine }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF</label>
+                        <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF
+                            
+                            </label>
                             <div class="nontm-select-div">
                                 <select name="brochurePrint" id="brochurePrint" class="nontm-select form-select">
                                     <option value ="">--None--</option>
@@ -1128,23 +1569,23 @@
                             </div>
                         </div>
                         <div class="label-div-mb"><label for="add_email" class="common-label">12 bullets, 4 words per bullet</label>
-
-                            <textarea class="form-control" rows="4" cols="50"></textarea>
-
+                            <textarea class="form-control" id='bullets' rows="4" cols="50">{{$submittal->bullets}}</textarea>
                         </div>`;
-        var innrtHtml5 = `<div class="label-div-mb"><label for="add_email" class="common-label">
+        var innrtHtml5 = `<div class="label-div-mb"><label for="add_email"  class="common-label">
                                     4 Word Headline - If Opting for A-Line Brochure</label>
-
-                                <input class="form-control" type="text"></input>
-
+                                <textarea class="form-control" id="headlineForBrochure" rows="4" cols="50">{{$submittal->headlineForBrochure}}</textarea>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="label-div-mb"><label for="add_email" class="common-label">Sticky Dots</label>
                                         <div class="nontm-select-div">
-                                            <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                                <option value="Yes"> Yes </option>
-                                                <option value="Yes"> No </option>
+                                            <select name="stickyDots" id="stickyDots" class="nontm-select form-select">
+                                                @foreach ($stickyDots as $stickyDot)
+                                                    <option value="{{ $stickyDot }}"
+                                                        {{ $stickyDot == $submittal->stickyDots ? 'selected' : '' }}>
+                                                        {{ $stickyDot }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -1152,9 +1593,13 @@
                                 <div class="col-lg-6 label-div-mb">
                                     <div class="label-div-mb"><label for="add_email" class="common-label">QR Code Sheet</label>
                                         <div class="nontm-select-div">
-                                            <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                                <option value="Yes"> Yes </option>
-                                                <option value="Yes"> No </option>
+                                            <select name="qrCodeSheet" id="qrCodeSheet" class="nontm-select form-select">
+                                                @foreach ($qrCodeSheets as $qrCodeSheet)
+                                                    <option value="{{ $qrCodeSheet }}"
+                                                        {{ $qrCodeSheet == $submittal->qrCodeSheet ? 'selected' : '' }}>
+                                                        {{ $qrCodeSheet }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -1163,7 +1608,9 @@
                             <div class="gap-2 col-lg-6">
                                 <div class="d-flex gap-2">
                                     <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="formCheck5">
+                                        <input type="checkbox" id="qrCodeSignRider" <?php if ($submittal['qrCodeSignRider']) {
+                                        echo 'checked';
+                                        } ?>>
                                     </div>
                                     <label for="add_email" class="common-label">QR Code Sign Rider</label>
                                 </div>
@@ -1174,67 +1621,62 @@
                                 Feature Cards</h3>
                             <div class="label-div-mb"><label for="add_email" class="common-label">Feature Card</label>
                                 <div class="nontm-select-div">
-                                    <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                        <option value="Yes"> Yes </option>
-                                        <option value="Yes"> No </option>
+                                    <select name="featureCards" id="featureCards" class="nontm-select form-select">
+                                        @foreach ($featuresCard as $featureCards)
+                                            <option value="{{ $featureCards }}"
+                                                {{ $featureCards == $submittal->featureCards ? 'selected' : '' }}>
+                                                {{ $featureCards }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="label-div-mb"><label for="add_email" class="common-label">Add Feature Card Copy</label>
-                            <textarea class="form-control" rows="4" cols="50"></textarea>
+                            <textarea id="featureCardCopy" class="form-control" rows="4" cols="50">{{$submittal->featureCardCopy}}</textarea>
                         </div>
                         `;
         var innrtHtml7 = ` <div class="close-date-nontm label-div-mb">
-                            <label for="close_date" class="common-label">Brochure Date</label>
+                            <label for="brochureDeliveryDate" class="common-label">Brochure Date</label>
                             <input type="date"
-                                value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
-                                class="form-control nontm-input" id="close_date">
-                            <div id="close_date_error" class="text-danger">
+                                value="{{ isset($submittal['brochureDeliveryDate']) ? \Carbon\Carbon::parse($submittal['brochureDeliveryDate'])->format('Y-m-d') : '' }}"
+                                class="form-control nontm-input" id="brochureDeliveryDate">
+                            <div id="brochureDeliveryDate_error" class="text-danger">
 
                             </div>
                         </div>
-                        <div><label for="add_email" class="common-label">
-                                Shipping Address</label>
-
-                            <input class="form-control" placeholder="address line1" type="text"></input>
+                        <div class="label-div-mb"><label for="add_email" class="common-label">Shipping Address</label>
+                            <textarea id="deliveryAddress" class="form-control" rows="4" cols="50">{{$submittal->deliveryAddress}}</textarea>
                         </div>
-                        <div class="mt-1">
-
-                            <input class="form-control" placeholder="address line2" type="text"></input>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-4 label-div-mb">
-                                <div class="pt-1">
-                                    <input class="form-control" placeholder="City or town" type="text"></input>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 label-div-mb">
-                                <div class="pt-1">
-                                    <input class="form-control" placeholder="State" type="text"></input>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 label-div-mb">
-                                <div class="pt-1">
-                                    <input class="form-control" placeholder="Zip" type="text"></input>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="close-date-nontm label-div-mb">
-                            <label for="close_date" class="common-label">Printed Items Pick Up or PDF Date</label>
+                            <label for="printedItemsPickupDate" class="common-label">Printed Items Pick Up or PDF Date</label>
                             <input type="date"
-                                value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
-                                class="form-control nontm-input" id="close_date">
-                            <div id="close_date_error" class="text-danger">
+                                value="{{ isset($submittal['printedItemsPickupDate']) ? \Carbon\Carbon::parse($submittal['printedItemsPickupDate'])->format('Y-m-d') : '' }}"
+                                class="form-control nontm-input" id="printedItemsPickupDate">
+                            <div id="printedItemsPickupDate_error" class="text-danger">
 
                             </div>
                         </div>
                         <div class="close-date-nontm label-div-mb">
-                            <label for="close_date" class="common-label">Brochure Pick Up or PDF Date</label>
+                            <label for="brochurePickupDate" class="common-label">Brochure Pick Up or PDF Date
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                viewBox="0 0 19 18" fill="none">
+                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                    x="0" y="0" width="19" height="18">
+                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_2151_10662)">
+                                    <path
+                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                        fill="#AC5353" />
+                                </g>
+                            </svg></label>
                             <input type="date"
-                                value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
-                                class="form-control nontm-input" id="close_date">
-                            <div id="close_date_error" class="text-danger">
+                                value="{{ isset($submittal['brochurePickupDate']) ? \Carbon\Carbon::parse($submittal['brochurePickupDate'])->format('Y-m-d') : '' }}"
+                                class="form-control nontm-input" id="brochurePickupDate">
+                            <div id="brochurePickupDate_error" class="text-danger">
 
                             </div>
                         </div>
@@ -1243,10 +1685,11 @@
                                 know?</label>
                         </div>
                         <div class="label-div-mb"><label for="add_email" class="common-label">Please Add your Notes</label>
-                            <textarea class="form-control" rows="4" cols="50"></textarea>
+                            <textarea id="marketingNotes" class="form-control" rows="4" cols="50">{{$submittal->marketingNotes}}</textarea>
                         </div>
                         <div class="text-end" id="saveSubmit">
-                            <button type="button" class="btn btn-white fw-bold">Save & Submit</button>
+                            <button type="button" onclick="validateSubmittal(true)"
+                            class="btn btn-white fw-bold">Save & Submit</button>
                         </div>
                         `;
 

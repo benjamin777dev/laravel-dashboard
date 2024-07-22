@@ -51,6 +51,12 @@ var table = $("#datatable_pipe_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
+    responsive: true,
+    columnDefs: [
+        { responsivePriority: 1, targets: 0 },
+        { responsivePriority: 10001, targets: 4 },
+        { responsivePriority: 2, targets: -9 }
+    ],
     columns: [
         {
             className: "dt-control",
@@ -1828,6 +1834,12 @@ var tableContact = $("#datatable_contact").DataTable({
     processing: true,
     responsive: true,
     serverSide: true,
+    responsive: true,
+    columnDefs: [
+        { responsivePriority: 1, targets: 0 },
+        { responsivePriority: 10001, targets: 4 },
+        { responsivePriority: 2, targets: -7 }
+    ],
     order: [0, "desac"],
     columns: [
         {
