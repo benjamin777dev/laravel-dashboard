@@ -182,7 +182,6 @@ div.dataTables_processing > div:last-child > div {
 
 .dtasksection {
     background: rgba(255, 255, 255, 1);
-    padding: 25px;
 }
 
 .dtableHeaderTr {
@@ -1928,8 +1927,8 @@ body .vertical-collpsed span .logo-sm image {
 }
 .carousel {
     display: flex;
-    /* padding: 20px; */
-    /* flex-direction: column;
+    padding: 20px;
+    flex-direction: column;
     justify-content: center;
     /* align-items: flex-start;
     gap: 24px; 
@@ -2080,9 +2079,9 @@ body .vertical-collpsed span .logo-sm image {
     line-height: normal;
 }
 
-/* .main_form_div {
+.main_form_div {
     padding: 0 90px 48px 90px;
-} */
+}
 
 .carousel-indicators {
     /* bottom: 20px; */
@@ -2319,11 +2318,6 @@ body .vertical-collpsed span .logo-sm image {
     }
     .prev_btn  span, .next_btn span{
         display: none;
-    }
-    .prev .next {
-        display: none; /* Hide the element */
-        /* OR */
-        visibility: hidden; /* Hide the element but keep the space it occupies */
     }
 }
 
@@ -3491,16 +3485,3 @@ input[type="button"]:hover {
 .sticky-col.sticky-header {
     z-index: 3; 
 } */
-
-@media (max-width: 767px) {
-    .prev_btn,
-    .next_btn {
-        display: none;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 1024px) {
-    .carausel-custom {
-        width: 83.3333%; /* Adjust if needed for specific margins/padding */
-    }
-}
