@@ -240,7 +240,7 @@
                     success: function (response) {
                         console.log("response",response);
                         showToast("Submittal updated successfully");
-                        // window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
+                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -494,7 +494,7 @@
                     success: function (response) {
                         console.log("response",response);
                         showToast("Listing Submittal updated successfully");
-                        // window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
+                        window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
