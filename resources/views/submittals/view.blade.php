@@ -354,16 +354,16 @@
                     (!usingCHR &&usingCHR!="" && $('input[name="usingCHR"]').length > 0) ||
                     (!needOE &&needOE!="" && $('input[name="needO&E"]').length > 0) ||
                     (!hasHOA &&hasHOA!="" && $('input[name="hasHOA"]').length > 0) ||
-                    (!includeInsights &&includeInsights!="" && $('input[name="includeInsights"]').length > 0) ||
-                    (!titleToOrderHOA &&titleToOrderHOA!="" && $('input[name="titleToOrderHOA"]').length > 0) ||
-                    (!mailoutNeeded &&mailoutNeeded!="" && $('input[name="mailoutNeeded"]').length > 0) ||
-                    (!powerOfAttnyNeeded &&powerOfAttnyNeeded!="" && $('input[name="powerOfAttnyNeeded"]').length > 0) ||
-                    (!scheduleSignInstall &&scheduleSignInstall!="" && $('input[name="scheduleSignInstall"]').length > 0) ||
-                    (!draftShowingInstructions &&draftShowingInstructions!="" && $('input[name="draftShowingInstructions"]').length > 0) ||
-                    (!closerNamePhone &&closerNamePhone!="" && $('#closerNamePhone').length > 0) ||
-                    (!showPromotion &&showPromotion!="" && $('input[name="showPromotion"]').length > 0) ||
-                    (!brochureLine &&brochureLine!="" && $('#brochureLine').length > 0) ||
-                    (!brochurePickupDate &&brochurePickupDate!="" && $('#brochurePickupDate').length > 0)
+                    (!includeInsights && includeInsights!="" && $('input[name="includeInsights"]').length > 0) ||
+                    (!titleToOrderHOA && titleToOrderHOA!="" && $('input[name="titleToOrderHOA"]').length > 0) ||
+                    (!mailoutNeeded && mailoutNeeded!="" && $('input[name="mailoutNeeded"]').length > 0) ||
+                    (!powerOfAttnyNeeded && powerOfAttnyNeeded!="" && $('input[name="powerOfAttnyNeeded"]').length > 0) ||
+                    (!scheduleSignInstall && scheduleSignInstall!="" && $('input[name="scheduleSignInstall"]').length > 0) ||
+                    (!draftShowingInstructions && draftShowingInstructions!="" && $('input[name="draftShowingInstructions"]').length > 0) ||
+                    (!closerNamePhone && closerNamePhone!="" && $('#closerNamePhone').length > 0) ||
+                    (!showPromotion && showPromotion!="" && $('input[name="showPromotion"]').length > 0) ||
+                    (!brochureLine && $('#brochureLine').length > 0) ||
+                    (!brochurePickupDate  && $('#brochurePickupDate').length > 0)
                 ) {
                     isValid = false
                     showToastError('Please fill all required fields');

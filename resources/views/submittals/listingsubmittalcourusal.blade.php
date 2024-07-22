@@ -548,11 +548,14 @@
 <script>
     $(document).ready(function(){
         let usingChrValue = $('input[name="usingCHR"]:checked').val();
-        addFormSlide(usingChrValue?true:false)
-        let showPromotionValue = $('input[name="showPromotion"]').val();
+        console.log(usingChrValue);
+        if(usingChrValue){
+            addFormSlide(true)
+        }
+        let showPromotionValue = $('input[name="showPromotion"]:checked').val();
         console.log("showPromotionValue",showPromotionValue);
         if(showPromotionValue){
-            propertyParmotion(false)
+            propertyParmotion(showPromotionValue=='1'?false:true)
         }
     })
     function addFormSlide(state, test = null) {
