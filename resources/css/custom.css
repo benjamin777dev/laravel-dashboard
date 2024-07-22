@@ -1943,8 +1943,10 @@ body .vertical-collpsed span .logo-sm image {
     padding: 25px;
 }
 
-.carousel-control-prev,
-.carousel-control-next {
+.carousel-control-prev span:nth-child(1),
+.carousel-control-prev span:nth-child(2),
+.carousel-control-next span:nth-child(1),
+.carousel-control-next span:nth-child(2) {
     display: none !important;
 }
 
@@ -2312,6 +2314,9 @@ body .vertical-collpsed span .logo-sm image {
 
     .dnewContactBtn {
         margin-bottom: 24px;
+    }
+    .prev_btn  span, .next_btn span{
+        display: none;
     }
 }
 
