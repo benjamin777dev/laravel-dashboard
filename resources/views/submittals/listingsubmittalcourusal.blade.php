@@ -91,7 +91,7 @@
                                 <input type="text" class="validate_err form-control" value="{{ $submittal['agentName'] }}" 
                                     placeholder="Enter agent Name" id="agentName" />
                             </div>
-                            <label for="commingSoon" class="common-label">Coming Soon? 
+                            <label for="commingSoon" id="commingSoon"class="common-label">Coming Soon? 
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                     viewBox="0 0 19 18" fill="none">
@@ -165,7 +165,7 @@
                                                 fill="#AC5353" />
                                         </g>
                                     </svg></label>
-                                <input type="date" value="{{ $submittal['activeDate'] }}"
+                                <input type="date" id="activeDate" value="{{ $submittal['activeDate'] }}"
                                     class="form-control nontm-input validate_err" id="activeDate">
                                 <div id="activeDate_err" class="text-danger">
 
@@ -207,7 +207,21 @@
                                     </div>
                                 </div>
                                 <div class="close-date-nontm col-lg-6 label-div-mb">
-                                    <label for="price" class="common-label">Price</label>
+                                    <label for="price" class="common-label">Price
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg>
+                                    </label>
                                     <input type="text" value="{{ $submittal['price'] }}" placeholder="$"
                                         class="form-control nontm-input validate_err" id="price">
                                     <div id="final_purchase_error" class="text-danger">
@@ -350,7 +364,7 @@
                                                 <input type="radio" id="scheduleSignInstall_yes" value="Yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="form-check-label" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -388,7 +402,7 @@
                                                 <input type="radio" id="draftShowingInstructions_yes" value="Yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="form-check-label" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -1011,7 +1025,7 @@
                                             <div class="mb-3">
                                                 <input type="radio" id="scheduleSignInstall_yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="scheduleSignInstall">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
@@ -1019,7 +1033,7 @@
                                             <div class="mb-3">
                                                 <input type="radio" id="scheduleSignInstall_no"
                                                     {{ $submittal['scheduleSignInstall'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="scheduleSignInstall">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -1049,7 +1063,7 @@
                                             <div class="mb-3">
                                                 <input type="radio" id="draftShowingInstructions_yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="draftShowingInstructions">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
@@ -1057,7 +1071,7 @@
                                             <div class="mb-3">
                                                 <input type="radio" id="draftShowingInstructions_no"
                                                     {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="draftShowingInstructions">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -1075,7 +1089,7 @@
                                             <div class="mb-3"> 
                                                 <input type="radio" id="conciergeListing_yes"
                                                     {{ $submittal['conciergeListing'] == 'Yes' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="conciergeListing">
                                                 <label class="form-check-label" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
@@ -1083,7 +1097,7 @@
                                             <div class="mb-3">
                                                 <input type="radio" id="conciergeListing_no"
                                                     {{ $submittal['conciergeListing'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
+                                                    name="conciergeListing">
                                                 <label class="form-check-label" for="formCheck1">
                                                     No
                                                 </label>
@@ -1445,7 +1459,21 @@
                         `;
 
         var innrtHtml4 = `<div class="label-div-mb"><label for="add_email" class="common-label">Brochure Design - <b>Click for
-                                options<b></label>
+                                options<b>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                    viewBox="0 0 19 18" fill="none">
+                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                        x="0" y="0" width="19" height="18">
+                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_2151_10662)">
+                                        <path
+                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                            fill="#AC5353" />
+                                    </g>
+                                </svg>
+                            </label>
                             <div class="nontm-select-div">
                                 <select name="brochureLine" id="brochureLine" class="nontm-select form-select">
                                     @foreach ($broucherLines as $brochureLine)
@@ -1457,7 +1485,9 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF</label>
+                        <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF
+                            
+                            </label>
                             <div class="nontm-select-div">
                                 <select name="brochurePrint" id="brochurePrint" class="nontm-select form-select">
                                     <option value ="">--None--</option>
@@ -1561,7 +1591,20 @@
                             </div>
                         </div>
                         <div class="close-date-nontm label-div-mb">
-                            <label for="brochurePickupDate" class="common-label">Brochure Pick Up or PDF Date</label>
+                            <label for="brochurePickupDate" class="common-label">Brochure Pick Up or PDF Date
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                viewBox="0 0 19 18" fill="none">
+                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                    x="0" y="0" width="19" height="18">
+                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_2151_10662)">
+                                    <path
+                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                        fill="#AC5353" />
+                                </g>
+                            </svg></label>
                             <input type="date"
                                 value="{{ isset($submittal['brochurePickupDate']) ? \Carbon\Carbon::parse($submittal['brochurePickupDate'])->format('Y-m-d') : '' }}"
                                 class="form-control nontm-input" id="brochurePickupDate">
