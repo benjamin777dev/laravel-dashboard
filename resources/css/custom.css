@@ -1114,9 +1114,8 @@ body .vertical-collpsed span .logo-sm image {
     align-items: center;
 }
 
-.actions {
-    display: flex;
-    gap: 10px;
+.submittalType {
+    padding-bottom: 20px;
 }
 
 .progressCardsContainer {

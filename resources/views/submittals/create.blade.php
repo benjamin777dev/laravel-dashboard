@@ -29,7 +29,7 @@
             </a>
             
             <a>
-                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal(true)"><i class="fas fa-save">
                     </i>
                     Save
                 </div>
@@ -132,11 +132,8 @@
         return regex.test(url);
     }
 
-    window.validateSubmittal=function(submittal,isNew) {
-        console.log(submittal,'validahasekhfkusdhkfh');
-        if(typeof submittal == "string"){
-            submittal = JSON.parse(submittal)
-        }
+    window.validateSubmittal=function(isNew) {
+        let submittal = @json($submittal);
         isValid = true
         // submittal = JSON.parse(submittal)
         if(submittal.submittalType == 'buyer-submittal'){
@@ -264,36 +261,36 @@
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
             var agentName = $('#agentName').val();
-            var commingSoon = $('#commingSoon').val();
+            var commingSoon = $('input[name="commingSoon"]:checked').val();
             var comingSoonDate = $('#comingSoonDate').val();
             var tmName = $('#tmName').val();
             var activeDate = $('#activeDate').val();
-            var agreementExecuted = $('#agreementExecuted').val();
+            var agreementExecuted = $('input[name="agreementExecuted"]:checked').val();
             var price = $('#price').val();
             var photoDate = $('#photoDate').val();
             var photoURL = $('#photoURL').val();
             var bedsBathsTotal = $('#bedsBathsTotal').val();
             var tourURL = $('#tourURL').val();
-            var usingCHR = $('#usingCHR').val();
+            var usingCHR = $('input[name="usingCHR"]:checked').val();
 
 
             // Get values from CHR TM - Transaction Details and Preferences section
-            var needOE = $('#needOE').val();
-            var hasHOA = $('#hasHOA').val();
-            var includeInsights = $('#includeInsights').val();
-            var titleToOrderHOA = $('#titleToOrderHOA').val();
-            var mailoutNeeded = $('#mailoutNeeded').val();
-            var powerOfAttnyNeeded = $('#powerOfAttnyNeeded').val();
+            var needOE = $('input[name="needOE"]:checked').val();
+            var hasHOA = $('input[name="hasHOA"]:checked').val();
+            var includeInsights = $('input[name="includeInsights"]:checked').val();
+            var titleToOrderHOA = $('input[name="titleToOrderHOA"]:checked').val();
+            var mailoutNeeded = $('input[name="mailoutNeeded"]:checked').val();
+            var powerOfAttnyNeeded =$('input[name="powerOfAttnyNeeded"]:checked').val();
             var hoaName = $('#hoaName').val();
             var hoaPhone = $('#hoaPhone').val();
             var hoaWebsite = $('#hoaWebsite').val();
             var miscNotes = $('#miscNotes').val();
 
             // Get values from CHR TM - Service Providers section
-            var scheduleSignInstall = $('#scheduleSignInstall').val();
-            var conciergeListing = $('#conciergeListing').val();
+            var scheduleSignInstall = $('input[name="scheduleSignInstall"]:checked').val();
+            var conciergeListing = $('input[name="conciergeListing"]:checked').val();
             var signInstallVendor = $('#signInstallVendor').val();
-            var draftShowingInstructions = $('#draftShowingInstructions').val();
+            var draftShowingInstructions = $('input[name="draftShowingInstructions"]:checked').val();
             var titleCompany = $('#titleCompany').val();
             var closerNamePhone = $('#closerNamePhone').val();
             var signInstallVendorOther = $('#signInstallVendorOther').val();
