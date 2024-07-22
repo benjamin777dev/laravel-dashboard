@@ -579,17 +579,23 @@
         var existingButton6 = document.querySelector('[data-bs-slide-to="8"]');
         var existingButton7 = document.querySelector('[data-bs-slide-to="9"]');
         var existingButton8 = document.querySelector('[data-bs-slide-to="10"]');
-        if (existingButton3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 &&
-            existingItem9 && existingItem10 && state) {
-            console.log('yes hereee')
-            existingItem3.remove();
-            existingItem4.remove();
-            existingItem5.remove();
-            existingItem6.remove();
-            existingItem7.remove();
-            existingItem8.remove();
-            existingItem9.remove();
-            existingItem10.remove();
+        var existingButton9 = document.querySelector('[data-bs-slide-to="11"]');
+        var existingButton10 = document.querySelector('[data-bs-slide-to="12"]');
+        var existingButton11 = document.querySelector('[data-bs-slide-to="13"]');
+        var existingButton12 = document.querySelector('[data-bs-slide-to="14"]');
+        var existingButton13 = document.querySelector('[data-bs-slide-to="15"]');
+        var existingButton14 = document.querySelector('[data-bs-slide-to="16"]');
+        if (existingItem3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 &&
+            existingItem9 && existingItem10 && state && !existingItem2 && !existingItem1) {
+            console.log('yes hereee1')
+            existingItem3?.remove();
+            existingItem4?.remove();
+            existingItem5?.remove();
+            existingItem6?.remove();
+            existingItem7?.remove();
+            existingItem8?.remove();
+            existingItem9?.remove();
+            existingItem10?.remove();
             existingButton1?.remove();
             existingButton2?.remove();
             existingButton3?.remove();
@@ -598,11 +604,32 @@
             existingButton6?.remove();
             existingButton7?.remove();
             existingButton8?.remove();
+            // existingButton9?.remove();
             showChrdefault();
+        }
+        if (existingItem2 && existingItem1 && state) {
+            existingItem3?.remove();
+            existingItem4?.remove();
+            existingItem5?.remove();
+            existingItem6?.remove();
+            existingItem7?.remove();
+            existingItem8?.remove();
+            existingItem9?.remove();
+            existingItem10?.remove();
+            existingButton7?.remove();
+            existingButton8?.remove();
+            existingButton9?.remove();
+            existingButton10?.remove();
+            existingButton11?.remove();
+            existingButton12?.remove();
+            existingButton13?.remove();
+            existingButton14?.remove();
+          
         }
         if (!state) {
              console.log('triggerererer',existingItem1,existingItem2,itemDefault,itemDefault1,itemDefault2,itemDefault3)
             if(!existingItem1 && !existingItem2){
+                console.log('yes hereee2')
                 itemDefault.remove();
                 itemDefault1.remove();
                 itemDefault2.remove();
@@ -613,21 +640,59 @@
                 existingButton4.remove();
                 showPropertyCarousalItem();
             }
+
+            if (existingItem3 && existingItem4 && existingItem5 && existingItem6 && existingItem7 && existingItem8 && existingItem9 && existingItem10) {
+                console.log('yes hereee3')
+                // console.log('chal rha hai')
+                existingItem3.remove();
+                existingItem4.remove();
+                existingItem5.remove();
+                existingItem6.remove();
+                existingItem7.remove();
+                existingItem8.remove();
+                existingItem9.remove();
+                existingItem10.remove();
+                existingButton7?.remove();
+                existingButton8?.remove();
+                existingButton9?.remove();
+                existingButton10?.remove();
+                existingButton11?.remove();
+                existingButton12?.remove();
+                existingButton13?.remove();
+                existingButton14?.remove();
+                //here next
+                itemDefault?.remove();
+                itemDefault1?.remove();
+                itemDefault2.remove();
+                itemDefault3?.remove();
+                existingItem1?.remove();
+                existingItem1?.remove();
+                existingButton2?.remove();
+                existingButton1?.remove();
+                existingButton3?.remove();
+                existingButton4?.remove();
+                existingButton5?.remove();
+                existingButton6?.remove();
+                showPropertyCarousalItem();
+                       
+            }
            
             // State is false, remove carousel items if they exist
-            if (existingItem1 && existingItem2 && itemDefault && itemDefault1 && itemDefault2 && itemDefault3) {
-                itemDefault.remove();
-                existingItem1.remove();
-                existingItem2.remove();
-                existingButton1.remove();
-                existingButton2.remove();
-                existingButton3.remove();
-                existingButton4.remove();
-                existingButton5.remove();
-                existingButton6.remove();
-                itemDefault1.remove();
-                itemDefault2.remove();
-                itemDefault3.remove();
+            if (existingItem1 && existingItem2 && itemDefault && itemDefault1 && itemDefault2 && itemDefault3 && !existingItem8 && !existingItem9 && !existingItem10) {
+                console.log('yes hereee4',existingItem9)
+                itemDefault?.remove();
+                existingItem1?.remove();
+                existingItem2?.remove();
+                existingButton1?.remove();
+                existingButton2?.remove();
+                existingButton3?.remove();
+                existingButton4?.remove();
+                existingButton5?.remove();
+                existingButton6?.remove();
+                existingButton7?.remove();
+                itemDefault1?.remove();
+                itemDefault2?.remove();
+                itemDefault3?.remove();
                 showPropertyCarousalItem();
             }
             return;
