@@ -1104,11 +1104,11 @@
         var innrtHtml4 = `<div class="label-div-mb"><label for="add_email" class="common-label">Brochure Design - <b>Click for
                                 options<b></label>
                             <div class="nontm-select-div">
-                                <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                    @foreach ($broucherPrint as $broucherprint)
-                                        <option value="{{ $broucherprint }}"
-                                            {{ $broucherprint == $submittal->brochurePrint ? 'selected' : '' }}>
-                                            {{ $broucherprint }}
+                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select">
+                                    @foreach ($broucherLines as $brochureLine)
+                                        <option value="{{ $brochureLine }}"
+                                            {{ $brochureLine == $submittal->brochureLine ? 'selected' : '' }}>
+                                            {{ $brochureLine }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -1128,23 +1128,23 @@
                             </div>
                         </div>
                         <div class="label-div-mb"><label for="add_email" class="common-label">12 bullets, 4 words per bullet</label>
-
-                            <textarea class="form-control" rows="4" cols="50"></textarea>
-
+                            <textarea class="form-control" id='bullets' rows="4" cols="50">{{$submittal->bullets}}</textarea>
                         </div>`;
-        var innrtHtml5 = `<div class="label-div-mb"><label for="add_email" class="common-label">
+        var innrtHtml5 = `<div class="label-div-mb"><label for="add_email"  class="common-label">
                                     4 Word Headline - If Opting for A-Line Brochure</label>
-
-                                <input class="form-control" type="text"></input>
-
+                                <textarea class="form-control" id="headlineForBrochure" rows="4" cols="50">{{$submittal->headlineForBrochure}}</textarea>
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="label-div-mb"><label for="add_email" class="common-label">Sticky Dots</label>
                                         <div class="nontm-select-div">
-                                            <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                                <option value="Yes"> Yes </option>
-                                                <option value="Yes"> No </option>
+                                            <select name="stickyDots" id="stickyDots" class="nontm-select form-select">
+                                                @foreach ($stickyDots as $stickyDot)
+                                                    <option value="{{ $stickyDot }}"
+                                                        {{ $stickyDot == $submittal->stickyDots ? 'selected' : '' }}>
+                                                        {{ $stickyDot }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -1152,9 +1152,13 @@
                                 <div class="col-lg-6 label-div-mb">
                                     <div class="label-div-mb"><label for="add_email" class="common-label">QR Code Sheet</label>
                                         <div class="nontm-select-div">
-                                            <select name="related_transaction" id="related_transaction" class="nontm-select form-select">
-                                                <option value="Yes"> Yes </option>
-                                                <option value="Yes"> No </option>
+                                            <select name="qrCodeSheet" id="qrCodeSheet" class="nontm-select form-select">
+                                                @foreach ($qrCodeSheets as $qrCodeSheet)
+                                                    <option value="{{ $qrCodeSheet }}"
+                                                        {{ $qrCodeSheet == $submittal->qrCodeSheet ? 'selected' : '' }}>
+                                                        {{ $qrCodeSheet }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

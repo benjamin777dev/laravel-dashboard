@@ -103,6 +103,9 @@ class SubmittalController extends Controller
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
+        $broucherLines = config('variables.broucherLines');
+        $stickyDots = config('variables.stickyDots');
+        $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
         /*$tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
@@ -120,7 +123,7 @@ class SubmittalController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
-        return view('submittals.view', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard','submittalId'));
+        return view('submittals.view', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','featuresCard','broucherLines','stickyDots','submittalId'));
     }
 
     public function showSubmittalCreate(Request $request)
@@ -163,8 +166,11 @@ class SubmittalController extends Controller
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
+        $broucherLines = config('variables.broucherLines');
+        $stickyDots = config('variables.stickyDots');
+        $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','broucherLines','stickyDots','featuresCard'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)
