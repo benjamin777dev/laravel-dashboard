@@ -52,11 +52,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     processing: true,
     serverSide: true,
     responsive: true,
-    columnDefs: [
-        { responsivePriority: 1, targets: 0 },
-        { responsivePriority: 10001, targets: 4 },
-        { responsivePriority: 2, targets: -9 }
-    ],
+    columnDefs: [{ responsivePriority: 2, targets: -9 }],
     columns: [
         {
             className: "dt-control",
@@ -125,10 +121,20 @@ var table = $("#datatable_pipe_transaction").DataTable({
             },
         },
         {
-            data: "client_name_primary",
+            data: "primary_contact",
             title: "Client Name",
             render: function (data, type, row) {
-                return `<span>${data || "N/A"}</span>`;
+                console.log("Data", data);
+                let jsonString = data.replace(/&quot;/g, '"');
+
+                // Parse the string as JSON
+                data = JSON.parse(jsonString);
+                let name =
+                    (data[0] &&
+                        data[0].Primary_Contact &&
+                        data[0].Primary_Contact.name) ??
+                    "";
+                return `<span>${name || "N/A"}</span>`;
             },
         },
         {
@@ -540,7 +546,7 @@ var subbmittalPipelineTable = $("#submittal_table_pipeline").DataTable({
                 console.log(data, "shdfhsdhf");
                 return `<span class="editable" data-name="phone" data-id="${
                     row.id
-                }">${formateDate(data) || "N/A"}</span>`;
+                }">${data || "N/A"}</span>`;
             },
         },
         {
@@ -1838,7 +1844,7 @@ var tableContact = $("#datatable_contact").DataTable({
     columnDefs: [
         { responsivePriority: 1, targets: 0 },
         { responsivePriority: 10001, targets: 4 },
-        { responsivePriority: 2, targets: -7 }
+        { responsivePriority: 2, targets: -7 },
     ],
     order: [0, "desac"],
     columns: [

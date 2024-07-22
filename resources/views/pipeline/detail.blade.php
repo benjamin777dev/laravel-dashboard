@@ -339,7 +339,7 @@
         </form>
     </div>
 </div>
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-12 col-sm-6">
         <div class="card">
             <div class="card-body">
@@ -421,7 +421,7 @@
 
 
     </div>
-</div>
+</div> --}}
 {{-- contact roles --}}
 <div>
     <h2 class='pText pt-3'> Contact Role </h2>
