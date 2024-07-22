@@ -45,4 +45,29 @@ return [
         "PDF - White Feature Cards - I’ll print it myself",
         "PDF - Black Feature Cards - I'll print it myself",
     ],
+    'broucherLines'=>[
+        '-None-',
+        'No Brochure',
+        'A-Line - 2 Page Horizontal',
+        'A-Line - 2 Page Vertical',
+        'A-Line - 4 Page',
+        'A-Line - 8 Page - Delivery Only',
+        'B-Line - 2 Page',
+        'B-Line - 4 Page',
+        'B-Line - 8 Page - Delivery Only',
+        'C-Line - 2 Page',
+        'C-Line - 4 Page',
+    ],
+    'stickyDots'=>[
+        '-None-',
+        '1 Per Feature Card - $.75 each',
+        '2 Per Feature Card - $.75 each',
+        'No Dots'
+    ],
+    'qrCodeSheet'=>[
+        '-None-',
+        'Print 1 at Alamo - $1',
+        'Print 2 at Alamo - $2',
+        "PDF - I'll Print it Myself"
+    ]
 ];

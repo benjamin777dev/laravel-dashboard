@@ -90,7 +90,7 @@
                                     <select name="related_transaction" onchange="addFormSlide(this)" id="buyerPackage" class="nontm-select validate_err">
                                         <option value="">--None--</option>
                                         <option value="Standard" {{ $submittal['buyerPackage']=='Standard'? 'selected' : '' }}>Standard</option>
-                                        <option value="New Construction" {{ $submittal['buyerPackage']=='New Construction'? 'selected' : '' }}>New Contruction</option>
+                                        <option value="New Construction" {{ $submittal['buyerPackage']=='New Construction'? 'selected' : '' }}>New Construction</option>
                                      
                                     </select>
                                 </div>
@@ -144,13 +144,13 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="mailoutNeeded_yes" name="mailoutNeededyes" {{ $submittal['mailoutNeeded']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "Yes" {{ $submittal['mailoutNeeded']=='Yes'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="mailoutNeeded_no" name="mailoutNeededno" {{ $submittal['mailoutNeeded']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "No" {{ $submittal['mailoutNeeded']=='No'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_no">
                                                 No
                                             </label>
@@ -158,7 +158,7 @@
                                     </div>
                                 </div>
                                 <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="powerOfAttnyNeeded" class="common-label">Power of Attny Needed?
+                                    <label for="buyerPowerAttny" class="common-label">Power of Attny Needed?
                                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
@@ -170,13 +170,13 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="powerOfAttnyNeeded_yes" name="powerOfAttnyNeededyes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}>
+                                            <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="powerOfAttnyNeeded_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="powerOfAttnyNeeded_no" name="powerOfAttnyNeededno" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}>
+                                            <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}>
                                             <label class="form-check-label" for="powerOfAttnyNeeded_no">
                                                 No
                                             </label>
@@ -202,13 +202,13 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="buyerincludeInsight_yes" name="includeInsightsyes"{{ $submittal['includeInsights']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "Yes" {{ $submittal['includeInsights']=='Yes'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="buyerincludeInsight_no" name="includeInsightsno" {{ $submittal['includeInsights']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "No"{{ $submittal['includeInsights']=='No'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_no">
                                                 No
                                             </label>
@@ -216,7 +216,7 @@
                                     </div>
                                 </div>
                                 <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="powerOfAttnyNeeded" class="common-label">Referral to Pay
+                                    <label for="buyerRefrralPay" class="common-label">Referral to Pay
                                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
@@ -228,14 +228,14 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="powerOfAttnyNeeded_yes" name="powerOfAttnyNeededyes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="powerOfAttnyNeeded_yes">
+                                            <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "Yes" {{ $submittal['referralToPay'] == 'Yes' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="buyerRefrralPay_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="powerOfAttnyNeeded_no" name="powerOfAttnyNeededno" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="powerOfAttnyNeeded_no">
+                                            <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "No"{{ $submittal['referralToPay'] == 'No' ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="buyerRefrralPay_no">
                                                 No
                                             </label>
                                         </div>
@@ -261,14 +261,14 @@
                              <div class="row">
                                 <div class='col-lg-6 label-div-mb'>
                                             <label for="buyerFeesCharged" class="common-label">Fees Charged to Buyer at Closing</label>
-                                            <input type="text" placeholder="$" value="{{ $submittal['comingSoonDate'] }}"
-                                                class="form-control nontm-input" id="comingSoonDate">
+                                            <input type="text" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}"
+                                                class="form-control nontm-input">
                                 </div>
                                 <div class="col-lg-6 label-div-mb">
-                                        <label for="add_email" class="common-label">Amount to CHR Gives</label>
-                                        <input type="text" placeholder="$" class="form-control nontm-input" value="{{ $submittal['additionalEmail'] }}" id="additionalEmail"
-                                            class="form-control" placeholder="Enter email" id="add_email">
-                                        <div class="add_email_error text-danger" id="add_email_error">
+                                        <label for="buyerAmountChr" class="common-label">Amount to CHR Gives</label>
+                                        <input type="text" placeholder="$" class="form-control nontm-input" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr"
+                                            class="form-control" placeholder="Enter email" id="buyerAmountChr">
+                                        <div class="buyerAmountChr_error text-danger" id="buyerAmountChr_error">
                                         </div>
                                     
 
@@ -277,14 +277,14 @@
                         </div>
                         <div class="carousel-item">
                             <div class="additional_email label-div-mb">
-                                <label for="add_email" class="common-label">Referral Details</label>
-                                <input type="email" class="form-control" value="{{ $submittal['additionalEmail'] }}" id="additionalEmail"
-                                    class="form-control" placeholder="Enter Details" id="add_details">
+                                <label for="buyerRefrealDetails" class="common-label">Referral Details</label>
+                                <input type="email" class="form-control" value="{{ $submittal['referralDetails'] }}" id="buyerRefrealDetails"
+                                    class="form-control" placeholder="Enter Details">
                                 
                             </div>
                             <div class="additional_email label-div-mb">
-                                <label for="add_email" class="common-label">Other important Notes</label>
-                            <textarea class="form-control" id="miscNotes"  rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
+                                <label for="buyerOtherNotes" class="common-label">Other important Notes</label>
+                            <textarea class="form-control" id="buyerOtherNotes"  rows="4" cols="50">{{ $submittal['marketingNotes'] }}</textarea>
                                 
                             </div>
                         </div>
@@ -296,7 +296,12 @@
     </div> <!-- end col -->
 </div> <!-- end row -->
 <script>
+    $(document).ready(function(){
+        var buyerPackage = $('#buyerPackage');
+        addFormSlide(buyerPackage[0],true);
+    })
     function addFormSlide(e,state=true) {
+        console.log(e,state);
         var existingItem1 = document.querySelector('.carousel-item.item1');
         var existingButton1 = document.querySelector('[data-bs-slide-to="5"]');
         if(e.value !== "New Construction"){
@@ -333,7 +338,7 @@
                                                     <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
                                                 </g>
                                             </svg></label>
-                                            <input type="text" placeholder="Enter Details" value="{{$submittal['referralDetails']}}"
+                                            <input type="text" placeholder="Enter Details" value="{{$submittal['buyerBuilderrepresent']}}"
                                                 class="form-control nontm-input" id="buyerBuilderrepresent">
                                     
                                 </div>
@@ -396,7 +401,7 @@
                             </div>
                              <div class="row">
                                 <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="mailoutNeeded" class="common-label">Contract Fully Executed
+                                    <label for="contractExecuted" class="common-label">Contract Fully Executed
                                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
@@ -408,13 +413,13 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="contractExecuted_yes" name="mailoutNeededyes" {{ $submittal['contractExecuted']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="contractExecuted" name="contractExecuted" value="Yes" {{ $submittal['contractExecuted']=='Yes'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="contractExecuted_no" name="mailoutNeededno" {{ $submittal['contractExecuted']=='No'? 'checked' : '' }}>
+                                            <input type="radio" id="contractExecuted" name="contractExecuted" value="No" {{ $submittal['contractExecuted']=='No'? 'checked' : '' }}>
                                             <label class="form-check-label" for="mailoutNeeded_no">
                                                 No
                                             </label>
@@ -434,13 +439,13 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="buyerAgency_yes" name="buyerAgencyyes" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerAgency_yes" name="buyerAgency" value="Yes" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
                                             <label class="form-check-label" for="buyerAgency">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="buyerAgency_no" name="buyerAgencyno" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerAgency_no" name="buyerAgency" value="No" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
                                             <label class="form-check-label" for="buyerAgency">
                                                 No
                                             </label>
