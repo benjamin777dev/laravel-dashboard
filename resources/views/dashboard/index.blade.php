@@ -33,6 +33,7 @@
                         @component('components.button', [
                             'id' => 'create_contact',
                             'label' => 'New Contact',
+                            'type' =>'dashboard',
                             'icon' => 'fas fa-plus plusicon',
                         ])
                         @endcomponent
@@ -41,6 +42,7 @@
                         @component('components.button', [
                            'id' => 'create_transaction',
                             'label' => 'New Transaction',
+                            'type' =>'dashboard',
                             'icon' => 'fas fa-plus plusicon',
                         ])
                         @endcomponent

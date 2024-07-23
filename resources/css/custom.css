@@ -3,7 +3,6 @@
 body {
     font-family: Montserrat;
 }
-
 .bg-black {
     background-color: #000000 !important;
 }
@@ -2305,7 +2304,12 @@ body .vertical-collpsed span .logo-sm image {
     .nplabelText {
         text-align: start !important;
     }
+    .commonFlex{
+        display: block!important;
+    }
+   
 }
+
 
 @media (min-width: 320px) and (max-width: 475px) {
     .npNom-TMRoles {
@@ -3147,6 +3151,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
     .col-contact {
         flex: 1 !important;
+    }
+    .w-control button{
+        width: 100% !important;
     }
 }
 

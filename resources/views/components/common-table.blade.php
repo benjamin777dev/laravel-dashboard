@@ -16,7 +16,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100">
+                <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100 min-mobile-p">
                 </table>
 
             </div>
