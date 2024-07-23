@@ -52,7 +52,7 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $db = new DatabaseService();
-        $search = request()->query('search');
+        $search = request()->query('q');
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
