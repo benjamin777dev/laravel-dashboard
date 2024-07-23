@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Rules\ValidMobile;
 
 class ContactController extends Controller
 {
@@ -308,9 +309,10 @@ class ContactController extends Controller
         $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
         $allstages = config('variables.dealStages');
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        
         return view('contacts.detailForm', compact('contact', 'userContact','deals','allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
     }
 
@@ -510,10 +512,18 @@ class ContactController extends Controller
                 $rules['last_emailed'] = 'date';
             }
             if (isset($input['mobile']) && $input['mobile'] !== '') {
-                $rules['mobile'] = 'required|string|regex:/^[0-9]+$/';
+                $rules['mobile'] = ['required', 'string', new ValidMobile];
             }
+
             if (isset($input['phone']) && $input['phone'] !== '') {
-                $rules['phone'] = 'required|string|regex:/^[0-9]+$/';
+                $rules['phone'] = ['required', 'string', new ValidMobile];
+            }
+            $validator = Validator::make($input, $rules);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                                ->withErrors($validator)
+                                ->withInput();
             }
             if (isset($input['email']) && $input['email'] !== '') {
                 $rules['email'] = 'required|string|email';
@@ -934,6 +944,22 @@ class ContactController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.notes.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
+    }
+
+        public function createTasksForContact()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $contactId = request()->route('contactId');
+        $accessToken = $user->getAccessToken();
+        $type = "Contacts";
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
     }
 
     

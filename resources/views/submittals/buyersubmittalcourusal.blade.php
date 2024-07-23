@@ -55,14 +55,14 @@
                                 <div class="nontm-select-div">
                                     <select class="nontm-select" id="relatedTransactionShow" required disabled>
                                         @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
                                             {{$currDeal['deal_name']}}
                                         </option>
                                         @endforeach
                                     </select>
                                     <select class="form-select npinputinfo validate" id="relatedTransaction" required hidden>
                                         @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
                                             {{$currDeal['deal_name']}}
                                         </option>
                                         @endforeach
@@ -261,12 +261,12 @@
                              <div class="row">
                                 <div class='col-lg-6 label-div-mb'>
                                             <label for="buyerFeesCharged" class="common-label">Fees Charged to Buyer at Closing</label>
-                                            <input type="text" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}"
+                                            <input type="number" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}"
                                                 class="form-control nontm-input">
                                 </div>
                                 <div class="col-lg-6 label-div-mb">
                                         <label for="buyerAmountChr" class="common-label">Amount to CHR Gives</label>
-                                        <input type="text" placeholder="$" class="form-control nontm-input" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr"
+                                        <input type="number" placeholder="$" class="form-control nontm-input" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr"
                                             class="form-control" placeholder="Enter email" id="buyerAmountChr">
                                         <div class="buyerAmountChr_error text-danger" id="buyerAmountChr_error">
                                         </div>
@@ -445,7 +445,7 @@
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="buyerAgency_no" name="buyerAgency" value="No" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
+                                            <input type="radio" id="buyerAgency_no" name="buyerAgency" value="No" {{ $submittal['buyerAgency']=='No'? 'checked' : '' }}>
                                             <label class="form-check-label" for="buyerAgency">
                                                 No
                                             </label>

@@ -1,6 +1,6 @@
 <div class="row">
     <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
-        method="POST" onsubmit="return validateContactForm();">
+        method="POST" >
         @csrf
         @method('PUT')
         {{-- Contact Details --}}
@@ -298,7 +298,7 @@
             </div>
         </div>
         <div>
-            <button class="submit_button btn btn-primary" id="submit_button" type="submit">Create</button>
+            <button class="submit_button btn btn-primary" id="submit_button" type="button" onclick="return validateContactForm();">Create</button>
         </div>
     </form>
 </div>
@@ -473,12 +473,14 @@
         });
     });
     function validateContactForm() {
+        event.preventDefault();
         let last_name = $("#last_name").val();
         if (last_name.trim() === "") {
             showToastError('Please enter last name');
             return false;
         }
         $('#contactOwner').removeAttr('disabled');
+        $('#submit_button').submit();
         return true;
     }
 

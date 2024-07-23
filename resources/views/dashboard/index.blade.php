@@ -599,7 +599,7 @@
         // Check if textarea value is empty
         if (textareaValue === '') {
             // Show error message or perform validation logic
-            document.getElementById("task_error").innerHTML = "please enter details";
+            document.getElementById("task_error").innerHTML = "please enter subject";
         } else {
             document.getElementById("task_error").innerHTML = "";
         }
@@ -608,7 +608,7 @@
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
-            document.getElementById("task_error").innerHTML = "please enter details";
+            document.getElementById("task_error").innerHTML = "please enter subject";
             return;
         }
         var seModule = document.getElementsByName("related_to_task")[0].value;
@@ -681,6 +681,25 @@
 
         return formattedDateTime;
     }
+
+    window.saveForm=function() {
+        return new Promise((complete, failed) => {
+            $('#confirmMessage').text('Are you sure you want to do this?');
+
+            $('#confirmYes').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(true);
+            });
+
+            $('#confirmNo').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                complete(false);
+            });
+
+            $('#confirmModal').modal('show');
+        });
+    }
+
 
     function createContact() {
         document.getElementById("loaderOverlay").style.display = "block";

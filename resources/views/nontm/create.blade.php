@@ -30,7 +30,7 @@
                         <div class="corausal-req-mb48">
                             <h4 class="card-title corausal-req-text">Non-TM Check Request Information</h4>
                         </div>
-                        <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                        <div id="carouselExampleDark" class="carousel carousel-dark slide"  data-interval="false" data-bs-ride="carousel">
                             <div class="row carousel-indicators text-center">
                                 <div class="col-md-4 ">
                                     <div class="prev_btn">
@@ -73,15 +73,15 @@
                                                     </g>
                                                 </svg></label>
                                             <div class="nontm-select-div">
-                                                <select name="related_transaction" id="related_transaction" class="nontm-select">
-                                                    @foreach ($deals as $deal)
+                                                <select name="related_transaction" id="related_transaction" class="nontm-select validate_err" disabled>
+                                                     @foreach ($deals as $deal)
                                                         <option value="{{ $deal->zoho_deal_id }}"
                                                             {{ $deal->zoho_deal_id == $dealData->dealId ? 'selected' : '' }}>
                                                             {{ $deal->deal_name }}
                                                         </option>
                                                     @endforeach
                                                 </select>
-                
+
                                                 <img src="{{ URL::asset('/images/domain_add.svg') }}" alt="">
                                             </div>
                                             <div id="related_transaction_error" class="text-danger">
@@ -378,7 +378,6 @@
             $(".main-carousel .carousel-control-next").trigger("click");
         });
 
-        $('.nontm-select').select2();
 
         let related_transaction = document.getElementById("related_transaction");
         let add_email = document.getElementById("add_email");
@@ -386,12 +385,7 @@
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
         let amount_chr = document.getElementById("amount_chr");
-        related_transaction.addEventListener("keyup", validateNonTm);
-        add_email.addEventListener("keyup",validateNonTm);
-        close_date.addEventListener("change", validateNonTm);
-        commission.addEventListener("keyup", validateNonTm);
-        final_purchase.addEventListener("keyup", validateNonTm);
-        amount_chr.addEventListener("keyup", validateNonTm);
+        
 
 
         // Select all radio buttons

@@ -4,7 +4,13 @@
             <div class="card-body p-0">
                 <h4 class="card-title p-3" id="title-corousal">CHR TM -Basic Information</h4>
                 <div id="carouselExampleIndicators" class="carousel slide" data-interval="false">
-                    <div class="carousel-indicators justify-content-center">
+                    <div class="carousel-indicators justify-content-between text-nowrap">
+                          <div class="prev_btn" href="#carouselExampleIndicators" role="button"
+                            data-bs-slide="prev">
+                                <a href="#"><<span class="prev">
+                                        Previous</span></a>
+                        </div>
+                        <div class="bullets">
                         <button type="button"
                             onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Basic Information'"
                             data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
@@ -34,7 +40,12 @@
                             onclick="document.getElementById('title-corousal').innerHTML='CHR TM - Select MLS'"
                             data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6"
                             aria-label="Slide 7"></button>
-
+                            </div>
+                        <div class="next_btn" href="#carouselExampleIndicators" role="button"
+                            data-bs-slide="next">
+                                <a href="#"><span class="next">Next </span>></a>
+                            </div>
+                            
                     </div>
                     <div class="carousel-inner" role="listbox">
                         <div class="carousel-item active">
@@ -53,10 +64,10 @@
                                         </g>
                                     </svg></label>
                                 <div class="nontm-select-div">
-                                    <select name="related_transaction" id="transactionName" class="nontm-select validate_err">
+                                    <select name="related_transaction" id="transactionName" class="nontm-select validate_err" disabled>
                                         @foreach ($deals as $currDeal)
                                             <option value="{{ $currDeal }}"
-                                                {{ $currDeal['deal_name'] == $submittal['dealData']['deal_name'] ? 'selected' : '' }}>
+                                                {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
                                                 {{ $currDeal['deal_name'] }}
                                             </option>
                                         @endforeach
@@ -110,14 +121,14 @@
                                 <div class="mb-3">
                                     <input type="radio"  id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'selected' : '' }}
                                         name="commingSoon">
-                                    <label class="form-check-label"  for="commingSoon_yes">
+                                    <label class=""  for="commingSoon_yes">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
                                     <input type="radio" id="commingSoon_no" {{ $submittal['commingSoon'] == 'No' ? 'selected' : '' }}
                                         name="commingSoon">
-                                    <label class="form-check-label" for="commingSoon_no">
+                                    <label class="" for="commingSoon_no">
                                         No
                                     </label>
                                 </div>
@@ -192,7 +203,7 @@
                                             <input type="radio" id="agreementExecuted_yes"
                                                 {{ $submittal['agreementExecuted'] == 'Yes' ? 'selected' : '' }}
                                                 name="agreementExecuted">
-                                            <label class="form-check-label" for="agreementExecuted_yes">
+                                            <label class="" for="agreementExecuted_yes">
                                                 Yes
                                             </label>
                                         </div>
@@ -200,7 +211,7 @@
                                             <input type="radio" id="agreementExecuted_no"
                                                 {{ $submittal['agreementExecuted'] == 'No' ? 'selected' : '' }}
                                                 name="agreementExecuted">
-                                            <label class="form-check-label" for="agreementExecuted_no">
+                                            <label class="" for="agreementExecuted_no">
                                                 No
                                             </label>
                                         </div>
@@ -222,7 +233,7 @@
                                             </g>
                                         </svg>
                                     </label>
-                                    <input type="text" value="{{ $submittal['price'] }}" placeholder="$"
+                                    <input type="number" value="{{ $submittal['price'] }}" placeholder="$"
                                         class="form-control nontm-input validate_err" id="price">
                                     <div id="final_purchase_error" class="text-danger">
 
@@ -281,7 +292,7 @@
                                     <input onclick="addFormSlide(true)" id="usingCHR_yes"
                                         {{ $submittal['usingCHR'] == 'Yes' ? 'selected' : '' }} type="radio"
                                         name="usingCHR">
-                                    <label class="form-check-label" id="chkNo" for="formCheck1">
+                                    <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
@@ -289,7 +300,7 @@
                                     <input onclick="addFormSlide(false)" id="usingCHR_no"
                                         {{ $submittal['usingCHR'] == 'No' ? 'selected' : '' }} type="radio"
                                         name="usingCHR">
-                                    <label class="form-check-label" for="formCheck1">
+                                    <label class="" for="formCheck1">
                                         No
                                     </label>
                                 </div>
@@ -323,7 +334,7 @@
                             <div class="row">
                                 <div class='pb-4 col-lg-6 label-div-mb'>
                                     <label for="amountToCHR" class="common-label">Amount to CHR Gives</label>
-                                    <input name="amountToCHR" placeholder = "$"
+                                    <input type="number"name="amountToCHR" placeholder = "$"
                                         value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
                                         class="form-control validate_err">
                                     </input>
@@ -364,15 +375,15 @@
                                                 <input type="radio" id="scheduleSignInstall_yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <label class="" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
                                                 <input type="radio" id="scheduleSignInstall_no"
                                                     {{ $submittal['scheduleSignInstall'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" for="formCheck1">
+                                                    name="scheduleSignInstall">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -402,15 +413,15 @@
                                                 <input type="radio" id="draftShowingInstructions_yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <label class="" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
                                                 <input type="radio" id="draftShowingInstructions_no"
                                                     {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" for="formCheck1">
+                                                    name="draftShowingInstructions">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -427,16 +438,16 @@
                                             <div class="mb-3"> 
                                                 <input type="radio" id="conciergeListing_yes"
                                                     {{ $submittal['conciergeListing'] == 'Yes' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                    name="conciergeListing">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
                                                 <input type="radio" id="conciergeListing_no"
                                                     {{ $submittal['conciergeListing'] == 'No' ? 'checked' : '' }}
-                                                    name="radio">
-                                                <label class="form-check-label" for="formCheck1">
+                                                    name="conciergeListing">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -549,8 +560,10 @@
     $(document).ready(function(){
         let usingChrValue = $('input[name="usingCHR"]:checked').val();
         console.log(usingChrValue);
-        if(usingChrValue){
+        if(usingChrValue&&usingChrValue =="Yes"){
             addFormSlide(true)
+        }else if(usingChrValue&&usingChrValue =="No"){
+            addFormSlide(false)
         }
         let showPromotionValue = $('input[name="showPromotion"]:checked').val();
         console.log("showPromotionValue",showPromotionValue);
@@ -731,14 +744,14 @@
                                <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="needOE_yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" name="needO&E">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" value="No" name="needO&E">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -762,14 +775,14 @@
                              <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="hasHOA_yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="hasHOA_no" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -796,14 +809,14 @@
                               <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="includeInsights_yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="includeInsights_yes" value="Yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input id="includeInsights_no" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input id="includeInsights_no" value="No" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -827,20 +840,20 @@
                                <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
-                                            <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_no" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                <label class="form-check-label" for="formCheck1">
+                                            <div class="mb-3"> 
+                                                <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
                                              <div class="mb-3">
-                                                <input type="radio" id="titleToOrderHOA_tbd" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <label class="" for="formCheck1">
                                                     TBD
                                                 </label>
                                             </div>
@@ -867,14 +880,14 @@
                              <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="mailoutNeeded_yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="mailoutNeeded_yes" value="Yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="mailoutNeeded_no" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input type="radio" id="mailoutNeeded_no" value="No" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -898,14 +911,14 @@
                               <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="powerOfAttnyNeeded_yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="powerOfAttnyNeeded">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="powerOfAttnyNeeded">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="powerOfAttnyNeeded_no" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="powerOfAttnyNeeded">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="powerOfAttnyNeeded">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -947,19 +960,18 @@
                                <div class="gap-2 col-lg-6 label-div-mb">
                             <label for="hoaName" class="common-label">Are you ready to continue to Property Promotion?</label>
                                <div class="row">
-                                        <div class="d-flex gap-2">
-                                            <div class="mb-3">
-                                                <input type="radio" onclick="propertyParmotion(false)" name="hoaName">
-                                                <label class="form-check-label"  for="formCheck1">
-                                                    Yes
-                                                </label>
-                                            </div>
-                                            <div class="mb-3">
-                                                <input type="radio" onclick="propertyParmotion(true)" name="hoaName" checked>
-                                                <label class="form-check-label" for="formCheck1">
-                                                    No
-                                                </label>
-                                            </div>
+                                    <div class="d-flex gap-2">
+                                        <div class="mb-3">
+                                            <input onclick="propertyParmotion(false)" value=1 {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }} type="radio"  name="showPromotion">
+                                            <label class=""  for="formCheck1">
+                                                Yes
+                                            </label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input onclick="propertyParmotion(true)" value=0 {{ $submittal['showPromotion'] == 0 ? 'checked' : '' }} type="radio" name="showPromotion">
+                                            <label class="" for="formCheck1">
+                                                No
+                                            </label>
                                         </div>
                                     </div>
                         </div>
@@ -1009,7 +1021,7 @@
             }
         })
 
-        var carouselIndicators = document.querySelector('.carousel-indicators');
+        var carouselIndicators = document.querySelector('.carousel-indicators .bullets');
         carouselIndicators.appendChild(button1);
         carouselIndicators.appendChild(button2);
     }
@@ -1031,7 +1043,7 @@
                                 <div class='col-lg-6 label-div-mb'>
                                     <label for="feesCharged" class="common-label">Fees Charged to Seller at
                                         Closing</label>
-                                    <input type="text" name="feesCharged" value="{{ $submittal['feesCharged'] }}"
+                                    <input type="number" name="feesCharged" value="{{ $submittal['feesCharged'] }}"
                                         id="feesCharged" class="form-control " placeholder="$">
                                     </input>
                                 </div>
@@ -1094,7 +1106,7 @@
                                                 <input type="radio" id="scheduleSignInstall_yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -1102,7 +1114,7 @@
                                                 <input type="radio" id="scheduleSignInstall_no"
                                                     {{ $submittal['scheduleSignInstall'] == 'No' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -1132,7 +1144,7 @@
                                                 <input type="radio" id="draftShowingInstructions_yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -1140,7 +1152,7 @@
                                                 <input type="radio" id="draftShowingInstructions_no"
                                                     {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -1158,7 +1170,7 @@
                                                 <input type="radio" id="conciergeListing_yes"
                                                     {{ $submittal['conciergeListing'] == 'Yes' ? 'checked' : '' }}
                                                     name="conciergeListing">
-                                                <label class="form-check-label" id="chkNo" for="formCheck1">
+                                                <label class="" id="chkNo" for="formCheck1">
                                                     Yes
                                                 </label>
                                             </div>
@@ -1166,7 +1178,7 @@
                                                 <input type="radio" id="conciergeListing_no"
                                                     {{ $submittal['conciergeListing'] == 'No' ? 'checked' : '' }}
                                                     name="conciergeListing">
-                                                <label class="form-check-label" for="formCheck1">
+                                                <label class="" for="formCheck1">
                                                     No
                                                 </label>
                                             </div>
@@ -1336,7 +1348,7 @@
             }
         })
 
-        var carouselIndicators = document.querySelector('.carousel-indicators');
+        var carouselIndicators = document.querySelector('.carousel-indicators .bullets');
         carouselIndicators.appendChild(button1);
         carouselIndicators.appendChild(button2);
         carouselIndicators.appendChild(button3);
@@ -1802,7 +1814,7 @@
             }
         })
 
-        var carouselIndicators = document.querySelector('.carousel-indicators');
+        var carouselIndicators = document.querySelector('.carousel-indicators .bullets');
         carouselIndicators.appendChild(button1);
         carouselIndicators.appendChild(button2);
         carouselIndicators.appendChild(button3);
@@ -1811,6 +1823,10 @@
         carouselIndicators.appendChild(button6);
         carouselIndicators.appendChild(button7);
         carouselIndicators.appendChild(button8);
+    }
+
+    function removeCHRItems(){
+
     }
 
     function propertyParmotion(input) {
