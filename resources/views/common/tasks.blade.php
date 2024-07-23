@@ -555,7 +555,7 @@
         });
     };
 
-    const saveForm = async () => {
+    window.saveForm = async () => {
         console.log(ui);
         const confirm = await ui.confirm('Are you sure you want to do this?');
 

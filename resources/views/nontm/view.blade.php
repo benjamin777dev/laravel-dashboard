@@ -358,12 +358,7 @@
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
         let amount_chr = document.getElementById("amount_chr");
-        related_transaction.addEventListener("keyup", validateNonTm);
-        add_email.addEventListener("keyup",validateNonTm);
-        close_date.addEventListener("change", validateNonTm);
-        commission.addEventListener("keyup", validateNonTm);
-        final_purchase.addEventListener("keyup", validateNonTm);
-        amount_chr.addEventListener("keyup", validateNonTm);
+       
 
         // Select all radio buttons
         const radioButtons = document.querySelectorAll('input[type="radio"]');

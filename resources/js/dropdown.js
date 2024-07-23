@@ -363,24 +363,24 @@ window.resetValidationTask = function (id) {
 
 window.validateTextareaTask = function (id) {
     if (id) {
-        var textarea = document.getElementById("darea" + id);
+        var textarea = document.getElementById("sarea" + id);
         var textareaValue = textarea.value.trim();
         // Check if textarea value is empty
         if (textareaValue === "") {
             // Show error message or perform validation logic
             document.getElementById("subject_error" + id).innerHTML =
-                "Please enter details";
+                "Please enter subject";
         } else {
             document.getElementById("subject_error" + id).innerHTML = "";
         }
     } else {
-        var textarea = document.getElementById("darea");
+        var textarea = document.getElementById("sarea");
         var textareaValue = textarea.value.trim();
         // Check if textarea value is empty
         if (textareaValue === "") {
             // Show error message or perform validation logic
             document.getElementById("subject_error").innerHTML =
-                "Please enter details";
+                "Please enter subject";
         } else {
             document.getElementById("subject_error").innerHTML = "";
         }
@@ -397,7 +397,7 @@ window.addCommonTask = function (id = "", type = "") {
         type = window.groupLabel;
         selectionId = window.relatedTo;
     }
-
+    var resetId;
     if (id) {
         var subject = document.getElementsByName("subject")[0].value;
         var detail = document.getElementsByName("detail")[0].value;
@@ -459,6 +459,7 @@ window.addCommonTask = function (id = "", type = "") {
                 ],
             };
         }
+        resetId = id;
     } else {
         var subject = document.getElementsByName("subject")[0].value;
         var detail = document.getElementsByName("detail")[0].value;
@@ -517,6 +518,7 @@ window.addCommonTask = function (id = "", type = "") {
                 ],
             };
         }
+        resetId = null;
     }
 
     formData.data[0] = Object.fromEntries(
@@ -543,7 +545,9 @@ window.addCommonTask = function (id = "", type = "") {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                resetTaskForm(resetId);
                 document.getElementById("closing_btnnnnn").click();
+
                 $("#datatable_tasks1").DataTable().ajax.reload();
                 $("#datatable_tasks")?.DataTable().ajax.reload();
                 formData = "";
@@ -556,8 +560,30 @@ window.addCommonTask = function (id = "", type = "") {
             // Handle error response
             console.log(xhr);
             showToastError(error);
+            resetTaskForm(resetId);
             $("#datatable_tasks").DataTable().ajax.reload();
             $("#datatable_tasks1").DataTable().ajax.reload();
         },
     });
+};
+
+window.resetTaskForm = function (id = null) {
+    console.log("ResetForm", id);
+    if (id) {
+        const modalId = "#newTaskModalId" + id;
+        document.getElementById("sarea" + id).value = "";
+        document.getElementById("darea" + id).value = "";
+
+        document.querySelector('input[name="due_date"]').value = "";
+        document.getElementById("subject_error" + id).innerHTML = "";
+        document.getElementById("detail_error" + id).innerHTML = "";
+    } else {
+        const modalId = "#newTaskModalId";
+        document.getElementById("sarea").value = "";
+        document.getElementById("darea").value = "";
+
+        document.querySelector('input[name="due_date"]').value = "";
+        document.getElementById("subject_error").innerHTML = "";
+        document.getElementById("detail_error").innerHTML = "";
+    }
 };

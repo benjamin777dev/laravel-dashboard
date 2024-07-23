@@ -216,10 +216,10 @@ class PipelineController extends Controller
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         
         
-        
-        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals'))->render();
+        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
 
 
     }
@@ -244,9 +244,10 @@ class PipelineController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId','submittals'))->render();
+        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId','submittals','nontms'))->render();
 
     }
 
@@ -636,6 +637,23 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.notes.create', compact("retrieveModuleData","deal","type"))->render();
+    }
+
+    public function createTasksForDeal()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $dealId = request()->route('dealId');
+        $accessToken = $user->getAccessToken();
+        $type = "Deals";
+        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        return view('common.tasks.create', compact("retrieveModuleData","deal","type"))->render();
     }
 
 

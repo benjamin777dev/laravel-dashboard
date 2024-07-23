@@ -77,12 +77,11 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     <span class="tooltiptext"></span>
                 </a>
                 <img src="/images/splitscreen.svg" alt="Split screen icon"
-                     class="ppiplinecommonIcon" data-bs-toggle="modal"
-                     data-bs-target="#newTaskModalId${
-                         data.id
-                     }" title="Add Task">
+                class="ppiplinecommonIcon"  title="Add Task" onclick="createTasksForDeal('${
+                    data.id
+                }','${data.zoho_deal_id}')">
                 <span class="tooltiptext"></span>
-                ${generateModalHtml(data)}
+                <div class="createTaskModal${data.id}"></div>
                 <img src="/images/sticky_note.svg" alt="Sticky note icon"
                      class="ppiplinecommonIcon" title="Notes" data-bs-toggle="modal" data-bs-target="#"
                      onclick="fetchNotesForContact('${data.id}','${
@@ -125,15 +124,19 @@ var table = $("#datatable_pipe_transaction").DataTable({
             title: "Client Name",
             render: function (data, type, row) {
                 console.log("Data", data);
-                let jsonString = data.replace(/&quot;/g, '"');
+                let jsonString, name;
+                if (data) {
+                    jsonString = data?.replace(/&quot;/g, '"');
 
-                // Parse the string as JSON
-                data = JSON.parse(jsonString);
-                let name =
-                    (data[0] &&
-                        data[0].Primary_Contact &&
-                        data[0].Primary_Contact.name) ??
-                    "";
+                    // Parse the string as JSON
+                    data = JSON.parse(jsonString);
+                    name =
+                        (data[0] &&
+                            data[0].Primary_Contact &&
+                            data[0].Primary_Contact.name) ??
+                        "";
+                }
+
                 return `<span>${name || "N/A"}</span>`;
             },
         },
@@ -1609,7 +1612,7 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
         id = undefined;
     }
 
-    if (updateids !== "") {
+    if (updateids.length !== 0) {
         const shouldDelete = await saveForm();
         if (!shouldDelete) {
             return;
@@ -1662,6 +1665,28 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
             },
         });
     }
+};
+
+window.saveForm = function () {
+    return new Promise((complete, failed) => {
+        $("#confirmMessage").text("Are you sure you want to do this?");
+
+        $("#confirmYes")
+            .off("click")
+            .on("click", () => {
+                $("#confirmModal").modal("hide");
+                complete(true);
+            });
+
+        $("#confirmNo")
+            .off("click")
+            .on("click", () => {
+                $("#confirmModal").modal("hide");
+                complete(false);
+            });
+
+        $("#confirmModal").modal("show");
+    });
 };
 
 window.updateSelectedRowIds = function () {
@@ -1865,12 +1890,11 @@ var tableContact = $("#datatable_contact").DataTable({
                         <span class="tooltiptext"></span>
                     </a>
                     <img src="/images/splitscreen.svg" alt="Split screen icon"
-                            class="ppiplinecommonIcon" data-bs-toggle="modal"
-                            data-bs-target="#newTaskModalId${
+                            class="ppiplinecommonIcon"  title="Add Task" onclick="createTaskForContact('${
                                 data.id
-                            }" title="Add Task">
-                        <span class="tooltiptext"></span>
-                        ${generateModalHtml(data)}
+                            }')">
+                            <span class="tooltiptext"></span>
+                            <div class="createTaskModal"></div>
                     <img src="/images/sticky_note.svg" alt="Sticky note icon"
                             class="ppiplinecommonIcon" data-bs-toggle="modal" data-bs-target="#" title="Notes"
                             onclick="fetchNotesForContact('${data.id}','${
@@ -1884,7 +1908,6 @@ var tableContact = $("#datatable_contact").DataTable({
                             data-bs-target="#staticBackdropforNote_${data.id}">
                         <span class="tooltiptext"></span>
                         <div class="createNoteModal"></div>
-                        </div>
                         `;
             },
         },
@@ -2212,6 +2235,35 @@ window.createNotesForContact = function (id, conId) {
     });
 };
 
+window.createTaskForContact = function (id, conId) {
+    console.log("heyyy+++++");
+    event.preventDefault();
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "/task-create/" + id,
+        method: "GET",
+        success: function (response) {
+            // $('#notesContainer').append('<p>New Note Content</p>');
+            let taskContainer = $(".createTaskModal");
+            console.log(response, "taskContainer");
+            // Clear previous contents of note containe
+            taskContainer.empty();
+            const card = taskContainer.html(response);
+            // // Show the modal after appending notes
+            $("#newTaskModalId" + id).modal("show");
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+
 window.fetchNotesForContact = function (id, conId, type) {
     event.preventDefault();
     $.ajaxSetup({
@@ -2273,6 +2325,34 @@ window.createNotesForDeal = function (id, conId) {
             const card = noteContainer.html(response);
             // // Show the modal after appending notes
             $("#staticBackdropforNote_" + id).modal("show");
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+
+window.createTasksForDeal = function (id, conId) {
+    event.preventDefault();
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "/task-create-pipe/" + id,
+        method: "GET",
+        success: function (response) {
+            // $('#notesContainer').append('<p>New Note Content</p>');
+            let noteContainer = $(".createTaskModal" + id);
+            console.log(response, "noteContainer");
+            // Clear previous contents of note containe
+            noteContainer.empty();
+            const card = noteContainer.html(response);
+            // // Show the modal after appending notes
+            $("#newTaskModalId" + id).modal("show");
         },
         error: function (xhr, status, error) {
             // Handle error

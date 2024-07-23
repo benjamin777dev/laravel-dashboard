@@ -315,7 +315,7 @@
         // Check if textarea value is empty
         if (textareaValue === '') {
             // Show error message or perform validation logic
-            document.getElementById("subject_error").innerHTML = "please enter details";
+            document.getElementById("subject_error").innerHTML = "please enter subject";
         } else {
             document.getElementById("subject_error").innerHTML = "";
         }
