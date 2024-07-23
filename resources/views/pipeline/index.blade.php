@@ -11,14 +11,12 @@
         <div class="dbgroupsFlex">
             <p class="ngText text-center">Pipeline</p>
             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                <div>
-                    @component('components.button', [
-                        'label' => 'New Transaction',
-                        'icon' => 'fas fa-plus plusicon',
-                        'id'=> "create_transaction"
-                    ])
-                    @endcomponent
-                </div>
+                <div class="input-group-text text-white justify-content-center pTransactionBtn"
+                data-bs-toggle="modal" data-bs-target="#transaction" id="create_transaction">
+                <i class="fas fa-plus plusicon">
+                </i>
+                New Transaction
+            </div>
                 <div class="input-group-text text-white justify-content-center pTransactionBtn"
                     data-bs-toggle="modal" data-bs-target="#chooseTransactionModal">
                     <i class="fas fa-plus plusicon">
@@ -85,14 +83,14 @@
             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
             --}}
             </div>
-            <div>
+            <div class="w-control">
                  @component('components.button', [
                     'label' => 'Filter',
                     'icon' => 'fas fa-filter'
                 ])
                 @endcomponent
             </div>
-            <div>
+            <div class="w-control">
                    @component('components.button', [
                     'label' => 'Reset All',
                     'icon' => 'fas fa-sync'

@@ -119,14 +119,14 @@
                             </label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio"  id="commingSoon_yes" value = "Yes" {{ $submittal['commingSoon'] == 'Yes' ? 'checked' : '' }}
+                                    <input type="radio"  id="commingSoon_yes" {{ $submittal['commingSoon'] == 'Yes' ? 'selected' : '' }}
                                         name="commingSoon">
                                     <label class=""  for="commingSoon_yes">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input type="radio" id="commingSoon_no" value = "No" {{ $submittal['commingSoon'] == 'No' ? 'checked' : '' }}
+                                    <input type="radio" id="commingSoon_no" {{ $submittal['commingSoon'] == 'No' ? 'selected' : '' }}
                                         name="commingSoon">
                                     <label class="" for="commingSoon_no">
                                         No
@@ -200,16 +200,16 @@
                                     </label>
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
-                                            <input type="radio" id="agreementExecuted_yes" value="Yes"
-                                                {{ $submittal['agreementExecuted'] == 'Yes' ? 'checked' : '' }}
+                                            <input type="radio" id="agreementExecuted_yes"
+                                                {{ $submittal['agreementExecuted'] == 'Yes' ? 'selected' : '' }}
                                                 name="agreementExecuted">
                                             <label class="" for="agreementExecuted_yes">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="mb-3">
-                                            <input type="radio" id="agreementExecuted_no" value="No"
-                                                {{ $submittal['agreementExecuted'] == 'No' ? 'checked' : '' }}
+                                            <input type="radio" id="agreementExecuted_no"
+                                                {{ $submittal['agreementExecuted'] == 'No' ? 'selected' : '' }}
                                                 name="agreementExecuted">
                                             <label class="" for="agreementExecuted_no">
                                                 No
@@ -289,16 +289,16 @@
                             </label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input onclick="addFormSlide(true)" id="usingCHR_yes" value="Yes"
-                                        {{ $submittal['usingCHR'] == 'Yes' ? 'checked' : '' }} type="radio"
+                                    <input onclick="addFormSlide(true)" id="usingCHR_yes"
+                                        {{ $submittal['usingCHR'] == 'Yes' ? 'selected' : '' }} type="radio"
                                         name="usingCHR">
                                     <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input onclick="addFormSlide(false)" id="usingCHR_no" value="No"
-                                        {{ $submittal['usingCHR'] == 'No' ? 'checked' : '' }} type="radio"
+                                    <input onclick="addFormSlide(false)" id="usingCHR_no"
+                                        {{ $submittal['usingCHR'] == 'No' ? 'selected' : '' }} type="radio"
                                         name="usingCHR">
                                     <label class="" for="formCheck1">
                                         No
@@ -320,12 +320,12 @@
                                         <label for="additonal_fee" class="common-label">Referral to Pay</label>
                                         <select name="additional_charge" id="additonal_fee"
                                             class="form-select validate_err" id="">
-                                            <option value="" checked>None</option>
+                                            <option value="" selected>None</option>
                                             <option value="Yes"
-                                                {{ $submittal['referralToPay'] == 'Yes' ? 'checked' : '' }}>Yes
+                                                {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
                                             </option>
                                             <option value="No"
-                                                {{ $submittal['referralToPay'] == 'No' ? 'checked' : '' }}>No</option>
+                                                {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No</option>
                                         </select>
                                     </div>
 
@@ -372,7 +372,7 @@
                                     <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="scheduleSignInstall_yes" value="Yes"
+                                                <input type="radio" id="scheduleSignInstall_yes"
                                                     {{ $submittal['scheduleSignInstall'] == 'Yes' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
                                                 <label class="" for="formCheck1">
@@ -380,7 +380,7 @@
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="scheduleSignInstall_no" value="No"
+                                                <input type="radio" id="scheduleSignInstall_no"
                                                     {{ $submittal['scheduleSignInstall'] == 'No' ? 'checked' : '' }}
                                                     name="scheduleSignInstall">
                                                 <label class="" for="formCheck1">
@@ -410,7 +410,7 @@
                                     <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="draftShowingInstructions_yes" value="Yes"
+                                                <input type="radio" id="draftShowingInstructions_yes"
                                                     {{ $submittal['draftShowingInstructions'] == 'Yes' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
                                                 <label class="" for="formCheck1">
@@ -418,7 +418,7 @@
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="draftShowingInstructions_no" value="No"
+                                                <input type="radio" id="draftShowingInstructions_no"
                                                     {{ $submittal['draftShowingInstructions'] == 'No' ? 'checked' : '' }}
                                                     name="draftShowingInstructions">
                                                 <label class="" for="formCheck1">
@@ -436,7 +436,7 @@
                                     <div class="row">
                                         <div class="d-flex gap-2">
                                             <div class="mb-3"> 
-                                                <input type="radio" id="conciergeListing_yes" value="Yes"
+                                                <input type="radio" id="conciergeListing_yes"
                                                     {{ $submittal['conciergeListing'] == 'Yes' ? 'checked' : '' }}
                                                     name="conciergeListing">
                                                 <label class="" id="chkNo" for="formCheck1">
@@ -444,7 +444,7 @@
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="conciergeListing_no" value="No"
+                                                <input type="radio" id="conciergeListing_no"
                                                     {{ $submittal['conciergeListing'] == 'No' ? 'checked' : '' }}
                                                     name="conciergeListing">
                                                 <label class="" for="formCheck1">
@@ -932,14 +932,14 @@
                                 <div class='col-lg-6'>
                                     <label for="hoaName" class="common-label">HOA Name</label>
                                     <input type="text" name="additional_charge" id="hoaName" value="{{ $submittal['hoaName'] }}"
-                                        class="form-control ">
+                                        class="form-control second-step-common-select select-mb24">
                                     </input>
                                 </div>
                                 <div class="col-lg-6 commission-nontm">
                                     <div class='pb-4'>
                                         <label for="hoaPhone" class="common-label">HOA Phone</label>
                                         <input type="text" name="additional_charge" value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
-                                        class="form-control ">
+                                        class="form-control second-step-common-select select-mb24">
                                     </input>
                                     </div>
 
@@ -958,7 +958,7 @@
                                 </div>
                             </div>
                                <div class="gap-2 col-lg-6 label-div-mb">
-                            <label for="showPromotion" class="common-label">Are you ready to continue to Property Promotion?</label>
+                            <label for="hoaName" class="common-label">Are you ready to continue to Property Promotion?</label>
                                <div class="row">
                                     <div class="d-flex gap-2">
                                         <div class="mb-3">
@@ -974,10 +974,9 @@
                                             </label>
                                         </div>
                                     </div>
-                                </div>
                         </div>
                         <div class="text-end" id="saveSubmit">
-                    <button type="button" onclick="validateSubmittal(true)"
+                    <button type="button" onclick="validateSubmittal()"
                         class="btn btn-white fw-bold">Save & Submit</button>
                     </div>
             </div>  
@@ -1391,153 +1390,132 @@
         carouselItem8.className = 'carousel-item item10';
 
         var innrtHtml = `<div class="row">
-                                <div class="gap-2 col-lg-6">
-                                    <div class="d-flex gap-2">
-                                        <label for="add_email" class="common-label">Matterport</label>
-                                        <div class="form-check mb-3">
-                                            <input type="checkbox" id="matterport" <?php if ($submittal['matterport']) {
-                                                echo 'checked';
-                                            } ?>>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <div class="d-flex gap-2">
-                                        <label for="add_email" class="common-label">Floor Plans</label>
-                                        <div class="form-check mb-3">
-                                            <input type="checkbox" id="floorPlans" <?php if ($submittal['floorPlans']) {
-                                                echo 'checked';
-                                            } ?>>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="gap-2 col-lg-6">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Matterport</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck1">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Floor Plans</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck3">
 
-                            <div class="row">
-                                <div class="gap-2 col-lg-6">
-                                    <div class="d-flex gap-2">
-                                        <label for="add_email" class="common-label">3D Zillow Tour</label>
-                                        <div class="form-check mb-3">
-                                            <input type="checkbox" id="threeDZillowTour" <?php if ($submittal['threeDZillowTour']) {
-                                                echo 'checked';
-                                            } ?>>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <div class="d-flex gap-2">
-                                        <label for="add_email" class="common-label">Onsite Video</label>
-                                        <div class="form-check mb-3">
-                                            <input type="checkbox" id="onsiteVideo" <?php if ($submittal['onsiteVideo']) {
-                                                echo 'checked';
-                                            } ?>>
+            </div>
+        </div>
+    </div>
+</div>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            </div>`;
+<div class="row">
+    <div class="gap-2 col-lg-6">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">3D Zillow Tour</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck5">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Onsite Video</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck7">
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>`;
 
         var innrtHtml2 = `<div class="row">
-                            <div class="gap-2 col-lg-6">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Email Blast to Sphere</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="emailBlastSphere" <?php if ($submittal['emailBlastSphere']) {
-                                                echo 'checked';
-                                            } ?>>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="gap-2 col-lg-6 label-div-mb">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Email Blast to Reverse Prospect List</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="emailBlastReverseProspect" <?php if ($submittal['emailBlastReverseProspect']) {
-                                                echo 'checked';
-                                            } ?>>
+    <div class="gap-2 col-lg-6">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Email Blast to Sphere</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck1">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Email Blast to Reverse Prospect List</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck3">
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <div class="row">
-                            <div class="gap-2 col-lg-6">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Social Media Ads</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="socialMediaAds" <?php if ($submittal['socialMediaAds']) {
-                                                echo 'checked';
-                                            } ?>>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="gap-2 col-lg-6 label-div-mb">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Social Media Images</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="socialMediaImages" <?php if ($submittal['socialMediaImages']) {
-                                                echo 'checked';
-                                            } ?>>
+<div class="row">
+    <div class="gap-2 col-lg-6">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Social Media Ads</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck5">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Social Media Images</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck7">
 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="gap-2 col-lg-6 label-div-mb">
-                            <div class="d-flex gap-2">
-                                <label for="add_email" class="common-label">Price Improvement Package</label>
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" id="priceImprovementPackage" <?php if ($submittal['priceImprovementPackage']) {
-                                                echo 'checked';
-                                            } ?>>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="gap-2 col-lg-6 label-div-mb">
+    <div class="d-flex gap-2">
+        <label for="add_email" class="common-label">Price Improvement Package</label>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="formCheck7">
 
-                                </div>
-                            </div>
-                        </div>
-                        </div>`;
+        </div>
+    </div>
+</div>
+</div>`;
         var innrtHtml3 = `<div class="row">
-                            <div class="gap-2 col-lg-6">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Property Website</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="propertyWebsite" <?php if ($submittal['propertyWebsite']) {
-                                                echo 'checked';
-                                            } ?>>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="gap-2 col-lg-6 label-div-mb">
-                                <div class="additional_email label-div-mb">
-                                    <label for="add_email" class="common-label">Custom Domain Name</label>
-                                    <input type="text" id="customDomainName" value="{{ isset($submittal['customDomainName']) ? $submittal['customDomainName'] : '' }}"
-                                        class="form-control" placeholder="" id="add_email">
-                                    <div class="add_email_error text-danger" id="add_email_error">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="gap-2 col-lg-6 label-div-mb">
-                                <div class="d-flex gap-2">
-                                    <label for="add_email" class="common-label">Property Highlight Video</label>
-                                    <div class="form-check mb-3">
-                                        <input type="checkbox" id="propertyHighlightVideo" <?php if ($submittal['propertyHighlightVideo']) {
-                                                echo 'checked';
-                                            } ?>>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="gap-2 col-lg-6 label-div-mb">
-                            <div class="additional_email label-div-mb">
-                                <label for="add_email" class="common-label">8-12 Features Needed for Video</label>
-                                <input type="text" id="featuresNeededForVideo" value="{{ isset($submittal['featuresNeededForVideo']) ? $submittal['featuresNeededForVideo'] : '' }}" class="form-control"
-                                    placeholder="" id="add_email">
-                                <div class="add_email_error text-danger" id="add_email_error">
-                                </div>
-                            </div>
-                        </div>
-                        `;
+    <div class="gap-2 col-lg-6">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Property Website</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck5">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="additional_email label-div-mb">
+            <label for="add_email" class="common-label">Custom Domain Name</label>
+            <input type="text" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}"
+                class="form-control" placeholder="" id="add_email">
+            <div class="add_email_error text-danger" id="add_email_error">
+            </div>
+        </div>
+    </div>
+    <div class="gap-2 col-lg-6 label-div-mb">
+        <div class="d-flex gap-2">
+            <label for="add_email" class="common-label">Property Highlight Video</label>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="formCheck5">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="gap-2 col-lg-6 label-div-mb">
+    <div class="additional_email label-div-mb">
+        <label for="add_email" class="common-label">8-12 Features Needed for Video</label>
+        <input type="text" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}" class="form-control"
+            placeholder="" id="add_email">
+        <div class="add_email_error text-danger" id="add_email_error">
+        </div>
+    </div>
+</div>
+`;
 
         var innrtHtml4 = `<div class="label-div-mb"><label for="add_email" class="common-label">Brochure Design - <b>Click for
                                 options<b>
@@ -1691,9 +1669,9 @@
                                 class="form-control nontm-input" id="brochurePickupDate">
                             <div id="brochurePickupDate_error" class="text-danger">
 
-                            </div>
-                        </div>
-                        `;
+        </div>
+    </div>
+    `;
         var innrtHtml8 = `<label for="add_email" class="text-bold">Is there anything else the Marketing Team should
                                 know?</label>
                         </div>

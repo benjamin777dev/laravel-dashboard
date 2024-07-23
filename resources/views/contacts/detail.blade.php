@@ -29,7 +29,7 @@
                 </div>
             </a>
         </div>
-        <div class="row">
+        <div class="row mt-2">
             <div class="col-md-8 col-sm-12 dtasksection">
                 <div class="d-flex justify-content-between mb-1">
                     <p class="dFont800 dFont15">Tasks</p>

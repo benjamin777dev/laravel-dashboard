@@ -16,31 +16,27 @@
     <div class="container-fluid">
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
-        <div class="justify-content-between align-items-center d-flex cus-grid">
-            <p class="pText">Database</p>
-            <div class="d-flex gap-1">
-                <a >
-                    <div>
+        <div class="dbgroupsFlex">
+            <p class="ngText text-center">Database</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <div class="w-control">
                         @component('components.button', [
                          'id' => 'create_contact',
+                         'type' => 'database',
                          'label' => 'New Contact',
                          'icon' => 'fas fa-plus plusicon'
                      ])
                      @endcomponent
-                 </div>
-                </a>
-                <a onclick="createTransaction({{ $userContact }});">
-                    <div>
-                        <div>
+                </div>
+                <div class="w-control">
                             @component('components.button', [
                                'id' => 'create_transaction',
+                               'type' => 'database',
                                'label' => 'New Transaction',
                                'icon' => 'fas fa-plus plusicon'
                            ])
                            @endcomponent
-                       </div>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
 
@@ -70,7 +66,7 @@
 
             </div>
             <div class="d-flex gap-4 cus-grid">
-                <div>
+                <div class="w-control">
                     @component('components.button', [
                        'attributes' => 'id=btnGroupAddon data-bs-toggle=modal data-bs-target=#filterModal',
                        'label' => 'Filter',
@@ -78,7 +74,7 @@
                    ])
                    @endcomponent
                </div>
-               <div>
+               <div class="w-control">
                       @component('components.button', [
                        'clickEvent' => 'applyFilter(\'reset\')',
                        'label' => 'Reset All',
