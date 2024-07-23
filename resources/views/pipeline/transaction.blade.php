@@ -429,7 +429,7 @@
     window.addTask = function(deal) {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
-            document.getElementById("subject_error").innerHTML = "Please enter details";
+            document.getElementById("subject_error").innerHTML = "Please enter subject";
             return;
         }
         
@@ -495,7 +495,7 @@
         // Check if textarea value is empty
         if (textareaValue === '') {
             // Show error message or perform validation logic
-            document.getElementById("subject_error").innerHTML = "please enter details";
+            document.getElementById("subject_error").innerHTML = "please enter subject";
         } else {
             document.getElementById("subject_error").innerHTML = "";
         }

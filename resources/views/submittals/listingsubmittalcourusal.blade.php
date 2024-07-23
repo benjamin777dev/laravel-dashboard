@@ -67,7 +67,7 @@
                                     <select name="related_transaction" id="transactionName" class="nontm-select validate_err" disabled>
                                         @foreach ($deals as $currDeal)
                                             <option value="{{ $currDeal }}"
-                                                {{ $currDeal['deal_name'] == $submittal['dealData']['deal_name'] ? 'checked' : '' }}>
+                                                {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
                                                 {{ $currDeal['deal_name'] }}
                                             </option>
                                         @endforeach
@@ -562,7 +562,7 @@
         console.log(usingChrValue);
         if(usingChrValue&&usingChrValue =="Yes"){
             addFormSlide(true)
-        }else{
+        }else if(usingChrValue&&usingChrValue =="No"){
             addFormSlide(false)
         }
         let showPromotionValue = $('input[name="showPromotion"]:checked').val();

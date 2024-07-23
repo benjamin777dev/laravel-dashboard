@@ -55,14 +55,14 @@
                                 <div class="nontm-select-div">
                                     <select class="nontm-select" id="relatedTransactionShow" required disabled>
                                         @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
                                             {{$currDeal['deal_name']}}
                                         </option>
                                         @endforeach
                                     </select>
                                     <select class="form-select npinputinfo validate" id="relatedTransaction" required hidden>
                                         @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['deal_name']==$submittal['dealData']['deal_name']? 'selected' : '' }}>
+                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
                                             {{$currDeal['deal_name']}}
                                         </option>
                                         @endforeach

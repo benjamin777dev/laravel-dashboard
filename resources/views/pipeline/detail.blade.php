@@ -482,11 +482,22 @@
         <h2 class='mt-3 pText '> Non-TM </h2>
     </div>
     <div class=" text-end">
-        <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
-                    id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-plus plusicon"></i>
-                    Add Non-TM Check request
-                </button>
+         @if (isset($nontms)&&$nontms->count() === 0)
+            <button onclick="addNonTm()" class="btn btn-secondary btn-bg dropdown-toggle" type="button"
+                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-plus plusicon"></i>
+                    Add Non-TM Check request                
+            </button>
+            @else
+            @if(isset($nontms))
+                <a href = "/nontm-view/{{$nontms[0]['id']}}" target="_blank">
+                   <div class="input-group-text npcontactbtn" id="showNonTm">
+                        <i class="fas fa-plus plusicon"></i>
+                        Show Non-TM Check request
+                    </div>
+                </a>
+                @endif
+            @endif
     </div>
 </div>
 
