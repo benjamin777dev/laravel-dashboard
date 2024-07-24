@@ -142,7 +142,8 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         LOG::info('Access Token Decrypted' . $accessToken);
         $search = request()->query('search');
-        $deals = $db->retrieveDeals($user, $accessToken, $search);
+        $stage = request()->query('stage');
+        $deals = $db->retrieveDeals($user, $accessToken, $search,null,null,null,$stage);
         return Datatables::of($deals)->make(true);
        
     }

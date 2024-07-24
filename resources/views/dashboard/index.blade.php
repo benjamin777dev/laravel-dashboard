@@ -310,11 +310,6 @@
                 </div>
             </div>
             <div class=" dtranstiontable mt-2" id="badDates">
-                @if ($needsNewDate['count'] > 0)
-                    <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
-                @else
-                    <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
-                @endif
                 @php
                     $transHeader = [
                         "",
@@ -335,6 +330,7 @@
                     'id'=>'datatable_transaction',
                     'commonArr' =>$needsNewDate,
                     "type" =>"dash-pipe-transaction",
+                    'needsNewDate'=>$needsNewDate
                 ])
                 @endcomponent
             </div>

@@ -35,6 +35,7 @@ body {
     cursor: pointer;
 }
 
+
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
     display: grid;
@@ -2294,6 +2295,8 @@ body .vertical-collpsed span .logo-sm image {
     color: #fff;
 } */
 
+
+
 @media (min-width: 475px) and (max-width: 767px) {
     .nproletext {
         margin-bottom: 0px;
@@ -2307,9 +2310,17 @@ body .vertical-collpsed span .logo-sm image {
     .commonFlex{
         display: block!important;
     }
-   
+    .max-width-500{
+        max-width: 150px !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+        word-break: break-all !important;
+        overflow: hidden !important;
+    }
+    #datatable_transaction .dtr-hidden:nth-child(2) {
+        display: block !important; /* Display the second element with class dtr-hidden */
+      }
 }
-
 
 @media (min-width: 320px) and (max-width: 475px) {
     .npNom-TMRoles {
@@ -2322,6 +2333,9 @@ body .vertical-collpsed span .logo-sm image {
     .prev_btn  span, .next_btn span{
         display: none;
     }
+    /* .dtr-hidden{
+        display: block !important;
+    } */
 }
 
 /* / database component / */

@@ -684,7 +684,7 @@
         })
     }
 
-    function showSubmittalFormType() {
+    window.showSubmittalFormType = function() {
         console.log("SUBMITTAL DATA", deal.tm_preference);
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {

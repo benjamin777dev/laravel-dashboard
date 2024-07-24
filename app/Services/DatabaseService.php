@@ -1950,7 +1950,7 @@ class DatabaseService
                 'email' => $zohoSpouseContact['Email'],
                 'phone' => $zohoSpouseContact['Phone'],
                 'mobile' => $zohoSpouseContact['Mobile'],
-                'isContactCompleted' => false,
+                'isContactCompleted' => true,
                 'contact_owner' => $user->root_user_id,
                 'isInZoho' => true,
                 'zoho_contact_id' => $spouseId,

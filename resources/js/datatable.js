@@ -46,6 +46,7 @@ function formateDate(data) {
     return formattedDate;
 }
 //pipeline data table code
+var deal;
 var table = $("#datatable_pipe_transaction").DataTable({
     paging: true,
     searching: true,
@@ -72,6 +73,28 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 } else {
                     lockIcon = `<span class="lock-placeholder"></span>`;
                 }
+                let submittalSection = '';
+    if (data.tm_preference !== 'Non-TM' && data.representing === 'Buyer' || data.representing === 'Seller') {
+        if (!data.submittals || data.submittals.length === 0) {
+            deal = data;
+            submittalSection = `
+            <div style="color:#222;" class="ps-2" id="addSubmittal" onclick="showSubmittalFormType()">
+                <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon"
+               title="Add Submittal"></i>
+            </div>
+        `;
+        
+        } else {
+            submittalSection = `
+                <a href="/submittal-view/${data.submittals[0].submittalType}/${data.submittals[0].id}" target="_blank">
+                    <div style="color:#222;" class="ps-2" id="addSubmittal">
+                       <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
+               title="View Submittal" aria-hidden="true"></i>
+                    </div>
+                </a>
+            `;
+        }
+    }
                 return `<div class="icon-container">
                 ${lockIcon}
                 <a href="/pipeline-view/${data.id}" target='_blank'>
@@ -101,7 +124,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                      }" title="Add Note">
                 <span class="tooltiptext"></span>
                 <div class="createNoteModal${data.id}"></div>
-            </div>`;
+                ${submittalSection}
+            </div>
+            `;
             },
         },
         {
@@ -251,6 +276,11 @@ var table = $("#datatable_pipe_transaction").DataTable({
             request._token = "{{ csrf_token() }}";
             request.perPage = request.length;
             request.page = request.start / request.length + 1;
+            var related_to_stage = $("#related_to_stage").val();
+            if (related_to_stage) {
+                request.stage = related_to_stage;
+                request.search = "";
+            }
             request.search = request.search.value;
         },
         dataSrc: function (data) {
@@ -464,6 +494,18 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
+window.showSubmittalFormType = function() {
+    console.log("SUBMITTAL DATA", deal);
+    let submittalData;
+    if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
+        addSubmittal('buyer-submittal', deal);
+    } else if (deal.representing === "Seller" && deal.tm_preference === "CHR TM") {
+        addSubmittal('listing-submittal', deal);
+    } else if (deal.representing === "Seller" && deal.tm_preference === "Non-TM") {
+        addSubmittal('listing-submittal', deal, 'Non-TM');
+    }
+}
+
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({
     paging: true,
@@ -663,7 +705,9 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     processing: true,
     serverSide: true,
     responsive:true,
-    responsivePriority: 1,
+    columnDefs: [
+        { responsivePriority: 1, targets: -10 }
+    ],
     columns: [
         {
             className: "dt-control",
@@ -675,7 +719,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             data: "deal_name",
             title: "Transaction",
             render: function (data, type, row) {
-                return `<span class='icon-container' >${data}</span>`;
+                return `<span class='icon-container max-width-500' >${data}</span>`;
             },
         },
         {
@@ -949,6 +993,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
         );
     },
 });
+
 
 
 var tableTasks = $("#datatable_tasks").DataTable({
