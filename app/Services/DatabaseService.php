@@ -788,7 +788,6 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contact From Database");
-
             $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
 
