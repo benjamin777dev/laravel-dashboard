@@ -52,7 +52,7 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $db = new DatabaseService();
-        $search = request()->query('search');
+        $search = request()->query('q');
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
@@ -146,7 +146,7 @@ class ContactController extends Controller
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $contacts = $db->retreiveContactsJson($user, $accessToken);
+        $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         if (request()->ajax()) {

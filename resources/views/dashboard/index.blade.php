@@ -677,26 +677,7 @@
 
         return formattedDateTime;
     }
-
-    window.saveForm=function() {
-        return new Promise((complete, failed) => {
-            $('#confirmMessage').text('Are you sure you want to do this?');
-
-            $('#confirmYes').off('click').on('click', () => {
-                $('#confirmModal').modal('hide');
-                complete(true);
-            });
-
-            $('#confirmNo').off('click').on('click', () => {
-                $('#confirmModal').modal('hide');
-                complete(false);
-            });
-
-            $('#confirmModal').modal('show');
-        });
-    }
-
-
+    
     function createContact() {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";
