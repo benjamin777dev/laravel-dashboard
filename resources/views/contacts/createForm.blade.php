@@ -182,25 +182,18 @@
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                         id="validationDefault13" >
-                        
                         <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
                         </option>
-                        @if (!empty($spouseContact))
-                            <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
-                                {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
-                            </option>
-                        @endif
                         @if (!empty($contacts))
                             @foreach ($contacts as $contactrefs)
                                 <option
-                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{$contactrefs['zoho_contact_id']==$contact['spouse_partner']?'selected':''}}
                                     data-id = {{$contactrefs['id']}}
                                     data-icon="fas fa-external-link-alt">
                                     {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
                                 </option>
                             @endforeach
                         @endif
-
                     </select>
                 </div>
                 <div class="col-md-6">
