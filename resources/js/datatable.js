@@ -675,10 +675,23 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             },
         },
         {
-            data: "client_name_primary",
+            data: "primary_contact",
             title: "Client Name",
             render: function (data, type, row) {
-                return `<span >${data}</span>`;
+                console.log("Data", data);
+                let jsonString, name;
+                if (data) {
+                    jsonString = data?.replace(/&quot;/g, '"');
+
+                    // Parse the string as JSON
+                    data = JSON.parse(jsonString);
+                    name =
+                        (data[0] &&
+                            data[0].Primary_Contact &&
+                            data[0].Primary_Contact.name) ??
+                        "";
+                }
+                return `<span >${name || "N/A"}</span>`;
             },
         },
         {

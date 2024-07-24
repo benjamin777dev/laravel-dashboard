@@ -2315,7 +2315,8 @@ body .vertical-collpsed span .logo-sm image {
     .dnewContactBtn {
         margin-bottom: 24px;
     }
-    .prev_btn  span, .next_btn span{
+    .prev_btn span,
+    .next_btn span {
         display: none;
     }
 }
@@ -3470,6 +3471,10 @@ input[type="button"]:hover {
     max-height: 400px; /* Adjust as needed */
     margin-top: 20px; /* Optional: add margin to adjust table position */
     position: relative;
+}
+
+.emailBox {
+    margin-top: 25px;
 }
 
 /* .sticky-head {
