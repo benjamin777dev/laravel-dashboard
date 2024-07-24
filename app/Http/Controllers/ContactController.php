@@ -554,8 +554,6 @@ class ContactController extends Controller
             if (isset($input['envelope_salutation']) && $input['envelope_salutation'] !== '') {
                 $rules['envelope_salutation'] = 'required|string|max:255';
             }
-            print($input);
-            die;
             if (isset($input['spouse_partner']) && $input['spouse_partner'] !== '') {
                 $rules['spouse_partner'] = 'required|string|max:255';
             }
