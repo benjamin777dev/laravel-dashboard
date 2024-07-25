@@ -848,7 +848,7 @@ class DatabaseService
         try {
             Log::info("Retrieve contacts from database");
     
-            $query = Contact::where('contact_owner', $user->root_user_id)->with('userData')->orderBy('updated_at', 'desc');
+            $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]])->with('userData')->orderBy('updated_at', 'desc');
     
             if (!empty($search)) {
                 $searchTerms = urldecode($search);
