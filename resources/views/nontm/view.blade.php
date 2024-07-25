@@ -335,6 +335,7 @@
 
 @endsection
 
+
 <script type="text/javascript">
     window.onload = function() {
         $(".main-carousel a span.prev").click(function(e) {
