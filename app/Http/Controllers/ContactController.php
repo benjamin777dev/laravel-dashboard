@@ -500,16 +500,18 @@ class ContactController extends Controller
             }
 
             if (isset($request->spouse_partner) && $request->spouse_partner !== '') {
-                // Assuming $request->spouse_partner is the ID string directly
-                $spouse_partner_id = $request->spouse_partner;
-            
-                // Validate the spouse_partner ID directly
-                $validatedSpouse = validator()->make(['id' => $spouse_partner_id], [
-                    'id' => 'required|numeric', // Adjust validation rules as per your requirements
-                ])->validate();
-                
-            
-                Log::info('Validated spouse_partner ID', ['validatedSpouse' => $validatedSpouse]);
+                $spouse_partner = json_decode($request->spouse_partner, true);
+                // Check if the 'id' is null
+                if (!is_null($spouse_partner['id'])) {
+                    $validatedSpouse = validator()->make($spouse_partner, [
+                        'id' => 'required|numeric',
+                        'Full_Name' => 'required|string|max:255',
+                    ])->validate();
+                    Log::info('Validated spouse_partner', ['validatedSpouse' => $validatedSpouse]);
+                } else {
+                    Log::warning('spouse_partner id is null, skipping validation', ['spouse_partner' => $spouse_partner]);
+                    $validatedSpouse = $spouse_partner;
+                }
             }
 
             $input = $request->all();
