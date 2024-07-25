@@ -1059,7 +1059,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Deal Contact From Database" . $dealId);
-            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->orderBy('updated_at', 'desc')->paginate(10);
+            $dealContacts = DealContact::with('userData')->with('contactData')->with('roleData')->where('zoho_deal_id', $dealId)->orderBy('updated_at', 'desc')->get();
             Log::info("Retrieved Deal Contact From Database", ['notes' => $dealContacts->toArray()]);
             return $dealContacts;
         } catch (\Exception $e) {
