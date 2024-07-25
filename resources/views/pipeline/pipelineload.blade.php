@@ -73,7 +73,7 @@
              <td>
                 @if(!($deal['tm_preference']=='Non-TM' && $deal['representing']=='Buyer'))
                     @if (!$deal->submittals()->exists() || $deal->submittals->isEmpty())
-                        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType({{$deal}})">
+                        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormTypeadd({{$deal}})">
                             <i class="fas fa-plus plusicon"></i>
                                 Add New Submittal
                         </div>
@@ -284,17 +284,12 @@
                 {{ $deal->client_name_primary ?? 'N/A' }}
             </td>
             <td>
-                <div class="commonFlex pipelinestatusdiv">
-                    <select class="form-select pstatusText"
-                        style="background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
-                        id="stage{{ $deal['zoho_deal_id'] }}" required
-                        onchange="updateDealData('stage','{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}',this.value)">
+                <div class="commonFlex pipelinestatusdiv form-select"  style="background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}" onchange="updateDealData('stage','{{ $deal['id'] }}','{{ $deal['zoho_deal_id'] }}',this.value)" id="stage{{ $deal['zoho_deal_id'] }}">
                         @foreach ($allstages as $stage)
-                            <option value="{{ $stage }}" {{ $deal['stage'] == $stage ? 'selected' : '' }}>
-                                {{ $stage }}
-                            </option>
+                            <p >
+                                {{ $deal['stage'] == $stage ? $stage : '' }}
+                            </p>
                         @endforeach
-                    </select>
                 </div>
             </td>
             <td>
@@ -383,7 +378,7 @@
        $('[data-toggle="tooltip"]').tooltip()
     })
 
-    function showSubmittalFormType(deal) {
+    function showSubmittalFormTypeadd(deal) {
         console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
         // deal = JSON.parse(deal);
         let submittalData;

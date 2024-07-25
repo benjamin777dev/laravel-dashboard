@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use DataTables;
+use Illuminate\Support\Facades\Validator;
 
 class PipelineController extends Controller
 {
@@ -129,6 +131,24 @@ class PipelineController extends Controller
         return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction'))->render();
     }
 
+    public function getDealsJson(Request $request)
+    {
+        $db = new DatabaseService();
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        LOG::info('Access Token Decrypted' . $accessToken);
+        $search = request()->query('search');
+        $stage = request()->query('stage');
+        $deals = $db->retrieveDeals($user, $accessToken, $search,null,null,null,$stage);
+        return Datatables::of($deals)->make(true);
+       
+    }
+    
+
     public function createACI(Request $request)
     {
         $aci = $request->data;
@@ -185,16 +205,23 @@ class PipelineController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
+        $users = User::all();
         $zoho->access_token = $accessToken;
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
+        $contacts = $db->retreiveContactsJson($user, $accessToken);
+
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $allStages = config('variables.dealStages');
+        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         
         
-        
-        return view('pipeline.view', compact('deal', 'dealId', 'notesInfo', 'retrieveModuleData', 'tab'))->render();
+        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
+
 
     }
 
@@ -217,10 +244,11 @@ class PipelineController extends Controller
 
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
-
+        $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
+        $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId'))->render();
+        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId','submittals','nontms'))->render();
 
     }
 
@@ -297,6 +325,7 @@ class PipelineController extends Controller
 
     public function createPipeline(Request $request)
     {
+          
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
@@ -372,6 +401,124 @@ class PipelineController extends Controller
             $data = $jsonData['data'];
             $deal = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
             return response()->json($zohoDealArray);
+        } catch (\Throwable $th) {
+            // Handle the exception here
+            return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function updateDeals(Request $request){
+        try {
+            $user = $this->user();
+            $accessToken = $user->getAccessToken();
+             $db = new DatabaseService();
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            }
+            $id = $request->input('id');
+            $dbfield = $request->input('field');
+            $value = $request->input('value');
+            $rules = [
+                'id' => 'required|exists:deals,id',
+                'field' => 'required|in:deal_name,address,stage,representing,sale_price,closing_date,commission,pipeline_probability',
+                'value' => 'nullable', // Allow the value to be nullable (empty)
+            ];
+    
+            $messages = [
+                'id.required' => 'Contact ID is required.',
+                'id.exists' => 'Invalid contact ID.',
+                'field.required' => 'Field type is required.',
+                'field.in' => 'Invalid field type.',
+                'value.email' => 'Invalid email format.',
+                'value.regex' => 'Invalid '.$dbfield .' phone format.',
+                'value.numeric' => ' number must be numeric.',
+            ];
+    
+            // Add custom validation for email format and phone number format if value is not empty
+            if (!empty($request->input('value'))) {
+                 if(in_array($request->input('field'), ['sale_price', 'commission', 'pipeline_probability'])) {
+                    $rules['value'] .= '|regex:/^\d+(\.\d{1})?$/'; // Numeric with optional one decimal place
+                }
+            }
+    
+            // Validate request inputs
+            $validator = Validator::make($request->all(), $rules, $messages);
+    
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+            }
+            $deal = $db->retrieveDealById($user,$accessToken,$id);
+            if(!$deal){
+                $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
+                if(!$deal){
+                    return response()->json(['error' => 'Deal Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+            $zoho = new ZohoCRM();
+ 
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+            $field;
+            if($dbfield==="deal_name"){
+                $field = "Deal_Name";
+            }
+            if($dbfield==="client_name_primary"){
+                $field = "Client_Name_Primary";
+            }
+            if($dbfield==="stage"){
+                $field = "Stage";
+            }
+            if($dbfield==="representing"){
+                $field = "Representing";
+            }
+
+            if($dbfield==="sale_price"){
+                $field = "Sale_Price";
+            }
+            if($dbfield==="closing_date"){
+                $field = "Closing_Date";
+            }
+
+            if($dbfield==="commission"){
+                $field = "Commission";
+            }
+            if($dbfield==="address"){
+                $field = "Address";
+            }
+            
+            $jsonData = [
+                'data' => [
+                    [
+                      $field => $value,
+                    ],
+                ],
+                'skip_mandatory' => true,
+            ];
+            
+            $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
+
+            if (!$zohoDeal->successful()) {
+                return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+             // If the stage is "Under Contract", update the locked_s field separately in the database
+        if ($dbfield === "stage" && $value === "Under Contract") {
+            \DB::table('deals')
+                ->where('id', $id)
+                ->update(['locked_s' => 1]);
+        }
+            $zohoDealArray = json_decode($zohoDeal, true);
+            $zohoDealData = $zohoDealArray['data'][0]['details'];
+            $resp = $zoho->getZohoDeal($zohoDealData['id']);
+
+            if (!$resp->successful()) {
+                return response()->json(['error' => 'Zoho Deal retrieval failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+            $zohoDeal_Array = json_decode($resp, true);
+            $zohoDealValues = $zohoDeal_Array['data'][0];
+            $data = $jsonData['data'];
+            $dealDatas =  $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
+            return response()->json(['data'=>$dealDatas,'message'=>"Successfully Updated"]);
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -476,6 +623,41 @@ class PipelineController extends Controller
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'deal'))->render();
     }
 
+    public function createNotesForDeal()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $dealId = request()->route('dealId');
+        $accessToken = $user->getAccessToken();
+        $type = "Deals";
+        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        return view('common.notes.create', compact("retrieveModuleData","deal","type"))->render();
+    }
+
+    public function createTasksForDeal()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $dealId = request()->route('dealId');
+        $accessToken = $user->getAccessToken();
+        $type = "Deals";
+        $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $deal = $db->retrieveDealById($user, $accessToken, $dealId);
+        return view('common.tasks.create', compact("retrieveModuleData","deal","type"))->render();
+    }
+
+
     public function addContactRole(Request $request)
     {
         $user = $this->user();
@@ -537,7 +719,9 @@ class PipelineController extends Controller
 
         // Fetch contact roles
         $contactRoles = $deal->getContactRoles();
+        return Datatables::of($contactRoles)->make(true);
 
-        return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
+
+        // return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
 }

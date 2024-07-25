@@ -381,7 +381,7 @@ window.closeTask = function(id, indexId, subject) {
             });
         }
 
-        function saveForm() {
+        window.saveForm=function() {
             return new Promise((complete, failed) => {
                 $('#confirmMessage').text('Are you sure you want to do this?');
 

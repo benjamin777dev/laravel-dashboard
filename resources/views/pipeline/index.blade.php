@@ -9,15 +9,14 @@
         <div class="loader" id="loaderfor" style="display: none;"></div>
         <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         <div class="dbgroupsFlex">
-            <p class="ngText">Pipeline</p>
-            <div class="pipeline-btns-container">
-
-                <div class="input-group-text text-white justify-content-center pcontactBtn"
-                    data-bs-toggle="modal" data-bs-target="#newTaskModalId"
-                    onclick="createTransaction({{ $userContact }})">
-                    <i class="fas fa-plus plusicon">
-                    </i> New Transaction
-                </div>
+            <p class="ngText text-center">Pipeline</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <div class="input-group-text text-white justify-content-center pTransactionBtn"
+                data-bs-toggle="modal" data-bs-target="#transaction" id="create_transaction">
+                <i class="fas fa-plus plusicon">
+                </i>
+                New Transaction
+            </div>
                 <div class="input-group-text text-white justify-content-center pTransactionBtn"
                     data-bs-toggle="modal" data-bs-target="#chooseTransactionModal">
                     <i class="fas fa-plus plusicon">
@@ -27,39 +26,49 @@
             </div>
         </div>
 
-        <div class="pipeline-cards-container">
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Sales Volume</p>
-                ${{ number_format($totalSalesVolume, 0, '.', ',') }}
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Avg Commission</p>
-                {{ number_format($averageCommission, 2) }}%
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Potential GCI</p>
-                ${{ number_format($totalPotentialGCI, 0, '.', ',') }}
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Avg Probability</p>
-                {{ number_format($averageProbability, 2) }}%
-            </div>
-            <div class="progressCardsContainer">
-                <p class="proCardsText">Probable GCI</p>
-                ${{ number_format($totalProbableGCI, 0, '.', ',') }}
-            </div>
 
+
+        <div class="pipeline-cards-container">
+            @component('components.pipe-cards', [
+                'title' => 'Sales Volume',
+                'value' => '$' . number_format($totalSalesVolume, 0, '.', ','),
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Avg Commission',
+                'value' => number_format($averageCommission, 2) . '%',
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Potential GCI',
+                'value' => '$' . number_format($totalPotentialGCI, 0, '.', ','),
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Avg Probability',
+                'value' => number_format($averageProbability, 2) . '%',
+            ])
+            @endcomponent
+
+            @component('components.pipe-cards', [
+                'title' => 'Probable GCI',
+                'value' => '$' . number_format($totalProbableGCI, 0, '.', ','),
+            ])
+            @endcomponent
         </div>
 
         <div class="pfilterDiv">
-            <div class="pcommonFilterDiv">
-                <input placeholder="Search" class="psearchInput" id="pipelineSearch" oninput="fetchDeal()" />
+            <div class="pcommonFilterDiv dataTables_filter">
+                <input placeholder="Search" class="psearchInput" id="pipelineSearch"/>
                 <i class="fas fa-search search-icon"></i>
             </div>
             <p class="porText">or</p>
             <div class="psortingFilterDiv">
                 <select class="form-select dmodaltaskSelect" id="related_to_stage" name="related_to_stage"
-                    aria-label="Select Transaction" onchange="fetchDeal()">
+                    aria-label="Select Transaction">
                     <option value="">Sort Pipeline by...</option>
                     @php
                         $excludedItems = ['Sold', 'Dead-Lost To Competition', 'Dead-Contract Terminated'];
@@ -74,19 +83,32 @@
             <img src="{{ URL::asset('/images/swap_vert.svg') }}" alt="Swap-invert icon" class="ppipelinesorticon">
             --}}
             </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal()"> <i class="fas fa-filter"></i>
-                Filter
+            <div class="w-control">
+                 @component('components.button', [
+                    'label' => 'Filter',
+                    'icon' => 'fas fa-filter'
+                ])
+                @endcomponent
             </div>
-            <div class="input-group-text pfilterBtn" id="btnGroupAddon" onclick="fetchDeal('','','reset_all')"> <i
-                    class="fas fa-sync"></i>
-                Reset All
+            <div class="w-control">
+                   @component('components.button', [
+                    'label' => 'Reset All',
+                    'icon' => 'fas fa-sync'
+                ])
+                @endcomponent
             </div>
 
         </div>
-
         <div class="transaction-container">
             @if (count($deals) > 0)
-                @include('pipeline.transaction')
+            @component('components.common-table', [
+                'id'=>'datatable_pipe_transaction',
+                'commonArr' =>$deals,
+                "type" =>"dash-pipe-transaction",
+                "retrieveModuleData" => $retrieveModuleData,
+                "allstages" => $allstages
+            ])
+            @endcomponent
             @else
                 <div class="pnofound">
                     <p>No records found</p>
@@ -100,6 +122,7 @@
 
 
     <script>
+      
         var prevSelectedColumn = null;
         var prevSortDirection = "";
         // Add an event listener to send search term as request
@@ -130,29 +153,29 @@
                         document.getElementById("loaderOverlay").style.display = "none";
                         document.getElementById('loaderfor').style.display = "none";
                     }
-                   
-                    const card = $('.transaction-container').html(data);
-                    if(card){
-                        if (prevSelectedColumn !== null) {
-                        if (prevSortDirection === "asc") {
-                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
-                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
-                        } else {
-                            $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
-                            $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
-                        }
-                    }
-                    if (sortType === "asc") {
-                        $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
-                        $(clickedColumn).find(".up-arrow").css("color", "#fff");
-                    } else {
-                        $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
-                        $(clickedColumn).find(".down-arrow").css("color", "#fff");
-                    }
 
-                    // Update the previously selected column and its sorting direction
-                    prevSelectedColumn = clickedColumn;
-                    prevSortDirection = sortType;
+                    const card = $('.transaction-container').html(data);
+                    if (card) {
+                        if (prevSelectedColumn !== null) {
+                            if (prevSortDirection === "asc") {
+                                $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                                $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                            } else {
+                                $(prevSelectedColumn).find(".up-arrow").css("color", "#fff");
+                                $(prevSelectedColumn).find(".down-arrow").css("color", "#fff");
+                            }
+                        }
+                        if (sortType === "asc") {
+                            $(clickedColumn).find(".down-arrow").css("color", "#D3D3D3");
+                            $(clickedColumn).find(".up-arrow").css("color", "#fff");
+                        } else {
+                            $(clickedColumn).find(".up-arrow").css("color", "#D3D3D3");
+                            $(clickedColumn).find(".down-arrow").css("color", "#fff");
+                        }
+
+                        // Update the previously selected column and its sorting direction
+                        prevSelectedColumn = clickedColumn;
+                        prevSortDirection = sortType;
                     }
 
                 },
@@ -174,11 +197,18 @@
             let selectedModule = $('#related_to_stage');
             let selectedText = selectedModule.val();
             // Call fetchData with the updated parameters
-            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,clickedCoulmn);
+            fetchData(sortField, sortDirection, selectedText, searchInput, ppipelineTableBody, ptableCardDiv, resetall,
+                clickedCoulmn);
         }
     </script>
 
 @section('pipelineScript')
+@section('script')
+    <!-- Responsive Table js -->
+    <script src="{{ URL::asset('build/libs/admin-resources/rwd-table/rwd-table.min.js') }}"></script>
 
+    <!-- Init js -->
+    <script src="{{ URL::asset('build/js/pages/table-responsive.init.js') }}"></script>
+@endsection
 @endsection
 @endsection

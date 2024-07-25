@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use DataTables;
 
 
 
@@ -32,7 +33,10 @@ class SubmittalController extends Controller
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
-            return view('submittals.index', compact('deal','submittals'))->render();
+            // echo "<>"
+            // return view('submittals.index', compact('deal','submittals'))->render(); 
+            return Datatables::of($submittals)->make(true);
+
         } catch (\Throwable $th) {
             return $th;
             throw $th;
@@ -99,6 +103,9 @@ class SubmittalController extends Controller
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
+        $broucherLines = config('variables.broucherLines');
+        $stickyDots = config('variables.stickyDots');
+        $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
         /*$tab = request()->query('tab') ?? 'In Progress';
         $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
@@ -116,7 +123,7 @@ class SubmittalController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
-        return view('submittals.view', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard','submittalId'));
+        return view('submittals.view', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','featuresCard','broucherLines','stickyDots','submittalId'));
     }
 
     public function showSubmittalCreate(Request $request)
@@ -159,8 +166,11 @@ class SubmittalController extends Controller
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
+        $broucherLines = config('variables.broucherLines');
+        $stickyDots = config('variables.stickyDots');
+        $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listing', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','broucherLines','stickyDots','featuresCard'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)
@@ -182,7 +192,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.buyer', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.buyersubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
     }
 
     public function createListingSubmittal(Request $request)

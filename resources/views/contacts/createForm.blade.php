@@ -1,6 +1,6 @@
 <div class="row">
     <form class="row" id="contact_create_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
-        method="POST" onsubmit="return validateContactForm();">
+        method="POST" >
         @csrf
         @method('PUT')
         {{-- Contact Details --}}
@@ -182,25 +182,18 @@
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                         id="validationDefault13" >
-                        
                         <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
                         </option>
-                        @if (!empty($spouseContact))
-                            <option value="{{ json_encode(['id' => $spouseContact['zoho_contact_id'], 'Full_Name' => $spouseContact['first_name'] . ' ' . $spouseContact['last_name']]) }}" selected>
-                                {{ $spouseContact['first_name'] }} {{ $spouseContact['last_name'] }}
-                            </option>
-                        @endif
                         @if (!empty($contacts))
                             @foreach ($contacts as $contactrefs)
                                 <option
-                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}"
+                                    value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{$contactrefs['zoho_contact_id']==$contact['spouse_partner']?'selected':''}}
                                     data-id = {{$contactrefs['id']}}
                                     data-icon="fas fa-external-link-alt">
                                     {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
                                 </option>
                             @endforeach
                         @endif
-
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -298,7 +291,7 @@
             </div>
         </div>
         <div>
-            <button class="submit_button btn btn-primary" id="submit_button" type="submit">Create</button>
+            <button class="submit_button btn btn-primary" id="submit_button" type="button" onclick="return validateContactForm();">Create</button>
         </div>
     </form>
 </div>
@@ -362,7 +355,13 @@
         var getReffered = $('#validationDefault14')
         getReffered.select2({
             placeholder: 'Search...',
-        })
+        }).on('select2:open', () => {
+        $(document).on('scroll.select2', function() {
+            getReffered.select2('close');
+        });
+    }).on('select2:close', () => {
+        $(document).off('scroll.select2');
+    });
 
 
         function formatState(state) {
@@ -418,14 +417,24 @@
             templateResult: formatState,
             templateSelection: formatState
         }).on('select2:open', () => {
-            // Remove existing button to avoid duplicates
-            $('.select2-results .new-contact-btn').remove();
+        $('.select2-results .new-contact-btn').remove();
+        $(".select2-results").prepend(
+            '<div class="new-contact-btn" onclick="openContactModalAndCloseSelect()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
+        );
 
-            // Append the button
-            $(".select2-results").prepend(
-                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-            );
+        // Add scroll event listener to close Select2 on scroll
+        $(document).on('scroll.select2', function() {
+            getSpouse.select2('close');
         });
+    }).on('select2:close', () => {
+        // Remove scroll event listener when Select2 is closed
+        $(document).off('scroll.select2');
+    });
+
+    window.openContactModalAndCloseSelect = function() {
+        $("#createContactModal").modal('show');
+        getSpouse.select2('close'); // Close the select2 dropdown
+    };
 
 
         window.openContactModal = function() {
@@ -457,12 +466,14 @@
         });
     });
     function validateContactForm() {
+        event.preventDefault();
         let last_name = $("#last_name").val();
         if (last_name.trim() === "") {
             showToastError('Please enter last name');
             return false;
         }
         $('#contactOwner').removeAttr('disabled');
+        $('#submit_button').submit();
         return true;
     }
 

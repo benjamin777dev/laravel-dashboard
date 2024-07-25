@@ -8,6 +8,8 @@ use App\Services\ZohoCRM;
 use Illuminate\Http\Response;
 use App\Models\NonTm;
 use App\Services\Helper;
+use DataTables;
+
 class NonTmController extends Controller
 {
     public function index(Request $request)
@@ -26,7 +28,9 @@ class NonTmController extends Controller
             $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
            /*  print_r($nontms);
             die; */
-            return view('nontm.index', compact('deal','nontms'))->render();
+            // return view('nontm.index', compact('deal','nontms'))->render(); 
+            return Datatables::of($nontms)->make(true);
+
         } catch (\Throwable $th) {
             return $th;
             throw $th;

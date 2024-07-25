@@ -8,24 +8,28 @@
 
 <div class="container-fluid">
     <div class="submittaldiv">
-        <a>
-            <div class="input-group-text text-white justify-content-center ppipeBtn" data-bs-toggle="modal" data-bs-target="#" onclick="validateSubmittal({{$submittal}},true)"><i class="fas fa-save">
-                </i>
-                Update
-            </div>
-        </a>
+        <div class="submittalType">
+            <h4 id="submittalType" style="font-weight:bold">
+                @if($submittalType == "buyer-submittal")
+                    Buyer Submittal
+                @elseif($submittalType == "listing-submittal")
+                    Listing Submittal
+                @else
+                    No Submittal Type Selected
+                @endif
+            </h4>
+        </div>
+        <div class = "actions">
+            
+            <a>
+                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal(true)"><i class="fas fa-save">
+                    </i>
+                    Update
+                </div>
+            </a>
+        </div>
     </div>
 
-    <div class="submittalType">
-        <label for="submittalType" class="form-label nplabelText">Submittal Type</label>
-        <select class="form-select npinputinfo" id="submittalType" onchange="showSubmittalForm(this)" disabled>
-            <option value="Buyer Submittal" {{$submittalType=="buyer-submittal" ?'selected':''}}>Buyer Submittal
-            </option>
-            <option value="Listing Submittal" {{$submittalType=="listing-submittal" ?'selected':''}}>Listing
-                Submittal</option>
-        </select>
-
-    </div>
     {{-- Listing Submittals--}}
     <div class="listingForm">
 
@@ -47,7 +51,8 @@
     var showOtherListingForm = @json($listingSubmittaltype);
     var submittalId = @json($submittalId);
     $(document).ready(function(){
-        var subForm = $('#submittalType').val();
+        var subForm = $('#submittalType').text().trim();
+        console.log("subForm",subForm);
         if(subForm == "Listing Submittal"){
             getListingForm();
         }else if(subForm == "Buyer Submittal"){
@@ -89,8 +94,12 @@
             if (string!='') {
                 // Parse the string to a floating-point number
                 let num = parseFloat(string);
+                console.log("num",num);
                 if (isNaN(num)) {
                     throw new Error("Conversion Error: Invalid input");
+                }
+                if(num.length>4){
+                    throw new Error("Conversion Error: Please enter four digit amount");
                 }
                 return num;
             }
@@ -118,24 +127,25 @@
         return regex.test(url);
     }
 
-    function validateSubmittal(submittal,isNew) {
+    window.validateSubmittal=function(isNew) {
+        let submittal = @json($submittal);
         isValid = true
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();
             var additionalEmailBuyer = $('#additionalEmailBuyer').val();
             var buyerPackage = $('#buyerPackage').val();
-            var buyerMailoutNeeded = $('#buyerMailoutNeeded').val();
+            var buyerMailoutNeeded = $('input[name="buyerMailoutNeeded"]:checked').val();
             var buyerClosingDate = $('#buyerClosingDate').val();
-            var buyerPowerAttny = $('#buyerPowerAttny').val();
-            var buyerincludeInsight = $('#buyerincludeInsight').val();
+            var buyerPowerAttny = $('input[name="buyerPowerAttny"]:checked').val();
+            var buyerincludeInsight = $('input[name="buyerincludeInsight"]:checked').val();
             var buyerLenderEmail = $('#buyerLenderEmail').val();
             var buyerLenderPhone = $('#buyerLenderPhone').val();
             var buyerFeesCharged = $('#buyerFeesCharged').val();
             var buyerTmName = $('#buyerTmName').val();
             var buyerAmountChr = $('#buyerAmountChr').val();
             var buyerOtherNotes = $('#buyerOtherNotes').val();
-            var buyerRefrralPay = $('#buyerRefrralPay').val();
+            var buyerRefrralPay = $('input[name="buyerRefrralPay"]:checked').val();
             var buyerRefrealDetails = $('#buyerRefrealDetails').val();
 
             if ((relatedTransaction && buyerPackage && buyerMailoutNeeded && buyerClosingDate && buyerPowerAttny && buyerTmName && buyerRefrralPay && buyerincludeInsight) !== '') {
@@ -151,15 +161,25 @@
                 var BuyerTitleCompany = $('#BuyerTitleCompany').val();
                 var builderCommisionPercent = $('#builderCommisionPercent').val();
                 var builderCommision = $('#builderCommision').val();
-                var contractExecuted = $('#contractExecuted').val();
-                var buyerAgency = $('#buyerAgency').val();
-                if((buyerBuilderrepresent && BuyerTitleCompany && builderCommisionPercent && builderCommision && contractExecuted && buyerAgency ) !== '') {
-                    isValid = true
-                } else {
-                    showToastError("Please fill New Construction all required fields.")
-                    isValid = false
-                }
+                var contractExecuted = $('input[name="contractExecuted"]:checked').val();
+                var buyerAgency = $('input[name="buyerAgency"]:checked').val();
+                console.log("ABCDEF",contractExecuted,buyerAgency);
+                if (
+                (buyerBuilderrepresent || $('#buyerBuilderrepresent').length === 0) &&
+                (BuyerTitleCompany || $('#BuyerTitleCompany').length === 0) &&
+                (builderCommisionPercent || $('#builderCommisionPercent').length === 0) &&
+                (builderCommision || $('#builderCommision').length === 0) &&
+                (contractExecuted || $('input[name="contractExecuted"]').length === 0) &&
+                (buyerAgency || $('input[name="buyerAgency"]').length === 0)
+            ) {
+                isValid = true;
+            } else {
+                showToastError("Please fill New Construction all required fields.");
+                isValid = false;
             }
+            }
+
+            
 
             if((additionalEmailBuyer!='')&&(!(isValidEmail(additionalEmailBuyer)))){
                 showToastError("Additional Email for confirmation should be in email format")
@@ -170,8 +190,8 @@
                 isValid = false
             }
             try {
-                var buyerFeesCharged = ($('#buyerFeesCharged').val()!="")?convertInInteger($('#buyerFeesCharged').val()):null;
-                var buyerAmountChr = ($('#buyerAmountChr').val()!="")?convertInInteger($('#buyerAmountChr').val()):null;
+                buyerFeesCharged = (buyerFeesCharged&&buyerFeesCharged!="")?convertInInteger(buyerFeesCharged):null;
+                buyerAmountChr = (buyerAmountChr&&buyerAmountChr!="")?convertInInteger(buyerAmountChr):null;
             } catch (error) {
                 isValid = false;
                 showToastError(error.message)
@@ -216,7 +236,7 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/buyer/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/buyer/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',
@@ -234,40 +254,41 @@
                 })
             }
         }else if(submittal.submittalType == 'listing-submittal'){
+            console.log("jasgdfjashj");
             // Get values from Basic Info section
             var transactionName = $('#transactionName').val();
             var additionalEmail = $('#additionalEmail').val();
             var agentName = $('#agentName').val();
-            var commingSoon = $('#commingSoon').val();
+            var commingSoon = $('input[name="commingSoon"]:checked').val();
             var comingSoonDate = $('#comingSoonDate').val();
             var tmName = $('#tmName').val();
             var activeDate = $('#activeDate').val();
-            var agreementExecuted = $('#agreementExecuted').val();
+            var agreementExecuted = $('input[name="agreementExecuted"]:checked').val();
             var price = $('#price').val();
             var photoDate = $('#photoDate').val();
             var photoURL = $('#photoURL').val();
             var bedsBathsTotal = $('#bedsBathsTotal').val();
             var tourURL = $('#tourURL').val();
-            var usingCHR = $('#usingCHR').val();
+            var usingCHR = $('input[name="usingCHR"]:checked').val();
 
 
             // Get values from CHR TM - Transaction Details and Preferences section
-            var needOE = $('#needOE').val();
-            var hasHOA = $('#hasHOA').val();
-            var includeInsights = $('#includeInsights').val();
-            var titleToOrderHOA = $('#titleToOrderHOA').val();
-            var mailoutNeeded = $('#mailoutNeeded').val();
-            var powerOfAttnyNeeded = $('#powerOfAttnyNeeded').val();
+            var needOE = $('input[name="needO&E"]:checked').val();
+            var hasHOA = $('input[name="hasHOA"]:checked').val();
+            var includeInsights = $('input[name="includeInsights"]:checked').val();
+            var titleToOrderHOA = $('input[name="titleToOrderHOA"]:checked').val();
+            var mailoutNeeded = $('input[name="mailoutNeeded"]:checked').val();
+            var powerOfAttnyNeeded =$('input[name="powerOfAttnyNeeded"]:checked').val();
             var hoaName = $('#hoaName').val();
             var hoaPhone = $('#hoaPhone').val();
             var hoaWebsite = $('#hoaWebsite').val();
             var miscNotes = $('#miscNotes').val();
 
             // Get values from CHR TM - Service Providers section
-            var scheduleSignInstall = $('#scheduleSignInstall').val();
-            var conciergeListing = $('#conciergeListing').val();
+            var scheduleSignInstall = $('input[name="scheduleSignInstall"]:checked').val();
+            var conciergeListing = $('input[name="conciergeListing"]:checked').val();
             var signInstallVendor = $('#signInstallVendor').val();
-            var draftShowingInstructions = $('#draftShowingInstructions').val();
+            var draftShowingInstructions = $('input[name="draftShowingInstructions"]:checked').val();
             var titleCompany = $('#titleCompany').val();
             var closerNamePhone = $('#closerNamePhone').val();
             var signInstallVendorOther = $('#signInstallVendorOther').val();
@@ -300,7 +321,7 @@
             var emailBlastReverseProspect = $('#emailBlastReverseProspect').prop('checked');
             var propertyHighlightVideo = $('#propertyHighlightVideo').prop('checked');
             var socialMediaImages = $('#socialMediaImages').prop('checked');
-            var showPromotion = $('#showPromotion').val();
+            var showPromotion = $('input[name="showPromotion"]:checked').val();
             var socialMediaAds = $('#socialMediaAds').prop('checked');
             var priceImprovementPackage = $('#priceImprovementPackage').prop('checked');
             var customDomainName = $('#customDomainName').val();
@@ -323,29 +344,37 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
+            // Select all div elements
             const listingSubmittalsContainer = document.getElementById('listingSubmittal');
-            console.log("listingSubmittalsContainer",listingSubmittalsContainer);
             if (listingSubmittalsContainer) {
-                const allDivs = listingSubmittalsContainer.querySelectorAll(':scope > div');
-                // Filter out divs that are hidden (display: none)
-                const visibleDivs = Array.from(allDivs).filter(div => window.getComputedStyle(div).display !== 'none');
-                console.log("visibleDivs",visibleDivs);
-                // Loop through each visible div and validate form fields within it
-                visibleDivs.forEach(div => {
-                    const validatedElements = div.querySelectorAll('.validate');
-                    console.log("validatedElements",validatedElements);
-                    validatedElements.forEach(element => {
-                        if (element.value.trim() === '') {
-                            const label = document.querySelector(`label[for="${element.id}"]`);
-                            const text = label ? label.innerHTML : "This field";
-                            showToastError(text + " cannot be empty");
-                            isValid = false;
-                        }
-                    });
-                });
+                if (
+                    (!transactionName&&transactionName!="" && $('#transactionName').length > 0) ||
+                    (!agentName &&agentName!="" && $('#agentName').length > 0) ||
+                    (!commingSoon &&commingSoon!="" && $('#commingSoon').length > 0) ||
+                    (!tmName &&tmName!="" && $('#tmName').length > 0) ||
+                    (!activeDate &&activeDate!="" && $('#activeDate').length > 0) ||
+                    (!price &&price!="" && $('#price').length > 0) ||
+                    (!agreementExecuted &&agreementExecuted!="" && $('input[name="agreementExecuted"]').length > 0) ||
+                    (!usingCHR &&usingCHR!="" && $('input[name="usingCHR"]').length > 0) ||
+                    (!needOE &&needOE!="" && $('input[name="needO&E"]').length > 0) ||
+                    (!hasHOA &&hasHOA!="" && $('input[name="hasHOA"]').length > 0) ||
+                    (!includeInsights && includeInsights!="" && $('input[name="includeInsights"]').length > 0) ||
+                    (!titleToOrderHOA && titleToOrderHOA!="" && $('input[name="titleToOrderHOA"]').length > 0) ||
+                    (!mailoutNeeded && mailoutNeeded!="" && $('input[name="mailoutNeeded"]').length > 0) ||
+                    (!powerOfAttnyNeeded && powerOfAttnyNeeded!="" && $('input[name="powerOfAttnyNeeded"]').length > 0) ||
+                    (!scheduleSignInstall && scheduleSignInstall!="" && $('input[name="scheduleSignInstall"]').length > 0) ||
+                    (!draftShowingInstructions && draftShowingInstructions!="" && $('input[name="draftShowingInstructions"]').length > 0) ||
+                    (!closerNamePhone && closerNamePhone!="" && $('#closerNamePhone').length > 0) ||
+                    (!showPromotion && showPromotion!="" && $('input[name="showPromotion"]').length > 0) ||
+                    (!brochureLine && $('#brochureLine').length > 0) ||
+                    (!brochurePickupDate  && $('#brochurePickupDate').length > 0)
+                ) {
+                    isValid = false
+                    showToastError('Please fill all required fields');
+                }
+                
+                
             }
-
-
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
                 showToastError("Additional Email for confirmation should be in email format")
@@ -362,13 +391,14 @@
             }
 
             try {
-                var price = ($('#price').val()!='')?convertInInteger($('#price').val()):null;
-                var amountToCHR = ($('#amountToCHR').val()!='')?convertInInteger($('#amountToCHR').val()):null;
-                var feesCharged = ($('#feesCharged').val()!='')?convertInInteger($('#feesCharged').val()):null;
+                console.log("price,amount to chr, fees changes",price,amountToCHR,feesCharged);
+                price = (price&&price!='')?convertInInteger(price):null;
+                amountToCHR = (amountToCHR&&amountToCHR!='')?convertInInteger(amountToCHR):null;
+                feesCharged = (feesCharged&&feesCharged!='')?convertInInteger(feesCharged):null;
             } catch (error) {
                 console.log(error);
                 isValid = false;
-                showToastError(error.message)
+                showToastError(error.message) 
             }
             console.log("isValid", isValid);
             if(isValid == true){
@@ -460,15 +490,15 @@
                 });
                     // Send AJAX request
                 $.ajax({
-                    url: "/listing/submittal/update/"+submittal.zoho_submittal_id+`?isNew=${isNew}`,
+                    url: "/listing/submittal/update/"+submittal.id+`?isNew=${isNew}`,
                     type: 'PUT',
                     contentType: 'application/json',
                     dataType: 'json',
                     data: JSON.stringify(formdata),
                     success: function (response) {
                         console.log("response",response);
-                        showToast("Submittal updated successfully");
-                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
+                        showToast("Listing Submittal updated successfully");
+                        window.location.href = "/pipeline-view/" + submittal['deal_data']['id'];
                     },
                     error: function (xhr, status, error) {
                         // Handle error response

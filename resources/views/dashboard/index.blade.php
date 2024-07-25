@@ -18,27 +18,34 @@
         <img src="{{ URL::asset('/images/Spinner-5.gif') }}" alt="Loading...">
     </div>
     <div class="container-fluid">
-        <div class="loader" id="loaderfor" style="display: none;"></div>
-        <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
+    <div class="loader" id="loaderfor" style="display: none;"></div>
+    <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         @if ($needsNewDate['count'] > 0)
             <div class="alert alert-danger text-center">
                 You have {{ $needsNewDate['count'] }} bad dates!
                 &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
             </div>
         @endif
-        <div class="row mt-4 text-center">
-            <div class="col-lg-3 col-md-3 text-start dcontactbtns-div">
+        <div class="row mt-3 text-center">
+            <div class="col-lg-3 col-md-3 text-start">
                 <div class="row g-1">
                     <div>
-                        <div class="input-group-text dcontactBtns" id="btnGroupAddon" onclick="createContact();">
-                            <i class="fas fa-plus plusicon"></i> New Contact
-                        </div>
+                        @component('components.button', [
+                            'id' => 'create_contact',
+                            'label' => 'New Contact',
+                            'type' =>'dashboard',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
+                        @endcomponent
                     </div>
                     <div>
-                        <div class="input-group-text dcontactBtns" data-bs-toggle="modal"
-                            data-bs-target="#" onclick="createTransaction({{ $userContact }})">
-                            <i class="fas fa-plus plusicon"></i> New Transaction
-                        </div>
+                        @component('components.button', [
+                           'id' => 'create_transaction',
+                            'label' => 'New Transaction',
+                            'type' =>'dashboard',
+                            'icon' => 'fas fa-plus plusicon',
+                        ])
+                        @endcomponent
                     </div>
                 </div>
             </div>
@@ -60,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <div class="section pt-0 pb-0">
+        <div class="section pt-0 pb-4">
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
@@ -232,8 +239,8 @@
                 <div class="d-flex flex-column">
                         @if ($notes->count() > 0)
                             @foreach ($notesInfo as $note)
-                                <div class="card mb-2 shadow-sm border-0">
-                                    <div class="card-body p-3">
+                                <div class=" mb-2 ">
+                                    <div class="p-3">
                                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                                             <div class="w-100">
                                                 <h5 class="m-0">
@@ -302,88 +309,31 @@
                     </div>
                 </div>
             </div>
-
-            <div class="table-responsive dtranstiontable mt-2" id="badDates">
-            @if ($needsNewDate['count'] > 0)
-                <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
-            @else
-                <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
-            @endif
-
-                <div class="dtabletranstion dtableHeader">
-                    <div>Transaction Name</div>
-                    <div>Client Name</div>
-                    <div>Stage</div>
-                    <div>Representing</div>
-                    <div>Sale Price</div>
-                    <div>Closing Date</div>
-                    <div>Commission</div>
-                    <div>Potential GCI</div>
-                    <div>Probability</div>
-                    <div>Probable GCI</div>
-                </div>
-                @if ($needsNewDate['count'] === 0)
-                    <div>
-                        <p class="text-center mt-4" colspan="12">No records found</p>
-                    </div>
-                @else
-                    @foreach ($needsNewDate['deals'] as $deal)
-                        <div class="dtabletranstion row-card" data-id="{{ $deal['id'] }}" data-zid="{{ $deal['zoho_deal_id'] }}">
-                        <div data-type="deal_name" data-value="{{ $deal['deal_name'] }}">
-                                <div class="dTContactName">
-                                    <a href="{{ url('/pipeline-view/' . $deal['id']) }}" target="_blank">
-                                        <span class="dlabel">Transaction Name:</span>  {{ $deal['deal_name'] }} {{ $deal['address'] }}</div>
-                                    </a>
-                                </div>
-                            <div data-type="client_name_primary" data-value="{{ $deal->client_name_primary ?? 'N/A' }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Client Name:</span>
-                                    <img src="{{ URL::asset('/images/account_box.svg') }}" alt="R">
-                                    {{ $deal->client_name_primary ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div data-type="stage" data-value="{{ $deal['stage'] }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Stage:</span>
-                                    <span style="font-weight:600;padding:5px;background-color: {{ $deal['stage'] === 'Potential' ? '#dfdfdf' : ($deal['stage'] === 'Active' ? '#afafaf' : ($deal['stage'] === 'Pre-Active' ? '#cfcfcf' : ($deal['stage'] === 'Under Contract' ? '#8f8f8f;color=#fff;' : ($deal['stage'] === 'Dead-Lost To Competition' ? '#efefef' : '#6f6f6f;color=#fff;')))) }}"
-                                    >{{ $deal['stage'] }}</span>
-                                </div>
-                            </div>
-                            <div data-type="representing" data-value="{{ $deal['representing'] }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Representing:</span>
-                                    {{ $deal['representing'] }}
-                                </div>
-                            </div>
-                            <div data-type="sale_price" data-value="{{ $deal['sale_price'] ?? 0 }}">
-                                <div class="dTContactName">
-                                    <span class="dlabel">Sale Price:</span>
-                                    ${{ number_format($deal['sale_price'] ?? 0, 0, '.', ',') }}
-                                </div>
-                            </div>
-                            <div class="dTContactName">
-                                <span class="dlabel">Closing Date:</span>
-                                <input type="date" class="badDateInput" onchange="updateDeal('{{ $deal['zoho_deal_id'] }}', '{{ $deal['id'] }}', this.closest('.row-card'))"
-                                    id="closing_date{{ $deal['zoho_deal_id'] }}" value="{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}">
-                            </div>
-                            <div data-type="commission" data-value="{{ $deal['commission'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Commission:</span>{{ number_format($deal['commission'] ?? 0, 2) }}%</div>
-                            </div>
-                            <div data-type="potential_gci" data-value="{{ $deal['potential_gci'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Potential GCI:</span>${{ number_format($deal['potential_gci'] ?? 0, 0, '.', ',') }}</div>
-                            </div>
-                            <div data-type="pipeline_probability" data-value="{{ $deal['pipeline_probability'] ?? 0 }}">
-                                <div class="dTContactName"><span class="dlabel">Probability:</span>   {{ number_format($deal['pipeline_probability'] ?? 0, 2) }}%</div>
-                            </div>
-                            <div data-type="probable_gci" data-value="{{ ($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100) }}">
-
-                                <div class="dTContactName"><span class="dlabel">Probable GCI:</span> ${{ number_format(($deal['sale_price'] ?? 0) * (($deal['commission'] ?? 0) / 100) * (($deal['pipeline_probability'] ?? 0) / 100), 0, '.', ',') }}</div>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+            <div class=" dtranstiontable mt-2" id="badDates">
+                @php
+                    $transHeader = [
+                        "",
+                    "Transaction",
+                    "Client Name",
+                    "Status",
+                    "Representing",
+                    "Price",
+                    "Close Date",
+                    "Commission",
+                    "Potential GCI",
+                    "Probability",
+                    "Probable GCI"
+                ]
+                @endphp
+                @component('components.common-table', [
+                    'th' => $transHeader,
+                    'id'=>'datatable_transaction',
+                    'commonArr' =>$needsNewDate,
+                    "type" =>"dash-pipe-transaction",
+                    'needsNewDate'=>$needsNewDate
+                ])
+                @endcomponent
             </div>
-        </div>
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdropforNote">
         <div class="tooltip-wrapper">
@@ -645,7 +595,7 @@
         // Check if textarea value is empty
         if (textareaValue === '') {
             // Show error message or perform validation logic
-            document.getElementById("task_error").innerHTML = "please enter details";
+            document.getElementById("task_error").innerHTML = "please enter subject";
         } else {
             document.getElementById("task_error").innerHTML = "";
         }
@@ -654,7 +604,7 @@
     function addTask() {
         var subject = document.getElementsByName("subject")[0].value;
         if (subject.trim() === "") {
-            document.getElementById("task_error").innerHTML = "please enter details";
+            document.getElementById("task_error").innerHTML = "please enter subject";
             return;
         }
         var seModule = document.getElementsByName("related_to_task")[0].value;
@@ -727,7 +677,7 @@
 
         return formattedDateTime;
     }
-
+    
     function createContact() {
         document.getElementById("loaderOverlay").style.display = "block";
         document.getElementById('loaderfor').style.display = "block";

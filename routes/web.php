@@ -48,6 +48,10 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
+Route::get('/dashboard-tasks', [DashboardController::class, 'retriveTaskforDatatable'])->name('dashboard.tasks')->middleware('auth');
+
+Route::get('/needsNewdate', [DashboardController::class, 'needNewDateMethod'])->middleware('auth');
+
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
 Route::post('/mark-done', [DashboardController::class, 'markAsDone'])->name('mark.done')->middleware('auth');
@@ -68,6 +72,9 @@ Route::delete('/delete-task/{id}', [DashboardController::class, 'deleteTaskactio
 // Contacts Route
 Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index')->middleware('auth');
 Route::post('/contact/create', [ContactController::class, 'createContactId'])->name('contact.create');
+Route::get('/contact_view', [ContactController::class, 'getContactJson'])->name('contact.get_contact')->middleware('auth');
+Route::post('/contact/update/{id}', [ContactController::class, 'updateContactField'])->name('contact.update')->middleware('auth');
+
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::get('/contact/create/form/{contactId}', [ContactController::class, 'contactCreateForm'])->name('contacts.create.form')->middleware('auth');
 Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
@@ -81,10 +88,17 @@ Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->na
 //notes fetch in json for contact
 Route::get('/contact/list', [ContactController::class, 'contactList'])->name('contacts.list')->middleware('auth');
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');
+Route::get('/task/{contactId}', [ContactController::class, 'retriveTasksForContact'])->name('notes.fetch')->middleware('auth');
+Route::get('/note-create/{contactId}', [ContactController::class, 'createNotesForContact'])->name('notes.create')->middleware('auth');
+Route::get('/task-create/{contactId}', [ContactController::class, 'createTasksForContact'])->name('notes.task.create')->middleware('auth');
 Route::get('/deal/note/{dealId}', [PipelineController::class, 'retriveNotesForDeal'])->name('notes.fetch.deal')->middleware('auth');
+Route::get('/deal/task/{dealId}', [PipelineController::class, 'retriveNotesForDeal'])->name('notes.fetch.deal')->middleware('auth');
 
 // Pipeline Route
 Route::get('/pipeline', [PipelineController::class, 'index'])->name('pipeline.index')->middleware('auth');
+Route::get('/pipeline_view', [PipelineController::class, 'getDealsJson'])->name('pipeline.get_pipeline')->middleware('auth');
+Route::get('/note-create-pipe/{dealId}', [PipelineController::class, 'createNotesForDeal'])->name('notes.create.deal')->middleware('auth');
+Route::get('/task-create-pipe/{dealId}', [PipelineController::class, 'createTasksForDeal'])->name('tasks.create.deal')->middleware('auth');
 Route::get('/pipeline/deals', [PipelineController::class, 'getDeals'])->middleware('auth');
 Route::get('/pipeline-view/{dealId}', [PipelineController::class, 'showViewPipeline'])->name('pipeline.view');
 Route::get('/pipeline/detail/form/{dealId}', [PipelineController::class, 'showViewPipelineForm'])->name('pipeline.detail.view');
@@ -92,6 +106,9 @@ Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreateP
 Route::get('/pipeline/create/form/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');
 Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
+
+Route::post('/deals/update/{id}', [PipelineController::class, 'updateDeals'])->name('deal.update')->middleware('auth');
+
 Route::put('/pipeline/update/{dealId}', [PipelineController::class, 'updatePipeline'])->name('pipeline.update')->middleware('auth');
 Route::post('/add/deal/contact/role/{dealId}', [PipelineController::class, 'addContactRole'])->name('contacts.role')->middleware('auth');
 Route::get('/get/deal/contact/role/{dealId}', [PipelineController::class, 'getContactRole'])->name('contact.role.fetch')->middleware('auth');
@@ -146,7 +163,9 @@ Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class,
 
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
-Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContact'])->name('task.contact')->middleware('auth');
+Route::post('/update-task-contact/{id}', [TaskController::class, 'updateTask'])->name('update.tasks')->middleware('auth');
+Route::get('/task/for/contact/{contactId}', [TaskController::class, 'taskForContactJson'])->name('task.contact')->middleware('auth');
+Route::get('/task/for/pipe/{dealId}', [TaskController::class, 'taskForPipeJson'])->name('task.pipe')->middleware('auth');
 Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeline'])->name('task.pipeline')->middleware('auth');
 
 //Notes Route
