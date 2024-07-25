@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center npNom-TMRoles">
         <p class="nproletext">Submittals</p>
         @if ($submittals->count() === 0)
-            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormTypeindex()">
                 <i class="fas fa-plus plusicon"></i>
                     Add New Submittal
             </div>
@@ -15,7 +15,7 @@
         </a>
         @endif
 
-                            <div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormType()">
+                            <div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormTypeindex()">
                                 <i class="fas fa-plus plusicon"></i>
                                 @if ($submittals->count() === 0)
                                     Add New Submittal
@@ -141,7 +141,7 @@
         $('#addSubmittal').removeAttr('disabled').removeClass('btn-disabled');
     }
 
-    function showSubmittalFormType() {
+    function showSubmittalFormTypeindex() {
         console.log("SUBMITTAL DATA", deal.representing, deal.tm_preference);
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {

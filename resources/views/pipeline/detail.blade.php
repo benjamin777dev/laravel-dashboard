@@ -443,7 +443,7 @@
     </div>
     <div class=" text-end">
         @if ($submittals->count() === 0)
-            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormTypedetail()">
                 <i class="fas fa-plus plusicon"></i>
                     Add New Submittal
             </div>
@@ -684,8 +684,7 @@
         })
     }
 
-    window.showSubmittalFormType = function() {
-        console.log("SUBMITTAL DATA", deal.tm_preference);
+    window.showSubmittalFormTypedetail = function(dealdata=null) {
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
             addSubmittal('buyer-submittal', deal);
