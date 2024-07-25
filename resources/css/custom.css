@@ -3477,6 +3477,17 @@ input[type="button"]:hover {
     margin-top: 25px;
 }
 
+form .tox .tox-menubar .tox-mbtn .tox-mbtn__select-label {
+    color: #000000 !important;
+}
+
+form .tox :not(svg):not(rect) {
+    color: #000000 !important;
+}
+
+form .tox .tox-toolbar__primary .tox-toolbar__group .tox-tbtn .tox-icon svg {
+    fill: #000000 !important;
+}
 /* .sticky-head {
     position: -webkit-sticky;
     position: sticky;

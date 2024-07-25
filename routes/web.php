@@ -175,6 +175,9 @@ Route::get('/notes', [DashboardController::class, 'showNotes'])->name('show.note
 //Email Route
 Route::get('/emails',[EmailController::class,'index'])->name('email.index')->middleware('auth');
 Route::get('/emails/list',[EmailController::class,'emailList'])->name('email.list')->middleware('auth');
+Route::post('/send/email',[EmailController::class,'sendEmail'])->name('send.email')->middleware('auth');
+Route::post('/draft/email',[EmailController::class,'draftEmail'])->name('draft.email')->middleware('auth');
+Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->name('email.detail')->middleware('auth');
 
 
 // Language Translation

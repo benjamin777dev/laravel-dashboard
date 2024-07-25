@@ -14,16 +14,16 @@
     <div class="col-12">
         <!-- Left sidebar -->
         <div class="email-leftbar card">
-            <button type="button" class="btn btn-dark btn-block waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal">
+            <button type="button" class="btn btn-dark btn-block waves-effect waves-light" onclick="createdraftEmail()" data-bs-toggle="modal" data-bs-target="#composemodal">
                 Compose
             </button>
             <div class="mail-list mt-4" onclick = "fetchEmails(event)">
-                <a href="#" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
-                <a href="#"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
-                {{-- <a href="#"><i class="mdi mdi-diamond-stone me-2"></i>Important</a>
-                <a href="#"><i class="mdi mdi-file-outline me-2"></i>Draft</a> --}}
-                <a href="#"><i class="mdi mdi-email-check-outline me-2"></i>Sent Mail</a>
-                <a href="#"><i class="mdi mdi-trash-can-outline me-2"></i>Trash</a>
+                <a href="javascript: void(0);" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
+                {{-- <a href="javascript: void(0);"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
+                <a href="javascript: void(0);"><i class="mdi mdi-diamond-stone me-2"></i>Important</a> --}}
+                <a href="javascript: void(0);"><i class="mdi mdi-file-outline me-2"></i>Draft</a>
+                <a href="javascript: void(0);"><i class="mdi mdi-email-check-outline me-2"></i>Sent Mail</a>
+                <a href="javascript: void(0);"><i class="mdi mdi-trash-can-outline me-2"></i>Trash</a>
             </div>
 
 
@@ -165,77 +165,20 @@
             <div class="modal-body">
                 <div>
                     <div class="mb-3">
-                        <select class="select2 form-control select2-multiple" multiple="multiple"
-                            data-placeholder="To" id="toSelect">
-                            <optgroup label="Alaskan/Hawaiian Time Zone">
-                                <option value="AK">Alaska</option>
-                                <option value="HI">Hawaii</option>
-                            </optgroup>
-                            <optgroup label="Pacific Time Zone">
-                                <option value="CA">California</option>
-                                <option value="NV">Nevada</option>
-                                <option value="OR">Oregon</option>
-                                <option value="WA">Washington</option>
-                            </optgroup>
-                            <optgroup label="Mountain Time Zone">
-                                <option value="AZ">Arizona</option>
-                                <option value="CO">Colorado</option>
-                                <option value="ID">Idaho</option>
-                                <option value="MT">Montana</option>
-                                <option value="NE">Nebraska</option>
-                                <option value="NM">New Mexico</option>
-                                <option value="ND">North Dakota</option>
-                                <option value="UT">Utah</option>
-                                <option value="WY">Wyoming</option>
-                            </optgroup>
-                            <optgroup label="Central Time Zone">
-                                <option value="AL">Alabama</option>
-                                <option value="AR">Arkansas</option>
-                                <option value="IL">Illinois</option>
-                                <option value="IA">Iowa</option>
-                                <option value="KS">Kansas</option>
-                                <option value="KY">Kentucky</option>
-                                <option value="LA">Louisiana</option>
-                                <option value="MN">Minnesota</option>
-                                <option value="MS">Mississippi</option>
-                                <option value="MO">Missouri</option>
-                                <option value="OK">Oklahoma</option>
-                                <option value="SD">South Dakota</option>
-                                <option value="TX">Texas</option>
-                                <option value="TN">Tennessee</option>
-                                <option value="WI">Wisconsin</option>
-                            </optgroup>
-                            <optgroup label="Eastern Time Zone">
-                                <option value="CT">Connecticut</option>
-                                <option value="DE">Delaware</option>
-                                <option value="FL">Florida</option>
-                                <option value="GA">Georgia</option>
-                                <option value="IN">Indiana</option>
-                                <option value="ME">Maine</option>
-                                <option value="MD">Maryland</option>
-                                <option value="MA">Massachusetts</option>
-                                <option value="MI">Michigan</option>
-                                <option value="NH">New Hampshire</option>
-                                <option value="NJ">New Jersey</option>
-                                <option value="NY">New York</option>
-                                <option value="NC">North Carolina</option>
-                                <option value="OH">Ohio</option>
-                                <option value="PA">Pennsylvania</option>
-                                <option value="RI">Rhode Island</option>
-                                <option value="SC">South Carolina</option>
-                                <option value="VT">Vermont</option>
-                                <option value="VA">Virginia</option>
-                                <option value="WV">West Virginia</option>
-                            </optgroup>
+                        <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple"
+                            data-placeholder="To">
+                            @foreach($contacts as $contact)
+                                <option value="{{$contact['email']}}">{{$contact['email']}}</option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Subject">
+                        <input type="text" id = "emailSubject" class="form-control" placeholder="Subject">
                     </div>
                     <div class="mb-3">
                         <form method="post">
-                            <textarea class="form-control" id="elm1" name="area"></textarea>
+                            <textarea class="form-control" id="elmEmail" name="area"></textarea>
                         </form>
                     </div>
 
@@ -243,7 +186,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-dark">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+                <button type="button" class="btn btn-dark" onclick="sendEmails()">Send <i class="fab fa-telegram-plane ms-1"></i></button>
             </div>
         </div>
     </div>
@@ -253,19 +196,62 @@
 @endsection
 @section('script')
 
-<!--tinymce js-->
-<script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
-
-<!-- init js -->
-<script src="{{ URL::asset('build/js/pages/form-editor.init.js') }}"></script>
 <script>
     $(document).ready(function(){
         fetchEmails();
         $("#toSelect").select2({
-            placeholder: "To"
-        })
+            placeholder: "To",
+        });
+
     })
+    tinymce.init({
+        selector: 'textarea#elmEmail',
+        plugins: 'lists, link, image, media',
+        toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+        menubar: false,
+        statusbar:false
+    });
+    
     window.fetchEmails = function(event=null){
+        var clickedValue;
+        if(event){
+            let element = event.target.closest('a');
+            console.log(element);
+            if (element) {
+                // Remove 'active' class from all links
+                const links = document.querySelectorAll('.mail-list a');
+                links.forEach(link => link.classList.remove('active'));
+    
+                // Add 'active' class to the clicked link
+                element.classList.add('active');
+    
+                // Get the clicked value
+                clickedValue = element.innerText.trim();
+                console.log(clickedValue);
+                // Add any further actions here, like making an AJAX request or updating the UI
+            }
+        }
+        $.ajax({
+            url: "{{ route('email.list') }}",
+            method: 'GET', // Change to DELETE method
+            data:{
+                'filter':clickedValue
+            },
+            success: function(response) {
+                $('#emailList').html(response)
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    }
+
+    window.sendEmails = function(event=null){
+        var to = $("#toSelect").val();
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
         if(event){
             let element = event.target.closest('a');
             console.log(element);
@@ -283,11 +269,70 @@
                 // Add any further actions here, like making an AJAX request or updating the UI
             }
         }
+        var formData = 
+        {
+            "fromEmail": "tech@coloradohomerealty.com",
+            "toEmail": to,
+            "subject": subject,
+            "detail": content  
+        }
         $.ajax({
-            url: "{{ route('email.list') }}",
-            method: 'GET', // Change to DELETE method
+            url: "{{ route('send.email') }}",
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            data: JSON.stringify(formData),
             success: function(response) {
-                $('#emailList').html(response)
+                console.error(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    }
+
+    window.createdraftEmail = function(event=null){
+        var to = $("#toSelect").val();
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
+        if(event){
+            let element = event.target.closest('a');
+            console.log(element);
+            if (element) {
+                // Remove 'active' class from all links
+                const links = document.querySelectorAll('.mail-list a');
+                links.forEach(link => link.classList.remove('active'));
+    
+                // Add 'active' class to the clicked link
+                element.classList.add('active');
+    
+                // Get the clicked value
+                const clickedValue = element.innerText.trim();
+                console.log(clickedValue);
+                // Add any further actions here, like making an AJAX request or updating the UI
+            }
+        }
+        var formData = 
+        {
+            "fromEmail": "tech@coloradohomerealty.com",
+            "toEmail": to,
+            "subject": subject,
+            "detail": content  
+        }
+        $.ajax({
+            url: "{{ route('draft.email') }}",
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                console.error(response);
             },
             error: function(xhr, status, error) {
                 // Handle error response

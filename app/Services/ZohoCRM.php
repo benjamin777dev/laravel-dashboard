@@ -1329,4 +1329,33 @@ class ZohoCRM
             throw new \Exception('Failed to delete Zoho Group');
         }
     }
+
+    public function sendZohoEmail($user,$access_token,$input)
+    {
+        try {
+            Log::info('Send Email through Zoho', ['input' => $input]);
+
+            // Trigger workflows
+            $input['trigger'] = 'workflow';
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->post("https://mail.zoho.com/api/accounts/$user->root_user_id/messages",$input);
+
+            $responseData = $response->json();
+
+            if (!$response->successful()) {
+                Log::error('Send Email Failed', ['response' => $responseData]);
+                throw new \Exception('Failed to Send Email');
+            }
+
+            Log::info('Zoho Send Email Response', ['response' => $responseData]);
+
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error Sending Email: ' . $th->getMessage());
+            throw new \Exception('Failed to Send email');
+        }
+    }
 }
