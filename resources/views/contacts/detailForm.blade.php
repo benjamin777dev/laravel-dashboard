@@ -203,9 +203,6 @@
                 </div>
             </div>
         </div>
-         <div class="d-none">
-            {{ $contacts->links() }}
-         </div>
         {{-- Primary Contact’s Address --}}
         <div class="col-md-6 col-sm-12"
             >
