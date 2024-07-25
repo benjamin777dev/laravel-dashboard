@@ -380,8 +380,8 @@
 
                 // Add event listener to each radio button
                 radioButtons.forEach(radioButton => {
-                    radioButton.addEventListener('change', event => {
-                        console.log(radioButton,'radioButtons')
+                    console.log(radioButton,'radioButtons')
+                    radioButton?.addEventListener('change', event => {
                         const question = radioButton.closest('.accordion-item').querySelector('button')
                             .textContent.trim();
                         const value = event.target.value;
