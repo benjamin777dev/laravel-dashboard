@@ -90,10 +90,10 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        if (session()->has('spouseContact')) {
+            session()->forget('spouseContact');
+        }
         $spouseContact = session('spouseContact');
-        // print_r($spouseContact);
-        // die;
-        session()->forget('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
@@ -356,7 +356,9 @@ class ContactController extends Controller
 
     public function updateContact(Request $request, $id)
     {
+
         try {
+            
             $user = $this->user();
 
             if (!$user) {
@@ -498,8 +500,8 @@ class ContactController extends Controller
                     $validatedRefferedData = $refferedData;
                 }
             }
-
-            if (isset($request->spouse_partner) && $request->spouse_partner !== '') {
+        
+            if (isset($request->spouse_partner) && $request->spouse_partner !== '' && is_object(json_decode($request->spouse_partner))) {
                 $spouse_partner = json_decode($request->spouse_partner, true);
                 // Check if the 'id' is null
                 if (!is_null($spouse_partner['id'])) {
@@ -630,7 +632,7 @@ class ContactController extends Controller
                         "Lead_Source_Detail" => $validatedData['lead_source_detail'] ?? "",
                         // "Salutation_s"=> $validatedData['phone'] ?? "",
                         "Spouse_Partner" => [
-                            "id" => $validatedSpouse['id'] ?? "",
+                            "id" => $validatedSpouse['id'] ?? $request->spouse_partner ?? "",
                             "name" => $validatedSpouse['Full_Name'] ?? "",
                         ],
                         // "Random_Notes"=> $validatedData['phone'] ?? "",
@@ -776,7 +778,7 @@ class ContactController extends Controller
                 $contactInstance->market_area = $validatedData['market_area'] ?? null;
                 $contactInstance->Lead_Source = $validatedData['lead_source'] ?? null;
                 $contactInstance->referred_id = $validatedRefferedData['id'] ?? null;
-                $contactInstance->spouse_partner = $validatedSpouse['id'] ?? null;
+                $contactInstance->spouse_partner = $validatedSpouse['id'] ?? $request->spouse_partner ?? null;
                 $contactInstance->mailing_state = $validatedData['state'] ?? null;
                 $contactInstance->mailing_city = $validatedData['city'] ?? null;
                 $contactInstance->mailing_address = $validatedData['address_line1'] ?? null;
