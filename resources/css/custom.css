@@ -3505,3 +3505,13 @@ input[type="button"]:hover {
 .sticky-col.sticky-header {
     z-index: 3; 
 } */
+/* wizard css */
+
+.wizard>.actions a, .wizard>.actions a:active, .wizard>.actions a:hover{
+    background-color: #222 !important;
+}
+
+/* .number{
+    background-color: #444 !important;
+    column-rule: #fff;
+} */

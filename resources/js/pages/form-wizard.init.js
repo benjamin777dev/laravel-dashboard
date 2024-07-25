@@ -6,9 +6,13 @@ Contact: themesbrand@gmail.com
 File: Form wizard Js File
 */
 
-
 $(function () {
     $("#basic-example").steps({
+        headerTag: "h3",
+        bodyTag: "section",
+        transitionEffect: "slide"
+    });
+    $("#basic-example11").steps({
         headerTag: "h3",
         bodyTag: "section",
         transitionEffect: "slide"
