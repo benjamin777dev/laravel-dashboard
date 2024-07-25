@@ -165,14 +165,14 @@ class Deal extends Model
                         'phone' => $contact->phone,
                         'email' => $contact->email,
                     ]);
-                $spouse = $contact->getSpouse();
-                if ($spouse) {
-                    $roles->push([
-                        'name' => $spouse->first_name . ' ' . $spouse->last_name,
-                        'role' => 'Client',
-                        'phone' => $spouse->phone,
-                        'email' => $spouse->email]);
-                }
+                // $spouse = $contact->getSpouse();
+                // if ($spouse) {
+                //     $roles->push([
+                //         'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                //         'role' => 'Client',
+                //         'phone' => $spouse->phone,
+                //         'email' => $spouse->email]);
+                // }
             }
            
         }

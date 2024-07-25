@@ -126,6 +126,7 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        $spouseContact = session('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
@@ -152,7 +153,13 @@ class ContactController extends Controller
             // If it's an AJAX request, return the pagination HTML
             return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
         }
-        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+        if ($spouseContact) {
+            // Ensure $spouseContact is an array or an object, not a string
+            if (is_string($spouseContact)) {
+                $spouseContact = json_decode($spouseContact, true);
+            }
+        }
+        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'));
     }
 
     public function getContactJson(){
@@ -288,6 +295,7 @@ class ContactController extends Controller
         if (!$user) {
             return redirect('/login');
         }
+        $spouseContact = session('spouseContact');
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
@@ -312,8 +320,13 @@ class ContactController extends Controller
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        
-        return view('contacts.detailForm', compact('contact', 'userContact','deals','allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups'));
+        if ($spouseContact) {
+            // Ensure $spouseContact is an array or an object, not a string
+            if (is_string($spouseContact)) {
+                $spouseContact = json_decode($spouseContact, true);
+            }
+        }
+        return view('contacts.detailForm', compact('contact', 'userContact','deals','allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'));
     }
 
 
@@ -487,18 +500,16 @@ class ContactController extends Controller
             }
 
             if (isset($request->spouse_partner) && $request->spouse_partner !== '') {
-                $spouse_partner = json_decode($request->spouse_partner, true);
-                // Check if the 'id' is null
-                if (!is_null($spouse_partner['id'])) {
-                    $validatedSpouse = validator()->make($spouse_partner, [
-                        'id' => 'required|numeric',
-                        'Full_Name' => 'required|string|max:255',
-                    ])->validate();
-                    Log::info('Validated spouse_partner', ['validatedSpouse' => $validatedSpouse]);
-                } else {
-                    Log::warning('spouse_partner id is null, skipping validation', ['spouse_partner' => $spouse_partner]);
-                    $validatedSpouse = $spouse_partner;
-                }
+                // Assuming $request->spouse_partner is the ID string directly
+                $spouse_partner_id = $request->spouse_partner;
+            
+                // Validate the spouse_partner ID directly
+                $validatedSpouse = validator()->make(['id' => $spouse_partner_id], [
+                    'id' => 'required|numeric', // Adjust validation rules as per your requirements
+                ])->validate();
+                
+            
+                Log::info('Validated spouse_partner ID', ['validatedSpouse' => $validatedSpouse]);
             }
 
             $input = $request->all();
@@ -726,11 +737,13 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Salutation'])) {
                 unset($responseData['data'][0]['Salutation']);
             }
+            
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
-           
+            
             $contactInstance = Contact::where('id', $id)->first();
+           
             if (!$contactInstance) {
                 return redirect('/contacts');
             }
@@ -1019,6 +1032,10 @@ class ContactController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
+           // Clear existing session value if it exists
+        if (session()->has('spouseContact')) {
+            session()->forget('spouseContact');
+        }
         if (!$user) {
             return redirect('/login');
         }

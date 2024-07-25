@@ -32,7 +32,7 @@
             </button>
 
                 <!-- App Search-->
-          <form class="app-search d-none d-lg-block p-0 pt-3 mb-0">
+          <form class="app-search d-lg-block p-0 pt-3 mb-0">
             <div class="position-relative search-input-design">
                 <div class="form-control " id="global-search">
                     <!-- Option to load data asynchronously -->

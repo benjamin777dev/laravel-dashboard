@@ -16,7 +16,14 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100">
+                <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100 min-mobile-p">
+                    @if ($id==="datatable_transaction")
+                        @if ($needsNewDate['count'] > 0)
+                        <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
+                    @else
+                        <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+                    @endif
+                    @endif
                 </table>
 
             </div>
@@ -46,5 +53,6 @@
     <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
     @vite(['resources/js/dropdown.js'])
     @vite(['resources/js/datatable.js'])
+    
  @endsection
     

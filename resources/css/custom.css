@@ -3,7 +3,6 @@
 body {
     font-family: Montserrat;
 }
-
 .bg-black {
     background-color: #000000 !important;
 }
@@ -35,6 +34,7 @@ body {
     /* 115% */
     cursor: pointer;
 }
+
 
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
@@ -2295,6 +2295,8 @@ body .vertical-collpsed span .logo-sm image {
     color: #fff;
 } */
 
+
+
 @media (min-width: 475px) and (max-width: 767px) {
     .nproletext {
         margin-bottom: 0px;
@@ -2305,6 +2307,19 @@ body .vertical-collpsed span .logo-sm image {
     .nplabelText {
         text-align: start !important;
     }
+    .commonFlex{
+        display: block!important;
+    }
+    .max-width-500{
+        max-width: 150px !important;
+        white-space: nowrap !important;
+        text-overflow: ellipsis !important;
+        word-break: break-all !important;
+        overflow: hidden !important;
+    }
+    #datatable_transaction .dtr-hidden:nth-child(2) {
+        display: block !important; /* Display the second element with class dtr-hidden */
+      }
 }
 
 @media (min-width: 320px) and (max-width: 475px) {
@@ -2319,6 +2334,9 @@ body .vertical-collpsed span .logo-sm image {
     .next_btn span {
         display: none;
     }
+    /* .dtr-hidden{
+        display: block !important;
+    } */
 }
 
 /* / database component / */
@@ -3148,6 +3166,9 @@ body[data-sidebar="dark"] .navbar-brand-box {
 
     .col-contact {
         flex: 1 !important;
+    }
+    .w-control button{
+        width: 100% !important;
     }
 }
 

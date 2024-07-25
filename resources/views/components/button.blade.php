@@ -1,4 +1,7 @@
-@if ($label=="New Transaction" || $label=="New Contact" || $label=="New Submittal")   
+@if ($label=="New Transaction" && $type=="database" || $label=="New Contact" && $type=="database" || $label=="New Submittal")   
+<button type="button" id="{{$id}}" class="input-group-text text-white justify-content-center pTransactionBtn " >  <i class="{{$icon}}"></i>{{$label}}</button>
+@endif
+@if ($label=="New Transaction" && $type=="dashboard" || $label=="New Contact" && $type=="dashboard")   
 <button type="button" id="{{$id}}" class="btn btn-primary btn-lg waves-effect waves-light d-flex h-100 p-3 justify-content-center align-items-center gap-1 align-self-stretch rounded-3 border border-1 border-dark shadow-sm text-white text-center fw-bolder w-100 dcontactBtns" >  <i class="{{$icon}}"></i>{{$label}}</button>
 @endif
 @if ($label=="Filter" || $label=="Reset All")    

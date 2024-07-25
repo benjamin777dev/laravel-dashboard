@@ -8,11 +8,11 @@ window.toggleValidation = function (element, addValidation) {
     }
 };
 window.checkValidate = function (deal) {
-    console.log(deal);
 
     var representing = document.getElementById("validationDefault02");
     var stage = document.getElementById("validationDefault04");
     if (representing?.value == "Buyer" && stage?.value == "Under Contract") {
+        
         let disabledText = deal.locked_s ? "disabled" : "";
 
         $("#additionalFields").append(`
