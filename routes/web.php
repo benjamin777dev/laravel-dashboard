@@ -17,6 +17,7 @@ use App\Http\Controllers\CustomerController; // Ensure you import the CustomerCo
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\SubmittalController;
+use App\Http\Controllers\EmailController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -170,6 +171,13 @@ Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeli
 
 //Notes Route
 Route::get('/notes', [DashboardController::class, 'showNotes'])->name('show.notes')->middleware('auth');
+
+//Email Route
+Route::get('/emails',[EmailController::class,'index'])->name('email.index')->middleware('auth');
+Route::get('/emails/list',[EmailController::class,'emailList'])->name('email.list')->middleware('auth');
+Route::post('/send/email',[EmailController::class,'sendEmail'])->name('send.email')->middleware('auth');
+Route::post('/draft/email',[EmailController::class,'draftEmail'])->name('draft.email')->middleware('auth');
+Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->name('email.detail')->middleware('auth');
 
 
 // Language Translation

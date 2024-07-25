@@ -318,6 +318,8 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
+
+@include('email-inbox')
 @vite(['resources/js/pipeline.js'])   
 <script>
     contact=@json($contact);

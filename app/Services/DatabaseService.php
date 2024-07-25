@@ -17,6 +17,7 @@ use App\Models\Note;
 use App\Models\Submittals;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Email;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -835,6 +836,23 @@ class DatabaseService
                 $contacts->orderBy('updated_at', 'desc');
             }
 
+            // Paginate the results
+            $contacts = $contacts->paginate(50);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveContactsHavingEmail(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Contact From Database");
+
+            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null]];
+            $contacts = Contact::where($conditions); // Initialize the query with basic conditions
+            $contacts->orderBy('updated_at', 'desc');
             // Paginate the results
             $contacts = $contacts->paginate(50);
             return $contacts;
@@ -2172,6 +2190,72 @@ class DatabaseService
         try {
             $bulkJob = Deal::where('zoho_deal_id', $id)->delete();
             return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function saveEmail($input,$to)
+    {
+        try {
+            Log::info('Email Input',$input);
+            $email = Email::create([
+                'fromEmail'=>$input['fromEmail'],
+                'toEmail'=>$to,
+                'subject'=>$input['subject'],
+                'content'=>$input['detail']
+            ]);
+            return $email;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function draftEmail($input)
+    {
+        try {
+            Log::info('Email Input',$input);
+            $email = Email::create([
+                'fromEmail'=>$input['fromEmail'],
+                'toEmail'=>is_array($input['toEmail']) && count($input['toEmail']) > 0 ? $input['toEmail'] : null,
+                'subject'=>$input['subject'],
+                'content'=>$input['detail']
+            ]);
+            return $email;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getEmails($user,$filter)
+    {
+        try {
+            $condition = [['userId',$user->id]];
+            if($filter=="Draft"){
+                $condition[]=['isEmailSent',false];
+            }else if($filter == "Sent Mail"){
+                $condition[]=['fromEmail',$user->email];
+            }else if($filter=='Trash'){
+                $condition[]=['isDeleted',true];
+            }else if($filter == 'Inbox'){
+                $condition[]=['isEmailSent',true];
+            }
+            $emails = Email::where($condition)->get();
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getEmailDetail($emailId)
+    {
+        try {
+            $email = Email::where('id',$emailId)->first();
+            return $email;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
