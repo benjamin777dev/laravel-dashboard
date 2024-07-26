@@ -580,7 +580,285 @@
                         </div>
                     
                       </section>
-                      
+
+                      <h3>Commission Details</h3>
+                      <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Need O&E <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" value="No" name="needO&E">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Has HOA? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Include Insights in Intro? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="includeInsights_yes" value="Yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input id="includeInsights_no" value="No" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Title to Order HOA docs?  <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3"> 
+                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                                 <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        TBD
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Mailout Needed? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="mailoutNeeded_yes" value="Yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="mailoutNeeded_no" value="No" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Power of Attny Needed?  <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="powerOfAttnyNeeded">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="powerOfAttnyNeeded">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    
+                      </section>
+
+                      <h3>Service Providers</h3>
+                      <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="builderCommisionPercent">HOA Name</label>
+                                            <input type="text" name="additional_charge" id="hoaName" value="{{ $submittal['hoaName'] }}"
+                                            class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">HOA Phone</label>
+                                            <input type="text" name="additional_charge" value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
+                                            class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">HOA Website </label>
+                                            <input type="text"
+                                   value="{{ $submittal['hoaWebsite'] }}"
+                                    class="form-control" placeholder="" id="hoaWebsite">
+                                    </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="titleCompany">Misc Notes - Seller, Communication, etc </label>
+                                            <textarea class="form-control" id="miscNotes"  rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="signInstallDate">Are you ready to continue to Property Promotion? </label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input onclick="propertyParmotion(false)" value=1 {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }} type="radio"  name="showPromotion">
+                                                    <label class=""  for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input onclick="propertyParmotion(true)" value=0 {{ $submittal['showPromotion'] == 0 ? 'checked' : '' }} type="radio" name="showPromotion">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                            </form>
+                        </div>
+                    
+                      </section>
+
 
                     <!-- Confirm Details -->
                     <h3>Confirm Detail</h3>
