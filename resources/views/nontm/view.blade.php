@@ -15,45 +15,25 @@
         </div>
     </div>
 </div>
-<div class="row justify-content-center" id="listingSubmittal">
-    <div class="col-xl-8 align-items-center">
+<div class="row">
+    <div class="col-lg-12">
         <div class="card">
-            <div class="card-body p-4">
-                <div id="carouselExampleIndicators" style="display: flex;justify-content:space-between" class="carousel slide" data-interval="false">
-                    <div class="corausal-req-mb48">
-                        <p class="corausal-req-text">Non-TM Check Request Information</p>
-                    </div>
-                   
-                    <div class="carousel-indicators d-flex justify-content-between text-nowrap">
-                        <div class="prev_btn" href="#carouselExampleIndicators" role="button"
-                        data-bs-slide="prev">
-                            <a href="#"><<span class="prev">
-                                     Previous</span></a>
-                        </div>
-                        <div class="bullets">
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                                aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                                aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                                aria-label="Slide 3"></button>
-                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"
-                                aria-label="Slide 4"></button>
-                        </div>
-                        <div class="next_btn" href="#carouselExampleIndicators" role="button"
-                        data-bs-slide="next">
-                            <a href="#"><span class="next">Next </span>></a>
-                        </div>
-                    </div>
-                    
-                    <div class="carousel-inner" role="listbox">
-                        <div class="carousel-item active">
-                                <div class="related_trxn label-div-mb">
-                                    <label for="relatedto" class="common-label">Related Transaction <svg
-                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
-                                            fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                                y="0" width="19" height="18">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Non-TM Check Request Information</h4>
+
+                <div id="basic-example-nontm-view">
+                    <!-- Seller Details -->
+                    <h3>Basic Information</h3>
+                    <section>
+                        <form>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label>Related Transaction <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                             </mask>
                                             <g mask="url(#mask0_2151_10662)">
@@ -62,219 +42,54 @@
                                                     fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                    <div class="nontm-select-div">
-                                        <select name="related_transaction" id="related_transaction" class="nontm-select">
+                                        <select name="related_transaction" id="related_transaction" class="form-select validate_err" disabled>
                                             @foreach ($deals as $deal)
-                                                <option value="{{ $deal->zoho_deal_id }}"
-                                                    {{ $deal->zoho_deal_id == $dealData->dealId ? 'selected' : '' }}>
-                                                    {{ $deal->deal_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-        
-                                        <img src="{{ URL::asset('/images/domain_add.svg') }}" alt="">
+                                               <option value="{{ $deal->zoho_deal_id }}"
+                                                   {{ $deal->zoho_deal_id == $dealData->dealId ? 'selected' : '' }}>
+                                                   {{ $deal->deal_name }}
+                                               </option>
+                                           @endforeach
+                                       </select>
                                     </div>
                                     <div id="related_transaction_error" class="text-danger">
                                     </div>
                                 </div>
-                                <div class="additional_email label-div-mb">
-                                    <label for="add_email" class="common-label">Additional Email for Confirmation</label>
-                                    <input type="email" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}"
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input">Additional Email for Confirmation </label>
+                                        <input type="email" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}"
                                         class="form-control" placeholder="Enter email" id="add_email">
-                                    <div class="add_email_error text-danger" id="add_email_error">
+                                        <div class="add_email_error text-danger" id="add_email_error">
+                                        </div>
                                     </div>
+                                    
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-6 label-div-mb">
-                                        <label for="close_date" class="common-label">Close Date <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
-                                                fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                                    y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                        <input type="date"
-                                            value="{{ isset($dealData['closed_date']) ? $dealData['closed_date'] : '' }}"
-                                            class="form-control nontm-input" id="close_date">
-                                        <div id="close_date_error" class="text-danger">
-        
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 label-div-mb">
-                                        <label for="commission" class="common-label">Commission % <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                                    x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                        <input type="text"
-                                            value="{{ isset($dealData['Commission']) ? $dealData['Commission'] : '' }}"
-                                            class="form-control nontm-input" id="commission">
-                                        <div id="commission_error" class="text-danger">
-        
-                                        </div>
-                                    </div>
-                                
                             </div>
-                          
-                        </div>
-                        <div class="carousel-item">
-    
-                                <div class="accordion" id="accordionExample">
-                                    <!-- Referral Fee Paid Out -->
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReferral" aria-expanded="false" aria-controls="collapseReferral">
-                                                Referral Fee Paid Out?
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                    </mask>
-                                                    <g mask="url(#mask0_2151_10662)">
-                                                        <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseReferral" class="accordion-collapse collapse" aria-labelledby="headingOne" >
-                                            <div class="accordion-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="referralFee" value="yes" id="referralYes" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "YES" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="referralYes">Yes</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="referralFee" value="no" id="referralNo" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "NO" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="referralNo">No</label>
-                                                </div>
-                                                <div class="referralCustomFields label-div-mb" style="margin-top:10px;display:none;">
-                                                    <div class="referralFeeAmount label-div-mb">
-                                                        <label for="referralFeeAmount" class="common-label">Referral Fee Amount</label>
-                                                        <input type="text" value="{{ isset($dealData['referralFeeAmount']) ? $dealData['referralFeeAmount'] : '' }}" class="form-control" id="referralFeeAmount">
-                                                        <div class="referralFeeAmount_error text-danger" id="referralFeeAmount_error"></div>
-                                                    </div>
-                                                    <div class="referralFeeBrokerage label-div-mb">
-                                                        <label for="referralFeeBrokerage" class="common-label">Referral Fee Brokerage Name</label>
-                                                        <input type="text" value="{{ isset($dealData['referralFeeBrokerage']) ? $dealData['referralFeeBrokerage'] : '' }}" class="form-control" id="referralFeeBrokerage">
-                                                        <div class="referralFeeBrokerage_error text-danger" id="referralFeeBrokerage_error"></div>
-                                                    </div>
-                                                    <div class="referralAgreement label-div-mb">
-                                                        <label for="referralAgreement" class="common-label">Referral Fee Agreement Executed</label>
-                                                        <input type="text" value="{{ isset($dealData['referralAgreement']) ? $dealData['referralAgreement'] : '' }}" class="form-control" id="referralAgreement">
-                                                        <div class="referralAgreement_error text-danger" id="referralAgreement_error"></div>
-                                                    </div>
-                                                    <div class="hasW9Provided label-div-mb">
-                                                        <label for="hasW9Provided" class="common-label">Has the W-9 been provided</label>
-                                                        <input type="text" value="{{ isset($dealData['hasW9Provided']) ? $dealData['hasW9Provided'] : '' }}" class="form-control" id="hasW9Provided">
-                                                        <div class="hasW9Provided_error text-danger" id="hasW9Provided_error"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Home Warranty Paid Out Agent -->
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingTwo">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHomeWarranty1" aria-expanded="false" aria-controls="collapseHomeWarranty1">
-                                                Home Warranty Paid Out Agent?
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                    </mask>
-                                                    <g mask="url(#mask0_2151_10662)">
-                                                        <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseHomeWarranty1" class="accordion-collapse collapse" aria-labelledby="headingTwo" >
-                                            <div class="accordion-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="homeWarranty" value="yes" id="homeWarrantyYes" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "YES" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="homeWarrantyYes">Yes</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="homeWarranty" value="no" id="homeWarrantyNo" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "NO" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="homeWarrantyNo">No</label>
-                                                </div>
-                                                <div class="homeWarrentyFields label-div-mb" style="margin-top:10px;display:none;">
-                                                    <div class="homeWarrentyAmount label-div-mb">
-                                                        <label for="homeWarrentyAmount" class="common-label">Home Warranty Amount</label>
-                                                        <input type="text" value="{{ isset($dealData['homeWarrentyAmount']) ? $dealData['homeWarrentyAmount'] : '' }}" class="form-control" id="homeWarrentyAmount">
-                                                        <div class="homeWarrentyAmount_error text-danger" id="homeWarrentyAmount_error"></div>
-                                                    </div>
-                                                    <div class="homeWarrentyDescription label-div-mb">
-                                                        <label for="homeWarrentyDescription" class="common-label">Home Warranty Description</label>
-                                                        <input type="text" value="{{ isset($dealData['homeWarrentyDescription']) ? $dealData['homeWarrentyDescription'] : '' }}" class="form-control" id="homeWarrentyDescription">
-                                                        <div class="homeWarrentyDescription_error text-danger" id="homeWarrentyDescription_error"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Additional Fees Charged -->
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingThree">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdditionalFees" aria-expanded="false" aria-controls="collapseAdditionalFees">
-                                                Any Additional Fees Charged?
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                    </mask>
-                                                    <g mask="url(#mask0_2151_10662)">
-                                                        <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseAdditionalFees" class="accordion-collapse collapse" aria-labelledby="headingThree" >
-                                            <div class="accordion-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="additionalFees" value="yes" id="additionalFeesYes" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "YES" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="additionalFeesYes">Yes</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="additionalFees" value="no" id="additionalFeesNo" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "NO" ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="additionalFeesNo">No</label>
-                                                </div>
-                                                <div class="additionalFeesFields label-div-mb" style="margin-top:10px;display:none;">
-                                                    <div class="additionalFeeAmount label-div-mb">
-                                                        <label for="additionalFeeAmount" class="common-label">Additional Fee Amount</label>
-                                                        <input type="text" value="{{ isset($dealData['additionalFeesAmount']) ? $dealData['additionalFeesAmount'] : '' }}" class="form-control" id="additionalFeeAmount">
-                                                        <div class="additionalFeeAmount_error text-danger" id="additionalFeeAmount_error"></div>
-                                                    </div>
-                                                    <div class="additionalFeeDescription label-div-mb">
-                                                        <label for="additionalFeeDescription" class="common-label">Additional Fee Description</label>
-                                                        <input type="text" value="{{ isset($dealData['additionalFeesDescription']) ? $dealData['additionalFeesDescription'] : '' }}" class="form-control" id="additionalFeeDescription">
-                                                        <div class="additionalFeeDescription_error text-danger" id="additionalFeeDescription_error"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-email-input">Close Date <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
+                                        <input type="date" class="form-control" value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}" id="close_date" >
+                                        <div id="close_date_error" class="text-danger">
+                
                                         </div>
                                     </div>
                                 </div>
-        
-                        </div>
-                        <div class="carousel-item main_form_div">
-                            <div class="row">
-                                <div class="col-lg-6 label-div-mb">
-                                    <label for="close_date" class="common-label">Final Purchase Price <svg
-                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18"
-                                            fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                                y="0" width="19" height="18">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-phoneno-input">Commission %<svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                             </mask>
                                             <g mask="url(#mask0_2151_10662)">
@@ -283,131 +98,330 @@
                                                     fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                    <input type="text"
-                                        value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
-                                        placeholder="$" class="form-control nontm-input" id="final_purchase">
-                                    <div id="final_purchase_error" class="text-danger">
-        
+                                        <input type="text" value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
+                                        class="form-control" id="commission">
+                                        <div id="commission_error" class="text-danger">
                                     </div>
                                 </div>
-                                <div class="col-lg-6 label-div-mb">
-                                    <label for="commission" class="common-label">Amount to CHR GIves</label>
-                                    <input type="text"
-                                        value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
+                            </div>
+                        </form>
+                    </section>
+                    <h3>Basic Information</h3>
+                    <section>
+                        <form>
+                            <div class="accordion" id="accordionExample">
+                                <!-- Referral Fee Paid Out -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReferral" aria-expanded="false" aria-controls="collapseReferral">
+                                            Referral Fee Paid Out?
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseReferral" class="accordion-collapse collapse" aria-labelledby="headingOne" >
+                                        <div class="accordion-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="referralFee" value="yes" id="referralYes" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "YES" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="referralYes">Yes</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="referralFee" value="no" id="referralNo" {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === "NO" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="referralNo">No</label>
+                                            </div>
+                                            <div class="referralCustomFields label-div-mb" style="margin-top:10px;display:none;">
+                                                <div class="referralFeeAmount label-div-mb">
+                                                    <label for="referralFeeAmount" class="common-label">Referral Fee Amount</label>
+                                                    <input type="text" value="{{ isset($dealData['referralFeeAmount']) ? $dealData['referralFeeAmount'] : '' }}" class="form-control" id="referralFeeAmount">
+                                                    <div class="referralFeeAmount_error text-danger" id="referralFeeAmount_error"></div>
+                                                </div>
+                                                <div class="referralFeeBrokerage label-div-mb">
+                                                    <label for="referralFeeBrokerage" class="common-label">Referral Fee Brokerage Name</label>
+                                                    <input type="text" value="{{ isset($dealData['referralFeeBrokerage']) ? $dealData['referralFeeBrokerage'] : '' }}" class="form-control" id="referralFeeBrokerage">
+                                                    <div class="referralFeeBrokerage_error text-danger" id="referralFeeBrokerage_error"></div>
+                                                </div>
+                                                <div class="referralAgreement label-div-mb">
+                                                    <label for="referralAgreement" class="common-label">Referral Fee Agreement Executed</label>
+                                                    <input type="text" value="{{ isset($dealData['referralAgreement']) ? $dealData['referralAgreement'] : '' }}" class="form-control" id="referralAgreement">
+                                                    <div class="referralAgreement_error text-danger" id="referralAgreement_error"></div>
+                                                </div>
+                                                <div class="hasW9Provided label-div-mb">
+                                                    <label for="hasW9Provided" class="common-label">Has the W-9 been provided</label>
+                                                    <input type="text" value="{{ isset($dealData['hasW9Provided']) ? $dealData['hasW9Provided'] : '' }}" class="form-control" id="hasW9Provided">
+                                                    <div class="hasW9Provided_error text-danger" id="hasW9Provided_error"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Home Warranty Paid Out Agent -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHomeWarranty1" aria-expanded="false" aria-controls="collapseHomeWarranty1">
+                                            Home Warranty Paid Out Agent?
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHomeWarranty1" class="accordion-collapse collapse" aria-labelledby="headingTwo" >
+                                        <div class="accordion-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="homeWarranty" value="yes" id="homeWarrantyYes" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "YES" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="homeWarrantyYes">Yes</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="homeWarranty" value="no" id="homeWarrantyNo" {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === "NO" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="homeWarrantyNo">No</label>
+                                            </div>
+                                            <div class="homeWarrentyFields label-div-mb" style="margin-top:10px;display:none;">
+                                                <div class="homeWarrentyAmount label-div-mb">
+                                                    <label for="homeWarrentyAmount" class="common-label">Home Warranty Amount</label>
+                                                    <input type="text" value="{{ isset($dealData['homeWarrentyAmount']) ? $dealData['homeWarrentyAmount'] : '' }}" class="form-control" id="homeWarrentyAmount">
+                                                    <div class="homeWarrentyAmount_error text-danger" id="homeWarrentyAmount_error"></div>
+                                                </div>
+                                                <div class="homeWarrentyDescription label-div-mb">
+                                                    <label for="homeWarrentyDescription" class="common-label">Home Warranty Description</label>
+                                                    <input type="text" value="{{ isset($dealData['homeWarrentyDescription']) ? $dealData['homeWarrentyDescription'] : '' }}" class="form-control" id="homeWarrentyDescription">
+                                                    <div class="homeWarrentyDescription_error text-danger" id="homeWarrentyDescription_error"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Additional Fees Charged -->
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdditionalFees" aria-expanded="false" aria-controls="collapseAdditionalFees">
+                                            Any Additional Fees Charged?
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseAdditionalFees" class="accordion-collapse collapse" aria-labelledby="headingThree" >
+                                        <div class="accordion-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="additionalFees" value="yes" id="additionalFeesYes" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "YES" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="additionalFeesYes">Yes</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="additionalFees" value="no" id="additionalFeesNo" {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === "NO" ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="additionalFeesNo">No</label>
+                                            </div>
+                                            <div class="additionalFeesFields label-div-mb" style="margin-top:10px;display:none;">
+                                                <div class="additionalFeeAmount label-div-mb">
+                                                    <label for="additionalFeeAmount" class="common-label">Additional Fee Amount</label>
+                                                    <input type="text" value="{{ isset($dealData['additionalFeesAmount']) ? $dealData['additionalFeesAmount'] : '' }}" class="form-control" id="additionalFeeAmount">
+                                                    <div class="additionalFeeAmount_error text-danger" id="additionalFeeAmount_error"></div>
+                                                </div>
+                                                <div class="additionalFeeDescription label-div-mb">
+                                                    <label for="additionalFeeDescription" class="common-label">Additional Fee Description</label>
+                                                    <input type="text" value="{{ isset($dealData['additionalFeesDescription']) ? $dealData['additionalFeesDescription'] : '' }}" class="form-control" id="additionalFeeDescription">
+                                                    <div class="additionalFeeDescription_error text-danger" id="additionalFeeDescription_error"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+
+                    <h3>Basic Information</h3>
+                    <section>
+                        <form>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label>Final Purchase Price <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
+                                        <input type="text"
+                                        value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
+                                        placeholder="$" class="form-control" id="final_purchase">
+                                        <div id="final_purchase_error" class="text-danger">
+                
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input">Amount to CHR GIves </label>
+                                        <input type="text" value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
                                         placeholder="$" class="form-control nontm-input" id="amount_chr">
                                         <div id="amount_chr_error" class="text-danger">
-        
                                     </div>
-        
                                 </div>
-                            <div>
-                                <label for="payable" class="common-label">Checks Payable to</label>
-                                <select name="additional_charge" id="additonal_fee"
-                                    class="form-select second-step-common-select select-mb24" id="">
-                                    <option value="" selected>{{ $deal->userData->name }}</option>
-                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-email-input">Checks Payable to</label>
+                                        <select name="additional_charge" id="additonal_fee"
+                                        class="form-select second-step-common-select select-mb24" id="">
+                                        <option value="" selected>{{ $deal->userData->name }}</option>
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-phoneno-input">Agent Comments/Remarks/Instructions<svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
+                                        <textarea placeholder="Add Copy" id="agent_comments" class="form-control" rows="2" placeholder="Enter Your Address">{{ isset($dealData['agent_comments']) ? $dealData['agent_comments'] : '' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-phoneno-input">Other Commission Notes</label>
+                                        <textarea placeholder="Add Copy" id="other_comm_notes" class="form-control" rows="2" placeholder="Enter Your Address">{{ isset($dealData['other_commission_notes']) ? $dealData['other_commission_notes'] : '' }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                    <!-- Confirm Details -->
+                    <h3>Confirm Detail</h3>
+                    <section>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6">
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Confirm Detail</h5>
+                                        <p class="text-muted"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-        
-                        </div>
-                        <div class="carousel-item">
-                                <div class="commission-nontm select-mb24">
-                                    <label for="commission" class="common-label">Agent Comments/Remarks/Instructions</label>
-                                    <input type="textarea"
-                                        value="{{ isset($dealData['agent_comments']) ? $dealData['agent_comments'] : '' }}"
-                                        placeholder="Add Copy" class="form-control nontm-input-textarea" id="agent_comments">
-                                </div>
-                                <div class="commission-nontm">
-                                    <label for="commission" class="common-label">Other Commission Notes</label>
-                                    <input type="textarea"
-                                        value="{{ isset($dealData['other_commission_notes']) ? $dealData['other_commission_notes'] : '' }}"
-                                        placeholder="Add Copy" class="form-control nontm-input-textarea" id="other_comm_notes">
-                                </div>
-                            
-                        </div>
-                    </div>
-                   
+                    </section>
                 </div>
+
             </div>
+            <!-- end card body -->
         </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
 
 @endsection
+    <!-- jquery step -->
+    <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
+    <!-- form wizard init -->
+    <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
 
 <script type="text/javascript">
     window.onload = function() {
-        $(".main-carousel a span.prev").click(function(e) {
-            e.preventDefault();
-            $(".main-carousel .carousel-control-prev").trigger("click");
-        });
-        $(".main-carousel a span.next").click(function(e) {
-            e.preventDefault();
-            $(".main-carousel .carousel-control-next").trigger("click");
-        });
+        $(function () {
+                $("#basic-example-nontm-view").steps({
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    transitionEffect: "slide"
+                    });
+                });
 
-        $('.nontm-select').select2();
+                let related_transaction = document.getElementById("related_transaction");
+                let add_email = document.getElementById("add_email");
+                let close_date = document.getElementById("close_date");
+                let commission = document.getElementById("commission");
+                let final_purchase = document.getElementById("final_purchase");
+                let amount_chr = document.getElementById("amount_chr");
+        
 
-        let related_transaction = document.getElementById("related_transaction");
-        let add_email = document.getElementById("add_email");
-        let close_date = document.getElementById("close_date");
-        let commission = document.getElementById("commission");
-        let final_purchase = document.getElementById("final_purchase");
-        let amount_chr = document.getElementById("amount_chr");
-       
 
         // Select all radio buttons
-        const radioButtons = document.querySelectorAll('input[type="radio"]');
+                const radioButtons = document.querySelectorAll('input[type="radio"]');
 
-        // Initialize an object to store the values
-        window.values = {};
+                // Initialize an object to store the values
+                window.values = {};
 
-        radioButtons.forEach(radioButton => {
-            if (radioButton.checked) {
-                const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
-                const value = radioButton.value;
-                window.values[question] = value;
-                openNewFields();
-            }
-           
-        });
-        // Add event listener to each radio button
-        radioButtons.forEach(radioButton => {
-            radioButton.addEventListener('change', event => {
-                const question = radioButton.closest('.accordion-item').querySelector('button')
-                    .textContent.trim();
-                const value = event.target.value;
-                window.values[question] = value;
-                openNewFields();
-                console.log(values, 'valuesis hreeee')
-            });
-        });
+                radioButtons.forEach(radioButton => {
+                    if (radioButton.checked) {
+                        const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+                        const value = radioButton.value;
+                        window.values[question] = value;
+                        openNewFields();
+                    }
+                
+                });
 
-        // Get all accordion buttons
-        const accordionButtons = document.querySelectorAll('.accordion-button');
+                // Add event listener to each radio button
+                document.addEventListener('change', event => {
+                if (event.target.matches('input[type="radio"]')) {
+                    const radioButton = event.target;
+                    const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+                    const value = radioButton.value;
+                    window.values[question] = value;
+                        openNewFields();
+                    }
+                });
 
-        // Add event listener to each button
-        accordionButtons.forEach((button) => {
-            // Get the accordion item
-            const accordionItem = button.closest('.accordion-item');
+                // Get all accordion buttons
+                const accordionButtons = document.querySelectorAll('.accordion-button');
 
-            // Get the collapse element
-            const collapseElement = accordionItem.querySelector('.accordion-collapse');
+                // Add event listener to each button
+                accordionButtons.forEach((button) => {
+                    // Get the accordion item
+                    const accordionItem = button.closest('.accordion-item');
 
-            // Toggle the collapse element
-            collapseElement.classList.toggle('show');
+                    // Get the collapse element
+                    const collapseElement = accordionItem.querySelector('.accordion-collapse');
+
+                    // Toggle the collapse element
+                    collapseElement.classList.toggle('show');
 
 
-            // Update the aria-expanded attribute
-            if (collapseElement.classList.contains('show')) {
-                button.classList.remove('collapsed');
-                button.setAttribute('aria-expanded', 'true');
-            } else {
-                button.classList.add('collapsed');
-                button.setAttribute('aria-expanded', 'false');
-            }
-        });
+                    // Update the aria-expanded attribute
+                    if (collapseElement.classList.contains('show')) {
+                        button.classList.remove('collapsed');
+                        button.setAttribute('aria-expanded', 'true');
+                    } else {
+                        button.classList.add('collapsed');
+                        button.setAttribute('aria-expanded', 'false');
+                    }
+                });
 
     }
 
@@ -454,15 +468,100 @@
         let commission = document.getElementById("commission");
         let final_purchase = document.getElementById("final_purchase");
         let amount_chr = document.getElementById("amount_chr");
+
         let related_transactionError = document.getElementById("related_transaction_error");
         let add_emailError = document.getElementById("add_email_error");
         let close_dateError = document.getElementById("close_date_error");
         let commissionError = document.getElementById("commission_error");
         let final_purchaseError = document.getElementById("final_purchase_error");
         let amount_chrError = document.getElementById("amount_chr_error");
+        /* let additionalCharges_error = document.getElementById("amount_chr_error");*/
 
+        let referralData =window.values['Referral Fee Paid Out?']
+        let homeWarrentyData =window.values['Home Warranty Paid Out Agent?']
+        let additionalFees =window.values['Any Additional Fees Charged?']
+        
 
         let isValid = true;
+
+        if(referralData==''||referralData == null){
+            isValid = false;
+            showToastError('Referral Fee Paid Out? is required')
+        }
+
+        if(homeWarrentyData==''||homeWarrentyData == null){
+            isValid = false;
+            showToastError('Home Warranty Paid Out Agent?')
+        }
+        if(additionalFees==''||additionalFees == null){
+            isValid = false;
+            showToastError('Any Additional Fees Charged?')
+        }
+
+
+        if (document.querySelector('input[name="referralFee"]:checked').value === "yes") {
+            if (document.getElementById('referralFeeAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeAmount_error').innerText = "Referral Fee Amount is required.";
+            } else {
+                document.getElementById('referralFeeAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('referralFeeBrokerage').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralFeeBrokerage_error').innerText = "Referral Fee Brokerage Name is required.";
+            } else {
+                document.getElementById('referralFeeBrokerage_error').innerText = "";
+            }
+
+            if (document.getElementById('referralAgreement').value.trim() === "") {
+                isValid = false;
+                document.getElementById('referralAgreement_error').innerText = "Referral Fee Agreement Executed is required.";
+            } else {
+                document.getElementById('referralAgreement_error').innerText = "";
+            }
+
+            if (document.getElementById('hasW9Provided').value.trim() === "") {
+                isValid = false;
+                document.getElementById('hasW9Provided_error').innerText = "W-9 provision status is required.";
+            } else {
+                document.getElementById('hasW9Provided_error').innerText = "";
+            }
+        }
+
+        // Home Warranty Validation
+        if (document.querySelector('input[name="homeWarranty"]:checked').value === "yes") {
+            if (document.getElementById('homeWarrentyAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyAmount_error').innerText = "Home Warranty Amount is required.";
+            } else {
+                document.getElementById('homeWarrentyAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('homeWarrentyDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('homeWarrentyDescription_error').innerText = "Home Warranty Description is required.";
+            } else {
+                document.getElementById('homeWarrentyDescription_error').innerText = "";
+            }
+        }
+
+        // Additional Fees Validation
+        if (document.querySelector('input[name="additionalFees"]:checked').value === "yes") {
+            if (document.getElementById('additionalFeeAmount').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeeAmount_error').innerText = "Additional Fees Amount is required.";
+            } else {
+                document.getElementById('additionalFeeAmount_error').innerText = "";
+            }
+
+            if (document.getElementById('additionalFeeDescription').value.trim() === "") {
+                isValid = false;
+                document.getElementById('additionalFeeDescription_error').innerText = "Additional Fees Description is required.";
+            } else {
+                document.getElementById('additionalFeeDescription_error').innerText = "";
+            }
+        }
 
         // Validate related_transaction
         if (related_transaction.value.trim() === "" ) {
@@ -513,7 +612,10 @@
         } else if (isNaN(commission.value.trim())) {
             commissionError.textContent = "Commission must be a number.";
             isValid = false;
-        } else {
+        } else if (commission.value.trim().split('.')[0]&&commission.value.trim().length>4) {
+            commissionError.textContent = "Commission length must be exactly 4 characters.";
+            isValid = false;
+        }else {
             commissionError.textContent = "";
         }
 
@@ -549,6 +651,7 @@
 
     window.updateNonTm = function(dealData, status) {
         // dealData = JSON.parse(dealData)
+        console.log(dealData);
         id=dealData.id
         if (!validateNonTm()) {
             return;
@@ -577,9 +680,9 @@
         var selectedText = selectedOption.textContent;
         let formData = {
             "data": [{
-                "Commission":commission? commission.value.trim().split('.')[0]:undefined,
+                "Commission":commission?.value?.trim().split('.')[0] ?? undefined,
                 "Final_Purchase_Price": final_purchase? final_purchase.value.trim():undefined,
-                "Any_Additional_Fees_Charged":window.values["Any Additional Fees Charged?"]? window.values["Any Additional Fees Charged?"]
+                "Any_Additional_Fees_Charged":window?.values["Any Additional Fees Charged?"]? window?.values["Any Additional Fees Charged?"]
                     ?.toUpperCase():undefined,
                 "Additonal_Fees_Amount":additionalFeeAmount? additionalFeeAmount.value.trim()
                     :undefined,

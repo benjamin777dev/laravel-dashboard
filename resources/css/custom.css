@@ -3511,6 +3511,10 @@ input[type="button"]:hover {
     background-color: #222 !important;
 }
 
+.wizard .steps>ul{
+       font-size: 13px !important;
+}
+
 /* .number{
     background-color: #444 !important;
     column-rule: #fff;
