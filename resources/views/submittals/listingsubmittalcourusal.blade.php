@@ -580,6 +580,7 @@
                         </div>
                     
                       </section>
+                      
 
                     <!-- Confirm Details -->
                     <h3>Confirm Detail</h3>
