@@ -3521,3 +3521,17 @@ form .tox .tox-toolbar__primary .tox-toolbar__group .tox-tbtn .tox-icon svg {
 .sticky-col.sticky-header {
     z-index: 3; 
 } */
+/* wizard css */
+
+.wizard>.actions a, .wizard>.actions a:active, .wizard>.actions a:hover{
+    background-color: #222 !important;
+}
+
+.wizard .steps>ul{
+       font-size: 13px !important;
+}
+
+/* .number{
+    background-color: #444 !important;
+    column-rule: #fff;
+} */
