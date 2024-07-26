@@ -2196,53 +2196,53 @@ class DatabaseService
         }
     }
 
-    public function saveEmail($input,$to)
+    public function saveEmail($user,$accessToken,$input)
     {
         try {
-            Log::info('Email Input',$input);
-            $email = Email::create([
-                'fromEmail'=>$input['fromEmail'],
-                'toEmail'=>$to,
-                'subject'=>$input['subject'],
-                'content'=>$input['detail']
-            ]);
+            Log::info('Email Input', $input);
+
+            $emailData = [
+                'fromEmail' => $input['fromEmail'],
+                'toEmail' => is_array($input['toEmail']) && count($input['toEmail']) > 0 ? json_encode($input['toEmail']) : null,
+                'ccEmail' => is_array($input['ccEmail']) && count($input['ccEmail']) > 0 ? json_encode($input['ccEmail']) : null,
+                'bccEmail' => is_array($input['bccEmail']) && count($input['bccEmail']) > 0 ? json_encode($input['bccEmail']) : null,
+                'subject' => $input['subject'],
+                'content' => $input['content'],
+                'userId' => $user->id,
+                'isEmailSent' => $input['isEmailSent']
+            ];
+
+            $email = Email::updateOrCreate(
+                ['id' => $input['emailId']],
+                $emailData
+            );
+
             return $email;
         } catch (\Exception $e) {
-            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            Log::error("Error processing email: " . $e->getMessage());
             throw $e;
         }
+
     }
 
-    public function draftEmail($input)
-    {
-        try {
-            Log::info('Email Input',$input);
-            $email = Email::create([
-                'fromEmail'=>$input['fromEmail'],
-                'toEmail'=>is_array($input['toEmail']) && count($input['toEmail']) > 0 ? $input['toEmail'] : null,
-                'subject'=>$input['subject'],
-                'content'=>$input['detail']
-            ]);
-            return $email;
-        } catch (\Exception $e) {
-            Log::error("Error retrieving deal contacts: " . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    public function getEmails($user,$filter)
+    public function getEmails($user,$filter='Inbox')
     {
         try {
             $condition = [['userId',$user->id]];
-            if($filter=="Draft"){
-                $condition[]=['isEmailSent',false];
-            }else if($filter == "Sent Mail"){
-                $condition[]=['fromEmail',$user->email];
-            }else if($filter=='Trash'){
-                $condition[]=['isDeleted',true];
-            }else if($filter == 'Inbox'){
-                $condition[]=['isEmailSent',true];
+            if($filter){
+                $cleanedFilter = strtok($filter, "\n");
+                if($cleanedFilter=="Draft"){
+                    $condition[]=['isEmailSent',false];
+                }else if($cleanedFilter == "Sent Mail"){
+                    $condition[]=['fromEmail',$user->email];
+                    $condition[]=['isEmailSent',true];
+                }else if($cleanedFilter=='Trash'){
+                    $condition[]=['isDeleted',true];
+                }else if($cleanedFilter == 'Inbox'){
+                    $condition[]=['isEmailSent',true];
+                }
             }
+            
             $emails = Email::where($condition)->get();
             return $emails;
         } catch (\Exception $e) {

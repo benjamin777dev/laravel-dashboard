@@ -12,9 +12,14 @@ class Email extends Model
     protected $fillable = [
         'id',
         'toEmail',
+        'ccEmail',
+        'bccEmail',
         'fromEmail',
         'subject',
         'content',
+        'userId',
+        'isEmailSent',
+        'isDeleted'
         
     ];
 
