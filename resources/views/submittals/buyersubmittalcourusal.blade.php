@@ -32,7 +32,7 @@
                                         </svg></label>
                                         <select class="form-select" id="relatedTransactionShow" required disabled>
                                             @foreach($deals as $currDeal)
-                                            <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
+                                            <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
                                                 {{$currDeal['deal_name']}}
                                             </option>
                                             @endforeach
@@ -61,7 +61,7 @@
                                                     fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                        <select class="form-select" name="related_transaction" onchange="addFormSlide(this)" id="buyerPackage" class="nontm-select validate_err">
+                                        <select class="form-select" name="related_transaction" id="buyerPackage" class="nontm-select validate_err">
                                             <option value="">--None--</option>
                                             <option value="Standard" {{ $submittal['buyerPackage']=='Standard'? 'selected' : '' }}>Standard</option>
                                             <option value="New Construction" {{ $submittal['buyerPackage']=='New Construction'? 'selected' : '' }}>New Construction</option>
@@ -429,7 +429,7 @@
                                     </div>
                                     <div>
                                         <h5>Confirm Detail</h5>
-                                        <p class="text-muted">If several languages coalesce, the grammar of the resulting</p>
+                                        <p class="text-muted"></p>
                                     </div>
                                 </div>
                             </div>
@@ -459,4 +459,43 @@
                     transitionEffect: "slide"
                 });
             });
+
+     $(document).ready(function() {
+            function handleFields() {
+                let buyerPackage = $("#buyerPackage").val();
+                
+                // Check if the selected value is "Standard"
+                if (buyerPackage === "Standard") {
+                    // Disable the fields
+                    $("#buyerBuilderrepresent").prop('disabled', true);
+                    $("#BuyerTitleCompany").prop('disabled', true);
+                    $("#builderCommisionPercent").prop('disabled', true);
+                    $("#builderCommision").prop('disabled', true);
+                    $("#buyerAgency").prop('disabled', true);
+                    $("input[name='contractExecuted']").prop('disabled', true);
+                    $("input[name='buyerAgency']").prop('disabled', true);
+                } else {
+                    // Enable the fields if value is not "Standard"
+                    $("#buyerBuilderrepresent").prop('disabled', false);
+                    $("#BuyerTitleCompany").prop('disabled', false);
+                    $("#builderCommisionPercent").prop('disabled', false);
+                    $("#builderCommision").prop('disabled', false);
+                    $("#buyerAgency").prop('disabled', false);
+                    $("input[name='contractExecuted']").prop('disabled', false);
+                    $("input[name='buyerAgency']").prop('disabled', false);
+                }
+            }
+            // Attach the event handler to the dropdown
+            $("#buyerPackage").change(function() {
+                handleFields();
+            });
+
+            // Call the function on page load to set initial state
+            handleFields();
+        });
+
+          
+
+           
+           
 </script>
