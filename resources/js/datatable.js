@@ -770,7 +770,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             render: function (data, type, row) {
                 return `<span class="editable badDateInput" data-name="closing_date" data-id="${
                     row.id
-                }">${formateDate(data)}</span>`;
+                }">${formateDate(data) || "N/A"}</span>`;
             },
         },
         {

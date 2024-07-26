@@ -380,8 +380,9 @@
 @endsection
 @section('script')
 <!-- jquery step -->
-<script src="{{ URL::asset('build/libs/jquery-stepsbuild/jquery.steps.min.js') }}"></script>
-
 <!-- form wizard init -->
 <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
+<script src="{{ URL::asset('build/libs/jquery-stepsbuild/jquery.steps.min.js') }}"></script>
+
+
 @endsection

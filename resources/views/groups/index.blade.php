@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Groups')
+@section('title', 'zPortal | Groups')
 
 @section('content')
     @vite(['resources/css/custom.css'])

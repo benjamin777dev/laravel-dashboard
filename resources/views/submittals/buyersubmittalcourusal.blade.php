@@ -1,124 +1,86 @@
-<div class="row justify-content-center" id="listingSubmittal">
-    <div class="col-xl-8 align-items-center">
+{{-- @component('components.breadcrumb')
+@slot('li_1') Form @endslot
+@slot('title') Buyer Submittal @endslot
+@endcomponent --}}
+
+<div class="row">
+    <div class="col-lg-12">
         <div class="card">
-            <div class="card-body p-0">
-                <h4 class="card-title p-3" id="title-corousal">CHR TM - Basic Information</h4>
+            <div class="card-body">
+                <h4 class="card-title mb-4">CHR -TM</h4>
 
-                <div id="carouselExampleIndicators" class="carousel slide" data-interval="false">
-                   
-                    <div class="carousel-indicators d-flex justify-content-between text-nowrap">
-                        <div class="prev_btn" href="#carouselExampleIndicators" role="button"
-                        data-bs-slide="prev">
-                            <a href="#"><<span class="prev">
-                                     Previous</span></a>
-                        </div>
-                        <div class="bullets">
-                        <button type="button"
-                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                            aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button"
-                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                            aria-label="Slide 2"></button>
-                        <button type="button"
-                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                            aria-label="Slide 3"></button>
-                        <button type="button"
-                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3"
-                            aria-label="Slide 4"></button>
-                        <button type="button"
-                            data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4"
-                            aria-label="Slide 5"></button>
-                        </div>
-                            <div class="next_btn" href="#carouselExampleIndicators" role="button"
-                            data-bs-slide="next">
-                                <a href="#"><span class="next">Next </span>></a>
-                            </div>
-                    </div>
-                    
-                    <div class="carousel-inner" role="listbox">
-                        <div class="carousel-item active">
-                            <div class="related_trxn label-div-mb">
-                                <label for="deal_name" class="common-label">Transaction Name <svg
-                                        xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                        viewBox="0 0 19 18" fill="none">
-                                        <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                            x="0" y="0" width="19" height="18">
-                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                        </mask>
-                                        <g mask="url(#mask0_2151_10662)">
-                                            <path
-                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                fill="#AC5353" />
-                                        </g>
-                                    </svg>
-                                </label>
-                                <div class="nontm-select-div">
-                                    <select class="nontm-select" id="relatedTransactionShow" required disabled>
-                                        @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
-                                            {{$currDeal['deal_name']}}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    <select class="form-select npinputinfo validate" id="relatedTransaction" required hidden>
-                                        @foreach($deals as $currDeal)
-                                        <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
-                                            {{$currDeal['deal_name']}}
-                                        </option>
-                                        @endforeach
-                                    </select>
-
-                                    <img src="{{ URL::asset('/images/domain_add.svg') }}" alt="">
-                                </div>
-                               
-                            </div>
-                            <div class="related_trxn label-div-mb">
-                                <label for="buyerPackage" class="common-label">Buyer Package<svg
-                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                    viewBox="0 0 19 18" fill="none">
-                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                        x="0" y="0" width="19" height="18">
-                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                    </mask>
-                                    <g mask="url(#mask0_2151_10662)">
-                                        <path
-                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                            fill="#AC5353" />
-                                    </g>
-                                </svg> </label>
-                                <div class="nontm-select-div">
-                                    <select name="related_transaction" onchange="addFormSlide(this)" id="buyerPackage" class="nontm-select validate_err">
-                                        <option value="">--None--</option>
-                                        <option value="Standard" {{ $submittal['buyerPackage']=='Standard'? 'selected' : '' }}>Standard</option>
-                                        <option value="New Construction" {{ $submittal['buyerPackage']=='New Construction'? 'selected' : '' }}>New Construction</option>
-                                     
-                                    </select>
-                                </div>
-                               
-                            </div>
-                            <div class="additional_email label-div-mb">
-                                <label for="additionalEmailBuyer" class="common-label">Additional Email for Confirmation </label>
-                                <input type="email" class="form-control" value="{{$submittal['additionalEmail']}}" id="additionalEmailBuyer"
-                                    class="form-control" placeholder="Enter email">
-                            </div>
-                        </div>
-                        <div class="carousel-item">
+                <div id="basic-example-buyer">
+                    <!-- Seller Details -->
+                    <h3>Basic Information</h3>
+                    <section>
+                        <form>
                             <div class="row">
-                                <div class='col-lg-6 label-div-mb'>
-                                        
-                                            <label for="buyerClosingDate" class="common-label">Closing Date <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <input type="date" value="{{$submittal['buyerClosingDate']?$submittal['buyerClosingDate']:$submittal['dealData']['closing_date']}}"
-                                                class="form-control nontm-input" id="buyerClosingDate">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label>Transaction Name <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
+                                        <select class="form-select" id="relatedTransactionShow" required disabled>
+                                            @foreach($deals as $currDeal)
+                                            <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
+                                                {{$currDeal['deal_name']}}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        <select class="form-select validate" id="relatedTransaction" required hidden>
+                                            @foreach($deals as $currDeal)
+                                            <option value="{{$currDeal}}" {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>>
+                                                {{$currDeal['deal_name']}}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="col-lg-6 label-div-mb">
-                                        <label for="buyerTmName" class="common-label">TM name <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input">Buyer Package <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                            viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                                x="0" y="0" width="19" height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
+                                        <select class="form-select" name="related_transaction" id="buyerPackage" class="nontm-select validate_err">
+                                            <option value="">--None--</option>
+                                            <option value="Standard" {{ $submittal['buyerPackage']=='Standard'? 'selected' : '' }}>Standard</option>
+                                            <option value="New Construction" {{ $submittal['buyerPackage']=='New Construction'? 'selected' : '' }}>New Construction</option>
+                                         
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-phoneno-input">Additional Email for Confirmation</label>
+                                        <input type="email" class="form-control" value="{{$submittal['additionalEmail']}}" id="additionalEmailBuyer" placeholder="Enter Your Email.">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-email-input">Closing Date <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                             </mask>
@@ -126,211 +88,213 @@
                                                 <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                        <input type="email" class="form-control nontm-input" value="{{$submittal['dealData']['tmName']['name']}}" id="buyerTmName"
-                                            class="form-control" placeholder="Enter email" id="add_email">
+                                        <input type="date" class="form-control" value="{{$submittal['buyerClosingDate']?$submittal['buyerClosingDate']:$submittal['dealData']['closing_date']}}" id="buyerClosingDate" >
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="buyerMailoutNeeded" class="common-label">Mailout Needed
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <label for="buyerTmName">TM name <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                             <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                 <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                             </mask>
                                             <g mask="url(#mask0_2151_10662)">
                                                 <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
                                             </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "Yes" {{ $submittal['mailoutNeeded']=='Yes'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "No" {{ $submittal['mailoutNeeded']=='No'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_no">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="buyerPowerAttny" class="common-label">Power of Attny Needed?
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="powerOfAttnyNeeded_yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="powerOfAttnyNeeded_no">
-                                                No
-                                            </label>
-                                        </div>
+                                        </svg></label>
+                                        <input type="text" value="{{$submittal['dealData']['tmName']['name']}}" id="buyerTmName" class="form-control" rows="2" placeholder="Enter Your Address">
                                     </div>
                                 </div>
                             </div>
-                            
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="buyerincludeInsight" class="common-label">
-                                        Include Insights in Intro?
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "Yes" {{ $submittal['includeInsights']=='Yes'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "No"{{ $submittal['includeInsights']=='No'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_no">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="buyerRefrralPay" class="common-label">Referral to Pay
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "Yes" {{ $submittal['referralToPay'] == 'Yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="buyerRefrralPay_yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "No"{{ $submittal['referralToPay'] == 'No' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="buyerRefrralPay_no">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        </form>
+                    </section>
 
-                        </div>
-                        <div class="carousel-item">
+                    <!-- Company Document -->
+                    <h3>Basic Information</h3>
+                    <section>
+                        <form>
                             <div class="row">
-                                <div class='col-lg-6 label-div-mb'>
-                                        
-                                            <label for="buyerLenderEmail" class="common-label">Lender Email</label>
-                                            <input type="text" placeholder="Enter email" value="{{$submittal['buyerLenderEmail']}}"
-                                                class="form-control nontm-input" id="buyerLenderEmail">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-pancard-input">Mailout Needed
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "Yes" {{ $submittal['mailoutNeeded']=='Yes'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerMailoutNeeded" name="buyerMailoutNeeded" value = "No" {{ $submittal['mailoutNeeded']=='No'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                    </div>
                                 </div>
-                                <div class="col-lg-6 label-div-mb">
-                                        <label for="buyerLenderPhone" class="common-label">Lender Phone</label>
-                                        <input type="text" class="form-control nontm-input" value="{{$submittal['buyerLenderPhone']}}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" id="buyerLenderPhone"
-                                            class="form-control" placeholder="">
-                                </div>
-                            </div>
-                             <div class="row">
-                                <div class='col-lg-6 label-div-mb'>
-                                            <label for="buyerFeesCharged" class="common-label">Fees Charged to Buyer at Closing</label>
-                                            <input type="number" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}"
-                                                class="form-control nontm-input">
-                                </div>
-                                <div class="col-lg-6 label-div-mb">
-                                        <label for="buyerAmountChr" class="common-label">Amount to CHR Gives</label>
-                                        <input type="number" placeholder="$" class="form-control nontm-input" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr"
-                                            class="form-control" placeholder="Enter email" id="buyerAmountChr">
-                                        <div class="buyerAmountChr_error text-danger" id="buyerAmountChr_error">
-                                        </div>
-                                    
 
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-vatno-input">Power of Attny Needed?
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="powerOfAttnyNeeded_yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerPowerAttny" name="buyerPowerAttny" value = "No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="powerOfAttnyNeeded_no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="additional_email label-div-mb">
-                                <label for="buyerRefrealDetails" class="common-label">Referral Details</label>
-                                <input type="email" class="form-control" value="{{ $submittal['referralDetails'] }}" id="buyerRefrealDetails"
-                                    class="form-control" placeholder="Enter Details">
-                                
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-cstno-input">Include Insights in Intro?
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "Yes" {{ $submittal['includeInsights']=='Yes'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerincludeInsight" name="buyerincludeInsight" value = "No"{{ $submittal['includeInsights']=='No'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-servicetax-input">Referral to Pay
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "Yes" {{ $submittal['referralToPay'] == 'Yes' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="buyerRefrralPay_yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerRefrralPay" name="buyerRefrralPay" value = "No"{{ $submittal['referralToPay'] == 'No' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="buyerRefrralPay_no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="additional_email label-div-mb">
-                                <label for="buyerOtherNotes" class="common-label">Other important Notes</label>
-                            <textarea class="form-control" id="buyerOtherNotes"  rows="4" cols="50">{{ $submittal['marketingNotes'] }}</textarea>
-                                
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="buyerLenderEmail">Lender Email</label>
+                                        <input type="email" class="form-control" id="buyerLenderEmail" value="{{$submittal['buyerLenderEmail']}}" placeholder="Enter Your Email">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="basicpill-declaration-input">Lender Phone</label>
+                                        <input type="text" class="form-control" value="{{$submittal['buyerLenderPhone']}}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" id="buyerLenderPhone" placeholder="Lender Phone">
+                                    </div>
+                                </div>
                             </div>
+                        </form>
+                    </section>
+
+                    <!-- Bank Details -->
+                    <h3>Basic Information</h3>
+                    <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerFeesCharged">Fees Charged to Buyer at Closing</label>
+                                            <input type="text" class="form-control" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerAmountChr">Fees Charged to Buyer at Closing</label>
+                                            <input type="text" class="form-control" placeholder="$" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerRefrealDetails">Referral Details</label>
+                                            <input type="text" class="form-control" value="{{ $submittal['referralDetails'] }}" id="buyerRefrealDetails"
+                                             placeholder="Enter Details">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">Other important Notes</label>
+                                            <textarea id="buyerOtherNotes" class="form-control" rows="2" placeholder="Enter Your Address">{{ $submittal['marketingNotes'] }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                   
-                </div>
-            </div>
-        </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
-<script>
-    $(document).ready(function(){
-        var buyerPackage = $('#buyerPackage');
-        addFormSlide(buyerPackage[0],true);
-    })
-    function addFormSlide(e,state=true) {
-        console.log(e,state);
-        var existingItem1 = document.querySelector('.carousel-item.item1');
-        var existingButton1 = document.querySelector('[data-bs-slide-to="5"]');
-        if(e.value !== "New Construction"){
-            console.log("yes erereee")
-            state = false;
-        }
-        if (!state) {
-            // State is false, remove carousel items if they exist
-            if (existingItem1 ) {
-                existingItem1.remove();
-                existingButton1?.remove();
-            }
-            return;
-        }
-        
-        if(e.value === "New Construction"){
-        if (existingItem1) {
-            // Both items already exist, do not create new items
-            console.log("Carousel items already exist.");
-            return;
-        }
-        
-        // Create a new carousel item
-        var carouselItem = document.createElement('div');
-        carouselItem.className = 'carousel-item item1';
-        var innrtHtml = `<div class="row">
-                                <div class='col-lg-6 label-div-mb'>
-                                        
-                                            <label for="buyerBuilderrepresent" class="common-label">Builder Representative <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                    </section>
+
+                      <!-- Confirm Details -->
+                      <h3>Basic Information</h3>
+                      <section >
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerBuilderrepresent">Builder Representative <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                                 <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                                 </mask>
@@ -339,31 +303,29 @@
                                                 </g>
                                             </svg></label>
                                             <input type="text" placeholder="Enter Details" value="{{$submittal['buyerBuilderrepresent']}}"
-                                                class="form-control nontm-input" id="buyerBuilderrepresent">
-                                    
-                                </div>
-                                <div class="col-lg-6 label-div-mb">
-                                        <label for="BuyerTitleCompany" class="common-label">
-                                            Title Company/Closer Info <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg></label>
-                                        <input type="text" class="form-control nontm-input" value="{{$submittal['titleCompany']}}" id="BuyerTitleCompany"
-                                            class="form-control" placeholder="Enter Details" id="add_email">
-                                        <div class="add_email_error text-danger" id="add_email_error">
+                                            class="form-control" id="buyerBuilderrepresent">
                                         </div>
-                                    
+                                    </div>
 
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="BuyerTitleCompany">Title Company/Closer Info <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <input type="text" class="form-control" value="{{$submittal['titleCompany']}}" id="BuyerTitleCompany"
+                                         placeholder="Enter Details" >
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class='col-lg-6 label-div-mb'>
-                                        
-                                            <label for="builderCommisionPercent" class="common-label">Builder Commission (% and/or flat fee) <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="builderCommisionPercent">Builder Commission (% and/or flat fee) <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
                                                 <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
                                                 </mask>
@@ -372,116 +334,168 @@
                                                 </g>
                                             </svg></label>
                                             <input type="text" placeholder="Enter Details" value="{{$submittal['builderCommisionPercent']}}" 
-                                                class="form-control nontm-input" id="builderCommisionPercent">
-                                    
-                                </div>
-                                <div class="col-lg-6 label-div-mb">
-                                        <label for="builderCommision" class="common-label">
-                                            
-                                            Builder Commission Based On <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg></label>
-                                          <div class="nontm-select-div">
-                                    <select name="related_transaction" id="builderCommision" class="nontm-select validate_err">
-                                        <option value="">--None--</option>
-                                            <option value="Base Price" {{ $submittal['builderCommision']=='Base Price'? 'selected' : '' }}>Base Price</option>
-                                            <option value="Flat Fee" {{ $submittal['builderCommision']=='Flat Fee'? 'selected' : '' }}>Flat Fee</option>
-                                            <option value="Other" {{ $submittal['builderCommision']=='Other'? 'selected' : '' }}>Other</option>
-                                     
-                                        </select>
+                                            class="form-control" id="builderCommisionPercent">
+                                        </div>
                                     </div>
-                                    
 
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">Builder Commission Based On <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <select name="related_transaction" id="builderCommision" class="form-select validate_err">
+                                                <option value="">--None--</option>
+                                                    <option value="Base Price" {{ $submittal['builderCommision']=='Base Price'? 'selected' : '' }}>Base Price</option>
+                                                    <option value="Flat Fee" {{ $submittal['builderCommision']=='Flat Fee'? 'selected' : '' }}>Flat Fee</option>
+                                                    <option value="Other" {{ $submittal['builderCommision']=='Other'? 'selected' : '' }}>Other</option>
+                                             
+                                                </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="builderCommisionPercent">Builder Contract Fully Executed <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="contractExecuted" name="contractExecuted" value="Yes" {{ $submittal['contractExecuted']=='Yes'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_yes">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="contractExecuted" name="contractExecuted" value="No" {{ $submittal['contractExecuted']=='No'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="mailoutNeeded_no">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">Buyer Agency Executed <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerAgency_yes" name="buyerAgency" value="Yes" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="buyerAgency">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="buyerAgency_no" name="buyerAgency" value="No" {{ $submittal['buyerAgency']=='No'? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="buyerAgency">
+                                                        No
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    
+                      </section>
+
+                    <!-- Confirm Details -->
+                    <h3>Confirm Detail</h3>
+                    <section>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6">
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Confirm Detail</h5>
+                                        <p class="text-muted"></p>
+                                    </div>
                                 </div>
                             </div>
-                             <div class="row">
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="contractExecuted" class="common-label">Contract Fully Executed
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="contractExecuted" name="contractExecuted" value="Yes" {{ $submittal['contractExecuted']=='Yes'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_yes">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="contractExecuted" name="contractExecuted" value="No" {{ $submittal['contractExecuted']=='No'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="mailoutNeeded_no">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="gap-2 col-lg-6 label-div-mb">
-                                    <label for="buyerAgency" class="common-label">Buyer Agency Executed
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-                                            <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                            </mask>
-                                            <g mask="url(#mask0_2151_10662)">
-                                                <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
-                                            </g>
-                                        </svg>
-                                    </label>
-                                    <div class="d-flex gap-2">
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerAgency_yes" name="buyerAgency" value="Yes" {{ $submittal['buyerAgency']=='Yes'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="buyerAgency">
-                                                Yes
-                                            </label>
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="radio" id="buyerAgency_no" name="buyerAgency" value="No" {{ $submittal['buyerAgency']=='No'? 'checked' : '' }}>
-                                            <label class="form-check-label" for="buyerAgency">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-         `;
+                        </div>
+                    </section>
+                </div>
 
-        // Set inner HTML content of carouselItem
-        carouselItem.innerHTML = innrtHtml;
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+<!-- end row -->
+<!-- jquery step -->
+<script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
-        // Append the new carousel items to the carousel inner
-        var carouselInner = document.querySelector('.carousel-inner');
-        carouselInner.appendChild(carouselItem);
-        // Update the carousel indicators (optional, if you want to show navigation bullets)
-        var slideIndex = $('.carousel-item').length - 1;
+<!-- form wizard init -->
+<script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
 
-        // Create the slide buttons for carousel indicators
+<script>
+       $(function () {
+                $("#basic-example-buyer").steps({
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    transitionEffect: "slide"
+                });
+            });
 
-        var button1 = document.createElement('button');
-        button1.type = 'button';
-        button1.setAttribute('data-bs-target', '#carouselExampleIndicators');
-        button1.setAttribute('data-bs-slide-to', slideIndex.toString());
-        button1.setAttribute('aria-label', 'Slide ' + (slideIndex + 1).toString());
-        // button1.addEventListener('click', function() {
-        // // Change the inner HTML of 'title-corousal' element
-        // const titleCorousal = document.getElementById('title-corousal');
-        // if (titleCorousal) {
-        //         titleCorousal.innerHTML = 'CHR TM - Transaction Details and Preferences';
-        //     }
-        // })
+     $(document).ready(function() {
+            function handleFields() {
+                let buyerPackage = $("#buyerPackage").val();
+                
+                // Check if the selected value is "Standard"
+                if (buyerPackage === "Standard") {
+                    // Disable the fields
+                    $("#buyerBuilderrepresent").prop('disabled', true);
+                    $("#BuyerTitleCompany").prop('disabled', true);
+                    $("#builderCommisionPercent").prop('disabled', true);
+                    $("#builderCommision").prop('disabled', true);
+                    $("#buyerAgency").prop('disabled', true);
+                    $("input[name='contractExecuted']").prop('disabled', true);
+                    $("input[name='buyerAgency']").prop('disabled', true);
+                } else {
+                    // Enable the fields if value is not "Standard"
+                    $("#buyerBuilderrepresent").prop('disabled', false);
+                    $("#BuyerTitleCompany").prop('disabled', false);
+                    $("#builderCommisionPercent").prop('disabled', false);
+                    $("#builderCommision").prop('disabled', false);
+                    $("#buyerAgency").prop('disabled', false);
+                    $("input[name='contractExecuted']").prop('disabled', false);
+                    $("input[name='buyerAgency']").prop('disabled', false);
+                }
+            }
+            // Attach the event handler to the dropdown
+            $("#buyerPackage").change(function() {
+                handleFields();
+            });
 
-        var carouselIndicators = document.querySelector('.carousel-indicators .bullets');
-        carouselIndicators.appendChild(button1);
-    }
-    }
+            // Call the function on page load to set initial state
+            handleFields();
+        });
 
+          
+
+           
+           
 </script>

@@ -73,7 +73,7 @@
              <td>
                 @if(!($deal['tm_preference']=='Non-TM' && $deal['representing']=='Buyer'))
                     @if (!$deal->submittals()->exists() || $deal->submittals->isEmpty())
-                        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType({{$deal}})">
+                        <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormTypeadd({{$deal}})">
                             <i class="fas fa-plus plusicon"></i>
                                 Add New Submittal
                         </div>
@@ -378,7 +378,7 @@
        $('[data-toggle="tooltip"]').tooltip()
     })
 
-    function showSubmittalFormType(deal) {
+    function showSubmittalFormTypeadd(deal) {
         console.log("SUBMITTAL DATA",deal.representing,deal.tm_preference);
         // deal = JSON.parse(deal);
         let submittalData;

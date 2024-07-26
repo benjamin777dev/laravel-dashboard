@@ -310,21 +310,21 @@
                     </div>
                     <div></div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked03" <?php if
+                        <input class="form-check-input" @if($deal['locked_s']) disabled @endif type="checkbox" value="" id="flexCheckChecked03" <?php if
                             ($deal['review_gen_opt_out']) { echo 'checked' ; } ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked03">
                             Review Gen Opt Out
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked04" <?php if
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked04" @if($deal['locked_s']) disabled @endif <?php if
                             ($deal['status_rpt_opt_out']) { echo 'checked' ; } ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked04">
                             Status Rpt Opt out
                         </label>
                     </div>
                     <div class="col-md-6">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked05" <?php if
+                        <input class="form-check-input" @if($deal['locked_s']) disabled @endif type="checkbox" value="" id="flexCheckChecked05" <?php if
                             ($deal['deadline_em_opt_out']) { echo 'checked' ; } ?>>
                         <label class="form-check-label nplabelText" for="flexCheckChecked05">
                             Deadline EM Opt Out
@@ -443,7 +443,7 @@
     </div>
     <div class=" text-end">
         @if ($submittals->count() === 0)
-            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormType()">
+            <div class="input-group-text npcontactbtn" id="addSubmittal" onclick="showSubmittalFormTypedetail()">
                 <i class="fas fa-plus plusicon"></i>
                     Add New Submittal
             </div>
@@ -684,8 +684,7 @@
         })
     }
 
-    window.showSubmittalFormType = function() {
-        console.log("SUBMITTAL DATA", deal.tm_preference);
+    window.showSubmittalFormTypedetail = function(dealdata=null) {
         let submittalData;
         if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
             addSubmittal('buyer-submittal', deal);
