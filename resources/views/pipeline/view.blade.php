@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Pipeline View')
+@section('title', 'zPortal | Pipeline View')
 
 @section('content')
 @vite(['resources/css/pipeline.css'])

@@ -2,7 +2,7 @@
 
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | Dashboard')
+@section('title', 'zPortal | Dashboard')
 @section('content')
     @vite(['resources/css/dashboard.css'])
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Agent Commander | NonTm')
+@section('title', 'zPortal | NonTm')
 
 @section('content')
 <div class="nontm-header">
