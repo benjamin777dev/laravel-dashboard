@@ -3529,6 +3529,9 @@ form .tox .tox-toolbar__primary .tox-toolbar__group .tox-tbtn .tox-icon svg {
 
 .wizard .steps>ul{
        font-size: 13px !important;
+       flex-wrap: unset !important;
+       overflow-x: auto !important;
+       text-wrap: nowrap !important;
 }
 
 /* .number{

@@ -36,8 +36,13 @@
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault05" class="form-label nplabelText">Email</label>
-                    <input type="text" value="{{ $contact['email'] }}" name="email"
-                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05">
+                    <div class="input-group">
+                        <input type="text" value="{{ $contact['email'] }} " name="email"
+                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05"> 
+                        <div class="input-group-text" onclick="openEmail()">
+                            <i class="mdi mdi-send ms-1"></i>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault06" class="form-label nplabelText">Market Area</label>
@@ -318,61 +323,71 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
+<!-- Modal -->
+<div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="modalValues">
+            @include('emails.email-create',['contact'=>$contact])
+        </div>
+    </div>
+</div>
 
-@include('email-inbox')
+<div id = "emailList">
+
+</div>
 @vite(['resources/js/pipeline.js'])   
 <script>
     contact=@json($contact);
     groups = @json($groups);
     $(document).ready(function() {
-    var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-        removeItemButton: true,
-        maxItemCount: null,
-        searchResultLimit: 500,
-        renderChoiceLimit: -1,
-    });
-
-    let selectedGroupsArr = [];         
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'selectedGroups';
-
-    document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
-        var selectedGroups = event.detail.value;
-        if (!selectedGroupsArr.includes(selectedGroups)) {
-            selectedGroupsArr.push(selectedGroups);
-        } else {
-            selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-        }
-        hiddenInput.value = JSON.stringify(selectedGroupsArr);
-    });
-
-    let selectedGroupsDefault = [];
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsDefault.push($(this).val());
-    });
-
-    let removeGroupsArr = [];
-    multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-        var removedGroup = event.detail.value;
-        if (selectedGroupsDefault.includes(removedGroup)) {
-            deleteAssignGroup(removedGroup);
-        }
-    });
-
-    document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
-    
-    var getReffered = $('#validationDefault14');
-    getReffered.select2({
-        placeholder: 'Search...',
-    }).on('select2:open', () => {
-        $(document).on('scroll.select2', function() {
-            getReffered.select2('close');
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+            removeItemButton: true,
+            maxItemCount: null,
+            searchResultLimit: 500,
+            renderChoiceLimit: -1,
         });
-    }).on('select2:close', () => {
-        $(document).off('scroll.select2');
+
+        let selectedGroupsArr = [];         
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'selectedGroups';
+
+        document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
+            var selectedGroups = event.detail.value;
+            if (!selectedGroupsArr.includes(selectedGroups)) {
+                selectedGroupsArr.push(selectedGroups);
+            } else {
+                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+            }
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+        });
+
+        let selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button_test option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        });
+
+        let removeGroupsArr = [];
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedGroup = event.detail.value;
+            if (selectedGroupsDefault.includes(removedGroup)) {
+                deleteAssignGroup(removedGroup);
+            }
+        });
+
+        document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
+        
+        var getReffered = $('#validationDefault14');
+        getReffered.select2({
+            placeholder: 'Search...',
+        }).on('select2:open', () => {
+            $(document).on('scroll.select2', function() {
+                getReffered.select2('close');
+            });
+        }).on('select2:close', () => {
+            $(document).off('scroll.select2');
+        });        
     });
-});
 
     function formatState(state) {
         if (!state.id) {
@@ -436,16 +451,20 @@
         });
     });
 
-function validateContactForm() {
-    let last_name = $("#last_name").val();
-    if (last_name.trim() === "") {
-        showToastError('Please enter last name');
-        return false;
+    function validateContactForm() {
+        let last_name = $("#last_name").val();
+        if (last_name.trim() === "") {
+            showToastError('Please enter last name');
+            return false;
+        }
+        $('#contactOwner').removeAttr('disabled');
+        return true;
     }
-    $('#contactOwner').removeAttr('disabled');
-    return true;
-}
 
+    function openEmail(){
+        $("#composemodal").modal('show');
+    }
 
+    
 
 </script>

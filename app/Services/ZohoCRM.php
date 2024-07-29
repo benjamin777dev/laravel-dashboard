@@ -1330,28 +1330,26 @@ class ZohoCRM
         }
     }
 
-    public function sendZohoEmail($user,$access_token,$input)
+    public function sendZohoEmail($inputEmail)
     {
         try {
-            Log::info('Send Email through Zoho', ['input' => $input]);
-
-            // Trigger workflows
-            $input['trigger'] = 'workflow';
-
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->post("https://mail.zoho.com/api/accounts/$user->root_user_id/messages",$input);
+            ])->post($this->apiUrl."Contacts/3652397000002181001/actions/send_mail",$inputEmail);
+            Log::info('Raw Response', ['response' => $response]);
 
             $responseData = $response->json();
-
             if (!$response->successful()) {
-                Log::error('Send Email Failed', ['response' => $responseData]);
-                throw new \Exception('Failed to Send Email');
+                if($response['code']=="AUTHENTICATION_FAILURE"){
+                    return $response['code'];
+                }else{
+
+                    throw new \Exception('Failed to send Email');
+                }
+                Log::error('Send Email Error Response', ['response' => $responseData]);
             }
-
-            Log::info('Zoho Send Email Response', ['response' => $responseData]);
-
+            Log::info('Send Email repsonse', ['response' => $responseData]);
             return $responseData;
         } catch (\Throwable $th) {
             Log::error('Error Sending Email: ' . $th->getMessage());

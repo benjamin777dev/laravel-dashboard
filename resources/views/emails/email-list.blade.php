@@ -92,6 +92,14 @@ use Carbon\Carbon;
 
 </div>
 
+<div class="modal fade" id="draftModal" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="modalValues">
+            
+        </div>
+    </div>
+</div>
+
 
 <script>
     console.log("activeElement",window.clickedValue);
@@ -100,11 +108,11 @@ use Carbon\Carbon;
         console.log(email.id);
         if(window.clickedValue == 'Draft'){
             $.ajax({
-                url: "{{ route('email.detail.json', ['emailId' => ':id']) }}".replace(':id', email.id),
+                url: "{{ route('email.detail.draft', ['emailId' => ':id']) }}".replace(':id', email.id),
                 method: 'GET',
                 success: function(response) {
-                    $('#composemodal').find('#modalValues').html(response);
-                    $('#composemodal').modal('show')
+                    $('#draftModal').find('#modalValues').html(response);
+                    $('#draftModal').modal('show')
                 },
                 error: function(xhr, status, error) {
                     // Handle error response

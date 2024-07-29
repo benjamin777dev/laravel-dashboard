@@ -192,7 +192,7 @@
                 showToastError(error.message)
                 return false
             }
-            console.log("isValid", isValid);
+            console.log("isValid", isValid,additionalEmail);
             if(isValid == true){
                 var formdata = {
                 "data": [{
@@ -395,7 +395,7 @@
                 isValid = false;
                 showToastError(error.message) 
             }
-            console.log("isValid", isValid);
+            console.log("isValid", isValid,additionalEmail);
             if(isValid == true){
                 var formdata = {
                 "data": [{
