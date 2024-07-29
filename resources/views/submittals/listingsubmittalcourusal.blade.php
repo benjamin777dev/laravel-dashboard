@@ -1390,8 +1390,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                             <label for="add_email" class="common-label">Custom Domain Name</label>
                             <input type="text" value="{{ isset($dealData['customDomainName']) ? $dealData['customDomainName'] : '' }}"
                                 class="form-control" placeholder="" id="customDomainName">
-                            <div class="add_email_error text-danger" id="add_email_error">
-                            </div>
                         </div>
                     </div>
                     <div class="gap-2 col-lg-6 label-div-mb">
@@ -1661,7 +1659,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 addStepChr('Service Providers', serviceProvider);
             
             } else if (value === "No") {
-                console.log("hello world123456");
                 for (let i = 6; i >= 3; i--) {
                     removeStep(i);
                 }
@@ -1690,6 +1687,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
 
             // Check required fields in this section
             $currentSection.find('.required-field').each(function() {
+                console.log("test out",this);
                 if (!$(this).val()) {
                     isValid = false;
                     $(this).addClass('error'); // Add error class for styling
