@@ -26,7 +26,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Non-TM Check Request Information</h4>
 
-                <div id="basic-example-nontm-view">
+                <div id="basic-example-nontm-create">
                     <!-- Seller Details -->
                     <h3>Basic Information</h3>
                     <section>
@@ -353,19 +353,16 @@
             <!-- jquery step -->
             <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
-            <!-- form wizard init -->
-            <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
-
             <script>
+                
         window.onload = function(){
-                    $(function () {
-                $("#basic-example-nontm").steps({
+            $(function () {
+                        $("#basic-example-nontm-create").steps({
                     headerTag: "h3",
                     bodyTag: "section",
                     transitionEffect: "slide"
                     });
                 });
-
                 let related_transaction = document.getElementById("related_transaction");
                 let add_email = document.getElementById("add_email");
                 let close_date = document.getElementById("close_date");

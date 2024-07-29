@@ -3513,6 +3513,9 @@ input[type="button"]:hover {
 
 .wizard .steps>ul{
        font-size: 13px !important;
+       flex-wrap: unset !important;
+       overflow-x: auto !important;
+       text-wrap: nowrap !important;
 }
 
 /* .number{
