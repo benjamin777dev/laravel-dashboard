@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Models\Aci;
-use App\Models\Attachment; // Import the User model
-use App\Models\BulkJob; // Import the Deal model
-use App\Models\Contact; // Import the Deal model
-use App\Models\ContactGroups; // Import the Deal model
-use App\Models\ContactRole; // Import the Deal model
-use App\Models\Deal; // Import the Deal model
-use App\Models\DealContact; // Import the Module model
+use App\Models\Attachment; 
+use App\Models\BulkJob; 
+use App\Models\Contact;
+use App\Models\ContactGroups; 
+use App\Models\ContactRole; 
+use App\Models\Deal; 
+use App\Models\DealContact; 
 use App\Models\Groups;
 use App\Models\Module;
 use App\Models\NonTm;

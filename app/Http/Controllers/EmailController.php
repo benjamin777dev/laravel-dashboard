@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
+use App\Services\SendGrid;
 use App\Models\Contact;
 use App\Models\User;
 // use App\Models\ContactGroups;
@@ -47,8 +48,54 @@ class EmailController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
+        $sendgrid = new SendGrid();
+        if(!$user){
+            return redirect('/login');
+        }
         $accessToken = $user->getAccessToken();
         $inputData = $request->json()->all();
+        
+        //Verify User
+        $userVerified = $sendgrid->verifySender($inputData['from']['email']);
+        Log::info('User Verification', ['userVerified' => $userVerified]);
+        if($userVerified){
+            $sendGridInput = 
+            [
+                'personalizations' => [
+                    [
+                        'to' => $inputData['to'],
+                        'subject' => $inputData['subject']
+                    ]
+                ],
+                'from' => $inputData['from'],
+                'content' => [
+                    [
+                        'type' => 'text/html',
+                        'value' => $inputData['content']
+                    ]
+                ]
+            ];
+            $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
+        }else{
+            $zohoInput = 
+            [
+                'to' => [
+                    $inputData['to'],
+                ],
+                'from' => [
+                    "user_name"=> $inputData['from']['name'],
+                    'email'=> $inputData['from']['email'],
+                ],
+                'subject' => $inputData['subject'],
+                'content' => $inputData['content']
+            ];
+            $sendEmail = $zoho->sendZohoEmail($zohoInput);
+            if($sendEmail=="AUTHENTICATION_FAILURE"){
+                return response()->json(["redirect"=>"/login"]);
+                // return redirect('/login');
+            }
+        }
+        return $sendEmail;
         $response = $db->saveEmail($user,$accessToken,$inputData);    
         return response()->json($response);
     }
@@ -68,7 +115,7 @@ class EmailController extends Controller
         return view('emails.email-read',compact('contacts','email'))->render();
     }
 
-    public function emailDetailJSON(Request $request)
+    public function emailDetailDraft(Request $request)
     {
         $db = new DatabaseService();
         $user = $this->user();
@@ -80,7 +127,7 @@ class EmailController extends Controller
         $emailId = $request->route('emailId');
         $email = $db->getEmailDetail($emailId);    
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
-        return view('emails.email-create',compact('contacts','email'))->render();
+        return view('emails.email-draft',compact('contacts','email'))->render();
     }
 
     public function emailTemplate(Request $request)

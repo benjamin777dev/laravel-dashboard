@@ -99,7 +99,7 @@
 <div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['email'=>null])
+            @include('emails.email-create',['contact'=>null])
         </div>
     </div>
 </div>
@@ -110,7 +110,9 @@
 
 <script>
     window.clickedValue;
-    
+    $(document).ready(function(){
+        fetchEmails();
+    })
     window.fetchEmails = function(event=null){
         if(event){
             let element = event.target.closest('a');
