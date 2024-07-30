@@ -48,14 +48,14 @@
             <p class="porText">or</p>
             <div class="psortingFilterDiv">
                 @php
-                    $abcd = ['A+', 'A', 'B', 'C', 'D'];
+                    $abcd = ['A1', 'A', 'B', 'C', 'D'];
                 @endphp
                 <div class="row" style="gap:24px;flex-wrap:nowrap;">
                     <div class="psortFilterDiv">
                         <select name="abcd_class" class="psearchInput" id="contactSort">
                             <option selected value="">-None-</option>
                             @foreach ($abcd as $abcdIndex)
-                                <option value="{{ $abcdIndex }}">{{ $abcdIndex }}</option>
+                                <option value="{{ $abcdIndex }}">{{ $abcdIndex==="A1" ? "A+" : $abcdIndex }}</option>
                             @endforeach
                         </select>
                         {{-- <input placeholder="Sort contacts by..." id="pipelineSort" class="psearchInput" /> --}}

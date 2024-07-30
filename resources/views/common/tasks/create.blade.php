@@ -85,7 +85,7 @@
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
                     <p class="modal-title dHeaderText">Create New Task</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetValidationTask()"
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="close_modal_task_dash" onclick="resetValidationTask()"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body dtaskbody">
