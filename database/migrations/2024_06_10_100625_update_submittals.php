@@ -210,9 +210,6 @@ return new class extends Migration
             if (!Schema::hasColumn('submittals', 'qrCodeSignRider')) {
                 $table->string('qrCodeSignRider')->nullable();
             }
-            if (!Schema::hasColumn('submittals', 'qrCodeMainPanel')) {
-                $table->string('qrCodeMainPanel')->nullable();
-            }
             if (!Schema::hasColumn('submittals', 'featureCards')) {
                 $table->string('featureCards')->nullable();
             }
