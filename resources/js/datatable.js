@@ -74,7 +74,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     lockIcon = `<span class="lock-placeholder"></span>`;
                 }
                 let submittalSection = '';
-    if (data.tm_preference !== 'Non-TM' && data.representing === 'Buyer' || data.representing === 'Seller') {
+    if (!(data.tm_preference === 'Non-TM' && data.representing === 'Buyer') ) {
         if (!data.submittals || data.submittals.length === 0) {
             deal = data;
             submittalSection = `
@@ -719,7 +719,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             data: "deal_name",
             title: "Transaction",
             render: function (data, type, row) {
-                return `<span class='icon-container max-width-500' >${data}</span>`;
+                return `<a href="/pipeline-view/${row?.id}" target="_blank"><span class='icon-container max-width-500' >${data}</span></a>`;
             },
         },
         {
@@ -1123,7 +1123,6 @@ var tableTasks = $("#datatable_tasks").DataTable({
             },
         },
     ],
-
     ajax: {
         url: "/task/for/contact/" + contactId, // Ensure this URL is correct
         type: "GET", // or 'POST' depending on your server setup

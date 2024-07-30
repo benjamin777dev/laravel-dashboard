@@ -886,9 +886,10 @@ class DatabaseService
             if (!empty($stage)) {
                 $searchStage = urldecode($stage);
                 $query->where(function ($query) use ($searchStage) {
-                $query->orWhere('abcd', 'like', '%' . $searchStage . '%');
-            });
-            }
+                    $searchStage ==="A1" ? $searchStage="A+" : $searchStage;
+                    $query->where('abcd', '=', $searchStage);
+                });
+            }                       
     
             $contacts = $query->get();
     
@@ -2062,6 +2063,7 @@ class DatabaseService
         $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
         $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
         $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
+        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : null;
         $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
         $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
         $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;
