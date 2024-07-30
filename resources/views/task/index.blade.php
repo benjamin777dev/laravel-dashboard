@@ -37,6 +37,9 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="datapagination d-none">
+                        @include('common.pagination', ['module' => $upcomingTasks])
+                    </div>
                 </div>
             </div>
 
@@ -173,6 +176,7 @@
            window.onload = function() {
             let nextPageUrl = '{{ $upcomingTasks->nextPageUrl() }}';
             $(window).scroll(function() {
+                console.log("yes hreeee",nextPageUrl)
                 if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
                     if (nextPageUrl) {
                         loadMorePosts();
