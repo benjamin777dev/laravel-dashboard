@@ -17,13 +17,13 @@
                 Compose
             </button>
             <div class="mail-list mt-4" onclick = "fetchEmails(event)">
-                <a href="javascript: void(0);" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
-                {{-- <a href="javascript: void(0);"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
+                {{-- <a href="javascript: void(0);" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
+                <a href="javascript: void(0);"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
                 <a href="javascript: void(0);"><i class="mdi mdi-diamond-stone me-2"></i>Important</a> --}}
+                <a href="javascript: void(0);" class="active"><i class="mdi mdi-email-check-outline me-2"></i>Sent Mail</a>
                 <a href="javascript: void(0);"><i class="mdi mdi-file-outline me-2"></i>Draft</a>
-                <a href="javascript: void(0);"><i class="mdi mdi-email-check-outline me-2"></i>Sent Mail</a>
                 <a href="javascript: void(0);"><i class="mdi mdi-trash-can-outline me-2"></i>Trash</a>
-                <a href="javascript: void(0);"><i class="mdi mdi-file-document-outline me-2"></i>Create Template</a>
+                <a href="javascript: void(0);"><i class="mdi mdi-file-document-outline me-2"></i>Template</a>
             </div>
 
 
@@ -131,7 +131,7 @@
                 // Add any further actions here, like making an AJAX request or updating the UI
             }
         }
-        if(window.clickedValue == 'Create Template'){
+        if(window.clickedValue == 'Template'){
             $.ajax({
                 url: "{{ route('email.template')}}",
                 method: 'GET',
@@ -149,7 +149,7 @@
                 url: "{{ route('email.list') }}",
                 method: 'GET', // Change to DELETE method
                 data:{
-                    'filter':window.clickedValue??'Inbox'
+                    'filter':window.clickedValue??'Sent Mail'
                 },
                 success: function(response) {
                    

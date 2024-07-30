@@ -459,6 +459,11 @@ class PipelineController extends Controller
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $field;
+            if (empty($field)) {
+                return response()->json([
+                    'error' => 'Cannot accept empty or with % value'
+                ], 400); // Use 400 Bad Request for client-side errors
+            }
             if($dbfield==="deal_name"){
                 $field = "Deal_Name";
             }

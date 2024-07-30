@@ -8,7 +8,7 @@ use Carbon\Carbon;
             <div class="btn-group me-2 mb-2 mb-sm-0">
                 {{-- <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-inbox"></i></button>
                 <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-exclamation-circle"></i></button> --}}
-                <button type="button" class="btn btn-dark waves-light waves-effect"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
+                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
             </div>
             {{-- <div class="btn-group me-2 mb-2 mb-sm-0">
                 <button type="button" class="btn btn-dark waves-light waves-effect" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,7 +51,7 @@ use Carbon\Carbon;
                         <li>
                             <div class="col-mail col-mail-1">
                                 <div class="checkbox-wrapper-mail">
-                                    <input type="checkbox" id="{{$email['id']}}">
+                                    <input type="checkbox" id="{{$email['id']}}" value="{{$email['id']}}" onclick="handleCheckboxClick(this)">
                                     <label for="{{$email['id']}}" class="toggle"></label>
                                 </div>
                                 <a href="javascript: void(0);" class="title" onclick = "getEmail({{json_encode($email)}})">{{$email['toEmail']}}, me (3)</a><span class="star-toggle far fa-star"></span>
@@ -102,7 +102,29 @@ use Carbon\Carbon;
 
 
 <script>
-    console.log("activeElement",window.clickedValue);
+    
+    
+    let checkedEmails = [];
+
+    function handleCheckboxClick(checkbox) {
+        // Get the value of the checkbox
+        const emailValue = checkbox.value;
+
+        // Check if the checkbox is checked
+        if (checkbox.checked) {
+            // Add value to the array if not already present
+            if (!checkedEmails.includes(emailValue)) {
+                checkedEmails.push(emailValue);
+            }
+        } else {
+            // Remove value from the array if unchecked
+            checkedEmails = checkedEmails.filter(value => value !== emailValue);
+        }
+
+        // Optional: Log the array to see the changes
+        console.log(checkedEmails);
+    }
+
     window.getEmail=function(email){
         console.log((email));
         console.log(email.id);
@@ -135,4 +157,28 @@ use Carbon\Carbon;
             });
         }
     }
+
+    window.moveToTrashEmail = function() {
+        console.log("CheckedEmail", checkedEmails);
+
+        $.ajax({
+            url: "{{ route('email.moveToTrash') }}",
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ emailIds: checkedEmails }),
+            success: function(response) {
+                fetchEmails();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    };
+
 </script>

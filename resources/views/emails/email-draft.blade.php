@@ -10,14 +10,14 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="toDraftSelect" multiple="multiple"
                     data-placeholder="To">
-                    @foreach($contacts as $contact)
+                    @foreach($contacts as $contactDetail)
                         @php
                             $selected = ''; // Initialize variable to hold 'selected' attribute
                             if (isset($email['toEmail'])) {
                                 foreach (json_decode($email['toEmail'],true) as $currEmail) {
                                     if (
-                                        $contact['email'] ===
-                                        $currEmail
+                                        $contactDetail['email'] ===
+                                        $currEmail['email']
                                     ) {
                                         $selected = 'selected'; // If IDs match, mark the option as selected
                                         break; // Exit loop once a match is found
@@ -25,7 +25,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{$contact['email']}}" {{$selected}}>{{$contact['email']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -35,14 +35,14 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccDraftSelect" multiple="multiple"
                     data-placeholder="To">
-                    @foreach($contacts as $contact)
+                    @foreach($contacts as $contactDetail)
                         @php
                             $selected = ''; // Initialize variable to hold 'selected' attribute
                             if (isset($email['ccEmail'])) {
                                 foreach (json_decode($email['ccEmail'],true) as $currEmail) {
                                     if (
-                                        $contact['email'] ===
-                                        $currEmail
+                                        $contactDetail['email'] ===
+                                        $currEmail['email']
                                     ) {
                                         $selected = 'selected'; // If IDs match, mark the option as selected
                                         break; // Exit loop once a match is found
@@ -50,7 +50,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{$contact['email']}}" {{$selected}}>{{$contact['email']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -60,14 +60,14 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="bccDraftSelect" multiple="multiple"
                     data-placeholder="To">
-                    @foreach($contacts as $contact)
+                    @foreach($contacts as $contactDetail)
                         @php
                             $selected = ''; // Initialize variable to hold 'selected' attribute
                             if (isset($email['bccEmail'])) {
                                 foreach (json_decode($email['bccEmail'],true) as $currEmail) {
                                     if (
-                                        $contact['email'] ===
-                                        $currEmail
+                                        $contactDetail['email'] ===
+                                        $currEmail['email']
                                     ) {
                                         $selected = 'selected'; // If IDs match, mark the option as selected
                                         break; // Exit loop once a match is found
@@ -75,7 +75,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{$contact['email']}}" {{$selected}}>{{$contact['email']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -98,8 +98,8 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="sendEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
-    <button type="button" class="btn btn-dark" onclick="sendEmails({{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 <script>
     $(document).ready(function(){
@@ -121,7 +121,7 @@
             statusbar:false
         });
 
-        var modal = document.getElementById('composemodal');
+        var modal = document.getElementById('draftModalTitle');
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
@@ -140,23 +140,30 @@
         
     })
 
-    window.sendEmails = function(email,isEmailSent){
+    window.sendDraftEmails = function(email,isEmailSent){
         var to = $("#toDraftSelect").val();
         var cc = $("#ccDraftSelect").val();
         var bcc = $("#bccDraftSelect").val();
         var content = tinymce.get('draftEmailEditor').getContent();
         var subject = $("#emailDraftSubject").val();
+        var toEmails = to.map((val)=>JSON.parse(val));
+        var ccEmails = cc.map((val)=>JSON.parse(val));
+        var bccEmails = bcc.map((val)=>JSON.parse(val));
         var formData = 
         {
-            "fromEmail": "tech@coloradohomerealty.com",
-            "toEmail": to,
-            "ccEmail":cc,
-            "bccEmail":bcc,
+            "to": toEmails,
+            "cc": ccEmails,
+            "bcc": bccEmails,
             "subject": subject,
+            "from": {
+                "email": "{{auth()->user()->email}}",
+                "name": "{{auth()->user()->name}}",
+            },
             "content": content,
-            "isEmailSent": isEmailSent,
-            "emailId": email?email.id:null
+            "isEmailSent":isEmailSent,
+            "emailId":email.id
         }
+
         $.ajax({
             url: "{{ route('send.email') }}",
             method: 'POST',
@@ -167,6 +174,14 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 console.info(response);
+                if (response.status === 'process') {
+                    showToastError(response.message);
+                    setTimeout(function() {
+                        window.location.href = response.redirect_url;
+                    }, 5000); // Adjust the delay as needed
+                } else {
+                    // Handle error
+                }
                 $("#emaildraftModalClose").click();
             },
             error: function(xhr, status, error) {

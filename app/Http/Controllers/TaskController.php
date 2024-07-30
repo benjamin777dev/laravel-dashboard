@@ -31,7 +31,6 @@ class TaskController extends Controller
 
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-
         return view('task.index', compact('upcomingTasks', 'inProgressTasks', 
             'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks'));
     }
@@ -237,6 +236,20 @@ class TaskController extends Controller
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function upcommingTaskForDashboard()
+    {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $db = new DatabaseService();
+        $upcomingTasks = $db->retreiveTasks($user, $accessToken, 'Upcoming');
+
+        return view('common.tasks.taskdash', compact('upcomingTasks'))->render();
     }
 
     public function taskForPipeline()

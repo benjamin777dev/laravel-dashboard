@@ -939,7 +939,7 @@
 </section>`;
 
 const defaultCHRSec1 = ` <h3>Commission Details</h3>
-             <section>
+     <section>
                         <div>
                             <form>
                                 <div class="row">
@@ -1379,40 +1379,43 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <div class="d-flex gap-2">
                             <label for="add_email" class="common-label">Property Website</label>
                             <div class="form-check mb-3">
-                                <input class="form-check-input" <?php if ($submittal['propertyWebsite']) {
+                                <input <?php if ($submittal['propertyWebsite']) {
                                             echo 'checked';
                                         } ?>  type="checkbox" id="propertyWebsite">
                             </div>
                         </div>
                     </div>
+                   <div class="gap-2 col-lg-6 label-div-mb">
+                    <div class="additional_email label-div-mb">
+                        <label for="customDomainName123" class="common-label">Custom Domain Name</label>
+                        <input type="text" value="{{ $submittal['customDomainName'] ?? '' }}" class="form-control" placeholder="" id="customDomainName">
+                    </div>
+                </div>
+
                     <div class="gap-2 col-lg-6 label-div-mb">
-                        <div class="additional_email label-div-mb">
-                            <label for="add_email" class="common-label">Custom Domain Name</label>
-                            <input type="text" value="{{ isset($dealData['customDomainName']) ? $dealData['customDomainName'] : '' }}"
-                                class="form-control" placeholder="" id="customDomainName">
-                            <div class="add_email_error text-danger" id="add_email_error">
-                            </div>
+                       <div class="d-flex gap-2">
+                        <label for="propertyHighlightVideo" class="common-label">Property Highlight Video</label>
+                        <div class="form-check mb-3">
+                            <input 
+                                type="checkbox" 
+                                id="propertyHighlightVideo" 
+                                name="propertyHighlightVideo" 
+                                {{ isset($submittal['propertyHighlightVideo']) && $submittal['propertyHighlightVideo'] == 1 ? 'checked' : '' }}>
                         </div>
                     </div>
-                    <div class="gap-2 col-lg-6 label-div-mb">
-                        <div class="d-flex gap-2">
-                            <label for="add_email" class="common-label">Property Highlight Video</label>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" value="{{ isset($dealData['propertyHighlightVideo']) ? $dealData['propertyHighlightVideo'] : '' }}" type="checkbox" id="propertyHighlightVideo">
-                            </div>
-                        </div>
+
                     </div>
                     </div>
                     <div class="gap-2 col-lg-6 label-div-mb">
                     <div class="additional_email label-div-mb">
                         <label for="add_email" class="common-label">8-12 Features Needed for Video</label>
-                        <input type="text" value="{{ isset($dealData['featuresNeededForVideo']) ? $dealData['featuresNeededForVideo'] : '' }}" class="form-control"
+                        <input type="text" value="{{ isset($submittal['featuresNeededForVideo']) ? $submittal['featuresNeededForVideo'] : '' }}" class="form-control"
                             placeholder="" id="featuresNeededForVideo">
                     </div>
                     </div>
             `;
 
-        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email" class="common-label">Brochure Design - <b>Click for
+        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"              class="common-label">Brochure Design - <b>Click for
                                 options<b>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
@@ -1429,7 +1432,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                 </svg>
                             </label>
                             <div class="nontm-select-div">
-                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select">
+                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select required-field">
                                     @foreach ($broucherLines as $brochureLine)
                                         <option value="{{ $brochureLine }}"
                                             {{ $brochureLine == $submittal->brochureLine ? 'selected' : '' }}>
@@ -1491,6 +1494,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                     </div>
                                 </div>
                             </div>
+                             <div class="row">
                             <div class="gap-2 col-lg-6">
                                 <div class="d-flex gap-2">
                                     <div class="form-check mb-3">
@@ -1499,7 +1503,19 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                         } ?>>
                                     </div>
                                     <label for="add_email" class="common-label">QR Code Sign Rider</label>
-                                </div>
+                              </div>
+                          </div>
+                          <div class="gap-2 col-lg-6">
+                                <div class="d-flex gap-2">
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" id="qrCodeMainPanel" <?php if ($submittal['qrCodeMainPanel']) {
+                                            echo 'checked';
+                                        } ?>>
+                                    </div>
+                                    <label for="add_email" class="common-label">QR Code Main Panel</label>
+                              </div>
+                          </div>
+                          </div>
                                 `;
 
         const innrtHtml6 = `<div class="label-div-mb property">
@@ -1561,7 +1577,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                             </svg></label>
                             <input type="date"
                                 value="{{ isset($submittal['brochurePickupDate']) ? \Carbon\Carbon::parse($submittal['brochurePickupDate'])->format('Y-m-d') : '' }}"
-                                class="form-control nontm-input" id="brochurePickupDate">
+                                class="form-control nontm-input required-field" id="brochurePickupDate">
                             <div id="brochurePickupDate_error" class="text-danger">
 
         </div>
@@ -1583,7 +1599,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
         // Event listeners and other logic
         let initialCHrusingValue = document.querySelector('input[name="usingCHR"]:checked')?.value;
         setTimeout(() => {
-            
             let initialshowPromotion = document.querySelector('input[name="showPromotion"]:checked')?.value;
             showAndDisableValues(initialshowPromotion,'showPropinitial');
         }, 500);
@@ -1661,7 +1676,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 addStepChr('Service Providers', serviceProvider);
             
             } else if (value === "No") {
-                console.log("hello world123456");
                 for (let i = 6; i >= 3; i--) {
                     removeStep(i);
                 }
@@ -1690,6 +1704,12 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
 
             // Check required fields in this section
             $currentSection.find('.required-field').each(function() {
+                if($(this).val()==="-None-"){
+                    isValid = false;
+                    $(this).addClass('error'); 
+                }else {
+                    $(this).removeClass('error'); // Remove error class if valid
+                }
                 if (!$(this).val()) {
                     isValid = false;
                     $(this).addClass('error'); // Add error class for styling

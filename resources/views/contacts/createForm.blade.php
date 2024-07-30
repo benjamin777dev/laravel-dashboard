@@ -398,8 +398,9 @@
                 },
                 processResults: function(data,params) {
                     params.page = params.page || 1;
+                    console.log(data,'dataaaa')
                     return {
-                        results: $.map(data.contacts.data, function(contact) {
+                        results: $.map(data.contacts, function(contact) {
                             return {
                                 id: contact.zoho_contact_id,
                                 text: (contact.first_name??"") + ' ' + (contact.last_name??""),

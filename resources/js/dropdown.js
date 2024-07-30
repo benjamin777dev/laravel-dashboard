@@ -546,8 +546,6 @@ window.addCommonTask = function (id = "", type = "") {
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
                 resetTaskForm(resetId);
-                document.getElementById("closing_btnnnnn").click();
-
                 $("#datatable_tasks1").DataTable().ajax.reload();
                 $("#datatable_tasks")?.DataTable().ajax.reload();
                 formData = "";

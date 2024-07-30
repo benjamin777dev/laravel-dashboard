@@ -59,7 +59,7 @@
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content">
             <div class="modal-header border-0 deleteModalHeaderDiv">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" id="task_modal_" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body deletemodalBodyDiv">
                 <p class="deleteModalBodyText">Please confirm you’d like to<br />delete this item.</p>
