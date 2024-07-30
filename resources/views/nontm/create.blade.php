@@ -26,7 +26,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Non-TM Check Request Information</h4>
 
-                <div id="basic-example-nontm">
+                <div id="basic-example-nontm-create">
                     <!-- Seller Details -->
                     <h3>Basic Information</h3>
                     <section>
@@ -56,13 +56,18 @@
                                            @endforeach
                                        </select>
                                     </div>
+                                    <div id="related_transaction_error" class="text-danger">
+                                    </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="basicpill-lastname-input">Additional Email for Confirmation </label>
                                         <input type="email" value="{{ isset($dealData['email']) ? $dealData['email'] : '' }}"
                                         class="form-control" placeholder="Enter email" id="add_email">
+                                        <div class="add_email_error text-danger" id="add_email_error">
+                                        </div>
                                     </div>
+                                    
                                 </div>
                             </div>
 
@@ -78,6 +83,9 @@
                                             </g>
                                         </svg></label>
                                         <input type="date" class="form-control" value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}" id="close_date" >
+                                        <div id="close_date_error" class="text-danger">
+                
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -97,6 +105,7 @@
                                         </svg></label>
                                         <input type="text" value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
                                         class="form-control" id="commission">
+                                        <div id="commission_error" class="text-danger">
                                     </div>
                                 </div>
                             </div>
@@ -262,6 +271,9 @@
                                         <input type="text"
                                         value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
                                         placeholder="$" class="form-control" id="final_purchase">
+                                        <div id="final_purchase_error" class="text-danger">
+                
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -269,6 +281,7 @@
                                         <label for="basicpill-lastname-input">Amount to CHR GIves </label>
                                         <input type="text" value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
                                         placeholder="$" class="form-control nontm-input" id="amount_chr">
+                                        <div id="amount_chr_error" class="text-danger">
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +334,7 @@
                                     </div>
                                     <div>
                                         <h5>Confirm Detail</h5>
-                                        <p class="text-muted">If several languages coalesce, the grammar of the resulting</p>
+                                        <p class="text-muted"></p>
                                     </div>
                                 </div>
                             </div>
@@ -340,19 +353,16 @@
             <!-- jquery step -->
             <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
-            <!-- form wizard init -->
-            <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
-
             <script>
+                
         window.onload = function(){
-                    $(function () {
-                $("#basic-example-nontm").steps({
+            $(function () {
+                        $("#basic-example-nontm-create").steps({
                     headerTag: "h3",
                     bodyTag: "section",
                     transitionEffect: "slide"
                     });
                 });
-
                 let related_transaction = document.getElementById("related_transaction");
                 let add_email = document.getElementById("add_email");
                 let close_date = document.getElementById("close_date");
@@ -379,16 +389,14 @@
                 });
 
                 // Add event listener to each radio button
-                radioButtons.forEach(radioButton => {
-                    console.log(radioButton,'radioButtons')
-                    radioButton?.addEventListener('change', event => {
-                        const question = radioButton.closest('.accordion-item').querySelector('button')
-                            .textContent.trim();
-                        const value = event.target.value;
-                        window.values[question] = value;
+                document.addEventListener('change', event => {
+                if (event.target.matches('input[type="radio"]')) {
+                    const radioButton = event.target;
+                    const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+                    const value = radioButton.value;
+                    window.values[question] = value;
                         openNewFields();
-                        console.log(values, 'valuesis hreeee')
-                    });
+                    }
                 });
 
                 // Get all accordion buttons

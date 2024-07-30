@@ -37,6 +37,9 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="datapagination d-none">
+                        @include('common.pagination', ['module' => $upcomingTasks])
+                    </div>
                 </div>
             </div>
 
@@ -170,6 +173,40 @@
 
     <script>
 
+           window.onload = function() {
+            let nextPageUrl = '{{ $upcomingTasks->nextPageUrl() }}';
+            $(window).scroll(function() {
+                console.log("yes hreeee",nextPageUrl)
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                    if (nextPageUrl) {
+                        loadMorePosts();
+                    }
+                }
+            });
+        }
+
+        function loadMorePosts() {
+            $('.spinner').show();
+            $.ajax({
+                url: nextPageUrl,
+                type: 'get',
+                beforeSend: function() {
+                    nextPageUrl = '';
+                },
+                success: function(data) {
+                    console.log(data, 'datatatata')
+                    $('.spinner').hide();
+                    nextPageUrl = data.nextPageUrl;
+                    $('.dbgBodyTable').append(data);
+                    $('.ptableCardDiv').append(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading more posts:", error);
+                    $('.spinner').hide();
+                }
+            });
+        }
+
 window.closeTask = function(id, indexId, subject) {
         $.ajaxSetup({
             headers: {
@@ -217,7 +254,7 @@ window.closeTask = function(id, indexId, subject) {
             fetchTasks(page);
         });
 
-        function fetchTasks(page = 1) {
+ function fetchTasks(page = 1) {
             $.ajax({
                 url: `/tasks?page=${page}`,
                 success: function(data) {
@@ -227,9 +264,9 @@ window.closeTask = function(id, indexId, subject) {
                     console.error('Error:', error);
                 }
             });
-        }
+ }
 
-        async function updateTask(indexid, id) {
+async function updateTask(indexid, id) {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

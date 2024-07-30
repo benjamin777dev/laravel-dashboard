@@ -17,6 +17,7 @@ use App\Models\Note;
 use App\Models\Submittals;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\TeamAndPartnership;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -886,9 +887,10 @@ class DatabaseService
             if (!empty($stage)) {
                 $searchStage = urldecode($stage);
                 $query->where(function ($query) use ($searchStage) {
-                $query->orWhere('abcd', 'like', '%' . $searchStage . '%');
-            });
-            }
+                    $searchStage ==="A1" ? $searchStage="A+" : $searchStage;
+                    $query->where('abcd', '=', $searchStage);
+                });
+            }                       
     
             $contacts = $query->get();
     
@@ -1901,6 +1903,8 @@ class DatabaseService
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
             case 'Tasks':
                 return \App\Models\Task::mapZohoData($record, 'csv');
+            case 'Teams_And_Partners':
+                return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1928,6 +1932,9 @@ class DatabaseService
                     break;
                 case 'Tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                case 'Teams_And_Partners':
+                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['zoho_teams_and_partners_id']);
                     break;
 
                     // Add other cases as needed
@@ -2062,6 +2069,7 @@ class DatabaseService
         $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
         $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
         $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
+        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : null;
         $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
         $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
         $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;

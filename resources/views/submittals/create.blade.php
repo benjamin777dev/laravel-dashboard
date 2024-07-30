@@ -192,7 +192,7 @@
                 showToastError(error.message)
                 return false
             }
-            console.log("isValid", isValid);
+            console.log("isValid", isValid,additionalEmail);
             if(isValid == true){
                 var formdata = {
                 "data": [{
@@ -333,6 +333,7 @@
             var stickyDots = $('#stickyDots').val();
             var qrCodeSheet = $('#qrCodeSheet').val();
             var qrCodeSignRider = $('#qrCodeSignRider').prop('checked');
+            var qrCodeMainPanel = $('#qrCodeMainPanel').prop('checked');
             var featureCards = $('#featureCards').val();
             var featureCardCopy = $('#featureCardCopy').val();
             var brochureDeliveryDate = $('#brochureDeliveryDate').val();
@@ -395,7 +396,7 @@
                 isValid = false;
                 showToastError(error.message) 
             }
-            console.log("isValid", isValid);
+            console.log("isValid", isValid,additionalEmail);
             if(isValid == true){
                 var formdata = {
                 "data": [{
@@ -434,6 +435,7 @@
                         "Email_Blast_to_Reverse_Prospect_List": emailBlastReverseProspect,
                         "Social_Media_Ads": socialMediaAds,
                         "QR_Code_Sign_Rider": qrCodeSignRider,
+                        "QR_Code_Main_Panel": qrCodeMainPanel,
                         "Grand_County": grandCounty,
                         "Agent_Name": agentName,
                         "Mailout_Needed1": mailoutNeeded,

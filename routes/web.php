@@ -49,6 +49,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Dashboard Route
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index')->middleware('auth');
 Route::get('/dashboard-tasks', [DashboardController::class, 'retriveTaskforDatatable'])->name('dashboard.tasks')->middleware('auth');
+Route::get('/upcomming-task', [TaskController::class, 'upcommingTaskForDashboard'])->name('dashboard.upcomming')->middleware('auth');
 
 Route::get('/needsNewdate', [DashboardController::class, 'needNewDateMethod'])->middleware('auth');
 
