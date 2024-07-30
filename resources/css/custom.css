@@ -1622,10 +1622,6 @@ body .vertical-collpsed span .logo-sm image {
         display: unset;
     }
 
-    .table-responsive {
-        display: none;
-    }
-
     .npAgentCard {
         display: flex;
         padding: 20px;

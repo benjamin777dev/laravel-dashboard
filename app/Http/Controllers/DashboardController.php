@@ -63,7 +63,7 @@ class DashboardController extends Controller
         $tasks = $this->db->retreiveTasks($user, $accessToken, $tab);
         $upcomingTasks = $this->db->retreiveTasks($user, $accessToken, 'Upcoming');
          
-        $notesInfo = $this->db->retrieveNotes($user, $accessToken,10);
+        $notesInfo = $this->db->retrieveNotes($user, $accessToken,5);
         $notes = $this->fetchNotes();
         $userContact = $this->db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
 
@@ -78,6 +78,8 @@ class DashboardController extends Controller
             'totalGciForDah', 'userContact', 'upcomingTasks'
         ));
     }
+
+
 
     private function getStageData($deals, $goal)
     {
