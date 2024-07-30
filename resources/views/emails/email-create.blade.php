@@ -11,7 +11,8 @@
                 <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{'email':{{$contactDetail['email']}},'name':{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+ {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -22,7 +23,8 @@
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{'email':{{$contactDetail['email']}},'name':{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+ {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -33,7 +35,8 @@
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{'email':{{$contactDetail['email']}},'name':{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+ {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -57,8 +60,10 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="sendEmails(null,false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template <i class="fab fa-telegram-plane ms-1"></i></button>
     <button type="button" class="btn btn-dark" onclick="sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
+
 <script>
     $(document).ready(function(){
         $("#toSelect").select2({
@@ -83,19 +88,27 @@
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
+            console.log("HIdden BS",modalData );
             if (modalData) {
-                modalData.querySelectorAll('input, select, textarea').forEach(function (element) {
+                modalData.querySelectorAll('input,  textarea').forEach(function (element) {
                     if (element.tagName.toLowerCase() === 'select') {
                         $(element).val([]).trigger('change');
-                    } else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
-                    tinymce.get(element.id).setContent('');
-                }else {
+                    } 
+                    else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
+                        tinymce.get(element.id).setContent('');
+                    }
+                    else {
                         element.value = '';
                     }
                 });
             }
         });
         
+        var secondModalEl = document.getElementById('templateModal');
+        secondModalEl.addEventListener('hidden.bs.modal', function () {
+            var firstModal = new bootstrap.Modal(document.getElementById('composemodal'));
+            firstModal.show();
+        });
     })
 
     window.sendEmails = function(email,isEmailSent){
@@ -104,15 +117,21 @@
         var bcc = $("#bccSelect").val();
         var content = tinymce.get('elmEmail').getContent();
         var subject = $("#emailSubject").val();
+        var toEmails = to.map((val)=>JSON.parse(val))
+        var ccEmails = cc.map((val)=>JSON.parse(val));
+        var bccEmails = bcc.map((val)=>JSON.parse(val));
         var formData = 
         {
-            "to": to,
+            "to": toEmails,
+            "cc": ccEmails,
+            "bcc": bccEmails,
             "subject": subject,
             "from": {
-                "email": "tech@coloradohomerealty.com",
-                "name": "CHR Tech"
+                "email": "{{auth()->user()->email}}",
+                "name": "{{auth()->user()->name}}",
             },
-            "content": content
+            "content": content,
+            "isEmailSent":isEmailSent
         }
 
         $.ajax({
@@ -125,10 +144,16 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 console.info(response);
-                if(response.redirect){
-                    window.location.href = response.redirect
+                if (response.status === 'process') {
+                    showToastError(response.message);
+                    setTimeout(function() {
+                        window.location.href = response.redirect_url;
+                    }, 5000); // Adjust the delay as needed
+                } else {
+                    // Handle error
                 }
                 $("#emailModalClose").click();
+                fetchEmails()
             },
             error: function(xhr, status, error) {
                 // Handle error response
@@ -136,6 +161,17 @@
                 showToastError(xhr.responseText);
             }
         });
+    }
+
+    window.openTemplate = function(){
+        var firstModalEl = document.getElementById('composemodal');
+        var firstModal = bootstrap.Modal.getInstance(firstModalEl);
+        if (firstModal) {
+            firstModal.hide();
+        }
+
+        var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
+        secondModal.show();
     }
 </script>
             

@@ -18,6 +18,7 @@ use App\Models\Submittals;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Email;
+use App\Models\Template;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -585,6 +586,30 @@ class DatabaseService
             Log::info("Retrieve contact From Database");
 
             $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+
+            Log::info("Contacts Conditions", ['contacts' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
+    public function retrieveContactByEmail(User $user, $accessToken, $email)
+    {
+
+        try {
+            Log::info("Retrieve contact From Database");
+
+            $conditions = [['contact_owner', $user->root_user_id], ['email', $email]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
@@ -2199,29 +2224,47 @@ class DatabaseService
     public function saveEmail($user,$accessToken,$input)
     {
         try {
+            // Log the input data for debugging
             Log::info('Email Input', $input);
 
+            // Validate and encode email data
             $emailData = [
-                'fromEmail' => $input['fromEmail'],
-                'toEmail' => is_array($input['toEmail']) && count($input['toEmail']) > 0 ? json_encode($input['toEmail']) : null,
-                'ccEmail' => is_array($input['ccEmail']) && count($input['ccEmail']) > 0 ? json_encode($input['ccEmail']) : null,
-                'bccEmail' => is_array($input['bccEmail']) && count($input['bccEmail']) > 0 ? json_encode($input['bccEmail']) : null,
-                'subject' => $input['subject'],
-                'content' => $input['content'],
-                'userId' => $user->id,
-                'isEmailSent' => $input['isEmailSent']
+                'fromEmail' => json_encode($input['from']) ?? null,
+                'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? json_encode($input['to']) : null,
+                'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? json_encode($input['cc']) : null,
+                'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? json_encode($input['bcc']) : null,
+                'subject' => $input['subject'] ?? null,
+                'content' => $input['content'] ?? null,
+                'userId' => $user->id ?? null,
+                'isEmailSent' => $input['isEmailSent'] ?? null,
+                'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
             ];
 
+            // Log the prepared email data
+            Log::info('Email data prepared for database', [$emailData]);
+
+            // Insert or update the email record
             $email = Email::updateOrCreate(
-                ['id' => $input['emailId']],
+                ['id' => $input['emailId'] ?? null],
                 $emailData
             );
+            
+
+            // Log the result of the database operation
+            Log::info('Email record updated or created', ['email' => $email]);
 
             return $email;
         } catch (\Exception $e) {
-            Log::error("Error processing email: " . $e->getMessage());
+            // Log detailed error information
+            Log::error('Error processing email: ' . $e->getMessage(), [
+                'input' => $input,
+                'exception' => $e
+            ]);
+
+            // Re-throw the exception to ensure it is handled by the calling code
             throw $e;
         }
+
 
     }
 
@@ -2234,8 +2277,12 @@ class DatabaseService
                 if($cleanedFilter=="Draft"){
                     $condition[]=['isEmailSent',false];
                 }else if($cleanedFilter == "Sent Mail"){
-                    $condition[]=['fromEmail',$user->email];
-                    $condition[]=['isEmailSent',true];
+                    $condition[] = ['isEmailSent', true];
+                    // Add raw SQL condition to check within JSON field
+                    $emails = Email::where($condition)
+                        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(fromEmail, '$.email')) = ?", [$user->email])
+                        ->get();
+                    return $emails;
                 }else if($cleanedFilter=='Trash'){
                     $condition[]=['isDeleted',true];
                 }else if($cleanedFilter == 'Inbox'){
@@ -2260,6 +2307,58 @@ class DatabaseService
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    public function moveToTrash($emailIds)
+    {
+        try {
+            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted'=>true]);
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createTemplate($user,$accessToken,$input)
+    {
+        try {
+            // Log the input data for debugging
+            Log::info('Template Input', $input);
+
+            // Validate and encode email data
+            $templateData = [
+                'templateName' => $input['templateName'] ?? null,
+                'content' => $input['content'] ?? null,
+                'ownerId' => $user->id ?? null,
+            ];
+
+            // Log the prepared email data
+            Log::info('Template data prepared for database', [$templateData]);
+
+            // Insert or update the email record
+            $template = Template::updateOrCreate(
+                ['id' => $input['templateId'] ?? null],
+                $templateData
+            );
+            
+
+            // Log the result of the database operation
+            Log::info('Template record updated or created', ['template' => $template]);
+
+            return $template;
+        } catch (\Exception $e) {
+            // Log detailed error information
+            Log::error('Error processing template: ' . $e->getMessage(), [
+                'input' => $input,
+                'exception' => $e
+            ]);
+
+            // Re-throw the exception to ensure it is handled by the calling code
+            throw $e;
+        }
+
+
     }
 
 }

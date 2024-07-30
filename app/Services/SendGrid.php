@@ -70,10 +70,11 @@ class SendGrid
     {
         try {
             $inputEmailJSON = json_encode($inputEmail);
+            Log::info("Input Sendgrid Email".$inputEmailJSON);
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->sendgrid_api_key,
                 'Content-Type' => 'application/json',
-            ])->post($this->sendGridApi."mail/send",$inputEmailJSON);
+            ])->post($this->sendGridApi."mail/send",$inputEmail);
             Log::info('Raw Response', ['response' => $response]);
 
             $responseData = $response->json();

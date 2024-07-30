@@ -18,6 +18,7 @@ use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\SubmittalController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\TemplateController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -179,9 +180,10 @@ Route::post('/send/email',[EmailController::class,'sendEmail'])->name('send.emai
 Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->name('email.detail')->middleware('auth');
 Route::get('/email/detail/draft/{emailId}',[EmailController::class,'emailDetailDraft'])->name('email.detail.draft')->middleware('auth');
 Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('email.template')->middleware('auth');
+Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
 
 
-
-
+//Template Route
+Route::post('/create/template',[TemplateController::class,'createTemplate'])->name('create.template')->middleware('auth');
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

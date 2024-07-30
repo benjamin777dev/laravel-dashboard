@@ -1330,13 +1330,13 @@ class ZohoCRM
         }
     }
 
-    public function sendZohoEmail($inputEmail)
+    public function sendZohoEmail($inputEmail,$contactId)
     {
         try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->post($this->apiUrl."Contacts/3652397000002181001/actions/send_mail",$inputEmail);
+            ])->post($this->apiUrl."Contacts/$contactId/actions/send_mail",$inputEmail);
             Log::info('Raw Response', ['response' => $response]);
 
             $responseData = $response->json();
@@ -1354,6 +1354,33 @@ class ZohoCRM
         } catch (\Throwable $th) {
             Log::error('Error Sending Email: ' . $th->getMessage());
             throw new \Exception('Failed to Send email');
+        }
+    }
+
+    public function assoiciateEmail($inputEmail,$contactId)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->post($this->apiUrl."Contacts/$contactId/actions/associate_email",$inputEmail);
+            Log::info('Raw Response', ['response' => $response]);
+
+            $responseData = $response->json();
+            if (!$response->successful()) {
+                if($response['code']=="AUTHENTICATION_FAILURE"){
+                    return $response['code'];
+                }else{
+
+                    throw new \Exception('Failed to Associate Email');
+                }
+                Log::error('Associate Email Error Response', ['response' => $responseData]);
+            }
+            Log::info('Associate Email repsonse', ['response' => $responseData]);
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error Sending Email: ' . $th->getMessage());
+            throw new \Exception('Failed to Associate email');
         }
     }
 }

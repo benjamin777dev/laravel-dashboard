@@ -331,6 +331,13 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @include('emails.email_templates.email-template-create',['contact'=>$contact])
+        </div>
+    </div>
+</div>
 
 <div id = "emailList">
 

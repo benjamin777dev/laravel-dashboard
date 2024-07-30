@@ -19,8 +19,8 @@ class Email extends Model
         'content',
         'userId',
         'isEmailSent',
-        'isDeleted'
-        
+        'isDeleted',
+        'sendEmailFrom'
     ];
 
     public function userData()

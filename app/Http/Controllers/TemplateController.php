@@ -19,7 +19,7 @@ use App\Models\User;
 // use Illuminate\Support\Facades\Validator;
 // use App\Rules\ValidMobile;
 
-class EmailController extends Controller
+class TemplateController extends Controller
 {
     protected function guard()
     {
@@ -48,66 +48,16 @@ class EmailController extends Controller
         return view('emails.email-list',compact('contacts','emails'))->render();
     }
 
-    public function sendEmail(Request $request)
+    public function createTemplate(Request $request)
     {
         $db = new DatabaseService();
-        $zoho = new ZohoCRM();
         $user = $this->user();
-        $sendgrid = new SendGrid();
         if(!$user){
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $inputData = $request->json()->all();
-        $userVerified = $sendgrid->verifySender($inputData['from']['email']);
-        Log::info('User Verification', ['userVerified' => $userVerified]);
-        $zohoInput = 
-            [
-                'to' => [
-                    $inputData['to'],
-                ],
-                'from' => [
-                    "user_name"=> $inputData['from']['name'],
-                    'email'=> $inputData['from']['email'],
-                ],
-                'subject' => $inputData['subject'],
-                'content' => $inputData['content']
-            ];
-        $contact = $db->retrieveContactByEmail($user,$accessToken,$inputData['from']['email']);
-        if($userVerified){
-            $sendGridInput = 
-            [
-                'personalizations' => [
-                    [
-                        'to' => $inputData['to'],
-                        'subject' => $inputData['subject']
-                    ]
-                ],
-                'from' => $inputData['from'],
-                'content' => [
-                    [
-                        'type' => 'text/html',
-                        'value' => $inputData['content']
-                    ]
-                ]
-            ];
-            $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
-            $associateEmail = $zoho->assoiciateEmail($zohoInput,$contact['zoho_contact_id']);
-            $inputData['sendEmailFrom'] = "SendGrid";
-        }else{
-            $sendEmail = $zoho->sendZohoEmail($zohoInput,$contact['zoho_contact_id']);
-            if($sendEmail=="AUTHENTICATION_FAILURE"){
-                $this->guard()->logout();
-                return response()->json([
-                    'status' => 'process',
-                    'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                    'redirect_url' => route('login')
-                ]);
-            }
-            $inputData['sendEmailFrom'] = "Zoho";
-        }
-        // return $sendEmail;
-        $response = $db->saveEmail($user,$accessToken,$inputData);    
+        $response = $db->createTemplate($user,$accessToken,$inputData);    
         return response()->json($response);
     }
 

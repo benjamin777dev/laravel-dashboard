@@ -416,7 +416,7 @@ class DashboardController extends Controller
         $What_Id;
         $priority;
         $contact;
-        $seModule;
+        $seModule=null;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
@@ -484,7 +484,7 @@ class DashboardController extends Controller
                 'created_by' => $user->id,
                 // 'priority' => $priority ?? null,
                 'created_time' => $created_time ?? null,
-                'related_to' => $seModule,
+                'related_to' => $seModule ?? null,
             ]);
             Log::info("Successful notes create... " . $task);
             return response()->json($responseArray, 201);
