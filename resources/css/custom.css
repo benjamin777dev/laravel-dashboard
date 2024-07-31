@@ -899,6 +899,10 @@ body .vertical-collpsed span .logo-sm image {
     .dcardssubjectdiv {
         padding: 16px 12px;
     }
+    .search-input-design .select2-selection__rendered {
+        margin-bottom: 0 !important;
+        width: 100px !important;
+    }
 
     .dcardscheckbox {
         padding: 16px 8px;

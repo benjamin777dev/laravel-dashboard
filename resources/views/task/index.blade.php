@@ -1,19 +1,25 @@
 @extends('layouts.master')
 
-@section('title') @lang('Task_List') @endsection
+@section('title')
+    @lang('Task_List')
+@endsection
 
 @section('content')
 
     @component('components.breadcrumb')
-        @slot('li_1') Tasks @endslot
-        @slot('title') Task List @endslot
+        @slot('li_1')
+            Tasks
+        @endslot
+        @slot('title')
+            Task List
+        @endslot
     @endcomponent
 
     <div class="row">
         <div class="d-flex justify-content-between">
             <p class="dFont800 dFont15">Tasks</p>
-            <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13"
-                id="btnGroupAddon" data-bs-toggle="modal" data-bs-target="#staticBackdropforTask">
+            <div class="input-group-text text-white justify-content-center taskbtn dFont400 dFont13" id="btnGroupAddon"
+                data-bs-toggle="modal" data-bs-target="#staticBackdropforTask">
                 <i class="fas fa-plus plusicon"></i> New Task
             </div>
         </div>
@@ -36,9 +42,6 @@
                                 @endif
                             </tbody>
                         </table>
-                    </div>
-                    <div class="datapagination d-none">
-                        @include('common.pagination', ['module' => $upcomingTasks])
                     </div>
                 </div>
             </div>
@@ -66,47 +69,39 @@
             </div>
 
             <!-- Overdue Tasks -->
-            <div class="card">
+            <div class="card ">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Overdue</h4>
-                    <div class="table-responsive">
-                        <table class="table table-nowrap align-middle mb-0">
-                            <tbody>
-                                @if (count($overdueTasks) > 0)
-                                    @foreach ($overdueTasks as $task)
-                                        @include('task.partials.task_row', ['task' => $task])
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="5">No overdue tasks found</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                    <div class="table-responsive overdue_section">
+                        @include('common.tasks.taskcard')
                     </div>
                 </div>
+                @if (!empty($overdueTasks->nextPageUrl()) && $overdueTasks->count() > 0 && $overdueTasks->count() >= 10)
+                    <div class="p-2 text-primary cursor-auto" id="see_moree_overdue">
+                        <p style="cursor: pointer">See More...</p>
+                    </div>
+                @endif
+
+                <div class="datapagination d-none">
+                    @include('common.pagination', ['module' => $overdueTasks])
+                </div>
+
             </div>
+
 
             <!-- Completed Tasks -->
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Completed</h4>
-                    <div class="table-responsive">
-                        <table class="table table-nowrap align-middle mb-0">
-                            <tbody>
-                                @if (count($completedTasks) > 0)
-                                    @foreach ($completedTasks as $task)
-                                        @include('task.partials.task_row', ['task' => $task])
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="5">No completed tasks found</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                    <div class="table-responsive completed_section">
+                        @include('common.tasks.completecard')
                     </div>
                 </div>
+                @if (!empty($completedTasks->nextPageUrl()) && $completedTasks->count() > 0 && $completedTasks->count() >= 10)
+                    <div class="p-2 text-primary" style="cursor: pointer" id="see_moree_complete">
+                        <p >See More...</p>
+                    </div>
+                @endif
             </div>
         </div>
         <!-- end col -->
@@ -137,7 +132,8 @@
                                             </td>
                                             <td>
                                                 @if ($task['related_to'] == 'Contacts')
-                                                    <span>Related to: {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}</span>
+                                                    <span>Related to: {{ $task->contactData->first_name ?? '' }}
+                                                        {{ $task->contactData->last_name ?? 'General' }}</span>
                                                 @elseif ($task['related_to'] == 'Deals')
                                                     <span>Related to: {{ $task->dealData->deal_name ?? 'General' }}</span>
                                                 @else
@@ -172,81 +168,113 @@
 
 
     <script>
+        let nextPageUrloverdue = '{{ $overdueTasks->nextPageUrl() }}';
+        let nextPageUrlComplete = '{{ $completedTasks->nextPageUrl() }}';
+        window.onload = function() {
 
-           window.onload = function() {
-            let nextPageUrl = '{{ $upcomingTasks->nextPageUrl() }}';
-            $(window).scroll(function() {
-                console.log("yes hreeee",nextPageUrl)
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-                    if (nextPageUrl) {
-                        loadMorePosts();
-                    }
+            $("#see_moree_overdue").click(function() {
+                if (nextPageUrloverdue !== "") {
+                    console.log("yes hittt")
+                    $('.spinner').show();
+
+                    $.ajax({
+                        url: nextPageUrloverdue + "&status=Overdue",
+                        type: 'get',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            // Optionally you can set nextPageUrloverdue to empty or reset it here
+                            // nextPageUrloverdue = ''; 
+                        },
+                        success: function(data) {
+                            $('.spinner').hide();
+                            // Update nextPageUrloverdue with the URL for the next page, 
+                            nextPageUrloverdue = data?.nextPageUrl || '';
+                            // Append the new content to the overdue_section
+                            $('.overdue_section').append(data?.html ||
+                            ''); // Assuming `data.html` contains the HTML content
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading more posts:", error);
+                            $('.spinner').hide();
+                        }
+                    });
+                }
+            });
+
+            $("#see_moree_complete").click(function() {
+                if (nextPageUrlComplete !== "") {
+                    $('.spinner').show();
+
+                    $.ajax({
+                        url: nextPageUrlComplete + "&status=Completed",
+                        type: 'get',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            // Optionally you can set nextPageUrlComplete to empty or reset it here
+                            // nextPageUrlComplete = ''; 
+                        },
+                        success: function(data) {
+                            $('.spinner').hide();
+                            // Update nextPageUrlComplete with the URL for the next page, 
+                            nextPageUrlComplete = data?.nextPageUrl || '';
+                            // Append the new content to the overdue_section
+                            $('.completed_section').append(data?.html ||
+                            ''); // Assuming `data.html` contains the HTML content
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading more posts:", error);
+                            $('.spinner').hide();
+                        }
+                    });
                 }
             });
         }
 
-        function loadMorePosts() {
-            $('.spinner').show();
+
+        window.closeTask = function(id, indexId, subject) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var formData = {
+                "data": [{
+                    "Subject": subject,
+                    "Status": "Completed"
+                }]
+            };
+
+            // console.log("ys check ot")
             $.ajax({
-                url: nextPageUrl,
-                type: 'get',
-                beforeSend: function() {
-                    nextPageUrl = '';
-                },
-                success: function(data) {
-                    console.log(data, 'datatatata')
-                    $('.spinner').hide();
-                    nextPageUrl = data.nextPageUrl;
-                    $('.dbgBodyTable').append(data);
-                    $('.ptableCardDiv').append(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error loading more posts:", error);
-                    $('.spinner').hide();
-                }
-            });
-        }
+                url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
+                method: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    // Handle success response
 
-window.closeTask = function(id, indexId, subject) {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        var formData = {
-            "data": [{
-                "Subject": subject,
-                "Status":"Completed"
-            }]
-        };
-
-        // console.log("ys check ot")
-        $.ajax({
-            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', id),
-            method: 'PUT',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                // Handle success response
-
-                if (response?.data[0]?.status == "success") {
+                    if (response?.data[0]?.status == "success") {
 
                         window.location.reload();
 
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    showToastError(xhr.responseJSON.error);
+                    console.error(xhr.responseText, 'errrorroororooro');
+
+
+
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                showToastError(xhr.responseJSON.error);
-                console.error(xhr.responseText, 'errrorroororooro');
-
-
-
-            }
-        })
-    }
+            })
+        }
 
         $(document).on('click', '.dpagination a', function(e) {
             e.preventDefault();
@@ -254,7 +282,7 @@ window.closeTask = function(id, indexId, subject) {
             fetchTasks(page);
         });
 
- function fetchTasks(page = 1) {
+        function fetchTasks(page = 1) {
             $.ajax({
                 url: `/tasks?page=${page}`,
                 success: function(data) {
@@ -264,9 +292,9 @@ window.closeTask = function(id, indexId, subject) {
                     console.error('Error:', error);
                 }
             });
- }
+        }
 
-async function updateTask(indexid, id) {
+        async function updateTask(indexid, id) {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -392,8 +420,12 @@ async function updateTask(indexid, id) {
                 "data": [{
                     "Subject": textfield === "subject" ? newText : undefined,
                     "Due_Date": textfield === "date" ? newText : undefined,
-                    "What_Id": WhatSelectoneid ? { "id": WhatSelectoneid } : undefined,
-                    "Who_Id": whoID ? { "id": whoID } : undefined,
+                    "What_Id": WhatSelectoneid ? {
+                        "id": WhatSelectoneid
+                    } : undefined,
+                    "Who_Id": whoID ? {
+                        "id": whoID
+                    } : undefined,
                     "$se_module": textfield === "Deals" || textfield === "Contacts" ? textfield : undefined,
                 }]
             };
@@ -418,7 +450,7 @@ async function updateTask(indexid, id) {
             });
         }
 
-        window.saveForm=function() {
+        window.saveForm = function() {
             return new Promise((complete, failed) => {
                 $('#confirmMessage').text('Are you sure you want to do this?');
 
@@ -455,8 +487,5 @@ async function updateTask(indexid, id) {
 
             return ids;
         }
-</script>
-
-
+    </script>
 @endsection
-
