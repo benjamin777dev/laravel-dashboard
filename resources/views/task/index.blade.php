@@ -190,9 +190,9 @@
                         success: function(data) {
                             $('.spinner').hide();
                             // Update nextPageUrloverdue with the URL for the next page, 
-                            nextPageUrloverdue = data.nextPageUrl || '';
+                            nextPageUrloverdue = data?.nextPageUrl || '';
                             // Append the new content to the overdue_section
-                            $('.overdue_section').append(data.html ||
+                            $('.overdue_section').append(data?.html ||
                             ''); // Assuming `data.html` contains the HTML content
                         },
                         error: function(xhr, status, error) {
@@ -220,7 +220,7 @@
                         success: function(data) {
                             $('.spinner').hide();
                             // Update nextPageUrlComplete with the URL for the next page, 
-                            nextPageUrlComplete = data.nextPageUrl || '';
+                            nextPageUrlComplete = data?.nextPageUrl || '';
                             // Append the new content to the overdue_section
                             $('.completed_section').append(data?.html ||
                             ''); // Assuming `data.html` contains the HTML content

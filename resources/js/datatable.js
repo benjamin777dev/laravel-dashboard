@@ -86,8 +86,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
         
         } else {
             deal = data;
+            console.log(row,'row submittalType');
             submittalSection = `
-                <a href="/submittal-view/${data.submittals[0].submittalType}/${data.submittals[0].id}" target="_blank">
+                <a href="/submittal-view/${row.submittals[0]?.submittalType}/${row?.submittals[0]?.id}" target="_blank">
                     <div style="color:#222;" class="ps-2" id="addSubmittal">
                        <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
                title="View Submittal" aria-hidden="true"></i>
