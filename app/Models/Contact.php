@@ -152,6 +152,16 @@ class Contact extends Model
         'has_address'                 
     ];
 
+    public function teamAndPartnership()
+    {
+        return $this->belongsTo(TeamAndPartnership::class, 'team_partnership', 'team_partnership_id');
+    }
+
+    public function isPartOfTeam()
+    {
+        return $this->teamAndPartnership()->exists();
+    }
+
     public static function getZohoContactInfo()
     {
         // Retrieve Zoho contact ID, last name, and first name
@@ -240,6 +250,11 @@ class Contact extends Model
 
         $mappedData = [
             'zoho_contact_id' => $source === 'webhook' ? $data['id'] :  $data['Id'],
+            'team_partnership' => 
+                $source === 'webhook' ? 
+                    (isset($data['Team_Partnership']['id']) 
+                        ? $data['Team_Partnership']['id'] : null)
+                    : (isset($data['Team_Partnership']) ? $data['Team_Partnership'] : null),
             'contact_owner' => $source === 'webhook' ? (isset($data['Owner']['id']) ? $data['Owner']['id'] : null) : (isset($data['Owner']) ? $data['Owner'] : null),
             'email' => isset($data['Email']) ? $data['Email'] : null,
             'first_name' => isset($data['First_Name']) ? $data['First_Name'] : null,
@@ -261,7 +276,10 @@ class Contact extends Model
             'isContactCompleted' => $source == "webhook" || $source == "csv",
             'isInZoho' => $source == "webhook" || $source == "csv",
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
-            'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
+            'referred_id' => $source === 'webhook' 
+            ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
+            : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
+            //'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
             'spouse_partner' => isset($data['Spouse_Partner']) ? (is_array($data['Spouse_Partner']) ? $data['Spouse_Partner']['id'] : $data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
@@ -298,7 +316,10 @@ class Contact extends Model
             'zillow_url' => isset($data['Zillow_URL']) ? $data['Zillow_URL'] : null,
             'agent_assistant' => isset($data['Agent_Assistant']) ? $data['Agent_Assistant'] : null,
             'social_media_ads' => isset($data['Social_Media_Ads']) ? (int)$data['Social_Media_Ads'] : null,
-            'referred_by' => isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null,
+            'referred_by' => $source === 'webhook' 
+            ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
+            : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
+            //'referred_by' => isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null,
             'peer_advisor' => isset($data['Peer_Advisor']) ? $data['Peer_Advisor'] : null,
             'agent_name_on_marketing' => isset($data['Agent_Name_on_Marketing']) ? $data['Agent_Name_on_Marketing'] : null,
             'other_street' => isset($data['Other_Street']) ? $data['Other_Street'] : null,
@@ -373,6 +394,7 @@ class Contact extends Model
             'transaction_manager' => isset($data['Transaction_Manager']) ? $data['Transaction_Manager'] : null,
             'auto_address' => isset($data['Auto_Address']) ? $data['Auto_Address'] : null,
             'has_address' => !empty($data['Mailing_Street']) && !empty($data['Mailing_City']) && !empty($data['Mailing_State']) && !empty($data['Mailing_Zip']),
+            
         ];
         
         if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {
