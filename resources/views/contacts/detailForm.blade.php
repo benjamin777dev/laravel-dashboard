@@ -338,11 +338,27 @@
         </div>
     </div>
 </div>
-
-<div id = "emailList">
-
+{{-- Emails--}}
+<div class="p-4 d-flex justify-content-between ">
+    <div class="">
+        <h2 class='pText mt-3 text-center'> Emails </h2>
+    </div>
+    <div class=" text-end">
+        <div class="input-group-text npcontactbtn" onclick="openEmail()">
+            Compose Email
+            <i class="mdi mdi-send ms-1"></i>
+        </div>
+    </div>
 </div>
-@vite(['resources/js/pipeline.js'])   
+
+<div class="contactEmailList">
+    @component('components.common-table', [
+        'id' => 'contact-email-table',
+    ])
+    @endcomponent
+</div>
+@vite(['resources/js/pipeline.js'])
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>   
 <script>
     contact=@json($contact);
     groups = @json($groups);
@@ -393,7 +409,7 @@
             });
         }).on('select2:close', () => {
             $(document).off('scroll.select2');
-        });        
+        });
     });
 
     function formatState(state) {
@@ -471,6 +487,9 @@
     function openEmail(){
         $("#composemodal").modal('show');
     }
+
+
+    
 
     
 

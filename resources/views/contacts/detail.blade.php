@@ -83,9 +83,20 @@
                 'module' => 'Contacts',
             ])
         </div>
-        <div class="updateContactform">
-           
-        </div>
+        @include('contacts.detailForm',[
+            'contact'=>$contact, 
+            'userContact'=>$userContact,
+            'deals'=>$deals,
+            'allstages'=>$allstages,
+            'user_id'=>$user_id, 
+            'tab'=>$tab, 
+            'name'=>$name, 
+            'contacts'=>$contacts, 
+            'tasks'=>$tasks, 
+            'notes'=>$notes, 
+            'getdealsTransaction'=>$getdealsTransaction, 
+            'retrieveModuleData'=>$retrieveModuleData, 
+            'dealContacts'=>$dealContacts, 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'])
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
         data-bs-target="#staticBackdropforNote_{{ $contact['id'] }}">
@@ -115,7 +126,6 @@
 <script>
     var contactId = @json($contactId);
   window.onload = function() {
-        updateContactform();
         fetchContactTasks('In Progress',contactId)
 
         const ui = {
@@ -153,22 +163,6 @@
         
     };
 
-    function updateContactform() {
-        $.ajax({
-            url: `{{ url('/contact/detail/form/') }}/${contactId}`,
-            method: 'GET',
-            success: function(data) {
-                 if (data.redirect) {
-                    window.location.href = data.redirect;
-                }else{
-                    $('.updateContactform').html(data);
-                }                 
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
     function fetchContactTasks(tab, contactId) {
         // Make AJAX call
         $.ajax({
@@ -249,22 +243,7 @@
 
         
 
-        var getReffered = $('#validationDefault14')
-        getReffered.select2({
-            placeholder: 'Search...',
-        })
-        var getSpouse = $('#validationDefault13');
-        getSpouse.select2({
-            placeholder: 'Search...',
-        }).on('select2:open', () => {
-            // Remove existing button to avoid duplicates
-            $('.select2-results .new-contact-btn').remove();
-
-            // Append the button
-            $(".select2-results").prepend(
-                '<div class="new-contact-btn" onclick="openContactModal()" style="padding: 6px; height: 20px; display: inline-table; color: black; cursor: pointer; background-color: lightgray; width: 100%"><i class="fas fa-plus plusicon"></i> New Spouse</div>'
-            );
-        });
+        
 
         window.openContactModal = function() {
             $("#createContactModal").modal('show');

@@ -2231,7 +2231,7 @@ class DatabaseService
 
             // Validate and encode email data
             $emailData = [
-                'fromEmail' => json_encode($input['from']) ?? null,
+                'fromEmail' => $user->id ?? null,
                 'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? json_encode($input['to']) : null,
                 'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? json_encode($input['cc']) : null,
                 'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? json_encode($input['bcc']) : null,
@@ -2281,10 +2281,6 @@ class DatabaseService
                 }else if($cleanedFilter == "Sent Mail"){
                     $condition[] = ['isEmailSent', true];
                     // Add raw SQL condition to check within JSON field
-                    $emails = Email::where($condition)
-                        ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(fromEmail, '$.email')) = ?", [$user->email])
-                        ->get();
-                    return $emails;
                 }else if($cleanedFilter=='Trash'){
                     $condition[]=['isDeleted',true];
                 }else if($cleanedFilter == 'Inbox'){
@@ -2292,7 +2288,7 @@ class DatabaseService
                 }
             }
             
-            $emails = Email::where($condition)->get();
+            $emails = Email::where($condition)->with('fromUserData')->get();
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2362,5 +2358,29 @@ class DatabaseService
 
 
     }
+
+    public function getContactEmailList($id)
+    {
+        try {
+            $emails = Email::whereJsonContains("toEmail",$id)->with('fromUserData')
+                        ->get();
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getContactsByMultipleId($ids)
+    {
+        try {
+            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(first_name, ' ', last_name) as name"), 'email')->get();
+            return $bulkContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 
 }

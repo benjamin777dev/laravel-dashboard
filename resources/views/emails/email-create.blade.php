@@ -11,7 +11,7 @@
                 <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+                        <option value="{{ $contactDetail['id'] }}"
  {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
@@ -23,7 +23,7 @@
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+                        <option value="{{ $contactDetail['id'] }}"
  {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
@@ -35,7 +35,7 @@
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}"
+                        <option value="{{ $contactDetail['id'] }}"
  {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
@@ -59,8 +59,8 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="sendEmails(null,false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
-    <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="sendEmails(null,false)">Save as draft</button>
+    <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
@@ -117,19 +117,16 @@
         var bcc = $("#bccSelect").val();
         var content = tinymce.get('elmEmail').getContent();
         var subject = $("#emailSubject").val();
-        var toEmails = to.map((val)=>JSON.parse(val))
-        var ccEmails = cc.map((val)=>JSON.parse(val));
-        var bccEmails = bcc.map((val)=>JSON.parse(val));
+        // var toEmails = to.map((val)=>JSON.parse(val))
+        // var ccEmails = cc.map((val)=>JSON.parse(val));
+        // var bccEmails = bcc.map((val)=>JSON.parse(val));
         var formData = 
         {
-            "to": toEmails,
-            "cc": ccEmails,
-            "bcc": bccEmails,
+            "to": to,
+            "cc": cc,
+            "bcc": bcc,
             "subject": subject,
-            "from": {
-                "email": "{{auth()->user()->email}}",
-                "name": "{{auth()->user()->name}}",
-            },
+            
             "content": content,
             "isEmailSent":isEmailSent
         }
@@ -169,7 +166,8 @@
         if (firstModal) {
             firstModal.hide();
         }
-
+        var templateContent= tinymce.get('elmEmail').getContent()
+        $('#templateContent').val(templateContent);
         var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
         secondModal.show();
     }
