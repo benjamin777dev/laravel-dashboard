@@ -84,6 +84,7 @@
     @endif
 
     <script>
+        window.onload = function(){
           window.deleteTaskdash = function(id) {
                 $.ajaxSetup({
                     headers: {
@@ -140,4 +141,6 @@
         });
 
     }
+
+}
     </script>

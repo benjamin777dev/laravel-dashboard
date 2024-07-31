@@ -13,7 +13,7 @@ use App\Services\ZohoCRM;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = $this->user();
         if (!$user) {
@@ -28,9 +28,39 @@ class TaskController extends Controller
         $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'Due Today');
         $completedTasks = $db->retreiveTasks($user, $accessToken, 'Completed');
         $overdueTasks = $db->retreiveTasks($user, $accessToken, 'Overdue');
-
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $status = $request->input('status');
+        
+        if (request()->ajax()) {
+            if(!empty($status) && $status==="Overdue"){
+                $pageUrl = $overdueTasks->nextPageUrl();
+                $view = view('common.tasks.taskcard', [
+                    'overdueTasks' => $overdueTasks,
+                    'getdealsTransaction' => $getdealsTransaction,
+                    'retrieveModuleData' => $retrieveModuleData,
+                ])->render();
+            
+                return response()->json([
+                    'html' => $view,
+                    'nextPageUrl' => $pageUrl // Also return the next page URL if needed
+                ]);
+        }
+        if(!empty($status) && $status==="Completed"){
+            $pageUrl = $completedTasks->nextPageUrl();
+            $view = view('common.tasks.completecard', [
+                'completedTasks' => $completedTasks,
+                'getdealsTransaction' => $getdealsTransaction,
+                'retrieveModuleData' => $retrieveModuleData,
+            ])->render();
+        
+            return response()->json([
+                'html' => $view,
+                'nextPageUrl' => $pageUrl // Also return the next page URL if needed
+            ]);
+    }
+    }
+      
         return view('task.index', compact('upcomingTasks', 'inProgressTasks', 
             'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks'));
     }
