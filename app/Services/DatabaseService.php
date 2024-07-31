@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Models\Aci;
-use App\Models\Attachment; 
-use App\Models\BulkJob; 
+use App\Models\Attachment;
+use App\Models\BulkJob;
 use App\Models\Contact;
-use App\Models\ContactGroups; 
-use App\Models\ContactRole; 
-use App\Models\Deal; 
-use App\Models\DealContact; 
+use App\Models\ContactGroups;
+use App\Models\ContactRole;
+use App\Models\Deal;
+use App\Models\DealContact;
 use App\Models\Groups;
 use App\Models\Module;
 use App\Models\NonTm;
@@ -19,6 +19,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\Email;
 use App\Models\Template;
+use App\Models\TeamAndPartnership;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
@@ -742,7 +743,7 @@ class DatabaseService
             $tasks = Task::query()->where('owner', $user->id);
             print_r($tab);
             die;
-    
+
             // Apply tab-specific conditions
             if ($tab == 'Overdue') {
                 // Tasks that have a due date less than today and the task status isn't completed
@@ -765,7 +766,7 @@ class DatabaseService
                 // Default case: no specific tab selected (perhaps all tasks)
                 $tasks->orderBy('updated_at', 'desc');
             }
-    
+
             // Additional filters based on dealId and contactId
             if ($dealId) {
                 $tasks->where('what_id', $dealId);
@@ -773,19 +774,19 @@ class DatabaseService
             if ($contactId) {
                 $tasks->where('who_id', $contactId);
             }
-    
+
             // Execute the query and return the results
             $tasks = $tasks->get();
-    
+
             Log::info("Retrieve Tasks From Database");
-    
+
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
 
     public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
@@ -890,9 +891,9 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve contacts from database");
-    
+
             $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]])->with('userData')->orderBy('updated_at', 'desc');
-    
+
             if (!empty($search)) {
                 $searchTerms = urldecode($search);
                 $query->where(function ($query) use ($searchTerms) {
@@ -901,7 +902,7 @@ class DatabaseService
                           ->orWhere('phone', 'like', '%' . $searchTerms . '%');
                 });
             }
-           
+
             if ($filterobj) {
                 // Check for email filter
                 if (isset($filterobj['email']) && $filterobj['email']) {
@@ -909,14 +910,14 @@ class DatabaseService
                         $query->whereNull('email')->orWhere('email', '');
                     });
                 }
-    
+
                 // Check for mobile filter
                 if (isset($filterobj['mobile']) && $filterobj['mobile']) {
                     $query->where(function ($query) {
                         $query->whereNull('phone')->orWhere('phone', '');
                     });
                 }
-    
+
                 // Check for abcd filter
                 if (isset($filterobj['abcd']) && $filterobj['abcd']) {
                     $query->where(function ($query) {
@@ -932,20 +933,20 @@ class DatabaseService
                     $searchStage ==="A1" ? $searchStage="A+" : $searchStage;
                     $query->where('abcd', '=', $searchStage);
                 });
-            }                       
-    
+            }
+
             $contacts = $query->get();
-    
+
             Log::info("Retrieved " . $contacts->count() . " contacts.");
-    
+
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
     }
-    
-    
+
+
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
@@ -1945,6 +1946,8 @@ class DatabaseService
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
             case 'Tasks':
                 return \App\Models\Task::mapZohoData($record, 'csv');
+            case 'Teams_And_Partners':
+                return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -1972,6 +1975,9 @@ class DatabaseService
                     break;
                 case 'Tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    break;
+                case 'Teams_And_Partners':
+                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['zoho_teams_and_partners_id']);
                     break;
 
                     // Add other cases as needed
@@ -2250,7 +2256,7 @@ class DatabaseService
                 ['id' => $input['emailId'] ?? null],
                 $emailData
             );
-            
+
 
             // Log the result of the database operation
             Log::info('Email record updated or created', ['email' => $email]);
@@ -2339,7 +2345,7 @@ class DatabaseService
                 ['id' => $input['templateId'] ?? null],
                 $templateData
             );
-            
+
 
             // Log the result of the database operation
             Log::info('Template record updated or created', ['template' => $template]);
