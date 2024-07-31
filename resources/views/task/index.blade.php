@@ -190,7 +190,7 @@
                         success: function(data) {
                             $('.spinner').hide();
                             // Update nextPageUrloverdue with the URL for the next page, 
-                            nextPageUrloverdue ='{{ $overdueTasks->nextPageUrl() }}';
+                            nextPageUrloverdue = data.nextPageUrl || '';
                             // Append the new content to the overdue_section
                             $('.overdue_section').append(data.html ||
                             ''); // Assuming `data.html` contains the HTML content
