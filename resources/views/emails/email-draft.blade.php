@@ -25,7 +25,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -50,7 +50,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -75,7 +75,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ json_encode(['email' => $contactDetail['email'], 'name' => $contactDetail['first_name'] . ' ' . $contactDetail['last_name']]) }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -146,19 +146,19 @@
         var bcc = $("#bccDraftSelect").val();
         var content = tinymce.get('draftEmailEditor').getContent();
         var subject = $("#emailDraftSubject").val();
-        var toEmails = to.map((val)=>JSON.parse(val));
-        var ccEmails = cc.map((val)=>JSON.parse(val));
-        var bccEmails = bcc.map((val)=>JSON.parse(val));
+        // var toEmails = to.map((val)=>JSON.parse(val));
+        // var ccEmails = cc.map((val)=>JSON.parse(val));
+        // var bccEmails = bcc.map((val)=>JSON.parse(val));
         var formData = 
         {
-            "to": toEmails,
-            "cc": ccEmails,
-            "bcc": bccEmails,
+            "to": to,
+            "cc": cc,
+            "bcc": bcc,
             "subject": subject,
-            "from": {
-                "email": "{{auth()->user()->email}}",
-                "name": "{{auth()->user()->name}}",
-            },
+            // "from": {
+            //     "email": "{{auth()->user()->email}}",
+            //     "name": "{{auth()->user()->name}}",
+            // },
             "content": content,
             "isEmailSent":isEmailSent,
             "emailId":email.id

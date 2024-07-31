@@ -23,9 +23,9 @@ class Email extends Model
         'sendEmailFrom'
     ];
 
-    public function userData()
+    public function fromUserData()
     {
-        return $this->belongsTo(User::class, 'userId');
+        return $this->belongsTo(User::class, 'fromEmail');
     }
     public function dealData()
     {

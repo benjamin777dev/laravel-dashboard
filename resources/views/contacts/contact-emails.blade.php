@@ -1,15 +1,11 @@
 @php
 use Carbon\Carbon;
 @endphp
-<div class="email-rightbar mb-3">
+<div class="">
 
     <div class="card">
         <div class="btn-toolbar p-3" role="toolbar">
-            <div class="btn-group me-2 mb-2 mb-sm-0">
-                {{-- <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-inbox"></i></button>
-                <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-exclamation-circle"></i></button> --}}
-                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
-            </div>
+            
             {{-- <div class="btn-group me-2 mb-2 mb-sm-0">
                 <button type="button" class="btn btn-dark waves-light waves-effect" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-folder"></i> <i class="mdi mdi-chevron-down ms-1"></i>
@@ -54,7 +50,7 @@ use Carbon\Carbon;
                                     <input type="checkbox" id="{{$email['id']}}" value="{{$email['id']}}" onclick="handleCheckboxClick(this)">
                                     <label for="{{$email['id']}}" class="toggle"></label>
                                 </div>
-                                <a href="javascript: void(0);" class="title" onclick = "getEmail({{json_encode($email)}})">{{$email['fromUserData']['email']}}, me (3)</a><span class="star-toggle far fa-star"></span>
+                                <a href="javascript: void(0);" class="title" onclick = "getEmail({{json_encode($email)}})">{{$email['toEmail']}}, me (3)</a><span class="star-toggle far fa-star"></span>
                             </div>
                             <div class="col-mail col-mail-2">
                                 <a href="javascript: void(0);" class="subject" onclick = "getEmail({{json_encode($email)}})">{{$email['subject']}} <span class="teaser">{{$email['content']}}</span>
@@ -73,9 +69,14 @@ use Carbon\Carbon;
             </ul>
         </div>
         
-
     </div><!-- card -->
+    <div class="btn-group me-2 mb-2 mb-sm-0">
+        {{-- <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-inbox"></i></button>
+        <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-exclamation-circle"></i></button> --}}
+        <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
+    </div>
 
+    
     <div class="row">
         @if($emails->count()>0)
             <div class="col-7">

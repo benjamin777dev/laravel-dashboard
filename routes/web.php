@@ -88,6 +88,7 @@ Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])-
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
+Route::get('/contact/email/list/{contactId}', [ContactController::class, 'contactEmailList'])->name('contact.email.list')->middleware('auth');
 //notes fetch in json for contact
 Route::get('/contact/list', [ContactController::class, 'contactList'])->name('contacts.list')->middleware('auth');
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');

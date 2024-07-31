@@ -10,6 +10,12 @@
                 <input type="text" id = "templateName" value="" class="form-control" placeholder="Template Name">
             </div>
         </div>
+         <div class="mb-3 row" style="display:none;">
+            <label for="example-text-input" class="col-md-2 col-form-label">Content</label>
+            <div class="col-md-10">
+                <input type="text" id = "templateContent" value="" class="form-control" placeholder="Template Name">
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal-footer">
@@ -19,17 +25,8 @@
 
 <script>
     window.saveTemplate = function(email,isEmailSent){
-        var content = '';
-
-        var elmEmailEditor = tinymce.get('elmEmail');
-        var draftEmailEditor = tinymce.get('draftEmailEditor');
-
-        if (elmEmailEditor) {
-            content = elmEmailEditor.getContent();
-        } else if (draftEmailEditor) {
-            content = draftEmailEditor.getContent();
-        }
         var templateName = $("#templateName").val();
+        var content = $("#templateContent").val();
         var formData = 
         {
             "ownerId": "{{auth()->user()->id}}",
@@ -56,7 +53,7 @@
                     // Handle error
                 }
                 $("#templateClose").click();
-                $("#composemodal").click();
+                $("#emailModalClose").click();
             },
             error: function(xhr, status, error) {
                 // Handle error response

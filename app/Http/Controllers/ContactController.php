@@ -145,10 +145,13 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
+        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $allstages = config('variables.dealStages');
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $emails = $db->getContactEmailList($contact['email']);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
@@ -159,7 +162,7 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'));
+        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails'));
     }
 
     public function getContactJson(){
@@ -1085,6 +1088,19 @@ class ContactController extends Controller
         return response()->json([
             'spouseContact'=>$contact
         ]);
+    }
+
+    public function contactEmailList(Request $request )
+    {
+        try {
+            $db= new DatabaseService();
+            $contactId = $request->route('contactId');
+            $emails = $db->getContactEmailList($contactId);
+            return Datatables::of($emails)->make(true);
+        } catch (\Exception $e) {
+            Log::error("Exception when fetching contact details: {$e->getMessage()}");
+            return null;
+        }
     }
 
 }

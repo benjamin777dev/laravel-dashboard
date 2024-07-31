@@ -59,31 +59,36 @@ class EmailController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $inputData = $request->json()->all();
-        $userVerified = $sendgrid->verifySender($inputData['from']['email']);
+        $userVerified = $sendgrid->verifySender($user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
+        $inputData['toDetail'] = $db->getContactsByMultipleId($inputData['to']);
+        Log::info("TOEMAILDETAIL",[$inputData['toDetail']]);
+        $inputData['ccDetail'] = $db->getContactsByMultipleId($inputData['cc']);
+        $inputData['bccDetail'] = $db->getContactsByMultipleId($inputData['bcc']);
         $zohoInput = 
             [
-                'to' => [
-                    $inputData['to'],
-                ],
+                'to' => $inputData['toDetail'],
                 'from' => [
-                    "user_name"=> $inputData['from']['name'],
-                    'email'=> $inputData['from']['email'],
+                    "user_name"=> $user['name'],
+                    'email'=> $user['email'],
                 ],
                 'subject' => $inputData['subject'],
                 'content' => $inputData['content']
             ];
-        $contact = $db->retrieveContactByEmail($user,$accessToken,$inputData['from']['email']);
+        $contact = $db->retrieveContactByEmail($user,$accessToken,$user['email']);
         if($userVerified){
             $sendGridInput = 
             [
                 'personalizations' => [
                     [
-                        'to' => $inputData['to'],
+                        'to' => $inputData['toDetail'],
                         'subject' => $inputData['subject']
                     ]
                 ],
-                'from' => $inputData['from'],
+                'from' => [
+                    "name"=> $user['name'],
+                    'email'=> $user['email'],
+                ],
                 'content' => [
                     [
                         'type' => 'text/html',
