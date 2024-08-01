@@ -586,21 +586,24 @@ var subbmittalPipelineTable = $("#submittal_table_pipeline").DataTable({
             data: "submittalName",
             title: "Submittal Name",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="submittalName" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="submittalName" data-id="${
+                    row.id
+                }">${data || "N/A"}</span>`;
             },
         },
         {
             data: "submittalType",
             title: "Submittal Type",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="submittalType" data-id="${
+                    row.id
+                }">${data || "N/A"}</span>`;
             },
         },
         {
             data: "user_data.name",
             title: "Owner",
             render: function (data, type, row) {
-                console.log(data, "shdfhsdhf");
                 return `<span class="editable" data-name="phone" data-id="${
                     row.id
                 }">${data || "N/A"}</span>`;
@@ -2452,7 +2455,7 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
             data: "subject",
             title: "Subject",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="emailSubject" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="emailSubject" data-id="${row.id}"><a href="">${data}</a></span>`;
             },
         },
         {
@@ -2469,14 +2472,16 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
             render: function (data, type, row) {
                 return `<span class="editable" data-name="phone" data-id="${
                     row.id
-                }">${(data == true ? "Sent" : "In Process") || "N/A"}</span>`;
+                }">${(data == true ? "Sent" : "Draft") || "N/A"}</span>`;
             },
         },
         {
             data: "created_at",
             title: "Date",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="submittalType" data-id="${
+                    row.id
+                }">${formateDate(data)}</span>`;
             },
         },
     ],

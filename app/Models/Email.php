@@ -20,7 +20,8 @@ class Email extends Model
         'userId',
         'isEmailSent',
         'isDeleted',
-        'sendEmailFrom'
+        'sendEmailFrom',
+        'message_id'
     ];
 
     public function fromUserData()

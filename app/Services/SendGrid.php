@@ -38,7 +38,7 @@ class SendGrid
                 throw new \Exception('Failed to get sender list');
             }
 
-            Log::info('Get sender list response', ['response' => $responseData]);
+            // Log::info('Get sender list response', ['response' => $responseData]);
 
             return $responseData;
         } catch (\Throwable $th) {
@@ -52,7 +52,7 @@ class SendGrid
         try {
             $sendGridUsers = $this->sendgridSenderList();
             $verified = false;
-            Log::info('Sender Users List', ['sendGridUsers' => $sendGridUsers]);
+            // Log::info('Sender Users List', ['sendGridUsers' => $sendGridUsers]);
             foreach ($sendGridUsers as $sender) {
                 if ($sender['from']['email'] == $senderEmail) {
                     $verified = $sender['verified']['status'];

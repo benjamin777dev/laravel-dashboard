@@ -58,6 +58,7 @@ class EmailController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
         $userVerified = $sendgrid->verifySender($user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -65,16 +66,46 @@ class EmailController extends Controller
         Log::info("TOEMAILDETAIL",[$inputData['toDetail']]);
         $inputData['ccDetail'] = $db->getContactsByMultipleId($inputData['cc']);
         $inputData['bccDetail'] = $db->getContactsByMultipleId($inputData['bcc']);
-        $zohoInput = 
-            [
-                'to' => $inputData['toDetail'],
-                'from' => [
-                    "user_name"=> $user['name'],
-                    'email'=> $user['email'],
-                ],
-                'subject' => $inputData['subject'],
-                'content' => $inputData['content']
+        $inputData['toData'] = [];
+        $inputData['ccData'] = [];
+        $inputData['bccData'] = [];
+        foreach ($inputData['toDetail'] as $currValue) {
+            $inputData['toData'][] = [
+                'user_name' => $currValue['name'],
+                'email' => $currValue['email'],
             ];
+        }
+        foreach ($inputData['ccDetail'] as $currValue) {
+            $inputData['ccData'][] = [
+                'user_name' => $currValue['name'],
+                'email' => $currValue['email'],
+            ];
+        }
+
+        // Process 'bcc' details
+        foreach ($inputData['bccDetail'] as $currValue) {
+            $inputData['bccData'][] = [
+                'user_name' => $currValue['name'],
+                'email' => $currValue['email'],
+            ];
+        }
+        $zohoInput =[
+            "data"=>[
+                [
+                    'to' => $inputData['toData'],
+                    'cc' => $inputData['ccData'],
+                    'bcc' => $inputData['bccData'],
+                    'from' => [
+                        "user_name"=> $user['name'],
+                        'email'=> $user['email'],
+                    ],
+                    'subject' => $inputData['subject'],
+                    'content' => $inputData['content'],
+                    "consent_email"=>false,
+                ]
+            ]
+        ]; 
+            
         $contact = $db->retrieveContactByEmail($user,$accessToken,$user['email']);
         if($userVerified){
             $sendGridInput = 
@@ -82,6 +113,7 @@ class EmailController extends Controller
                 'personalizations' => [
                     [
                         'to' => $inputData['toDetail'],
+                       
                         'subject' => $inputData['subject']
                     ]
                 ],
@@ -96,8 +128,16 @@ class EmailController extends Controller
                     ]
                 ]
             ];
+            // $associateEmail = $zoho->assoiciateEmail($zohoInput,$contact['zoho_contact_id']);
+            // if($associateEmail=="AUTHENTICATION_FAILURE"){
+            //     $this->guard()->logout();
+            //     return response()->json([
+            //         'status' => 'process',
+            //         'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+            //         'redirect_url' => route('login')
+            //     ]);
+            // }
             $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
-            $associateEmail = $zoho->assoiciateEmail($zohoInput,$contact['zoho_contact_id']);
             $inputData['sendEmailFrom'] = "SendGrid";
         }else{
             $sendEmail = $zoho->sendZohoEmail($zohoInput,$contact['zoho_contact_id']);
@@ -110,6 +150,7 @@ class EmailController extends Controller
                 ]);
             }
             $inputData['sendEmailFrom'] = "Zoho";
+            $inputData['message_id']=$sendEmail['data'][0]['details']['message_id'];
         }
         // return $sendEmail;
         $response = $db->saveEmail($user,$accessToken,$inputData);    

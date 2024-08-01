@@ -78,11 +78,82 @@
 
         tinymce.init({
             selector: 'textarea#elmEmail',
-            plugins: 'lists, link, image, media',
-            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help',
+            plugins: 'lists link image media preview',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
             menubar: false,
-            statusbar:false
+            statusbar: false,
+            setup: function (editor) {
+                editor.ui.registry.addButton('customSelect', {
+                    text: 'Select Template',
+                    onAction: function () {
+                        // Fetch data from the server
+                        $.ajax({
+                            url: '/get/templates',  // Replace with your API endpoint
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function (response) {
+                                // Assuming response is an array of options
+                                var items = response.email_templates.map(function(item) {
+                                    return { text: item.name, value: item.id };
+                                });
+
+                                // Open the dialog with the fetched data
+                                editor.windowManager.open({
+                                    title: 'Select Template',
+                                    body: {
+                                        type: 'panel',
+                                        items: [
+                                            {
+                                                type: 'selectbox',
+                                                name: 'options',
+                                                label: 'Select Option',
+                                                items: items
+                                            }
+                                        ]
+                                    },
+                                    buttons: [
+                                        {
+                                            type: 'cancel',
+                                            text: 'Close'
+                                        },
+                                        {
+                                            type: 'submit',
+                                            text: 'Insert',
+                                            primary: true
+                                        }
+                                    ],
+                                    onSubmit: function (api) {
+                                        var data = api.getData();
+                                        var selectedOption = data.options;
+                                        console.log(selectedOption);
+                                        // Call the API with the selected option
+                                        $.ajax({
+                                            url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
+                                            method: 'GET',
+                                            success: function (response) {
+                                                // Insert the response content or selected option into the editor
+                                                editor.insertContent(response.email_templates[0].content);
+                                                api.close();
+                                            },
+                                            error: function () {
+                                                // Handle any errors
+                                                alert('Failed to submit the selected option');
+                                            }
+                                        });
+                                        
+                                    }
+                                });
+                            },
+                            error: function () {
+                                // Handle any errors
+                                alert('Failed to fetch options');
+                            }
+                        });
+                    }
+                });
+            }
         });
+
 
         var modal = document.getElementById('composemodal');
         var modalData = document.getElementById('modal-data');

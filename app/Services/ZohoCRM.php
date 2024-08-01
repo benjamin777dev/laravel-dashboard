@@ -41,7 +41,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL,ZohoCRM.mass_delete.custom.DELETE',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL,ZohoCRM.mass_delete.custom.DELETE,ZohoCRM.send_mail.all.CREATE,ZohoCRM.modules.emails.ALL',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
@@ -192,7 +192,7 @@ class ZohoCRM
     }
 
     //create contacts to zoho
-   public function createContactData($inputJson, $id)
+    public function createContactData($inputJson, $id)
     {
         try {
             Log::info('Creating Zoho contacts', ['input' => $inputJson, 'id' => $id]);
@@ -1333,6 +1333,7 @@ class ZohoCRM
     public function sendZohoEmail($inputEmail,$contactId)
     {
         try {
+            Log::info('Raw Input Email', ['inputEmail' => $inputEmail]);
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json',
@@ -1365,7 +1366,6 @@ class ZohoCRM
                 'Content-Type' => 'application/json',
             ])->post($this->apiUrl."Contacts/$contactId/actions/associate_email",$inputEmail);
             Log::info('Raw Response', ['response' => $response]);
-
             $responseData = $response->json();
             if (!$response->successful()) {
                 if($response['code']=="AUTHENTICATION_FAILURE"){
@@ -1381,6 +1381,38 @@ class ZohoCRM
         } catch (\Throwable $th) {
             Log::error('Error Sending Email: ' . $th->getMessage());
             throw new \Exception('Failed to Associate email');
+        }
+    }
+
+    public function getZohoTemplates()
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->access_token,
+            ])->get($this->apiUrl."settings/email_templates");
+            Log::info('Raw Response', ['response' => $response]);   
+            $responseData = $response->json();
+            Log::info('Email Template repsonse', ['response' => $responseData]);
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error Email Template: ' . $th->getMessage());
+            throw new \Exception('Email Template');
+        }
+    }
+
+    public function getZohoTemplateDetail($templateId)
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->access_token,
+            ])->get($this->apiUrl."settings/email_templates/".$templateId);
+            Log::info('Raw Response', ['response' => $response]);   
+            $responseData = $response->json();
+            Log::info('Email Template repsonse', ['response' => $responseData]);
+            return $responseData;
+        } catch (\Throwable $th) {
+            Log::error('Error Email Template: ' . $th->getMessage());
+            throw new \Exception('Email Template');
         }
     }
 }

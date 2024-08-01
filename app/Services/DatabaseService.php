@@ -619,7 +619,7 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
+            // Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving Contacts: " . $e->getMessage());
@@ -2243,6 +2243,7 @@ class DatabaseService
                 'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? json_encode($input['bcc']) : null,
                 'subject' => $input['subject'] ?? null,
                 'content' => $input['content'] ?? null,
+                'message_id' => $input['message_id'] ?? null,
                 'userId' => $user->id ?? null,
                 'isEmailSent' => $input['isEmailSent'] ?? null,
                 'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
@@ -2294,7 +2295,7 @@ class DatabaseService
                 }
             }
             
-            $emails = Email::where($condition)->with('fromUserData')->get();
+            $emails = Email::where($condition)->with('fromUserData')->orderBy('updated_at','DESC')->get();
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2387,6 +2388,25 @@ class DatabaseService
             throw $e;
         }
     }
+
+    //  public function saveZohoTemplateInDB($ids)
+    // {
+    //     try {
+    //         for ($i=0; $i < $templates->count(); $i++) { 
+    //             $template = $templates[$i];
+    //             $bulkContacts = Template::updateOrCreate(
+    //                 ['zoho_template_id'=>isset($template['id'])?$template['id']:null],
+    //                 [
+
+    //                 ]
+    //             );
+    //         }
+    //         return $bulkContacts;
+    //     } catch (\Exception $e) {
+    //         Log::error("Error retrieving deal contacts: " . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
 
 
 }
