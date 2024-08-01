@@ -206,7 +206,6 @@
             $("#see_moree_complete").click(function() {
                 if (nextPageUrlComplete !== "") {
                     $('.spinner').show();
-
                     $.ajax({
                         url: nextPageUrlComplete + "&status=Completed",
                         type: 'get',
