@@ -35,4 +35,35 @@ class TemplateController extends Controller
         return response()->json($response);
     }
 
+    public function getTemplates(Request $request)
+    {
+        $db = new DatabaseService();
+        $zoho = new ZohoCRM();
+        $user = $this->user();
+        if(!$user){
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $inputData = $request->json()->all();
+        $response = $zoho->getZohoTemplates();
+        return response()->json($response);
+    }
+
+    public function getTemplateDetail(Request $request)
+    {
+        $db = new DatabaseService();
+        $zoho = new ZohoCRM();
+        $user = $this->user();
+        if(!$user){
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $templateId = $request->route('templateId');
+        $response = $zoho->getZohoTemplateDetail($templateId);
+        return response()->json($response);
+    }
+
+
 }

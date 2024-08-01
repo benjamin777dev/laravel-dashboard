@@ -187,5 +187,7 @@ Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->
 
 //Template Route
 Route::post('/create/template',[TemplateController::class,'createTemplate'])->name('create.template')->middleware('auth');
+Route::get('/get/templates',[TemplateController::class,'getTemplates'])->name('get.template')->middleware('auth');
+Route::get('/get/template/detail/{templateId}',[TemplateController::class,'getTemplateDetail'])->name('get.template.detail')->middleware('auth');
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

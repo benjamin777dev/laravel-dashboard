@@ -619,7 +619,7 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
-            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
+            // Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving Contacts: " . $e->getMessage());
@@ -945,50 +945,96 @@ class DatabaseService
             throw $e;
         }
     }
-
-
+    
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
-        try {
-            Log::info("Retrieve Tasks From Database");
-            $condition = [];
-            $tasks = Task::where('what_id', $dealId)->with(['dealData']);
-            if ($tab == 'Overdue') {
-                $tasks
-                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
-            } elseif ($tab == 'Upcoming') {
-                $tasks
-                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
-            } elseif ($tab == 'In Progress') {
-                $tasks->where([['due_date', null],['status','!=','Completed']]);
-            } elseif ($tab == 'Completed') {
-                $tasks->where('status', 'Completed');
+       
+           
+            try {
+                Log::info("Retrieve Tasks From Database");
+                // Get the current date and time
+                $now = now();
+                $startOfToday = $now->copy()->startOfDay();
+                $endOfToday = $now->copy()->endOfDay();
+                // Initialize the query
+                $tasks = Task::where('what_id', $dealId)->with(['dealData']);
+        
+                if ($tab == 'Overdue') {
+                    // Tasks where due_date is before the start of today and status is not 'Completed'
+                    $tasks->where([
+                        ['due_date', '<', $startOfToday],
+                        ['status', '!=', 'Completed']
+                    ]);
+                } elseif ($tab == 'Upcoming') {
+                    // Tasks where due_date is after the end of today and status is not 'Completed'
+                    $tasks->where([
+                        ['due_date', '>', $endOfToday],
+                        ['status', '!=', 'Completed']
+                    ]);
+                }  elseif ($tab == 'In Progress') {
+                    // Tasks where due_date is between start and end of today or is null and status is not 'Completed'
+                    $tasks->where(function($query) use ($startOfToday, $endOfToday) {
+                        $query->where(function($query) use ($startOfToday, $endOfToday) {
+                            $query->whereBetween('due_date', [$startOfToday, $endOfToday])
+                                  ->orWhereNull('due_date');
+                        })
+                        ->where('status', '!=', 'Completed');
+                    });
+                } elseif ($tab == 'Completed') {
+                    // Tasks where status is 'Completed'
+                    $tasks->where('status', 'Completed');
+                }
+        
+                // Order the tasks by the updated_at field in descending order
+                $tasks = $tasks->orderBy('updated_at', 'desc')->get();
+                return $tasks;
+            } catch (\Exception $e) {
+                Log::error("Error retrieving tasks: " . $e->getMessage());
+                throw $e;
             }
-            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
-            return $tasks;
-        } catch (\Exception $e) {
-            Log::error("Error retrieving tasks: " . $e->getMessage());
-            throw $e;
-        }
+         
     }
 
     public function retreiveTasksForContact(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
             Log::info("Retrieve Tasks From Database");
-            $condition = [];
+    
+            // Get the current date and time
+            $now = now();
+            $startOfToday = $now->copy()->startOfDay();
+            $endOfToday = $now->copy()->endOfDay();
+    
+            // Initialize the query
             $tasks = Task::where('who_id', $dealId)->with(['contactData']);
+    
             if ($tab == 'Overdue') {
-                $tasks
-                    ->where([['due_date', '<', now()],['status','!=','Completed']]);
+                // Tasks where due_date is before the start of today and status is not 'Completed'
+                $tasks->where([
+                    ['due_date', '<', $startOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
             } elseif ($tab == 'Upcoming') {
-                $tasks
-                    ->where([['due_date', '>=', now()],['status','!=','Completed']]);
-            } elseif ($tab == 'In Progress') {
-                $tasks->where([['due_date', null],['status','!=','Completed']]);
+                // Tasks where due_date is after the end of today and status is not 'Completed'
+                $tasks->where([
+                    ['due_date', '>', $endOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
+            }  elseif ($tab == 'In Progress') {
+                // Tasks where due_date is between start and end of today or is null and status is not 'Completed'
+                $tasks->where(function($query) use ($startOfToday, $endOfToday) {
+                    $query->where(function($query) use ($startOfToday, $endOfToday) {
+                        $query->whereBetween('due_date', [$startOfToday, $endOfToday])
+                              ->orWhereNull('due_date');
+                    })
+                    ->where('status', '!=', 'Completed');
+                });
             } elseif ($tab == 'Completed') {
+                // Tasks where status is 'Completed'
                 $tasks->where('status', 'Completed');
             }
+    
+            // Order the tasks by the updated_at field in descending order
             $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
         } catch (\Exception $e) {
@@ -2243,6 +2289,7 @@ class DatabaseService
                 'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? json_encode($input['bcc']) : null,
                 'subject' => $input['subject'] ?? null,
                 'content' => $input['content'] ?? null,
+                'message_id' => $input['message_id'] ?? null,
                 'userId' => $user->id ?? null,
                 'isEmailSent' => $input['isEmailSent'] ?? null,
                 'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
@@ -2294,7 +2341,7 @@ class DatabaseService
                 }
             }
             
-            $emails = Email::where($condition)->with('fromUserData')->get();
+            $emails = Email::where($condition)->with('fromUserData')->orderBy('updated_at','DESC')->get();
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2387,6 +2434,25 @@ class DatabaseService
             throw $e;
         }
     }
+
+    //  public function saveZohoTemplateInDB($ids)
+    // {
+    //     try {
+    //         for ($i=0; $i < $templates->count(); $i++) { 
+    //             $template = $templates[$i];
+    //             $bulkContacts = Template::updateOrCreate(
+    //                 ['zoho_template_id'=>isset($template['id'])?$template['id']:null],
+    //                 [
+
+    //                 ]
+    //             );
+    //         }
+    //         return $bulkContacts;
+    //     } catch (\Exception $e) {
+    //         Log::error("Error retrieving deal contacts: " . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
 
 
 }
