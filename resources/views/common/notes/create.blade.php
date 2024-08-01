@@ -89,7 +89,7 @@
         </div>
     </div>
 @else
-    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false"   tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal deleteModal">
             <div class="modal-content noteModal">

@@ -831,13 +831,13 @@ class ZohoCRM
     public function deleteContactGroup($id)
     {
         try {
-            Log::info('Deleting Contact Zoho Deal: ' . json_encode($id));
+            Log::info('Deleting Contact Zoho group: ' . json_encode($id));
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->delete($this->apiUrl . 'Contacts_X_Groups' . $id);
+            ])->delete($this->apiUrl . 'Contacts_X_Groups/' . $id);
             return $response;
         } catch (\Throwable $e) {
             Log::error("Error retrieving Update Group: " . $e->getMessage());
@@ -1314,19 +1314,17 @@ class ZohoCRM
                 'Content-Type' => 'application/json',
             ])->delete($this->apiUrl . "Groups/$id");
 
-            $responseData = $response->json();
+            // $responseData = $response->json();
 
             if (!$response->successful()) {
-                Log::error('Zoho Group deletion failed', ['response' => $responseData]);
-                throw new \Exception('Failed to delete Zoho Group');
+                Log::error('Zoho Group deletion failed', ['response' => $response]);
+                throw new \Exception('Failed to delete Zoho Group'.$response);
             }
 
-            Log::info('Zoho Group deletion response', ['response' => $responseData]);
-
-            return $responseData;
+            return $response;
         } catch (\Throwable $th) {
             Log::error('Error deleting Zoho Group: ' . $th->getMessage());
-            throw new \Exception('Failed to delete Zoho Group');
+            throw new \Exception('Failed to delete Zoho Group'.$th->getMessage());
         }
     }
 

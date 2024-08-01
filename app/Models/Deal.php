@@ -143,6 +143,7 @@ class Deal extends Model
             $roles->push(
                 ['name' => $client->first_name . ' ' . $client->last_name,
                     'role' => 'Client',
+                    'id' => $client->id,
                     'phone' => $client->phone,
                     'email' => $client->email,
                 ]);
@@ -151,6 +152,7 @@ class Deal extends Model
                 $roles->push([
                     'name' => $spouse->first_name . ' ' . $spouse->last_name,
                     'role' => 'Client',
+                    'id' => $spouse->id,
                     'phone' => $spouse->phone,
                     'email' => $spouse->email]);
             }
@@ -162,6 +164,7 @@ class Deal extends Model
                 $roles->push(
                     ['name' => $contact->first_name . ' ' . $contact->last_name,
                         'role' => 'Client',
+                        'id' => $contact->id,
                         'phone' => $contact->phone,
                         'email' => $contact->email,
                     ]);
@@ -182,18 +185,21 @@ class Deal extends Model
         if ($leadAgent) {
             $roles->push(['name' => $leadAgent->name,
                 'role' => 'CHR Agent',
+                'id' => $leadAgent->id,
                 'phone' => $leadAgent->phone,
                 'email' => $leadAgent->email,
             ]);
             if ($contactName) {
                 $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
                     'role' => 'Co-Listing Agent',
+                    'id' => $contactName->id,
                     'phone' => $contactName->phone,
                     'email' => $contactName->email]);
             }
         } elseif ($contactName) {
             $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
                 'role' => 'CHR Agent',
+                'id' => $contactName->id,
                 'phone' => $contactName->phone,
                 'email' => $contactName->email]);
         }
@@ -204,6 +210,7 @@ class Deal extends Model
             $roles->push(['name' => $tm->name,
                 'role' => 'Transaction Manager',
                 'phone' => $tm->phone,
+                'id' => $tm->id,
                 'email' => $tm->email]);
         }
 
