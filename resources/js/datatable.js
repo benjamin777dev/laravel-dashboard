@@ -526,7 +526,7 @@ var tableContactRole = $("#contact_role_table_pipeline").DataTable({
             data: "name",
             title: "Name",
             render: function (data, type, row) {
-                return `<span class='icon-container' >${data}</span>`;
+                return `<a href="/contacts-view/${row?.id}" target="_blank"><span class='icon-container' >${data}</span></a>`;
             },
         },
         {
@@ -929,6 +929,10 @@ var tableDashboard = $("#datatable_transaction").DataTable({
 
             // Check if the value has changed
             if (newValue !== currentText) {
+                $("#datatable_transaction_processing").css(
+                    "display",
+                    "block"
+                );
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
                     url: "/deals/update/" + dataId,
@@ -947,11 +951,25 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                         console.log("Updated successfully:", response);
                         if (response?.message) {
                             showToast(response?.message);
+                            $("#datatable_transaction_processing").css(
+                                "display",
+                                "none"
+                            );
+                            $("#datatable_transaction")
+                                .DataTable()
+                                .ajax.reload();
                         }
                     },
                     error: function (error) {
                         console.error("Error updating:", error);
                         showToastError(error?.responseJSON?.error);
+                        $("#datatable_transaction_processing").css(
+                            "display",
+                            "none"
+                        );
+                        $("#datatable_transaction")
+                            .DataTable()
+                            .ajax.reload();
                     },
                 });
             }
