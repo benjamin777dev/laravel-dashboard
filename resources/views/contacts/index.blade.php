@@ -37,6 +37,15 @@
                            ])
                            @endcomponent
                 </div>
+                <div class="w-control">
+                            @component('components.button', [
+                               'id' => 'compose_email',
+                               'type' => 'database',
+                               'label' => 'Compose Email',
+                               'icon' => 'fab fa-telegram-plane ms-1'
+                           ])
+                           @endcomponent
+                </div>
             </div>
         </div>
 

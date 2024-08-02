@@ -35,7 +35,7 @@ class TemplateController extends Controller
         return response()->json($response);
     }
 
-    public function getTemplates(Request $request)
+    public function getTemplatesFromZoho(Request $request)
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
@@ -47,10 +47,12 @@ class TemplateController extends Controller
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
         $response = $zoho->getZohoTemplates();
+        $templates = $response['email_templates'];
+        $templatesInDB = $db->saveZohoTemplatesInDB($templates);
         return response()->json($response);
     }
 
-    public function getTemplateDetail(Request $request)
+    public function getTemplates(Request $request)
     {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
@@ -60,9 +62,43 @@ class TemplateController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
-        $templateId = $request->route('templateId');
-        $response = $zoho->getZohoTemplateDetail($templateId);
-        return response()->json($response);
+        // $inputData = $request->json()->all();
+        // $response = $zoho->getZohoTemplates();
+        // $templates = $response['email_templates'];
+        $templatesInDB = $db->getTemplatesFromDB($user);
+        return response()->json($templatesInDB);
+    }
+
+    public function getTemplateDetail(Request $request)
+    {
+        try {   
+            $db = new DatabaseService();
+            $zoho = new ZohoCRM();
+            $user = $this->user();
+            if(!$user){
+                return redirect('/login');
+            }
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+            $templateId = $request->route('templateId');
+            Log::info("TEMPLATEID",[$templateId]);
+            $template = $db->getTemplateDetailFromDB($templateId);
+            if( $template && $template['content']!=null){
+                $templateDetail = $template;
+            }else{
+                $response = $zoho->getZohoTemplateDetail($template['zoho_template_id']);
+                Log::info("Template detail",[$response]);
+                if($response){
+                    $db->updateTemplate($template['zoho_template_id'],$response['email_templates'][0]);
+                    $templateDetail = $db->getTemplateDetailFromDB($templateId);
+                }else{
+                    throw new \Exception("Template Not Found");
+                }
+            }
+            return response()->json($templateDetail);
+        } catch (\Throwable $e) {
+            throw $e;
+        }
     }
 
 

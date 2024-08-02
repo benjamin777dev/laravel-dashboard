@@ -1359,6 +1359,7 @@ class ZohoCRM
     public function assoiciateEmail($inputEmail,$contactId)
     {
         try {
+            Log::info('Raw inputEmail', ['inputEmail' => $inputEmail]);
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json',

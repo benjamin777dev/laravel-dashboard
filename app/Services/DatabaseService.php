@@ -2390,7 +2390,7 @@ class DatabaseService
             // Insert or update the email record
             $template = Template::updateOrCreate(
                 ['id' => $input['templateId'] ?? null],
-                $templateData
+                $input
             );
 
 
@@ -2415,14 +2415,14 @@ class DatabaseService
     public function getContactEmailList($id)
     {
         try {
-            $emails = Email::whereJsonContains("toEmail",$id)->with('fromUserData')
-                        ->get();
+            $emails = Email::whereJsonContains('toEmail', $id) ->with('fromUserData')->orderBy('updated_at', 'desc')->get();
             return $emails;
         } catch (\Exception $e) {
-            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            Log::error("Error retrieving email list for contact ID {$id}: " . $e->getMessage());
             throw $e;
         }
     }
+
 
     public function getContactsByMultipleId($ids)
     {
@@ -2435,24 +2435,74 @@ class DatabaseService
         }
     }
 
-    //  public function saveZohoTemplateInDB($ids)
-    // {
-    //     try {
-    //         for ($i=0; $i < $templates->count(); $i++) { 
-    //             $template = $templates[$i];
-    //             $bulkContacts = Template::updateOrCreate(
-    //                 ['zoho_template_id'=>isset($template['id'])?$template['id']:null],
-    //                 [
+    public function saveZohoTemplatesInDB($templates)
+    {
+        try {
+            foreach ($templates as $template) {
+                $templateData = [
+                    'subject' => $template['subject'] ?? null,
+                    'active' => $template['active'] ?? null,
+                    'name' => $template['name'] ?? null,
+                    'favorite' => $template['favorite'] ?? null,
+                    'consent_linked' => $template['consent_linked'] ?? null,
+                    'associated' => $template['associated'] ?? null,
+                    'content'=>$template['content'] ??null,
+                    'templateType' => 'public',
+                    'folder' => json_encode($template['folder']) ?? null,
+                    'zoho_template_id'=>$template['id']
+                ];
 
-    //                 ]
-    //             );
-    //         }
-    //         return $bulkContacts;
-    //     } catch (\Exception $e) {
-    //         Log::error("Error retrieving deal contacts: " . $e->getMessage());
-    //         throw $e;
-    //     }
-    // }
+                Template::updateOrCreate(
+                    ['zoho_template_id' => $template['id']],
+                    $templateData
+                );
+            }
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error saving Zoho templates: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function getTemplatesFromDB($user)
+    {
+        try {
+            
+                $templateList = Template::whereOr(
+                    [['templateType'=>"Public"],['ownerId',$user->id]],
+                )->orderBy('updated_at','DESC')->get();
+            return $templateList;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getTemplateDetailFromDB($templateId)
+    {
+        try {
+            $templateDetail = Template::where('id', $templateId)->first();
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving template details: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function updateTemplate($templateId, $template)
+    {
+        try {
+            $templateDetail = Template::where('zoho_template_id', $templateId)
+                                    ->update(['content' => $template['mail_content']]);
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error updating template: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
 
 
 }

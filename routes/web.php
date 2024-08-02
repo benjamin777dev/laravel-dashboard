@@ -183,10 +183,12 @@ Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->na
 Route::get('/email/detail/draft/{emailId}',[EmailController::class,'emailDetailDraft'])->name('email.detail.draft')->middleware('auth');
 Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('email.template')->middleware('auth');
 Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
+Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
 
 
 //Template Route
 Route::post('/create/template',[TemplateController::class,'createTemplate'])->name('create.template')->middleware('auth');
+Route::get('/get/templates/from/zoho',[TemplateController::class,'getTemplatesFromZoho'])->name('get.template.zoho')->middleware('auth');
 Route::get('/get/templates',[TemplateController::class,'getTemplates'])->name('get.template')->middleware('auth');
 Route::get('/get/template/detail/{templateId}',[TemplateController::class,'getTemplateDetail'])->name('get.template.detail')->middleware('auth');
 // Language Translation

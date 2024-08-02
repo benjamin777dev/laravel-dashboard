@@ -951,10 +951,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
 
             // Check if the value has changed
             if (newValue !== currentText) {
-                $("#datatable_transaction_processing").css(
-                    "display",
-                    "block"
-                );
+                $("#datatable_transaction_processing").css("display", "block");
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
                     url: "/deals/update/" + dataId,
@@ -989,9 +986,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                             "display",
                             "none"
                         );
-                        $("#datatable_transaction")
-                            .DataTable()
-                            .ajax.reload();
+                        $("#datatable_transaction").DataTable().ajax.reload();
                     },
                 });
             }
@@ -1970,7 +1965,21 @@ var tableContact = $("#datatable_contact").DataTable({
     responsive: true,
     serverSide: true,
     responsive: true,
-    columnDefs: [{ responsivePriority: 2, targets: -7 }],
+    columnDefs: [
+        { responsivePriority: 2, targets: -7 },
+        {
+            targets: 0,
+            orderable: false,
+            className: "select-checkbox",
+            defaultContent: "",
+        },
+        {
+            targets: 1,
+            orderable: false,
+            className: "select-checkbox",
+            defaultContent: "",
+        },
+    ],
     order: [0, "desac"],
     columns: [
         {
@@ -1978,6 +1987,15 @@ var tableContact = $("#datatable_contact").DataTable({
             orderable: false,
             data: null,
             defaultContent: "",
+        },
+        {
+            data: null,
+            className: "select-checkbox",
+            defaultContent: "",
+            orderable: false,
+            render: function (data, type, row) {
+                return `<input type="checkbox" class="emailCheckbox" value="${data.id}"/>`;
+            },
         },
         {
             data: null,
@@ -2289,6 +2307,10 @@ $("#contactSort").on("change", function () {
 $(".pfilterBtn").on("click", function () {
     tableContact.search("").draw();
 });
+$("#compose_email").on("click", function () {
+    var checkedItems = getCheckedItems();
+    console.log(checkedItems); // Do something with the checked items
+});
 
 $(".filterClosebtn").on("click", function () {
     $("#filterEmail").prop("checked", false);
@@ -2304,6 +2326,16 @@ $("#Reset_All").on("click", function () {
     $("#filterABCD").prop("checked", false);
     tableContact.search("").draw();
 });
+
+window.getCheckedItems = function () {
+    var checkedValues = [];
+    $("#datatable_contact .emailCheckbox:checked").each(function () {
+        var rowId = $(this).val();
+        checkedValues.push(rowId);
+    });
+
+    return checkedValues;
+};
 
 //    contacts actions
 window.createNotesForContact = function (id, conId) {
@@ -2468,12 +2500,18 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
     processing: true,
     serverSide: true,
     pageLength: 5,
+    lengthMenu: [5, 10, 25, 50, 75, 100],
     columns: [
         {
             data: "subject",
             title: "Subject",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="emailSubject" data-id="${row.id}"><a href="">${data}</a></span>`;
+                return `<span class="editable" data-name="emailSubject" data-id="${
+                    row.id
+                }" onclick="viewEmail('${
+                    row.id
+                }')" style="cursor:pointer;">${data}</a>
+                ${viewEmailModal(row.id)}</span>`;
             },
         },
         {
@@ -2517,3 +2555,45 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
         },
     },
 });
+
+function viewEmailModal(id) {
+    return `
+                <div class="modal fade testing" onclick="event.preventDefault();"
+                    id="viewEmailModal${id}" data-bs-backdrop="static"
+                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewEmailLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                        <div class="modal-content dtaskmodalContent">
+                            <div class="modal-header border-0">
+                                <p class="modal-title dHeaderText">Email</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    onclick="resetValidation()" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="viewEmailDetails${id}">
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+}
+
+window.viewEmail = function (emailId) {
+    event.preventDefault();
+    $.ajax({
+        url: "/get/email/modal/" + emailId,
+        method: "GET",
+        success: function (response) {
+            let viewEmailContainer = $("#viewEmailDetails" + emailId);
+            console.log(response, "viewEmailContainer");
+            viewEmailContainer.empty();
+            const card = viewEmailContainer.html(response);
+            $("#viewEmailModal" + emailId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
+};

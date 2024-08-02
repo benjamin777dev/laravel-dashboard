@@ -10,10 +10,16 @@
                 <input type="text" id = "templateName" value="" class="form-control" placeholder="Template Name">
             </div>
         </div>
-         <div class="mb-3 row" style="display:none;">
+        <div class="mb-3 row" style="display:none;">
             <label for="example-text-input" class="col-md-2 col-form-label">Content</label>
             <div class="col-md-10">
                 <input type="text" id = "templateContent" value="" class="form-control" placeholder="Template Name">
+            </div>
+        </div>
+        <div class="mb-3 row" style="display:none;">
+            <label for="example-text-input" class="col-md-2 col-form-label">Subject</label>
+            <div class="col-md-10">
+                <input type="text" id = "templateSubject" value="" class="form-control" placeholder="Template Name">
             </div>
         </div>
     </div>
@@ -27,11 +33,14 @@
     window.saveTemplate = function(email,isEmailSent){
         var templateName = $("#templateName").val();
         var content = $("#templateContent").val();
+        var subject = $("#templateSubject").val();
         var formData = 
         {
             "ownerId": "{{auth()->user()->id}}",
             "content": content,
-            "templateName":templateName
+            "name":templateName,
+            'subject':subject,
+            'templateType':'private'
         }
 
         $.ajax({

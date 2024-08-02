@@ -4,10 +4,7 @@
 
 @section('content')
 
-@component('components.breadcrumb')
-@slot('li_1') Email @endslot
-@slot('title') Inbox @endslot
-@endcomponent
+
 
 <div class="row">
     <div class="col-12">
