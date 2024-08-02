@@ -675,40 +675,99 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Tasks From Database");
+            $now = now();
+            $startOfToday = $now->copy()->startOfDay();
+            $endOfToday = $now->copy()->endOfDay();
             $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
 
             if ($tab == 'Overdue') {
                 // These are any tasks that have a due date less than today and the task status isn't completed
-                $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'desc');
+                $tasks->where([
+                    ['due_date', '<', $startOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
             } elseif ($tab == 'Upcoming') {
                 // These are any tasks that have a due date greater than or equal to today and are not complete
-                $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'desc');
+                $tasks->where([
+                    ['due_date', '>', $endOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
+                $tasks->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
                 // These are any tasks that are due today and are not complete
-                $tasks
-                ->whereDate('due_date', now()->toDateString())
-                      ->where('status', '!=', 'Completed')
-                      ->orderBy('due_date', 'desc');
+                $tasks->where(function($query) use ($startOfToday, $endOfToday) {
+                    $query->where(function($query) use ($startOfToday, $endOfToday) {
+                        $query->whereBetween('due_date', [$startOfToday, $endOfToday])
+                              ->orWhereNull('due_date');
+                    })
+                    ->where('status', '!=', 'Completed');
+                });
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
-                $tasks->where('status', 'Completed')
-                      ->orderBy('updated_at', 'desc');
-            }
-
-            // This will apply the updated_at ordering only if it's not already ordered by due_date
-            if ($tab != 'Upcoming' && $tab != 'Overdue' && $tab != 'Due Today') {
-                $tasks = $tasks->orderBy('updated_at', 'desc');
-            }
-
-            $tasks = $tasks->paginate(50);
-            return $tasks;
+                  $tasks->where('status', 'Completed');
+            } 
+     // Order the tasks by the updated_at field in descending order
+        $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
+        return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
+    public function getTaskCounts($user)
+    {
+        try {
+            Log::info("Retrieve Task Counts From Database");
+            
+            $now = now();
+            $startOfYear = $now->copy()->startOfYear();
+            $endOfYear = $now->copy()->endOfYear();
+    
+            // Initialize the counts array
+            $counts = [
+                'totalCompleted' => 0,
+                'totalTasks' => 0,
+                'monthlyCounts' => []
+            ];
+    
+            // Get total counts for the year
+            $counts['totalCompleted'] = Task::where('owner', $user->id)
+                ->where('status', 'Completed')
+                ->whereBetween('updated_at', [$startOfYear, $endOfYear])
+                ->count();
+    
+            $counts['totalTasks'] = Task::where('owner', $user->id)
+                ->whereBetween('updated_at', [$startOfYear, $endOfYear])
+                ->count();
+    
+            // Get monthly counts for the current year
+            for ($month = 1; $month <= 12; $month++) {
+                $startOfMonth = $now->copy()->month($month)->startOfMonth();
+                $endOfMonth = $now->copy()->month($month)->endOfMonth();
+    
+                $monthlyCompletedCount = Task::where('owner', $user->id)
+                    ->where('status', 'Completed')
+                    ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
+                    ->count();
+    
+                $monthlyTotalCount = Task::where('owner', $user->id)
+                    ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
+                    ->count();
+    
+                $counts['monthlyCounts'][$month] = [
+                    'completed' => $monthlyCompletedCount,
+                    'total' => $monthlyTotalCount
+                ];
+            }
+    
+            return $counts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving task counts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+
 
     public function retrieveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null, $tab = null)
     {
