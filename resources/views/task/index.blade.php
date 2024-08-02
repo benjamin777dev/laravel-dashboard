@@ -324,7 +324,7 @@
                             stops: [0, 100, 100, 100]
                         }
                 },
-                labels: ['Jan', 'Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'],
+                labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
                 markers: {
                     size: 0
                 },
