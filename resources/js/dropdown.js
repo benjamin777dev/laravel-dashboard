@@ -553,6 +553,11 @@ window.addCommonTask = function (id = "", type = "") {
                 if(closing_btnnnnn){
                     closing_btnnnnn?.click();
                 }
+                var pathname = window.location.pathname;
+                if(pathname==="/task"){
+                    window.location.reload();
+                    return;
+                }
                 window.fetchData();
                 resetTaskForm(resetId);
                 $("#datatable_tasks1")?.DataTable().ajax.reload();
