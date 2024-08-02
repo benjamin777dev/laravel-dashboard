@@ -19,9 +19,9 @@
                 <table id="{{ $id }}" class="table table-bordered dt-responsive nowrap w-100 min-mobile-p">
                     @if ($id==="datatable_transaction")
                         @if ($needsNewDate['count'] > 0)
-                        <p class="fw-bold">Bad Dates | <span class="text-danger">{{$needsNewDate['count']}} Bad Dates!</span></p>
+                        <p class="fw-bold">Bad Dates | <span class="text-danger bad_date_count"></span></p>
                     @else
-                        <p class="fw-bold">Bad Dates | <span class="text-success">No Bad Dates, <strong>Great Job!</strong>!</span></p>
+                        <p class="fw-bold">Bad Dates | <span class="text-success bad_date_success"></span></p>
                     @endif
                     @endif
                 </table>

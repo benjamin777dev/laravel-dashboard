@@ -31,7 +31,7 @@ class TaskController extends Controller
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $status = $request->input('status');
-        
+        if(!empty($status)){
         if (request()->ajax()) {
             if(!empty($status) && $status==="Overdue"){
                 $pageUrl = $overdueTasks->nextPageUrl();
@@ -60,6 +60,7 @@ class TaskController extends Controller
             ]);
     }
     }
+}
       
         return view('task.index', compact('upcomingTasks', 'inProgressTasks', 
             'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks'));

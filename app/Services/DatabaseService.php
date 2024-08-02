@@ -680,17 +680,17 @@ class DatabaseService
             if ($tab == 'Overdue') {
                 // These are any tasks that have a due date less than today and the task status isn't completed
                 $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'asc');
+                      ->orderBy('due_date', 'desc');
             } elseif ($tab == 'Upcoming') {
                 // These are any tasks that have a due date greater than or equal to today and are not complete
                 $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'asc');
+                      ->orderBy('due_date', 'desc');
             } elseif ($tab == 'Due Today') {
                 // These are any tasks that are due today and are not complete
                 $tasks
                 ->whereDate('due_date', now()->toDateString())
                       ->where('status', '!=', 'Completed')
-                      ->orderBy('due_date', 'asc');
+                      ->orderBy('due_date', 'desc');
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
                 $tasks->where('status', 'Completed')
@@ -702,7 +702,7 @@ class DatabaseService
                 $tasks = $tasks->orderBy('updated_at', 'desc');
             }
 
-            $tasks = $tasks->paginate(10);
+            $tasks = $tasks->paginate(50);
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
@@ -902,7 +902,7 @@ class DatabaseService
             throw $e;
         }
     }
-    
+
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
        
