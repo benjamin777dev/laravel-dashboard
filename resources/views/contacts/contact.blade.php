@@ -7,6 +7,7 @@
                     <thead class="thead_con_design">
                         <tr>
                             <th></th>
+                            <th></th>
                             <th data-sort-type="text">
                                 <div class="commonFlex" onclick="sortContact('first_name,last_name',this)">
                                     <p class="mb-0">Full name</p>

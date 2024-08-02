@@ -11,8 +11,16 @@ class Template extends Model
 
     protected $fillable = [
         'id',
-        'templateName',
+        'name',
         'ownerId',
+        'subject',
+        'active',
+        'favorite',
+        'consent_linked',
+        'associated',
+        'folder',
+        'templateType',
         'content',
+        'zoho_template_id'
     ];
 }

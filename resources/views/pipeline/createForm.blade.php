@@ -142,7 +142,7 @@
         <div class="col-md-6 col-sm-12"
             style=" padding:16px; border-radius:4px;background: #FFF;box-shadow: 0px 12px 24px 0px rgba(18, 38, 63, 0.03);">
 
-            <p class="npinfoText">Earnings Information</p>
+            <p class="npinfoText">Earnings Information {{ $deal }}</p>
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="validationDefault11" class="form-label nplabelText">Commission %</label>

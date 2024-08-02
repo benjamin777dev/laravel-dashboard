@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
 use App\Services\SendGrid;
@@ -128,17 +129,37 @@ class EmailController extends Controller
                     ]
                 ]
             ];
-            // $associateEmail = $zoho->assoiciateEmail($zohoInput,$contact['zoho_contact_id']);
-            // if($associateEmail=="AUTHENTICATION_FAILURE"){
-            //     $this->guard()->logout();
-            //     return response()->json([
-            //         'status' => 'process',
-            //         'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-            //         'redirect_url' => route('login')
-            //     ]);
-            // }
+            $associateZohoInput = [
+                "Emails"=>[
+                [
+                    'to' => $inputData['toData'],
+                    'cc' => $inputData['ccData'],
+                    'bcc' => $inputData['bccData'],
+                    'from' => [
+                        "user_name"=> $user['name'],
+                        'email'=> $user['email'],
+                    ],
+                    'subject' => $inputData['subject'],
+                    'content' => $inputData['content'],
+                    "consent_email"=>false,
+                ]
+            ]
+                ];
+            $associateZohoInput['Emails'][0]['sent'] = true;
+            $associateZohoInput['Emails'][0]['date_time'] = now();
+            $associateZohoInput['Emails'][0]['original_message_id'] =  Str::uuid();
+            $associateEmail = $zoho->assoiciateEmail($associateZohoInput,$contact['zoho_contact_id']);
+            if($associateEmail=="AUTHENTICATION_FAILURE"){
+                $this->guard()->logout();
+                return response()->json([
+                    'status' => 'process',
+                    'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                    'redirect_url' => route('login')
+                ]);
+            }
             $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
             $inputData['sendEmailFrom'] = "SendGrid";
+            $inputData['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
         }else{
             $sendEmail = $zoho->sendZohoEmail($zohoInput,$contact['zoho_contact_id']);
             if($sendEmail=="AUTHENTICATION_FAILURE"){
@@ -214,5 +235,18 @@ class EmailController extends Controller
         $emailIds = $request->input('emailIds');
         $email = $db->moveToTrash($emailIds);    
         return response()->json(['success' => true]);
+    }
+
+       public function getEmailModal()
+    {
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $emailId = request()->route('emailId');
+        $accessToken = $user->getAccessToken();
+        $email = $db->getEmailDetail($emailId);    
+        return view('emails.email-read', compact('email'))->render();
     }
 }

@@ -11,8 +11,7 @@
                 <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}"
- {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -23,8 +22,7 @@
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}"
- {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -35,8 +33,7 @@
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}"
- {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -93,8 +90,8 @@
                             dataType: 'json',
                             success: function (response) {
                                 // Assuming response is an array of options
-                                var items = response.email_templates.map(function(item) {
-                                    return { text: item.name, value: item.id };
+                                var items = response.map(function(item) {
+                                    return { text: item.name, value: JSON.stringify(item.id) };
                                 });
 
                                 // Open the dialog with the fetched data
@@ -131,8 +128,8 @@
                                             url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
                                             method: 'GET',
                                             success: function (response) {
-                                                // Insert the response content or selected option into the editor
-                                                editor.insertContent(response.email_templates[0].content);
+                                               $("#emailSubject").val(response.subject);
+                                                editor.insertContent(response.content);
                                                 api.close();
                                             },
                                             error: function () {
@@ -238,7 +235,9 @@
             firstModal.hide();
         }
         var templateContent= tinymce.get('elmEmail').getContent()
+        var templateSubject= $("#emailSubject").val();
         $('#templateContent').val(templateContent);
+        $('#templateSubject').val(templateSubject);
         var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
         secondModal.show();
     }

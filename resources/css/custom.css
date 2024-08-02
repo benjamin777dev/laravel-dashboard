@@ -35,7 +35,6 @@ body {
     cursor: pointer;
 }
 
-
 /* btnsRowAndCards-css */
 .dbtnsCardsRow {
     display: grid;
@@ -2295,8 +2294,6 @@ body .vertical-collpsed span .logo-sm image {
     color: #fff;
 } */
 
-
-
 @media (min-width: 475px) and (max-width: 767px) {
     .nproletext {
         margin-bottom: 0px;
@@ -2307,10 +2304,10 @@ body .vertical-collpsed span .logo-sm image {
     .nplabelText {
         text-align: start !important;
     }
-    .commonFlex{
-        display: block!important;
+    .commonFlex {
+        display: block !important;
     }
-    .max-width-500{
+    .max-width-500 {
         max-width: 150px !important;
         white-space: nowrap !important;
         text-overflow: ellipsis !important;
@@ -2319,7 +2316,7 @@ body .vertical-collpsed span .logo-sm image {
     }
     #datatable_transaction .dtr-hidden:nth-child(2) {
         display: block !important; /* Display the second element with class dtr-hidden */
-      }
+    }
 }
 
 @media (min-width: 320px) and (max-width: 475px) {
@@ -3167,7 +3164,7 @@ body[data-sidebar="dark"] .navbar-brand-box {
     .col-contact {
         flex: 1 !important;
     }
-    .w-control button{
+    .w-control button {
         width: 100% !important;
     }
 }
@@ -3523,18 +3520,22 @@ form .tox .tox-toolbar__primary .tox-toolbar__group .tox-tbtn .tox-icon svg {
 } */
 /* wizard css */
 
-.wizard>.actions a, .wizard>.actions a:active, .wizard>.actions a:hover{
+.wizard > .actions a,
+.wizard > .actions a:active,
+.wizard > .actions a:hover {
     background-color: #222 !important;
 }
 
-.wizard .steps>ul{
-       font-size: 13px !important;
-       flex-wrap: unset !important;
-       overflow-x: auto !important;
-       text-wrap: nowrap !important;
+.wizard .steps > ul {
+    font-size: 13px !important;
+    flex-wrap: unset !important;
+    overflow-x: auto !important;
+    text-wrap: nowrap !important;
 }
 
-/* .number{
-    background-color: #444 !important;
-    column-rule: #fff;
-} */
+.emailCheckbox {
+    cursor: pointer;
+    width: 18px;
+    accent-color: black;
+    height: 18px;
+}

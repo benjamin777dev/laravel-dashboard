@@ -837,7 +837,7 @@ class ZohoCRM
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
-            ])->delete($this->apiUrl . 'Contacts_X_Groups/' . $id);
+            ])->delete($this->apiUrl .'Contacts_X_Groups/' . $id);
             return $response;
         } catch (\Throwable $e) {
             Log::error("Error retrieving Update Group: " . $e->getMessage());
@@ -1359,6 +1359,7 @@ class ZohoCRM
     public function assoiciateEmail($inputEmail,$contactId)
     {
         try {
+            Log::info('Raw inputEmail', ['inputEmail' => $inputEmail]);
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->access_token,
                 'Content-Type' => 'application/json',
