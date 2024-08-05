@@ -320,7 +320,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     );
                 });
 
-            currentText = $(element).text(); // Set currentText when entering edit mode
+            var currentTextfilter = $(element).text();  // Get the text content of the element
+            currentText = currentTextfilter.replace(/\$|%/g, ''); // Set currentText when entering edit mode
             var dataName = $(element).data("name");
             var dataId = $(element).data("id");
 
@@ -1025,7 +1026,6 @@ var tableTasks = $("#datatable_tasks").DataTable({
     processing: true,
     serverSide: true,
     responsive:true,
-    
     columns: [
         {
             className: "dt-control",
@@ -1051,6 +1051,16 @@ var tableTasks = $("#datatable_tasks").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${row.id}">${data}</span>`;
             },
         },
         {
@@ -1380,6 +1390,16 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${row.id}">${data}</span>`;
             },
         },
         {

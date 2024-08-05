@@ -695,14 +695,15 @@ class DatabaseService
                 ]);
                 $tasks->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
-                // These are any tasks that are due today and are not complete
-                $tasks->where(function($query) use ($startOfToday, $endOfToday) {
-                    $query->where(function($query) use ($startOfToday, $endOfToday) {
-                        $query->whereBetween('due_date', [$startOfToday, $endOfToday])
-                              ->orWhereNull('due_date');
-                    })
-                    ->where('status', '!=', 'Completed');
+                // Tasks with due date within today
+                $tasks->whereBetween('due_date', [$startOfToday, $endOfToday]);
+
+                // Tasks with null due_date but created today
+                $tasks->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                    $query->whereNull('due_date')
+                        ->whereBetween('created_at', [$startOfToday, $endOfToday]);
                 });
+                $tasks->where('status', '!=', 'Completed');
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
                   $tasks->where('status', 'Completed');
@@ -1384,19 +1385,19 @@ class DatabaseService
                 'address' => isset($zohoDeal['Address']) ? $zohoDeal['Address'] : null,
                 'representing' => isset($zohoDeal['Representing']) ? $zohoDeal['Representing'] : null,
                 'client_name_only' => isset($zohoDeal['Client_Name_Only']) ? $zohoDeal['Client_Name_Only'] : null,
-                'commission' => isset($zohoDeal['Commission']) ? $zohoDeal['Commission'] : null,
-                'commission_flat_free' => isset($zohoDeal['Commission_Flat_Fee']) ? $zohoDeal['Commission_Flat_Fee'] : null,
+                'commission' => isset($zohoDeal['Commission']) ? $zohoDeal['Commission'] : 0,
+                'commission_flat_free' => isset($zohoDeal['Commission_Flat_Fee']) ? $zohoDeal['Commission_Flat_Fee'] : 0,
                 'zip' => isset($zohoDeal['Zip']) ? $zohoDeal['Zip'] : null,
                 'client_name_primary' => isset($zohoDeal['Client_Name_Primary']) ? $zohoDeal['Client_Name_Primary'] : null,
                 'closing_date' => isset($zohoDeal['Closing_Date']) ? $helper->convertToUTC($zohoDeal['Closing_Date']) : null,
                 'stage' => isset($zohoDeal['Stage']) ? $zohoDeal['Stage'] : null,
-                'sale_price' => isset($zohoDeal['Sale_Price']) ? $zohoDeal['Sale_Price'] : null,
+                'sale_price' => isset($zohoDeal['Sale_Price']) ? $zohoDeal['Sale_Price'] : 0,
                 'city' => isset($zohoDeal['City']) ? $zohoDeal['City'] : null,
                 'state' => isset($zohoDeal['State']) ? $zohoDeal['State'] : null,
                 'pipeline1' => isset($zohoDeal['Pipeline1']) ? $zohoDeal['Pipeline1'] : null,
                 'ownership_type' => isset($zohoDeal['Ownership_Type']) ? $zohoDeal['Ownership_Type'] : null,
                 'deal_name' => isset($zohoDeal['Deal_Name']) ? $zohoDeal['Deal_Name'] : null,
-                'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : null,
+                'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : 0,
                 'property_type' => isset($zohoDeal['Property_Type']) ? $zohoDeal['Property_Type'] : null,
                 'potential_gci' => isset($zohoDeal['Potential_GCI']) ? $zohoDeal['Potential_GCI'] : null,
                 'primary_contact'=>isset($zohoDeal['Primary_Contact']) ? $zohoDeal['Primary_Contact'] : null,

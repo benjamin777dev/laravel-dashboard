@@ -32,7 +32,7 @@
                         @include('common.tasks.upcommingcard')
                     </div>
                 </div>
-                @if (!empty($upcomingTasks->nextPageUrl()) && $upcomingTasks->count() > 0 && $upcomingTasks->count() >= 10)
+                @if (!empty($upcomingTasks->nextPageUrl()) && $upcomingTasks->count() >= 10)
                 <div class="p-2 text-primary cursor-auto" id="see_moree_upcomming">
                     <p style="cursor: pointer">See More...</p>
                 </div>
@@ -47,7 +47,7 @@
                         @include('common.tasks.overduecard')
                     </div>
                 </div>
-                @if (!empty($inProgressTasks->nextPageUrl()) && $inProgressTasks->count() > 0 && $inProgressTasks->count() >= 10)
+                @if (!empty($inProgressTasks->nextPageUrl()) && $inProgressTasks->count() >= 10)
                 <div class="p-2 text-primary cursor-auto" id="see_moree_overdue_today">
                     <p style="cursor: pointer">See More...</p>
                 </div>
@@ -62,7 +62,7 @@
                         @include('common.tasks.taskcard')
                     </div>
                 </div>
-                @if (!empty($overdueTasks->nextPageUrl()) && $overdueTasks->count() > 0 && $overdueTasks->count() >= 10)
+                @if (!empty($overdueTasks->nextPageUrl()) && $overdueTasks->count() >= 10)
                     <div class="p-2 text-primary cursor-auto" id="see_moree_overdue">
                         <p style="cursor: pointer">See More...</p>
                     </div>
@@ -83,11 +83,12 @@
                         @include('common.tasks.completecard')
                     </div>
                 </div>
-                @if (!empty($completedTasks->nextPageUrl()) && $completedTasks->count() > 0 && $completedTasks->count() >= 10)
-                    <div class="p-2 text-primary" style="cursor: pointer" id="see_moree_complete">
-                        <p >See More...</p>
-                    </div>
-                @endif
+                @if (!empty($completedTasks->nextPageUrl()) && $completedTasks->count() >= 10)
+                <div class="p-2 text-primary" style="cursor: pointer" id="see_moree_complete">
+                    <p>See More...</p>
+                </div>
+            @endif
+            
             </div>
         </div>
         <!-- end col -->
@@ -159,7 +160,14 @@
         let nextUpcommingTasks = '{{ $upcomingTasks->nextPageUrl() }}';
         window.onload = function() {
             let dddddd= @json($taskcal);
-            console.log(dddddd,'ddddddddddd');
+            let nextPageUrloverdue = '{{ $overdueTasks->nextPageUrl() ? str_replace('/', '', $overdueTasks->nextPageUrl()) : null }}';
+            let isLoading = false;
+
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading) {
+                    loadMorePosts();
+                }
+            });
             $("#see_moree_overdue").click(function() {
                 if (nextPageUrloverdue !== "") {
                     console.log("yes hittt")
@@ -177,6 +185,7 @@
                         },
                         success: function(data) {
                             $('.spinner').hide();
+                            data?.nextPageUrl===null?$('#see_moree_overdue').hide():data?.nextPageUrl;
                             // Update nextPageUrloverdue with the URL for the next page, 
                             nextPageUrloverdue = data?.nextPageUrl || '';
                             // Append the new content to the overdue_section
@@ -206,6 +215,7 @@
                         },
                         success: function(data) {
                             $('.spinner').hide();
+                            data?.nextPageUrl===null?$('#see_moree_complete').hide():data?.nextPageUrl;
                             // Update nextPageUrlComplete with the URL for the next page, 
                             nextPageUrlComplete = data?.nextPageUrl || '';
                             // Append the new content to the overdue_section
@@ -234,8 +244,10 @@
                         },
                         success: function(data) {
                             $('.spinner').hide();
+                            data?.nextPageUrl===null?$('#see_moree_overdue_today').hide():data?.nextPageUrl;
                             // Update nextPageUrlComplete with the URL for the next page, 
                             nextinProgressTasks = data?.nextPageUrl || '';
+
                             // Append the new content to the overdue_section
                             $('.see_moree_overdue_today').append(data?.html ||
                             ''); // Assuming `data.html` contains the HTML content
@@ -262,6 +274,7 @@
                         },
                         success: function(data) {
                             $('.spinner').hide();
+                            data?.nextPageUrl===null?$('#see_moree_upcomming').hide():data?.nextPageUrl;
                             // Update nextPageUrlComplete with the URL for the next page, 
                             nextUpcommingTasks = data?.nextPageUrl || '';
                             // Append the new content to the overdue_section
