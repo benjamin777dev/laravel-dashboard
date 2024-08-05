@@ -1712,6 +1712,8 @@ class DatabaseService
             // Get all groups
             $groups = $query->with(['contacts' => function ($query) use ($user) {
                 $query->where('ownerId', $user->id);
+                $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
+                $query->where('contacts.isContactCompleted', true);
             }])->get();
 
             // Separate the groups into different categories
