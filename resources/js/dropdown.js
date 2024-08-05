@@ -545,8 +545,22 @@ window.addCommonTask = function (id = "", type = "") {
                 // Convert message to uppercase and then display
                 const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                var modalElement = document.getElementById('closeModal');
+                if(modalElement){
+                    modalElement?.click();
+                }
+                var closing_btnnnnn = document.getElementById('closing_btnnnnn');
+                if(closing_btnnnnn){
+                    closing_btnnnnn?.click();
+                }
+                var pathname = window.location.pathname;
+                if(pathname==="/task"){
+                    window.location.reload();
+                    return;
+                }
+                window.fetchData();
                 resetTaskForm(resetId);
-                $("#datatable_tasks1").DataTable().ajax.reload();
+                $("#datatable_tasks1")?.DataTable().ajax.reload();
                 $("#datatable_tasks")?.DataTable().ajax.reload();
                 formData = "";
                 // window.location.reload();
@@ -585,3 +599,26 @@ window.resetTaskForm = function (id = null) {
         document.getElementById("detail_error").innerHTML = "";
     }
 };
+
+window.fetchData = function() {
+    $('#spinner').show();
+   let loadtask = true;
+    // Make AJAX call
+    $.ajax({
+        url: '/upcomming-task',
+        method: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            $('#spinner').hide();
+            loadtask = false;
+            $('.upcomming-task').html(data);
+
+        },
+        error: function(xhr, status, error) {
+            // Handle errors
+            loadtask = false;
+            console.error('Error:', error);
+        }
+    });
+
+}

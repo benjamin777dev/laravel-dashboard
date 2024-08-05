@@ -232,11 +232,11 @@ var table = $("#datatable_pipe_transaction").DataTable({
             title: "Commission",
             render: function (data, type, row) {
                 if (row.stage === "Under Contract") {
-                    return `<span>${data || "N/A"}</span>`;
+                    return `<span>${data || "N/A"}%</span>`;
                 }
                 return `<span class="editable" data-name="commission" data-id="${
                     row.id
-                }">${data || "N/A"}</span>`;
+                }">${data || "N/A"}%</span>`;
             },
         },
         {
@@ -253,9 +253,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 if (row.stage === "Under Contract") {
                     return `<span>${data || "N/A"}</span>`;
                 }
-                return `<span class="editable" data-name="pipeline_probability" data-id="${
-                    row.id
-                }">${data || "N/A"}%</span>`;
+                return `<span>${data || "N/A"}%</span>`;
             },
         },
         {
@@ -526,7 +524,7 @@ var tableContactRole = $("#contact_role_table_pipeline").DataTable({
             data: "name",
             title: "Name",
             render: function (data, type, row) {
-                return `<span class='icon-container' >${data}</span>`;
+                return `<a href="/contacts-view/${row?.id}" target="_blank"><span class='icon-container' >${data}</span></a>`;
             },
         },
         {
@@ -807,6 +805,11 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             request.search = request.search.value;
         },
         dataSrc: function (data) {
+            if (data?.data?.length > 0) {
+                $(".bad_date_count").text(data.data.length + " Bad Dates!");
+            } else {
+                $(".bad_date_success").html('No Bad Dates, <strong>Great Job!</strong>!');
+            }            
             return data?.data; // Return the data array or object from your response
         },
     },
@@ -929,6 +932,10 @@ var tableDashboard = $("#datatable_transaction").DataTable({
 
             // Check if the value has changed
             if (newValue !== currentText) {
+                $("#datatable_transaction_processing").css(
+                    "display",
+                    "block"
+                );
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
                     url: "/deals/update/" + dataId,
@@ -947,11 +954,25 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                         console.log("Updated successfully:", response);
                         if (response?.message) {
                             showToast(response?.message);
+                            $("#datatable_transaction_processing").css(
+                                "display",
+                                "none"
+                            );
+                            $("#datatable_transaction")
+                                .DataTable()
+                                .ajax.reload();
                         }
                     },
                     error: function (error) {
                         console.error("Error updating:", error);
                         showToastError(error?.responseJSON?.error);
+                        $("#datatable_transaction_processing").css(
+                            "display",
+                            "none"
+                        );
+                        $("#datatable_transaction")
+                            .DataTable()
+                            .ajax.reload();
                     },
                 });
             }
@@ -1324,6 +1345,8 @@ var tableTasks = $("#datatable_tasks").DataTable({
 tableTasks.on("draw.dt", function () {
     let dealTask = $(".dealTaskSelect");
     window.showDropdownForId("", dealTask);
+    let selectglobal = $("#global-search");
+    window.showDropdown("global-search", selectglobal);
 });
 
 var tableTaskspipe = $("#datatable_tasks1").DataTable({
@@ -1665,6 +1688,8 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
 tableTaskspipe.on("draw.dt", function () {
     let dealTask = $(".dealSelectPipe");
     window.showDropdownForId("", dealTask);
+    let selectglobal = $("#global-search");
+    window.showDropdown("global-search", selectglobal);
 });
 
 window.deleteTask = async function (id = "", isremoveselected = false) {

@@ -28,44 +28,30 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Upcoming</h4>
-                    <div class="table-responsive">
-                        <table class="table table-nowrap align-middle mb-0">
-                            <tbody>
-                                @if (count($upcomingTasks) > 0)
-                                    @foreach ($upcomingTasks as $task)
-                                        @include('task.partials.task_row', ['task' => $task])
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="5">No upcoming tasks found</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                    <div class="table-responsive upcommingcard">
+                        @include('common.tasks.upcommingcard')
                     </div>
                 </div>
+                @if (!empty($upcomingTasks->nextPageUrl()) && $upcomingTasks->count() > 0 && $upcomingTasks->count() >= 10)
+                <div class="p-2 text-primary cursor-auto" id="see_moree_upcomming">
+                    <p style="cursor: pointer">See More...</p>
+                </div>
+                @endif
             </div>
 
             <!-- In Progress Tasks -->
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Due Today</h4>
-                    <div class="table-responsive">
-                        <table class="table table-nowrap align-middle mb-0">
-                            <tbody>
-                                @if (count($inProgressTasks) > 0)
-                                    @foreach ($inProgressTasks as $task)
-                                        @include('task.partials.task_row', ['task' => $task])
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td class="text-center" colspan="5">No tasks in progress found</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                    <div class="table-responsive see_moree_overdue_today">
+                        @include('common.tasks.overduecard')
                     </div>
                 </div>
+                @if (!empty($inProgressTasks->nextPageUrl()) && $inProgressTasks->count() > 0 && $inProgressTasks->count() >= 10)
+                <div class="p-2 text-primary cursor-auto" id="see_moree_overdue_today">
+                    <p style="cursor: pointer">See More...</p>
+                </div>
+                @endif
             </div>
 
             <!-- Overdue Tasks -->
@@ -163,15 +149,17 @@
     <!-- apexcharts -->
     <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 
-    <!-- dashboard init -->
-    <script src="{{ URL::asset('build/js/pages/tasklist.init.js') }}"></script>
+ 
 
 
     <script>
         let nextPageUrloverdue = '{{ $overdueTasks->nextPageUrl() }}';
         let nextPageUrlComplete = '{{ $completedTasks->nextPageUrl() }}';
+        let nextinProgressTasks = '{{ $inProgressTasks->nextPageUrl() }}';
+        let nextUpcommingTasks = '{{ $upcomingTasks->nextPageUrl() }}';
         window.onload = function() {
-
+            let dddddd= @json($taskcal);
+            console.log(dddddd,'ddddddddddd');
             $("#see_moree_overdue").click(function() {
                 if (nextPageUrloverdue !== "") {
                     console.log("yes hittt")
@@ -206,7 +194,6 @@
             $("#see_moree_complete").click(function() {
                 if (nextPageUrlComplete !== "") {
                     $('.spinner').show();
-
                     $.ajax({
                         url: nextPageUrlComplete + "&status=Completed",
                         type: 'get',
@@ -232,6 +219,127 @@
                     });
                 }
             });
+            $("#see_moree_overdue_today").click(function() {
+                if (nextinProgressTasks !== "") {
+                    $('.spinner').show();
+                    $.ajax({
+                        url: nextinProgressTasks + "&status=Overdue_today",
+                        type: 'get',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            // Optionally you can set nextPageUrlComplete to empty or reset it here
+                            // nextPageUrlComplete = ''; 
+                        },
+                        success: function(data) {
+                            $('.spinner').hide();
+                            // Update nextPageUrlComplete with the URL for the next page, 
+                            nextinProgressTasks = data?.nextPageUrl || '';
+                            // Append the new content to the overdue_section
+                            $('.see_moree_overdue_today').append(data?.html ||
+                            ''); // Assuming `data.html` contains the HTML content
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading more posts:", error);
+                            $('.spinner').hide();
+                        }
+                    });
+                }
+            });
+            $("#see_moree_upcomming").click(function() {
+                if (nextUpcommingTasks !== "") {
+                    $('.spinner').show();
+                    $.ajax({
+                        url: nextUpcommingTasks + "&status=Upcomming",
+                        type: 'get',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            // Optionally you can set nextPageUrlComplete to empty or reset it here
+                            // nextPageUrlComplete = ''; 
+                        },
+                        success: function(data) {
+                            $('.spinner').hide();
+                            // Update nextPageUrlComplete with the URL for the next page, 
+                            nextUpcommingTasks = data?.nextPageUrl || '';
+                            // Append the new content to the overdue_section
+                            $('.upcommingcard').append(data?.html ||
+                            ''); // Assuming `data.html` contains the HTML content
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading more posts:", error);
+                            $('.spinner').hide();
+                        }
+                    });
+                }
+            });
+
+
+            var completedTasksData = [];
+            var allTasksData = [];
+            let taskCounts = @json($taskcal);
+            for (var month = 1; month <= 12; month++) {
+                completedTasksData.push(taskCounts.monthlyCounts[month] ? taskCounts.monthlyCounts[month].completed : 0);
+                allTasksData.push(taskCounts.monthlyCounts[month] ? taskCounts.monthlyCounts[month].total : 0);
+            }
+            var options = {
+                chart: {
+                    height: 280,
+                    type: 'line',
+                    stacked: false,
+                    toolbar: {
+                        show: false,
+                    }
+                },
+                stroke: {
+                    width: [0, 2, 5],
+                    curve: 'smooth'
+                },
+                plotOptions: {
+                    bar: {
+                    columnWidth: '20%',
+                    endingShape: 'rounded'
+                    }
+                },
+                colors: ['#556ee6', '#34c38f'],
+                series: [{
+                    name: 'Complete Tasks',
+                    type: 'column',
+                    data: completedTasksData,
+                },
+                {
+                    name: 'All Tasks',
+                    type: 'line',
+                    data: allTasksData,
+                }],
+                fill: {
+                        gradient: {
+                            inverseColors: false,
+                            shade: 'light',
+                            type: "vertical",
+                            opacityFrom: 0.85,
+                            opacityTo: 0.55,
+                            stops: [0, 100, 100, 100]
+                        }
+                },
+                labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                markers: {
+                    size: 0
+                },
+
+                yaxis: {
+                    min: 0
+                },
+                }
+
+                var chart = new ApexCharts(
+                document.querySelector("#task-chart"),
+                options
+                );
+
+                chart.render();
         }
 
 
