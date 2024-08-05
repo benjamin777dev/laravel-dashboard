@@ -585,7 +585,7 @@ class DatabaseService
         try {
             Log::info("Retrieve contact From Database");
 
-            $conditions = [['contact_owner', $user->root_user_id], ['id', $contactId]];
+            $conditions = [['id', $contactId]];
 
             // Adjust query to include contactName table using join
             $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
@@ -2244,7 +2244,7 @@ class DatabaseService
         $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
         $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
         $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
-        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : null;
+        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : false;
         $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
         $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
         $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;

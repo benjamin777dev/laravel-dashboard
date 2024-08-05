@@ -1058,9 +1058,9 @@ var tableTasks = $("#datatable_tasks").DataTable({
             title: "Details",
             render: function (data, type, row) {
                 if (row?.status === "Completed") {
-                    return `<span >${data}</span>`;
+                    return `<span >${data ?? "N/A"}</span>`;
                 }
-                return `<span class="editable" data-name="detail" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="detail" data-id="${row.id}">${data ?? "N/A"}</span>`;
             },
         },
         {
@@ -1397,9 +1397,9 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
             title: "Details",
             render: function (data, type, row) {
                 if (row?.status === "Completed") {
-                    return `<span >${data}</span>`;
+                    return `<span >${data ?? "N/A"}</span>`;
                 }
-                return `<span class="editable" data-name="detail" data-id="${row.id}">${data}</span>`;
+                return `<span class="editable" data-name="detail" data-id="${row.id}">${data ?? "N/A"}</span>`;
             },
         },
         {
