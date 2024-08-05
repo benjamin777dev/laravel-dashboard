@@ -836,7 +836,7 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' .$this->access_token=$this->getAccessToken(),
+                'Authorization' => 'Zoho-oauthtoken ' .$this->access_token,
                 'Content-Type' => 'application/json',
             ])->delete($this->apiUrl2 .'Contacts_X_Groups/'.$id);
             return $response;
