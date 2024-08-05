@@ -1486,21 +1486,26 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
-        DB::enableQueryLog();
         try {
-            Log::info("Retrieve Contacts From Database");
-
             $condition = [
                 ['contacts.contact_owner', $user->root_user_id],
                 ['contacts.zoho_contact_id', '!=', null],
                 ['contacts.isContactCompleted', true],
-                ['contacts.relationship_type', '!=', 'Secondary'],
+                // ['contacts.relationship_type', '!=', 'Secondary'],
             ];
 
+            // Fetch primary contacts
             $primaryContacts = Contact::where($condition)
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
                 })
+                ->with([
+                    'groups' => function ($query) use ($filter) {
+                        if ($filter) {
+                            $query->where('groupId', $filter);
+                        }
+                    },
+                ])
                 ->select(
                     'contacts.id',
                     'contacts.email',
@@ -1529,15 +1534,21 @@ class DatabaseService
                         $query->where('contacts.email', '!=', null);
                     } elseif ($filter === "has_address") {
                         $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
-                    } else {
-                        $query->whereHas('groups', function ($query) use ($filter) {
-                            $query->where('groupId', $filter);
-                        });
                     }
                 })
+                ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
                 ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
                 ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
                 ->get();
+
+            // Fetch all group data for contacts in a single query
+            $contactIds = $primaryContacts->pluck('id')->merge($primaryContacts->pluck('secondary_contact_id'))->filter()->unique();
+            $allGroups = ContactGroups::whereIn('contactId', $contactIds)
+                ->when($filter, function ($query) use ($filter) {
+                    $query->where('groupId', $filter);
+                })
+                ->get()
+                ->groupBy('contactId');
 
             // Transform results to include secondary contacts as additional rows
             $transformedContacts = [];
@@ -1545,11 +1556,21 @@ class DatabaseService
 
             foreach ($primaryContacts as $contact) {
                 if (!in_array($contact->id, $addedContactIds)) {
+                    $contact->groups = $allGroups->get($contact->id, []);
                     $transformedContacts[] = $contact;
                     $addedContactIds[] = $contact->id;
                 }
 
                 if ($contact->secondary_contact_id) {
+                    if (in_array($contact->secondary_contact_id, $addedContactIds)) {
+                        // shift transformedContacts to this index
+                        $index = array_search($contact->secondary_contact_id, $addedContactIds);
+                        $tfc = $transformedContacts[$index];
+                        // delete the secondary contact from the array
+                        unset($transformedContacts[$index]);
+                        $transformedContacts[] = $tfc;
+                        continue;
+                    }
                     $secondaryContact = new \stdClass();
                     $secondaryContact->id = $contact->secondary_contact_id;
                     $secondaryContact->email = $contact->secondary_email;
@@ -1562,13 +1583,10 @@ class DatabaseService
                     $secondaryContact->spouse_partner = $contact->secondary_spouse_partner;
                     $secondaryContact->has_email = $contact->has_email; // Assuming secondary contact shares the same has_email status
                     $secondaryContact->has_address = $contact->has_address; // Assuming secondary contact shares the same has_address status
-                    $secondaryContact->groups = $contact->groups ?? null;
-
-                    // Check if already exists
-                    if (!in_array($secondaryContact->id, $addedContactIds)) {
-                        $transformedContacts[] = $secondaryContact;
-                        $addedContactIds[] = $secondaryContact->id;
-                    }
+                    // Assign groups for secondary contact
+                    $secondaryContact->groups = $allGroups->get($secondaryContact->id, []);
+                    $transformedContacts[] = $secondaryContact;
+                    $addedContactIds[] = $secondaryContact->id;
                 }
             }
 
@@ -1577,10 +1595,6 @@ class DatabaseService
             $perPage = 15;
             $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
             $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
-
-            Log::info("Query Log", DB::getQueryLog());
-
-            Log::info("Retrieved " . $paginatedContacts->count() . " contacts.", $paginatedContacts->toArray());
 
             return $paginatedContacts;
         } catch (\Exception $e) {
