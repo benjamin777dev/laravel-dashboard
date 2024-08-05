@@ -99,7 +99,16 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="openDraftTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+</div>
+
+<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @include('emails.email_templates.email-template-create',['contact'=>$contact])
+        </div>
+    </div>
 </div>
 <script>
     $(document).ready(function(){
@@ -260,6 +269,20 @@
                 showToastError(xhr.responseText);
             }
         });
+    }
+
+    window.openDraftTemplate = function(){
+        var firstModalEl = document.getElementById('composemodal');
+        var firstModal = bootstrap.Modal.getInstance(firstModalEl);
+        if (firstModal) {
+            firstModal.hide();
+        }
+        var templateContent= tinymce.get('elmEmail').getContent()
+        var templateSubject= $("#emailSubject").val();
+        $('#templateContent').val(templateContent);
+        $('#templateSubject').val(templateSubject);
+        var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
+        secondModal.show();
     }
 </script>
             

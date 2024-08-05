@@ -2486,7 +2486,7 @@ class DatabaseService
     public function getContactsByMultipleId($ids)
     {
         try {
-            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(first_name, ' ', last_name) as name"), 'email')->get();
+            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email')->get();
             return $bulkContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2555,6 +2555,17 @@ class DatabaseService
         try {
             $templateDetail = Template::where('zoho_template_id', $templateId)
                                     ->update(['content' => $template['mail_content']]);
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error updating template: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function deleteTemplatesFromDB($templateIds)
+    {
+        try {
+            $templateDetail = Template::whereIn('id', $templateIds)->delete();
             return $templateDetail;
         } catch (\Exception $e) {
             Log::error("Error updating template: " . $e->getMessage());

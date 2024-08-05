@@ -162,7 +162,10 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails'));
+        $selectedContacts = $contacts->filter(function($contact) use ($contactId) {
+            return $contact->id === (int)$contactId;
+        });
+        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts'));
     }
 
     public function getContactJson(){

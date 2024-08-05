@@ -104,7 +104,7 @@ use Carbon\Carbon;
 <script>
     
     
-    let checkedEmails = [];
+    let selectedEmails = [];
 
     function handleCheckboxClick(checkbox) {
         // Get the value of the checkbox
@@ -113,16 +113,16 @@ use Carbon\Carbon;
         // Check if the checkbox is checked
         if (checkbox.checked) {
             // Add value to the array if not already present
-            if (!checkedEmails.includes(emailValue)) {
-                checkedEmails.push(emailValue);
+            if (!selectedEmails.includes(emailValue)) {
+                selectedEmails.push(emailValue);
             }
         } else {
             // Remove value from the array if unchecked
-            checkedEmails = checkedEmails.filter(value => value !== emailValue);
+            selectedEmails = selectedEmails.filter(value => value !== emailValue);
         }
 
         // Optional: Log the array to see the changes
-        console.log(checkedEmails);
+        console.log(selectedEmails);
     }
 
     window.getEmail=function(email){
@@ -159,7 +159,7 @@ use Carbon\Carbon;
     }
 
     window.moveToTrashEmail = function() {
-        console.log("CheckedEmail", checkedEmails);
+        console.log("CheckedEmail", selectedEmails);
 
         $.ajax({
             url: "{{ route('email.moveToTrash') }}",
@@ -169,7 +169,7 @@ use Carbon\Carbon;
             },
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ emailIds: checkedEmails }),
+            data: JSON.stringify({ emailIds: selectedEmails }),
             success: function(response) {
                 fetchEmails();
             },

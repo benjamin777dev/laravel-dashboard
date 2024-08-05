@@ -830,8 +830,10 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             if (data?.data?.length > 0) {
                 $(".bad_date_count").text(data.data.length + " Bad Dates!");
             } else {
-                $(".bad_date_success").html('No Bad Dates, <strong>Great Job!</strong>!');
-            }            
+                $(".bad_date_success").html(
+                    "No Bad Dates, <strong>Great Job!</strong>!"
+                );
+            }
             return data?.data; // Return the data array or object from your response
         },
     },
@@ -1971,7 +1973,7 @@ var tableContact = $("#datatable_contact").DataTable({
     processing: true,
     responsive: true,
     serverSide: true,
-    responsive: true,
+
     columnDefs: [
         { responsivePriority: 2, targets: -7 },
         {
@@ -2001,7 +2003,12 @@ var tableContact = $("#datatable_contact").DataTable({
             defaultContent: "",
             orderable: false,
             render: function (data, type, row) {
-                return `<input type="checkbox" class="emailCheckbox" value="${data.id}"/>`;
+                return `<input type="checkbox" id= "email-checkbox${
+                    data.id
+                }" class="emailCheckbox" value="${data.id}" ${
+                    !row.email ? "disabled" : ""
+                }/>
+                `;
             },
         },
         {
@@ -2316,7 +2323,8 @@ $(".pfilterBtn").on("click", function () {
 });
 $("#compose_email").on("click", function () {
     var checkedItems = getCheckedItems();
-    console.log(checkedItems); // Do something with the checked items
+    console.log(checkedItems);
+    openComposeModal(checkedItems);
 });
 
 $(".filterClosebtn").on("click", function () {
@@ -2501,13 +2509,15 @@ window.createTasksForDeal = function (id, conId) {
     });
 };
 
-var subbmittalPipelineTable = $("#contact-email-table").DataTable({
+var contactEmailTable = $("#contact-email-table").DataTable({
     paging: true,
     searching: true,
     processing: true,
     serverSide: true,
+    responsive: true,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
+    columnDefs: [{ responsivePriority: 2, targets: -7 }],
     columns: [
         {
             data: "subject",
@@ -2600,6 +2610,172 @@ window.viewEmail = function (emailId) {
         error: function (xhr, status, error) {
             // Handle error
             showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+var templateTableList = $("#template-table-list").DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    responsive: true,
+    dom: "Bfrtip", // Integrates buttons with DataTables
+    buttons: [
+        {
+            text: "Remove Selected",
+            className: "btn btn-dark btn-block waves-effect waves-light",
+            action: function (e, dt, node, config) {
+                var selectedIds = [];
+                $(".emailTemplateCheckbox:checked").each(function () {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length > 0) {
+                    $.ajax({
+                        url: "/delete/templates",
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                        },
+                        contentType: "application/json",
+                        data: JSON.stringify(selectedIds),
+                        success: function (response) {
+                            showToast(
+                                "Selected templates deleted successfully."
+                            );
+                            templateTableList.ajax.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error details:", {
+                                status: status,
+                                error: error,
+                                responseText: xhr.responseText,
+                            });
+                            showToastError(
+                                "An error occurred while deleting templates. Please try again."
+                            );
+                        },
+                    });
+                } else {
+                    showToastError("No templates selected.");
+                }
+            },
+        },
+    ],
+    columns: [
+        {
+            className: "dt-control",
+            orderable: false,
+            data: null,
+            defaultContent: "",
+        },
+        {
+            data: null,
+            className: "select-checkbox",
+            defaultContent: "",
+            orderable: false,
+            render: function (data, type, row) {
+                return `
+                    <input type="checkbox" id="email-template-checkbox${
+                        data.id
+                    }" 
+                        class="emailTemplateCheckbox" value="${data.id}" 
+                        ${row.templateType === "public" ? "disabled" : ""}/>
+                `;
+            },
+        },
+        {
+            data: "name",
+            title: "Name",
+            render: function (data, type, row) {
+                return `
+                    <span class="editable" data-name="templateSubject" data-id="${
+                        row.id
+                    }" 
+                        onclick="viewTemplateDetail('${
+                            row.id
+                        }')" style="cursor:pointer;">
+                        ${data}
+                    </span>
+                    ${viewTemplateModal(row.id, row.name)}
+                `;
+            },
+        },
+        {
+            data: "subject",
+            title: "Subject",
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "created_at",
+            title: "Date",
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${
+                    row.id
+                }">${formateDate(data)}</span>`;
+            },
+        },
+    ],
+    ajax: {
+        url: "/get/templates/json", // Ensure this URL is correct
+        type: "GET",
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+        },
+        dataSrc: function (data) {
+            console.log(data, "data is here");
+            return data?.data; // Return the data array or object from your response
+        },
+    },
+});
+
+function viewTemplateModal(id, name) {
+    return `
+        <div class="modal fade" id="viewTemplateModal${id}" data-bs-backdrop="static" 
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewTemplateLabel" 
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl deleteModal">
+                <div class="modal-content dtaskmodalContent">
+                    <div class="modal-header border-0">
+                        <p class="modal-title dHeaderText">${name}</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                            onclick="resetValidation()" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="viewTemplateData${id}">
+                        <!-- Template content will be loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary btn-dark">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.viewTemplateDetail = function (templateId) {
+    event.preventDefault();
+    $.ajax({
+        url: "/read/template/detail/" + templateId,
+        method: "GET",
+        success: function (response) {
+            let viewTemplateContainer = $("#viewTemplateData" + templateId);
+            console.log(response, "viewTemplateContainer");
+            viewTemplateContainer.empty();
+            viewTemplateContainer.html(response);
+            $("#viewTemplateModal" + templateId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            showToastError(
+                "An error occurred while fetching template details."
+            );
             console.error("Ajax Error:", error);
         },
     });

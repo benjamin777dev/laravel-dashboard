@@ -1,11 +1,8 @@
 @extends('layouts.master')
-
+<!DOCTYPE html>
 @section('title') @lang('Inbox') @endsection
 
 @section('content')
-
-
-
 <div class="row">
     <div class="col-12">
         <!-- Left sidebar -->
@@ -13,7 +10,7 @@
             <button type="button" class="btn btn-dark btn-block waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal">
                 Compose
             </button>
-            <div class="mail-list mt-4" onclick = "fetchEmails(event)">
+            <div class="mail-list mt-4" onclick="fetchEmails(event)">
                 {{-- <a href="javascript: void(0);" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
                 <a href="javascript: void(0);"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
                 <a href="javascript: void(0);"><i class="mdi mdi-diamond-stone me-2"></i>Important</a> --}}
@@ -87,6 +84,9 @@
 
         </div>
          <!-- end Col-9 -->
+        <div id="templateList" style="display:none;">
+            @include('components.common-table', ['id' => 'template-table-list'])
+        </div>
 
     </div>
 
@@ -96,7 +96,14 @@
 <div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['contact'=>null])
+            @include('emails.email-create',['contacts'=>$contacts])
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @include('emails.email_templates.email-template-create',['contact'=>null])
         </div>
     </div>
 </div>
@@ -105,15 +112,21 @@
 @endsection
 @section('script')
 
+
+@endsection
 <script>
     window.clickedValue;
-    $(document).ready(function(){
-        fetchEmails();
-    })
-    window.fetchEmails = function(event=null){
+   window.onload = function(){
+       fetchEmails(null);
+ 
+   
+       }
+        function fetchEmails(event=null){
+        console.log("EVENTTTTTTTTTTTT",event);
+        
         if(event){
             let element = event.target.closest('a');
-            console.log(element);
+            console.log("ELEMENTTTTTTTTTTTT",element);
             if (element) {
                 // Remove 'active' class from all links
                 const links = document.querySelectorAll('.mail-list a');
@@ -129,19 +142,13 @@
             }
         }
         if(window.clickedValue == 'Template'){
-            $.ajax({
-                url: "{{ route('email.template')}}",
-                method: 'GET',
-                success: function(response) {
-                    $('#emailList').html(response);
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
+             $("#template-table-list").DataTable().ajax.reload();
+            $("#emailList").hide();
+            $("#templateList").show();
+            fetchEmails
         } else {
+            $("#emailList").show();
+              $("#templateList").hide();
             $.ajax({
                 url: "{{ route('email.list') }}",
                 method: 'GET', // Change to DELETE method
@@ -164,4 +171,3 @@
     
     
 </script>
-@endsection

@@ -327,7 +327,7 @@
 <div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['contact'=>$contact])
+            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contacts])
         </div>
     </div>
 </div>

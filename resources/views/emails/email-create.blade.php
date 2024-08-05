@@ -8,12 +8,26 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple"
-                    data-placeholder="To">
+                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        @php
+                            $selected = '';
+                            if (isset($selectedContacts)) {
+                                foreach ($selectedContacts as $selectedContact) {
+                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                        $selected = 'selected';
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>
+                            {{ $contactDetail['first_name'] }} {{ $contactDetail['last_name'] }}
+                        </option>
                     @endforeach
                 </select>
+
+
             </div>
         </div>
         <div class="mb-3 row">
@@ -22,7 +36,18 @@
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        @php
+                            $selected = '';
+                            if (isset($selectedContacts)) {
+                                foreach ($selectedContacts as $selectedContact) {
+                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                        $selected = 'selected';
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp   
+                        <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -33,7 +58,18 @@
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" {{$contactDetail['email']==(isset($contact['email'])?$contact['email']:false)?'selected':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        @php
+                            $selected = '';
+                            if (isset($selectedContacts)) {
+                                foreach ($selectedContacts as $selectedContact) {
+                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                        $selected = 'selected';
+                                        break;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -62,17 +98,24 @@
 </div>
 
 <script>
-    $(document).ready(function(){
+   $(document).ready(function(){
+        
+        // Initialize Select2 for all select elements
         $("#toSelect").select2({
             placeholder: "To",
         });
+
         $("#ccSelect").select2({
             placeholder: "CC",
-        });
-        $("#bccSelect").select2({
-            placeholder: "BCC",
+           
         });
 
+        $("#bccSelect").select2({
+            placeholder: "BCC",
+            
+        });
+
+        // Initialize TinyMCE
         tinymce.init({
             selector: 'textarea#elmEmail',
             plugins: 'lists link image media preview',
@@ -128,7 +171,7 @@
                                             url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
                                             method: 'GET',
                                             success: function (response) {
-                                               $("#emailSubject").val(response.subject);
+                                                $("#emailSubject").val(response.subject);
                                                 editor.insertContent(response.content);
                                                 api.close();
                                             },
@@ -137,7 +180,6 @@
                                                 alert('Failed to submit the selected option');
                                             }
                                         });
-                                        
                                     }
                                 });
                             },
@@ -151,14 +193,14 @@
             }
         });
 
-
+        // Handle modal reset
         var modal = document.getElementById('composemodal');
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
-            console.log("HIdden BS",modalData );
+            console.log("Hidden BS", modalData);
             if (modalData) {
-                modalData.querySelectorAll('input,  textarea').forEach(function (element) {
+                modalData.querySelectorAll('input, textarea').forEach(function (element) {
                     if (element.tagName.toLowerCase() === 'select') {
                         $(element).val([]).trigger('change');
                     } 
@@ -171,13 +213,21 @@
                 });
             }
         });
-        
+
+        // Handle nested modal behavior
         var secondModalEl = document.getElementById('templateModal');
         secondModalEl.addEventListener('hidden.bs.modal', function () {
             var firstModal = new bootstrap.Modal(document.getElementById('composemodal'));
             firstModal.show();
         });
-    })
+
+        // Trigger change event to ensure pre-selected options are displayed correctly
+        $('#toSelect').trigger('change');
+        $('#ccSelect').trigger('change');
+        $('#bccSelect').trigger('change');
+
+    });
+
 
     window.sendEmails = function(email,isEmailSent){
         var to = $("#toSelect").val();
