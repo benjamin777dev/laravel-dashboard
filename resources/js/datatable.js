@@ -320,7 +320,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     );
                 });
 
-            currentText = $(element).text(); // Set currentText when entering edit mode
+            var currentTextfilter = $(element).text();  // Get the text content of the element
+            currentText = currentTextfilter.replace(/\$|%/g, ''); // Set currentText when entering edit mode
             var dataName = $(element).data("name");
             var dataId = $(element).data("id");
 

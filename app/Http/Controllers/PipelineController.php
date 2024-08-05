@@ -499,6 +499,14 @@ class PipelineController extends Controller
                 ],
                 'skip_mandatory' => true,
             ];
+
+            if (!empty($dbfield) && empty($value)) {
+                // Transform $dbfield to uppercase the first letters and remove underscores
+                $formattedField = str_replace('_', ' ', $dbfield); // Replace underscores with spaces
+                $formattedField = ucwords($formattedField); // Capitalize the first letter of each word
+                // Return the formatted error message
+                return response()->json(['error' => $formattedField . ' cannot be empty'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             
             $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
 
