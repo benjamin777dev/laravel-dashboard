@@ -173,7 +173,7 @@ if(!empty($status) && $status==="Upcomming"){
             $module = $request->input('module');
             $rules = [
                 'id' => 'required|exists:tasks,id',
-                'field' => 'required|in:subject,related_to,due_date,done_task',
+                'field' => 'required|in:subject,related_to,due_date,done_task,detail',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
     
@@ -202,6 +202,9 @@ if(!empty($status) && $status==="Upcomming"){
             $field;
             if($dbfield==="subject"){
                 $field = "Subject";
+            }
+            if($dbfield==="detail"){
+                $field = "Detail";
             }
             if($dbfield==="done_task"){
                 $field = "Status";
