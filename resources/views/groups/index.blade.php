@@ -123,36 +123,48 @@
     @include('common.group.editModal', ['groups' => $ownerGroups])
 
     <script>
-        // window.onload = function() {
-        //     let nextPageUrl = '{{ $contacts->nextPageUrl() }}';
-        // $(window).scroll(function() {
-        //     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-        //         if (nextPageUrl) {
-        //             loadMorePosts();
-        //         }
-        //     }
-        // });
+        window.onload = function() {
+            let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
+            let isLoading = false;
 
-        function loadMorePosts() {
-            $('.spinner').show();
-            $.ajax({
-                url: nextPageUrl,
-                type: 'get',
-                beforeSend: function() {
-                    nextPageUrl = '';
-                },
-                success: function(data) {
-                    console.log(data, 'datatatata')
-                    $('.spinner').hide();
-                    nextPageUrl = data.nextPageUrl;
-                    $('.dbgBodyTable').append(data);
-                    $('.ptableCardDiv').append(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error loading more posts:", error);
-                    $('.spinner').hide();
+            $(window).scroll(function() {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading) {
+                    loadMorePosts();
                 }
             });
+
+            function loadMorePosts() {
+                isLoading = true; // Prevent multiple AJAX calls
+                $.ajax({
+                    url: nextPageUrl,
+                    type: 'get',
+                    beforeSend: function() {
+                        $('.spinner').show();
+                    },
+                    success: function(data) {
+                        $('.spinner').hide();
+                        if (data.trim() === "") {
+                            nextPageUrl = null; // No more data to load
+                            $('.datapagination').hide();
+                            return;
+                        }
+
+                        $('.dbgBodyTable').append(data);
+                        $('.ptableCardDiv').append(data);
+
+                        // Increment page number from next page url query string value and append it to the next page url
+                        nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
+                            return 'page=' + (parseInt(pageNumber) + 1);
+                        });
+                        isLoading = false; // Allow next AJAX call
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading more posts:", error);
+                        $('.spinner').hide();
+                        isLoading = false; // Allow next AJAX call even if there is an error
+                    }
+                });
+            }
         }
 
         window.fetchData = function(sortField = null) {
