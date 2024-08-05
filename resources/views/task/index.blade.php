@@ -160,14 +160,6 @@
         let nextUpcommingTasks = '{{ $upcomingTasks->nextPageUrl() }}';
         window.onload = function() {
             let dddddd= @json($taskcal);
-            let nextPageUrloverdue = '{{ $overdueTasks->nextPageUrl() ? str_replace('/', '', $overdueTasks->nextPageUrl()) : null }}';
-            let isLoading = false;
-
-            $(window).scroll(function() {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading) {
-                    loadMorePosts();
-                }
-            });
             $("#see_moree_overdue").click(function() {
                 if (nextPageUrloverdue !== "") {
                     console.log("yes hittt")
