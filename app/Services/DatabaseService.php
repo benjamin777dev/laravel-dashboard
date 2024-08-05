@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class DatabaseService
 {
@@ -706,7 +707,7 @@ class DatabaseService
             } elseif ($tab == 'Completed') {
                 // These are tasks that are completed
                   $tasks->where('status', 'Completed');
-            } 
+            }
      // Order the tasks by the updated_at field in descending order
         $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
         return $tasks;
@@ -719,55 +720,55 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Task Counts From Database");
-            
+
             $now = now();
             $startOfYear = $now->copy()->startOfYear();
             $endOfYear = $now->copy()->endOfYear();
-    
+
             // Initialize the counts array
             $counts = [
                 'totalCompleted' => 0,
                 'totalTasks' => 0,
                 'monthlyCounts' => []
             ];
-    
+
             // Get total counts for the year
             $counts['totalCompleted'] = Task::where('owner', $user->id)
                 ->where('status', 'Completed')
                 ->whereBetween('updated_at', [$startOfYear, $endOfYear])
                 ->count();
-    
+
             $counts['totalTasks'] = Task::where('owner', $user->id)
                 ->whereBetween('updated_at', [$startOfYear, $endOfYear])
                 ->count();
-    
+
             // Get monthly counts for the current year
             for ($month = 1; $month <= 12; $month++) {
                 $startOfMonth = $now->copy()->month($month)->startOfMonth();
                 $endOfMonth = $now->copy()->month($month)->endOfMonth();
-    
+
                 $monthlyCompletedCount = Task::where('owner', $user->id)
                     ->where('status', 'Completed')
                     ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                     ->count();
-    
+
                 $monthlyTotalCount = Task::where('owner', $user->id)
                     ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                     ->count();
-    
+
                 $counts['monthlyCounts'][$month] = [
                     'completed' => $monthlyCompletedCount,
                     'total' => $monthlyTotalCount
                 ];
             }
-    
+
             return $counts;
         } catch (\Exception $e) {
             Log::error("Error retrieving task counts: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
 
 
     public function retrieveTasksJson(User $user, $accessToken, $dealId = null, $contactId = null, $tab = null)
@@ -777,7 +778,7 @@ class DatabaseService
             $tasks = Task::query()->where('owner', $user->id);
             print_r($tab);
             die;
-    
+
             // Apply tab-specific conditions
             if ($tab == 'Overdue') {
                 // Tasks that have a due date less than today and the task status isn't completed
@@ -800,7 +801,7 @@ class DatabaseService
                 // Default case: no specific tab selected (perhaps all tasks)
                 $tasks->orderBy('updated_at', 'desc');
             }
-    
+
             // Additional filters based on dealId and contactId
             if ($dealId) {
                 $tasks->where('what_id', $dealId);
@@ -808,19 +809,19 @@ class DatabaseService
             if ($contactId) {
                 $tasks->where('who_id', $contactId);
             }
-    
+
             // Execute the query and return the results
             $tasks = $tasks->get();
-    
+
             Log::info("Retrieve Tasks From Database");
-    
+
             return $tasks;
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
 
     public function retreiveDealsJson(User $user, $accessToken, $dealId = null, $contactId = null)
     {
@@ -908,9 +909,9 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve contacts from database");
-    
+
             $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]])->with('userData')->orderBy('updated_at', 'desc');
-    
+
             if (!empty($search)) {
                 $searchTerms = urldecode($search);
                 $query->where(function ($query) use ($searchTerms) {
@@ -919,7 +920,7 @@ class DatabaseService
                           ->orWhere('phone', 'like', '%' . $searchTerms . '%');
                 });
             }
-           
+
             if ($filterobj) {
                 // Check for email filter
                 if (isset($filterobj['email']) && $filterobj['email']) {
@@ -927,14 +928,14 @@ class DatabaseService
                         $query->whereNull('email')->orWhere('email', '');
                     });
                 }
-    
+
                 // Check for mobile filter
                 if (isset($filterobj['mobile']) && $filterobj['mobile']) {
                     $query->where(function ($query) {
                         $query->whereNull('phone')->orWhere('phone', '');
                     });
                 }
-    
+
                 // Check for abcd filter
                 if (isset($filterobj['abcd']) && $filterobj['abcd']) {
                     $query->where(function ($query) {
@@ -950,12 +951,12 @@ class DatabaseService
                     $searchStage ==="A1" ? $searchStage="A+" : $searchStage;
                     $query->where('abcd', '=', $searchStage);
                 });
-            }                       
-    
+            }
+
             $contacts = $query->get();
-    
+
             Log::info("Retrieved " . $contacts->count() . " contacts.");
-    
+
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -965,8 +966,8 @@ class DatabaseService
 
     public function retreiveTasksFordeal(User $user, $accessToken, $tab = '', $dealId = '')
     {
-       
-           
+
+
             try {
                 Log::info("Retrieve Tasks From Database");
                 // Get the current date and time
@@ -975,7 +976,7 @@ class DatabaseService
                 $endOfToday = $now->copy()->endOfDay();
                 // Initialize the query
                 $tasks = Task::where('what_id', $dealId)->with(['dealData']);
-        
+
                 if ($tab == 'Overdue') {
                     // Tasks where due_date is before the start of today and status is not 'Completed'
                     $tasks->where([
@@ -1001,7 +1002,7 @@ class DatabaseService
                     // Tasks where status is 'Completed'
                     $tasks->where('status', 'Completed');
                 }
-        
+
                 // Order the tasks by the updated_at field in descending order
                 $tasks = $tasks->orderBy('updated_at', 'desc')->get();
                 return $tasks;
@@ -1009,22 +1010,22 @@ class DatabaseService
                 Log::error("Error retrieving tasks: " . $e->getMessage());
                 throw $e;
             }
-         
+
     }
 
     public function retreiveTasksForContact(User $user, $accessToken, $tab = '', $dealId = '')
     {
         try {
             Log::info("Retrieve Tasks From Database");
-    
+
             // Get the current date and time
             $now = now();
             $startOfToday = $now->copy()->startOfDay();
             $endOfToday = $now->copy()->endOfDay();
-    
+
             // Initialize the query
             $tasks = Task::where('who_id', $dealId)->with(['contactData']);
-    
+
             if ($tab == 'Overdue') {
                 // Tasks where due_date is before the start of today and status is not 'Completed'
                 $tasks->where([
@@ -1050,7 +1051,7 @@ class DatabaseService
                 // Tasks where status is 'Completed'
                 $tasks->where('status', 'Completed');
             }
-    
+
             // Order the tasks by the updated_at field in descending order
             $tasks = $tasks->orderBy('updated_at', 'desc')->get();
             return $tasks;
@@ -1485,15 +1486,18 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
+        DB::enableQueryLog();
         try {
             Log::info("Retrieve Contacts From Database");
 
             $condition = [
                 ['contacts.contact_owner', $user->root_user_id],
-                ['contacts.zoho_contact_id', '!=', null]
+                ['contacts.zoho_contact_id', '!=', null],
+                ['contacts.isContactCompleted', true],
+                ['contacts.relationship_type', '!=', 'Secondary'],
             ];
 
-            $contacts = Contact::where($condition)
+            $primaryContacts = Contact::where($condition)
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
                 })
@@ -1509,6 +1513,15 @@ class DatabaseService
                     'contacts.spouse_partner',
                     'contacts.has_email',
                     'contacts.has_address',
+                    'c.id as secondary_contact_id',
+                    'c.first_name as secondary_first_name',
+                    'c.last_name as secondary_last_name',
+                    'c.relationship_type as secondary_relationship_type',
+                    'c.email as secondary_email',
+                    'c.auto_address as secondary_auto_address',
+                    'c.spouse_partner as secondary_spouse_partner',
+                    'c.zoho_contact_id as secondary_zoho_contact_id',
+                    'c.contact_owner as secondary_contact_owner',
                     DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner) as partner_id')
                 )
                 ->when($filter, function ($query) use ($filter) {
@@ -1522,14 +1535,54 @@ class DatabaseService
                         });
                     }
                 })
-                ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END') // Primary contacts first
-                ->orderByRaw('CASE WHEN c.id IS NOT NULL THEN 1 ELSE 0 END') // Secondary contacts after their primary
-                ->orderBy('contacts.relationship_type', 'asc') // Then order alphabetically within each group
-                ->orderByRaw("CONCAT_WS(' ', contacts.first_name, contacts.last_name) $sort") // Then order by first_name and last_name
+                ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
                 ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
-                ->paginate();
+                ->get();
 
-            return $contacts;
+            // Transform results to include secondary contacts as additional rows
+            $transformedContacts = [];
+            $addedContactIds = [];
+
+            foreach ($primaryContacts as $contact) {
+                if (!in_array($contact->id, $addedContactIds)) {
+                    $transformedContacts[] = $contact;
+                    $addedContactIds[] = $contact->id;
+                }
+
+                if ($contact->secondary_contact_id) {
+                    $secondaryContact = new \stdClass();
+                    $secondaryContact->id = $contact->secondary_contact_id;
+                    $secondaryContact->email = $contact->secondary_email;
+                    $secondaryContact->auto_address = $contact->secondary_auto_address;
+                    $secondaryContact->contact_owner = $contact->secondary_contact_owner;
+                    $secondaryContact->zoho_contact_id = $contact->secondary_zoho_contact_id;
+                    $secondaryContact->first_name = $contact->secondary_first_name;
+                    $secondaryContact->last_name = $contact->secondary_last_name;
+                    $secondaryContact->relationship_type = $contact->secondary_relationship_type;
+                    $secondaryContact->spouse_partner = $contact->secondary_spouse_partner;
+                    $secondaryContact->has_email = $contact->has_email; // Assuming secondary contact shares the same has_email status
+                    $secondaryContact->has_address = $contact->has_address; // Assuming secondary contact shares the same has_address status
+                    $secondaryContact->groups = $contact->groups ?? null;
+
+                    // Check if already exists
+                    if (!in_array($secondaryContact->id, $addedContactIds)) {
+                        $transformedContacts[] = $secondaryContact;
+                        $addedContactIds[] = $secondaryContact->id;
+                    }
+                }
+            }
+
+            // Manual pagination
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = 15;
+            $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
+            $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
+
+            Log::info("Query Log", DB::getQueryLog());
+
+            Log::info("Retrieved " . $paginatedContacts->count() . " contacts.", $paginatedContacts->toArray());
+
+            return $paginatedContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
