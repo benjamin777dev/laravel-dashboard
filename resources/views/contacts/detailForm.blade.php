@@ -83,7 +83,7 @@
                                         }
                                     }
                                 @endphp
-                                <option value="{{ $contactGroupData['zoho_contact_group_id'] ?? '' }}" {{ $selected }}>
+                                <option value="{{ $contactGroupData['zoho_contact_group_id'] ?? $group['zoho_group_id'] }}" {{ $selected }}>
                                     {{ $group['name'] }}
                                 </option>
                             @endforeach

@@ -584,6 +584,30 @@ class DatabaseService
 
         try {
             Log::info("Retrieve contact From Database");
+            // ['contact_owner', $user->root_user_id],
+            $conditions = [['id', $contactId]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+
+            Log::info("Contacts Conditions", ['contacts' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
+    public function retrieveContactByIdForRoles(User $user, $accessToken, $contactId)
+    {
+
+        try {
+            Log::info("Retrieve contact From Database");
 
             $conditions = [['id', $contactId]];
 
