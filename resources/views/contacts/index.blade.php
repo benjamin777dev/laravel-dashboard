@@ -140,14 +140,14 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+        <div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content" id="modalValues">
                     @include('emails.email-create',['contacts'=>$contacts])
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     @include('emails.email_templates.email-template-create',['contact'=>null])

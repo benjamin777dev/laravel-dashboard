@@ -192,7 +192,7 @@
 
 
         
-            <div class="modal fade" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
+            <div class="modal fade p-5" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered deleteModal">
                     <div class="modal-content">
                         <div class="modal-header saveModalHeaderDiv border-0">

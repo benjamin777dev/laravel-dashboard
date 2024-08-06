@@ -2390,8 +2390,10 @@ class DatabaseService
                 $cleanedFilter = strtok($filter, "\n");
                 if($cleanedFilter=="Draft"){
                     $condition[]=['isEmailSent',false];
+                     $condition[] = ['isDeleted', false];
                 }else if($cleanedFilter == "Sent Mail"){
                     $condition[] = ['isEmailSent', true];
+                    $condition[] = ['isDeleted', false];
                     // Add raw SQL condition to check within JSON field
                 }else if($cleanedFilter=='Trash'){
                     $condition[]=['isDeleted',true];
@@ -2419,10 +2421,21 @@ class DatabaseService
         }
     }
 
-    public function moveToTrash($emailIds)
+    public function moveToTrash($emailIds,$isDeleted)
     {
         try {
-            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted'=>true]);
+            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted'=>$isDeleted]);
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function emailDelete($emailIds)
+    {
+        try {
+            $emails = Email::whereIn('id', $emailIds)->delete();
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2474,6 +2487,7 @@ class DatabaseService
     public function getContactEmailList($id)
     {
         try {
+            $id = (string) $id;
             $emails = Email::whereJsonContains('toEmail', $id) ->with('fromUserData')->orderBy('updated_at', 'desc')->get();
             return $emails;
         } catch (\Exception $e) {
@@ -2550,7 +2564,7 @@ class DatabaseService
     }
 
 
-    public function updateTemplate($templateId, $template)
+    public function updateZohoTemplate($templateId, $template)
     {
         try {
             $templateDetail = Template::where('zoho_template_id', $templateId)
@@ -2573,6 +2587,26 @@ class DatabaseService
         }
     }
 
+    public function updateTemplate($user,$accessToken,$templateId,$template)
+    {
+        try {
+            $templateData = [
+                'subject' => $template['subject'] ?? null,
+                'name' => $template['name'] ?? null,
+                'content'=>$template['content'] ??null,
+                'templateType' => 'private',
+                'ownerId'=>$user->id,
+            ];
 
+            Template::updateOrCreate(
+                ['id' => $templateId],
+                $templateData
+            );
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error saving Zoho templates: " . $e->getMessage());
+            throw $e;
+        }
+    }
 
 }

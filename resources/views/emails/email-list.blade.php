@@ -8,9 +8,11 @@ use Carbon\Carbon;
             <div class="btn-group me-2 mb-2 mb-sm-0">
                 {{-- <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-inbox"></i></button>
                 <button type="button" class="btn btn-dark waves-light waves-effect"><i class="fa fa-exclamation-circle"></i></button> --}}
-                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
+                <button type="button" class="btn btn-dark waves-light waves-effect" id="trashButton" onclick = "moveToTrashEmail(true)"><i class="far fa-trash-alt"></i><span class="ms-1">  Move to trash</button>
+                
             </div>
             {{-- <div class="btn-group me-2 mb-2 mb-sm-0">
+                
                 <button type="button" class="btn btn-dark waves-light waves-effect" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa fa-folder"></i> <i class="mdi mdi-chevron-down ms-1"></i>
                 </button>
@@ -43,10 +45,16 @@ use Carbon\Carbon;
                     <a class="dropdown-item" href="#">Mute</a>
                 </div>
             </div>--}}
+            <div class="btn-group me-2 mb-2 mb-sm-0" id="removeEmail" style="display:none;">
+                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "openDeleteEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Remove selected</button>
+            </div>
+            <div class="btn-group me-2 mb-2 mb-sm-0" id="restoreEmail" style="display:none;">
+                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail(false)"><i class="far fa-trash-alt"></i><span class="ms-1">  Restore selected</button>
+            </div>
         </div> 
         <div>
             <ul class="message-list">
-                @if($emails->count()>0)
+                @if($emails->isNotEmpty())
                     @foreach($emails as $email)
                         <li>
                             <div class="col-mail col-mail-1">
@@ -54,12 +62,25 @@ use Carbon\Carbon;
                                     <input type="checkbox" id="{{$email['id']}}" value="{{$email['id']}}" onclick="handleCheckboxClick(this)">
                                     <label for="{{$email['id']}}" class="toggle"></label>
                                 </div>
-                                <a href="javascript: void(0);" class="title" onclick = "getEmail({{json_encode($email)}})">{{$email['fromUserData']['email']}}, me (3)</a><span class="star-toggle far fa-star"></span>
+                                @php
+                                    $contacts = $email->toUserData;
+                                    if (is_array($contacts) || $contacts instanceof \Illuminate\Support\Collection) {
+                                        $contacts = collect($contacts); // Convert to collection if it's an array
+                                    } else {
+                                        $contacts = collect([]); // Handle as empty collection if not countable
+                                    }
+                                    $firstContact = $contacts->first();
+                                    $remainingCount = $contacts->count() - 1;
+                                @endphp
+                                <a href="javascript: void(0);" class="title text-dark" onclick = "getEmail({{$email}})">To: {{ $firstContact ? $firstContact->first_name . ' ' . $firstContact->last_name : 'No contacts available' }}
+                                @if ($remainingCount > 0)
+                                    ,({{ $remainingCount }})
+                                @endif</a><span class="star-toggle far fa-star"></span>
                             </div>
                             <div class="col-mail col-mail-2">
-                                <a href="javascript: void(0);" class="subject" onclick = "getEmail({{json_encode($email)}})">{{$email['subject']}} <span class="teaser">{{$email['content']}}</span>
+                                <a href="javascript: void(0);" class="subject text-dark" onclick = "getEmail({{$email}})">{{$email['subject']}} <span class="teaser text-muted"> - {{ htmlspecialchars(strip_tags($email['content'])) }}</span>
                                 </a>
-                                <div class="date">{{ Carbon::parse($email['created_at'])->format('Y-m-d') }}</div>
+                                <div class="date">{{ Carbon::parse($email['created_at'])->format('M j') }}</div>
                             </div>
                         </li>
                     @endforeach
@@ -76,8 +97,8 @@ use Carbon\Carbon;
 
     </div><!-- card -->
 
+    @if($emails->count()>0)
     <div class="row">
-        @if($emails->count()>0)
             <div class="col-7">
                 Showing 1 - 20 of {{$emails->count()}}
             </div>
@@ -87,12 +108,12 @@ use Carbon\Carbon;
                     <button type="button" class="btn btn-sm btn-success waves-effect"><i class="fa fa-chevron-right"></i></button>
                 </div>
             </div>
+        </div>
         @endif
-    </div>
 
 </div>
 
-<div class="modal fade" id="draftModal" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="draftModal" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
             
@@ -100,12 +121,28 @@ use Carbon\Carbon;
     </div>
 </div>
 
+<div class="modal fade bs-example-modal-center show" id="confirmEmailDeleteModal" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to do this?</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-dark" onclick="updateTemplate('${id}')">Update template</button>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 <script>
-    
+   
     
     let selectedEmails = [];
-
+    
     function handleCheckboxClick(checkbox) {
         // Get the value of the checkbox
         const emailValue = checkbox.value;
@@ -147,7 +184,12 @@ use Carbon\Carbon;
                 url: "{{ route('email.detail', ['emailId' => ':id']) }}".replace(':id', email.id),
                 method: 'GET',
                 success: function(response) {
-                    $('.message-list').html(response);
+                    $('#emailList').html(response);
+                    if(window.clickedValue=='Trash'){
+                        $('#readEmailTrash').hide();
+                        $('#readRemoveEmail').show();
+                        $('#readRestoreEmail').show();
+                    }
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -158,7 +200,7 @@ use Carbon\Carbon;
         }
     }
 
-    window.moveToTrashEmail = function() {
+    function moveToTrashEmail(isDeleted) {
         console.log("CheckedEmail", selectedEmails);
 
         $.ajax({
@@ -169,7 +211,7 @@ use Carbon\Carbon;
             },
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ emailIds: selectedEmails }),
+            data: JSON.stringify({ emailIds: selectedEmails,isDeleted:isDeleted }),
             success: function(response) {
                 fetchEmails();
             },
@@ -180,5 +222,30 @@ use Carbon\Carbon;
             }
         });
     };
+
+    function openDeleteEmail(){
+        $("#confirmEmailDeleteModal").modal('show')
+    }
+   function deleteEmail() {
+        $.ajax({
+            url: "{{ route('email.delete') }}",
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({ emailIds: selectedEmails}),
+            success: function(response) {
+                fetchEmails();
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    };
+    
 
 </script>

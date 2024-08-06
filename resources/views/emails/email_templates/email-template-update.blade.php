@@ -2,25 +2,26 @@
 
         <div class="card-body">
             <div class="mb-3 row">
-                <label for="example-text-input" class="col-md-2 col-form-label">Subject</label>
+                <label for="templateSubject" class="col-md-2 col-form-label">Subject</label>
                 <div class="col-md-10">
-                    <input class="form-control" type="text" value="{{$templateDetail['subject']}}" id="example-text-input">
+                    <input class="form-control" type="text" value="{{$templateDetail['subject']}}" id="templateSubject{{$templateDetail['id']}}">
                 </div>
             </div>
             <div class="mb-3 row">
-                <label for="example-search-input" class="col-md-2 col-form-label">Content</label>
+                <label for="templateContent" class="col-md-2 col-form-label">Content</label>
                 <div class="col-md-10">
                     <form method="post">
-                        <textarea class="form-control" id="templateContent" name="area">{{ $templateDetail['content'] }}</textarea>
+                        <textarea class="form-control" id="templateContent{{$templateDetail['id']}}" name="area">{{ $templateDetail['content'] }}</textarea>
                     </form>
                 </div>
             </div>
         </div>
 
 <script>
+    var template = @json($templateDetail);
     $(document).ready(function(){
         tinymce.init({
-            selector: 'textarea#templateContent',
+            selector: `textarea#templateContent${template.id}`,
             plugins: 'lists link image media preview',
             toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
             menubar: false,

@@ -296,7 +296,7 @@
     </form>
 </div>
 {{-- view group secton --}}
-<div class="modal fade" id="staticBackdropforViewGroup" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade p-5" id="staticBackdropforViewGroup" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content noteModal">

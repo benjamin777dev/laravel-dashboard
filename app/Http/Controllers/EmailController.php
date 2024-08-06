@@ -211,6 +211,7 @@ class EmailController extends Controller
         $emailId = $request->route('emailId');
         $email = $db->getEmailDetail($emailId);    
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
+        // return response()->json($email);
         return view('emails.email-read',compact('contacts','email'))->render();
     }
 
@@ -254,7 +255,22 @@ class EmailController extends Controller
         $accessToken = $user->getAccessToken();
 
         $emailIds = $request->input('emailIds');
-        $email = $db->moveToTrash($emailIds);    
+        $isDeleted = $request->input('isDeleted');
+        $email = $db->moveToTrash($emailIds,$isDeleted);    
+        return response()->json(['success' => true]);
+    }
+
+    public function emailDelete(Request $request)
+    {
+        $db = new DatabaseService();
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+
+        $emailIds = $request->input('emailIds');
+        $email = $db->emailDelete($emailIds);    
         return response()->json(['success' => true]);
     }
 
@@ -268,7 +284,7 @@ class EmailController extends Controller
         $emailId = request()->route('emailId');
         $accessToken = $user->getAccessToken();
         $email = $db->getEmailDetail($emailId);    
-        return view('emails.email-read', compact('email'))->render();
+        return view('emails.email-read-modal', compact('email'))->render();
     }
 
     public function getEmailCreateModal(Request $request)

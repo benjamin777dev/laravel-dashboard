@@ -193,7 +193,7 @@
                                     </div>
                                 </div>
                                 <!-- Delete Modal -->
-                                <div class="modal fade" id="deleteModalId{{ $note['zoho_note_id'] }}" tabindex="-1">
+                                <div class="modal fade p-5" id="deleteModalId{{ $note['zoho_note_id'] }}" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered deleteModal">
                                         <div class="modal-content">
                                             <div class="modal-header border-0 deleteModalHeaderDiv">

@@ -14,7 +14,7 @@
                             $selected = '';
                             if (isset($selectedContacts)) {
                                 foreach ($selectedContacts as $selectedContact) {
-                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
                                         $selected = 'selected';
                                         break;
                                     }
@@ -40,7 +40,7 @@
                             $selected = '';
                             if (isset($selectedContacts)) {
                                 foreach ($selectedContacts as $selectedContact) {
-                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
                                         $selected = 'selected';
                                         break;
                                     }
@@ -62,7 +62,7 @@
                             $selected = '';
                             if (isset($selectedContacts)) {
                                 foreach ($selectedContacts as $selectedContact) {
-                                    if ($contactDetail['id'] === $selectedContact['id']) {
+                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
                                         $selected = 'selected';
                                         break;
                                     }
@@ -78,13 +78,13 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">Subject</label>
             <div class="col-md-10">
-                <input type="text" id = "emailSubject" value="" class="form-control" placeholder="Subject">
+                <input type="text" id = "emailSubject" value="" class="form-control validate" placeholder="Subject">
             </div>
         </div>
         <div class="mb-3 row">
                 <label for="example-text-input" class="col-md-2 col-form-label">Message</label>
             <form method="post">
-                <textarea class="form-control" id="elmEmail" name="area"></textarea>
+                <textarea class="form-control" class="validate" id="elmEmail" name="area"></textarea>
             </form>
         </div>
 
@@ -92,9 +92,9 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="sendEmails(null,false)">Save as draft</button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
 <script>
@@ -103,6 +103,7 @@
         // Initialize Select2 for all select elements
         $("#toSelect").select2({
             placeholder: "To",
+            selectionCssClass: 'validate'
         });
 
         $("#ccSelect").select2({
@@ -228,6 +229,31 @@
 
     });
 
+    function validateForm() {
+        let isValidate = true;
+        const to = $("#toSelect").val();
+        const cc = $("#ccSelect").val();
+        const bcc = $("#bccSelect").val();
+        const content = tinymce.get('elmEmail').getContent();
+        const subject = $("#emailSubject").val();
+
+        const fields = [
+            { value: to, message: "Please enter To emails" },
+            { value: content, message: "Please enter content" },
+            { value: subject, message: "Please enter subject" }
+        ];
+
+        for (const field of fields) {
+            if (field.value === '' || field.value.length === 0) {
+                showToastError(field.message);
+                isValidate = false;
+                break;
+            }
+        }
+
+        return isValidate;
+    }
+
 
     window.sendEmails = function(email,isEmailSent){
         var to = $("#toSelect").val();
@@ -235,9 +261,10 @@
         var bcc = $("#bccSelect").val();
         var content = tinymce.get('elmEmail').getContent();
         var subject = $("#emailSubject").val();
-        // var toEmails = to.map((val)=>JSON.parse(val))
-        // var ccEmails = cc.map((val)=>JSON.parse(val));
-        // var bccEmails = bcc.map((val)=>JSON.parse(val));
+        let isValidate = validateForm();
+        if(!isValidate){
+            return false;
+        };
         var formData = 
         {
             "to": to,

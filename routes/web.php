@@ -183,6 +183,7 @@ Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->na
 Route::get('/email/detail/draft/{emailId}',[EmailController::class,'emailDetailDraft'])->name('email.detail.draft')->middleware('auth');
 Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('email.template')->middleware('auth');
 Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
+Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('email.delete')->middleware('auth');
 Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
 Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
 
@@ -195,5 +196,6 @@ Route::get('/get/templates/json',[TemplateController::class,'getTemplatesJSON'])
 Route::get('/get/template/detail/{templateId}',[TemplateController::class,'getTemplateDetail'])->name('get.template.detail')->middleware('auth');
 Route::get('/read/template/detail/{templateId}',[TemplateController::class,'readTemplateDetail'])->name('read.template.detail')->middleware('auth');
 Route::post('/delete/templates',[TemplateController::class,'deleteTemplates'])->name('delete.template')->middleware('auth');
+Route::patch('/update/template/{templateId}',[TemplateController::class,'updateTemplate'])->name('delete.template')->middleware('auth');
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

@@ -104,7 +104,7 @@ class TemplateController extends Controller
                 $response = $zoho->getZohoTemplateDetail($template['zoho_template_id']);
                 Log::info("Template detail",[$response]);
                 if($response){
-                    $db->updateTemplate($template['zoho_template_id'],$response['email_templates'][0]);
+                    $db->updateZohoTemplate($template['zoho_template_id'],$response['email_templates'][0]);
                     $templateDetail = $db->getTemplateDetailFromDB($templateId);
                 }else{
                     throw new \Exception("Template Not Found");
@@ -136,7 +136,7 @@ class TemplateController extends Controller
                 $response = $zoho->getZohoTemplateDetail($template['zoho_template_id']);
                 Log::info("Template detail",[$response]);
                 if($response){
-                    $db->updateTemplate($template['zoho_template_id'],$response['email_templates'][0]);
+                    $db->updateZohoTemplate($template['zoho_template_id'],$response['email_templates'][0]);
                     $templateDetail = $db->getTemplateDetailFromDB($templateId);
                 }else{
                     throw new \Exception("Template Not Found");
@@ -164,6 +164,24 @@ class TemplateController extends Controller
        return response()->json($templatesInDB);
     }
 
-
+    public function updateTemplate(Request $request)
+    {
+        try {   
+            $db = new DatabaseService();
+            $zoho = new ZohoCRM();
+            $user = $this->user();
+            if(!$user){
+                return redirect('/login');
+            }
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+            $templateId = $request->route('templateId');
+            $inputData= $request->json()->all();
+            $db->updateTemplate($user,$accessToken,$templateId,$inputData);
+            return response()->json(true);
+        } catch (\Throwable $e) {
+            throw $e;
+        }
+    }
 
 }

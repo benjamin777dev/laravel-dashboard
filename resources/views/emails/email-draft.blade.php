@@ -1,6 +1,6 @@
 <script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
 <div class="modal-header">
-    <h5 class="modal-title" id="draftModalTitle">New Message</h5>
+    <h5 class="modal-title" id="draftModalTitle">{{isset($email)?$email['subject']:''}}</h5>
     <button type="button" class="btn-close" id="emaildraftModalClose" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
@@ -13,11 +13,11 @@
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = ''; // Initialize variable to hold 'selected' attribute
-                            if (isset($email['toEmail'])) {
-                                foreach (json_decode($email['toEmail'],true) as $currEmail) {
+                            if (isset($email['toEmail'])&&(!is_null($email['toEmail']))) {
+                                foreach ($email['toEmail'] as $currEmail) {
                                     if (
-                                        $contactDetail['email'] ===
-                                        $currEmail['email']
+                                        (string)$contactDetail['id'] ===
+                                        $currEmail
                                     ) {
                                         $selected = 'selected'; // If IDs match, mark the option as selected
                                         break; // Exit loop once a match is found
@@ -35,22 +35,22 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccDraftSelect" multiple="multiple"
                     data-placeholder="To">
-                    @foreach($contacts as $contactDetail)
+                    @foreach($contacts as $contactDetails)
                         @php
-                            $selected = ''; // Initialize variable to hold 'selected' attribute
-                            if (isset($email['ccEmail'])) {
+                            $ccSelected = ''; // Initialize variable to hold 'ccSelected' attribute
+                            if (isset($email['ccEmail'])&&(!is_null($email['ccEmail']))) {
                                 foreach (json_decode($email['ccEmail'],true) as $currEmail) {
                                     if (
-                                        $contactDetail['email'] ===
-                                        $currEmail['email']
+                                        (string)$contactDetails['id'] ===
+                                        $currEmail
                                     ) {
-                                        $selected = 'selected'; // If IDs match, mark the option as selected
+                                        $ccSelected = 'selected'; // If IDs match, mark the option as ccSelected
                                         break; // Exit loop once a match is found
                                     }
                                 }
                             }
                         @endphp
-                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetails['id'] }}" {{$ccSelected}}>{{$contactDetails['first_name']}} {{$contactDetails['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -62,20 +62,20 @@
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
                         @php
-                            $selected = ''; // Initialize variable to hold 'selected' attribute
-                            if (isset($email['bccEmail'])) {
-                                foreach (json_decode($email['bccEmail'],true) as $currEmail) {
+                            $bccSelected = ''; // Initialize variable to hold 'selected' attribute
+                            if (isset($email['bccEmail'])&&(!is_null($email['bccEmail']))) {
+                                foreach (json_decode($email['bccEmail']) as $currEmail) {
                                     if (
-                                        $contactDetail['email'] ===
-                                        $currEmail['email']
+                                        (string)$contactDetail['id'] ===
+                                        $currEmail
                                     ) {
-                                        $selected = 'selected'; // If IDs match, mark the option as selected
+                                        $bccSelected = 'selected'; // If IDs match, mark the option as selected
                                         break; // Exit loop once a match is found
                                     }
                                 }
                             }
                         @endphp
-                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" {{$bccSelected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -100,13 +100,13 @@
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
     <button type="button" class="btn btn-dark" onclick="openDraftTemplate()">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}}">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
-<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            @include('emails.email_templates.email-template-create',['contact'=>$contact])
+            @include('emails.email_templates.email-template-create',['contacts'=>$contacts])
         </div>
     </div>
 </div>
@@ -219,15 +219,39 @@
         
     })
 
+    function validateForm() {
+        let isValidate = true;
+        const to = $("#toDraftSelect").val();
+        const content = tinymce.get('draftEmailEditor').getContent();
+        const subject = $("#emailDraftSubject").val();
+
+        const fields = [
+            { value: to, message: "Please enter To emails" },
+            { value: content, message: "Please enter content" },
+            { value: subject, message: "Please enter subject" }
+        ];
+
+        for (const field of fields) {
+            if (field.value === '' || field.value.length === 0) {
+                showToastError(field.message);
+                isValidate = false;
+                break;
+            }
+        }
+
+        return isValidate;
+    }
+
     window.sendDraftEmails = function(email,isEmailSent){
         var to = $("#toDraftSelect").val();
         var cc = $("#ccDraftSelect").val();
         var bcc = $("#bccDraftSelect").val();
         var content = tinymce.get('draftEmailEditor').getContent();
         var subject = $("#emailDraftSubject").val();
-        // var toEmails = to.map((val)=>JSON.parse(val));
-        // var ccEmails = cc.map((val)=>JSON.parse(val));
-        // var bccEmails = bcc.map((val)=>JSON.parse(val));
+        let isValidate = validateForm();
+        if(!isValidate){
+            return false;
+        };
         var formData = 
         {
             "to": to,

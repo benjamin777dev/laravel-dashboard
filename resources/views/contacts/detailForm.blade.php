@@ -289,7 +289,7 @@
 </div>
 @include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
-<div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade p-5" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content noteModal">
@@ -324,14 +324,14 @@
     'type' => 'Contacts',
 ])
 <!-- Modal -->
-<div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
             @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contacts])
         </div>
     </div>
 </div>
-<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             @include('emails.email_templates.email-template-create',['contact'=>$contact])

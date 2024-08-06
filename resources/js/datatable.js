@@ -1880,7 +1880,7 @@ $("#datatable_tasks1 tbody").on("change", ".task_checkbox", function () {
 
 function generateModalHtml(data) {
     return `
-                <div class="modal fade" id="newTaskModalId${
+                <div class="modal fade p-5" id="newTaskModalId${
                     data.id
                 }" tabindex="-1">
                     <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
@@ -2044,10 +2044,13 @@ var tableContact = $("#datatable_contact").DataTable({
             },
         },
         {
-            data: "last_name",
+            data: null,
             title: "Full name",
             render: function (data, type, row) {
-                return `<span>${data || "N/A"}</span>`;
+                const fullName = `${row.first_name ?? ""} ${
+                    row.last_name ?? ""
+                }`.trim();
+                return `<span>${fullName || "N/A"}</span>`;
             },
         },
         {
@@ -2517,7 +2520,6 @@ var contactEmailTable = $("#contact-email-table").DataTable({
     responsive: true,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
-    columnDefs: [{ responsivePriority: 2, targets: -7 }],
     columns: [
         {
             data: "subject",
@@ -2536,7 +2538,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
             title: "Sent By",
             render: function (data, type, row) {
                 console.log("FROM Data", data);
-                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.name}</span>`;
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.first_name} ${data.last_name}</span>`;
             },
         },
         {
@@ -2575,7 +2577,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
 
 function viewEmailModal(id) {
     return `
-                <div class="modal fade testing" onclick="event.preventDefault();"
+                <div class="modal fade testing p-5" onclick="event.preventDefault();"
                     id="viewEmailModal${id}" data-bs-backdrop="static"
                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewEmailLabel"
                     aria-hidden="true">
@@ -2737,22 +2739,22 @@ var templateTableList = $("#template-table-list").DataTable({
 
 function viewTemplateModal(id, name) {
     return `
-        <div class="modal fade" id="viewTemplateModal${id}" data-bs-backdrop="static" 
+        <div class="modal fade p-5" id="viewTemplateModal${id}" data-bs-backdrop="static" 
             data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewTemplateLabel" 
             aria-hidden="true">
             <div class="modal-dialog modal-xl deleteModal">
                 <div class="modal-content dtaskmodalContent">
                     <div class="modal-header border-0">
-                        <p class="modal-title dHeaderText">${name}</p>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                            onclick="resetValidation()" aria-label="Close"></button>
+                        <p class="modal-title dHeaderText" id="templateName${id}" onclick="editName('${id}')">${name}</p>
+                        <button type="button" class="btn-close" id="templateClose" data-bs-dismiss="modal" 
+                         aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="viewTemplateData${id}">
                         <!-- Template content will be loaded here -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary btn-dark">Save changes</button>
+                        <button type="button" class="btn btn-primary btn-dark" onclick="updateTemplate('${id}')">Save changes</button>
                     </div>
                 </div>
             </div>
@@ -2771,6 +2773,54 @@ window.viewTemplateDetail = function (templateId) {
             viewTemplateContainer.empty();
             viewTemplateContainer.html(response);
             $("#viewTemplateModal" + templateId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            showToastError(
+                "An error occurred while fetching template details."
+            );
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+
+window.editName = function (templateId) {
+    var element = document.getElementById("templateName" + templateId);
+    console.log("ELEMENT NAME", element);
+
+    let inputElement = document.createElement("input");
+    inputElement.type = "text";
+    inputElement.className = "form-control"; // Add any classes you need
+    inputElement.id = "templateName" + templateId;
+    inputElement.value = element.textContent.trim();
+    console.log(inputElement);
+
+    // Replace the <p> element with the <input> element
+    element.replaceWith(inputElement);
+};
+
+window.updateTemplate = function (templateId) {
+    event.preventDefault();
+    var subject = $("#templateSubject" + templateId).val();
+    var content = tinymce.get("templateContent" + templateId).getContent();
+    var name = $("#templateName" + templateId).val();
+
+    var jsonData = {
+        subject: subject,
+        content: content,
+        name: name,
+    };
+    $.ajax({
+        url: "/update/template/" + templateId,
+        method: "PATCH",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        contentType: "application/json",
+        dataType: "JSON",
+        data: JSON.stringify(jsonData),
+        success: function (response) {
+            showToast("Template update successfully");
+            $("#templateClose").click();
         },
         error: function (xhr, status, error) {
             showToastError(

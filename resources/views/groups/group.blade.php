@@ -21,7 +21,7 @@
                                     data-index="{{ $loop->index }}" />
                             </div>
                         </div>
-                        <div class="modal fade" id="confirmModel{{ $shownGroup['id'] }}" tabindex="-1"
+                        <div class="modal fade p-5" id="confirmModel{{ $shownGroup['id'] }}" tabindex="-1"
                             aria-labelledby="confirmModelLabel{{ $shownGroup['id'] }}" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered deleteModal">
                                 <div class="modal-content">
