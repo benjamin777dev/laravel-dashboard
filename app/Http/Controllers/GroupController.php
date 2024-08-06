@@ -259,7 +259,6 @@ class GroupController extends Controller
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $zohoGroupId = $request->route('contactGroupId');
-
             $response = $zoho->deleteContactGroup($zohoGroupId);
             Log::info('Update GRoup RESPONSE ' . json_encode($response));
             // if (!$response['data'][0]['code']==="SUCCESS") {

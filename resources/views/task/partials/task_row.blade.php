@@ -21,7 +21,7 @@
                         </a>
                     @elseif ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
                         <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
-                            {{ $task->contactData->first_name ?? '' }}
+                            {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? '' }}
                         </a>
                     @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
                         <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">

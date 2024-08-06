@@ -30,8 +30,9 @@ class TaskController extends Controller
         $overdueTasks = $db->retreiveTasks($user, $accessToken, 'Overdue');
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $taskcal = $this->taskCalculation();
         $status = $request->input('status');
-        
+        if(!empty($status)){
         if (request()->ajax()) {
             if(!empty($status) && $status==="Overdue"){
                 $pageUrl = $overdueTasks->nextPageUrl();
@@ -59,10 +60,37 @@ class TaskController extends Controller
                 'nextPageUrl' => $pageUrl // Also return the next page URL if needed
             ]);
     }
+    if(!empty($status) && $status==="Overdue_today"){
+        $pageUrl = $overdueTasks->nextPageUrl();
+        $view = view('common.tasks.overduecard', [
+            'inProgressTasks' => $overdueTasks,
+            'getdealsTransaction' => $getdealsTransaction,
+            'retrieveModuleData' => $retrieveModuleData,
+        ])->render();
+    
+        return response()->json([
+            'html' => $view,
+            'nextPageUrl' => $pageUrl // Also return the next page URL if needed
+        ]);
+}
+if(!empty($status) && $status==="Upcomming"){
+    $pageUrl = $overdueTasks->nextPageUrl();
+    $view = view('common.tasks.upcommingcard', [
+        'upcomingTasks' => $overdueTasks,
+        'getdealsTransaction' => $getdealsTransaction,
+        'retrieveModuleData' => $retrieveModuleData,
+    ])->render();
+
+    return response()->json([
+        'html' => $view,
+        'nextPageUrl' => $pageUrl // Also return the next page URL if needed
+    ]);
+}
     }
-      
+}
+
         return view('task.index', compact('upcomingTasks', 'inProgressTasks', 
-            'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks'));
+            'completedTasks', 'getdealsTransaction', 'retrieveModuleData', 'overdueTasks','taskcal'));
     }
 
     public function taskForContact()
@@ -145,7 +173,7 @@ class TaskController extends Controller
             $module = $request->input('module');
             $rules = [
                 'id' => 'required|exists:tasks,id',
-                'field' => 'required|in:subject,related_to,due_date,done_task',
+                'field' => 'required|in:subject,related_to,due_date,done_task,detail',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
     
@@ -174,6 +202,9 @@ class TaskController extends Controller
             $field;
             if($dbfield==="subject"){
                 $field = "Subject";
+            }
+            if($dbfield==="detail"){
+                $field = "Detail";
             }
             if($dbfield==="done_task"){
                 $field = "Status";
@@ -302,6 +333,20 @@ class TaskController extends Controller
 
        return view('common.tasks',
             compact('tasks','deal','retrieveModuleData','tab'));
+    }
+
+    public function taskCalculation()
+    {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $db = new DatabaseService();
+        $getTaskCalculatedCounts = $db->getTaskCounts($user);
+
+         return $getTaskCalculatedCounts;
     }
 
 }

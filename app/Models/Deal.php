@@ -136,79 +136,115 @@ class Deal extends Model
     public function getContactRoles()
     {
         $roles = collect();
-
+        $existingIds = collect(); // To keep track of existing IDs
+    
         // Client and Spouse
         $client = $this->getClientFromClientNameOnly();
         if ($client) {
-            $roles->push(
-                ['name' => $client->first_name . ' ' . $client->last_name,
+            if (!$existingIds->contains($client->id)) {
+                $roles->push([
+                    'name' => $client->first_name . ' ' . $client->last_name,
                     'role' => 'Client',
+                    'id' => $client->id,
                     'phone' => $client->phone,
                     'email' => $client->email,
                 ]);
-            $spouse = $client->getSpouse();
-            if ($spouse) {
-                $roles->push([
-                    'name' => $spouse->first_name . ' ' . $spouse->last_name,
-                    'role' => 'Client',
-                    'phone' => $spouse->phone,
-                    'email' => $spouse->email]);
+                $existingIds->push($client->id); // Add the ID to existing IDs
+    
+                $spouse = $client->getSpouse();
+                if ($spouse && !$existingIds->contains($spouse->id)) {
+                    $roles->push([
+                        'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                        'role' => 'Client',
+                        'id' => $spouse->id,
+                        'phone' => $spouse->phone,
+                        'email' => $spouse->email,
+                    ]);
+                    $existingIds->push($spouse->id); // Add the ID to existing IDs
+                }
             }
         }
-
+    
         $clientFromPrimaryContact = $this->getClientFromPrimaryContact();
         if ($clientFromPrimaryContact) {
             foreach ($clientFromPrimaryContact as $contact) {
-                $roles->push(
-                    ['name' => $contact->first_name . ' ' . $contact->last_name,
+                if (!$existingIds->contains($contact->id)) {
+                    $roles->push([
+                        'name' => $contact->first_name . ' ' . $contact->last_name,
                         'role' => 'Client',
+                        'id' => $contact->id,
                         'phone' => $contact->phone,
                         'email' => $contact->email,
                     ]);
-                // $spouse = $contact->getSpouse();
-                // if ($spouse) {
-                //     $roles->push([
-                //         'name' => $spouse->first_name . ' ' . $spouse->last_name,
-                //         'role' => 'Client',
-                //         'phone' => $spouse->phone,
-                //         'email' => $spouse->email]);
-                // }
+                    $existingIds->push($contact->id); // Add the ID to existing IDs
+    
+                    // $spouse = $contact->getSpouse();
+                    // if ($spouse && !$existingIds->contains($spouse->id)) {
+                    //     $roles->push([
+                    //         'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                    //         'role' => 'Client',
+                    //         'id' => $spouse->id,
+                    //         'phone' => $spouse->phone,
+                    //         'email' => $spouse->email,
+                    //     ]);
+                    //     $existingIds->push($spouse->id); // Add the ID to existing IDs
+                    // }
+                }
             }
-           
         }
+    
         // Lead Agent and CHR Agent
         $leadAgent = $this->leadAgent;
         $contactName = $this->contactName;
         if ($leadAgent) {
-            $roles->push(['name' => $leadAgent->name,
-                'role' => 'CHR Agent',
-                'phone' => $leadAgent->phone,
-                'email' => $leadAgent->email,
-            ]);
-            if ($contactName) {
-                $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
-                    'role' => 'Co-Listing Agent',
-                    'phone' => $contactName->phone,
-                    'email' => $contactName->email]);
+            if (!$existingIds->contains($leadAgent->id)) {
+                $roles->push([
+                    'name' => $leadAgent->name,
+                    'role' => 'CHR Agent',
+                    'id' => $leadAgent->id,
+                    'phone' => $leadAgent->phone,
+                    'email' => $leadAgent->email,
+                ]);
+                $existingIds->push($leadAgent->id); // Add the ID to existing IDs
             }
-        } elseif ($contactName) {
-            $roles->push(['name' => $contactName->first_name . ' ' . $contactName->last_name,
+            
+            if ($contactName && !$existingIds->contains($contactName->id)) {
+                $roles->push([
+                    'name' => $contactName->first_name . ' ' . $contactName->last_name,
+                    'role' => 'Co-Listing Agent',
+                    'id' => $contactName->id,
+                    'phone' => $contactName->phone,
+                    'email' => $contactName->email,
+                ]);
+                $existingIds->push($contactName->id); // Add the ID to existing IDs
+            }
+        } elseif ($contactName && !$existingIds->contains($contactName->id)) {
+            $roles->push([
+                'name' => $contactName->first_name . ' ' . $contactName->last_name,
                 'role' => 'CHR Agent',
+                'id' => $contactName->id,
                 'phone' => $contactName->phone,
-                'email' => $contactName->email]);
+                'email' => $contactName->email,
+            ]);
+            $existingIds->push($contactName->id); // Add the ID to existing IDs
         }
-
+    
         // Transaction Manager
         $tm = $this->tmName;
-        if ($tm) {
-            $roles->push(['name' => $tm->name,
+        if ($tm && !$existingIds->contains($tm->id)) {
+            $roles->push([
+                'name' => $tm->name,
                 'role' => 'Transaction Manager',
                 'phone' => $tm->phone,
-                'email' => $tm->email]);
+                'id' => $tm->id,
+                'email' => $tm->email,
+            ]);
+            $existingIds->push($tm->id); // Add the ID to existing IDs
         }
-
+    
         return $roles;
     }
+    
 
     /**
      * Map Zoho data to deal model attributes.
