@@ -420,7 +420,7 @@ class PipelineController extends Controller
             $value = $request->input('value');
             $rules = [
                 'id' => 'required|exists:deals,id',
-                'field' => 'required|in:deal_name,address,stage,representing,sale_price,closing_date,commission,pipeline_probability,client_name',
+                'field' => 'required|in:deal_name,address,stage,representing,sale_price,closing_date,commission,pipeline_probability,client_name_primary,pipeline_probability',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
     
@@ -461,6 +461,9 @@ class PipelineController extends Controller
             $field;
             if($dbfield==="deal_name"){
                 $field = "Deal_Name";
+            }
+            if($dbfield==="pipeline_probability"){
+                $field = "Pipeline_Probability";
             }
             if($dbfield==="client_name_primary"){
                 $field = "Client_Name_Primary";
