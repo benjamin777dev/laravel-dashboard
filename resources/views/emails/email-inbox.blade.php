@@ -1,11 +1,8 @@
 @extends('layouts.master')
-
+<!DOCTYPE html>
 @section('title') @lang('Inbox') @endsection
 
 @section('content')
-
-
-
 <div class="row">
     <div class="col-12">
         <!-- Left sidebar -->
@@ -13,14 +10,14 @@
             <button type="button" class="btn btn-dark btn-block waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal">
                 Compose
             </button>
-            <div class="mail-list mt-4" onclick = "fetchEmails(event)">
-                {{-- <a href="javascript: void(0);" class="active" ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
+            <div class="mail-list mt-4" onclick="fetchEmails(event)">
+                {{-- <a href="javascript: void(0);" class="active " ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
                 <a href="javascript: void(0);"><i class="mdi mdi-star-outline me-2"></i>Starred</a>
                 <a href="javascript: void(0);"><i class="mdi mdi-diamond-stone me-2"></i>Important</a> --}}
                 <a href="javascript: void(0);" class="active"><i class="mdi mdi-email-check-outline me-2"></i>Sent Mail</a>
-                <a href="javascript: void(0);"><i class="mdi mdi-file-outline me-2"></i>Draft</a>
-                <a href="javascript: void(0);"><i class="mdi mdi-trash-can-outline me-2"></i>Trash</a>
-                <a href="javascript: void(0);"><i class="mdi mdi-file-document-outline me-2"></i>Template</a>
+                <a href="javascript: void(0);" class="text-dark"><i class="mdi mdi-file-outline me-2"></i>Draft</a>
+                <a href="javascript: void(0);" class="text-dark" id="trash"><i class="mdi mdi-trash-can-outline me-2"></i>Trash</a>
+                <a href="javascript: void(0);" class="text-dark"><i class="mdi mdi-file-document-outline me-2"></i>Template</a>
             </div>
 
 
@@ -87,81 +84,88 @@
 
         </div>
          <!-- end Col-9 -->
+        <div id="templateList" style="display:none;">
+            @include('components.common-table', ['id' => 'template-table-list'])
+        </div>
 
     </div>
 
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['contact'=>null])
+            @include('emails.email-create',['contacts'=>$contacts])
+        </div>
+    </div>
+</div>
+<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @include('emails.email_templates.email-template-create',['contact'=>null])
         </div>
     </div>
 </div>
 <!-- end modal -->
 
 @endsection
-@section('script')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     window.clickedValue;
-    $(document).ready(function(){
-        fetchEmails();
-    })
-    window.fetchEmails = function(event=null){
-        if(event){
-            let element = event.target.closest('a');
-            console.log(element);
-            if (element) {
-                // Remove 'active' class from all links
-                const links = document.querySelectorAll('.mail-list a');
-                links.forEach(link => link.classList.remove('active'));
-    
-                // Add 'active' class to the clicked link
-                activeElement = element.classList.add('active');
-    
-                // Get the clicked value
-                window.clickedValue = element.innerText.trim();
-                console.log(window.clickedValue);
-                // Add any further actions here, like making an AJAX request or updating the UI
-            }
-        }
-        if(window.clickedValue == 'Template'){
-            $.ajax({
-                url: "{{ route('email.template')}}",
-                method: 'GET',
-                success: function(response) {
-                    $('#emailList').html(response);
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
-        } else {
-            $.ajax({
-                url: "{{ route('email.list') }}",
-                method: 'GET', // Change to DELETE method
-                data:{
-                    'filter':window.clickedValue??'Sent Mail'
-                },
-                success: function(response) {
-                   
-                        $('#emailList').html(response)
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
-        }
+    window.onload = function(){
+        fetchEmails(null);
     }
-
-    
-    
+    function fetchEmails(event=null){
+            if(event){
+                let element = event.target.closest('a');
+                
+                if (element) {
+                    // Remove 'active' class from all links
+                    const links = document.querySelectorAll('.mail-list a');
+                    links.forEach(link => link.classList.remove('active'));
+                    links.forEach(link => link.classList.add('text-dark'));
+        
+                    // Add 'active' class to the clicked link
+                    activeElement = element.classList.add('active');
+                    activeElement = element.classList.remove('text-dark');
+        
+                    // Get the clicked value
+                    window.clickedValue = element.innerText.trim();
+                    console.log(window.clickedValue);
+                    // Add any further actions here, like making an AJAX request or updating the UI
+                }
+            }
+            if(window.clickedValue == 'Template'){
+                $("#template-table-list").DataTable().ajax.reload();
+                $("#emailList").hide();
+                $("#templateList").show();
+                fetchEmails
+            } else {
+                $("#emailList").show();
+                $("#templateList").hide();
+                $.ajax({
+                    url: "{{ route('email.list') }}",
+                    method: 'GET', // Change to DELETE method
+                    data:{
+                        'filter':window.clickedValue??'Sent Mail'
+                    },
+                    success: function(response) {
+                    
+                            $('#emailList').html(response)
+                            if(window.clickedValue=='Trash'){
+                                $('#trashButton').hide();
+                                $('#removeEmail').show();
+                                $('#restoreEmail').show();
+                            }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                    }
+                });
+            }
+    }
 </script>
-@endsection

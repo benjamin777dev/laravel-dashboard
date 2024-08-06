@@ -155,20 +155,30 @@ var table = $("#datatable_pipe_transaction").DataTable({
             title: "Client Name",
             render: function (data, type, row) {
                 console.log("Data", data);
-                let jsonString, name;
+                let jsonString,
+                    names = [];
+
                 if (data) {
                     jsonString = data?.replace(/&quot;/g, '"');
 
                     // Parse the string as JSON
                     data = JSON.parse(jsonString);
-                    name =
-                        (data[0] &&
-                            data[0].Primary_Contact &&
-                            data[0].Primary_Contact.name) ??
-                        "";
+
+                    // Extract names from the data
+                    if (Array.isArray(data)) {
+                        names = data
+                            .filter(
+                                (item) =>
+                                    item.Primary_Contact &&
+                                    item.Primary_Contact.name
+                            )
+                            .map((item) => item.Primary_Contact.name);
+                    }
                 }
 
-                return `<span>${name || "N/A"}</span>`;
+                // Join names into a single string, separated by commas
+                const namesString = names.join(", ") || "N/A";
+                return `<span class="primary-contact-names">${namesString}</span>`;
             },
         },
         {
@@ -255,7 +265,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 if (row.stage === "Under Contract") {
                     return `<span>${data || "N/A"}</span>`;
                 }
-                return `<span>${data || "N/A"}%</span>`;
+                return `<span class="editable" data-name="pipeline_probability" data-id="${
+                    row.id
+                }">${data || "N/A"}%</span>`;
             },
         },
         {
@@ -322,7 +334,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     );
                 });
 
-            currentText = $(element).text(); // Set currentText when entering edit mode
+            var currentTextfilter = $(element).text(); // Get the text content of the element
+            currentText = currentTextfilter.replace(/\$|%|,|.00/g, ""); // Set currentText when entering edit mode
             var dataName = $(element).data("name");
             var dataId = $(element).data("id");
 
@@ -830,8 +843,10 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             if (data?.data?.length > 0) {
                 $(".bad_date_count").text(data.data.length + " Bad Dates!");
             } else {
-                $(".bad_date_success").html('No Bad Dates, <strong>Great Job!</strong>!');
-            }            
+                $(".bad_date_success").html(
+                    "No Bad Dates, <strong>Great Job!</strong>!"
+                );
+            }
             return data?.data; // Return the data array or object from your response
         },
     },
@@ -1040,7 +1055,6 @@ var tableTasks = $("#datatable_tasks").DataTable({
     processing: true,
     serverSide: true,
     responsive: true,
-
     columns: [
         {
             className: "dt-control",
@@ -1066,6 +1080,18 @@ var tableTasks = $("#datatable_tasks").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data ?? "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${
+                    row.id
+                }">${data ?? "N/A"}</span>`;
             },
         },
         {
@@ -1395,6 +1421,18 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data ?? "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${
+                    row.id
+                }">${data ?? "N/A"}</span>`;
             },
         },
         {
@@ -1878,7 +1916,7 @@ $("#datatable_tasks1 tbody").on("change", ".task_checkbox", function () {
 
 function generateModalHtml(data) {
     return `
-                <div class="modal fade" id="newTaskModalId${
+                <div class="modal fade p-5" id="newTaskModalId${
                     data.id
                 }" tabindex="-1">
                     <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
@@ -1971,7 +2009,7 @@ var tableContact = $("#datatable_contact").DataTable({
     processing: true,
     responsive: true,
     serverSide: true,
-    responsive: true,
+
     columnDefs: [
         { responsivePriority: 2, targets: -7 },
         {
@@ -2001,7 +2039,12 @@ var tableContact = $("#datatable_contact").DataTable({
             defaultContent: "",
             orderable: false,
             render: function (data, type, row) {
-                return `<input type="checkbox" class="emailCheckbox" value="${data.id}"/>`;
+                return `<input type="checkbox" id= "email-checkbox${
+                    data.id
+                }" class="emailCheckbox" value="${data.id}" ${
+                    !row.email ? "disabled" : ""
+                }/>
+                `;
             },
         },
         {
@@ -2037,10 +2080,13 @@ var tableContact = $("#datatable_contact").DataTable({
             },
         },
         {
-            data: "last_name",
+            data: null,
             title: "Full name",
             render: function (data, type, row) {
-                return `<span>${data || "N/A"}</span>`;
+                const fullName = `${row.first_name ?? ""} ${
+                    row.last_name ?? ""
+                }`.trim();
+                return `<span>${fullName || "N/A"}</span>`;
             },
         },
         {
@@ -2316,7 +2362,8 @@ $(".pfilterBtn").on("click", function () {
 });
 $("#compose_email").on("click", function () {
     var checkedItems = getCheckedItems();
-    console.log(checkedItems); // Do something with the checked items
+    console.log(checkedItems);
+    openComposeModal(checkedItems);
 });
 
 $(".filterClosebtn").on("click", function () {
@@ -2501,11 +2548,12 @@ window.createTasksForDeal = function (id, conId) {
     });
 };
 
-var subbmittalPipelineTable = $("#contact-email-table").DataTable({
+var contactEmailTable = $("#contact-email-table").DataTable({
     paging: true,
     searching: true,
     processing: true,
     serverSide: true,
+    responsive: true,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
     columns: [
@@ -2526,7 +2574,7 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
             title: "Sent By",
             render: function (data, type, row) {
                 console.log("FROM Data", data);
-                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.name}</span>`;
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.first_name} ${data.last_name}</span>`;
             },
         },
         {
@@ -2565,7 +2613,7 @@ var subbmittalPipelineTable = $("#contact-email-table").DataTable({
 
 function viewEmailModal(id) {
     return `
-                <div class="modal fade testing" onclick="event.preventDefault();"
+                <div class="modal fade testing p-5" onclick="event.preventDefault();"
                     id="viewEmailModal${id}" data-bs-backdrop="static"
                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewEmailLabel"
                     aria-hidden="true">
@@ -2600,6 +2648,220 @@ window.viewEmail = function (emailId) {
         error: function (xhr, status, error) {
             // Handle error
             showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+var templateTableList = $("#template-table-list").DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    responsive: true,
+    dom: "Bfrtip", // Integrates buttons with DataTables
+    buttons: [
+        {
+            text: "Remove Selected",
+            className: "btn btn-dark btn-block waves-effect waves-light",
+            action: function (e, dt, node, config) {
+                var selectedIds = [];
+                $(".emailTemplateCheckbox:checked").each(function () {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length > 0) {
+                    $.ajax({
+                        url: "/delete/templates",
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                        },
+                        contentType: "application/json",
+                        data: JSON.stringify(selectedIds),
+                        success: function (response) {
+                            showToast(
+                                "Selected templates deleted successfully."
+                            );
+                            templateTableList.ajax.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error details:", {
+                                status: status,
+                                error: error,
+                                responseText: xhr.responseText,
+                            });
+                            showToastError(
+                                "An error occurred while deleting templates. Please try again."
+                            );
+                        },
+                    });
+                } else {
+                    showToastError("No templates selected.");
+                }
+            },
+        },
+    ],
+    columns: [
+        {
+            className: "dt-control",
+            orderable: false,
+            data: null,
+            defaultContent: "",
+        },
+        {
+            data: null,
+            className: "select-checkbox",
+            defaultContent: "",
+            orderable: false,
+            render: function (data, type, row) {
+                return `
+                    <input type="checkbox" id="email-template-checkbox${
+                        data.id
+                    }" 
+                        class="emailTemplateCheckbox" value="${data.id}" 
+                        ${row.templateType === "public" ? "disabled" : ""}/>
+                `;
+            },
+        },
+        {
+            data: "name",
+            title: "Name",
+            render: function (data, type, row) {
+                return `
+                    <span class="editable" data-name="templateSubject" data-id="${
+                        row.id
+                    }" 
+                        onclick="viewTemplateDetail('${
+                            row.id
+                        }')" style="cursor:pointer;">
+                        ${data}
+                    </span>
+                    ${viewTemplateModal(row.id, row.name)}
+                `;
+            },
+        },
+        {
+            data: "subject",
+            title: "Subject",
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "created_at",
+            title: "Date",
+            render: function (data, type, row) {
+                return `<span class="editable" data-name="submittalType" data-id="${
+                    row.id
+                }">${formateDate(data)}</span>`;
+            },
+        },
+    ],
+    ajax: {
+        url: "/get/templates/json", // Ensure this URL is correct
+        type: "GET",
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+        },
+        dataSrc: function (data) {
+            console.log(data, "data is here");
+            return data?.data; // Return the data array or object from your response
+        },
+    },
+});
+
+function viewTemplateModal(id, name) {
+    return `
+        <div class="modal fade p-5" id="viewTemplateModal${id}" data-bs-backdrop="static" 
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewTemplateLabel" 
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl deleteModal">
+                <div class="modal-content dtaskmodalContent">
+                    <div class="modal-header border-0">
+                        <p class="modal-title dHeaderText" id="templateName${id}" onclick="editName('${id}')">${name}</p>
+                        <button type="button" class="btn-close" id="templateClose" data-bs-dismiss="modal" 
+                         aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="viewTemplateData${id}">
+                        <!-- Template content will be loaded here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary btn-dark" onclick="updateTemplate('${id}')">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.viewTemplateDetail = function (templateId) {
+    event.preventDefault();
+    $.ajax({
+        url: "/read/template/detail/" + templateId,
+        method: "GET",
+        success: function (response) {
+            let viewTemplateContainer = $("#viewTemplateData" + templateId);
+            console.log(response, "viewTemplateContainer");
+            viewTemplateContainer.empty();
+            viewTemplateContainer.html(response);
+            $("#viewTemplateModal" + templateId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            showToastError(
+                "An error occurred while fetching template details."
+            );
+            console.error("Ajax Error:", error);
+        },
+    });
+};
+
+window.editName = function (templateId) {
+    var element = document.getElementById("templateName" + templateId);
+    console.log("ELEMENT NAME", element);
+
+    let inputElement = document.createElement("input");
+    inputElement.type = "text";
+    inputElement.className = "form-control"; // Add any classes you need
+    inputElement.id = "templateName" + templateId;
+    inputElement.value = element.textContent.trim();
+    console.log(inputElement);
+
+    // Replace the <p> element with the <input> element
+    element.replaceWith(inputElement);
+};
+
+window.updateTemplate = function (templateId) {
+    event.preventDefault();
+    var subject = $("#templateSubject" + templateId).val();
+    var content = tinymce.get("templateContent" + templateId).getContent();
+    var name = $("#templateName" + templateId).val();
+
+    var jsonData = {
+        subject: subject,
+        content: content,
+        name: name,
+    };
+    $.ajax({
+        url: "/update/template/" + templateId,
+        method: "PATCH",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        contentType: "application/json",
+        dataType: "JSON",
+        data: JSON.stringify(jsonData),
+        success: function (response) {
+            showToast("Template update successfully");
+            $("#templateClose").click();
+        },
+        error: function (xhr, status, error) {
+            showToastError(
+                "An error occurred while fetching template details."
+            );
             console.error("Ajax Error:", error);
         },
     });

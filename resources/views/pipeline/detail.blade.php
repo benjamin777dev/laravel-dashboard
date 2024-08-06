@@ -90,7 +90,7 @@
                     id="validationDefault05"
                     @if($deal['locked_s']) disabled @endif 
                     required
-                    value="{{$deal['sale_price']=='0.00'?'':$deal['sale_price']}}">
+                    value="{{$deal['sale_price']=='0.00'?'0':$deal['sale_price']}}">
             </div>
             <div class="col-md-6">
                 <label for="validationDefault06" class="form-label nplabelText">Closing Date</label>
@@ -189,7 +189,7 @@
                             id="validationDefault11" 
                             @if($deal['locked_s']) disabled @endif
                             required
-                            value="{{$deal['commission']=='0.00'?'':$deal['commission']}}">
+                            value="{{$deal['commission']=='0'?'0':$deal['commission']}}">
                     </div>
                     <div class="col-md-6">
                         <label for="commissionflat" class="form-label nplabelText">Commission Flat Fee</label>
@@ -198,7 +198,7 @@
                             id="commissionflat"
                             @if($deal['locked_s']) disabled @endif 
                             required
-                            value="{{ $deal['commission_flat_free'] }}">
+                            value="{{$deal['commission_flat_free']=='0'?'0':$deal['commission_flat_free']}}">
                     </div>
         
                     <div class="col-md-6">

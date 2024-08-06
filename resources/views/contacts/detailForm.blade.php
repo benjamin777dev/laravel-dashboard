@@ -73,30 +73,26 @@
                 <div class="row d-flex justify-content-center mt-100">
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                        <select id="choices-multiple-remove-button_test" placeholder="Select Groups"
-                            multiple>
+                        <select id="choices-multiple-remove-button_test" placeholder="Select Groups" multiple>
                             @foreach ($groups as $group)
                                 @php
                                     $selected = ''; // Initialize variable to hold 'selected' attribute
+                                    $contactGroupData = null; // Initialize variable to hold group data
                                     if (isset($contact['groupsData'])) {
                                         foreach ($contact['groupsData'] as $contactGroup) {
-                                            if (
-                                                $group['id'] ===
-                                                $contactGroup['groupId']
-                                            ) {
+                                            if ($group['id'] === $contactGroup['groupId']) {
                                                 $selected = 'selected'; // If IDs match, mark the option as selected
+                                                $contactGroupData = $contactGroup;
                                                 break; // Exit loop once a match is found
                                             }
                                         }
                                     }
                                 @endphp
-                                <option value="{{ $group['zoho_group_id'] }}" {{ $selected }}>
+                                <option value="{{ $contactGroupData['zoho_contact_group_id'] ?? $group['zoho_group_id'] }}" {{ $selected }}>
                                     {{ $group['name'] }}
                                 </option>
                             @endforeach
                         </select>
-
-
                     </div>
                 </div>
             </div>
@@ -289,7 +285,7 @@
 </div>
 @include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
-<div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade p-5" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content noteModal">
@@ -324,14 +320,14 @@
     'type' => 'Contacts',
 ])
 <!-- Modal -->
-<div class="modal fade" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['contact'=>$contact])
+            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contacts])
         </div>
     </div>
 </div>
-<div class="modal fade" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             @include('emails.email_templates.email-template-create',['contact'=>$contact])

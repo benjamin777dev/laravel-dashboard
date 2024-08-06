@@ -1,4 +1,6 @@
 @extends('layouts.master')
+<!DOCTYPE html>
+
 @section('title', 'zPortal | Contacts')
 
 @section('content')
@@ -138,11 +140,183 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" id="modalValues">
+                    @include('emails.email-create',['contacts'=>$contacts])
+                </div>
+            </div>
+        </div>
+        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    @include('emails.email_templates.email-template-create',['contact'=>null])
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
 @vite(['resources/js/toast.js'])
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    var contacts = @json($contacts);
+    
+    $(document).ready(function(){
+        $("#toSelect").select2({
+            placeholder: "To",
+        });
+        $("#ccSelect").select2({
+            placeholder: "CC",
+        });
+        $("#bccSelect").select2({
+            placeholder: "BCC",
+        });
+
+        tinymce.init({
+            selector: 'textarea#elmEmail',
+            plugins: 'lists link image media preview',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
+            menubar: false,
+            statusbar: false,
+            setup: function (editor) {
+                editor.ui.registry.addButton('customSelect', {
+                    text: 'Select Template',
+                    onAction: function () {
+                        // Fetch data from the server
+                        $.ajax({
+                            url: '/get/templates',  // Replace with your API endpoint
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function (response) {
+                                // Assuming response is an array of options
+                                var items = response.map(function(item) {
+                                    return { text: item.name, value: JSON.stringify(item.id) };
+                                });
+
+                                // Open the dialog with the fetched data
+                                editor.windowManager.open({
+                                    title: 'Select Template',
+                                    body: {
+                                        type: 'panel',
+                                        items: [
+                                            {
+                                                type: 'selectbox',
+                                                name: 'options',
+                                                label: 'Select Option',
+                                                items: items
+                                            }
+                                        ]
+                                    },
+                                    buttons: [
+                                        {
+                                            type: 'cancel',
+                                            text: 'Close'
+                                        },
+                                        {
+                                            type: 'submit',
+                                            text: 'Insert',
+                                            primary: true
+                                        }
+                                    ],
+                                    onSubmit: function (api) {
+                                        var data = api.getData();
+                                        var selectedOption = data.options;
+                                        console.log(selectedOption);
+                                        // Call the API with the selected option
+                                        $.ajax({
+                                            url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
+                                            method: 'GET',
+                                            success: function (response) {
+                                               $("#emailSubject").val(response.subject);
+                                                editor.insertContent(response.content);
+                                                api.close();
+                                            },
+                                            error: function () {
+                                                // Handle any errors
+                                                alert('Failed to submit the selected option');
+                                            }
+                                        });
+                                        
+                                    }
+                                });
+                            },
+                            error: function () {
+                                // Handle any errors
+                                alert('Failed to fetch options');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+        var modal = document.getElementById('composemodal');
+        var modalData = document.getElementById('modal-data');
+
+        modal.addEventListener('hidden.bs.modal', function () {
+            console.log("HIdden BS",modalData );
+            if (modalData) {
+                modalData.querySelectorAll('input,  textarea').forEach(function (element) {
+                    if (element.tagName.toLowerCase() === 'select') {
+                        $(element).val([]).trigger('change');
+                    } 
+                    else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
+                        tinymce.get(element.id).setContent('');
+                    }
+                    else {
+                        element.value = '';
+                    }
+                });
+            }
+        });
+        
+        var secondModalEl = document.getElementById('templateModal');
+        secondModalEl.addEventListener('hidden.bs.modal', function () {
+            var firstModal = new bootstrap.Modal(document.getElementById('composemodal'));
+            firstModal.show();
+        });
+    });
+    window.openComposeModal = function (Ids) {
+        console.log("Open modal ids",Ids);
+        var intIds = Ids.map(id => parseInt(id));
+        var selectedContacts = contacts.filter(contact => intIds.includes(contact.id));
+        var data = {
+            contacts: contacts,
+            selectedContacts: selectedContacts
+        };
+        $.ajax({
+            url: '/get/email-create', 
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'html',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                // Update the modal content with the response
+                $('#modalValues').html(response);
+
+                // Re-initialize Select2
+                $('#toSelect').select2({
+                    placeholder: "To",
+                    
+                });
+
+                // Open the modal
+                $("#composemodal").modal("show");
+                selectedContacts.forEach(element => {
+                    $('#email-checkbox'+element.id).prop('checked', false);
+                });
+            },
+            error: function () {
+                // Handle any errors
+                alert('Failed to load modal content');
+            }
+        });
+    }
     window.onload = function() {
         @foreach ($contacts as $contact)
             var noteTextElement = document.getElementById("note_text{{ $contact['zoho_contact_id'] }}");
@@ -155,7 +329,6 @@
                     validateFormc("", "{{ $contact['zoho_contact_id'] }}");
                 });
             } else {
-                console.log("One or both elements not found for contact ID {{ $contact['zoho_contact_id'] }}");
             }
         @endforeach
 

@@ -10,6 +10,7 @@ use App\Services\DatabaseService;
 class ZohoCRM
 {
     private $apiUrl = 'https://www.zohoapis.com/crm/v6/';
+    private $apiUrl2 = 'https://www.zohoapis.com/crm/v2.2/';
     private $contentURL = 'https://content.zohoapis.com/crm/v3/';
     private $apiNoteUrl = 'https://www.zohoapis.com/crm/v5/';
     private $authUrl = 'https://accounts.zoho.com/oauth/v2/';
@@ -835,9 +836,9 @@ class ZohoCRM
             // trigger workflows
             $inputJson['trigger'] = 'workflow';
             $response = Http::withHeaders([
-                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Authorization' => 'Zoho-oauthtoken ' .$this->access_token,
                 'Content-Type' => 'application/json',
-            ])->delete($this->apiUrl .'Contacts_X_Groups/' . $id);
+            ])->delete($this->apiUrl2 .'Contacts_X_Groups/'.$id);
             return $response;
         } catch (\Throwable $e) {
             Log::error("Error retrieving Update Group: " . $e->getMessage());
