@@ -171,7 +171,6 @@ var table = $("#datatable_pipe_transaction").DataTable({
         
                 // Join names into a single string, separated by commas
                 const namesString = names.join(', ') || "N/A";
-        
                 return `<span class="primary-contact-names">${namesString}</span>`;
             },
         },        
