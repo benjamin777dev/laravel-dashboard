@@ -153,22 +153,28 @@ var table = $("#datatable_pipe_transaction").DataTable({
             title: "Client Name",
             render: function (data, type, row) {
                 console.log("Data", data);
-                let jsonString, name;
+                let jsonString, names = [];
+        
                 if (data) {
                     jsonString = data?.replace(/&quot;/g, '"');
-
+        
                     // Parse the string as JSON
                     data = JSON.parse(jsonString);
-                    name =
-                        (data[0] &&
-                            data[0].Primary_Contact &&
-                            data[0].Primary_Contact.name) ??
-                        "";
+        
+                    // Extract names from the data
+                    if (Array.isArray(data)) {
+                        names = data
+                            .filter(item => item.Primary_Contact && item.Primary_Contact.name)
+                            .map(item => item.Primary_Contact.name);
+                    }
                 }
-
-                return `<span>${name || "N/A"}</span>`;
+        
+                // Join names into a single string, separated by commas
+                const namesString = names.join(', ') || "N/A";
+        
+                return `<span class="primary-contact-names">${namesString}</span>`;
             },
-        },
+        },        
         {
             data: "stage",
             title: "Status",
@@ -253,7 +259,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 if (row.stage === "Under Contract") {
                     return `<span>${data || "N/A"}</span>`;
                 }
-                return `<span>${data || "N/A"}%</span>`;
+                return `<span class="editable" data-name="pipeline_probability" data-id="${
+                    row.id
+                }">${data || "N/A"}%</span>`;
             },
         },
         {

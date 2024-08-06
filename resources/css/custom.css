@@ -3517,6 +3517,16 @@ input[type="button"]:hover {
        text-wrap: nowrap !important;
 }
 
+.primary-contact-names {
+    display: inline-block; /* Ensure the span behaves properly */
+    max-width: 200px; /* Adjust to fit your container */
+    white-space: nowrap; /* Prevent the text from wrapping */
+    overflow: hidden; /* Hide overflowed text */
+    text-overflow: ellipsis; /* Add ellipsis (…) at the end of the text */
+    vertical-align: top; /* Align the text with surrounding elements */
+}
+
+
 /* .number{
     background-color: #444 !important;
     column-rule: #fff;
