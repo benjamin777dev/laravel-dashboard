@@ -155,20 +155,30 @@ var table = $("#datatable_pipe_transaction").DataTable({
             title: "Client Name",
             render: function (data, type, row) {
                 console.log("Data", data);
-                let jsonString, name;
+                let jsonString,
+                    names = [];
+
                 if (data) {
                     jsonString = data?.replace(/&quot;/g, '"');
 
                     // Parse the string as JSON
                     data = JSON.parse(jsonString);
-                    name =
-                        (data[0] &&
-                            data[0].Primary_Contact &&
-                            data[0].Primary_Contact.name) ??
-                        "";
+
+                    // Extract names from the data
+                    if (Array.isArray(data)) {
+                        names = data
+                            .filter(
+                                (item) =>
+                                    item.Primary_Contact &&
+                                    item.Primary_Contact.name
+                            )
+                            .map((item) => item.Primary_Contact.name);
+                    }
                 }
 
-                return `<span>${name || "N/A"}</span>`;
+                // Join names into a single string, separated by commas
+                const namesString = names.join(", ") || "N/A";
+                return `<span class="primary-contact-names">${namesString}</span>`;
             },
         },
         {
@@ -255,7 +265,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 if (row.stage === "Under Contract") {
                     return `<span>${data || "N/A"}</span>`;
                 }
-                return `<span>${data || "N/A"}%</span>`;
+                return `<span class="editable" data-name="pipeline_probability" data-id="${
+                    row.id
+                }">${data || "N/A"}%</span>`;
             },
         },
         {
@@ -322,7 +334,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     );
                 });
 
-            currentText = $(element).text(); // Set currentText when entering edit mode
+            var currentTextfilter = $(element).text(); // Get the text content of the element
+            currentText = currentTextfilter.replace(/\$|%|,|.00/g, ""); // Set currentText when entering edit mode
             var dataName = $(element).data("name");
             var dataId = $(element).data("id");
 
@@ -1042,7 +1055,6 @@ var tableTasks = $("#datatable_tasks").DataTable({
     processing: true,
     serverSide: true,
     responsive: true,
-
     columns: [
         {
             className: "dt-control",
@@ -1068,6 +1080,18 @@ var tableTasks = $("#datatable_tasks").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data ?? "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${
+                    row.id
+                }">${data ?? "N/A"}</span>`;
             },
         },
         {
@@ -1397,6 +1421,18 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
                     return `<span >${data}</span>`;
                 }
                 return `<span class="editable" data-name="subject" data-id="${row.id}">${data}</span>`;
+            },
+        },
+        {
+            data: "detail",
+            title: "Details",
+            render: function (data, type, row) {
+                if (row?.status === "Completed") {
+                    return `<span >${data ?? "N/A"}</span>`;
+                }
+                return `<span class="editable" data-name="detail" data-id="${
+                    row.id
+                }">${data ?? "N/A"}</span>`;
             },
         },
         {

@@ -260,7 +260,7 @@ class ContactController extends Controller
                     $field = "Mailing_Address"; // Adjust field name as needed
                     break;
                 default:
-                    return response()->json(['error' => 'Invalid field type'], Response::HTTP_BAD_REQUEST);
+                    return response()->json(['error' => 'Invalid field '], Response::HTTP_BAD_REQUEST);
             }
     
             $contact = Contact::findOrFail($id);

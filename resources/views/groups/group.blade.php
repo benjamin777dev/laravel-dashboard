@@ -52,8 +52,17 @@
         <tbody class="text-center dbgBodyTable">
             @include('groups.load')
         </tbody>
+        <tfoot class="text-center">
+            <tr class="spinner" style="display: none;">
+                <td colspan="10">
+                    <!-- Add your spinner HTML here -->
+                    <!-- For example, you can use Font Awesome spinner -->
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </td>
+            </tr>
+        </tfoot>
     </table>
-    
+
     @foreach ($shownGroups as $shownGroup)
     <div class="ptableCardDiv">
         <div class="pTableCard">
@@ -61,7 +70,7 @@
                 <div>
                 <p>Group Name</p>
                 <p>{{ $shownGroup['name'] }}</p>
-                </div> 
+                </div>
                 <div>
                 <p>Contacts</p>
                 <p>{{ count($shownGroup['contacts']) }}</p>
@@ -73,7 +82,7 @@
                             <span class="tooltiptext">Add Groups</span>
                         </div>
                 </div>
-            </div>      
+            </div>
         </div>
     </div>
     @endforeach

@@ -420,7 +420,7 @@ class PipelineController extends Controller
             $value = $request->input('value');
             $rules = [
                 'id' => 'required|exists:deals,id',
-                'field' => 'required|in:deal_name,address,stage,representing,sale_price,closing_date,commission,pipeline_probability',
+                'field' => 'required|in:deal_name,address,stage,representing,sale_price,closing_date,commission,pipeline_probability,client_name_primary,pipeline_probability',
                 'value' => 'nullable', // Allow the value to be nullable (empty)
             ];
     
@@ -462,6 +462,9 @@ class PipelineController extends Controller
             if($dbfield==="deal_name"){
                 $field = "Deal_Name";
             }
+            if($dbfield==="pipeline_probability"){
+                $field = "Pipeline_Probability";
+            }
             if($dbfield==="client_name_primary"){
                 $field = "Client_Name_Primary";
             }
@@ -499,6 +502,14 @@ class PipelineController extends Controller
                 ],
                 'skip_mandatory' => true,
             ];
+
+            if (!empty($dbfield) && empty($value)) {
+                // Transform $dbfield to uppercase the first letters and remove underscores
+                $formattedField = str_replace('_', ' ', $dbfield); // Replace underscores with spaces
+                $formattedField = ucwords($formattedField); // Capitalize the first letter of each word
+                // Return the formatted error message
+                return response()->json(['error' => $formattedField . ' cannot be empty'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
             
             $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
 

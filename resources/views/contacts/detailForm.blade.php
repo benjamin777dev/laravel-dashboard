@@ -73,30 +73,26 @@
                 <div class="row d-flex justify-content-center mt-100">
                     <div>
                         <label for="validationDefault02" class="form-label nplabelText mt-2">Groups</label>
-                        <select id="choices-multiple-remove-button_test" placeholder="Select Groups"
-                            multiple>
+                        <select id="choices-multiple-remove-button_test" placeholder="Select Groups" multiple>
                             @foreach ($groups as $group)
                                 @php
                                     $selected = ''; // Initialize variable to hold 'selected' attribute
+                                    $contactGroupData = null; // Initialize variable to hold group data
                                     if (isset($contact['groupsData'])) {
                                         foreach ($contact['groupsData'] as $contactGroup) {
-                                            if (
-                                                $group['id'] ===
-                                                $contactGroup['groupId']
-                                            ) {
+                                            if ($group['id'] === $contactGroup['groupId']) {
                                                 $selected = 'selected'; // If IDs match, mark the option as selected
+                                                $contactGroupData = $contactGroup;
                                                 break; // Exit loop once a match is found
                                             }
                                         }
                                     }
                                 @endphp
-                                <option value="{{ $group['zoho_group_id'] }}" {{ $selected }}>
+                                <option value="{{ $contactGroupData['zoho_contact_group_id'] ?? $group['zoho_group_id'] }}" {{ $selected }}>
                                     {{ $group['name'] }}
                                 </option>
                             @endforeach
                         </select>
-
-
                     </div>
                 </div>
             </div>
