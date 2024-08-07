@@ -45,6 +45,17 @@ function formateDate(data) {
     });
     return formattedDate;
 }
+function fetchTasks() {
+    $.ajax({
+        url: "/pipline-cards",
+        success: function(data) {
+            $('.pipeline-cards-container').html(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+} 
 //pipeline data table code
 var deal;
 var table = $("#datatable_pipe_transaction").DataTable({
@@ -454,6 +465,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                                 .DataTable()
                                 .ajax.reload();
                         }
+                        fetchTasks();
                     },
                     error: function (error) {
                         console.error("Error updating:", error);
@@ -1805,7 +1817,7 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
                 $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
-                showToastError(xhr.responseText);
+                showToastError(error?.responseJSON?.error);
             },
         });
     }
