@@ -12,6 +12,8 @@ use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use DataTables;
@@ -515,7 +517,7 @@ class DashboardController extends Controller
             if (strpos($id, ',') === false) {
                 $response = $zoho->deleteTask($jsonData, $id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                    return response()->json(['error' => "Not found in Zoho crm"],401);
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 if (!$task) {
@@ -526,7 +528,7 @@ class DashboardController extends Controller
                 // Multiple IDs provided
                 $response = $zoho->deleteTaskSelected($jsonData, $id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                    return response()->json(['error' => "Not found in Zoho crm"],401);
                 }
                 $idArray = explode(',', $id);
                 $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();

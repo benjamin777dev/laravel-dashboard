@@ -107,6 +107,8 @@ Route::get('/pipeline-create/{dealId}', [PipelineController::class, 'showCreateP
 Route::get('/pipeline/create/form/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
 Route::post('/pipeline/create', [PipelineController::class, 'createPipeline'])->middleware('auth');
 Route::get('/pipeline-update/{dealId}', [PipelineController::class, 'showCreatePipelineForm']);
+Route::get('/pipline-cards', [PipelineController::class, 'piplineCardUpdate']);
+
 
 Route::post('/deals/update/{id}', [PipelineController::class, 'updateDeals'])->name('deal.update')->middleware('auth');
 

@@ -740,4 +740,29 @@ class PipelineController extends Controller
 
         // return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
+    public  function piplineCardUpdate(Request $request) {
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $accessToken = $user->getAccessToken();
+        $allDeals = $db->retrieveDeals(
+            $user, // user
+            $accessToken,  // access token 
+            null, // search filters if exist
+            null,  // sort filter if exist
+            null,  // sort type if exist
+            null,  // date filter (none)
+            null, // filter
+            true
+        ); 
+
+        $stats = $this->calculateDealStatistics($allDeals);
+        if ($request->ajax()) {
+            return view('components.pipe-cards', $stats)->render();
+        }
+    }
 }
+
+
