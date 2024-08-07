@@ -17,12 +17,7 @@
                 </i>
                 New Transaction
             </div>
-                <div class="input-group-text text-white justify-content-center pTransactionBtn"
-                    data-bs-toggle="modal" data-bs-target="#chooseTransactionModal">
-                    <i class="fas fa-plus plusicon">
-                    </i>
-                    New Submittal
-                </div>
+               
             </div>
         </div>
 

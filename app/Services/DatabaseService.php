@@ -336,10 +336,11 @@ class DatabaseService
         Log::info("Contacts stored into database successfully.");
     }
 
-    public function storeContactIntoDB($contact)
+    public function storeContactIntoDB($id,$contact)
     {
         $helper = new Helper();
-        Log::info("Storing Contacts Into Database");
+        Log::info('Storing Contacts Into Database', ['contact' => $contact]);
+
         
         $user = User::where('root_user_id', $contact['Owner']['id'])->first();
             // Map the data correctly
@@ -482,7 +483,7 @@ class DatabaseService
             ];
 
             // Update or create the contact
-            Contact::updateOrCreate(['zoho_contact_id' => $contact['id']], $mappedData);
+            Contact::updateOrCreate(['id' => $id], $mappedData);
 
         Log::info("Contacts stored into database successfully.");
     }
@@ -951,8 +952,6 @@ class DatabaseService
         try {
             // Initialize tasks query
             $tasks = Task::query()->where('owner', $user->id);
-            print_r($tab);
-            die;
 
             // Apply tab-specific conditions
             if ($tab == 'Overdue') {
