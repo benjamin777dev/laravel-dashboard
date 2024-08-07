@@ -771,7 +771,8 @@ class ContactController extends Controller
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($zohoContactValues);
+               
+                $db->storeContactIntoDB($id,$zohoContactValues);
                 if (isset($zohoContactValues['Groups']) && is_array($zohoContactValues['Groups']) && count($zohoContactValues['Groups']) !== 0) {
                     foreach ($zohoContactValues['Groups'] as $group) {
                         
