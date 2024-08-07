@@ -98,18 +98,17 @@ use Carbon\Carbon;
     </div><!-- card -->
 
     @if($emails->count()>0)
-    <div class="row">
+        <div class="row">
             <div class="col-7">
-                Showing 1 - 20 of {{$emails->count()}}
+                Showing {{ $emails->firstItem() }} - {{ $emails->lastItem() }} of {{ $emails->total() }}
             </div>
             <div class="col-5">
                 <div class="btn-group float-end">
-                    <button type="button" class="btn btn-sm btn-success waves-effect"><i class="fa fa-chevron-left"></i></button>
-                    <button type="button" class="btn btn-sm btn-success waves-effect"><i class="fa fa-chevron-right"></i></button>
+                    {!! $emails->links() !!}
                 </div>
             </div>
         </div>
-        @endif
+    @endif
 
 </div>
 
@@ -121,17 +120,17 @@ use Carbon\Carbon;
     </div>
 </div>
 
-<div class="modal fade bs-example-modal-center show" id="confirmEmailDeleteModal" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
+<div class="modal fade bs-example-modal-center" id="confirmEmailDeleteModal" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" id="trashConfirmModalClose" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to do this?</p>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary btn-dark" onclick="updateTemplate('${id}')">Update template</button>
+                <p style="text-align:center;">Are you sure you want to do this?</p>
+                <div class="modal-footer trashFooterModal">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-dark" onclick="deleteEmail()">Submit</button>
                 </div>
             </div>
         </div><!-- /.modal-content -->
@@ -139,7 +138,13 @@ use Carbon\Carbon;
 </div>
 
 <script>
-   
+   $(document).ready(function(){
+        $(document).on('click', '.pagination a', function (event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            fetchEmails(null,page);
+        });
+   })
     
     let selectedEmails = [];
     
@@ -186,9 +191,9 @@ use Carbon\Carbon;
                 success: function(response) {
                     $('#emailList').html(response);
                     if(window.clickedValue=='Trash'){
-                        $('#readEmailTrash').hide();
-                        $('#readRemoveEmail').show();
-                        $('#readRestoreEmail').show();
+                        $('#readEmailTrash')?.hide();
+                        $('#readRemoveEmail')?.show();
+                        $('#readRestoreEmail')?.show();
                     }
                 },
                 error: function(xhr, status, error) {
@@ -202,31 +207,39 @@ use Carbon\Carbon;
 
     function moveToTrashEmail(isDeleted) {
         console.log("CheckedEmail", selectedEmails);
-
-        $.ajax({
-            url: "{{ route('email.moveToTrash') }}",
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify({ emailIds: selectedEmails,isDeleted:isDeleted }),
-            success: function(response) {
-                fetchEmails();
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-                showToastError(xhr.responseText);
-            }
-        });
+        if(selectedEmails.length==0){
+            showToastError("Please select email")
+        }else{
+            
+            $.ajax({
+                url: "{{ route('email.moveToTrash') }}",
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({ emailIds: selectedEmails,isDeleted:isDeleted }),
+                success: function(response) {
+                    fetchEmails();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                }
+            });
+        }
     };
 
     function openDeleteEmail(){
-        $("#confirmEmailDeleteModal").modal('show')
+        if(selectedEmails.length==0){
+            showToastError("Please select email")
+        }else{
+            $("#confirmEmailDeleteModal").modal('show')
+        }
     }
-   function deleteEmail() {
+    function deleteEmail() {
         $.ajax({
             url: "{{ route('email.delete') }}",
             method: 'PATCH',
@@ -237,6 +250,8 @@ use Carbon\Carbon;
             contentType: 'application/json',
             data: JSON.stringify({ emailIds: selectedEmails}),
             success: function(response) {
+                showToast('Emails deleted successfully')
+                $("#trashConfirmModalClose").click();
                 fetchEmails();
             },
             error: function(xhr, status, error) {

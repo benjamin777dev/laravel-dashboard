@@ -40,7 +40,7 @@
                 </div>
             </div>--}}
             <div class="btn-group me-2 mb-2 mb-sm-0" id="readRemoveEmail" style="display:none;">
-                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "deleteSingleEmail('{{$email['id']}}')"><i class="far fa-trash-alt"></i><span class="ms-1">  Remove selected</button>
+                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "openDeleteSingleEmailModal('{{$email['id']}}')"><i class="far fa-trash-alt"></i><span class="ms-1">  Remove selected</button>
             </div>
             <div class="btn-group me-2 mb-2 mb-sm-0" id="readRestoreEmail" style="display:none;">
                 <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveEmailToTrash('{{$email['id']}}',false)"><i class="far fa-trash-alt"></i><span class="ms-1">  Restore selected</button>
@@ -92,6 +92,23 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade bs-example-modal-center" id="confirmEmailDeleteModal{{$email['id']}}" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" id="trashConfirmModalClose{{$email['id']}}" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="text-align:center;">Are you sure you want to do this?</p>
+                <div class="modal-footer trashFooterModal">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-dark" onclick="deleteSingleEmail('{{$email['id']}}')">Submit</button>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 <script>
     function moveEmailToTrash(id,isDeleted) {
         let selectedEmail = [];
@@ -115,6 +132,11 @@
             }
         });
     };
+
+    function openDeleteSingleEmailModal(id){
+        $("#confirmEmailDeleteModal"+id).modal('show')
+    }
+
     function deleteSingleEmail(id) {
         let selectedEmail = [];
         selectedEmail.push(`${id}`);
@@ -128,6 +150,8 @@
             contentType: 'application/json',
             data: JSON.stringify({ emailIds: selectedEmail}),
             success: function(response) {
+                showToast('Email deleted successfully')
+                $("#trashConfirmModalClose"+id).click();
                 fetchEmails();
             },
             error: function(xhr, status, error) {

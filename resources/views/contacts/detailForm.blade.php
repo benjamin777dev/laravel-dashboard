@@ -1,3 +1,4 @@
+
 <div class="row">
     <div class='card'>
 
@@ -481,6 +482,8 @@
     }
 
     function openEmail(){
+        console.log("jfjfjgfjfjgf");
+        
         $("#composemodal").modal('show');
     }
 

@@ -25,8 +25,11 @@ class Email extends Model
     ];
 
     protected $casts = [
-        'toEmail' => 'array', // Cast toEmail as an array
+        'toEmail' => 'array',
+        'ccEmail' => 'array',
+        'bccEmail' => 'array'
     ];
+    
     public function fromUserData()
     {
         return $this->belongsTo(Contact::class, 'fromEmail');
@@ -35,6 +38,16 @@ class Email extends Model
     public function getToUserDataAttribute()
     {
         return Contact::whereIn('id', $this->toEmail)->get();
+    }
+
+    public function getCCUserDataAttribute()
+    {
+        return Contact::whereIn('id', $this->ccEmail)->get();
+    }
+
+    public function getBCCUserDataAttribute()
+    {
+        return Contact::whereIn('id', $this->bccEmail)->get();
     }
     public function dealData()
     {

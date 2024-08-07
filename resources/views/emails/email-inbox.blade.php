@@ -113,11 +113,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    var contactId = @json($contactId);
     window.clickedValue;
-    window.onload = function(){
+    $(document).ready(function(){
+
         fetchEmails(null);
-    }
-    function fetchEmails(event=null){
+    })
+    function fetchEmails(event=null,page=''){
             if(event){
                 let element = event.target.closest('a');
                 
@@ -141,7 +143,6 @@
                 $("#template-table-list").DataTable().ajax.reload();
                 $("#emailList").hide();
                 $("#templateList").show();
-                fetchEmails
             } else {
                 $("#emailList").show();
                 $("#templateList").hide();
@@ -149,15 +150,16 @@
                     url: "{{ route('email.list') }}",
                     method: 'GET', // Change to DELETE method
                     data:{
-                        'filter':window.clickedValue??'Sent Mail'
+                        'filter':window.clickedValue??'Sent Mail',
+                        'page':page??'',
+                        'contactId':contactId??null
                     },
                     success: function(response) {
-                    
                             $('#emailList').html(response)
                             if(window.clickedValue=='Trash'){
-                                $('#trashButton').hide();
-                                $('#removeEmail').show();
-                                $('#restoreEmail').show();
+                                $('#trashButton')?.hide();
+                                $('#removeEmail')?.show();
+                                $('#restoreEmail')?.show();
                             }
                     },
                     error: function(xhr, status, error) {

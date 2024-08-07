@@ -6,9 +6,7 @@ body {
 .bg-black {
     background-color: #000000 !important;
 }
-.card {
-    margin-bottom: 0 !important;
-}
+
 .card-body-padding0 {
     padding: 0 !important;
 }
@@ -3547,7 +3545,6 @@ form .tox .tox-toolbar__primary .tox-toolbar__group .tox-tbtn .tox-icon svg {
     vertical-align: top; /* Align the text with surrounding elements */
 }
 
-/* .number{
-    background-color: #444 !important;
-    column-rule: #fff;
-} */
+.trashFooterModal {
+    justify-content: space-evenly;
+}

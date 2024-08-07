@@ -34,8 +34,9 @@ class EmailController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
+        $contactId = $request->query('contactId');
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
-        return view('emails.email-inbox',compact('contacts'));
+        return view('emails.email-inbox',compact('contacts','contactId'));
     }
 
     public function emailList(Request $request)
@@ -44,7 +45,8 @@ class EmailController extends Controller
         $user = $this->user();
         $accessToken = $user->getAccessToken();
         $filter = $request->query('filter');
-        $emails = $db->getEmails($user,$filter);
+        $toEmail = $request->query('contactId');
+        $emails = $db->getEmails($user,$filter,$toEmail);
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);          
         return view('emails.email-list',compact('contacts','emails'))->render();
     }

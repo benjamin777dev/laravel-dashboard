@@ -2437,9 +2437,9 @@ class DatabaseService
             // Validate and encode email data
             $emailData = [
                 'fromEmail' => $user->id ?? null,
-                'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? json_encode($input['to']) : null,
-                'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? json_encode($input['cc']) : null,
-                'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? json_encode($input['bcc']) : null,
+                'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? $input['to'] : null,
+                'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? $input['cc'] : null,
+                'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? $input['bcc'] : null,
                 'subject' => $input['subject'] ?? null,
                 'content' => $input['content'] ?? null,
                 'message_id' => $input['message_id'] ?? null,
@@ -2476,7 +2476,7 @@ class DatabaseService
 
     }
 
-    public function getEmails($user,$filter='Inbox')
+    public function getEmails($user,$filter='Sent Email',$contactId)
     {
         try {
             $condition = [['userId',$user->id]];
@@ -2495,9 +2495,13 @@ class DatabaseService
                     $condition[]=['isEmailSent',true];
                 }
             }
-            
-            $emails = Email::where($condition)->with('fromUserData')->orderBy('updated_at','DESC')->get();
-            return $emails;
+
+            $emails = Email::where($condition);
+            if($contactId){
+             $emails= $emails->whereJsonContains('toEmail', $contactId);
+            }
+            $emailList = $emails->with('fromUserData')->orderBy('updated_at','DESC')->paginate(10);
+            return $emailList;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
