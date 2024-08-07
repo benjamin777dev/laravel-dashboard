@@ -39,7 +39,7 @@
                         @php
                             $ccSelected = ''; // Initialize variable to hold 'ccSelected' attribute
                             if (isset($email['ccEmail'])&&(!is_null($email['ccEmail']))) {
-                                foreach (json_decode($email['ccEmail'],true) as $currEmail) {
+                                foreach ($email['ccEmail'] as $currEmail) {
                                     if (
                                         (string)$contactDetails['id'] ===
                                         $currEmail
@@ -64,7 +64,7 @@
                         @php
                             $bccSelected = ''; // Initialize variable to hold 'selected' attribute
                             if (isset($email['bccEmail'])&&(!is_null($email['bccEmail']))) {
-                                foreach (json_decode($email['bccEmail']) as $currEmail) {
+                                foreach ($email['bccEmail'] as $currEmail) {
                                     if (
                                         (string)$contactDetail['id'] ===
                                         $currEmail
@@ -296,13 +296,13 @@
     }
 
     window.openDraftTemplate = function(){
-        var firstModalEl = document.getElementById('composemodal');
+        var firstModalEl = document.getElementById('draftModal');
         var firstModal = bootstrap.Modal.getInstance(firstModalEl);
         if (firstModal) {
             firstModal.hide();
         }
-        var templateContent= tinymce.get('elmEmail').getContent()
-        var templateSubject= $("#emailSubject").val();
+        var templateContent= tinymce.get('draftEmailEditor').getContent()
+        var templateSubject= $("#emailDraftSubject").val();
         $('#templateContent').val(templateContent);
         $('#templateSubject').val(templateSubject);
         var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));

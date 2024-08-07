@@ -222,10 +222,6 @@
         @endforeach
     </div>
 </div>
-<div class="datapagination d-none">
-
-    @include('common.pagination', ['module' => $contacts])
-</div>
 <script>
     window.onload = function() {
         let nextPageUrl = '{{ $contacts->nextPageUrl() }}';

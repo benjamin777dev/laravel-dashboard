@@ -17,48 +17,16 @@
                 </i>
                 New Transaction
             </div>
-                <div class="input-group-text text-white justify-content-center pTransactionBtn"
-                    data-bs-toggle="modal" data-bs-target="#chooseTransactionModal">
-                    <i class="fas fa-plus plusicon">
-                    </i>
-                    New Submittal
-                </div>
+               
             </div>
         </div>
 
 
 
         <div class="pipeline-cards-container">
-            @component('components.pipe-cards', [
-                'title' => 'Sales Volume',
-                'value' => '$' . number_format($totalSalesVolume, 0, '.', ','),
-            ])
-            @endcomponent
-
-            @component('components.pipe-cards', [
-                'title' => 'Avg Commission',
-                'value' => number_format($averageCommission, 2) . '%',
-            ])
-            @endcomponent
-
-            @component('components.pipe-cards', [
-                'title' => 'Potential GCI',
-                'value' => '$' . number_format($totalPotentialGCI, 0, '.', ','),
-            ])
-            @endcomponent
-
-            @component('components.pipe-cards', [
-                'title' => 'Avg Probability',
-                'value' => number_format($averageProbability, 2) . '%',
-            ])
-            @endcomponent
-
-            @component('components.pipe-cards', [
-                'title' => 'Probable GCI',
-                'value' => '$' . number_format($totalProbableGCI, 0, '.', ','),
-            ])
-            @endcomponent
+             @include('components.pipe-cards')
         </div>
+        
 
         <div class="pfilterDiv">
             <div class="pcommonFilterDiv dataTables_filter">
@@ -122,7 +90,6 @@
 
 
     <script>
-      
         var prevSelectedColumn = null;
         var prevSortDirection = "";
         // Add an event listener to send search term as request

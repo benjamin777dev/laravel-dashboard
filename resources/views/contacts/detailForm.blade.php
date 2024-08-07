@@ -1,7 +1,6 @@
+
 <div class="row">
     <div class='card'>
-
-   
     <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
         method="POST" onsubmit="return validateContactForm();">
         @csrf
@@ -9,6 +8,7 @@
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
             >
+            <div id="popup" class="text-danger"></div>
             <p class="npinfoText p-2">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
@@ -481,6 +481,8 @@
     }
 
     function openEmail(){
+        console.log("jfjfjgfjfjgf");
+        
         $("#composemodal").modal('show');
     }
 

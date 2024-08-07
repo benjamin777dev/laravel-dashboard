@@ -45,6 +45,17 @@ function formateDate(data) {
     });
     return formattedDate;
 }
+function fetchTasks() {
+    $.ajax({
+        url: "/pipline-cards",
+        success: function(data) {
+            $('.pipeline-cards-container').html(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+} 
 //pipeline data table code
 var deal;
 var table = $("#datatable_pipe_transaction").DataTable({
@@ -454,6 +465,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                                 .DataTable()
                                 .ajax.reload();
                         }
+                        fetchTasks();
                     },
                     error: function (error) {
                         console.error("Error updating:", error);
@@ -1805,7 +1817,7 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
                 $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
-                showToastError(xhr.responseText);
+                showToastError(error?.responseJSON?.error);
             },
         });
     }
@@ -2617,7 +2629,7 @@ function viewEmailModal(id) {
                     id="viewEmailModal${id}" data-bs-backdrop="static"
                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewEmailLabel"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                    <div class="modal-dialog modal-lg deleteModal">
                         <div class="modal-content dtaskmodalContent">
                             <div class="modal-header border-0">
                                 <p class="modal-title dHeaderText">Email</p>
@@ -2634,23 +2646,24 @@ function viewEmailModal(id) {
 }
 
 window.viewEmail = function (emailId) {
-    event.preventDefault();
-    $.ajax({
-        url: "/get/email/modal/" + emailId,
-        method: "GET",
-        success: function (response) {
-            let viewEmailContainer = $("#viewEmailDetails" + emailId);
-            console.log(response, "viewEmailContainer");
-            viewEmailContainer.empty();
-            const card = viewEmailContainer.html(response);
-            $("#viewEmailModal" + emailId).modal("show");
-        },
-        error: function (xhr, status, error) {
-            // Handle error
-            showToastError(error);
-            console.error("Ajax Error:", error);
-        },
-    });
+    window.location.href = "/emails?contactId=" + contactId;
+    // event.preventDefault();
+    // $.ajax({
+    //     url: "/get/email/modal/" + emailId,
+    //     method: "GET",
+    //     success: function (response) {
+    //         let viewEmailContainer = $("#viewEmailDetails" + emailId);
+    //         console.log(response, "viewEmailContainer");
+    //         viewEmailContainer.empty();
+    //         const card = viewEmailContainer.html(response);
+    //         $("#viewEmailModal" + emailId).modal("show");
+    //     },
+    //     error: function (xhr, status, error) {
+    //         // Handle error
+    //         showToastError(error);
+    //         console.error("Ajax Error:", error);
+    //     },
+    // });
 };
 var templateTableList = $("#template-table-list").DataTable({
     paging: true,

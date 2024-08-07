@@ -8,7 +8,7 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To">
+                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search">
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = '';
@@ -33,43 +33,21 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
+                <select class="form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        @php
-                            $selected = '';
-                            if (isset($selectedContacts)) {
-                                foreach ($selectedContacts as $selectedContact) {
-                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
-                                        $selected = 'selected';
-                                        break;
-                                    }
-                                }
-                            }
-                        @endphp   
-                        <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
         </div>
         <div class="mb-3 row">
-            <label for="example-text-input" class="col-md-2 col-form-label">BCC</label>
+            <label for="example-text-input" class="col-md-2 cmultipleol-form-label">BCC</label>
             <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
+                <select class="form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="To">
                     @foreach($contacts as $contactDetail)
-                        @php
-                            $selected = '';
-                            if (isset($selectedContacts)) {
-                                foreach ($selectedContacts as $selectedContact) {
-                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
-                                        $selected = 'selected';
-                                        break;
-                                    }
-                                }
-                            }
-                        @endphp
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
             </div>
@@ -96,15 +74,18 @@
     <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>   
 
 <script>
-   $(document).ready(function(){
-        
+    $(document).ready(function(){
         // Initialize Select2 for all select elements
         $("#toSelect").select2({
             placeholder: "To",
-            selectionCssClass: 'validate'
+            allowClear:true,
+            tags:true
         });
+
+        
 
         $("#ccSelect").select2({
             placeholder: "CC",
@@ -309,7 +290,7 @@
         var firstModalEl = document.getElementById('composemodal');
         var firstModal = bootstrap.Modal.getInstance(firstModalEl);
         if (firstModal) {
-            firstModal.hide();
+            firstModal?.hide();
         }
         var templateContent= tinymce.get('elmEmail').getContent()
         var templateSubject= $("#emailSubject").val();
