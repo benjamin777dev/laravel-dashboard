@@ -1,7 +1,5 @@
 <div class="row">
     <div class='card'>
-
-   
     <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
         method="POST" onsubmit="return validateContactForm();">
         @csrf
@@ -9,6 +7,7 @@
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
             >
+            <div id="popup" class="text-danger"></div>
             <p class="npinfoText p-2">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
@@ -366,6 +365,19 @@
     }).on('select2:close', () => {
         $(document).off('scroll.select2');
     });
+    var errorMessage = @json(session('error'));
+    console.log(errorMessage,'errorMessage')
+
+if (errorMessage) {
+    var popup = document.getElementById('popup');
+    popup.textContent = errorMessage;
+    popup.style.display = 'block';
+
+    // Hide the popup after 2 seconds
+    setTimeout(function() {
+        popup.style.display = 'none';
+    }, 1000);
+}
 });
 
     function formatState(state) {

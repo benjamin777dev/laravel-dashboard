@@ -119,10 +119,10 @@
                                             </td>
                                             <td>
                                                 @if ($task['related_to'] == 'Contacts')
-                                                    <span>Related to: {{ $task->contactData->first_name ?? '' }}
-                                                        {{ $task->contactData->last_name ?? 'General' }}</span>
+                                                   <span>Related to:<a href="/contacts-view/{{$task->contactData->id ?? ""}}"> {{ $task->contactData->first_name ?? '' }}
+                                                        {{ $task->contactData->last_name ?? 'General' }}</a> </span>
                                                 @elseif ($task['related_to'] == 'Deals')
-                                                    <span>Related to: {{ $task->dealData->deal_name ?? 'General' }}</span>
+                                               <span>Related to: <a href="/pipeline-view/{{$task->dealData->id ?? ""}}"> {{ $task->dealData->deal_name ?? 'General' }}</a></span>
                                                 @else
                                                     <span>Related to: General</span>
                                                 @endif

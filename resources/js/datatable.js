@@ -45,6 +45,17 @@ function formateDate(data) {
     });
     return formattedDate;
 }
+function fetchTasks() {
+    $.ajax({
+        url: "/pipline-cards",
+        success: function(data) {
+            $('.pipeline-cards-container').html(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+} 
 //pipeline data table code
 var deal;
 var table = $("#datatable_pipe_transaction").DataTable({
@@ -77,13 +88,6 @@ var table = $("#datatable_pipe_transaction").DataTable({
     if (!(data.tm_preference === 'Non-TM' && data.representing === 'Buyer') ) {
         if (row?.submittals?.length === 0) {
             deal = data;
-            submittalSection = `
-            <div style="color:#222;" class="ps-2" id="addSubmittal" onclick="showSubmittalFormType()">
-                <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon"
-               title="Add Submittal"></i>
-            </div>
-        `;
-        
         } else {
             deal = data;
             console.log(row,'row submittalType');
@@ -447,6 +451,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                                 .DataTable()
                                 .ajax.reload();
                         }
+                        fetchTasks();
                     },
                     error: function (error) {
                         console.error("Error updating:", error);
@@ -1779,7 +1784,9 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
                 $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
-                showToastError(xhr.responseText);
+                showToastError(xhr?.responseJSON?.error);
+                $("#datatable_tasks1_processing").css("display", "none");
+                $("#datatable_tasks_processing").css("display", "none");
             },
         });
     }
