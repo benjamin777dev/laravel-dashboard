@@ -208,7 +208,10 @@ class Contact extends Model
         return $this->hasMany(Contact::class, 'referred_id');
     }
 
-
+    public function toUserData()
+    {
+        return $this->hasMany(Email::class, 'toEmail');
+    }
     public function getSpouse()
     {
         if (is_null($this->spouse_partner) || $this->spouse_partner == '') {
