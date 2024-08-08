@@ -19,7 +19,7 @@
                 @endif
             </h4>
         </div>
-        <div class = "actions">
+        <div class = "actions d-flex">
             <a href="{{ url('/pipeline-view/' . $submittal['dealData']['id']) }}">
                 <div class="input-group-text text-white justify-content-center ppipeBtn"  >
                     <i class="fas fa-times">

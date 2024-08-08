@@ -19,15 +19,7 @@
                 @endif
             </h4>
         </div>
-        <div class = "actions">
-            
-            <a>
-                <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal(true)"><i class="fas fa-save">
-                    </i>
-                    Update
-                </div>
-            </a>
-        </div>
+      
     </div>
 
     {{-- Listing Submittals--}}
