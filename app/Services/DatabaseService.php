@@ -2067,7 +2067,9 @@ class DatabaseService
     {
         try {
 
-            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
+            //old query
+            // $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
+            $submittalData = Submittals::where([['dealId', $dealId]])->with('userData','dealData')->orderBy('updated_at','desc')->get();
             return $submittalData;
         } catch (\Exception $e) {
 
@@ -2853,6 +2855,36 @@ class DatabaseService
             return true;
         } catch (\Exception $e) {
             Log::error("Error saving Zoho templates: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createContactIfNotExists($user, $emails)
+    {
+        try {
+            $createdContacts=[];
+            foreach ($emails as $email) {
+                $contact = [
+                    'email' => $email['email'],
+                    'last_name' => 'CHR', // Adjust if needed
+                    'isContactCompleted' => false,
+                    'contact_owner' => $user->root_user_id,
+                    'isInZoho' => false,
+                    'zoho_contact_id' => $email['id'],
+                ];
+                $createdContact = Contact::create($contact);
+                $createdContacts[] = $createdContact['id'];
+            }
+
+            // Fetch newly created contacts to return them
+            $newContacts = Contact::whereIn('id', $createdContacts)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
+            
+            // Log the newly created contacts
+            Log::info('New Contacts Created', ['contacts' => $newContacts]);
+
+            return $newContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
         }
     }

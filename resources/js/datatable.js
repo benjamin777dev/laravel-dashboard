@@ -1,5 +1,6 @@
 const urlParts = window.location.pathname.split("/"); // Split the URL by '/'
 const contactId = urlParts.pop();
+window.dealId;
 console.log("datatable ContactId and uRl", contactId, urlParts);
 function number_format(number, decimals, dec_point, thousands_sep) {
     // Function to format number with commas for thousands and specified decimals
@@ -48,16 +49,17 @@ function formateDate(data) {
 function fetchTasks() {
     $.ajax({
         url: "/pipline-cards",
-        success: function(data) {
-            $('.pipeline-cards-container').html(data);
+        success: function (data) {
+            $(".pipeline-cards-container").html(data);
         },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
-        }
+        error: function (xhr, status, error) {
+            console.error("Error:", error);
+        },
     });
-} 
+}
+
+var dealDataForsubMittal = null;
 //pipeline data table code
-var deal;
 var table = $("#datatable_pipe_transaction").DataTable({
     paging: true,
     searching: true,
@@ -90,16 +92,14 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     )
                 ) {
                     if (row?.submittals?.length === 0) {
-                        deal = data;
+                        console.log(row, "row is hereeeetexxttt");
                         submittalSection = `
-            <div style="color:#222;" class="ps-2" id="addSubmittal" onclick="showSubmittalFormType()">
+            <div style="color:#222;" class="ps-2" id="addSubmittal" onclick="showSubmittalFormType('${row?.representing}', '${row?.tm_preference}', '${row?.id}')">
                 <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon"
                title="Add Submittal"></i>
             </div>
         `;
                     } else {
-                        deal = data;
-                        console.log(row, "row submittalType");
                         submittalSection = `
                 <a href="/submittal-view/${row.submittals[0]?.submittalType}/${row?.submittals[0]?.id}" target="_blank">
                     <div style="color:#222;" class="ps-2" id="addSubmittal">
@@ -521,21 +521,15 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
-window.showSubmittalFormType = function () {
-    console.log("SUBMITTAL DATA", deal);
+window.showSubmittalFormType = function (representing, tm_preference, rowid) {
+    window.dealId = rowid;
     let submittalData;
-    if (deal.representing === "Buyer" && deal.tm_preference === "CHR TM") {
-        addSubmittal("buyer-submittal", deal);
-    } else if (
-        deal.representing === "Seller" &&
-        deal.tm_preference === "CHR TM"
-    ) {
-        addSubmittal("listing-submittal", deal);
-    } else if (
-        deal.representing === "Seller" &&
-        deal.tm_preference === "Non-TM"
-    ) {
-        addSubmittal("listing-submittal", deal, "Non-TM");
+    if (representing === "Buyer" && tm_preference === "CHR TM") {
+        addSubmittal("buyer-submittal", null);
+    } else if (representing === "Seller" && tm_preference === "CHR TM") {
+        addSubmittal("listing-submittal", null);
+    } else if (representing === "Seller" && tm_preference === "Non-TM") {
+        addSubmittal("listing-submittal", null, "Non-TM");
     }
 };
 
@@ -852,7 +846,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             request.search = request.search.value;
         },
         dataSrc: function (data) {
-            if (data?.data?.length > 0) {
+            if (data?.data?.length >= 0) {
                 $(".bad_date_count").text(data.data.length + " Bad Dates!");
             } else {
                 $(".bad_date_success").html(
@@ -1817,7 +1811,9 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
                 $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
-                showToastError(error?.responseJSON?.error);
+                showToastError(xhr?.responseJSON?.error);
+                $("#datatable_tasks1_processing").css("display", "none");
+                $("#datatable_tasks_processing").css("display", "none");
             },
         });
     }

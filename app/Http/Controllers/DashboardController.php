@@ -536,12 +536,12 @@ class DashboardController extends Controller
                 }
             }
             Log::info("Successful notes delete... " . $response);
+            return $response;
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
-        return $response;
     }
     public function updateTaskaction(Request $request, User $user, $id)
     {
