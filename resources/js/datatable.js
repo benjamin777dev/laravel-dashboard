@@ -36,16 +36,21 @@ function getTextColorForStage(stage) {
     }
 }
 function formateDate(data) {
-    const dateObj = new Date(data);
     if (!data) return false;
-    // Format the date to display in YYYY-MM-DD format
-    const formattedDate = dateObj.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    });
+    
+    const dateObj = new Date(data);
+    
+    // Extract year, month, and day
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    
+    // Format the date to YYYY-MM-DD
+    const formattedDate = `${year}-${month}-${day}`;
+    
     return formattedDate;
 }
+
 function fetchTasks() {
     $.ajax({
         url: "/pipline-cards",

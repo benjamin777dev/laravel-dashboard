@@ -705,8 +705,11 @@
     }
 
     function addSubmittal(type, deal, formType = null) {
-        console.log('test subbbbb');
-        return;
+        let dealsArray = @json($deals);
+        if(dealsArray?.length && window?.dealId){
+            let matchingDeal = dealsArray.find(dealObj => String(dealObj?.id) === String(window?.dealId));
+            deal = matchingDeal;
+        }
     let formData = {
         "data": [{
             "Transaction_Name": {
