@@ -57,7 +57,7 @@
 
     function addSubmittal (type,deal=null,formType=null){
         let dealsArray = @json($deals);
-        if(dealsArray?.length){
+        if(dealsArray?.length && window?.dealId){
             let matchingDeal = dealsArray.find(dealObj => String(dealObj?.id) === String(window?.dealId));
             deal = matchingDeal;
         }
