@@ -210,7 +210,15 @@ class PipelineController extends Controller
         $tab = request()->query('tab') ?? 'In Progress';
         $dealId = request()->route('dealId');
         $contacts = $db->retreiveContactsJson($user, $accessToken);
-
+        $deals = $db->retrieveDeals(
+            $user, // user
+            $accessToken,  // access token 
+            $inputs['search'] ?? null, // search filters if exist
+            $inputs['sort']?? null,  // sort filter if exist
+            $inputs['sortType']?? null,  // sort type if exist
+            null,  // date filter (none)
+            $inputs['filter']?? null // filter
+        ); 
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $allStages = config('variables.dealStages');
@@ -220,7 +228,7 @@ class PipelineController extends Controller
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         
         
-        return view('pipeline.view', compact('deal','users', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
+        return view('pipeline.view', compact('deal','users','deals', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
 
 
     }
@@ -241,7 +249,6 @@ class PipelineController extends Controller
         $zoho->access_token = $accessToken;
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $users = User::all();
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);

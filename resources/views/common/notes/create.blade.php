@@ -105,7 +105,7 @@
                         <p class="ddetailsText">Details</p>
                         <textarea name="note_text" id="note_text" rows="4" class="dtextarea"></textarea>
                         <div id="note_text_error" class="text-danger"></div>
-                        <p class="dRelatedText">Related to...ssss</p>
+                        <p class="dRelatedText">Related to...</p>
                         <div class="btn-group dmodalTaskDiv">
                             <select class="form-select dmodaltaskSelect" id="related_to_note" name="related_to_note"
                                 aria-label="Select Transaction">

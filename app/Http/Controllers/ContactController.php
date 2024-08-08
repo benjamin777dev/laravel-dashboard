@@ -758,10 +758,6 @@ class ContactController extends Controller
                 $response = $zoho->createNewContactData($responseData);
                 
             }
-            if (!$response->successful()) {
-               // Store the error message in the session
-               return session()->flash('error', 'No permission to edit this record!'.$response);
-            }
             $data = json_decode($response, true);
             if (isset($response['data']) && is_array($response['data'])) {
                 if(!empty($contactInstance->zoho_contact_id)){
