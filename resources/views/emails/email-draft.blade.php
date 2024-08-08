@@ -28,6 +28,7 @@
                         <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
+                <span id="emailErrorDraftTo" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
         </div>
         <div class="mb-3 row">
@@ -53,6 +54,7 @@
                         <option value="{{ $contactDetails['id'] }}" {{$ccSelected}}>{{$contactDetails['first_name']}} {{$contactDetails['last_name']}}</option>
                     @endforeach
                 </select>
+                <span id="emailErrorDraftCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
         </div>
         <div class="mb-3 row">
@@ -78,6 +80,7 @@
                         <option value="{{ $contactDetail['id'] }}" {{$bccSelected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
+                <span id="emailErrorDraftBCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
         </div>
 
@@ -112,14 +115,94 @@
 </div>
 <script>
     $(document).ready(function(){
-        $("#toDraftSelect").select2({
-            placeholder: "To",
+        function initializeSelect2(selector, placeholder, errorId) {
+            $(selector).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#draftModal'),
+                createTag: function(params) {
+                    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(params.term)) {
+                        $("#"+errorId).show();
+                        return null;
+                    }
+                    $("#"+errorId).hide();
+                    return {
+                        id: params.term,
+                        text: params.term,
+                        newTag: true
+                    };
+                }
+            });
+        }
+
+        function updateSelectOptions() {
+            var toValues = $("#toDraftSelect").val() || [];
+            var ccValues = $("#ccDraftSelect").val() || [];
+
+            // Filter ccSelect options based on toSelect values
+            $("#ccDraftSelect option").each(function() {
+                if (toValues.includes($(this).val())) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // Filter bccSelect options based on ccSelect values
+            $("#bccDraftSelect option").each(function() {
+                if (toValues.includes($(this).val()) || ccValues.includes($(this).val())) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // Refresh Select2 elements
+            $("#ccDraftSelect").select2({
+                placeholder: "CC",
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#draftModal')
+            });
+
+            $("#bccDraftSelect").select2({
+                placeholder: "BCC",
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#draftModal')
+            });
+        }
+
+        // Initialize Select2 for all select elements
+        initializeSelect2("#toDraftSelect", "To", "emailErrorDraftTo");
+        initializeSelect2("#ccDraftSelect", "CC", "emailErrorDraftCC");
+        initializeSelect2("#bccDraftSelect", "BCC", "emailErrorDraftBCC");
+
+        // Ensure Select2 dropdowns work within modals
+        $('#composemodal').on('shown.bs.modal', function () {
+            initializeSelect2("#toDraftSelect", "To", "emailErrorDraftTo");
+            initializeSelect2("#ccDraftSelect", "CC", "emailErrorDraftCC");
+            initializeSelect2("#bccDraftSelect", "BCC", "emailErrorDraftBCC");
         });
-        $("#ccDraftSelect").select2({
-            placeholder: "CC",
+
+        $("#toDraftSelect").on('change', function() {
+            updateSelectOptions();
         });
-        $("#bccDraftSelect").select2({
-            placeholder: "BCC",
+
+        $("#ccDraftSelect").on('change', function() {
+            updateSelectOptions();
+        });
+
+        $("#toDraftSelect").on('select2:select', function (e) {
+            $("#emailErrorDraftTo").hide();
+        });
+        $("#ccDraftSelect").on('select2:select', function (e) {
+            $("#emailErrorDraftCC").hide();
+        });
+        $("#bccDraftSelect").on('select2:select', function (e) {
+            $("#emailErrorDraftBCC").hide();
         });
 
         tinymce.init({

@@ -1357,7 +1357,7 @@ class ZohoCRM
         }
     }
 
-    public function assoiciateEmail($inputEmail,$contactId)
+    public function associateEmail($inputEmail,$contactId)
     {
         try {
             Log::info('Raw inputEmail', ['inputEmail' => $inputEmail]);
@@ -1413,6 +1413,58 @@ class ZohoCRM
         } catch (\Throwable $th) {
             Log::error('Error Email Template: ' . $th->getMessage());
             throw new \Exception('Email Template');
+        }
+    }
+
+    public function createMultipleContact($user,$emails)
+    {
+        try {
+            Log::info('Creating Zoho contacts');
+            $data = [];
+            foreach ($emails as $email) {
+                $data[] = [
+                    "Owner" => [
+                        "id" => $user['root_user_id'],
+                        "full_name" => $user['name'],
+                    ],
+                    "Last_Name" => "CHR",
+                    "Email" => $email,
+                    "Has_Email" => true
+                ];
+            }
+
+            // Prepare the input JSON with the data and trigger
+            $inputJson = [
+                'data' => $data,
+                'trigger' => 'workflow'
+            ];
+
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            Log::info('Creating Zoho contacts',[$inputJson]);
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            ])->post($this->apiUrl . "Contacts", $inputJson);
+
+            $responseData = $response->json();
+
+            // Check if the request was successful
+            if (!$response->successful()) {
+                Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+                throw new \Exception('Failed to create Zoho contacts');
+            }
+
+            $createdContactIds = [];
+            foreach ($responseData['data'] as $index => $contact) {
+                $createdContactIds[] = [
+                    'id' => $contact['details']['id'],
+                    'email' => $emails[$index] ?? null // Ensure alignment with emails
+                ];
+            }
+
+            return $createdContactIds;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
         }
     }
 }

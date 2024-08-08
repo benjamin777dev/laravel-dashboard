@@ -26,7 +26,7 @@
                         </option>
                     @endforeach
                 </select>
-
+                <span id="emailErrorTo" style="color: red; display: none;">Please enter a valid email address.</span>            
 
             </div>
         </div>
@@ -39,6 +39,7 @@
                         <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
+                <span id="emailErrorCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
         </div>
         <div class="mb-3 row">
@@ -50,6 +51,7 @@
                         <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
+                <span id="emailErrorBCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
         </div>
 
@@ -79,24 +81,100 @@
 <script>
     $(document).ready(function(){
         // Initialize Select2 for all select elements
-        $("#toSelect").select2({
-            placeholder: "To",
-            allowClear:true,
-            tags:true
+        function initializeSelect2(selector, placeholder,errorId) {
+            $(selector).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#composemodal'),
+                createTag: function(params) {
+                    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailPattern.test(params.term)) {
+                        $("#"+errorId).show();
+                        return null;
+                    }
+                    $("#"+errorId).hide();
+                    return {
+                        id: params.term,
+                        text: params.term,
+                        newTag: true
+                    };
+                }
+            });
+        }
+
+        function updateSelectOptions() {
+            var toValues = $("#toSelect").val() || [];
+            var ccValues = $("#ccSelect").val() || [];
+            // Filter ccSelect options based on toSelect values
+            $("#ccSelect option").each(function() {
+                const value = $(this).val();
+                const hasEmail = $(this).data('email'); // Check if option has an email associated
+
+                if (toValues.includes(value) || !hasEmail) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // Filter bccSelect options based on ccSelect values
+           $("#bccSelect option").each(function() {
+                const value = $(this).val();
+                const hasEmail = $(this).data('email'); // Check if option has an email associated
+
+                if (toValues.includes(value) || ccValues.includes(value) || !hasEmail) {
+                    $(this).prop('disabled', true);
+                } else {
+                    $(this).prop('disabled', false);
+                }
+            });
+
+            // Refresh Select2 elements
+            $("#ccSelect").select2({
+                placeholder: "CC",
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#composemodal')
+            });
+
+            $("#bccSelect").select2({
+                placeholder: "BCC",
+                allowClear: true,
+                tags: true,
+                dropdownParent: $('#composemodal')
+            });
+        }
+
+        // Initialize Select2 for all select elements
+        initializeSelect2("#toSelect", "To", "emailErrorTo");
+        initializeSelect2("#ccSelect", "CC", "emailErrorCC");
+        initializeSelect2("#bccSelect", "BCC", "emailErrorBCC");
+
+        // Ensure Select2 dropdowns work within modals
+        $('#composemodal').on('shown.bs.modal', function () {
+            initializeSelect2("#toSelect", "To", "emailErrorTo");
+            initializeSelect2("#ccSelect", "CC", "emailErrorCC");
+            initializeSelect2("#bccSelect", "BCC", "emailErrorBCC");
         });
 
-        
-
-        $("#ccSelect").select2({
-            placeholder: "CC",
-           
+        $("#toSelect").on('change', function() {
+            updateSelectOptions();
         });
 
-        $("#bccSelect").select2({
-            placeholder: "BCC",
-            
+        $("#ccSelect").on('change', function() {
+            updateSelectOptions();
         });
 
+        $("#toSelect").on('select2:select', function (e) {
+            $("#emailErrorTo").hide();
+        });
+        $("#ccSelect").on('select2:select', function (e) {
+            $("#emailErrorCC").hide();
+        });
+        $("#bccSelect").on('select2:select', function (e) {
+            $("#emailErrorBCC").hide();
+        });
         // Initialize TinyMCE
         tinymce.init({
             selector: 'textarea#elmEmail',
@@ -180,7 +258,6 @@
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
-            console.log("Hidden BS", modalData);
             if (modalData) {
                 modalData.querySelectorAll('input, textarea').forEach(function (element) {
                     if (element.tagName.toLowerCase() === 'select') {
