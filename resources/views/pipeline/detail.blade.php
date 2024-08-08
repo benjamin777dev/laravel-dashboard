@@ -705,6 +705,8 @@
     }
 
     function addSubmittal(type, deal, formType = null) {
+        console.log('test subbbbb');
+        return;
     let formData = {
         "data": [{
             "Transaction_Name": {
