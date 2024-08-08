@@ -521,7 +521,7 @@ window.showSubmittalFormType = function(representing,tm_preference,rowid) {
     if (representing === "Buyer" && tm_preference === "CHR TM") {
         addSubmittal('buyer-submittal', null);
     } else if (representing === "Seller" && tm_preference === "CHR TM") {
-        addSubmittal('listing-submittal', null);
+        addSubmittal('listing-submittal', null);    
     } else if (representing === "Seller" && tm_preference === "Non-TM") {
         addSubmittal('listing-submittal', null, 'Non-TM');
     }
@@ -1792,7 +1792,7 @@ window.deleteTask = async function (id = "", isremoveselected = false) {
                 $("#datatable_tasks_processing").css("display", "none");
             },
             error: function (xhr, status, error) {
-                showToastError(error?.responseJSON?.error);
+                showToastError(xhr?.responseJSON?.error);
                 $("#datatable_tasks1_processing").css("display", "none");
                 $("#datatable_tasks_processing").css("display", "none");
             },
