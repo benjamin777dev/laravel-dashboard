@@ -17,6 +17,8 @@ use App\Http\Controllers\CustomerController; // Ensure you import the CustomerCo
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\SubmittalController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\TemplateController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -86,6 +88,7 @@ Route::get('/contacts/fetch-contact', [ContactController::class, 'getContact'])-
 Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contacts.group')->middleware('auth');
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
+Route::get('/contact/email/list/{contactId}', [ContactController::class, 'contactEmailList'])->name('contact.email.list')->middleware('auth');
 //notes fetch in json for contact
 Route::get('/contact/list', [ContactController::class, 'contactList'])->name('contacts.list')->middleware('auth');
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');
@@ -174,6 +177,27 @@ Route::get('/task/for/pipeline/{dealId}', [TaskController::class, 'taskForPipeli
 //Notes Route
 Route::get('/notes', [DashboardController::class, 'showNotes'])->name('show.notes')->middleware('auth');
 
+//Email Route
+Route::get('/emails',[EmailController::class,'index'])->name('email.index')->middleware('auth');
+Route::get('/emails/list',[EmailController::class,'emailList'])->name('email.list')->middleware('auth');
+Route::post('/send/email',[EmailController::class,'sendEmail'])->name('send.email')->middleware('auth');
+Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->name('email.detail')->middleware('auth');
+Route::get('/email/detail/draft/{emailId}',[EmailController::class,'emailDetailDraft'])->name('email.detail.draft')->middleware('auth');
+Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('email.template')->middleware('auth');
+Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
+Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('email.delete')->middleware('auth');
+Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
+Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
 
+
+//Template Route
+Route::post('/create/template',[TemplateController::class,'createTemplate'])->name('create.template')->middleware('auth');
+Route::get('/get/templates/from/zoho',[TemplateController::class,'getTemplatesFromZoho'])->name('get.template.zoho')->middleware('auth');
+Route::get('/get/templates',[TemplateController::class,'getTemplates'])->name('get.template')->middleware('auth');
+Route::get('/get/templates/json',[TemplateController::class,'getTemplatesJSON'])->name('get.template.json')->middleware('auth');
+Route::get('/get/template/detail/{templateId}',[TemplateController::class,'getTemplateDetail'])->name('get.template.detail')->middleware('auth');
+Route::get('/read/template/detail/{templateId}',[TemplateController::class,'readTemplateDetail'])->name('read.template.detail')->middleware('auth');
+Route::post('/delete/templates',[TemplateController::class,'deleteTemplates'])->name('delete.template')->middleware('auth');
+Route::patch('/update/template/{templateId}',[TemplateController::class,'updateTemplate'])->name('delete.template')->middleware('auth');
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

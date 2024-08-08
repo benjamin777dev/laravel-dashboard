@@ -125,7 +125,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="newContactModal" tabindex="-1" aria-labelledby="newContactModalLabel" aria-hidden="true">
+    <div class="modal fade p-5" id="newContactModal" tabindex="-1" aria-labelledby="newContactModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -215,7 +215,7 @@
     <!-- end newContactModal -->
 
     <!-- removeItemModal -->
-    <div class="modal fade" id="removeItemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade p-5" id="removeItemModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-body px-4 py-5 text-center">

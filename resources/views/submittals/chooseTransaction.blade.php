@@ -1,4 +1,4 @@
-<div class="modal fade" id="chooseTransactionModal" tabindex="-1" role="dialog">
+<div class="modal fade p-5" id="chooseTransactionModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">

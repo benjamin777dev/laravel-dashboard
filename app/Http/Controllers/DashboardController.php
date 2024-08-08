@@ -168,7 +168,6 @@ class DashboardController extends Controller
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
             return Carbon::parse($this->helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
-            Log::info("MONTHLYGCI",[$dealsGroup]);
             return $dealsGroup->sum('pipeline1');
         });
 
@@ -420,7 +419,7 @@ class DashboardController extends Controller
         $What_Id;
         $priority;
         $contact;
-        $seModule;
+        $seModule=null;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;

@@ -7,6 +7,7 @@
                     <thead class="thead_con_design">
                         <tr>
                             <th></th>
+                            <th></th>
                             <th data-sort-type="text">
                                 <div class="commonFlex" onclick="sortContact('first_name,last_name',this)">
                                     <p class="mb-0">Full name</p>
@@ -191,7 +192,7 @@
 
 
         
-            <div class="modal fade" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
+            <div class="modal fade p-5" id="savemakeModalId{{ $contact['zoho_contact_id'] }}" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered deleteModal">
                     <div class="modal-content">
                         <div class="modal-header saveModalHeaderDiv border-0">

@@ -110,7 +110,7 @@
                             </div>
                             @endif
                             {{-- delete Modal --}}
-                            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                            <div class="modal fade p-5" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header border-0 deleteModalHeaderDiv">
@@ -146,7 +146,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal fade" id="saveModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                            <div class="modal fade p-5" id="saveModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">
@@ -171,7 +171,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal fade" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
+                            <div class="modal fade p-5" id="savemakeModalId{{ $task['id'] }}" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered deleteModal">
                                     <div class="modal-content">
                                         <div class="modal-header saveModalHeaderDiv border-0">

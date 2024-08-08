@@ -1,4 +1,4 @@
-@if ($label=="New Transaction" && $type=="database" || $label=="New Contact" && $type=="database" || $label=="New Submittal")   
+@if ($label=="New Transaction" && $type=="database" || $label=="New Contact" && $type=="database" || $label=="New Submittal" || $label=="Compose Email")   
 <button type="button" id="{{$id}}" class="input-group-text text-white justify-content-center pTransactionBtn " >  <i class="{{$icon}}"></i>{{$label}}</button>
 @endif
 @if ($label=="New Transaction" && $type=="dashboard" || $label=="New Contact" && $type=="dashboard")   

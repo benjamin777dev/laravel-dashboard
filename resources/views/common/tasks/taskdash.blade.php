@@ -52,7 +52,7 @@
             </div>
 
             <!-- Delete Modal -->
-            <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+            <div class="modal fade p-5" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered deleteModal">
                     <div class="modal-content">
                         <div class="modal-header border-0 deleteModalHeaderDiv">

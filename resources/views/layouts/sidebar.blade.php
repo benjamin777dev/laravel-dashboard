@@ -72,6 +72,12 @@
                                             <span key="t-tasks">@lang('Tasks')</span>
                                         </a>
                                     </li>
+                                    <li>
+                                        <a href="{{ route('email.index') }}" class="waves-effect">
+                                            <i class="bx bx-envelope"></i>
+                                            <span key="t-tasks">@lang('Emails')</span>
+                                        </a>
+                                    </li>
                                     <li class="menu-title" key="t-backend">@lang('Resources')</li>
                                     <li>
                                         <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">

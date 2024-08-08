@@ -1,5 +1,5 @@
 @if(isset($deal))
-<div class="modal fade" id="n_{{$deal['id']}}" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade p-5" id="n_{{$deal['id']}}" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 <div class="col-md-4">
     <h4 class="text-start dFont600 mb-4">Notes</h4>
@@ -33,7 +33,7 @@
 
                     {{-- dynamic edit modal --}}
                     {{-- note update modal --}}
-                    <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteupdate{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     {{-- note view modal --}}
-                    <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteview{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -244,7 +244,7 @@
 
                     {{-- dynamic edit modal --}}
                     {{-- note update modal --}}
-                    <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteupdate{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -345,7 +345,7 @@
                         </div>
                     </div>
                     {{-- note view modal --}}
-                    <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteview{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -455,7 +455,7 @@
 
                     {{-- dynamic edit modal --}}
                     {{-- note update modal --}}
-                    <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteupdate{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -556,7 +556,7 @@
                         </div>
                     </div>
                     {{-- note view modal --}}
-                    <div class="modal fade" id="staticBackdropnoteview{{ $note['id'] }}"
+                    <div class="modal fade p-5" id="staticBackdropnoteview{{ $note['id'] }}"
                         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered deleteModal">

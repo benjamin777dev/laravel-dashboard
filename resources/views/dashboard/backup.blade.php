@@ -132,7 +132,7 @@
                                                     </div>
                                                 </div>
                                                 {{-- delete Modal --}}
-                                                {{-- <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}"
+                                                {{-- <div class="modal fade p-5" id="deleteModalId{{ $task['zoho_task_id'] }}"
                                                     tabindex="-1">
                                                     <div class="modal-dialog modal-dialog-centered deleteModal">
                                                         <div class="modal-content">
@@ -172,7 +172,7 @@
                                                 <form action="/delete.task/{{ $task['zoho_task_id'] }}" method="POST" id="deleteTaskForm">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <div class="modal fade" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
+                                                    <div class="modal fade p-5" id="deleteModalId{{ $task['zoho_task_id'] }}" tabindex="-1">
                                                         <div class="modal-dialog modal-dialog-centered deleteModal">
                                                             <div class="modal-content">
                                                                 <div class="modal-header border-0 deleteModalHeaderDiv">
@@ -332,7 +332,7 @@
 
                                 {{-- dynamic edit modal --}}
                                 {{-- note update modal --}}
-                                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}"
+                                <div class="modal fade p-5" id="staticBackdropnoteupdate{{ $note['id'] }}"
                                     data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                     aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered deleteModal">
@@ -426,7 +426,7 @@
     </div>
     {{-- Modals --}}
     {{-- Create New Task Modal --}}
-    <div class="modal fade" id="newTaskModalId" tabindex="-1">
+    <div class="modal fade p-5" id="newTaskModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content dtaskmodalContent">
                 <div class="modal-header border-0">
@@ -461,7 +461,7 @@
     </div>
 
     {{-- Note Modal --}}
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <div class="modal fade p-5" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content noteModal">
@@ -503,7 +503,7 @@
     </div>
 
     {{-- save Modal --}}
-    {{-- <div class="modal fade" id="saveModalId" tabindex="-1">
+    {{-- <div class="modal fade p-5" id="saveModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -527,7 +527,7 @@
         </div> --}}
     {{-- </div>` --}}
     {{-- save Modal --}}
-    <div class="modal fade" id="saveModalId" tabindex="-1">
+    <div class="modal fade p-5" id="saveModalId" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered deleteModal">
             <div class="modal-content">
                 <div class="modal-header saveModalHeaderDiv border-0">

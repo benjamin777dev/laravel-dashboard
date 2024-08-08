@@ -1,5 +1,5 @@
 @if (isset($type) && $type == 'Deals')
-    <div class="modal fade" id="staticBackdropforNote_{{ $deal['id'] }}" data-bs-backdrop="static"
+    <div class="modal fade p-5" id="staticBackdropforNote_{{ $deal['id'] }}" data-bs-backdrop="static"
         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
             <div class="modal-content p-1">
@@ -42,7 +42,7 @@
         </div>
     </div>
 @elseif(isset($type) && $type == 'Contacts')
-    <div class="modal fade" id="staticBackdropforNote_{{ $contact['id'] }}"
+    <div class="modal fade p-5" id="staticBackdropforNote_{{ $contact['id'] }}"
         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
         aria-hidden="true">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal deleteModal">
@@ -89,7 +89,7 @@
         </div>
     </div>
 @else
-    <div class="modal fade" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false"   tabindex="-1"
+    <div class="modal fade p-5" id="staticBackdropforNote" data-bs-backdrop="static" data-bs-keyboard="false"   tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal deleteModal">
             <div class="modal-content noteModal">

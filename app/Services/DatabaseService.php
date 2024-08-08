@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Models\Aci;
-use App\Models\Attachment; // Import the User model
-use App\Models\BulkJob; // Import the Deal model
-use App\Models\Contact; // Import the Deal model
-use App\Models\ContactGroups; // Import the Deal model
-use App\Models\ContactRole; // Import the Deal model
-use App\Models\Deal; // Import the Deal model
-use App\Models\DealContact; // Import the Module model
+use App\Models\Attachment;
+use App\Models\BulkJob;
+use App\Models\Contact;
+use App\Models\ContactGroups;
+use App\Models\ContactRole;
+use App\Models\Deal;
+use App\Models\DealContact;
 use App\Models\Groups;
 use App\Models\Module;
 use App\Models\NonTm;
@@ -17,6 +17,8 @@ use App\Models\Note;
 use App\Models\Submittals;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Email;
+use App\Models\Template;
 use App\Models\TeamAndPartnership;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
@@ -779,6 +781,30 @@ class DatabaseService
 
     }
 
+    public function retrieveContactByEmail(User $user, $accessToken, $email)
+    {
+
+        try {
+            Log::info("Retrieve contact From Database");
+
+            $conditions = [['contact_owner', $user->root_user_id], ['email', $email]];
+
+            // Adjust query to include contactName table using join
+            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+
+            Log::info("Contacts Conditions", ['contacts' => $conditions]);
+
+            // Retrieve deals based on the conditions
+            $contacts = $contacts->where($conditions)->first();
+            // Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving Contacts: " . $e->getMessage());
+            throw $e;
+        }
+
+    }
+
     public function retrieveDealByZohoId(User $user, $accessToken, $dealId)
     {
 
@@ -1073,6 +1099,23 @@ class DatabaseService
 
             // Paginate the results
             $contacts = $contacts->get();
+            return $contacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function retreiveContactsHavingEmail(User $user, $accessToken)
+    {
+        try {
+            Log::info("Retrieve Contact From Database");
+
+            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null]];
+            $contacts = Contact::where($conditions); // Initialize the query with basic conditions
+            $contacts->orderBy('updated_at', 'desc');
+            // Paginate the results
+            $contacts = $contacts->paginate(50);
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -2531,6 +2574,315 @@ class DatabaseService
         try {
             $bulkJob = Deal::where('zoho_deal_id', $id)->delete();
             return $bulkJob;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function saveEmail($user,$accessToken,$input)
+    {
+        try {
+            // Log the input data for debugging
+            Log::info('Email Input', $input);
+
+            // Validate and encode email data
+            $emailData = [
+                'fromEmail' => $user->id ?? null,
+                'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? $input['to'] : null,
+                'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? $input['cc'] : null,
+                'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? $input['bcc'] : null,
+                'subject' => $input['subject'] ?? null,
+                'content' => $input['content'] ?? null,
+                'message_id' => $input['message_id'] ?? null,
+                'userId' => $user->id ?? null,
+                'isEmailSent' => $input['isEmailSent'] ?? null,
+                'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
+            ];
+
+            // Log the prepared email data
+            Log::info('Email data prepared for database', [$emailData]);
+
+            // Insert or update the email record
+            $email = Email::updateOrCreate(
+                ['id' => $input['emailId'] ?? null],
+                $emailData
+            );
+
+
+            // Log the result of the database operation
+            Log::info('Email record updated or created', ['email' => $email]);
+
+            return $email;
+        } catch (\Exception $e) {
+            // Log detailed error information
+            Log::error('Error processing email: ' . $e->getMessage(), [
+                'input' => $input,
+                'exception' => $e
+            ]);
+
+            // Re-throw the exception to ensure it is handled by the calling code
+            throw $e;
+        }
+
+
+    }
+
+    public function getEmails($user,$filter='Sent Email',$contactId)
+    {
+        try {
+            $condition = [['userId',$user->id]];
+            if($filter){
+                $cleanedFilter = strtok($filter, "\n");
+                if($cleanedFilter=="Draft"){
+                    $condition[]=['isEmailSent',false];
+                     $condition[] = ['isDeleted', false];
+                }else if($cleanedFilter == "Sent Mail"){
+                    $condition[] = ['isEmailSent', true];
+                    $condition[] = ['isDeleted', false];
+                    // Add raw SQL condition to check within JSON field
+                }else if($cleanedFilter=='Trash'){
+                    $condition[]=['isDeleted',true];
+                }else if($cleanedFilter == 'Inbox'){
+                    $condition[]=['isEmailSent',true];
+                }
+            }
+
+            $emails = Email::where($condition);
+            if($contactId){
+             $emails= $emails->whereJsonContains('toEmail', $contactId);
+            }
+            $emailList = $emails->with('fromUserData')->orderBy('updated_at','DESC')->paginate(10);
+            return $emailList;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getEmailDetail($emailId)
+    {
+        try {
+            $email = Email::where('id',$emailId)->first();
+            return $email;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function moveToTrash($emailIds,$isDeleted)
+    {
+        try {
+            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted'=>$isDeleted]);
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function emailDelete($emailIds)
+    {
+        try {
+            $emails = Email::whereIn('id', $emailIds)->delete();
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createTemplate($user,$accessToken,$input)
+    {
+        try {
+            // Log the input data for debugging
+            Log::info('Template Input', $input);
+
+            // Validate and encode email data
+            $templateData = [
+                'templateName' => $input['templateName'] ?? null,
+                'content' => $input['content'] ?? null,
+                'ownerId' => $user->id ?? null,
+            ];
+
+            // Log the prepared email data
+            Log::info('Template data prepared for database', [$templateData]);
+
+            // Insert or update the email record
+            $template = Template::updateOrCreate(
+                ['id' => $input['templateId'] ?? null],
+                $input
+            );
+
+
+            // Log the result of the database operation
+            Log::info('Template record updated or created', ['template' => $template]);
+
+            return $template;
+        } catch (\Exception $e) {
+            // Log detailed error information
+            Log::error('Error processing template: ' . $e->getMessage(), [
+                'input' => $input,
+                'exception' => $e
+            ]);
+
+            // Re-throw the exception to ensure it is handled by the calling code
+            throw $e;
+        }
+
+
+    }
+
+    public function getContactEmailList($id)
+    {
+        try {
+            $id = (string) $id;
+            $emails = Email::whereJsonContains('toEmail', $id) ->with('fromUserData')->orderBy('updated_at', 'desc')->get();
+            return $emails;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving email list for contact ID {$id}: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function getContactsByMultipleId($ids)
+    {
+        try {
+            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email')->get();
+            return $bulkContacts;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function saveZohoTemplatesInDB($templates)
+    {
+        try {
+            foreach ($templates as $template) {
+                $templateData = [
+                    'subject' => $template['subject'] ?? null,
+                    'active' => $template['active'] ?? null,
+                    'name' => $template['name'] ?? null,
+                    'favorite' => $template['favorite'] ?? null,
+                    'consent_linked' => $template['consent_linked'] ?? null,
+                    'associated' => $template['associated'] ?? null,
+                    'content'=>$template['content'] ??null,
+                    'templateType' => 'public',
+                    'folder' => json_encode($template['folder']) ?? null,
+                    'zoho_template_id'=>$template['id']
+                ];
+
+                Template::updateOrCreate(
+                    ['zoho_template_id' => $template['id']],
+                    $templateData
+                );
+            }
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error saving Zoho templates: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function getTemplatesFromDB($user)
+    {
+        try {
+            
+                $templateList = Template::whereOr(
+                    [['templateType'=>"Public"],['ownerId',$user->id]],
+                )->orderBy('updated_at','DESC')->get();
+            return $templateList;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving deal contacts: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getTemplateDetailFromDB($templateId)
+    {
+        try {
+            $templateDetail = Template::where('id', $templateId)->first();
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving template details: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function updateZohoTemplate($templateId, $template)
+    {
+        try {
+            $templateDetail = Template::where('zoho_template_id', $templateId)
+                                    ->update(['content' => $template['mail_content']]);
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error updating template: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function deleteTemplatesFromDB($templateIds)
+    {
+        try {
+            $templateDetail = Template::whereIn('id', $templateIds)->delete();
+            return $templateDetail;
+        } catch (\Exception $e) {
+            Log::error("Error updating template: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateTemplate($user,$accessToken,$templateId,$template)
+    {
+        try {
+            $templateData = [
+                'subject' => $template['subject'] ?? null,
+                'name' => $template['name'] ?? null,
+                'content'=>$template['content'] ??null,
+                'templateType' => 'private',
+                'ownerId'=>$user->id,
+            ];
+
+            Template::updateOrCreate(
+                ['id' => $templateId],
+                $templateData
+            );
+            return true;
+        } catch (\Exception $e) {
+            Log::error("Error saving Zoho templates: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function createContactIfNotExists($user, $emails)
+    {
+        try {
+            $createdContacts=[];
+            foreach ($emails as $email) {
+                $contact = [
+                    'email' => $email['email'],
+                    'last_name' => 'CHR', // Adjust if needed
+                    'isContactCompleted' => false,
+                    'contact_owner' => $user->root_user_id,
+                    'isInZoho' => false,
+                    'zoho_contact_id' => $email['id'],
+                ];
+                $createdContact = Contact::create($contact);
+                $createdContacts[] = $createdContact['id'];
+            }
+
+            // Fetch newly created contacts to return them
+            $newContacts = Contact::whereIn('id', $createdContacts)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
+            
+            // Log the newly created contacts
+            Log::info('New Contacts Created', ['contacts' => $newContacts]);
+
+            return $newContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
             throw $e;
