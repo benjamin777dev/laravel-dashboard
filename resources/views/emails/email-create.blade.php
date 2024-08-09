@@ -8,7 +8,7 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search">
+                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = '';
@@ -73,15 +73,15 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
-    <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
+    <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>   
 
 <script>
-    $(document).ready(function(){
+    var emailType = @json($emailType);
+    $(document).ready(function() {
         // Initialize Select2 for all select elements
-        function initializeSelect2(selector, placeholder,errorId) {
+        function initializeSelect2(selector, placeholder, errorId) {
             $(selector).select2({
                 placeholder: placeholder,
                 allowClear: true,
@@ -90,10 +90,10 @@
                 createTag: function(params) {
                     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailPattern.test(params.term)) {
-                        $("#"+errorId).show();
+                        $("#" + errorId).show();
                         return null;
                     }
-                    $("#"+errorId).hide();
+                    $("#" + errorId).hide();
                     return {
                         id: params.term,
                         text: params.term,
@@ -106,11 +106,10 @@
         function updateSelectOptions() {
             var toValues = $("#toSelect").val() || [];
             var ccValues = $("#ccSelect").val() || [];
-            $("#ccSelect, #bccSelect").off('change');
-            // Filter ccSelect options based on toSelect values
+
             $("#ccSelect option").each(function() {
                 const value = $(this).val();
-                const hasEmail = $(this).data('email'); // Check if option has an email associated
+                const hasEmail = $(this).data('email');
 
                 if (toValues.includes(value) || !hasEmail) {
                     $(this).prop('disabled', true);
@@ -119,10 +118,9 @@
                 }
             });
 
-            // Filter bccSelect options based on ccSelect values
-           $("#bccSelect option").each(function() {
+            $("#bccSelect option").each(function() {
                 const value = $(this).val();
-                const hasEmail = $(this).data('email'); // Check if option has an email associated
+                const hasEmail = $(this).data('email');
 
                 if (toValues.includes(value) || ccValues.includes(value) || !hasEmail) {
                     $(this).prop('disabled', true);
@@ -130,44 +128,42 @@
                     $(this).prop('disabled', false);
                 }
             });
-
-            // Refresh Select2 elements
-            $("#ccSelect, #bccSelect").on('change', function() {
-                updateSelectOptions();
-            });
-
-            
         }
 
-        // Initialize Select2 for all select elements
+        $("#toSelect, #ccSelect").on('change', function() {
+            updateSelectOptions();
+            $(this).trigger('select2:select'); // Trigger the select2:select event instead of change
+        });
+
         initializeSelect2("#toSelect", "To", "emailErrorTo");
         initializeSelect2("#ccSelect", "CC", "emailErrorCC");
         initializeSelect2("#bccSelect", "BCC", "emailErrorBCC");
 
-        // Ensure Select2 dropdowns work within modals
-        $('#composemodal').on('shown.bs.modal', function () {
+        $('#composemodal').on('shown.bs.modal', function() {
             initializeSelect2("#toSelect", "To", "emailErrorTo");
             initializeSelect2("#ccSelect", "CC", "emailErrorCC");
             initializeSelect2("#bccSelect", "BCC", "emailErrorBCC");
         });
 
-        $("#toSelect").on('change', function() {
-            updateSelectOptions();
+        $("#toSelect, #ccSelect").on('change', updateSelectOptions);
+
+        $("#toSelect, #ccSelect, #bccSelect").on('select2:select change', function(e) {
+            var suffix = '';
+            switch ($(this).attr('id')) {
+                case 'toSelect':
+                    suffix = 'To';
+                    break;
+                case 'ccSelect':
+                    suffix = 'CC';
+                    break;
+                case 'bccSelect':
+                    suffix = 'BCC';
+                    break;
+            }
+            $("#emailError" + suffix).hide();
         });
 
-        $("#ccSelect").on('change', function() {
-            updateSelectOptions();
-        });
 
-        $("#toSelect").on('select2:select', function (e) {
-            $("#emailErrorTo").hide();
-        });
-        $("#ccSelect").on('select2:select', function (e) {
-            $("#emailErrorCC").hide();
-        });
-        $("#bccSelect").on('select2:select', function (e) {
-            $("#emailErrorBCC").hide();
-        });
         // Initialize TinyMCE
         tinymce.init({
             selector: 'textarea#elmEmail',
@@ -175,22 +171,19 @@
             toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
             menubar: false,
             statusbar: false,
-            setup: function (editor) {
+            setup: function(editor) {
                 editor.ui.registry.addButton('customSelect', {
                     text: 'Select Template',
-                    onAction: function () {
-                        // Fetch data from the server
+                    onAction: function() {
                         $.ajax({
-                            url: '/get/templates',  // Replace with your API endpoint
+                            url: '/get/templates',
                             method: 'GET',
                             dataType: 'json',
-                            success: function (response) {
-                                // Assuming response is an array of options
+                            success: function(response) {
                                 var items = response.map(function(item) {
-                                    return { text: item.name, value: JSON.stringify(item.id) };
+                                    return { text: item.name ?? "", value: JSON.stringify(item.id) ?? "" };
                                 });
 
-                                // Open the dialog with the fetched data
                                 editor.windowManager.open({
                                     title: 'Select Template',
                                     body: {
@@ -215,30 +208,27 @@
                                             primary: true
                                         }
                                     ],
-                                    onSubmit: function (api) {
+                                    onSubmit: function(api) {
                                         var data = api.getData();
                                         var selectedOption = data.options;
                                         console.log(selectedOption);
-                                        // Call the API with the selected option
                                         $.ajax({
-                                            url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
+                                            url: '/get/template/detail/' + selectedOption,
                                             method: 'GET',
-                                            success: function (response) {
+                                            success: function(response) {
                                                 $("#emailSubject").val(response.subject);
                                                 editor.insertContent(response.content);
                                                 api.close();
                                             },
-                                            error: function () {
-                                                // Handle any errors
-                                                alert('Failed to submit the selected option');
+                                            error: function() {
+                                                showToastError('Failed to submit the selected option');
                                             }
                                         });
                                     }
                                 });
                             },
-                            error: function () {
-                                // Handle any errors
-                                alert('Failed to fetch options');
+                            error: function() {
+                                showToastError('Failed to fetch options');
                             }
                         });
                     }
@@ -266,12 +256,7 @@
             }
         });
 
-        // Handle nested modal behavior
-        var secondModalEl = document.getElementById('templateModal');
-        secondModalEl.addEventListener('hidden.bs.modal', function () {
-            var firstModal = new bootstrap.Modal(document.getElementById('composemodal'));
-            firstModal.show();
-        });
+        
 
         // Trigger change event to ensure pre-selected options are displayed correctly
         $('#toSelect').trigger('change');
@@ -327,49 +312,95 @@
             "content": content,
             "isEmailSent":isEmailSent
         }
-
-        $.ajax({
-            url: "{{ route('send.email') }}",
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                console.info(response);
-                if (response.status === 'process') {
-                    showToastError(response.message);
-                    setTimeout(function() {
-                        window.location.href = response.redirect_url;
-                    }, 5000); // Adjust the delay as needed
-                } else {
-                    // Handle error
+        if(emailType=="multiple"){
+            //  $.ajax({
+            //     url: "{{ route('send.multiple.email') }}",
+            //     method: 'POST',
+            //     headers: {
+            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //     },
+            //     dataType: 'json',
+            //     data: JSON.stringify(formData),
+            //     success: function(response) {
+            //         console.info(response);
+            //         if (response.status === 'process') {
+            //             showToastError(response.message);
+            //             setTimeout(function() {
+            //                 window.location.href = response.redirect_url;
+            //             }, 5000); // Adjust the delay as needed
+            //         } else {
+            //             // Handle error
+            //         }
+            //         button.disabled = false;
+            //         $("#emailModalClose").click();
+            //         fetchEmails()
+            //     },
+            //     error: function(xhr, status, error) {
+            //         // Handle error response
+            //         console.error(xhr.responseText);
+            //         showToastError(xhr.responseText);
+            //     }
+            // });
+        }else{
+            $.ajax({
+                url: "{{ route('send.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
+                    }
+                    button.disabled = false;
+                    $("#emailModalClose").click();
+                    fetchEmails()
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
                 }
-                button.disabled = false;
-                $("#emailModalClose").click();
-                fetchEmails()
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-                showToastError(xhr.responseText);
-            }
-        });
-    }
-
-    window.openTemplate = function(){
-        var firstModalEl = document.getElementById('composemodal');
-        var firstModal = bootstrap.Modal.getInstance(firstModalEl);
-        if (firstModal) {
-            firstModal?.hide();
+            });
         }
-        var templateContent= tinymce.get('elmEmail').getContent()
-        var templateSubject= $("#emailSubject").val();
-        $('#templateContent').val(templateContent);
-        $('#templateSubject').val(templateSubject);
-        var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
-        secondModal.show();
     }
+    window.validateOpenTemplate = function(){
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
+        let isValidateTemplate = true
+        
+
+        if(content==""){
+            showToastError("Please enter content");
+            isValidateTemplate = false;
+            
+        }
+
+        if(subject==""){
+            showToastError("Please enter subject");
+            isValidateTemplate = false;
+            
+        }
+
+        return isValidateTemplate
+    }
+    window.openTemplate = function(){
+    if (validateOpenTemplate()) {
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
+        $("#templateSubject").val(subject);
+        $("#templateContent").val(content);
+        $('#composemodal').modal('hide');
+        $('#templateModal').modal('show'); // Open the modal if validation passes
+    }
+}
 </script>
             

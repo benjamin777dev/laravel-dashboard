@@ -181,7 +181,7 @@ Route::get('/notes', [DashboardController::class, 'showNotes'])->name('show.note
 Route::get('/emails',[EmailController::class,'index'])->name('email.index')->middleware('auth');
 Route::get('/emails/list',[EmailController::class,'emailList'])->name('email.list')->middleware('auth');
 Route::post('/send/email',[EmailController::class,'sendEmail'])->name('send.email')->middleware('auth');
-Route::post('/send/multiple/email',[EmailController::class,'sendMultipleEmail'])->name('send.mutiple.email')->middleware('auth');
+Route::post('/send/multiple/email',[EmailController::class,'sendMultipleEmail'])->name('send.multiple.email')->middleware('auth');
 Route::get('/email/detail/{emailId}',[EmailController::class,'emailDetail'])->name('email.detail')->middleware('auth');
 Route::get('/email/detail/draft/{emailId}',[EmailController::class,'emailDetailDraft'])->name('email.detail.draft')->middleware('auth');
 Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('email.template')->middleware('auth');

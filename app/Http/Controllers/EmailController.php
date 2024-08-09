@@ -371,9 +371,13 @@ public function sendMultipleEmail(Request $request)
             $inputData['bccData'] = $prepareEmailData($contactData['bcc']['combined']);
 
             $zohoInput = [
-                "data" => [
-                    [
-                        'to' => $inputData['toData'],
+                "data" => []
+            ];
+
+            $DBInput = [];
+            foreach ($inputData['toData'] as $toData) {
+                $DBInput[]=[
+                        'to' => [$toData],
                         'cc' => $inputData['ccData'],
                         'bcc' => $inputData['bccData'],
                         'from' => [
@@ -383,9 +387,21 @@ public function sendMultipleEmail(Request $request)
                         'subject' => $inputData['subject'],
                         'content' => $inputData['content'],
                         "consent_email" => false,
-                    ]
-                ]
-            ];
+                    ];
+
+                    $zohoInput['data'][]=[
+                        'to' => [$toData],
+                        'cc' => $inputData['ccData'],
+                        'bcc' => $inputData['bccData'],
+                        'from' => [
+                            "user_name" => $user['name'],
+                            'email' => $user['email'],
+                        ],
+                        'subject' => $inputData['subject'],
+                        'content' => $inputData['content'],
+                        "consent_email" => false,
+                    ];
+            }
 
             $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
         
@@ -422,9 +438,12 @@ public function sendMultipleEmail(Request $request)
                 $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
 
                 $associateZohoInput = [
-                    "Emails" => [
-                        [
-                            'to' => $inputData['toData'],
+                    "Emails" => []
+                ];
+
+                foreach ($inputData['toData'] as $toData) {
+                    $associateZohoInput['Emails'][] = [
+                            'to' => [$toData],
                             'cc' => $inputData['ccData'],
                             'bcc' => $inputData['bccData'],
                             'from' => [
@@ -434,15 +453,12 @@ public function sendMultipleEmail(Request $request)
                             'subject' => $inputData['subject'],
                             'content' => $inputData['content'],
                             "consent_email" => false,
-                        ]
-                    ]
-                ];
+                            'sent' => true,
+                            'date_time' => now(),
+                            'original_message_id' => Str::uuid(),
+                        ];
+                }
 
-                $associateZohoInput['Emails'][0] += [
-                    'sent' => true,
-                    'date_time' => now(),
-                    'original_message_id' => Str::uuid(),
-                ];
 
                 $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
                 if ($associateEmail === "AUTHENTICATION_FAILURE") {
@@ -454,8 +470,12 @@ public function sendMultipleEmail(Request $request)
                     ]);
                 }
 
-                $inputData['sendEmailFrom'] = "SendGrid";
-                $inputData['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
+                foreach ($associateZohoInput['Emails'] as $index => $emailData) {
+                    if (isset($associateEmail['Emails'][$index]['details']['message_id'])) {
+                        $DBInput['message_id'][$index] = $associateEmail['Emails'][$index]['details']['message_id'];
+                        $DBInput['sendEmailFrom'][$index] = 'SendGrid';
+                    }
+                }
             } else {
                 $sendEmail = $zoho->sendZohoEmail($zohoInput, $contact['zoho_contact_id']);
                 if ($sendEmail === "AUTHENTICATION_FAILURE") {
@@ -471,7 +491,7 @@ public function sendMultipleEmail(Request $request)
             }
         }
 
-        $response = $db->saveEmail($user, $accessToken, $inputData);
+        $response = $db->saveMultipleEmail($user, $accessToken, $DBInput);
         return response()->json($response);
     } catch (\Throwable $th) {
         Log::error('Error sending email', ['error' => $th->getMessage()]);
