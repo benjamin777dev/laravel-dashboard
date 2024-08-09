@@ -112,7 +112,7 @@ use Carbon\Carbon;
 
 </div>
 
-<div class="modal fade p-5" id="draftModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="draftModal" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
             
@@ -138,79 +138,63 @@ use Carbon\Carbon;
 </div>
 
 <script>
-   $(document).ready(function(){
-        $(document).on('click', '.pagination a', function (event) {
-            event.preventDefault();
-            var page = $(this).attr('href').split('page=')[1];
-            fetchEmails(null,page);
-        });
-   })
-    
+    $(document).ready(function() {
+    $(document).on('click', '.pagination a', function(event) {
+        event.preventDefault();
+        var page = $(this).attr('href').split('page=')[1];
+        fetchEmails(null, page);
+    });
+
     let selectedEmails = [];
-    
-    function handleCheckboxClick(checkbox) {
-        // Get the value of the checkbox
+
+    window.handleCheckboxClick=function(checkbox) {
         const emailValue = checkbox.value;
 
-        // Check if the checkbox is checked
         if (checkbox.checked) {
-            // Add value to the array if not already present
             if (!selectedEmails.includes(emailValue)) {
                 selectedEmails.push(emailValue);
             }
         } else {
-            // Remove value from the array if unchecked
             selectedEmails = selectedEmails.filter(value => value !== emailValue);
         }
 
-        // Optional: Log the array to see the changes
         console.log(selectedEmails);
     }
 
-    window.getEmail=function(email){
-        console.log((email));
+    window.getEmail = function(email) {
+        console.log(email);
         console.log(email.id);
-        if(window.clickedValue == 'Draft'){
-            $.ajax({
-                url: "{{ route('email.detail.draft', ['emailId' => ':id']) }}".replace(':id', email.id),
-                method: 'GET',
-                success: function(response) {
+        const url = window.clickedValue === 'Draft'
+            ? `{{ route('email.detail.draft', ['emailId' => ':id']) }}`.replace(':id', email.id)
+            : `{{ route('email.detail', ['emailId' => ':id']) }}`.replace(':id', email.id);
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                if (window.clickedValue === 'Draft') {
                     $('#draftModal').find('#modalValues').html(response);
-                    $('#draftModal').modal('show')
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
-        } else{
-            $.ajax({
-                url: "{{ route('email.detail', ['emailId' => ':id']) }}".replace(':id', email.id),
-                method: 'GET',
-                success: function(response) {
+                    $('#draftModal').modal('show');
+                } else {
                     $('#emailList').html(response);
-                    if(window.clickedValue=='Trash'){
+                    if (window.clickedValue === 'Trash') {
                         $('#readEmailTrash')?.hide();
                         $('#readRemoveEmail')?.show();
                         $('#readRestoreEmail')?.show();
                     }
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
                 }
-            });
-        }
-    }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    };
 
-    function moveToTrashEmail(isDeleted) {
-        console.log("CheckedEmail", selectedEmails);
-        if(selectedEmails.length==0){
-            showToastError("Please select email")
-        }else{
-            
+    window.moveToTrashEmail=function(isDeleted) {
+        if (selectedEmails.length === 0) {
+            showToastError("Please select email");
+        } else {
             $.ajax({
                 url: "{{ route('email.moveToTrash') }}",
                 method: 'PATCH',
@@ -219,27 +203,27 @@ use Carbon\Carbon;
                 },
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON.stringify({ emailIds: selectedEmails,isDeleted:isDeleted }),
+                data: JSON.stringify({ emailIds: selectedEmails, isDeleted: isDeleted }),
                 success: function(response) {
                     fetchEmails();
                 },
                 error: function(xhr, status, error) {
-                    // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
                 }
             });
         }
-    };
+    }
 
-    function openDeleteEmail(){
-        if(selectedEmails.length==0){
-            showToastError("Please select email")
-        }else{
-            $("#confirmEmailDeleteModal").modal('show')
+    window.openDeleteEmail=function() {
+        if (selectedEmails.length === 0) {
+            showToastError("Please select email");
+        } else {
+            $("#confirmEmailDeleteModal").modal('show');
         }
     }
-    function deleteEmail() {
+
+    window.deleteEmail=function() {
         $.ajax({
             url: "{{ route('email.delete') }}",
             method: 'PATCH',
@@ -248,19 +232,20 @@ use Carbon\Carbon;
             },
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({ emailIds: selectedEmails}),
+            data: JSON.stringify({ emailIds: selectedEmails }),
             success: function(response) {
-                showToast('Emails deleted successfully')
+                showToast('Emails deleted successfully');
                 $("#trashConfirmModalClose").click();
                 fetchEmails();
             },
             error: function(xhr, status, error) {
-                // Handle error response
                 console.error(xhr.responseText);
                 showToastError(xhr.responseText);
             }
         });
-    };
+    }
+});
+
     
 
 </script>
