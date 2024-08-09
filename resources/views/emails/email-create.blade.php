@@ -8,7 +8,7 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{isset($selectedContacts)&&count($selectedContacts)>0?'disabled':''}}>
+                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search">
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = '';
@@ -72,15 +72,13 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,false)">Save as draft</button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
-@php
-    $emailType = $emailType ?? '';
-@endphp
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>   
+
 <script>
-    var emailType = @json($emailType?$emailType:"");
     $(document).ready(function(){
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder,errorId) {
@@ -108,7 +106,7 @@
         function updateSelectOptions() {
             var toValues = $("#toSelect").val() || [];
             var ccValues = $("#ccSelect").val() || [];
-             $("#ccSelect, #bccSelect").off('change');
+            $("#ccSelect, #bccSelect").off('change');
             // Filter ccSelect options based on toSelect values
             $("#ccSelect option").each(function() {
                 const value = $(this).val();
@@ -133,13 +131,11 @@
                 }
             });
 
+            // Refresh Select2 elements
             $("#ccSelect, #bccSelect").on('change', function() {
                 updateSelectOptions();
             });
 
-            // Trigger change event to update Select2
-            $("#ccSelect").trigger('change.select2');
-            $("#bccSelect").trigger('change.select2');
             
         }
 
@@ -310,7 +306,8 @@
     }
 
 
-    window.sendEmails = function(email,isEmailSent){
+    window.sendEmails = function(button,email,isEmailSent){
+        button.disabled = true;
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -326,67 +323,39 @@
             "cc": cc,
             "bcc": bcc,
             "subject": subject,
+            
             "content": content,
-            "isEmailSent":isEmailSent,
-            "emailType":emailType ? emailType : "single"
+            "isEmailSent":isEmailSent
         }
-        if(emailType==="multiple"){
-            $.ajax({
-                url: "{{ route('send.mutiple.email') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    console.info(response);
-                    if (response.status === 'process') {
-                        showToastError(response.message);
-                        setTimeout(function() {
-                            window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
-                    } else {
-                        // Handle error
-                    }
-                    $("#emailModalClose").click();
-                    fetchEmails()
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
+
+        $.ajax({
+            url: "{{ route('send.email') }}",
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                console.info(response);
+                if (response.status === 'process') {
+                    showToastError(response.message);
+                    setTimeout(function() {
+                        window.location.href = response.redirect_url;
+                    }, 5000); // Adjust the delay as needed
+                } else {
+                    // Handle error
                 }
-            });
-        }else{
-            $.ajax({
-                url: "{{ route('send.email') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    console.info(response);
-                    if (response.status === 'process') {
-                        showToastError(response.message);
-                        setTimeout(function() {
-                            window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
-                    } else {
-                        // Handle error
-                    }
-                    $("#emailModalClose").click();
-                    fetchEmails()
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
-        }
+                button.disabled = false;
+                $("#emailModalClose").click();
+                fetchEmails()
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
     }
 
     window.openTemplate = function(){

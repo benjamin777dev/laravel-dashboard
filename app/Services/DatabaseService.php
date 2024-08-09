@@ -2867,9 +2867,9 @@ class DatabaseService
                 $contact = [
                     'email' => $email['email'],
                     'last_name' => 'CHR', // Adjust if needed
-                    'isContactCompleted' => false,
+                    'isContactCompleted' => true,
                     'contact_owner' => $user->root_user_id,
-                    'isInZoho' => false,
+                    'isInZoho' => true,
                     'zoho_contact_id' => $email['id'],
                 ];
                 $createdContact = Contact::create($contact);
