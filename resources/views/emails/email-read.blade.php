@@ -49,18 +49,24 @@
         <div class="card-body">
             <div class="d-flex mb-4">
                 <div class="flex-shrink-0 me-3">
-                    <img class="rounded-circle avatar-sm" src="{{ URL::asset('build/images/users/avatar-2.jpg') }}" alt="Generic placeholder image">
+                    <img class="rounded-circle avatar-sm" src="{{ URL::asset('/images/dummyProfile.png') }}" alt="Generic placeholder image">
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="font-size-14 mt-1">Humberto D. Champion</h5>
                     @php
                         $contacts = $email->toUserData;
                         $firstContact = $contacts->first();
                         $remainingCount = $contacts->count() - 1;
                     @endphp
+                    <h5 class="font-size-14 mt-1">
+                        @foreach($contacts as $contact)
+                            {{$contact['first_name']??""}} {{$contact['last_name']??""}},
+                        @endforeach
+                    </h5>
+                    <small class="text-muted">
                     @foreach($contacts as $contact)
-                    <small class="text-muted">{{$contact['email']}},</small>
+                        {{$contact['email']}},
                     @endforeach
+                    </small>
                 </div>
             </div>
 

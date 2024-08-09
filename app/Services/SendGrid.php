@@ -43,7 +43,7 @@ class SendGrid
             return $responseData;
         } catch (\Throwable $th) {
             Log::error('Error Get Sender List: ' . $th->getMessage());
-            throw new \Exception('Get Sender List');
+            throw new \Exception($th->getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ class SendGrid
             return $verified;
         } catch (\Throwable $th) {
             Log::error('Error Sending Email: ' . $th->getMessage());
-            throw new \Exception('Failed to Send email');
+            throw new \Exception($th->getMessage());
         }
     }
 

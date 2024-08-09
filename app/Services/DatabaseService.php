@@ -2750,7 +2750,7 @@ class DatabaseService
     public function getContactsByMultipleId($ids)
     {
         try {
-            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email')->get();
+            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
             return $bulkContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
