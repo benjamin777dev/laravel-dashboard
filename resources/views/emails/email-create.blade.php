@@ -72,9 +72,9 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,false)">Save as draft</button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" onclick="openTemplate()">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="return sendEmails(null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>   
 
@@ -106,6 +106,7 @@
         function updateSelectOptions() {
             var toValues = $("#toSelect").val() || [];
             var ccValues = $("#ccSelect").val() || [];
+            $("#ccSelect, #bccSelect").off('change');
             // Filter ccSelect options based on toSelect values
             $("#ccSelect option").each(function() {
                 const value = $(this).val();
@@ -131,19 +132,11 @@
             });
 
             // Refresh Select2 elements
-            $("#ccSelect").select2({
-                placeholder: "CC",
-                allowClear: true,
-                tags: true,
-                dropdownParent: $('#composemodal')
+            $("#ccSelect, #bccSelect").on('change', function() {
+                updateSelectOptions();
             });
 
-            $("#bccSelect").select2({
-                placeholder: "BCC",
-                allowClear: true,
-                tags: true,
-                dropdownParent: $('#composemodal')
-            });
+            
         }
 
         // Initialize Select2 for all select elements
@@ -313,7 +306,8 @@
     }
 
 
-    window.sendEmails = function(email,isEmailSent){
+    window.sendEmails = function(button,email,isEmailSent){
+        button.disabled = true;
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -352,6 +346,7 @@
                 } else {
                     // Handle error
                 }
+                button.disabled = false;
                 $("#emailModalClose").click();
                 fetchEmails()
             },

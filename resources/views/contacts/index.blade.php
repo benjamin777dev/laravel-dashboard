@@ -140,10 +140,10 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+        <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content" id="modalValues">
-                    @include('emails.email-create',['contacts'=>$contacts])
+                    @include('emails.email-create',['contacts'=>$contacts,'emailType'=>'multiple'])
                 </div>
             </div>
         </div>
@@ -284,7 +284,8 @@
         var selectedContacts = contacts.filter(contact => intIds.includes(contact.id));
         var data = {
             contacts: contacts,
-            selectedContacts: selectedContacts
+            selectedContacts: selectedContacts,
+            emailType:"multiple"
         };
         $.ajax({
             url: '/get/email-create', 

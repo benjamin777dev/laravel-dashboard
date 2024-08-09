@@ -37,17 +37,17 @@ function getTextColorForStage(stage) {
 }
 function formateDate(data) {
     if (!data) return false;
-    
+
     const dateObj = new Date(data);
-    
+
     // Extract year, month, and day
     const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const day = String(dateObj.getDate()).padStart(2, "0");
+
     // Format the date to YYYY-MM-DD
     const formattedDate = `${year}-${month}-${day}`;
-    
+
     return formattedDate;
 }
 
@@ -2796,7 +2796,7 @@ function viewTemplateModal(id, name) {
                 <div class="modal-content dtaskmodalContent">
                     <div class="modal-header border-0">
                         <p class="modal-title dHeaderText" id="templateName${id}" onclick="editName('${id}')">${name}</p>
-                        <button type="button" class="btn-close" id="templateClose" data-bs-dismiss="modal" 
+                        <button type="button" class="btn-close" id="templateViewClose" data-bs-dismiss="modal" 
                          aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="viewTemplateData${id}">
@@ -2870,7 +2870,7 @@ window.updateTemplate = function (templateId) {
         data: JSON.stringify(jsonData),
         success: function (response) {
             showToast("Template update successfully");
-            $("#templateClose").click();
+            $("#templateViewClose").click();
         },
         error: function (xhr, status, error) {
             showToastError(
