@@ -112,7 +112,7 @@ use Carbon\Carbon;
 
 </div>
 
-<div class="modal fade p-5" id="draftModal" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="draftModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="draftModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
             

@@ -28,6 +28,7 @@
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="saveTemplate()">Save as template <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     window.saveTemplate = function(email,isEmailSent){
@@ -53,16 +54,15 @@
             data: JSON.stringify(formData),
             success: function(response) {
                 console.info(response);
-                if (response.status === 'process') {
+                if (response.status&&response.status === 'process') {
                     showToastError(response.message);
                     setTimeout(function() {
                         window.location.href = response.redirect_url;
                     }, 5000); // Adjust the delay as needed
-                } else {
-                    // Handle error
-                }
+                }else{
+                    showToast("Template added successfully");
+                } 
                 $("#templateClose").click();
-                $("#emailModalClose").click();
             },
             error: function(xhr, status, error) {
                 // Handle error response

@@ -93,7 +93,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade p-5" id="composemodal" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+<div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
             @include('emails.email-create',['contacts'=>$contacts])
