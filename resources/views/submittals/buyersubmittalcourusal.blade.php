@@ -88,7 +88,7 @@
                                                 <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                        <input type="date" class="form-control" value="{{$submittal['buyerClosingDate']?$submittal['buyerClosingDate']:$submittal['dealData']['closing_date']}}" id="buyerClosingDate" >
+                                        <input type="date" class="form-control required-field" value="{{$submittal['buyerClosingDate']?$submittal['buyerClosingDate']:$submittal['dealData']['closing_date']}}" id="buyerClosingDate" >
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                                 <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
                                             </g>
                                         </svg></label>
-                                        <input type="text" value="{{$submittal['dealData']['tmName']['name']}}" id="buyerTmName" class="form-control" rows="2" placeholder="Enter Your Address">
+                                        <input type="text" value="{{$submittal['dealData']['tmName']['name']}}" id="buyerTmName" class="form-control required-field" rows="2" placeholder="Enter Your Address">
                                     </div>
                                 </div>
                             </div>
