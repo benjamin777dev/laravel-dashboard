@@ -2656,6 +2656,55 @@ class DatabaseService
 
     }
 
+    public function saveMultipleEmail($user,$accessToken,$inputArray)
+    {
+        try {
+            // Log the input data for debugging
+            Log::info('Email Input', $inputArray);
+            $createdEmails=[];
+            // Validate and encode email data
+            foreach ($inputArray as $input) {
+                $emailData = [
+                    'fromEmail' => $user->id ?? null,
+                    'toEmail' => isset($input['to']) && is_array($input['to']) && count($input['to']) > 0 ? $input['to'] : null,
+                    'ccEmail' => isset($input['cc']) && is_array($input['cc']) && count($input['cc']) > 0 ? $input['cc'] : null,
+                    'bccEmail' => isset($input['bcc']) && is_array($input['bcc']) && count($input['bcc']) > 0 ? $input['bcc'] : null,
+                    'subject' => $input['subject'] ?? null,
+                    'content' => $input['content'] ?? null,
+                    'message_id' => $input['message_id'] ?? null,
+                    'userId' => $user->id ?? null,
+                    'isEmailSent' => $input['isEmailSent'] ?? null,
+                    'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
+                ];
+
+                // Log the prepared email data
+                Log::info('Email data prepared for database', [$emailData]);
+
+                // Insert or update the email record
+                $email = Email::updateOrCreate(
+                    ['id' => $input['emailId'] ?? null],
+                    $emailData
+                );
+                $createdEmails[]=$email;
+                
+                // Log the result of the database operation
+                Log::info('Email record updated or created', ['email' => $email]);
+            }
+            return $createdEmails;
+        } catch (\Exception $e) {
+            // Log detailed error information
+            Log::error('Error processing email: ' . $e->getMessage(), [
+                'input' => $input,
+                'exception' => $e
+            ]);
+
+            // Re-throw the exception to ensure it is handled by the calling code
+            throw $e;
+        }
+
+
+    }
+
     public function getEmails($user,$filter='Sent Email',$contactId)
     {
         try {

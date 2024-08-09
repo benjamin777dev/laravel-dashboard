@@ -25,16 +25,44 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary" data-bs-target="#composemodal" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="saveTemplate()">Save as template <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    window.validateTemplate = function(){
+        var templateName = $("#templateName").val();
+        var content = $("#templateContent").val();
+        var subject = $("#templateSubject").val();
+        let isValidateTemplate = true
+        if(templateName==""){
+            showToastError("Please enter template name");
+            isValidateTemplate = false
+        }
+
+        if(content==""){
+            showToastError("Please enter template name");
+            isValidateTemplate = false
+
+        }
+
+        if(subject==""){
+            showToastError("Please enter template name");
+            isValidateTemplate = false
+
+        }
+
+        return isValidateTemplate
+    }
     window.saveTemplate = function(email,isEmailSent){
         var templateName = $("#templateName").val();
         var content = $("#templateContent").val();
         var subject = $("#templateSubject").val();
+
+        if(!validateTemplate()){
+            return false;
+        }
         var formData = 
         {
             "ownerId": "{{auth()->user()->id}}",
@@ -63,6 +91,7 @@
                     showToast("Template added successfully");
                 } 
                 $("#templateClose").click();
+                $("#emailModalClose").click();
             },
             error: function(xhr, status, error) {
                 // Handle error response

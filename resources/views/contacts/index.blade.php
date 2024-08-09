@@ -140,10 +140,9 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+        <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="composemodalTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content" id="modalValues">
-                    @include('emails.email-create',['contacts'=>$contacts,'emailType'=>'multiple'])
                 </div>
             </div>
         </div>
@@ -163,120 +162,8 @@
     var contacts = @json($contacts);
     
     $(document).ready(function(){
-        $("#toSelect").select2({
-            placeholder: "To",
-        });
-        $("#ccSelect").select2({
-            placeholder: "CC",
-        });
-        $("#bccSelect").select2({
-            placeholder: "BCC",
-        });
-
-        tinymce.init({
-            selector: 'textarea#elmEmail',
-            plugins: 'lists link image media preview',
-            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
-            menubar: false,
-            statusbar: false,
-            setup: function (editor) {
-                editor.ui.registry.addButton('customSelect', {
-                    text: 'Select Template',
-                    onAction: function () {
-                        // Fetch data from the server
-                        $.ajax({
-                            url: '/get/templates',  // Replace with your API endpoint
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function (response) {
-                                // Assuming response is an array of options
-                                var items = response.map(function(item) {
-                                    return { text: item.name, value: JSON.stringify(item.id) };
-                                });
-
-                                // Open the dialog with the fetched data
-                                editor.windowManager.open({
-                                    title: 'Select Template',
-                                    body: {
-                                        type: 'panel',
-                                        items: [
-                                            {
-                                                type: 'selectbox',
-                                                name: 'options',
-                                                label: 'Select Option',
-                                                items: items
-                                            }
-                                        ]
-                                    },
-                                    buttons: [
-                                        {
-                                            type: 'cancel',
-                                            text: 'Close'
-                                        },
-                                        {
-                                            type: 'submit',
-                                            text: 'Insert',
-                                            primary: true
-                                        }
-                                    ],
-                                    onSubmit: function (api) {
-                                        var data = api.getData();
-                                        var selectedOption = data.options;
-                                        console.log(selectedOption);
-                                        // Call the API with the selected option
-                                        $.ajax({
-                                            url: '/get/template/detail/'+selectedOption,  // Replace with your submission API endpoint
-                                            method: 'GET',
-                                            success: function (response) {
-                                               $("#emailSubject").val(response.subject);
-                                                editor.insertContent(response.content);
-                                                api.close();
-                                            },
-                                            error: function () {
-                                                // Handle any errors
-                                                alert('Failed to submit the selected option');
-                                            }
-                                        });
-                                        
-                                    }
-                                });
-                            },
-                            error: function () {
-                                // Handle any errors
-                                alert('Failed to fetch options');
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-
-        var modal = document.getElementById('composemodal');
-        var modalData = document.getElementById('modal-data');
-
-        modal.addEventListener('hidden.bs.modal', function () {
-            console.log("HIdden BS",modalData );
-            if (modalData) {
-                modalData.querySelectorAll('input,  textarea').forEach(function (element) {
-                    if (element.tagName.toLowerCase() === 'select') {
-                        $(element).val([]).trigger('change');
-                    } 
-                    else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
-                        tinymce.get(element.id).setContent('');
-                    }
-                    else {
-                        element.value = '';
-                    }
-                });
-            }
-        });
         
-        var secondModalEl = document.getElementById('templateModal');
-        secondModalEl.addEventListener('hidden.bs.modal', function () {
-            var firstModal = new bootstrap.Modal(document.getElementById('composemodal'));
-            firstModal.show();
-        });
+        
     });
     window.openComposeModal = function (Ids) {
         console.log("Open modal ids",Ids);

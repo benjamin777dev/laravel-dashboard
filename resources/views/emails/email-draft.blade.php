@@ -102,7 +102,7 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
-    <button type="button" class="btn btn-dark" onclick="openDraftTemplate()">Save as template</button>
+    <button type="button" class="btn btn-dark" data-bs-target="#templateModal" data-bs-toggle="modal" data-bs-dismiss="modal">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}}">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
@@ -378,18 +378,6 @@
         });
     }
 
-    window.openDraftTemplate = function(){
-        var firstModalEl = document.getElementById('draftModal');
-        var firstModal = bootstrap.Modal.getInstance(firstModalEl);
-        if (firstModal) {
-            firstModal.hide();
-        }
-        var templateContent= tinymce.get('draftEmailEditor').getContent()
-        var templateSubject= $("#emailDraftSubject").val();
-        $('#templateContent').val(templateContent);
-        $('#templateSubject').val(templateSubject);
-        var secondModal = new bootstrap.Modal(document.getElementById('templateModal'));
-        secondModal.show();
-    }
+    
 </script>
             
