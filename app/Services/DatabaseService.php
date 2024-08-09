@@ -892,9 +892,13 @@ class DatabaseService
             } elseif ($tab == 'Upcoming') {
                 // These are any tasks that have a due date greater than or equal to today and are not complete
                 $tasks->where([
-                    ['due_date', '>', $endOfToday],
+                    ['due_date', '>=', $startOfToday],
                     ['status', '!=', 'Completed']
                 ]);
+                $tasks->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                    $query->whereNull('due_date')
+                        ->whereBetween('created_at', [$startOfToday, $endOfToday]);
+                });
                 $tasks->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
                 // Tasks with due date within today
@@ -1858,7 +1862,31 @@ class DatabaseService
             throw $e;
         }
     }
-
+   
+    public function retrieveContactGroupsDataForDelte($user, $accessToken, $contactId)
+    {
+        try {
+            Log::info("Retrieve Contact Group From Database");
+    
+            // Retrieve a single contact group based on the provided contactId
+            $contact = ContactGroups::with('groupData') // Load the related groups
+            ->where('ownerId', $user->id)
+            ->where('contactId', $contactId)
+            ->get();
+    
+            // If no contact is found, return null or handle as needed
+            if (!$contact) {
+                Log::info("No contact group found for contactId: " . $contactId);
+                return null; // Or handle it according to your requirements
+            }
+    
+            return $contact;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contact group: " . $e->getMessage());
+            throw $e;
+        }
+    }
+    
     public function updateGroups(User $user, $accessToken, $data)
     {
         try {
