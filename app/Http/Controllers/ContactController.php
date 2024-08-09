@@ -775,6 +775,46 @@ class ContactController extends Controller
                 $zohoContactValues = $zohoContact_Array['data'][0];
                
                 $db->storeContactIntoDB($id,$zohoContactValues);
+                $contactGroups = $this->getGroupsForDelete($id);
+                $groupNames = $contactGroups->map(function ($item) {
+                    return [
+                        'name' => $item->groupData['name'],
+                        'id' => $item->groupData['id']
+                    ]; // Access both the group name and id
+                })->toArray(); // Convert the result to an array
+
+                $match_abcd = ["A", "A+", "B", "C", "D"];
+                $targetGroup = $zohoContactValues['ABCD'];
+                
+                // Remove all contact groups that match $match_abcd except the one specified in $targetGroup
+                foreach ($groupNames as $groupName) {
+                    if (in_array($groupName['name'], $match_abcd) && $groupName['name'] !== $targetGroup) {
+                        // Find the group by id
+                        $group = Groups::where('id', $groupName['id'])->first();
+                        
+                        if ($group) {
+                            // Remove the contact group entry
+                            ContactGroups::where('contactId', $contactInstance['id'])
+                                ->where('groupId', $group->id)
+                                ->delete();
+                        }
+                    }
+                }   
+                // Ensure that the target group is added or updated
+                $getGroup = Groups::where('name', $targetGroup)->first();
+                
+                if ($getGroup) {
+                    ContactGroups::updateOrCreate(
+                        ['zoho_contact_group_id' => $getGroup->zoho_group_id],
+                        [
+                            'ownerId' => $user->id,
+                            'contactId' => $contactInstance['id'] ?? null,
+                            'groupId' => $getGroup->id ?? null,
+                            'zoho_contact_group_id' => $getGroup->zoho_group_id ?? null,
+                        ]
+                    );
+                }
+                
                 if (isset($zohoContactValues['Groups']) && is_array($zohoContactValues['Groups']) && count($zohoContactValues['Groups']) !== 0) {
                     foreach ($zohoContactValues['Groups'] as $group) {
                         
@@ -878,6 +918,22 @@ class ContactController extends Controller
             Log::error("Exception when fetching contacts: {$e->getMessage()}");
             return collect();
         }
+    }
+
+    public function getGroupsForDelete($contactId)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+       
+        // $contactInfo = Contact::getZohoContactInfo();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactsGroups = $db->retrieveContactGroupsDataForDelte($user, $accessToken, $contactId);
+        return $contactsGroups;
+
     }
 
     public function getGroups(Request $request)

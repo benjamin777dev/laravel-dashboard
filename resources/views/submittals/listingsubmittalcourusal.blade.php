@@ -1648,8 +1648,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     addStepChr('Select MLS', defaultCHRSec4);
                     
                     }
-                addStepChr('Commission Details', CommissionDetails);
-                addStepChr('Service Providers', serviceProvider);
+                addStepChr('Commission Details', CommissionDetails,3);
+                addStepChr('Service Providers', serviceProvider,4);
             
             } else if (value === "No") {
                 for (let i = 6; i >= 3; i--) {
@@ -1717,14 +1717,28 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
             return isValid;
         }
 
-        function addStepChr(title, content) {
-            $stepsContainer.steps('add', {
-                headerTag: "h3",
-                bodyTag: "section",
-                title: title,
-                content: content
-            });
-        }
+        function addStepChr(title, content, index = null) {
+            if (index === null) {
+                // Add at the end if no index is provided
+                $stepsContainer.steps('add', {
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    title: title,
+                    content: content
+                });
+            } else {
+                console.log(index,'yes here inde')
+                // Insert at the specified index
+                $stepsContainer.steps('add', {
+                    index: index,
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    title: title,
+                    content: content
+                });
+          }
+}
+
 
         function removeStep(index) {
             console.log(index,'index is hereee')
