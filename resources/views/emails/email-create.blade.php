@@ -78,7 +78,7 @@
 </div>
 
 <script>
-    var emailType = @json($emailType);
+    var emailType = @json($emailType??"");
     $(document).ready(function() {
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder, errorId) {
