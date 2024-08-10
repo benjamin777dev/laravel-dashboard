@@ -1435,7 +1435,7 @@ class DatabaseService
                     "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
                     "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
                     "total" => isset($aci['Total']) ? $aci['Total'] : null,
-                    "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                    "zoho_aci_id" => isset($aci['zoho_aci_id']) ? $aci['id'] : null,
                     'dealId' => isset($deal['id']) ? $deal['id'] : null,
                     'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
                     'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
@@ -2277,7 +2277,7 @@ class DatabaseService
                 try {
                     // Dynamically call the mapping method based on the module
                     $mappedData = $this->mapDataByModule($module, $record);
-
+                    if ($mappedData == [] || is_null($mappedData)) continue;
                     $dataBatch[] = $mappedData;
                 } catch (\Exception $e) {
                     Log::error("Error mapping record for module {$module}: " . $e->getMessage());
@@ -2287,6 +2287,7 @@ class DatabaseService
 
                 if (count($dataBatch) >= $batchSize) {
                     try {
+                        Log::info("processing batch: ", ['batch' => $dataBatch]);
                         $this->upsertDataBatch($dataBatch, $module);
                     } catch (\Exception $e) {
                         Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
@@ -2327,6 +2328,8 @@ class DatabaseService
                 return \App\Models\Task::mapZohoData($record, 'csv');
             case 'Teams_And_Partners':
                 return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
+            case 'Agent_Commission_Incomes':
+                return \App\Models\Aci::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -2347,7 +2350,7 @@ class DatabaseService
                     \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
                     break;
                 case 'Agent_Commission_Incomes':
-                    \App\Models\ACI::upsert($dataBatch, ['zoho_aci_id']);
+                    \App\Models\Aci::upsert($dataBatch, ['zoho_aci_id']);
                     break;
                 case 'Groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
@@ -2694,7 +2697,7 @@ class DatabaseService
         } catch (\Exception $e) {
             // Log detailed error information
             Log::error('Error processing email: ' . $e->getMessage(), [
-                'input' => $input,
+                'input' => $input ?? null,
                 'exception' => $e
             ]);
 
