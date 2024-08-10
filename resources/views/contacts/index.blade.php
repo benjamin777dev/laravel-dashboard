@@ -1,4 +1,6 @@
 @extends('layouts.master')
+<!DOCTYPE html>
+
 @section('title', 'zPortal | Contacts')
 
 @section('content')
@@ -34,6 +36,15 @@
                                'type' => 'database',
                                'label' => 'New Transaction',
                                'icon' => 'fas fa-plus plusicon'
+                           ])
+                           @endcomponent
+                </div>
+                <div class="w-control">
+                            @component('components.button', [
+                               'id' => 'compose_email',
+                               'type' => 'database',
+                               'label' => 'Compose Email',
+                               'icon' => 'fab fa-telegram-plane ms-1'
                            ])
                            @endcomponent
                 </div>
@@ -129,11 +140,71 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="composemodalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" id="modalValues">
+                </div>
+            </div>
+        </div>
+        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    @include('emails.email_templates.email-template-create',['contact'=>null])
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection
 @vite(['resources/js/toast.js'])
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    var contacts = @json($contacts);
+    
+    $(document).ready(function(){
+        
+        
+    });
+    window.openComposeModal = function (Ids) {
+        console.log("Open modal ids",Ids);
+        var intIds = Ids.map(id => parseInt(id));
+        var selectedContacts = contacts.filter(contact => intIds.includes(contact.id));
+        var data = {
+            contacts: contacts,
+            selectedContacts: selectedContacts,
+            emailType:"multiple"
+        };
+        $.ajax({
+            url: '/get/email-create', 
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            method: 'POST',
+            dataType: 'html',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                // Update the modal content with the response
+                $('#modalValues').html(response);
+
+                // Re-initialize Select2
+                $('#toSelect').select2({
+                    placeholder: "To",
+                    
+                });
+
+                // Open the modal
+                $("#composemodal").modal("show");
+                selectedContacts.forEach(element => {
+                    $('#email-checkbox'+element.id).prop('checked', false);
+                });
+            },
+            error: function () {
+                // Handle any errors
+                alert('Failed to load modal content');
+            }
+        });
+    }
     window.onload = function() {
         @foreach ($contacts as $contact)
             var noteTextElement = document.getElementById("note_text{{ $contact['zoho_contact_id'] }}");
@@ -146,7 +217,6 @@
                     validateFormc("", "{{ $contact['zoho_contact_id'] }}");
                 });
             } else {
-                console.log("One or both elements not found for contact ID {{ $contact['zoho_contact_id'] }}");
             }
         @endforeach
 

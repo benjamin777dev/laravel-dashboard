@@ -1417,22 +1417,10 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
 
         const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"              class="common-label">Brochure Design - <b>Click for
                                 options<b>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                    viewBox="0 0 19 18" fill="none">
-                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                        x="0" y="0" width="19" height="18">
-                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                    </mask>
-                                    <g mask="url(#mask0_2151_10662)">
-                                        <path
-                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                            fill="#AC5353" />
-                                    </g>
-                                </svg>
+                                
                             </label>
                             <div class="nontm-select-div">
-                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select required-field">
+                                <select name="brochureLine" id="brochureLine" class="nontm-select form-select">
                                     @foreach ($broucherLines as $brochureLine)
                                         <option value="{{ $brochureLine }}"
                                             {{ $brochureLine == $submittal->brochureLine ? 'selected' : '' }}>
@@ -1441,7 +1429,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
+                        </div>s
                         <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF
                             
                             </label>
@@ -1562,22 +1550,10 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         </div>
                         <div class="close-date-nontm label-div-mb">
                             <label for="brochurePickupDate" class="common-label">Brochure Pick Up or PDF Date
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                viewBox="0 0 19 18" fill="none">
-                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                    x="0" y="0" width="19" height="18">
-                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                </mask>
-                                <g mask="url(#mask0_2151_10662)">
-                                    <path
-                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                        fill="#AC5353" />
-                                </g>
-                            </svg></label>
+                           </label>
                             <input type="date"
                                 value="{{ isset($submittal['brochurePickupDate']) ? \Carbon\Carbon::parse($submittal['brochurePickupDate'])->format('Y-m-d') : '' }}"
-                                class="form-control nontm-input required-field" id="brochurePickupDate">
+                                class="form-control nontm-input" id="brochurePickupDate">
                             <div id="brochurePickupDate_error" class="text-danger">
 
         </div>
@@ -1672,8 +1648,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     addStepChr('Select MLS', defaultCHRSec4);
                     
                     }
-                addStepChr('Commission Details', CommissionDetails);
-                addStepChr('Service Providers', serviceProvider);
+                addStepChr('Commission Details', CommissionDetails,3);
+                addStepChr('Service Providers', serviceProvider,4);
             
             } else if (value === "No") {
                 for (let i = 6; i >= 3; i--) {
@@ -1741,14 +1717,28 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
             return isValid;
         }
 
-        function addStepChr(title, content) {
-            $stepsContainer.steps('add', {
-                headerTag: "h3",
-                bodyTag: "section",
-                title: title,
-                content: content
-            });
-        }
+        function addStepChr(title, content, index = null) {
+            if (index === null) {
+                // Add at the end if no index is provided
+                $stepsContainer.steps('add', {
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    title: title,
+                    content: content
+                });
+            } else {
+                console.log(index,'yes here inde')
+                // Insert at the specified index
+                $stepsContainer.steps('add', {
+                    index: index,
+                    headerTag: "h3",
+                    bodyTag: "section",
+                    title: title,
+                    content: content
+                });
+          }
+}
+
 
         function removeStep(index) {
             console.log(index,'index is hereee')

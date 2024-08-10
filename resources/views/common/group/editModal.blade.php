@@ -1,4 +1,4 @@
-<div class="modal fade" id="editGroupModal" tabindex="-1" role="dialog">
+<div class="modal fade p-5" id="editGroupModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg"
     role="document">
         <div class="modal-content">

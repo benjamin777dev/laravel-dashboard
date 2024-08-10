@@ -145,10 +145,13 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
+        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $allstages = config('variables.dealStages');
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $emails = $db->getContactEmailList($contact['email']);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
@@ -159,7 +162,10 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        return view('contacts.detail', compact('contact', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'));
+        $selectedContacts = $contacts->filter(function($contact) use ($contactId) {
+            return $contact->id === (int)$contactId;
+        });
+        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts'));
     }
 
     public function getContactJson(){
@@ -614,7 +620,7 @@ class ContactController extends Controller
                         "Unsubscribe_From_Reviews" => false,
                         "Currency" => "USD",
                         "Market_Area" => $validatedData['market_area'] ?? "-None-",
-                        "Salutation" => $validatedData['envelope_salutation'] ?? "-None-",
+                        // "Salutation" => $validatedData['envelope_salutation'] ?? "-None-",
                         "First_Name" => $validatedData['first_name'] ?? "",
                         "Lead_Source" => $validatedData['lead_source'] ?? "-None-",
                         "Last_Name" => $last_name,
@@ -630,7 +636,7 @@ class ContactController extends Controller
                             "name" => $validatedRefferedData['Full_Name'] ?? "",
                         ] ?? '-None-',
                         "Lead_Source_Detail" => $validatedData['lead_source_detail'] ?? "",
-                        // "Salutation_s"=> $validatedData['phone'] ?? "",
+                        "Salutation_s"=> $validatedData['envelope_salutation'] ?? "-None-",
                         "Spouse_Partner" => [
                             "id" => $validatedSpouse['id'] ?? $request->spouse_partner ?? "",
                             "name" => $validatedSpouse['Full_Name'] ?? "",
@@ -747,6 +753,7 @@ class ContactController extends Controller
             }
             
             $contactInstance = Contact::where('id', $id)->first();
+            $getContactFromZoho=null;
            
             if (!$contactInstance) {
                 return redirect('/contacts');
@@ -755,58 +762,58 @@ class ContactController extends Controller
                 $response = $zoho->createContactData($responseData, $contactInstance->zoho_contact_id);
             } else {
                 $response = $zoho->createNewContactData($responseData);
-            }
-            if (!$response->successful()) {
-                Log::error("Error creating contacts:");
-                return "error somthing" . $response;
+                
             }
             $data = json_decode($response, true);
-            if (isset($response['data'][0])) {
-                $data = $response['data'][0];
-                $id = $data['details']['id'];
-                $zohoContactId = $data['details']['id'];
-                $createdByName = $data['details']['Created_By']['name'];
-                $createdById = $data['details']['Created_By']['id'];
-                $contactInstance->created_time = isset($data['details']['Created_Time']) ? $helper->convertToUTC($data['details']['Created_Time']) : null;
-                $contactInstance->last_name = $last_name;
-                $contactInstance->zoho_contact_id = $zohoContactId;
-                $contactInstance->first_name = $validatedData['first_name'] ?? null;
-                $contactInstance->mobile = $validatedData['mobile'] ?? null;
-                $contactInstance->email = $validatedData['email'] ?? null;
-                $contactInstance->phone = $validatedData['phone'] ?? null;
-                $contactInstance->abcd = $validatedData['abcd_class'] ?? null;
-                $contactInstance->market_area = $validatedData['market_area'] ?? null;
-                $contactInstance->Lead_Source = $validatedData['lead_source'] ?? null;
-                $contactInstance->referred_id = $validatedRefferedData['id'] ?? null;
-                $contactInstance->spouse_partner = $validatedSpouse['id'] ?? $request->spouse_partner ?? null;
-                $contactInstance->mailing_state = $validatedData['state'] ?? null;
-                $contactInstance->mailing_city = $validatedData['city'] ?? null;
-                $contactInstance->mailing_address = $validatedData['address_line1'] ?? null;
-                $contactInstance->mailing_zip = $validatedData['zip_code'] ?? null;
-                $contactInstance->secondory_email = $validatedData['email_primary'] ?? null;
-                $contactInstance->business_name = $validatedData['business_name'] ?? null;
-                $contactInstance->business_information = $validatedData['business_information'] ?? null;
-                $contactInstance->lead_source_detail = $validatedData['lead_source_detail'] ?? null;
-                $contactInstance->envelope_salutation = $validatedData['envelope_salutation'] ?? null;
-                $contactInstance->relationship_type = $validatedData['relationship_type'] ?? null;
-                $contactInstance->has_email =$validatedData['has_email']??null;
-                $contactInstance->has_address =$validatedData['has_address']??null;
-                $contactInstance->isContactCompleted = true;
-                $contactInstance->isInZoho = true;
-
-                if (isset($validatedData['last_called']) && !empty($validatedData['last_called'])) {
-                    $contactInstance->last_called = $validatedData['last_called'];
+            if (isset($response['data']) && is_array($response['data'])) {
+                if(!empty($contactInstance->zoho_contact_id)){
+                    $getContactFromZoho = $zoho->getZohoContact($contactInstance->zoho_contact_id);
+                }else{
+                    $getContactFromZoho = $zoho->getZohoContact($response['data'][0]['details']['id']);
                 }
-
-                if (isset($validatedData['last_emailed']) && !empty($validatedData['last_emailed'])) {
-                    $contactInstance->last_emailed = $validatedData['last_emailed'];
-                }
-                $contactInstance->save();
-
-                $zohoContacts = $zoho->getZohoContact($contactInstance['zoho_contact_id']);
-                $zohoContact_Array = json_decode($zohoContacts, true);
-                
+                $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
+               
+                $db->storeContactIntoDB($id,$zohoContactValues);
+                $contactGroups = $this->getGroupsForDelete($id);
+                $groupNames = $contactGroups->map(function ($item) {
+                    return [
+                        'name' => $item->groupData['name'],
+                        'id' => $item->groupData['id']
+                    ]; // Access both the group name and id
+                })->toArray(); // Convert the result to an array
+
+                $match_abcd = ["A", "A+", "B", "C", "D"];
+                $targetGroup = $zohoContactValues['ABCD'];
+                
+                // Remove all contact groups that match $match_abcd except the one specified in $targetGroup
+                foreach ($groupNames as $groupName) {
+                    if (in_array($groupName['name'], $match_abcd) && $groupName['name'] !== $targetGroup) {
+                        // Find the group by id
+                        $group = Groups::where('id', $groupName['id'])->first();
+                        
+                        if ($group) {
+                            // Remove the contact group entry
+                            ContactGroups::where('contactId', $contactInstance['id'])
+                                ->where('groupId', $group->id)
+                                ->delete();
+                        }
+                    }
+                }   
+                // Ensure that the target group is added or updated
+                $getGroup = Groups::where('name', $targetGroup)->first();
+                
+                if ($getGroup) {
+                    ContactGroups::updateOrCreate(
+                        ['zoho_contact_group_id' => $getGroup->zoho_group_id],
+                        [
+                            'ownerId' => $user->id,
+                            'contactId' => $contactInstance['id'] ?? null,
+                            'groupId' => $getGroup->id ?? null,
+                            'zoho_contact_group_id' => $getGroup->zoho_group_id ?? null,
+                        ]
+                    );
+                }
                 
                 if (isset($zohoContactValues['Groups']) && is_array($zohoContactValues['Groups']) && count($zohoContactValues['Groups']) !== 0) {
                     foreach ($zohoContactValues['Groups'] as $group) {
@@ -911,6 +918,22 @@ class ContactController extends Controller
             Log::error("Exception when fetching contacts: {$e->getMessage()}");
             return collect();
         }
+    }
+
+    public function getGroupsForDelete($contactId)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+       
+        // $contactInfo = Contact::getZohoContactInfo();
+        $accessToken = $user->getAccessToken(); // Method to get the access token.
+        $contactsGroups = $db->retrieveContactGroupsDataForDelte($user, $accessToken, $contactId);
+        return $contactsGroups;
+
     }
 
     public function getGroups(Request $request)
@@ -1085,6 +1108,19 @@ class ContactController extends Controller
         return response()->json([
             'spouseContact'=>$contact
         ]);
+    }
+
+    public function contactEmailList(Request $request )
+    {
+        try {
+            $db= new DatabaseService();
+            $contactId = $request->route('contactId');
+            $emails = $db->getContactEmailList($contactId);
+            return Datatables::of($emails)->make(true);
+        } catch (\Exception $e) {
+            Log::error("Exception when fetching contact details: {$e->getMessage()}");
+            return null;
+        }
     }
 
 }

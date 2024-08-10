@@ -12,6 +12,8 @@ use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use DataTables;
@@ -166,7 +168,6 @@ class DashboardController extends Controller
         $monthlyGCI = $filteredDeals->groupBy(function ($deal) {
             return Carbon::parse($this->helper->convertToMST($deal['closing_date']))->format('Y-m');
         })->map(function ($dealsGroup) {
-            Log::info("MONTHLYGCI",[$dealsGroup]);
             return $dealsGroup->sum('pipeline1');
         });
 
@@ -418,7 +419,7 @@ class DashboardController extends Controller
         $What_Id;
         $priority;
         $contact;
-        $seModule;
+        $seModule=null;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
@@ -515,7 +516,7 @@ class DashboardController extends Controller
             if (strpos($id, ',') === false) {
                 $response = $zoho->deleteTask($jsonData, $id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                    return response()->json(['error' => "Not found in Zoho crm"],401);
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 if (!$task) {
@@ -526,7 +527,7 @@ class DashboardController extends Controller
                 // Multiple IDs provided
                 $response = $zoho->deleteTaskSelected($jsonData, $id);
                 if (!$response->successful()) {
-                    return "error somthing" . $response;
+                    return response()->json(['error' => "Not found in Zoho crm"],401);
                 }
                 $idArray = explode(',', $id);
                 $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
@@ -535,12 +536,12 @@ class DashboardController extends Controller
                 }
             }
             Log::info("Successful notes delete... " . $response);
+            return $response;
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             return "somthing went wrong" . $e->getMessage();
         }
-        return $response;
     }
     public function updateTaskaction(Request $request, User $user, $id)
     {

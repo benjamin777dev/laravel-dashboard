@@ -158,12 +158,29 @@ class Helper
     }
 
     public function array_find(array $array, callable $callback) {
-    foreach ($array as $item) {
-        if ($callback($item)) {
-            return $item;
+        foreach ($array as $item) {
+            if ($callback($item)) {
+                return $item;
+            }
         }
+        return null;
     }
-    return null;
-}
+
+    function filterEmailsAndNumbers($items) {                        
+        $emails = [];
+        $ids = [];
+
+        foreach ($items as $item) {
+            // Check if the item is a valid email
+            if (filter_var($item, FILTER_VALIDATE_EMAIL)) {
+                $emails[] = $item;
+            } else if (is_numeric($item)) {
+                $ids[] = $item;
+            }
+        }
+        Log::info("EMAILS: ", $emails);
+    Log::info("IDS: ", $ids);
+        return [$emails, $ids];
+    }
 
 }

@@ -50,7 +50,7 @@
                     </div>
                 </li>
                 {{-- note view modal --}}
-                <div class="modal fade" id="staticBackdropnoteview{{ $note['zoho_note_id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                <div class="modal fade p-5" id="staticBackdropnoteview{{ $note['zoho_note_id'] }}" data-bs-backdrop="static" data-bs-keyboard="false"
                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered deleteModal">
                         <div class="modal-content noteModal">
@@ -114,7 +114,7 @@
                     </div>
                 </div>
                 {{-- note update modal --}}
-                <div class="modal fade" id="staticBackdropnoteupdate{{ $note['id'] }}" data-bs-backdrop="static"
+                <div class="modal fade p-5" id="staticBackdropnoteupdate{{ $note['id'] }}" data-bs-backdrop="static"
                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered deleteModal">
                         <!-- Font Awesome delete icon -->

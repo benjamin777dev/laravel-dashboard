@@ -1,4 +1,4 @@
-<div class="modal fade" id="chooseTransactionModal" tabindex="-1" role="dialog">
+<div class="modal fade p-5" id="chooseTransactionModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -55,7 +55,12 @@
             return Math.floor(1000 + Math.random() * 9000);
         }
 
-    function addSubmittal (type,deal,formType=null){
+    function addSubmittal (type,deal=null,formType=null){
+        let dealsArray = @json($deals);
+        if(dealsArray?.length && window?.dealId){
+            let matchingDeal = dealsArray.find(dealObj => String(dealObj?.id) === String(window?.dealId));
+            deal = matchingDeal;
+        }
         if(type == "buyer-submittal"){
             var formData = {
                 "data": [{

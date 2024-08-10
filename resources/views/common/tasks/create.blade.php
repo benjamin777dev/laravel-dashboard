@@ -1,5 +1,5 @@
 @if (isset($type) && $type == 'Deals')
-    <div class="modal fade" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
+    <div class="modal fade p-5" id="newTaskModalId{{ $deal->id }}" tabindex="-1">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
             <div class="modal-content p-1">
                 <div class="modal-header border-0">
@@ -39,7 +39,7 @@
         </div>
     </div>
 @elseif(isset($type) && $type == 'Contacts')
-<div class="modal fade" id="newTaskModalId{{ $contact->id }}" tabindex="-1">
+<div class="modal fade p-5" id="newTaskModalId{{ $contact->id }}" tabindex="-1">
     <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
         <div class="modal-content p-1">
             <div class="modal-header border-0">
@@ -79,7 +79,7 @@
     </div>
 </div>
 @else
-    <div class="modal fade" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"
+    <div class="modal fade p-5" id="staticBackdropforTask" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"
         tabindex="-1">
         <div class="modal-dialog d-flex justify-content-center align-items-center vh-100 deleteModal">
             <div class="modal-content p-1">

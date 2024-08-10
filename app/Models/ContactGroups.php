@@ -62,7 +62,7 @@ class ContactGroups extends Model
 
     public function groupData()
     {
-        return $this->belongsTo(Groups::class, 'groupId');
+        return $this->belongsTo(Groups::class, 'groupId','id');
     }
 
     public function modifiedBy()

@@ -1,7 +1,6 @@
+
 <div class="row">
     <div class='card'>
-
-   
     <form class="row" id="contact_detail_form" action="{{ route('update.contact', ['id' => $contact->id]) }}"
         method="POST" onsubmit="return validateContactForm();">
         @csrf
@@ -9,6 +8,7 @@
         {{-- Contact Details --}}
         <div class="col-md-6 col-sm-12"
             >
+            <div id="popup" class="text-danger"></div>
             <p class="npinfoText p-2">Contact Details</p>
             <div class="row g-3">
                 <div class="col-md-6">
@@ -36,8 +36,13 @@
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault05" class="form-label nplabelText">Email</label>
-                    <input type="text" value="{{ $contact['email'] }}" name="email"
-                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05">
+                    <div class="input-group">
+                        <input type="text" value="{{ $contact['email'] }} " name="email"
+                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05"> 
+                        <div class="input-group-text" onclick="openEmail()">
+                            <i class="mdi mdi-send ms-1"></i>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault06" class="form-label nplabelText">Market Area</label>
@@ -280,7 +285,7 @@
 </div>
 @include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
-<div class="modal fade" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade p-5" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered deleteModal">
         <div class="modal-content noteModal">
@@ -314,59 +319,95 @@
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',
 ])
-@vite(['resources/js/pipeline.js'])   
+<!-- Modal -->
+<div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="modalValues">
+            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contacts])
+        </div>
+    </div>
+</div>
+<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @include('emails.email_templates.email-template-create',['contact'=>$contact])
+        </div>
+    </div>
+</div>
+{{-- Emails--}}
+<div class="p-4 d-flex justify-content-between ">
+    <div class="">
+        <h2 class='pText mt-3 text-center'> Emails </h2>
+    </div>
+    <div class=" text-end">
+        <div class="input-group-text npcontactbtn" onclick="openEmail()">
+            Compose Email
+            <i class="mdi mdi-send ms-1"></i>
+        </div>
+    </div>
+</div>
+
+<div class="contactEmailList">
+    @component('components.common-table', [
+        'id' => 'contact-email-table',
+    ])
+    @endcomponent
+</div>
+@vite(['resources/js/pipeline.js'])
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 <script>
     contact=@json($contact);
     groups = @json($groups);
     $(document).ready(function() {
-    var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
-        removeItemButton: true,
-        maxItemCount: null,
-        searchResultLimit: 500,
-        renderChoiceLimit: -1,
-    });
-
-    let selectedGroupsArr = [];         
-    const hiddenInput = document.createElement('input');
-    hiddenInput.type = 'hidden';
-    hiddenInput.name = 'selectedGroups';
-
-    document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
-        var selectedGroups = event.detail.value;
-        if (!selectedGroupsArr.includes(selectedGroups)) {
-            selectedGroupsArr.push(selectedGroups);
-        } else {
-            selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
-        }
-        hiddenInput.value = JSON.stringify(selectedGroupsArr);
-    });
-
-    let selectedGroupsDefault = [];
-    $("#choices-multiple-remove-button_test option:selected").each(function() {
-        selectedGroupsDefault.push($(this).val());
-    });
-
-    let removeGroupsArr = [];
-    multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
-        var removedGroup = event.detail.value;
-        if (selectedGroupsDefault.includes(removedGroup)) {
-            deleteAssignGroup(removedGroup);
-        }
-    });
-
-    document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
-    
-    var getReffered = $('#validationDefault14');
-    getReffered.select2({
-        placeholder: 'Search...',
-    }).on('select2:open', () => {
-        $(document).on('scroll.select2', function() {
-            getReffered.select2('close');
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
+            removeItemButton: true,
+            maxItemCount: null,
+            searchResultLimit: 500,
+            renderChoiceLimit: -1,
         });
-    }).on('select2:close', () => {
-        $(document).off('scroll.select2');
+
+        let selectedGroupsArr = [];         
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'selectedGroups';
+
+        document.getElementById('choices-multiple-remove-button_test')?.addEventListener('change', function(event) {
+            var selectedGroups = event.detail.value;
+            if (!selectedGroupsArr.includes(selectedGroups)) {
+                selectedGroupsArr.push(selectedGroups);
+            } else {
+                selectedGroupsArr = selectedGroupsArr.filter(item => item !== selectedGroups);
+            }
+            hiddenInput.value = JSON.stringify(selectedGroupsArr);
+        });
+
+        let selectedGroupsDefault = [];
+        $("#choices-multiple-remove-button_test option:selected").each(function() {
+            selectedGroupsDefault.push($(this).val());
+        });
+
+        let removeGroupsArr = [];
+        multipleCancelButton.passedElement.element.addEventListener('removeItem', function(event) {
+            var removedGroup = event.detail.value;
+            if (selectedGroupsDefault.includes(removedGroup)) {
+                deleteAssignGroup(removedGroup);
+            }
+        });
+
+        document.getElementById('contact_detail_form')?.appendChild(hiddenInput);
+        
+        var getReffered = $('#validationDefault14');
+        getReffered.select2({
+            placeholder: 'Search...',
+        }).on('select2:open', () => {
+            $(document).on('scroll.select2', function() {
+                getReffered.select2('close');
+            });
+        }).on('select2:close', () => {
+            $(document).off('scroll.select2');
+        });
     });
-});
 
     function formatState(state) {
         if (!state.id) {
@@ -430,16 +471,25 @@
         });
     });
 
-function validateContactForm() {
-    let last_name = $("#last_name").val();
-    if (last_name.trim() === "") {
-        showToastError('Please enter last name');
-        return false;
+    function validateContactForm() {
+        let last_name = $("#last_name").val();
+        if (last_name.trim() === "") {
+            showToastError('Please enter last name');
+            return false;
+        }
+        $('#contactOwner').removeAttr('disabled');
+        return true;
     }
-    $('#contactOwner').removeAttr('disabled');
-    return true;
-}
+
+    function openEmail(){
+        console.log("jfjfjgfjfjgf");
+        
+        $("#composemodal").modal('show');
+    }
 
 
+    
+
+    
 
 </script>

@@ -73,6 +73,7 @@
 <script>
     console.log("yes working")
     $(document).ready(function() {
+        console.log(window.submittalId,'window.submittalId')
         const urlPartss = window.location.pathname.split('/'); // Split the URL by '/'
         const dealId = urlPartss.pop();
          $('#datatable_submittal').DataTable({
