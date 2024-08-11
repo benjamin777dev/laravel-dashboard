@@ -303,7 +303,7 @@ class Deal extends Model
             'contractId' => $source == "webhook" ? ((int) ($data['Contract']['id'] ?? null)) : ((int) ($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
             'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
-            'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
+            'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
             'coOpAgentCHRFit' => isset($data['Co_Op_Agent_CHR_Fit']) ? (int) $data['Co_Op_Agent_CHR_Fit'] : null,
             'coOpAgentEBLetterSent' => isset($data['EB_Letter_Sent']) ? (int) $data['EB_Letter_Sent'] : null,
