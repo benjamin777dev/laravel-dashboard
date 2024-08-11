@@ -2315,20 +2315,21 @@ class DatabaseService
 
     protected function mapDataByModule($module, $record)
     {
+        $module = strtolower($module);
         switch ($module) {
-            case 'Contacts':
+            case 'contacts':
                 return \App\Models\Contact::mapZohoData($record, 'csv');
-            case 'Deals':
+            case 'deals':
                 return \App\Models\Deal::mapZohoData($record, 'csv');
-            case 'Groups':
+            case 'groups':
                 return \App\Models\Groups::mapZohoData($record, 'csv');
-            case 'Contacts_X_Groups':
+            case 'contacts_x_groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
-            case 'Tasks':
+            case 'tasks':
                 return \App\Models\Task::mapZohoData($record, 'csv');
-            case 'Teams_And_Partners':
+            case 'teams_and_partners':
                 return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
-            case 'Agent_Commission_Incomes':
+            case 'agent_commission_incomes':
                 return \App\Models\Aci::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
@@ -2339,26 +2340,27 @@ class DatabaseService
     protected function upsertDataBatch(array $dataBatch, $module)
     {
         try {
+            $module = strtolower($module);
             switch ($module) {
-                case 'Contacts':
+                case 'contacts':
                     \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id']);
                     break;
-                case 'Deals':
+                case 'deals':
                     \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id']);
                     break;
-                case 'Contacts_X_Groups':
+                case 'contacts_x_groups':
                     \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
                     break;
-                case 'Agent_Commission_Incomes':
+                case 'agent_commission_incomes':
                     \App\Models\Aci::upsert($dataBatch, ['zoho_aci_id']);
                     break;
-                case 'Groups':
+                case 'groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
-                case 'Tasks':
+                case 'tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
                     break;
-                case 'Teams_And_Partners':
+                case 'teams_and_partners':
                     \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
 
