@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Aci;
 use App\Models\Deal;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ClosingInformationController extends Controller
@@ -17,22 +16,32 @@ class ClosingInformationController extends Controller
             return redirect('/login');
         }
 
+        $contact = $user->contact;
+        $teamAndPartnership = null;
+
+        if ($contact && $contact->teamAndPartnership) {
+            $teamAndPartnership = $contact->teamAndPartnership;
+            Log::info('User is part of the team:', ['team' => $teamAndPartnership->toArray()]);
+        } else {
+            Log::info('User is not part of any team.');
+        }
+
         // Fetch KPIs
-        $transactionCountYTD = $this->calculateTransactionCountYTD($user);
-        $gciYTD = $this->calculateGCIYTD($user);
-        $volumeYTD = $this->calculateVolumeYTD($user);
-        $capAmountPaidYTD = $this->calculateCapAmountPaidYTD($user);
-        $averageSalePrice = $this->calculateAverageSalePrice($user);
-        $incomeGoal = $user->contact->income_goal ?? 0;
-        $averageCommissionPercent = $this->calculateAverageCommissionPercent($user);
-        $initialCap = $user->contact->initial_cap ?? 0;
-        $residualCap = $user->contact->residual_cap ?? 0;
-        $irs1099Amount = $this->calculate1099Amount($user);
+        $transactionCountYTD = $this->calculateTransactionCountYTD($contact, $teamAndPartnership);
+        $gciYTD = $this->calculateGCIYTD($contact, $teamAndPartnership);
+        $volumeYTD = $this->calculateVolumeYTD($contact, $teamAndPartnership);
+        $capAmountPaidYTD = $this->calculateCapAmountPaidYTD($contact, $teamAndPartnership);
+        $averageSalePrice = $this->calculateAverageSalePrice($contact, $teamAndPartnership);
+        $incomeGoal = $contact->income_goal ?? 0;
+        $averageCommissionPercent = $this->calculateAverageCommissionPercent($contact, $teamAndPartnership);
+        $initialCap = $contact->initial_cap ?? 0;
+        $residualCap = $contact->residual_cap ?? 0;
+        $irs1099Amount = $this->calculate1099Amount($contact, $teamAndPartnership);
 
         // Fetch Table Data
-        $agentReport = $this->getAgentReportData($user);
-        $transactionsSoldYTD = $this->getTransactionsSoldYTD($user);
-        $soldByYear = $this->getSoldByYearData($user);
+        $agentReport = $this->getAgentReportData($contact, $teamAndPartnership);
+        $transactionsSoldYTD = $this->getTransactionsSoldYTD($contact, $teamAndPartnership);
+        $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership);
 
         return view('closing_information.index', compact(
             'transactionCountYTD', 'gciYTD', 'volumeYTD',
@@ -42,31 +51,45 @@ class ClosingInformationController extends Controller
         ));
     }
 
-    private function calculateTransactionCountYTD($user)
+
+    private function buildTransactionQuery($contact, $teamAndPartnership, $startDate = null, $endDate = null)
+    {
+        $query = Aci::where('stage', 'Sold');
+
+        // Apply the date range filter only if both start and end dates are provided
+        if ($startDate && $endDate) {
+            $query->whereBetween('closing_date', [$startDate, $endDate]);
+        }
+
+        // Apply team/partnership or individual agent filter
+        if ($teamAndPartnership) {
+            $query->where('team_partnership_id', $teamAndPartnership->team_partnership_id);
+        } else {
+            $query->where('chr_agent_id', $contact->zoho_contact_id);
+        }
+
+        return $query;
+    }
+
+
+    private function calculateTransactionCountYTD($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
         $previousFiscalYearStart = $fiscalYearStart->copy()->subYear();
         $previousFiscalYearEnd = $fiscalYearEnd->copy()->subYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
+        // Build the queries
+        $currentYearQuery = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $previousYearQuery = $this->buildTransactionQuery($contact, $teamAndPartnership, $previousFiscalYearStart, $previousFiscalYearEnd);
 
-        if ($user->isPartOfTeam()) {
-            Log::info("User is part of team: " . $user->teamPartnership);
-            
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        // Execute the queries
+        $currentYearCount = $currentYearQuery->sum('sides');
+        $previousYearCount = $previousYearQuery->sum('sides');
 
-        $currentYearCount = $query->sum('sides');
-
-        $previousYearCount = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$previousFiscalYearStart, $previousFiscalYearEnd])
-            ->sum('sides');
-
-        $percentageChange = $this->calculatePercentageChange($currentYearCount, $previousYearCount);
+        $percentageChange = $previousYearCount > 0 
+            ? number_format(($currentYearCount / $previousYearCount) * 100, 2) 
+            : number_format(($currentYearCount > 0 ? 100 : 0), 2);
 
         return [
             'currentYearCount' => $currentYearCount,
@@ -75,163 +98,93 @@ class ClosingInformationController extends Controller
         ];
     }
 
-    private function calculateGCIYTD($user)
+    private function calculateGCIYTD($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->sum('adjusted_gross_commission');
     }
 
-    private function calculateVolumeYTD($user)
+    private function calculateVolumeYTD($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->sum('calculated_volume');
     }
 
-    private function calculateCapAmountPaidYTD($user)
+    private function calculateCapAmountPaidYTD($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->sum('less_split_to_chr');
     }
 
-    private function calculateAverageSalePrice($user)
+    private function calculateAverageSalePrice($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->avg('sale_price');
     }
 
-    private function calculateAverageCommissionPercent($user)
+    private function calculateAverageCommissionPercent($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->avg('commission_percent');
     }
 
-    private function calculate1099Amount($user)
+    private function calculate1099Amount($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->sum('irs_reported_1099_income_for_this_transaction');
     }
 
-    private function calculatePercentageChange($currentYear, $previousYear)
-    {
-        if ($previousYear == 0) {
-            return $currentYear == 0 ? 0 : 100;
-        }
-        return (($currentYear - $previousYear) / $previousYear) * 100;
-    }
-
-    private function getAgentReportData($user)
+    private function getAgentReportData($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->groupBy('chr_agent_id')
             ->selectRaw('chr_agent_id, count(*) as record_count, sum(calculated_gci) as total_gci, sum(calculated_volume) as total_volume')
             ->get();
     }
 
-    private function getTransactionsSoldYTD($user)
+    private function getTransactionsSoldYTD($contact, $teamAndPartnership)
     {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
 
-        $query = Aci::where('stage', 'Sold')
-            ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
 
         return $query->groupByRaw('MONTH(closing_date)')
             ->selectRaw('MONTH(closing_date) as month, count(*) as record_count, sum(calculated_gci) as total_gci, sum(calculated_volume) as total_volume')
             ->get();
     }
 
-    private function getSoldByYearData($user)
+    private function getSoldByYearData($contact, $teamAndPartnership)
     {
-        $query = Aci::where('stage', 'Sold');
-
-        if ($user->isPartOfTeam()) {
-            $query->where('team_partnership_id', $user->teamPartnership->id);
-        } else {
-            $query->where('chr_agent_id', $user->zoho_id);
-        }
+        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, null, null);
 
         return $query->groupByRaw('YEAR(closing_date)')
             ->selectRaw('YEAR(closing_date) as year, count(*) as record_count, sum(calculated_gci) as total_gci, sum(calculated_volume) as total_volume')

@@ -262,10 +262,10 @@ class Deal extends Model
         // no deals inthe database can exist without it
         // as zoho won't save a deal w/o one
         // so we don't need to check for null here
-        $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] : $data['Contact_Name'];
+        $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] ?? null : $data['Contact_Name']?? null ;
         if ($contactNameId == null) {
             Log::error("No contact ID found! ", ['data' => $data]);
-            $contactNameId = $source == "webhook" ? $data['Owner']['id'] : $data['Owner'];
+            $contactNameId = $source == "webhook" ? $data['Owner']['id']?? null  : $data['Owner']?? null ;
             if (!$contactNameId) {
                 return new Deal();
             }
