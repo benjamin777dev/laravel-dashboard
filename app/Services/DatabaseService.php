@@ -578,22 +578,36 @@ class DatabaseService
         }
     }
 
+    
+
     public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
     {
-
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [
-                ['userID', $user->id],
-                ['isDealCompleted',true]
-            ];
+            // Check if user is part of a team
+            $contact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+            $teamPartnershipId = $contact->team_partnership ?? null;
 
+            // Base conditions
+            $conditions = [];
+
+            if ($teamPartnershipId) {
+                // If user is part of a team, fetch deals for the entire team
+                $conditions[] = ['teamPartnership', $teamPartnershipId];
+            } else {
+                // If user is not part of a team, fetch deals for the individual user
+                $conditions[] = ['userID', $user->id];
+            }
+
+            $conditions[] = ['isDealCompleted', true];
+
+            // Start building the query
             $deals = Deal::where($conditions)
-                ->whereNotIn('stage', config('variables.dealPipelineStages')
-                );
+                ->whereNotIn('stage', config('variables.dealPipelineStages'));
 
-            if ($search&&$search !== "") {
+            // Search logic
+            if ($search && $search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
@@ -602,12 +616,12 @@ class DatabaseService
                 });
             }
 
+            // Sorting logic
             if ($sortValue != '' && $sortType != '') {
                 $sortField = $sortValue;
                 if ($sortField === 'contactName.first_name') {
                     $sortField = 'contacts.first_name';
                 }
-                // Add sorting logic based on the field and type
                 switch ($sortType) {
                     case 'asc':
                         $deals->orderBy($sortField, 'asc');
@@ -616,13 +630,13 @@ class DatabaseService
                         $deals->orderBy($sortField, 'desc');
                         break;
                     default:
-
                         break;
                 }
             } else {
                 $deals->orderBy('updated_at', 'desc');
             }
 
+            // Date filter logic
             if ($dateFilter && $dateFilter != '') {
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
@@ -636,6 +650,7 @@ class DatabaseService
             if ($filter) {
                 $conditions[] = ['stage', $filter];
             }
+
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -649,8 +664,10 @@ class DatabaseService
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
-
     }
+
+
+
 
     public function retrieveSubmittalDeals(User $user, $accessToken)
     {
