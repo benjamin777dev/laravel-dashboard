@@ -2359,7 +2359,7 @@ class DatabaseService
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
                     break;
                 case 'Teams_And_Partners':
-                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['zoho_teams_and_partners_id']);
+                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
 
                     // Add other cases as needed

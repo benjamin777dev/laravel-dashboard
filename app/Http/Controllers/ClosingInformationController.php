@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Aci;
 use App\Models\Deal;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ClosingInformationController extends Controller
 {
@@ -52,6 +53,8 @@ class ClosingInformationController extends Controller
             ->whereBetween('closing_date', [$fiscalYearStart, $fiscalYearEnd]);
 
         if ($user->isPartOfTeam()) {
+            Log::info("User is part of team: " . $user->teamPartnership);
+            
             $query->where('team_partnership_id', $user->teamPartnership->id);
         } else {
             $query->where('chr_agent_id', $user->zoho_id);
