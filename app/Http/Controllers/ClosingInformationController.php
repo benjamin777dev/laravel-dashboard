@@ -33,7 +33,7 @@ class ClosingInformationController extends Controller
         $transactionsSoldYTD = $this->getTransactionsSoldYTD($user);
         $soldByYear = $this->getSoldByYearData($user);
 
-        return view('closing_information', compact(
+        return view('closing_information.index', compact(
             'transactionCountYTD', 'gciYTD', 'volumeYTD',
             'capAmountPaidYTD', 'averageSalePrice', 'incomeGoal',
             'averageCommissionPercent', 'initialCap', 'residualCap',
