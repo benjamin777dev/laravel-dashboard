@@ -19,6 +19,7 @@ use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\SubmittalController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\ClosingInformationController;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -200,5 +201,10 @@ Route::get('/get/template/detail/{templateId}',[TemplateController::class,'getTe
 Route::get('/read/template/detail/{templateId}',[TemplateController::class,'readTemplateDetail'])->name('read.template.detail')->middleware('auth');
 Route::post('/delete/templates',[TemplateController::class,'deleteTemplates'])->name('delete.template')->middleware('auth');
 Route::patch('/update/template/{templateId}',[TemplateController::class,'updateTemplate'])->name('delete.template')->middleware('auth');
+
+
+// Closing Information Route
+Route::get('/closing-information', [ClosingInformationController::class, 'index'])->name('closing.information')->middleware('auth');
+
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
