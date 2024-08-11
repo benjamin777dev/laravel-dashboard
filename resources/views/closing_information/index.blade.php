@@ -8,122 +8,114 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Closing Information</h4>
+            <h4 class="mb-sm-0 font-weight-bold">Closing Information</h4>
         </div>
     </div>
 </div>
 <!-- End Page Title -->
 
+<!-- Financial Overview -->
 <div class="row">
-    <!-- Transaction Count YTD -->
-    <div class="col-md-4">
-        <div class="card">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Transaction Count YTD</h4>
-                <h2>{{ $transactionCountYTD['currentYearCount'] }}</h2>
-                <p class="{{ $transactionCountYTD['percentageChange'] >= 0 ? 'text-success' : 'text-danger' }}">
-                    <i class="mdi mdi-arrow-{{ $transactionCountYTD['percentageChange'] >= 0 ? 'up' : 'down' }}-bold"></i>
-                    {{ $transactionCountYTD['percentageChange'] }}%
-                </p>
-                <p>Last Year: {{ $transactionCountYTD['previousYearCount'] }}</p>
-            </div>
-        </div>
-    </div>
+                <h5 class="card-title text-muted">Financial Overview</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Income Goal</h6>
+                        <h2 class="font-weight-bold">${{ number_format($incomeGoal, 2) }}</h2>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                style="width: {{ ($irs1099Amount / $incomeGoal) * 100 }}%" 
+                                aria-valuenow="{{ ($irs1099Amount / $incomeGoal) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="mt-1 text-muted">1099 Amount Paid: ${{ number_format($irs1099Amount, 2) }}</p>
+                    </div>
 
-    <!-- GCI YTD -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">GCI YTD</h4>
-                <h2>${{ number_format($gciYTD, 2) }}</h2>
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Initial Cap</h6>
+                        <h2 class="font-weight-bold">${{ number_format($initialCap, 2) }}</h2>
+                    </div>
 
-    <!-- Volume YTD -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Volume YTD</h4>
-                <h2>${{ number_format($volumeYTD, 2) }}</h2>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Residual Cap</h6>
+                        <h2 class="font-weight-bold">${{ number_format($residualCap, 2) }}</h2>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <h6 class="text-muted">Cap Amount Paid YTD</h6>
+                        <h2 class="font-weight-bold">${{ number_format($capAmountPaidYTD, 2) }}</h2>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Transaction Overview -->
 <div class="row">
-    <!-- Cap Amount Paid YTD -->
-    <div class="col-md-4">
-        <div class="card">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Cap Amount Paid YTD</h4>
-                <h2>${{ number_format($capAmountPaidYTD, 2) }}</h2>
-            </div>
-        </div>
-    </div>
+                <h5 class="card-title text-muted">Transaction Overview</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6 class="text-muted">Transaction Count YTD</h6>
+                        <h2 class="font-weight-bold">{{ $transactionCountYTD['currentYearCount'] }}</h2>
+                        <p class="text-muted">Last Year: {{ $transactionCountYTD['previousYearCount'] }}</p>
+                        <span class="badge {{ $transactionCountYTD['percentageChange'] >= 0 ? 'badge-success' : 'badge-danger' }}">
+                            <i class="mdi mdi-arrow-{{ $transactionCountYTD['percentageChange'] >= 0 ? 'up' : 'down' }}-bold"></i>
+                            {{ $transactionCountYTD['percentageChange'] }}%
+                        </span>
+                    </div>
 
-    <!-- Average Sale Price -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Average Sale Price</h4>
-                <h2>${{ number_format($averageSalePrice, 2) }}</h2>
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-muted">GCI YTD</h6>
+                        <h2 class="font-weight-bold">${{ number_format($gciYTD, 2) }}</h2>
+                    </div>
 
-    <!-- Average Commission Percent -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Average Commission %</h4>
-                <h2>{{ number_format($averageCommissionPercent, 2) }}%</h2>
+                    <div class="col-md-4">
+                        <h6 class="text-muted">Volume YTD</h6>
+                        <h2 class="font-weight-bold">${{ number_format($volumeYTD, 2) }}</h2>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Additional Metrics -->
 <div class="row">
-    <!-- Initial Cap -->
-    <div class="col-md-4">
-        <div class="card">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Initial Cap</h4>
-                <h2>${{ number_format($initialCap, 2) }}</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- Residual Cap -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Residual Cap</h4>
-                <h2>${{ number_format($residualCap, 2) }}</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- IRS 1099 Amount -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">1099 Amount</h4>
-                <h2>${{ number_format($irs1099Amount, 2) }}</h2>
+                <h5 class="card-title text-muted">Average Sale Price & Commission</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Average Sale Price</h6>
+                        <h2 class="font-weight-bold">${{ number_format($averageSalePrice, 2) }}</h2>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Average Commission %</h6>
+                        <h2 class="font-weight-bold">{{ number_format($averageCommissionPercent, 2) }}%</h2>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Detailed Reports -->
 <div class="row">
-    <!-- Agent Report Table -->
-    <div class="col-12">
-        <div class="card">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Agent Report</h4>
+                <h5 class="card-title text-muted">Agent Report</h5>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead>
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Co-Listing Agent</th>
                                 <th>Record Count</th>
@@ -146,17 +138,14 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <!-- Transactions Sold YTD -->
-    <div class="col-12">
-        <div class="card">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Transactions Sold YTD</h4>
+                <h5 class="card-title text-muted">Transactions Sold YTD</h5>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead>
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Month</th>
                                 <th>Record Count</th>
@@ -179,17 +168,14 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <!-- Sold by Year -->
-    <div class="col-12">
-        <div class="card">
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <h4 class="card-title">Sold by Year</h4>
+                <h5 class="card-title text-muted">Sold by Year</h5>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead>
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-light">
                             <tr>
                                 <th>Year</th>
                                 <th>Record Count</th>

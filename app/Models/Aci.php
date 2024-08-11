@@ -129,7 +129,6 @@ class Aci extends Model
                     $mappedData[$field] = is_numeric($value) ? (int) $value ?? null : null;
                 } elseif (in_array($field, ['commission_percent', 'split_percent', 'portion_of_total', 'admin_fee_income', 'after_splits', 'agent_check_amount'])) {
                     $mappedData[$field] = ($value !== '') ? (float) $value : null;
-                    Log::info("field: $field value: $value");
                 } elseif (in_array($field, ['closing_date'])) {
                     $mappedData[$field] = Carbon::parse($value)->toDateString();
                 } elseif (in_array($field, ['created_at', 'updated_at'])) {
@@ -218,6 +217,12 @@ class Aci extends Model
 
         $mappedData['transaction_id'] = $dealRecord->id;
         $mappedData['zoho_aci_id'] = $idKey;
+        
+        if ($dealRecord->teamPartnership) {
+            Log::info("Team Partnership:" . $dealRecord->teamPartnership);
+            $mappedData['team_partnership_id'] = $dealRecord->teamPartnership ?? null;
+        }
+        
 
 
         //Log::info("Mapped Data: ", ['data' => $mappedData]);

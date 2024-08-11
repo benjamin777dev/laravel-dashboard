@@ -1,25 +1,27 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController; // Make sure to import the ResetPasswordController if you're using it
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PipelineController;
-use App\Http\Controllers\NonTmController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
-use App\Http\Controllers\ZohoController;
-use App\Http\Controllers\UpdateFromZohoCRMController;
-use App\Http\Controllers\SubmittalController;
-use App\Http\Controllers\EmailController;
-use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\ClosingInformationController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NonTmController;
+use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\SubmittalController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamIndividualController;
+use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\UpdateFromZohoCRMController;
+use App\Http\Controllers\ZohoController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
@@ -205,6 +207,10 @@ Route::patch('/update/template/{templateId}',[TemplateController::class,'updateT
 
 // Closing Information Route
 Route::get('/closing-information', [ClosingInformationController::class, 'index'])->name('closing.information')->middleware('auth');
+
+// Team and Individual
+Route::get('/team-individual', [TeamIndividualController::class, 'index'])->name('teamindividual.information')->middleware('auth');
+
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

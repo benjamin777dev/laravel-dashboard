@@ -2287,7 +2287,7 @@ class DatabaseService
 
                 if (count($dataBatch) >= $batchSize) {
                     try {
-                        Log::info("processing batch: ", ['batch' => $dataBatch]);
+                        //Log::info("processing batch: ", ['batch' => $dataBatch]);
                         $this->upsertDataBatch($dataBatch, $module);
                     } catch (\Exception $e) {
                         Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());

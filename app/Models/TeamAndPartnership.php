@@ -18,6 +18,12 @@ class TeamAndPartnership extends Model
 
     protected $table = 'teams_and_partnerships';
 
+    protected $primaryKey = 'team_partnership_id'; // Specify the primary key
+
+    public $incrementing = false; // Since team_partnership_id is not auto-incrementing
+
+    protected $keyType = 'string'; // If the primary key is a string
+
     protected $fillable = [
         'created_by',
         'created_date',
@@ -51,9 +57,8 @@ class TeamAndPartnership extends Model
         'system_modified_time' => 'datetime',
     ];
 
-
     /**
-     * Is Team Agent
+     * Check if a user is a team agent
      *
      * @param integer $userId
      * @return boolean
@@ -64,10 +69,10 @@ class TeamAndPartnership extends Model
     }
 
     /**
-     * Get Team from user ID
+     * Get the team associated with a specific user ID
      *
      * @param integer $userId
-     * @return void
+     * @return TeamAndPartnership|null
      */
     public static function getTeamFromUserId($userId)
     {
@@ -75,10 +80,10 @@ class TeamAndPartnership extends Model
     }
 
     /**
-     * Get Team
+     * Get a specific team by its ID
      *
      * @param integer $teamId
-     * @return void
+     * @return TeamAndPartnership|null
      */
     public static function getTeam($teamId)
     {
@@ -86,10 +91,10 @@ class TeamAndPartnership extends Model
     }
 
     /**
-     * Get Team Members
+     * Get the members of a specific team
      *
      * @param integer $teamId
-     * @return void
+     * @return array|null
      */
     public static function getTeamMembers($teamId)
     {
@@ -98,7 +103,7 @@ class TeamAndPartnership extends Model
     }
 
     /**
-     * Undocumented function
+     * Check if a user is a member of a specific team
      *
      * @param integer $userId
      * @param integer $teamId
@@ -115,18 +120,23 @@ class TeamAndPartnership extends Model
     }
 
     /**
-     * Return the team profile
+     * Get the team profile associated with this team
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function getTeamProfile()
     {
-        return $this->belongsTo(Contact::class, 'team_profile');
+        return $this->belongsTo(Contact::class, 'team_profile', 'zoho_contact_id');
     }
 
+    /**
+     * Get the user who is the owner of this team
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function ownerData()
     {
-        return $this->belongsTo(User::class, 'team_or_partner_owner');
+        return $this->belongsTo(User::class, 'team_or_partner_owner', 'root_user_id');
     }
 
     /**
