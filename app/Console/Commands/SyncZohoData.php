@@ -19,7 +19,7 @@ class SyncZohoData extends Command
      *
      * @var string
      */
-    protected $signature = 'zoho:sync-data';
+    protected $signature = 'sync:zoho-data';
 
     /**
      * The console command description.
