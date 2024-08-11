@@ -45,12 +45,13 @@ class SyncZohoData extends Command
         $db = new DatabaseService();
 
         $modules = [
-            //'Contacts', 
-            //'Groups', 
-            //'Tasks', 
-            //'Deals', 
+            'Contacts',
+            'Groups',
+            'Tasks',
+            'Deals',
             //'Contacts_X_Groups'
-            'Agent_Commission_Incomes'
+            'Agent_Commission_Incomes',
+            'Teams_and_Partners'
         ];
         Log::info("Syncing data for modules: " . implode(', ', $modules));
 
