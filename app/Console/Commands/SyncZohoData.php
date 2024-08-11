@@ -19,7 +19,7 @@ class SyncZohoData extends Command
      *
      * @var string
      */
-    protected $signature = 'zoho:sync-data';
+    protected $signature = 'sync:zoho-data';
 
     /**
      * The console command description.
@@ -44,7 +44,14 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DatabaseService();
 
-        $modules = ['Contacts', 'Groups', 'Tasks', 'Deals', 'Contacts_X_Groups']; // Add other modules as needed
+        $modules = [
+            //'Contacts', 
+            //'Groups', 
+            //'Tasks', 
+            //'Deals', 
+            //'Contacts_X_Groups'
+            'Agent_Commission_Incomes'
+        ];
         Log::info("Syncing data for modules: " . implode(', ', $modules));
 
         // Sync users separately using the REST API

@@ -178,8 +178,28 @@ class User extends Authenticatable
         Log::info("Decrypted refresh token: " . $refreshToken);
         return $refreshToken;
     }
+
+    public function contact()
+    {
+        return $this->hasOne(Contact::class, 'zoho_contact_id', 'zoho_id');
+    }
+
     public function contactData()
     {
         return $this->belongsTo(Contact::class, 'zoho_id', 'zoho_contact_id');
+    }
+
+    public function isPartOfTeam()
+    {
+        // Get the contact associated with this user
+        $contact = $this->contact;
+
+        if ($contact) {
+            // Check if this contact is part of a team/partnership
+            return $contact->teamAndPartnership()->exists();
+        }
+
+        // Fallback check using TeamAndPartnership model
+        return TeamAndPartnership::isTeamAgent($this->id);
     }
 }
