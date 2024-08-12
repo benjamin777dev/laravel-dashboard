@@ -32,8 +32,9 @@ jobs:
     - name: Laravel Specific Commands
       run: |
         cd /home/master/applications/xjuzwthjhj//public_html
+        chmod +x artisan
         php artisan config:clear # Clear Configuration Cache
         php artisan config:cache # Cache configuration
         php artisan cache:clear # Clear cache
         php artisan migrate --force # Run migrations
-        chmod +x artisan
+        

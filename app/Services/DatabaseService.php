@@ -578,22 +578,36 @@ class DatabaseService
         }
     }
 
+    
+
     public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
     {
-
         try {
             Log::info("Retrieve Deals From Database");
 
-            $conditions = [
-                ['userID', $user->id],
-                ['isDealCompleted',true]
-            ];
+            // Check if user is part of a team
+            $contact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+            $teamPartnershipId = $contact->team_partnership ?? null;
 
+            // Base conditions
+            $conditions = [];
+
+            if ($teamPartnershipId) {
+                // If user is part of a team, fetch deals for the entire team
+                $conditions[] = ['teamPartnership', $teamPartnershipId];
+            } else {
+                // If user is not part of a team, fetch deals for the individual user
+                $conditions[] = ['userID', $user->id];
+            }
+
+            $conditions[] = ['isDealCompleted', true];
+
+            // Start building the query
             $deals = Deal::where($conditions)
-                ->whereNotIn('stage', config('variables.dealPipelineStages')
-                );
+                ->whereNotIn('stage', config('variables.dealPipelineStages'));
 
-            if ($search&&$search !== "") {
+            // Search logic
+            if ($search && $search !== "") {
                 $searchTerms = urldecode($search);
                 $deals->where(function ($query) use ($searchTerms) {
                     $query->where('deal_name', 'like', '%' . $searchTerms . '%')
@@ -602,12 +616,12 @@ class DatabaseService
                 });
             }
 
+            // Sorting logic
             if ($sortValue != '' && $sortType != '') {
                 $sortField = $sortValue;
                 if ($sortField === 'contactName.first_name') {
                     $sortField = 'contacts.first_name';
                 }
-                // Add sorting logic based on the field and type
                 switch ($sortType) {
                     case 'asc':
                         $deals->orderBy($sortField, 'asc');
@@ -616,13 +630,13 @@ class DatabaseService
                         $deals->orderBy($sortField, 'desc');
                         break;
                     default:
-
                         break;
                 }
             } else {
                 $deals->orderBy('updated_at', 'desc');
             }
 
+            // Date filter logic
             if ($dateFilter && $dateFilter != '') {
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
@@ -636,6 +650,7 @@ class DatabaseService
             if ($filter) {
                 $conditions[] = ['stage', $filter];
             }
+
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
@@ -649,8 +664,10 @@ class DatabaseService
             Log::error("Error retrieving deals: " . $e->getMessage());
             throw $e;
         }
-
     }
+
+
+
 
     public function retrieveSubmittalDeals(User $user, $accessToken)
     {
@@ -693,25 +710,36 @@ class DatabaseService
 
     public function retrieveDealById(User $user, $accessToken, $dealId)
     {
-
         try {
             Log::info("Retrieve Deals From Database");
-
-            $conditions = [['userID', $user->id], ['id', $dealId]];
-
-            // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName', 'leadAgent');
-
-            Log::info("Deal Conditions", ['deals' => $conditions]);
-
-            // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->first();
-            return $deals;
+    
+            // Check if user is part of a team
+            $contact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+            $teamPartnershipId = $contact->team_partnership ?? null;
+    
+            // Base conditions
+            $conditions = [['id', $dealId]];
+    
+            if ($teamPartnershipId) {
+                // If user is part of a team, fetch the deal for the entire team
+                $conditions[] = ['teamPartnership', $teamPartnershipId];
+            } else {
+                // If user is not part of a team, fetch the deal for the individual user
+                $conditions[] = ['userID', $user->id];
+            }
+    
+            Log::info("Deal Conditions", ['conditions' => $conditions]);
+    
+            // Retrieve the deal based on the conditions
+            $deal = Deal::with('userData', 'contactName', 'leadAgent')
+                        ->where($conditions)
+                        ->first();
+    
+            return $deal;
         } catch (\Exception $e) {
-            Log::error("Error retrieving deals: " . $e->getMessage());
+            Log::error("Error retrieving deal: " . $e->getMessage());
             throw $e;
         }
-
     }
 
     public function retrieveNonTmById(User $user, $accessToken, $dealId)
@@ -1435,7 +1463,7 @@ class DatabaseService
                     "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
                     "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
                     "total" => isset($aci['Total']) ? $aci['Total'] : null,
-                    "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                    "zoho_aci_id" => isset($aci['zoho_aci_id']) ? $aci['id'] : null,
                     'dealId' => isset($deal['id']) ? $deal['id'] : null,
                     'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
                     'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
@@ -2277,7 +2305,7 @@ class DatabaseService
                 try {
                     // Dynamically call the mapping method based on the module
                     $mappedData = $this->mapDataByModule($module, $record);
-
+                    if ($mappedData == [] || is_null($mappedData)) continue;
                     $dataBatch[] = $mappedData;
                 } catch (\Exception $e) {
                     Log::error("Error mapping record for module {$module}: " . $e->getMessage());
@@ -2287,6 +2315,7 @@ class DatabaseService
 
                 if (count($dataBatch) >= $batchSize) {
                     try {
+                        //Log::info("processing batch: ", ['batch' => $dataBatch]);
                         $this->upsertDataBatch($dataBatch, $module);
                     } catch (\Exception $e) {
                         Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
@@ -2314,19 +2343,22 @@ class DatabaseService
 
     protected function mapDataByModule($module, $record)
     {
+        $module = strtolower($module);
         switch ($module) {
-            case 'Contacts':
+            case 'contacts':
                 return \App\Models\Contact::mapZohoData($record, 'csv');
-            case 'Deals':
+            case 'deals':
                 return \App\Models\Deal::mapZohoData($record, 'csv');
-            case 'Groups':
+            case 'groups':
                 return \App\Models\Groups::mapZohoData($record, 'csv');
-            case 'Contacts_X_Groups':
+            case 'contacts_x_groups':
                 return \App\Models\ContactGroups::mapZohoData($record, 'csv');
-            case 'Tasks':
+            case 'tasks':
                 return \App\Models\Task::mapZohoData($record, 'csv');
-            case 'Teams_And_Partners':
+            case 'teams_and_partners':
                 return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
+            case 'agent_commission_incomes':
+                return \App\Models\Aci::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -2336,27 +2368,28 @@ class DatabaseService
     protected function upsertDataBatch(array $dataBatch, $module)
     {
         try {
+            $module = strtolower($module);
             switch ($module) {
-                case 'Contacts':
+                case 'contacts':
                     \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id']);
                     break;
-                case 'Deals':
+                case 'deals':
                     \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id']);
                     break;
-                case 'Contacts_X_Groups':
+                case 'contacts_x_groups':
                     \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
                     break;
-                case 'Agent_Commission_Incomes':
-                    \App\Models\ACI::upsert($dataBatch, ['zoho_aci_id']);
+                case 'agent_commission_incomes':
+                    \App\Models\Aci::upsert($dataBatch, ['zoho_aci_id']);
                     break;
-                case 'Groups':
+                case 'groups':
                     \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
-                case 'Tasks':
+                case 'tasks':
                     \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
                     break;
-                case 'Teams_And_Partners':
-                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['zoho_teams_and_partners_id']);
+                case 'teams_and_partners':
+                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
 
                     // Add other cases as needed
@@ -2694,7 +2727,7 @@ class DatabaseService
         } catch (\Exception $e) {
             // Log detailed error information
             Log::error('Error processing email: ' . $e->getMessage(), [
-                'input' => $input,
+                'input' => $input ?? null,
                 'exception' => $e
             ]);
 

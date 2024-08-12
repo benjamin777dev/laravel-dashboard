@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -441,6 +440,40 @@ public function sendMultipleEmail(Request $request)
                 
                 $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
 
+                $associateZohoInput = [
+                    "Emails" => []
+                ];
+
+                foreach ($inputData['toData'] as $index=> $toData) {
+                    $associateZohoInput['Emails'][0] = [
+                            'to' => [$toData],
+                            'cc' => $inputData['ccData'],
+                            'bcc' => $inputData['bccData'],
+                            'from' => [
+                                "user_name" => $user['name'],
+                                'email' => $user['email'],
+                            ],
+                            'subject' => $inputData['subject'],
+                            'content' => $inputData['content'],
+                            "consent_email" => false,
+                            'sent' => true,
+                            'date_time' => now(),
+                            'original_message_id' => Str::uuid(),
+                        ];
+                        $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
+                        if ($associateEmail === "AUTHENTICATION_FAILURE") {
+                            $this->guard()->logout();
+                            return response()->json([
+                                'status' => 'process',
+                                'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                                'redirect_url' => route('login')
+                            ]);
+                        }
+                        if (isset($associateEmail['Emails'][0]['details']['message_id'])) {
+                            $DBInput[$index]['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
+                            $DBInput[$index]['sendEmailFrom'] = 'SendGrid';
+                        }
+                }
             } else {
                 $sendEmail = $zoho->sendMultipleZohoEmail($zohoInput, $contact['zoho_contact_id']);
                 if ($sendEmail === "AUTHENTICATION_FAILURE") {
@@ -453,41 +486,6 @@ public function sendMultipleEmail(Request $request)
                 }
                 $inputData['sendEmailFrom'] = "Zoho";
                 $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
-            }
-            
-            $associateZohoInput = [
-                "Emails" => []
-            ];
-
-            foreach ($inputData['toData'] as $index=> $toData) {
-                $associateZohoInput['Emails'][0] = [
-                        'to' => [$toData],
-                        'cc' => $inputData['ccData'],
-                        'bcc' => $inputData['bccData'],
-                        'from' => [
-                            "user_name" => $user['name'],
-                            'email' => $user['email'],
-                        ],
-                        'subject' => $inputData['subject'],
-                        'content' => $inputData['content'],
-                        "consent_email" => false,
-                        'sent' => true,
-                        'date_time' => now(),
-                        'original_message_id' => Str::uuid(),
-                    ];
-                    $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
-                    if ($associateEmail === "AUTHENTICATION_FAILURE") {
-                        $this->guard()->logout();
-                        return response()->json([
-                            'status' => 'process',
-                            'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                            'redirect_url' => route('login')
-                        ]);
-                    }
-                    if (isset($associateEmail['Emails'][0]['details']['message_id'])) {
-                        $DBInput[$index]['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
-                        $DBInput[$index]['sendEmailFrom'] = 'SendGrid';
-                    }
             }
         }
 

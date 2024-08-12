@@ -2,6 +2,16 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    @if (app()->environment('production'))
+        <script>
+        // Override console.log to prevent any logs from being shown in production
+        console.log = function() {};
+        console.error = function() {};
+        console.warn = function() {};
+        console.info = function() {};
+        console.debug = function() {};
+        </script>
+    @endif
     <meta charset="utf-8" />
     <title> @yield('title') | zPortal - Admin & Dashboard Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -32,7 +32,7 @@ class Email extends Model
     
     public function fromUserData()
     {
-        return $this->belongsTo(Contact::class, 'fromEmail');
+        return $this->belongsTo(User::class, 'fromEmail');
     }
 
     public function getToUserDataAttribute()

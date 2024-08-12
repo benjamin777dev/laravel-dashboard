@@ -25,6 +25,18 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a href="{{ route('closing.information') }}" class="waves-effect">
+                                            <img src="{{ URL::asset('/images/closing-info-icon.svg') }}" class="sidebarIcons" alt="C">
+                                            <span key="t-closing-information">Closing Info</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('teamindividual.information') }}" class="waves-effect">
+                                            <img src="{{ URL::asset('/images/team-individual.svg') }}" class="sidebarIcons" alt="T">
+                                            <span key="t-team-individual">Team/Individual Info</span>
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a href="{{ route('pipeline.index') }}" class="waves-effect">
                                             {{-- <i class="bx bx-home-circle"></i> --}}
                                             <img src="{{ URL::asset('/images/polyline.svg') }}" class="sidebarIcons" alt="P">

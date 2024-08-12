@@ -254,59 +254,95 @@ class Deal extends Model
      */
     public static function mapZohoData(array $data, $source)
     {
-
         $userId = null;
+        $leadAgentId = null;
+        $teamPartnershipId = null;
+        $dealUser = null;
 
-        //Log::info("Data: ". json_encode($data));
-        // contact Name is a REQUIRED FIELD
-        // no deals inthe database can exist without it
-        // as zoho won't save a deal w/o one
-        // so we don't need to check for null here
-        $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] : $data['Contact_Name'];
+        $idkey = $source == "webhook" ? $data['id'] : $data['Id'];
+        
+        // Determine contactNameId
+        $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] ?? null : $data['Contact_Name'] ?? null;
         if ($contactNameId == null) {
             Log::error("No contact ID found! ", ['data' => $data]);
-            $contactNameId = $source == "webhook" ? $data['Owner']['id'] : $data['Owner'];
+            $contactNameId = $source == "webhook" ? $data['Owner']['id'] ?? null : $data['Owner'] ?? null;
             if (!$contactNameId) {
-                return new Deal();
+                return [];
             }
         }
-        // now that we have a contact name id, which is the name of the agent
-        // and id of the agent who is assigned this deal
-        // we can find that user in the system
-        $dealUser = User::where("zoho_id", $contactNameId)->first();
-        $contact = Contact::where("zoho_contact_id", $contactNameId)->first();
+
+        // Check if the deal is owned by a team
+        $teamPartnershipId = $source == "webhook" ? ($data['Team_Partnership']['id'] ?? null) : ($data['Team_Partnership'] ?? null);
+        if ($teamPartnershipId) {
+            // Deal is owned by a team, check if there's a co-listing agent
+            $leadAgentId = $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null);
+            if ($leadAgentId) {
+                // Since there's a lead agent, it's that user we will use
+                $dealUser = User::where('zoho_id', $leadAgentId)->first();
+            } else {
+                Log::error("Deal: $idkey has a team/partnership, but no lead Agent assigned!");
+            }
+        } else {
+            // Deal is owned by a single agent, use contactNameId
+            $dealUser = User::where("zoho_id", $contactNameId)->first();
+        }
+
+        // Get the userId if available
         if ($dealUser) {
             $userId = $dealUser->id;
         }
 
+        // Process dates
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
         $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
         $data['Closing_Date'] = isset($data['Closing_Date']) ? Carbon::parse($data['Closing_Date'])->format('Y-m-d H:i:s') : null;
         $data['Create_Date'] = isset($data['Create_Date']) ? Carbon::parse($data['Create_Date'])->format('Y-m-d H:i:s') : null;
         $data['Lead_Conversion_Time'] = isset($data['Lead_Conversion_Time']) ? Carbon::parse($data['Lead_Conversion_Time'])->format('Y-m-d H:i:s') : null;
 
+        // Truncate or round the commission field to fit within the database constraints
+        if (isset($data['Commission'])) {
+            // Assuming the commission column is DECIMAL(5,2)
+            $commission = (float) $data['Commission'];
+            $commission = round($commission, 2); // Round to two decimal places
+        } else {
+            $commission = null;
+        }
+
+        // Ensure pipeline_probability is within acceptable range
+        if (isset($data['Pipeline_Probability'])) {
+            $pipelineProbability = (float) $data['Pipeline_Probability'];
+            if ($pipelineProbability > 100) {
+                $pipelineProbability = 100;
+            } elseif ($pipelineProbability < 0) {
+                $pipelineProbability = 0;
+            }
+        } else {
+            $pipelineProbability = null;
+        }
+
+           // Map the data to the deal model attributes
         $mappedData = [
             'address' => $data['Address'] ?? null,
             'approval_state' => $data['Approval_State'] ?? null,
             'brokerment_id' => $data['Brokermint_ID'] ?? null,
             'cda_notes' => $data['CDA_Notes'] ?? null,
-            'check_received' => (int) ($data['Check_Received'] ?? null),
+            'check_received' => (int)($data['Check_Received'] ?? null),
             'chr_name' => $data['CHR_Name'] ?? null,
             'city' => $data['City'] ?? null,
             'client_name_only' => $data['Client_Name_Only'] ?? null,
             'client_name_primary' => $data['Client_Name_Primary'] ?? null,
             'closing_date' => $data['Closing_Date'] ?? null,
-            'commission' => (float) ($data['Commission'] ?? null),
+            'commission' => (float)$commission,
             'commission_flat_fee' => $data['Commission_Flat_Fee'] ?? null,
             'commission_flat_free' => $data['Commission_Flat_Fee'] ?? null,
-            'compliance_check_complete' => (int) ($data['Compliance_Check_Complete'] ?? null),
-            'contractId' => $source == "webhook" ? ((int) ($data['Contract']['id'] ?? null)) : ((int) ($data['Contract'] ?? null)),
+            'compliance_check_complete' => (int)($data['Compliance_Check_Complete'] ?? null),
+            'contractId' => $source == "webhook" ? ((int)($data['Contract']['id'] ?? null)) : ((int)($data['Contract'] ?? null)),
             'contactId' => $contactNameId,
             'contact_name' => $source == "webhook" ? $data['Contact_Name']['name'] : null,
-            'contact_name_id' => $source == "webhook" ? $data['Contact_Name']['id'] : null,
+            'contact_name_id' => $contactNameId,
             'contract_time_of_day_deadline' => $data['Contract_Time_of_Day_Deadline'] ?? null,
-            'coOpAgentCHRFit' => isset($data['Co_Op_Agent_CHR_Fit']) ? (int) $data['Co_Op_Agent_CHR_Fit'] : null,
-            'coOpAgentEBLetterSent' => isset($data['EB_Letter_Sent']) ? (int) $data['EB_Letter_Sent'] : null,
+            'coOpAgentCHRFit' => isset($data['Co_Op_Agent_CHR_Fit']) ? (int)$data['Co_Op_Agent_CHR_Fit'] : null,
+            'coOpAgentEBLetterSent' => isset($data['EB_Letter_Sent']) ? (int)$data['EB_Letter_Sent'] : null,
             'coOpAgentCompany' => $data['Co_Op_Agent_Company'] ?? null,
             'coOpAgentEmail' => $data['Co_Op_Agent_Email'] ?? null,
             'coOpAgentFirstName' => $data['Co_Op_Agent_First_Name'] ?? null,
@@ -319,21 +355,21 @@ class Deal extends Model
             'created_by_name' => $data['Created_By']['name'] ?? null,
             'currency' => $data['Currency'] ?? null,
             'deal_name' => $data['Deal_Name'] ?? null,
-            'deadline_em_opt_out' => (int) ($data['Deadline_Emails'] ?? null),
-            'deadline_emails' => (int) ($data['Deadline_Emails'] ?? null),
-            'double_ended' => (int) ($data['Double_Ended'] ?? null),
-            'exchange_rate' => (float) ($data['Exchange_Rate'] ?? null),
+            'deadline_em_opt_out' => (int)($data['Deadline_Emails'] ?? null),
+            'deadline_emails' => (int)($data['Deadline_Emails'] ?? null),
+            'double_ended' => (int)($data['Double_Ended'] ?? null),
+            'exchange_rate' => (float)($data['Exchange_Rate'] ?? null),
             'final_commission_for_agent' => $data['Final_Commission_for_Agent'] ?? null,
             'final_commission_for_co_op_agent_flat_fee' => $data['Final_Commission_for_Co_Op_Agent_Flat_Fee'] ?? null,
             'financing' => $data['Financing'] ?? null,
             'full_address' => $data['Full_Address'] ?? null,
             'html_report' => $data['HTML_Report'] ?? null,
             'import_batch_id' => $data['Import_Batch_ID'] ?? null,
-            'isDealCompleted' => (int) ($data['isDealCompleted'] ?? 1),
-            'isInZoho' => (int) ($data['isInZoho'] ?? 1),
+            'isDealCompleted' => (int)($data['isDealCompleted'] ?? 1),
+            'isInZoho' => (int)($data['isInZoho'] ?? 1),
             'lead_agent' => $data['Lead_Agent']['name'] ?? null,
             'lead_agent_email' => $data['Lead_Agent']['email'] ?? null,
-            'lead_agent_id' => $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null),
+            'lead_agent_id' => $leadAgentId ?? null, // Correct assignment
             'lead_agent_name' => $data['Lead_Agent']['name'] ?? null,
             'lead_conversion_time' => $data['Lead_Conversion_Time'] ?? null,
             'lender_company' => $data['Lender_Company'] ?? null,
@@ -347,49 +383,50 @@ class Deal extends Model
             'modified_by_name' => $data['Modified_By']['name'] ?? null,
             'modified_time' => $data['Modified_Time'] ?? null,
             'most_recent_note' => $data['Most_Recent_Note'] ?? null,
-            'needs_new_date2' => (int) ($data['Needs_New_Date2'] ?? null),
+            'needs_new_date2' => (int)($data['Needs_New_Date2'] ?? null),
             'original_co_op_commission' => $data['Original_Co_Op_Commission'] ?? null,
             'original_co_op_commission_flat_fee' => $data['Original_Co_Op_Commission_Flat_Fee'] ?? null,
             'original_commission_for_agent_flat_fee' => $data['Original_Commission_For_Agent_Flat_Fee'] ?? null,
-            'original_listing_price' => (float) ($data['Original_Listing_Price'] ?? null),
-            'overall_sales_duration' => (int) ($data['Overall_Sales_Duration'] ?? null),
+            'original_listing_price' => (float)($data['Original_Listing_Price'] ?? null),
+            'overall_sales_duration' => (int)($data['Overall_Sales_Duration'] ?? null),
             'owner_email' => $data['Owner']['email'] ?? null,
             'owner_id' => $source == "webhook" ? ($data['Owner']['id'] ?? null) : ($data['Owner'] ?? null),
             'owner_name' => $data['Owner']['name'] ?? null,
             'ownership_type' => $data['Ownership_Type'] ?? null,
-            'personal_transaction' => (int) ($data['Personal_Transaction'] ?? null),
+            'personal_transaction' => (int)($data['Personal_Transaction'] ?? null),
             'pipeline1' => $data['Pipeline1'] ?? null,
-            'pipeline_probability' => (float) ($data['Pipeline_Probability'] ?? null),
+            'pipeline_probability' => (float)$pipelineProbability,
             'potential_gci' => $data['Potential_GCI'] ?? null,
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
-            'probability' => (float) ($data['Probability'] ?? null),
+            'probability' => (float)($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
             'property_type' => $data['Property_Type'] ?? null,
             'representing' => $data['Representing'] ?? null,
-            'review_gen_opt_out' => (int) ($data['Review_Gen_Opt_Out'] ?? null),
+            'review_gen_opt_out' => (int)($data['Review_Gen_Opt_Out'] ?? null),
             'review_process' => json_encode($data['review_process'] ?? null),
-            'sale_price' => (float) ($data['Sale_Price'] ?? null),
-            'sales_cycle_duration' => (int) ($data['Sales_Cycle_Duration'] ?? null),
+            'sale_price' => (float)($data['Sale_Price'] ?? null),
+            'sales_cycle_duration' => (int)($data['Sales_Cycle_Duration'] ?? null),
             'stage' => $data['Stage'] ?? null,
             'state' => $data['State'] ?? null,
-            'status_reports' => (int) ($data['Status_Reports'] ?? null),
-            'status_rpt_opt_out' => (int) ($data['status_rpt_opt_out'] ?? 0),
+            'status_reports' => (int)($data['Status_Reports'] ?? null),
+            'status_rpt_opt_out' => (int)($data['status_rpt_opt_out'] ?? 0),
             'tag' => json_encode($data['Tag'] ?? null),
-            'teamPartnership' => $source == "webhook" ? ($data['Team_Partnership']['id'] ?? null) : ($data['Team_Partnership'] ?? null),
-            'tm_audit_complete' => (int) ($data['TM_Audit_Complete'] ?? null),
+            'teamPartnership' => $teamPartnershipId ?? null, // Correct assignment
+            'tm_audit_complete' => (int)($data['TM_Audit_Complete'] ?? null),
             'tm_name' => $data['TM_Name']['name'] ?? null,
             'tm_name_id' => $source == "webhook" ? ($data['TM_Name']['id'] ?? null) : ($data['TM_Name'] ?? null),
             'tm_preference' => $data['TM_Preference'] ?? null,
             'transaction_code' => $data['Transaction_Code'] ?? null,
-            'under_contract' => (int) ($data['Under_Contract'] ?? null),
+            'under_contract' => (int)($data['Under_Contract'] ?? null),
             'userID' => $userId,
             'zoho_deal_createdTime' => $data['Created_Time'] ?? null,
-            'zoho_deal_id' => $source == "webhook" ? $data['id'] : $data['Id'],
+            'zoho_deal_id' => $idkey,
             'z_project_id' => $data['Z_Project_ID'] ?? null,
             'zip' => $data['Zip'] ?? null,
         ];
 
         return $mappedData;
     }
+
 
 }

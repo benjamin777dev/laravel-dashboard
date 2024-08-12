@@ -2046,7 +2046,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: null,
             defaultContent: "",
         },
-        {
+        { 
             data: null,
             className: "select-checkbox",
             defaultContent: "",
@@ -2587,7 +2587,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
             title: "Sent By",
             render: function (data, type, row) {
                 console.log("FROM Data", data);
-                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.first_name} ${data.last_name}</span>`;
+                return `<span class="editable" data-name="submittalType" data-id="${row.id}">${data.name}</span>`;
             },
         },
         {
