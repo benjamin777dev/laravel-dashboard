@@ -151,7 +151,7 @@ class ContactController extends Controller
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $emails = $db->getContactEmailList($contact['email']);
+        $emails = $db->getContactEmailList($contact['id']);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
             return view('common.tasks', compact('contact', 'tasks', 'retrieveModuleData', 'tab'))->render();
