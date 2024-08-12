@@ -67,6 +67,8 @@ public function sendEmail(Request $request)
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
+        $emailSignature = $user->contact()->email_signature ?? '';
+        $inputData['content'] .= "<br><br>" . $emailSignature;
 
         $userVerified = $sendgrid->verifySender($user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -280,6 +282,9 @@ public function sendMultipleEmail(Request $request)
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
+
+        $emailSignature = $user->contact()->email_signature ?? '';
+        $inputData['content'] .= "<br><br>" . $emailSignature;
 
         $userVerified = $sendgrid->verifySender($user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
