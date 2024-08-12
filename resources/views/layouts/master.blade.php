@@ -4,7 +4,12 @@
 <head>
     @if (app()->environment('production'))
         <script>
-            console.log = function() {};
+        // Override console.log to prevent any logs from being shown in production
+        console.log = function() {};
+        console.error = function() {};
+        console.warn = function() {};
+        console.info = function() {};
+        console.debug = function() {};
         </script>
     @endif
     <meta charset="utf-8" />
