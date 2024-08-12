@@ -2,6 +2,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    @if (app()->environment('production'))
+        <script>
+            console.log = function() {};
+        </script>
+    @endif
     <meta charset="utf-8" />
     <title> @yield('title') | zPortal - Admin & Dashboard Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
