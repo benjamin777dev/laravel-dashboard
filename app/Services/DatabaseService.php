@@ -482,7 +482,6 @@ class DatabaseService
                 'termination_reason' => $contact['Termination_Reason'] ?? null,
                 'transaction_manager' => $contact['Transaction_Manager'] ?? null,
                 'auto_address' => $contact['Auto_Address'] ?? null,
-                'chr_marketing_email' => $contact['chr_marketing_email'] ?? null,
             ];
 
             // Update or create the contact
@@ -1144,7 +1143,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null]];
+            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null],['email', '!=', '']];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
             $contacts->orderBy('updated_at', 'desc');
             // Paginate the results
