@@ -710,25 +710,36 @@ class DatabaseService
 
     public function retrieveDealById(User $user, $accessToken, $dealId)
     {
-
         try {
             Log::info("Retrieve Deals From Database");
-
-            $conditions = [['userID', $user->id], ['id', $dealId]];
-
-            // Adjust query to include contactName table using join
-            $deals = Deal::with('userData', 'contactName', 'leadAgent');
-
-            Log::info("Deal Conditions", ['deals' => $conditions]);
-
-            // Retrieve deals based on the conditions
-            $deals = $deals->where($conditions)->first();
-            return $deals;
+    
+            // Check if user is part of a team
+            $contact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+            $teamPartnershipId = $contact->team_partnership ?? null;
+    
+            // Base conditions
+            $conditions = [['id', $dealId]];
+    
+            if ($teamPartnershipId) {
+                // If user is part of a team, fetch the deal for the entire team
+                $conditions[] = ['teamPartnership', $teamPartnershipId];
+            } else {
+                // If user is not part of a team, fetch the deal for the individual user
+                $conditions[] = ['userID', $user->id];
+            }
+    
+            Log::info("Deal Conditions", ['conditions' => $conditions]);
+    
+            // Retrieve the deal based on the conditions
+            $deal = Deal::with('userData', 'contactName', 'leadAgent')
+                        ->where($conditions)
+                        ->first();
+    
+            return $deal;
         } catch (\Exception $e) {
-            Log::error("Error retrieving deals: " . $e->getMessage());
+            Log::error("Error retrieving deal: " . $e->getMessage());
             throw $e;
         }
-
     }
 
     public function retrieveNonTmById(User $user, $accessToken, $dealId)

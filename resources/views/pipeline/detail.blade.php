@@ -263,7 +263,7 @@
                             id="transactionOwner" 
                             @if($deal['locked_s']) disabled @endif
                             required
-                            value="{{$deal['userData']['name']}}">
+                            value="{{$deal['userData']['name'] ?? null}}">
                     </div>
                     <div class="col-md-6">
                         <label for="tmPreference" class="form-label nplabelText">TM Preference</label>
