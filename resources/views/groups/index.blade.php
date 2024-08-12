@@ -37,6 +37,10 @@
                     </i>
                     Edit Group
                 </div>
+                <div class="input-group-text dbEditGroups" onclick="selectGroup()"><i class="fab fa-telegram-plane ms-1">
+                    </i>
+                    Compose Email
+                </div>
             </div>
         </div>
         <div class="row" style="gap: 24px">
@@ -121,8 +125,82 @@
     </div>
     @include('common.group.createModal', ['groups' => $groups])
     @include('common.group.editModal', ['groups' => $ownerGroups])
+    <div class="modal fade p-5" id="selectGroupModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Select Group</h5>
+                    <button type="button" class="btn-close" id="selectGroupModalClose" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="selectGroupForm">
+                        <div class="table-container">
+                            @if(count($groups))
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Group Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($groups as $group)
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" name="group_{{ $group['id'] }}"
+                                                        id="{{ $group['id'] }}">
+                                                </td>
+                                                <td>
+                                                    <label for="group_{{ $group['id'] }}">{{ $group['name'] }}</label>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Group Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">No Groups Available</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            @endif
 
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary taskModalSaveBtn" onclick="sendMultipleGroupMail();">
+                        <i class="fas fa-save saveIcon"></i> Send Mail
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="composemodalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content" id="modalValues">
+                </div>
+            </div>
+        </div>
+        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    @include('emails.email_templates.email-template-create',['contact'=>null])
+                </div>
+            </div>
+        </div>
     <script>
+        var contactList = @json($contactsList??"").data;
         window.onload = function() {
             let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
             let isLoading = false;
@@ -217,6 +295,87 @@
 
         window.EditGroup = function() {
             $('#editGroupModal').modal('show');
+        }
+
+         window.selectGroup = function() {
+            $('#selectGroupModal').modal('show');
+        }
+
+        window.sendMultipleGroupMail = function(){
+            let selectedGroups = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(checkbox) {
+                if (checkbox.id && checkbox.name.startsWith('group_')) {
+                    selectedGroups.push(checkbox.id);
+                }
+            });
+
+            console.log(selectedGroups);
+           getGroupContacts(selectedGroups,function(groupContacts){
+               console.log(groupContacts);
+               openGroupComposeModal(groupContacts);
+           });
+           
+        }
+
+        window.getGroupContacts = function(groupIds,callback){
+            $.ajax({
+                url: '/get/group/contacts', // Your endpoint here
+                type: 'GET',
+                data: {
+                    groups: JSON.stringify(groupIds),
+                },
+                success: function(response) {
+                    if (callback && typeof callback === 'function') {
+                        callback(response.map(val => val.contactId));
+                        $("#selectGroupModalClose").click();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    showToastError('An error occurred');
+                }
+            });
+        }
+
+        window.openGroupComposeModal = function (Ids) {
+            
+            var intIds = Ids.map(id => parseInt(id));
+            var selectedContacts = contactList.filter(contact => intIds.includes(contact.id));
+            console.log("Open modal ids",selectedContacts);
+            var data = {
+                contacts: contactList,
+                selectedContacts: selectedContacts,
+                emailType:"multiple"
+            };
+            $.ajax({
+                url: '/get/email-create', 
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                method: 'POST',
+                dataType: 'html',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    // Update the modal content with the response
+                    $('#modalValues').html(response);
+
+                    // Re-initialize Select2
+                    $('#toSelect').select2({
+                        placeholder: "To",
+                        
+                    });
+
+                    // Open the modal
+                    $("#composemodal").modal("show");
+                    // selectedContacts.forEach(element => {
+                    //     $('#email-checkbox'+element.id).prop('checked', false);
+                    // });
+                },
+                error: function () {
+                    // Handle any errors
+                    alert('Failed to load modal content');
+                }
+            });
         }
     </script>
 

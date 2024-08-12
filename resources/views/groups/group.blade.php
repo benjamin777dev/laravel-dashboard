@@ -13,7 +13,8 @@
                 @foreach ($shownGroups as $shownGroup)
                     <th scope="col" class="sticky-head">
                         <div class="dbgheaderFlex">
-                            <p class="mb-0">{{ count($shownGroup['contacts']) }}</p>
+                            <p class="mb-0">{{ count($shownGroup['contacts']) }} <i class="fas fa-paper-plane ms-1" onclick="sendGroupMail('{{$shownGroup['id']}}')"></i></p>
+                            
                             <div class="checkboxText">
                                 <p class="mb-0 text-end">{{ $shownGroup['name'] }}</p>
                                 <input type="checkbox" class="headerCheckbox" data-group-id="{{ $shownGroup['id'] }}" id="headerCheckbox{{ $loop->index }}"
@@ -325,6 +326,16 @@
             headerCheckbox.checked = allChecked;
         });
     };
+
+    window.sendGroupMail = function(id){
+        let selectedGroups = [id];
+        console.log(selectedGroups);
+        getGroupContacts(selectedGroups,function(groupContacts){
+            console.log(groupContacts);
+            openGroupComposeModal(groupContacts);
+        });
+        
+    }
 
 
 </script>
