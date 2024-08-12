@@ -348,10 +348,8 @@
 </div>
 
 <div class="contactEmailList">
-    @component('components.common-table', [
-        'id' => 'contact-email-table',
-    ])
-    @endcomponent
+    <table id="contact-email-table" class="table table-bordered dt-responsive nowrap w-100">
+    </table>
 </div>
 @vite(['resources/js/pipeline.js'])
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>

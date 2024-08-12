@@ -165,7 +165,7 @@
 
 <!-- Transactions and Volume Section -->
 <div class="row">
-    <div class="col-12 mb-4">
+    <div class="col-6 mb-4">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h5 class="card-title text-muted">Transactions - Past 4 Quarters</h5>
@@ -174,7 +174,7 @@
         </div>
     </div>
 
-    <div class="col-12 mb-4">
+    <div class="col-6 mb-4">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h5 class="card-title text-muted">Volume - Past 4 Quarters</h5>
@@ -186,7 +186,7 @@
 
 <!-- Pipeline by Month Section -->
 <div class="row">
-    <div class="col-12 mb-4">
+    <div class="col-6 mb-4">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h5 class="card-title text-muted">Pipeline $ by Month</h5>
@@ -194,11 +194,7 @@
             </div>
         </div>
     </div>
-</div>
-
-<!-- My Groups Section -->
-<div class="row">
-    <div class="col-12 mb-4">
+    <div class="col-6 mb-4">
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <h5 class="card-title text-muted">My Groups</h5>
@@ -238,8 +234,9 @@
     </div>
 </div>
 
+
 <script>
-    // Assuming you're using Chart.js for the charts
+   // Transactions - Past 4 Quarters Chart
     var ctx = document.getElementById('transactionsChart').getContext('2d');
     var transactionsChart = new Chart(ctx, {
         type: 'bar',
@@ -252,9 +249,19 @@
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
         }
     });
 
+    // Volume - Past 4 Quarters Chart
     var ctx2 = document.getElementById('volumeChart').getContext('2d');
     var volumeChart = new Chart(ctx2, {
         type: 'bar',
@@ -267,9 +274,19 @@
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
         }
     });
 
+    // Pipeline $ by Month Chart
     var ctx3 = document.getElementById('pipelineChart').getContext('2d');
     var pipelineChart = new Chart(ctx3, {
         type: 'bar',
@@ -282,8 +299,18 @@
                 borderColor: 'rgba(153, 102, 255, 1)',
                 borderWidth: 1
             }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
         }
     });
 </script>
+
 
 @endsection
