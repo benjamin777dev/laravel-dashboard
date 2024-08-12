@@ -19,7 +19,7 @@ class SyncZohoData extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:zoho-data';
+    protected $signature = 'sync:zoho-data {module?} {--all}';
 
     /**
      * The console command description.
@@ -29,10 +29,33 @@ class SyncZohoData extends Command
     protected $description = 'Sync data from Zoho CRM using Bulk Read API and REST API';
 
     /**
+     * List of modules that can be synced.
+     *
+     * @var array
+     */
+    protected $modules = [
+        'Contacts',
+        'Contacts_X_Groups',
+        'Groups',
+        'Tasks',
+        'Deals',
+        'Agent_Commission_Incomes',
+        'Teams_and_Partners',
+    ];
+
+    /**
      * Execute the console command.
      */
     public function handle()
     {
+        $module = $this->argument('module');
+        $syncAll = $this->option('all');
+
+        // If no arguments are provided, show help
+        if (!$module && !$syncAll) {
+            return $this->showHelp();
+        }
+
         $user = User::where('email', 'phillip@coloradohomerealty.com')->first();
         Log::info("Syncing data for user: {$user->email}");
         if (!$user) {
@@ -44,29 +67,64 @@ class SyncZohoData extends Command
         $zoho = new ZohoBulkRead($user);
         $db = new DatabaseService();
 
-        $modules = [
-            'Contacts',
-            'Groups',
-            'Tasks',
-            'Deals',
-            //'Contacts_X_Groups'
-            'Agent_Commission_Incomes',
-            'Teams_and_Partners'
-        ];
-        Log::info("Syncing data for modules: " . implode(', ', $modules));
+        // Sync all modules if --all is specified
+        if ($syncAll) {
+            Log::info("Syncing data for all modules: " . implode(', ', $this->modules));
 
-        // Sync users separately using the REST API
-        $this->syncUsers($user);
-
-        foreach ($modules as $module) {
-            $jobResponse = $zoho->createBulkReadJob($module);
-
-            if ($jobResponse) {
-                $jobId = $jobResponse['data'][0]['details']['id'];
-                $this->info("Bulk read job created for module: {$module} with job ID: {$jobId}");
-            } else {
-                $this->error("Failed to create bulk read job for module: {$module}");
+            $this->syncUsers($user);
+            foreach ($this->modules as $module) {
+                $this->syncModule($zoho, $module);
             }
+            return;
+        }
+
+        // Sync specific module if provided
+        if ($module) {
+            // Validate the module
+            if (!in_array($module, $this->modules)) {
+                $this->error("Invalid module specified: {$module}");
+                return;
+            }
+            Log::info("Syncing data for module: {$module}");
+
+            $this->syncModule($zoho, $module);
+        }
+    }
+
+    /**
+     * Show the help information.
+     */
+    protected function showHelp()
+    {
+        $this->info("Usage:");
+        $this->line("  sync:zoho-data {module?} {--all}");
+
+        $this->info("\nDescription:");
+        $this->line("  {$this->description}");
+
+        $this->info("\nModules that can be synced:");
+        foreach ($this->modules as $module) {
+            $this->line("  - {$module}");
+        }
+
+        $this->info("\nExample:");
+        $this->line("  ./artisan sync:zoho-data Deals  # Sync only the Deals module (caps matter)");
+        $this->line("  ./artisan sync:zoho-data --all  # Sync all modules");
+        $this->line("  ./artisan sync:zoho-data        # Show this help");
+    }
+
+    /**
+     * Sync the specified module using ZohoBulkRead.
+     */
+    private function syncModule($zoho, $module)
+    {
+        $jobResponse = $zoho->createBulkReadJob($module);
+
+        if ($jobResponse) {
+            $jobId = $jobResponse['data'][0]['details']['id'];
+            $this->info("Bulk read job created for module: {$module} with job ID: {$jobId}");
+        } else {
+            $this->error("Failed to create bulk read job for module: {$module}");
         }
     }
 
@@ -174,5 +232,4 @@ class SyncZohoData extends Command
             $this->error("Error syncing users: " . $e->getMessage());
         }
     }
-
 }

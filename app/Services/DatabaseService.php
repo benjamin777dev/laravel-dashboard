@@ -1143,7 +1143,7 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null]];
+            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null],['email', '!=', '']];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
             $contacts->orderBy('updated_at', 'desc');
             // Paginate the results
@@ -1555,6 +1555,12 @@ class DatabaseService
             if ($dealData['Contact_Name']) {
                 $contact_name = Contact::where('zoho_contact_id', $dealData['Contact_Name']['id'])->first();
             }
+            $userContact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+            $teamPartnershipId = $userContact->team_partnership ?? null;
+    
+            // Base conditions
+            $conditions = [['id', $dealId]];
+
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
@@ -1567,7 +1573,8 @@ class DatabaseService
                 'contactId' => isset($contact->id) ? $contact->id : null,
                 'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
-                'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null
+                'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null,
+                'teamPartnershipId'=> isset($teamPartnershipId)?$teamPartnershipId:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -2706,7 +2713,7 @@ class DatabaseService
                     'content' => $input['content'] ?? null,
                     'message_id' => $input['message_id'] ?? null,
                     'userId' => $user->id ?? null,
-                    'isEmailSent' => $input['isEmailSent'] ?? null,
+                    'isEmailSent' => $input['isEmailSent'] ?? false,
                     'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
                 ];
 

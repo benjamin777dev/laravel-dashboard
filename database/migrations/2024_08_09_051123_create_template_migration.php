@@ -11,24 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('templates', function (Blueprint $table) {
-            $table->id(); 
-            $table->string('name'); 
-            $table->unsignedBigInteger('ownerId'); 
-            $table->string('subject')->nullable(); 
-            $table->boolean('active')->default(true); 
-            $table->boolean('favorite')->default(false); 
-            $table->boolean('consent_linked')->default(false); 
-            $table->string('associated')->nullable(); 
-            $table->string('folder')->nullable();
-            $table->string('templateType')->nullable(); 
-            $table->longText('content')->nullable(); 
-            $table->string('zoho_template_id')->nullable(); 
-            $table->timestamps(); 
+        if (!Schema::hasTable('templates')) {
+            Schema::create('templates', function (Blueprint $table) {
+                $table->id(); 
+                $table->string('name'); 
+                $table->unsignedBigInteger('ownerId'); 
+                $table->string('subject')->nullable(); 
+                $table->boolean('active')->default(true); 
+                $table->boolean('favorite')->default(false); 
+                $table->boolean('consent_linked')->default(false); 
+                $table->string('associated')->nullable(); 
+                $table->string('folder')->nullable();
+                $table->string('templateType')->nullable(); 
+                $table->longText('content')->nullable(); 
+                $table->string('zoho_template_id')->nullable(); 
+                $table->timestamps(); 
 
-            // Foreign key constraint (optional)
-            $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');
-        });
+                // Foreign key constraint (optional)
+                $table->foreign('ownerId')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     /**

@@ -38,10 +38,12 @@
                     <label for="validationDefault05" class="form-label nplabelText">Email</label>
                     <div class="input-group">
                         <input type="text" value="{{ $contact['email'] }} " name="email"
-                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05"> 
-                        <div class="input-group-text" onclick="openEmail()">
-                            <i class="mdi mdi-send ms-1"></i>
-                        </div>
+                        class="form-control npinputinfo" placeholder="Enter Email" id="validationDefault05">
+                        @if($contact['email']) 
+                            <div class="input-group-text" onclick="openEmail()">
+                                <i class="mdi mdi-send ms-1"></i>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -323,7 +325,7 @@
 <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contacts])
+            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contactsWithEmails])
         </div>
     </div>
 </div>
@@ -335,16 +337,19 @@
     </div>
 </div>
 {{-- Emails--}}
+
 <div class="p-4 d-flex justify-content-between ">
     <div class="">
         <h2 class='pText mt-3 text-center'> Emails </h2>
     </div>
-    <div class=" text-end">
-        <div class="input-group-text npcontactbtn" onclick="openEmail()">
-            Compose Email
-            <i class="mdi mdi-send ms-1"></i>
+    @if($contact['email'])
+        <div class=" text-end">
+            <div class="input-group-text npcontactbtn" onclick="openEmail()">
+                Compose Email
+                <i class="mdi mdi-send ms-1"></i>
+            </div>
         </div>
-    </div>
+    @endif
 </div>
 
 <div class="contactEmailList">
