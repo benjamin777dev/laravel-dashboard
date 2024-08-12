@@ -110,7 +110,6 @@
             $("#ccSelect option").each(function() {
                 const value = $(this).val();
                 const hasEmail = $(this).data('email');
-
                 if (toValues.includes(value) || !hasEmail) {
                     $(this).prop('disabled', true);
                 } else {
@@ -292,7 +291,7 @@
 
 
     window.sendEmails = function(button,email,isEmailSent){
-        // button.disabled = true;
+        button.disabled = true;
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -332,14 +331,14 @@
                         // Handle error
                     }
                     button.disabled = false;
-                    // $("#emailModalClose").click();
+                    $("#emailModalClose").click();
                     fetchEmails()
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
-                    // $("#emailModalClose").click();
+                    $("#emailModalClose").click();
 
                 }
             });

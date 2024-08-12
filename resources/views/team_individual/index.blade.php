@@ -136,7 +136,7 @@
                             @foreach($openTasks as $task)
                                 <tr>
                                     <td>{{ $task->name }}</td>
-                                    <td>{{ $task->due_date->format('Y-m-d') }}</td>
+                                    <td>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</td>
                                     <td>{{ ucfirst($task->status) }}</td>
                                 </tr>
                             @endforeach
@@ -151,7 +151,7 @@
                                 <h6 class="text-muted">Task Name</h6>
                                 <p>{{ $task->name }}</p>
                                 <h6 class="text-muted">Due Date</h6>
-                                <p>{{ $task->due_date->format('Y-m-d') }}</p>
+                                <td>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</td>
                                 <h6 class="text-muted">Status</h6>
                                 <p>{{ ucfirst($task->status) }}</p>
                             </div>

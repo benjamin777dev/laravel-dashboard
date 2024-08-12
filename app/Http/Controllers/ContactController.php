@@ -33,6 +33,7 @@ class ContactController extends Controller
         $missingFeild = $request->input('missingField');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
+        $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $apend = false;
@@ -42,7 +43,7 @@ class ContactController extends Controller
             return Response::json(['view' => $view, 'nextPageUrl' => $contacts->nextPageUrl()]);
         }
 
-        return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend'));
+        return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend','contactsWithEmails'));
     }
 
     public function contactList(Request $request)
@@ -149,6 +150,7 @@ class ContactController extends Controller
         $allstages = config('variables.dealStages');
         $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
+        $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $emails = $db->getContactEmailList($contact['id']);
@@ -165,7 +167,7 @@ class ContactController extends Controller
         $selectedContacts = $contacts->filter(function($contact) use ($contactId) {
             return $contact->id === (int)$contactId;
         });
-        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts'));
+        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts','contactsWithEmails'));
     }
 
     public function getContactJson(){
@@ -600,6 +602,10 @@ class ContactController extends Controller
             if (isset($input['secondry_address']) && $input['secondry_address'] !== '') {
                 $rules['secondry_address'] = 'required|string|max:255';
             }
+
+            if (isset($input['chr_marketing_email']) && $input['chr_marketing_email'] !== '') {
+                $rules['chr_marketing_email'] = 'required|string|email';
+            }
             
             // Validate the request data using the defined rules
             $validatedData = $request->validate($rules);
@@ -773,7 +779,7 @@ class ContactController extends Controller
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-               
+                $zohoContactValues['chr_marketing_email']= isset($input['chr_marketing_email'])?$input['chr_marketing_email']:null;
                 $db->storeContactIntoDB($id,$zohoContactValues);
                 $contactGroups = $this->getGroupsForDelete($id);
                 $groupNames = $contactGroups->map(function ($item) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -284,10 +285,10 @@ public function sendMultipleEmail(Request $request)
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
 
-        $userVerified = $sendgrid->verifySender($user['email']);
+        $userVerified = false;
         Log::info('User Verification', ['userVerified' => $userVerified]);
 
-        if ($inputData['isEmailSent'] === true) {
+       
             // Initialize contact arrays
             $contactTypes = ['to', 'cc', 'bcc'];
             $contactData = [];
@@ -408,7 +409,7 @@ public function sendMultipleEmail(Request $request)
 
             $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
         
-
+        if ($inputData['isEmailSent'] === true) {
             if ($userVerified) {
                 Log::info("RECIEPNTS TOTAL",[$inputData['toData']]);
 

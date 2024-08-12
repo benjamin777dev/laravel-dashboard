@@ -134,6 +134,7 @@ Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class,
 Route::get('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
 Route::post('/contact/group/bulk/remove', [GroupController::class, 'bulkRemove'])->middleware('auth');
 Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
+Route::get('/get/group/contacts', [GroupController::class, 'getGroupContacts']);
 // From ADMIN - Assuming these routes are for authenticated users
 Auth::routes(['verify' => true]);
 

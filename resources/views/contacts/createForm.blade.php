@@ -201,6 +201,11 @@
                     <input type="text" value="{{ $contact['salutation_s'] }}" name="envelope_salutation"
                         class="form-control npinputinfo" id="envelope_salutation">
                 </div>
+                <div class="col-md-6">
+                    <label for="chr_marketing_email" class="form-label nplabelText">CHR Marketing Email</label>
+                    <input type="text" value="{{ $contact['chr_marketing_email'] }}" name="chr_marketing_email"
+                        class="form-control npinputinfo" id="chr_marketing_email">
+                </div>
             </div>
         </div>
         {{-- Primary Contact’s Address --}}
