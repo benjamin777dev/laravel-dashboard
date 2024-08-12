@@ -292,7 +292,7 @@
 
 
     window.sendEmails = function(button,email,isEmailSent){
-        button.disabled = true;
+        // button.disabled = true;
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -313,34 +313,36 @@
             "isEmailSent":isEmailSent
         }
         if(emailType=="multiple"){
-            //  $.ajax({
-            //     url: "{{ route('send.multiple.email') }}",
-            //     method: 'POST',
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     dataType: 'json',
-            //     data: JSON.stringify(formData),
-            //     success: function(response) {
-            //         console.info(response);
-            //         if (response.status === 'process') {
-            //             showToastError(response.message);
-            //             setTimeout(function() {
-            //                 window.location.href = response.redirect_url;
-            //             }, 5000); // Adjust the delay as needed
-            //         } else {
-            //             // Handle error
-            //         }
-            //         button.disabled = false;
-            //         $("#emailModalClose").click();
-            //         fetchEmails()
-            //     },
-            //     error: function(xhr, status, error) {
-            //         // Handle error response
-            //         console.error(xhr.responseText);
-            //         showToastError(xhr.responseText);
-            //     }
-            // });
+             $.ajax({
+                url: "{{ route('send.multiple.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
+                    }
+                    button.disabled = false;
+                    // $("#emailModalClose").click();
+                    fetchEmails()
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                    // $("#emailModalClose").click();
+
+                }
+            });
         }else{
             $.ajax({
                 url: "{{ route('send.email') }}",
@@ -368,6 +370,8 @@
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
+                    $("#emailModalClose").click();
+
                 }
             });
         }

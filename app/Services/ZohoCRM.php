@@ -853,7 +853,7 @@ class ZohoCRM
                 'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
                 'Content-Type' => 'application/json',
             ])->get($this->apiUrl . 'org');
-
+            Log::info("Oragnisation Id",[$getOrgIdResponse]);
             $orgId = $getOrgIdResponse->json()['org'][0]['zgid'];
 
             $headers = [
@@ -1357,6 +1357,51 @@ class ZohoCRM
         }
     }
 
+    public function sendMultipleZohoEmail($inputEmail, $contactId)
+{
+    try {
+        Log::info('Raw Input Email', ['inputEmail' => $inputEmail]);
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . "Contacts/$contactId/actions/send_mail", $inputEmail);
+
+        Log::info('Raw Response', ['response' => $response]);
+
+        $responseData = $response->json();
+
+        if (!$response->successful()) {
+            if (isset($responseData['code']) && $responseData['code'] == "AUTHENTICATION_FAILURE") {
+                return $responseData['code'];
+            } else {
+                throw new \Exception('Failed to send Email');
+            }
+        }
+
+        // Handle the case where the response includes multiple entries
+        if (isset($responseData['data'])) {
+            foreach ($responseData['data'] as $data) {
+                if ($data['status'] == 'error') {
+                    Log::error('Send Email Error Response', ['response' => $data]);
+                    throw new \Exception('Failed to send Email: ' . $data['message']);
+                } elseif ($data['status'] == 'success') {
+                    Log::info('Send Email Response', ['response' => $data]);
+                    return $data; // Return the successful response
+                }
+            }
+        } else {
+            Log::error('Unexpected Response Format', ['response' => $responseData]);
+            throw new \Exception('Failed to send Email due to unexpected response format');
+        }
+
+    } catch (\Throwable $th) {
+        Log::error('Error Sending Email: ' . $th->getMessage());
+        throw new \Exception('Failed to Send email');
+    }
+}
+
+
     public function associateEmail($inputEmail,$contactId)
     {
         try {
@@ -1467,4 +1512,80 @@ class ZohoCRM
             throw new \Exception('Failed to create Zoho contacts');
         }
     }
+    public function associateEmailBulk($fileId,$contactId)
+    {
+        try {
+            Log::info('Bulk Write Job In ZOHO');
+            // Define the JSON input for the bulk write job
+            $inputJSON = [
+                "operation" => "insert",
+                "ignore_empty" => true,
+                "callback" => [
+                    "url" => "https://sampledomain.com/getzohoresponse",
+                    "method" => "post"
+                ],
+                "resource" => [
+                    [
+                        "type" => "data",
+                        "module" => [
+                            "api_name" => "Emails"
+                        ],
+                        "file_id" => $fileId,
+                        "field_mappings" => [
+                            [
+                        "api_name" => "To_Email",  // Corresponds to 'to_email' in CSV
+                        "find_by" => "email",
+                        "index" => 0
+                    ],
+                    [
+                        "api_name" => "Cc_Email",  // Corresponds to 'cc_email' in CSV
+                        "find_by" => "email",
+                        "index" => 1
+                    ],
+                    [
+                        "api_name" => "Bcc_Email",  // Corresponds to 'bcc_email' in CSV
+                        "find_by" => "email",
+                        "index" => 2
+                    ],
+                    [
+                        "api_name" => "From_Email",  // Corresponds to 'from_email' in CSV
+                        "index" => 3
+                    ],
+                    [
+                        "api_name" => "Subject",  // Corresponds to 'subject' in CSV
+                        "index" => 4
+                    ],
+                    [
+                        "api_name" => "Content",  // Corresponds to 'content' in CSV
+                        "index" => 5
+                    ],
+                    [
+                        "api_name" => "Date_Time",  // Corresponds to 'date_time' in CSV
+                        "index" => 6
+                    ],
+                    [
+                        "api_name" => "Original_Message_Id",  // Corresponds to 'original_message_id' in CSV
+                        "index" => 7
+                    ]
+                        ]
+                    ]
+                ]
+            ];
+    
+            // Send a POST request to Zoho API
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->post('https://www.zohoapis.com/crm/bulk/v3/write', $inputJSON);
+    
+            // Log response
+            Log::info('Response after Bulk Write Job In ZOHO', ['response' => $response->json()]);
+    
+            return $response;
+        } catch (\Exception $e) {
+            Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }
+

@@ -2673,7 +2673,7 @@ class DatabaseService
                     'content' => $input['content'] ?? null,
                     'message_id' => $input['message_id'] ?? null,
                     'userId' => $user->id ?? null,
-                    'isEmailSent' => $input['isEmailSent'] ?? null,
+                    'isEmailSent' => $input['isEmailSent'] ?? false,
                     'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
                 ];
 

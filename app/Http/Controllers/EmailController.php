@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +14,10 @@ use App\Services\SendGrid;
 use App\Services\Helper;
 use App\Models\Contact;
 use App\Models\User;
+use League\Csv\Writer;
+use ZipArchive;
+use Illuminate\Support\Facades\Storage;
+
 // use App\Models\ContactGroups;
 // use App\Models\Groups;
 // use DataTables;
@@ -386,7 +390,7 @@ public function sendMultipleEmail(Request $request)
                         ],
                         'subject' => $inputData['subject'],
                         'content' => $inputData['content'],
-                        "consent_email" => false,
+                        "isEmailSent" => false,
                     ];
 
                     $zohoInput['data'][]=[
@@ -437,47 +441,8 @@ public function sendMultipleEmail(Request $request)
                 
                 $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
 
-                $associateZohoInput = [
-                    "Emails" => []
-                ];
-
-                foreach ($inputData['toData'] as $toData) {
-                    $associateZohoInput['Emails'][] = [
-                            'to' => [$toData],
-                            'cc' => $inputData['ccData'],
-                            'bcc' => $inputData['bccData'],
-                            'from' => [
-                                "user_name" => $user['name'],
-                                'email' => $user['email'],
-                            ],
-                            'subject' => $inputData['subject'],
-                            'content' => $inputData['content'],
-                            "consent_email" => false,
-                            'sent' => true,
-                            'date_time' => now(),
-                            'original_message_id' => Str::uuid(),
-                        ];
-                }
-
-
-                $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
-                if ($associateEmail === "AUTHENTICATION_FAILURE") {
-                    $this->guard()->logout();
-                    return response()->json([
-                        'status' => 'process',
-                        'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                        'redirect_url' => route('login')
-                    ]);
-                }
-
-                foreach ($associateZohoInput['Emails'] as $index => $emailData) {
-                    if (isset($associateEmail['Emails'][$index]['details']['message_id'])) {
-                        $DBInput['message_id'][$index] = $associateEmail['Emails'][$index]['details']['message_id'];
-                        $DBInput['sendEmailFrom'][$index] = 'SendGrid';
-                    }
-                }
             } else {
-                $sendEmail = $zoho->sendZohoEmail($zohoInput, $contact['zoho_contact_id']);
+                $sendEmail = $zoho->sendMultipleZohoEmail($zohoInput, $contact['zoho_contact_id']);
                 if ($sendEmail === "AUTHENTICATION_FAILURE") {
                     $this->guard()->logout();
                     return response()->json([
@@ -489,6 +454,41 @@ public function sendMultipleEmail(Request $request)
                 $inputData['sendEmailFrom'] = "Zoho";
                 $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
             }
+            
+            $associateZohoInput = [
+                "Emails" => []
+            ];
+
+            foreach ($inputData['toData'] as $index=> $toData) {
+                $associateZohoInput['Emails'][0] = [
+                        'to' => [$toData],
+                        'cc' => $inputData['ccData'],
+                        'bcc' => $inputData['bccData'],
+                        'from' => [
+                            "user_name" => $user['name'],
+                            'email' => $user['email'],
+                        ],
+                        'subject' => $inputData['subject'],
+                        'content' => $inputData['content'],
+                        "consent_email" => false,
+                        'sent' => true,
+                        'date_time' => now(),
+                        'original_message_id' => Str::uuid(),
+                    ];
+                    $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
+                    if ($associateEmail === "AUTHENTICATION_FAILURE") {
+                        $this->guard()->logout();
+                        return response()->json([
+                            'status' => 'process',
+                            'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                            'redirect_url' => route('login')
+                        ]);
+                    }
+                    if (isset($associateEmail['Emails'][0]['details']['message_id'])) {
+                        $DBInput[$index]['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
+                        $DBInput[$index]['sendEmailFrom'] = 'SendGrid';
+                    }
+            }
         }
 
         $response = $db->saveMultipleEmail($user, $accessToken, $DBInput);
@@ -499,6 +499,93 @@ public function sendMultipleEmail(Request $request)
     }
 }
 
+public function associateMultipleEmail($associateInput,$contactId)
+{
+    try {
+        $zoho = new ZohoCRM();
+        $user = $this->user();
+        
+        if (!$user) {
+            return redirect('/login');
+        }
+
+        $accessToken = $user->getAccessToken();
+        $zoho->access_token = $accessToken;
+        $csvResponse = $this->exportCsv($associateInput,$contactId);
+        $zipFilename = $csvResponse->getData()->zip_filename;
+        $zipPath = storage_path('app/' . $zipFilename);
+        $FileId = $zoho->uploadZipFile($zipPath);
+        Log::info("CSV FILE",[$FileId]);
+        $fileId = $FileId['details']['file_id'];
+        //Bulk Write
+        $bulkJob = $zoho->associateEmailBulk($fileId,$contactId);
+        $jobID = $bulkJob['details']['id'];
+        return response()->json($csvResponse);
+    } catch (\Throwable $th) {
+        Log::error('Error sending email', ['error' => $th->getMessage()]);
+        throw $th;
+    }
+}
+
+public function exportCsv($associateInput,$contactId)
+{
+    try {
+        $csv = Writer::createFromString('');
+        $csv->insertOne(['to_email', 'cc_email', 'bcc_email', 'from_email', 'subject', 'content', 'date_time', 'original_message_id']);
+
+        // Process JSON data and write to CSV
+        foreach ($associateInput as $item) {
+            $toEmails = implode(', ', array_column($item['to'], 'email'));
+            $ccEmails = implode(', ', $item['cc']);
+            $bccEmails = implode(', ', $item['bcc']);
+            $fromEmail = $item['from']['email'];
+            $subject = $item['subject'];
+            $content = strip_tags($item['content']); // Remove HTML tags for CSV
+            $dateTime = $item['date_time'];
+            $originalMessageId = $item['original_message_id'];
+
+            $csv->insertOne([
+                $toEmails,
+                $ccEmails,
+                $bccEmails,
+                $fromEmail,
+                $subject,
+                $content,
+                $dateTime,
+                $originalMessageId
+            ]);
+        }
+
+        // Prepare the response
+        $csvContent = $csv->getContent();
+        $csvFilename = 'emails_' . date('Y_m_d_H_i_s') . '.csv';
+
+        // Create a temporary file for the CSV
+        $tempCsvPath = storage_path('app/' . $csvFilename);
+        file_put_contents($tempCsvPath, $csvContent);
+
+        // Create a zip archive
+        $zip = new ZipArchive;
+        $zipFilename = 'emails_' . date('Y_m_d_H_i_s') . '.zip';
+        $zipPath = storage_path('app/' . $zipFilename);
+
+        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+            // Add the CSV file to the zip archive
+            $zip->addFile($tempCsvPath, $csvFilename);
+            $zip->close();
+        }
+
+        // Remove the temporary CSV file
+        unlink($tempCsvPath);
+
+        // Return the zip file name
+        return response()->json(['zip_filename' => $zipFilename]);
+    
+    } catch (\Throwable $th) {
+        Log::error('Error sending email', ['error' => $th->getMessage()]);
+        throw $th;
+    }
+}
     public function emailDetail(Request $request)
     {
         $db = new DatabaseService();
