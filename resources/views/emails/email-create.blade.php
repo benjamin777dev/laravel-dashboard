@@ -1,6 +1,6 @@
 <script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
 <div class="modal-header">
-    <h5 class="modal-title" id="composemodalTitle">New Message</h5>
+    <h5 class="modal-title" id="composemodalTitle">New Email</h5>
     <button type="button" class="btn-close" id="emailModalClose" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
@@ -34,7 +34,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
                 <select class="form-control select2-multiple" id="ccSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="CC">
                     @foreach($contacts as $contactDetail)
                         <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
@@ -46,7 +46,7 @@
             <label for="example-text-input" class="col-md-2 cmultipleol-form-label">BCC</label>
             <div class="col-md-10">
                 <select class="form-control select2-multiple" id="bccSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="BCC">
                     @foreach($contacts as $contactDetail)
                         <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
@@ -236,7 +236,17 @@
         });
 
         // Handle modal reset
-        var button = document.getElementById('emailModalClose');
+        
+
+        
+
+        // Trigger change event to ensure pre-selected options are displayed correctly
+        $('#toSelect').trigger('change');
+        $('#ccSelect').trigger('change');
+        $('#bccSelect').trigger('change');
+
+    });
+    var button = document.getElementById('emailModalClose');
         button.addEventListener('click', function () {
         var modal = document.getElementById('composemodal');
         
@@ -257,15 +267,6 @@
                 });
             }
         });
-    });
-
-        
-
-        // Trigger change event to ensure pre-selected options are displayed correctly
-        $('#toSelect').trigger('change');
-        $('#ccSelect').trigger('change');
-        $('#bccSelect').trigger('change');
-
     });
 
     function validateForm() {
@@ -295,7 +296,7 @@
 
 
     window.sendEmails = function(button,email,isEmailSent){
-        button.disabled = true;
+        
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -305,6 +306,7 @@
         if(!isValidate){
             return false;
         };
+        button.disabled = true;
         var formData = 
         {
             "to": to,
@@ -338,13 +340,13 @@
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
+                    fetchEmails();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
                     $("#emailModalClose").click();
-
                 }
             });
         }else{
@@ -370,6 +372,7 @@
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
+                    fetchEmails();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
