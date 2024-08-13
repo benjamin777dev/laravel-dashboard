@@ -14,7 +14,7 @@
                     <th scope="col" class="sticky-head">
                         <div class="dbgheaderFlex">
                             <p class="mb-0">{{ count($shownGroup['contacts']) }} <i class="fas fa-paper-plane ms-1" onclick="sendGroupMail('{{$shownGroup['id']}}')"></i></p>
-                            
+
                             <div class="checkboxText">
                                 <p class="mb-0 text-end">{{ $shownGroup['name'] }}</p>
                                 <input type="checkbox" class="headerCheckbox" data-group-id="{{ $shownGroup['id'] }}" id="headerCheckbox{{ $loop->index }}"
@@ -137,7 +137,7 @@
 
     checkAllCheckboxes(); // Initial check on page load
     });
-    window.fetchData = function (sortField = null) {
+    window.refetchData = function (sortField = null) {
         const filterSelect = document.getElementById('validationDefault05');
         const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
         $.ajax({
@@ -164,11 +164,11 @@
     window.toggleSort = function () {
         sortDescending = !sortDescending;
         const sortDirection = sortDescending ? 'desc' : 'asc';
-        fetchData(sortDirection);
+        refetchData(sortDirection);
     };
 
     window.contactGroupUpdate = function (t, zoho_contact_id, zoho_group_id, isChecked, zoho_contact_group_id) {
-        zoho_contact_group_id = zoho_contact_group_id ? $(t).attr('data-group-id') : '';
+        zoho_contact_group_id = zoho_contact_group_id ? zoho_contact_group_id : $(t).attr('data-group-id');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -196,7 +196,7 @@
                     showToast('Contact add successfully')
                     // set group id data attribute
                     $(t).attr('data-group-id', response.zoho_contact_group_id);
-                    fetchData();
+                    refetchData();
 
                 },
                 error: function(xhr, status, error) {
@@ -212,7 +212,7 @@
 
                 success: function (response) {
                    showToast('Contact remove successfully');
-                   fetchData();
+                   refetchData();
                 },
                 error: function(xhr, status, error) {
                     showToastError(error)
@@ -270,7 +270,7 @@
                 },
                 success: function (response) {
                     showToast('Contacts add successfully')
-                    fetchData();
+                    refetchData();
                 },
                 error: function (xhr, status, error) {
                     // Handle errors
@@ -294,7 +294,7 @@
                 data: jsonString,
                 success: function (response) {
                     showToast('Contacts remove successfully')
-                    fetchData();
+                    refetchData();
                 },
                 error: function (xhr, status, error) {
                     // Handle errors
@@ -332,7 +332,7 @@
             console.log(groupContacts);
             openGroupComposeModal(groupContacts);
         });
-        
+
     }
 
 
