@@ -1756,43 +1756,44 @@ class DatabaseService
 
             // Fetch primary contacts
             $primaryContacts = Contact::where($condition)
-                ->leftJoin('contacts as c', function ($join) {
-                    $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
-                })
-                ->select(
-                    'contacts.id',
-                    'contacts.email',
-                    'contacts.auto_address',
-                    'contacts.contact_owner',
-                    'contacts.zoho_contact_id',
-                    'contacts.first_name',
-                    'contacts.last_name',
-                    'contacts.relationship_type',
-                    'contacts.spouse_partner',
-                    'contacts.has_email',
-                    'contacts.has_address',
-                    'c.id as secondary_contact_id',
-                    'c.first_name as secondary_first_name',
-                    'c.last_name as secondary_last_name',
-                    'c.relationship_type as secondary_relationship_type',
-                    'c.email as secondary_email',
-                    'c.auto_address as secondary_auto_address',
-                    'c.spouse_partner as secondary_spouse_partner',
-                    'c.zoho_contact_id as secondary_zoho_contact_id',
-                    'c.contact_owner as secondary_contact_owner',
-                    'c.spouse_partner as partner_id')
-                )
-                ->when($filter, function ($query) use ($filter) {
-                    if ($filter === "has_email") {
-                        $query->where('contacts.email', '!=', null);
-                    } elseif ($filter === "has_address") {
-                        $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
-                    }
-                })
-                ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
-                ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
-                ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
-                ->get();
+    ->leftJoin('contacts as c', function ($join) {
+        $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
+    })
+    ->select(
+        'contacts.id',
+        'contacts.email',
+        'contacts.auto_address',
+        'contacts.contact_owner',
+        'contacts.zoho_contact_id',
+        'contacts.first_name',
+        'contacts.last_name',
+        'contacts.relationship_type',
+        'contacts.spouse_partner',
+        'contacts.has_email',
+        'contacts.has_address',
+        'c.id as secondary_contact_id',
+        'c.first_name as secondary_first_name',
+        'c.last_name as secondary_last_name',
+        'c.relationship_type as secondary_relationship_type',
+        'c.email as secondary_email',
+        'c.auto_address as secondary_auto_address',
+        'c.spouse_partner as secondary_spouse_partner',
+        'c.zoho_contact_id as secondary_zoho_contact_id',
+        'c.contact_owner as secondary_contact_owner',
+        'c.spouse_partner as partner_id'
+    )
+    ->when($filter, function ($query) use ($filter) {
+        if ($filter === "has_email") {
+            $query->where('contacts.email', '!=', null);
+        } elseif ($filter === "has_address") {
+            $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
+        }
+    })
+    ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
+    ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
+    ->orderBy('contacts.updated_at', 'desc')
+    ->get();
+
 
                 Log::info("Query Log", DB::getQueryLog());
 
