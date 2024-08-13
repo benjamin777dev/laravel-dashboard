@@ -13,8 +13,8 @@
                 $group = optional($contact->groups)->firstWhere('groupId', $shownGroup['id']);
                 @endphp
                 <td>
-                    <input type="checkbox" data-id="{{$contact->zoho_contact_id}}" data-group-id="{{$group}}"
-                        onclick="contactGroupUpdate('{{ $contact ? json_encode($contact) : 'null' }}', '{{ $shownGroup }}', this.checked,'{{$group}}')"
+                    <input type="checkbox" data-id="{{$contact->zoho_contact_id}}" data-group-id="{{$group ? $group->zoho_contact_group_id : ''}}"
+                        onclick="contactGroupUpdate(this, '{{ $contact->zoho_contact_id }}', '{{ $shownGroup->zoho_group_id }}', this.checked, '{{$group ? $group->zoho_contact_group_id : ''}}')"
                         class="groupCheckbox" {{ $group ? 'checked' : '' }} data-index="{{ $index }}" />
                 </td>
     @endforeach

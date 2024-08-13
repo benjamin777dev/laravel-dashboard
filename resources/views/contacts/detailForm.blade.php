@@ -64,7 +64,7 @@
                     @endphp
                     <label for="validationDefault07" class="form-label nplabelText">ABCD Status</label>
                     <select name="abcd_class" class="form-select npinputinfo" id="validationDefault07">
-                        <option selected disabled value="">-None-</option>
+                        <option selected value="-None-">-None-</option>
                         @foreach ($abcd as $abcdIndex)
                             <option value="{{ $abcdIndex }}"
                                 {{ $contact['abcd'] == $abcdIndex ? 'selected' : '' }}>{{ $abcdIndex }}
@@ -183,18 +183,23 @@
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
                     <select type="text" name="spouse_partner" class="form-select npinputinfo"
                         id="validationDefault13" >
+                        <option value="" selected>Search...</option>
                         @if (!empty($contacts))
                         @foreach ($contacts as $contactref)
                             @php
                                 $zoho_contact_id = isset($contactref['zoho_contact_id']) ? (string) $contactref['zoho_contact_id'] : '';
                                 $spouse_partner = isset($contact['spouse_partner']) ? (string) $contact['spouse_partner'] : '';
+                                
                             @endphp
-                            <option value="{{ json_encode(['id' => $zoho_contact_id, 'Full_Name' => $contactref['first_name'] . ' ' . $contactref['last_name']]) }}" 
-                                    {{ $zoho_contact_id === $spouse_partner ? 'selected' : '' }}
-                                    data-id="{{ $contactref['id'] }}"
-                                    data-icon="fas fa-external-link-alt">
-                                {{ $contactref['first_name'] }} {{ $contactref['last_name'] }}
-                            </option>
+                          <option 
+                          value="{{ json_encode(['id' => $zoho_contact_id, 'Full_Name' => $contactref['first_name'] . ' ' . $contactref['last_name']]) }}" 
+                          {{ $zoho_contact_id === $spouse_partner ? 'selected' : '' }}
+                          data-id="{{ $contactref['id'] }}"
+                          data-icon="fas fa-external-link-alt"
+                      >
+                           {{ $contactref['first_name'] . ' ' . $contactref['last_name']  }}
+                      </option>
+                      
                         @endforeach
                     @endif
                     </select>
@@ -432,7 +437,6 @@
 
     var getSpouse = $('#validationDefault13');
     getSpouse.select2({
-        placeholder: 'Search...',
         templateResult: formatState,
         templateSelection: formatState
     }).on('select2:open', () => {

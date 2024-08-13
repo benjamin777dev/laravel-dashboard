@@ -343,7 +343,7 @@ class DatabaseService
         $helper = new Helper();
         Log::info('Storing Contacts Into Database', ['contact' => $contact]);
 
-        
+
         $user = User::where('root_user_id', $contact['Owner']['id'])->first();
             // Map the data correctly
             $mappedData = [
@@ -578,7 +578,7 @@ class DatabaseService
         }
     }
 
-    
+
 
     public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
     {
@@ -712,14 +712,14 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Deals From Database");
-    
+
             // Check if user is part of a team
             $contact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
             $teamPartnershipId = $contact->team_partnership ?? null;
-    
+
             // Base conditions
             $conditions = [['id', $dealId]];
-    
+
             if ($teamPartnershipId) {
                 // If user is part of a team, fetch the deal for the entire team
                 $conditions[] = ['teamPartnership', $teamPartnershipId];
@@ -727,14 +727,14 @@ class DatabaseService
                 // If user is not part of a team, fetch the deal for the individual user
                 $conditions[] = ['userID', $user->id];
             }
-    
+
             Log::info("Deal Conditions", ['conditions' => $conditions]);
-    
+
             // Retrieve the deal based on the conditions
             $deal = Deal::with('userData', 'contactName', 'leadAgent')
                         ->where($conditions)
                         ->first();
-    
+
             return $deal;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal: " . $e->getMessage());
@@ -1143,11 +1143,16 @@ class DatabaseService
         try {
             Log::info("Retrieve Contact From Database");
 
-            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true],['email','!=',null],['email', '!=', '']];
+            $conditions = [
+                ['contact_owner', $user->root_user_id],
+                ['zoho_contact_id', '!=', null],
+                ['email', '!=', null],
+                ['email', '!=', '']
+            ];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
             $contacts->orderBy('updated_at', 'desc');
             // Paginate the results
-            $contacts = $contacts->paginate(50);
+            $contacts = $contacts->get();
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
@@ -1557,9 +1562,7 @@ class DatabaseService
             }
             $userContact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
             $teamPartnershipId = $userContact->team_partnership ?? null;
-    
-            // Base conditions
-            $conditions = [['id', $dealId]];
+
 
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
@@ -1574,7 +1577,7 @@ class DatabaseService
                 'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
                 'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null,
-                'teamPartnershipId'=> isset($teamPartnershipId)?$teamPartnershipId:null
+                'teamPartnership'=> isset($teamPartnershipId)?$teamPartnershipId:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -1742,11 +1745,12 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
+        DB::enableQueryLog();
         try {
             $condition = [
                 ['contacts.contact_owner', $user->root_user_id],
                 ['contacts.zoho_contact_id', '!=', null],
-                ['contacts.isContactCompleted', true],
+                // ['contacts.isContactCompleted', true],
                 // ['contacts.relationship_type', '!=', 'Secondary'],
             ];
 
@@ -1755,13 +1759,13 @@ class DatabaseService
                 ->leftJoin('contacts as c', function ($join) {
                     $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
                 })
-                ->with([
-                    'groups' => function ($query) use ($filter) {
-                        if ($filter) {
-                            $query->where('groupId', $filter);
-                        }
-                    },
-                ])
+                // ->with([
+                //     'groups' => function ($query) use ($filter) {
+                //         if ($filter) {
+                //             $query->where('groupId', $filter);
+                //         }
+                //     },
+                // ])
                 ->select(
                     'contacts.id',
                     'contacts.email',
@@ -1791,11 +1795,18 @@ class DatabaseService
                     } elseif ($filter === "has_address") {
                         $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
                     }
+                    // else {
+                    //     $query->whereHas('groups', function ($query) use ($filter) {
+                    //         $query->where('groupId', $filter);
+                    //     });
+                    // }
                 })
                 ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
                 ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
                 ->orderBy('contacts.updated_at', 'desc') // Finally order by updated_at descending
                 ->get();
+
+                Log::info("Query Log", DB::getQueryLog());
 
             // Fetch all group data for contacts in a single query
             $contactIds = $primaryContacts->pluck('id')->merge($primaryContacts->pluck('secondary_contact_id'))->filter()->unique();
@@ -1806,18 +1817,40 @@ class DatabaseService
                 ->get()
                 ->groupBy('contactId');
 
+            $allGroupsNoFilter = ContactGroups::whereIn('contactId', $contactIds)
+                ->get()
+                ->groupBy('contactId');
+
             // Transform results to include secondary contacts as additional rows
             $transformedContacts = [];
             $addedContactIds = [];
 
             foreach ($primaryContacts as $contact) {
                 if (!in_array($contact->id, $addedContactIds)) {
-                    $contact->groups = $allGroups->get($contact->id, []);
-                    $transformedContacts[] = $contact;
-                    $addedContactIds[] = $contact->id;
+                    $contact->groups = $allGroupsNoFilter->get($contact->id, []);
+
+                    // check if $filter is groupId then add contact in list
+                    if ($filter && $filter !== "has_email" && $filter !== "has_address") {
+                        if (empty($allGroups->get($contact->id, []))) {
+                            Log::info("No groups found for contact: ", ['contact' => $contact->id]);
+                        } else {
+                            $transformedContacts[] = $contact;
+                            $addedContactIds[] = $contact->id;
+                        }
+                    } else{
+                        $transformedContacts[] = $contact;
+                        $addedContactIds[] = $contact->id;
+                    }
                 }
 
                 if ($contact->secondary_contact_id) {
+                    // check same group filter is applied on secondary contact
+                    if ($filter && $filter !== "has_email" && $filter !== "has_address") {
+                        if (empty($allGroups->get($contact->secondary_contact_id, []))) {
+                            continue;
+                        }
+                    }
+
                     if (in_array($contact->secondary_contact_id, $addedContactIds)) {
                         // shift transformedContacts to this index
                         $index = array_search($contact->secondary_contact_id, $addedContactIds);
@@ -1840,7 +1873,7 @@ class DatabaseService
                     $secondaryContact->has_email = $contact->has_email; // Assuming secondary contact shares the same has_email status
                     $secondaryContact->has_address = $contact->has_address; // Assuming secondary contact shares the same has_address status
                     // Assign groups for secondary contact
-                    $secondaryContact->groups = $allGroups->get($secondaryContact->id, []);
+                    $secondaryContact->groups = $allGroupsNoFilter->get($secondaryContact->id, []);
                     $transformedContacts[] = $secondaryContact;
                     $addedContactIds[] = $secondaryContact->id;
                 }
@@ -1897,31 +1930,31 @@ class DatabaseService
             throw $e;
         }
     }
-   
+
     public function retrieveContactGroupsDataForDelte($user, $accessToken, $contactId)
     {
         try {
             Log::info("Retrieve Contact Group From Database");
-    
+
             // Retrieve a single contact group based on the provided contactId
             $contact = ContactGroups::with('groupData') // Load the related groups
             ->where('ownerId', $user->id)
             ->where('contactId', $contactId)
             ->get();
-    
+
             // If no contact is found, return null or handle as needed
             if (!$contact) {
                 Log::info("No contact group found for contactId: " . $contactId);
                 return null; // Or handle it according to your requirements
             }
-    
+
             return $contact;
         } catch (\Exception $e) {
             Log::error("Error retrieving contact group: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
     public function updateGroups(User $user, $accessToken, $data)
     {
         try {
@@ -1974,6 +2007,7 @@ class DatabaseService
 
     public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
+        DB::enableQueryLog();
         try {
             Log::info("Retrieve Groups From Database");
 
@@ -1991,10 +2025,13 @@ class DatabaseService
 
             // Get all groups
             $groups = $query->with(['contacts' => function ($query) use ($user) {
-                $query->where('ownerId', $user->id);
                 $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
-                $query->where('contacts.isContactCompleted', true);
+                $query->where('contacts.zoho_contact_id', '!=', null);
+                $query->where('contacts.contact_owner', $user->root_user_id);
+
             }])->get();
+
+            Log::info("Query Log", DB::getQueryLog());
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {
@@ -2726,7 +2763,7 @@ class DatabaseService
                     $emailData
                 );
                 $createdEmails[]=$email;
-                
+
                 // Log the result of the database operation
                 Log::info('Email record updated or created', ['email' => $email]);
             }
@@ -2908,7 +2945,7 @@ class DatabaseService
     public function getTemplatesFromDB($user)
     {
         try {
-            
+
                 $templateList = Template::whereOr(
                     [['templateType'=>"Public"],['ownerId',$user->id]],
                 )->orderBy('updated_at','DESC')->get();
@@ -2995,7 +3032,7 @@ class DatabaseService
 
             // Fetch newly created contacts to return them
             $newContacts = Contact::whereIn('id', $createdContacts)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
-            
+
             // Log the newly created contacts
             Log::info('New Contacts Created', ['contacts' => $newContacts]);
 

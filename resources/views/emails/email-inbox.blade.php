@@ -119,7 +119,7 @@
 
         fetchEmails(null);
     })
-    function fetchEmails(event=null,page=''){
+    window.fetchEmails=function(event=null,page=''){
             if(event){
                 let element = event.target.closest('a');
                 

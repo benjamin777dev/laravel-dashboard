@@ -49,7 +49,7 @@ use Carbon\Carbon;
                 <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "openDeleteEmail()"><i class="far fa-trash-alt"></i><span class="ms-1">  Remove selected</button>
             </div>
             <div class="btn-group me-2 mb-2 mb-sm-0" id="restoreEmail" style="display:none;">
-                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail(false)"><i class="far fa-trash-alt"></i><span class="ms-1">  Restore selected</button>
+                <button type="button" class="btn btn-dark waves-light waves-effect" onclick = "moveToTrashEmail(false)"><i class="fas fa-arrow-left"></i><span class="ms-1">  Restore selected</button>
             </div>
         </div> 
         <div>
@@ -119,7 +119,6 @@ use Carbon\Carbon;
         </div>
     </div>
 </div>
-
 <div class="modal fade bs-example-modal-center" id="confirmEmailDeleteModal" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

@@ -57,6 +57,7 @@ Route::get('/dashboard-tasks', [DashboardController::class, 'retriveTaskforDatat
 Route::get('/upcomming-task', [TaskController::class, 'upcommingTaskForDashboard'])->name('dashboard.upcomming')->middleware('auth');
 
 Route::get('/needsNewdate', [DashboardController::class, 'needNewDateMethod'])->middleware('auth');
+Route::get('/getStage', [DashboardController::class, 'getStageForDashboard'])->middleware('auth');
 
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');
@@ -131,7 +132,7 @@ Route::delete('/group/delete/{groupId}', [GroupController::class, 'deleteGroup']
 Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');
-Route::get('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
+Route::post('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
 Route::post('/contact/group/bulk/remove', [GroupController::class, 'bulkRemove'])->middleware('auth');
 Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 Route::get('/get/group/contacts', [GroupController::class, 'getGroupContacts']);

@@ -25,12 +25,27 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-target="#composemodal" data-bs-toggle="modal" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary" id="closeAndOpenModal">Close</button>
     <button type="button" class="btn btn-dark" onclick="saveTemplate()">Save as template <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+    $("#closeAndOpenModal").click(function() {
+        if ($("#templateModal").hasClass("draft")) {
+            // Hide the current modal
+            $("#templateModal").modal('hide');
+            // Show the draft modal
+            $("#draftModal").modal('show');
+        } else {
+            // Hide the current modal
+            $("#templateModal").modal('hide');
+            // Show the compose modal
+            $("#composemodal").modal('show');
+        }
+    });
+});
     window.validateTemplate = function(){
         var templateName = $("#templateName").val();
         var content = $("#templateContent").val();

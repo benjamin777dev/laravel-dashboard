@@ -5,6 +5,7 @@
 @section('content')
 @vite(['resources/css/pipeline.css'])
 @vite(['resources/js/toast.js'])
+@if(isset($deal['id']))
 <div class="pipelineCreateForm">
         
 </div>
@@ -16,6 +17,7 @@
     </div>
 </div>
 @include('common.notes.create', ['deal' => $deal, 'type' => 'Deals'])
+
 
 @vite(['resources/js/pipeline.js'])
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -45,5 +47,5 @@
         });
     }
 </script>
-
+@endif
 @endsection
