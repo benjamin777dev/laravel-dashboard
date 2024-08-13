@@ -119,7 +119,6 @@ use Carbon\Carbon;
         </div>
     </div>
 </div>
-
 <div class="modal fade bs-example-modal-center" id="confirmEmailDeleteModal" tabindex="-1" role="dialog" aria-modal="true" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

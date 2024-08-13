@@ -1147,7 +1147,7 @@ class DatabaseService
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
             $contacts->orderBy('updated_at', 'desc');
             // Paginate the results
-            $contacts = $contacts->paginate(50);
+            $contacts = $contacts->get();
             return $contacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());

@@ -8,7 +8,7 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
+                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = '';
@@ -71,7 +71,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary" id = "emailModalClose" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
@@ -236,7 +236,10 @@
         });
 
         // Handle modal reset
+        var button = document.getElementById('emailModalClose');
+        button.addEventListener('click', function () {
         var modal = document.getElementById('composemodal');
+        
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
@@ -254,6 +257,7 @@
                 });
             }
         });
+    });
 
         
 
@@ -330,9 +334,10 @@
                     } else {
                         // Handle error
                     }
+                    showToast("Email sent successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
-                    fetchEmails()
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -361,9 +366,10 @@
                     } else {
                         // Handle error
                     }
+                    showToast("Email sent successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
-                    fetchEmails()
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -403,6 +409,9 @@
         $("#templateContent").val(content);
         $('#composemodal').modal('hide');
         $('#templateModal').modal('show'); // Open the modal if validation passes
+        $("#templateModal").removeClass("draft");
+       $("#templateModal").addClass("compose");
+
     }
 }
 </script>
