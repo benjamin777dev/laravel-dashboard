@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
                         if (ext === 'css') {
                             return 'css/[name].min.css';
                         } else {
-                            return 'icons/' + assetInfo.name;
+                            return 'icons/' + assetInfo.name; // Adjust if needed
                         }
                     },
                     entryFileNames: 'js/[name].js',
@@ -50,15 +50,14 @@ export default defineConfig(({ mode }) => {
             viteStaticCopy({
                 targets: [
                     { src: 'resources/fonts', dest: '' },
-                    { src: 'resources/images', dest: '' },
-                    { src: 'resources/customImages', dest: '' },
-                    { src: 'resources/js', dest: '' },
-                    { src: 'resources/json', dest: '' },
-                    { src: 'resources/libs', dest: '' },
+                    { src: 'resources/images', dest: 'images' }, // Ensure images go to public/images
+                    { src: 'resources/customImages', dest: 'customImages' }, // Adjust as needed
                 ],
             }),
-            // Conditionally include removeConsole plugin only in production
-            mode === 'production' && removeConsole(),
-        ].filter(Boolean), // This filters out falsey values like "false" from the plugins array
+            removeConsole({ 
+                // Options for removeConsole plugin
+                remove: mode === 'production',
+            }),
+        ],
     };
 });
