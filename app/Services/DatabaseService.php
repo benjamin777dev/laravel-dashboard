@@ -1558,9 +1558,7 @@ class DatabaseService
             $userContact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
             $teamPartnershipId = $userContact->team_partnership ?? null;
     
-            // Base conditions
-            $conditions = [['id', $dealId]];
-
+            
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,

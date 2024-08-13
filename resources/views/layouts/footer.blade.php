@@ -1,4 +1,4 @@
-<footer class="footer position-sticky" >
+<footer class="footer position-absolute" >
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">

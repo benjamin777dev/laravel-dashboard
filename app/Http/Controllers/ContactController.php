@@ -602,10 +602,6 @@ class ContactController extends Controller
             if (isset($input['secondry_address']) && $input['secondry_address'] !== '') {
                 $rules['secondry_address'] = 'required|string|max:255';
             }
-
-            if (isset($input['chr_marketing_email']) && $input['chr_marketing_email'] !== '') {
-                $rules['chr_marketing_email'] = 'required|string|email';
-            }
             
             // Validate the request data using the defined rules
             $validatedData = $request->validate($rules);
@@ -779,7 +775,6 @@ class ContactController extends Controller
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $zohoContactValues['chr_marketing_email']= isset($input['chr_marketing_email'])?$input['chr_marketing_email']:null;
                 $db->storeContactIntoDB($id,$zohoContactValues);
                 $contactGroups = $this->getGroupsForDelete($id);
                 $groupNames = $contactGroups->map(function ($item) {
