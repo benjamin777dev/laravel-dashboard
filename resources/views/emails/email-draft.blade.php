@@ -35,7 +35,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccDraftSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="CC">
                     @foreach($contacts as $contactDetails)
                         @php
                             $ccSelected = ''; // Initialize variable to hold 'ccSelected' attribute
@@ -61,7 +61,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">BCC</label>
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="bccDraftSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="BCC">
                     @foreach($contacts as $contactDetail)
                         @php
                             $bccSelected = ''; // Initialize variable to hold 'selected' attribute
@@ -102,8 +102,8 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="sendDraftEmails(this,{{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
-    <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openTemplate()">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="sendDraftEmails(this,{{isset($email)?json_encode($email):null}},true">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openDraftTemplate()">Save as template</button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails(this,{{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
 
@@ -309,7 +309,8 @@
         return isValidate;
     }
 
-    window.sendDraftEmails = function(email,isEmailSent){
+    window.sendDraftEmails = function(button,email,isEmailSent){
+        
         var to = $("#toDraftSelect").val();
         var cc = $("#ccDraftSelect").val();
         var bcc = $("#bccDraftSelect").val();
@@ -319,6 +320,7 @@
         if(!isValidate){
             return false;
         };
+        button.disabled = true;
         var formData = 
         {
             "to": to,
@@ -354,16 +356,16 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Email sent successfully");
+                    showToast("Draft saved successfully");
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
-                    $("#emailModalClose").click();
+                    $("#emaildraftModalClose").click();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
-                    $("#emailModalClose").click();
+                    $("#emaildraftModalClose").click();
 
                 }
             });
@@ -387,23 +389,23 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Email sent successfully");
+                    showToast("Draft saved successfully");
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
-                    $("#emailModalClose").click();
+                    $("#emaildraftModalClose").click();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
-                    $("#emailModalClose").click();
+                    $("#emaildraftModalClose").click();
 
                 }
             });
         }
     }
 
-    window.validateOpenTemplate = function(){
+    window.validateOpenDraftTemplate = function(){
         var content = tinymce.get('draftEmailEditor').getContent();
         var subject = $("#emailDraftSubject").val();
         let isValidateTemplate = true
@@ -423,8 +425,8 @@
 
         return isValidateTemplate
     }
-    window.openTemplate = function(){
-    if (validateOpenTemplate()) {
+    window.openDraftTemplate = function(){
+    if (validateOpenDraftTemplate()) {
         var content = tinymce.get('draftEmailEditor').getContent();
         var subject = $("#emailDraftSubject").val();
         $("#templateSubject").val(subject);
