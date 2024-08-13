@@ -33,6 +33,7 @@ class GroupController extends Controller
         $filter = $request->query('filter');
         $sort = $request->query('sort');
         $contacts = $db->retrieveContactGroups($user, $accessToken, $filter, $sort);
+        $contactsList = $db->retreiveContactsHavingEmail($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
         $ownerGroups = $db->getOwnerGroups($user, $accessToken);
@@ -40,7 +41,7 @@ class GroupController extends Controller
             // If it's an AJAX request, return the pagination HTML
             return view('groups.load', compact('contacts','groups','shownGroups'))->render();
         }
-        return view('groups.index', compact('contacts','groups','shownGroups', 'ownerGroups'));
+        return view('groups.index', compact('contacts','groups','shownGroups', 'ownerGroups','contactsList'));
     }
 
     public function createGroup(Request $request)
@@ -425,4 +426,36 @@ class GroupController extends Controller
             return response()->json(['error' => 'Failed to create CSV or upload to Zoho'], 500);
         }
     }
+
+    public function getGroupContacts(Request $request)
+    {
+        try {
+            $zoho = new ZohoCRM();
+            $db = new DatabaseService();
+            $user = $this->user();
+
+            if (!$user) {
+                return redirect('/login');
+            }
+
+            $input = $request->query('groups');
+            $groups = json_decode($input, true);
+
+            if (empty($groups) || !is_array($groups)) {
+                return response()->json(['error' => 'Invalid or missing groups parameter'], 400);
+            }
+
+            $accessToken = $user->getAccessToken();
+            $zoho->access_token = $accessToken;
+
+            $contactGroup = ContactGroups::where('ownerId',$user['id'])->whereIn('groupId', $groups)->select('contactId')->get()->unique('contactId');
+
+            return response()->json($contactGroup->values()->all());
+
+        } catch (\Exception $e) {
+            Log::error("Error retrieving group contacts: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to retrieve group contacts'], 500);
+        }
+    }
+
 }

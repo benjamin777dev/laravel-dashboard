@@ -2046,7 +2046,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: null,
             defaultContent: "",
         },
-        { 
+        {
             data: null,
             className: "select-checkbox",
             defaultContent: "",
@@ -2647,24 +2647,24 @@ function viewEmailModal(id) {
 }
 
 window.viewEmail = function (emailId) {
-    window.location.href = "/emails?contactId=" + contactId;
-    // event.preventDefault();
-    // $.ajax({
-    //     url: "/get/email/modal/" + emailId,
-    //     method: "GET",
-    //     success: function (response) {
-    //         let viewEmailContainer = $("#viewEmailDetails" + emailId);
-    //         console.log(response, "viewEmailContainer");
-    //         viewEmailContainer.empty();
-    //         const card = viewEmailContainer.html(response);
-    //         $("#viewEmailModal" + emailId).modal("show");
-    //     },
-    //     error: function (xhr, status, error) {
-    //         // Handle error
-    //         showToastError(error);
-    //         console.error("Ajax Error:", error);
-    //     },
-    // });
+    // window.location.href = "/emails?contactId=" + contactId;
+    event.preventDefault();
+    $.ajax({
+        url: "/get/email/modal/" + emailId,
+        method: "GET",
+        success: function (response) {
+            let viewEmailContainer = $("#viewEmailDetails" + emailId);
+            console.log(response, "viewEmailContainer");
+            viewEmailContainer.empty();
+            const card = viewEmailContainer.html(response);
+            $("#viewEmailModal" + emailId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
 };
 var templateTableList = $("#template-table-list").DataTable({
     paging: true,
