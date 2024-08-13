@@ -1577,7 +1577,7 @@ class DatabaseService
                 'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
                 'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null,
-                'teamPartnershipId'=> isset($teamPartnershipId)?$teamPartnershipId:null
+                'teamPartnership'=> isset($teamPartnershipId)?$teamPartnershipId:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;

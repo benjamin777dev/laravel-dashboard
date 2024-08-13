@@ -434,9 +434,16 @@
                 @endcomponent
        
         </div>
-
 {{-- Add New Submittal --}}
 
+@if (
+    isset($deal['representing']) && 
+    isset($deal['tm_preference']) &&
+    (
+        ($deal['representing'] == "Buyer" && $deal['tm_preference'] != "Non-TM") || 
+        $deal['representing'] == "Seller"
+    )
+)
 <div class="p-4 d-flex justify-content-between ">
     <div class="">
         <h2 class='pText mt-3 text-center'> Submittal </h2>
@@ -458,13 +465,22 @@
         
     </div>
 </div>
+@endif
+
 
 
         </div>
     </div>
 </div>
 
-
+@if (
+    isset($deal['representing']) && 
+    isset($deal['tm_preference']) &&
+    (
+        ($deal['representing'] == "Buyer" && $deal['tm_preference'] != "Non-TM") || 
+        $deal['representing'] == "Seller"
+    )
+)
 <div class="showsubmittalTable">
                 @component('components.common-table', [
                     'id' => 'submittal_table_pipeline',
@@ -472,6 +488,7 @@
                 @endcomponent
        
 </div>
+@endif
 {{-- Add Non-TM --}}
 
 

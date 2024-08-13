@@ -236,7 +236,7 @@ class ZohoCRM
     public function createNewContactData($inputJson)
     {
         try {
-            Log::info('Creating Zoho contacts');
+            Log::info('Creating Zoho contacts'.json_encode($inputJson));
 
             // Trigger workflows
             $inputJson['trigger'] = 'workflow';

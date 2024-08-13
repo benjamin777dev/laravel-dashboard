@@ -57,6 +57,7 @@ Route::get('/dashboard-tasks', [DashboardController::class, 'retriveTaskforDatat
 Route::get('/upcomming-task', [TaskController::class, 'upcommingTaskForDashboard'])->name('dashboard.upcomming')->middleware('auth');
 
 Route::get('/needsNewdate', [DashboardController::class, 'needNewDateMethod'])->middleware('auth');
+Route::get('/getStage', [DashboardController::class, 'getStageForDashboard'])->middleware('auth');
 
 Route::post('/save-note', [DashboardController::class, 'saveNote'])->name('save.note')->middleware('auth');
 Route::delete('/delete-note/{id}', [DashboardController::class, 'deleteNote'])->name('delete.note')->middleware('auth');

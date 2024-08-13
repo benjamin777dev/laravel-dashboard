@@ -213,7 +213,7 @@ class ContactController extends Controller
            // Define validation rules and messages
            $rules = [
             'id' => 'required|exists:contacts,id',
-            'field' => 'required|in:email,mobile,phone,envelope_salutation',
+            'field' => 'required|in:email,mobile,phone,salutation_s',
             'value' => 'nullable', // Allow the value to be nullable (empty)
         ];
 
@@ -232,7 +232,7 @@ class ContactController extends Controller
             if ($request->input('field') === 'email') {
                 $rules['value'] .= '|email';
             } elseif ($request->input('field') === 'mobile' || $request->input('field') === 'phone') {
-                $rules['value'] .= '|numeric'; // Regex for international phone numbers
+                $rules['value'] .= '|regex:/^\d{3}[-.\s]?\d{3}[-.\s]?\d{3,4}$/';
             }
         }
 
@@ -258,8 +258,8 @@ class ContactController extends Controller
                 case "phone":
                     $field = "Phone";
                     break;
-                case "envelope_salutation":
-                    $field = "Mailing_Address"; // Adjust field name as needed
+                case "salutation_s":
+                    $field = "Salutation_s"; // Adjust field name as needed
                     break;
                 default:
                     return response()->json(['error' => 'Invalid field '], Response::HTTP_BAD_REQUEST);
@@ -366,7 +366,6 @@ class ContactController extends Controller
     {
 
         try {
-            
             $user = $this->user();
 
             if (!$user) {
@@ -478,6 +477,9 @@ class ContactController extends Controller
                 }
             }
 
+            if (session()->has('spouseContact')) {
+                session()->forget('spouseContact');
+            }
             $contactOwnerArray = json_decode($request->contactOwner, true);
             // Validate the array
             $contactOwnerArray = json_decode($request->contactOwner, true);
@@ -803,7 +805,6 @@ class ContactController extends Controller
                 }   
                 // Ensure that the target group is added or updated
                 $getGroup = Groups::where('name', $targetGroup)->first();
-                
                 if ($getGroup) {
                     ContactGroups::updateOrCreate(
                         ['zoho_contact_group_id' => $getGroup->zoho_group_id],
@@ -988,20 +989,20 @@ class ContactController extends Controller
     }
 
         public function createTasksForContact()
-    {
-        $user = $this->user();
+            {
+                $user = $this->user();
 
-        if (!$user) {
-            return redirect('/login');
-        }
-        $db = new DatabaseService();
-        $contactId = request()->route('contactId');
-        $accessToken = $user->getAccessToken();
-        $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
-    }
+                if (!$user) {
+                    return redirect('/login');
+                }
+                $db = new DatabaseService();
+                $contactId = request()->route('contactId');
+                $accessToken = $user->getAccessToken();
+                $type = "Contacts";
+                $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+                $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+                return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
+        }   
 
     
 

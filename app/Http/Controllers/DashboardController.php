@@ -81,14 +81,26 @@ class DashboardController extends Controller
         ));
     }
 
-
+    public function getStageForDashboard(){
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+ 
+        $accessToken = $user->getAccessToken();
+        $cRecord = Contact::where('zoho_contact_id', $user->zoho_id)->first();
+        $goal = $cRecord->income_goal ?? 250000;
+        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $stageData = $this->getStageData($deals, $goal);
+        return view('components.dash-cards', compact('stageData'))->render();
+    }
 
     private function getStageData($deals, $goal)
     {
         // Define the stages to process
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
         // Define the date range for filtering deals (current 12-month period)
-        $startDate = Carbon::now();
+        $startDate = Carbon::now()->startOfDay();
         $endDate = Carbon::now()->addYear();
 
         // Process each stage and calculate metrics
