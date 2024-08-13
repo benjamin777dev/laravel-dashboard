@@ -131,7 +131,7 @@ Route::delete('/group/delete/{groupId}', [GroupController::class, 'deleteGroup']
 Route::get('/contact/groups', [GroupController::class, 'filterGroups'])->middleware('auth');
 Route::post('/contact/group/update', [GroupController::class, 'updateContactGroup'])->middleware('auth');
 Route::delete('/contact/group/delete/{contactGroupId}', [GroupController::class, 'deleteContactGroup'])->middleware('auth');
-Route::get('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
+Route::post('/contact/group/create/CSVfile', [GroupController::class, 'createCsv'])->middleware('auth');
 Route::post('/contact/group/bulk/remove', [GroupController::class, 'bulkRemove'])->middleware('auth');
 Route::post('/bulkJob/update', [GroupController::class, 'bulkUpdate']);
 Route::get('/get/group/contacts', [GroupController::class, 'getGroupContacts']);

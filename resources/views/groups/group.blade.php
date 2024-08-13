@@ -159,7 +159,7 @@
         });
 
     }
-    var sortDescending = true;
+    var sortDescending = false;
 
     window.toggleSort = function () {
         sortDescending = !sortDescending;
@@ -167,23 +167,21 @@
         fetchData(sortDirection);
     };
 
-    window.contactGroupUpdate = function (contact, group, isChecked, contactGroup) {
-        contact = JSON.parse(contact);
-        group = JSON.parse(group);
+    window.contactGroupUpdate = function (t, zoho_contact_id, zoho_group_id, isChecked, zoho_contact_group_id) {
+        zoho_contact_group_id = zoho_contact_group_id ? $(t).attr('data-group-id') : '';
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        console.log(contact, group, isChecked);
         if (isChecked) {
             var formData = {
                 "data": [{
                     "Contacts": {
-                        'id': contact.zoho_contact_id
+                        'id': zoho_contact_id
                     },
                     "Groups": {
-                        'id': `${group.zoho_group_id}`
+                        'id': zoho_group_id
                     },
                 }],
             };
@@ -196,6 +194,8 @@
                 data: JSON.stringify(formData),
                 success: function(response) {
                     showToast('Contact add successfully')
+                    // set group id data attribute
+                    $(t).attr('data-group-id', response.zoho_contact_group_id);
                     fetchData();
 
                 },
@@ -204,11 +204,9 @@
                 }
             });
         } else {
-            contactGroup = JSON.parse(contactGroup);
-            console.log("contactGroup", contactGroup);
             console.log(formData);
             $.ajax({
-                url: '/contact/group/delete/' + contactGroup.zoho_contact_group_id,
+                url: '/contact/group/delete/' + zoho_contact_group_id,
                 method: 'DELETE',
                 contentType: 'application/json',
 
@@ -264,7 +262,7 @@
             });
             $.ajax({
                 url: '/contact/group/create/CSVfile',
-                method: 'GET',
+                method: 'POST',
                 contentType: 'application/json',
                 dataType: 'json',
                 data: {
