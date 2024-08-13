@@ -158,22 +158,11 @@
                     $(this).prop('disabled', false);
                 }
             });
-
-            // Refresh Select2 elements
-            $("#ccDraftSelect").select2({
-                placeholder: "CC",
-                allowClear: true,
-                tags: true,
-                dropdownParent: $('#draftModal')
-            });
-
-            $("#bccDraftSelect").select2({
-                placeholder: "BCC",
-                allowClear: true,
-                tags: true,
-                dropdownParent: $('#draftModal')
-            });
         }
+            $("#toDraftSelect, #ccDraftSelect").on('change', function() {
+                updateSelectOptions();
+                $(this).trigger('select2:select'); // Trigger the select2:select event instead of change
+            });
 
         // Initialize Select2 for all select elements
         initializeSelect2("#toDraftSelect", "To", "emailErrorDraftTo");
@@ -187,22 +176,22 @@
             initializeSelect2("#bccDraftSelect", "BCC", "emailErrorDraftBCC");
         });
 
-        $("#toDraftSelect").on('change', function() {
-            updateSelectOptions();
-        });
+        $("#toDraftSelect, #ccDraftSelect").on('change', updateSelectOptions);
 
-        $("#ccDraftSelect").on('change', function() {
-            updateSelectOptions();
-        });
-
-        $("#toDraftSelect").on('select2:select', function (e) {
-            $("#emailErrorDraftTo").hide();
-        });
-        $("#ccDraftSelect").on('select2:select', function (e) {
-            $("#emailErrorDraftCC").hide();
-        });
-        $("#bccDraftSelect").on('select2:select', function (e) {
-            $("#emailErrorDraftBCC").hide();
+        $("#toDraftSelect, #ccDraftSelect, #bccDraftSelect").on('select2:select change', function(e) {
+            var suffix = '';
+            switch ($(this).attr('id')) {
+                case 'toDraftSelect':
+                    suffix = 'DraftTo';
+                    break;
+                case 'ccDraftSelect':
+                    suffix = 'DraftCC';
+                    break;
+                case 'bccDraftSelect':
+                    suffix = 'DraftBCC';
+                    break;
+            }
+            $("#emailError" + suffix).hide();
         });
 
         tinymce.init({
