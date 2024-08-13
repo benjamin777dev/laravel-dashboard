@@ -50,8 +50,11 @@ export default defineConfig(({ mode }) => {
             viteStaticCopy({
                 targets: [
                     { src: 'resources/fonts', dest: '' },
-                    { src: 'resources/images', dest: '../images' }, // Ensure images go to public/images
-                    { src: 'resources/customImages', dest: 'customImages' }, // Adjust as needed
+                    { src: 'resources/images', dest: '' },
+                    { src: 'resources/customImages', dest: '' },
+                    { src: 'resources/js', dest: '' },
+                    { src: 'resources/json', dest: '' },
+                    { src: 'resources/libs', dest: '' },
                 ],
             }),
             // Conditionally include removeConsole plugin only in production
