@@ -123,18 +123,36 @@
     @include('common.group.editModal', ['groups' => $ownerGroups])
 
     <script>
+        let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
+
+        // Get selected filter value
+        var filterSelect = document.getElementById('validationDefault05');
+        var filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+        var sortField = sortDescending ? 'desc' : 'asc';
+        nextPageUrl = nextPageUrl + '&filter=' + filterValue + '&sort=' + sortField;
+
+        let moreData = true;
         window.onload = function() {
-            let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
             let isLoading = false;
 
             $(window).scroll(function() {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading) {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading && moreData) {
                     loadMorePosts();
                 }
             });
 
             function loadMorePosts() {
                 isLoading = true; // Prevent multiple AJAX calls
+                filterSelect = document.getElementById('validationDefault05');
+                filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+                sortField = sortDescending ? 'desc' : 'asc';
+                nextPageUrl = nextPageUrl.replace(/&filter=([^&]*)/, function(match, filter) {
+                    return '&filter=' + filterValue;
+                });
+                nextPageUrl = nextPageUrl.replace(/&sort=([^&]*)/, function(match, sort) {
+                    return '&sort=' + sortField;
+                });
+
                 $.ajax({
                     url: nextPageUrl,
                     type: 'get',
@@ -144,9 +162,8 @@
                     success: function(data) {
                         $('.spinner').hide();
                         if (data.trim() === "") {
-                            nextPageUrl = null; // No more data to load
+                            moreData = false; // No more data to load
                             $('.datapagination').hide();
-                            return;
                         }
 
                         $('.dbgBodyTable').append(data);
@@ -171,6 +188,11 @@
             // Get selected filter value
             const filterSelect = document.getElementById('validationDefault05');
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+            // reset next page url first page
+            nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
+                            return 'page=' + 1;
+                        });
+            moreData = true;
             // Make AJAX call
             $.ajax({
                 url: "{{ url('/contact/groups') }}",
