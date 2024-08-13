@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
                         if (ext === 'css') {
                             return 'css/[name].min.css';
                         } else {
-                            return 'icons/' + assetInfo.name; // Adjust if needed
+                            return 'icons/' + assetInfo.name;
                         }
                     },
                     entryFileNames: 'js/[name].js',
@@ -54,10 +54,8 @@ export default defineConfig(({ mode }) => {
                     { src: 'resources/customImages', dest: 'customImages' }, // Adjust as needed
                 ],
             }),
-            removeConsole({ 
-                // Options for removeConsole plugin
-                remove: mode === 'production',
-            }),
-        ],
+            // Conditionally include removeConsole plugin only in production
+            mode === 'production' && removeConsole(),
+        ].filter(Boolean), // This filters out falsey values like "false" from the plugins array
     };
 });
