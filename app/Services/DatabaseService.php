@@ -1558,7 +1558,7 @@ class DatabaseService
             $userContact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
             $teamPartnershipId = $userContact->team_partnership ?? null;
     
-            
+            Log::info("check teampartnership ",[$teamPartnershipId]);
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,
@@ -1572,7 +1572,7 @@ class DatabaseService
                 'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
                 'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null,
-                'teamPartnershipId'=> isset($teamPartnershipId)?$teamPartnershipId:null
+                'teamPartnership'=> isset($teamPartnershipId)?$teamPartnershipId:null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;

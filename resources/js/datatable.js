@@ -733,6 +733,22 @@ $("#Reset_All").on("click", function () {
     table.search("").draw();
 });
 
+window.getStageData = function() {
+    // Make AJAX call
+    $.ajax({
+        url: '/getStage',
+        method: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            $('.dashboard-cards').html(data);
+        },
+        error: function(xhr, status, error) {
+            // Handle errors
+            console.error('Error:', error);
+        }
+    });
+
+}
 //transaction for dashboard
 var tableDashboard = $("#datatable_transaction").DataTable({
     paging: true,
@@ -1006,6 +1022,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                             $("#datatable_transaction")
                                 .DataTable()
                                 .ajax.reload();
+                                getStageData();
                         }
                     },
                     error: function (error) {
@@ -2144,10 +2161,10 @@ var tableContact = $("#datatable_contact").DataTable({
             },
         },
         {
-            data: "envelope_salutation",
+            data: "salutation_s",
             title: "Envelope",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="envelope_salutation" data-id="${
+                return `<span class="editable" data-name="salutation_s" data-id="${
                     row.id
                 }">${data || "N/A"}</span>`;
             },
