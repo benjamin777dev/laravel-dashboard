@@ -159,7 +159,7 @@
                 }
             });
         }
-            $("#toSelect, #ccSelect").on('change', function() {
+            $("#toDraftSelect, #ccDraftSelect").on('change', function() {
                 updateSelectOptions();
                 $(this).trigger('select2:select'); // Trigger the select2:select event instead of change
             });
