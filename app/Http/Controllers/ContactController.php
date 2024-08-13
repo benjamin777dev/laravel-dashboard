@@ -808,7 +808,6 @@ class ContactController extends Controller
                 }   
                 // Ensure that the target group is added or updated
                 $getGroup = Groups::where('name', $targetGroup)->first();
-                
                 if ($getGroup) {
                     ContactGroups::updateOrCreate(
                         ['zoho_contact_group_id' => $getGroup->zoho_group_id],
