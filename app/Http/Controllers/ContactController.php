@@ -232,7 +232,7 @@ class ContactController extends Controller
             if ($request->input('field') === 'email') {
                 $rules['value'] .= '|email';
             } elseif ($request->input('field') === 'mobile' || $request->input('field') === 'phone') {
-                $rules['value'] .= '|numeric'; // Regex for international phone numbers
+                $rules['value'] .= '|regex:/^\d{3}[-.\s]?\d{3}[-.\s]?\d{3,4}$/';
             }
         }
 
@@ -992,20 +992,20 @@ class ContactController extends Controller
     }
 
         public function createTasksForContact()
-    {
-        $user = $this->user();
+            {
+                $user = $this->user();
 
-        if (!$user) {
-            return redirect('/login');
-        }
-        $db = new DatabaseService();
-        $contactId = request()->route('contactId');
-        $accessToken = $user->getAccessToken();
-        $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
-    }
+                if (!$user) {
+                    return redirect('/login');
+                }
+                $db = new DatabaseService();
+                $contactId = request()->route('contactId');
+                $accessToken = $user->getAccessToken();
+                $type = "Contacts";
+                $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+                $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+                return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
+        }   
 
     
 
