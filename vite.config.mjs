@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
             viteStaticCopy({
                 targets: [
                     { src: 'resources/fonts', dest: '' },
-                    { src: 'resources/images', dest: 'images' }, // Ensure images go to public/images
+                    { src: 'resources/images', dest: '../images' }, // Ensure images go to public/images
                     { src: 'resources/customImages', dest: 'customImages' }, // Adjust as needed
                 ],
             }),

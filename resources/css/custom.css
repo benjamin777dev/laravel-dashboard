@@ -1834,6 +1834,9 @@ body .vertical-collpsed span .logo-sm image {
 
 .sidebarIcons {
     margin-right: 12px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* New Pipeline */
