@@ -40,7 +40,7 @@
                                     </li>
                                     <li>
                                         <a class="has-arrow waves-effect" onclick="mmShow(this)">
-                                            <i class="bx bx-contact"></i>
+                                            <i class="bx bx-book-content"></i>
                                             <span key="t-database">@lang('Database')</span>
                                         </a>
                                         <ul class="sub-menu mm-collapse" id="showDropdown" aria-expanded="true">
