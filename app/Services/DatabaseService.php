@@ -1757,15 +1757,8 @@ class DatabaseService
             // Fetch primary contacts
             $primaryContacts = Contact::where($condition)
                 ->leftJoin('contacts as c', function ($join) {
-                    $join->on('contacts.zoho_contact_id', '=', DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(c.spouse_partner, "$.id")), c.spouse_partner)'));
+                    $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
                 })
-                // ->with([
-                //     'groups' => function ($query) use ($filter) {
-                //         if ($filter) {
-                //             $query->where('groupId', $filter);
-                //         }
-                //     },
-                // ])
                 ->select(
                     'contacts.id',
                     'contacts.email',
@@ -1787,7 +1780,7 @@ class DatabaseService
                     'c.spouse_partner as secondary_spouse_partner',
                     'c.zoho_contact_id as secondary_zoho_contact_id',
                     'c.contact_owner as secondary_contact_owner',
-                    DB::raw('COALESCE(JSON_UNQUOTE(JSON_EXTRACT(contacts.spouse_partner, "$.id")), contacts.spouse_partner) as partner_id')
+                    'c.spouse_partner as partner_id')
                 )
                 ->when($filter, function ($query) use ($filter) {
                     if ($filter === "has_email") {
@@ -1795,11 +1788,6 @@ class DatabaseService
                     } elseif ($filter === "has_address") {
                         $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
                     }
-                    // else {
-                    //     $query->whereHas('groups', function ($query) use ($filter) {
-                    //         $query->where('groupId', $filter);
-                    //     });
-                    // }
                 })
                 ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
                 ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
