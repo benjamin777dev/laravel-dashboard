@@ -55,7 +55,7 @@
                     </div>
 
                     <ul class="dropdown-menu gdropdown-ul gdropdownMax" aria-labelledby="dropdownMenuButton1"
-                        onchange="fetchData()">
+                        onchange="refetchData()">
                         @foreach ($groups as $group)
                             <li class="gdropdown" value="{{ $group['id'] }}">{{ $group['name'] }} <input type="checkbox"
                                     {{ $group->isShow == true ? 'checked' : '' }} /></li>
@@ -67,7 +67,7 @@
                 <div class="dbgSortDiv">
                     <div class="dbgGroupDiv">
                         <select class="form-select dbgSelectinfo" placeholder="Sort groups by" id="validationDefault05"
-                            onchange="fetchData()" required>
+                            onchange="refetchData()" required>
                             <option selected value = "">-None-</option>
                             <option value = "has_address">Has Address</option>
                             <option value = "has_email">Has Email</option>
@@ -76,7 +76,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="fetchData()">
+                    <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="refetchData()">
                         <i class="fas fa-filter"></i>
                         Filter
                     </div>
@@ -102,14 +102,14 @@
             <div class="col-md-6 col-sm-12">
                 <div class="row dbgSortDiv">
                     <div class="col-md-6 col-sm-12 dbgGroupDiv">
-                        <select class="form-select dbgSelectinfo" id="validationDefault05" onchange="fetchData()" required>
+                        <select class="form-select dbgSelectinfo" id="validationDefault05" onchange="refetchData()" required>
                             <option selected value = "">--None--</option>
                             @foreach ($groups as $group)
                                 <option value = "{{ $group['id'] }}">{{ $group['name'] }} </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="input-group-text dbgfilterBtn col-md-6 col-sm-12" id="btnGroupAddon" onclick ="fetchData()">
+                    <div class="input-group-text dbgfilterBtn col-md-6 col-sm-12" id="btnGroupAddon" onclick ="refetchData()">
                         <i class="fas fa-filter"></i>
                         Filter
                     </div>
@@ -200,19 +200,38 @@
             </div>
         </div>
     <script>
+        let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
+
+        // Get selected filter value
+        var filterSelect = document.getElementById('validationDefault05');
+        var filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+        var sortField = sortDescending ? 'desc' : 'asc';
+        nextPageUrl = nextPageUrl + '&filter=' + filterValue + '&sort=' + sortField;
+
+        let moreData = true;
         var contactList = @json($contactsList??"").data;
+
         window.onload = function() {
-            let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
             let isLoading = false;
 
             $(window).scroll(function() {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading) {
+                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading && moreData) {
                     loadMorePosts();
                 }
             });
 
             function loadMorePosts() {
                 isLoading = true; // Prevent multiple AJAX calls
+                filterSelect = document.getElementById('validationDefault05');
+                filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+                sortField = sortDescending ? 'desc' : 'asc';
+                nextPageUrl = nextPageUrl.replace(/&filter=([^&]*)/, function(match, filter) {
+                    return '&filter=' + filterValue;
+                });
+                nextPageUrl = nextPageUrl.replace(/&sort=([^&]*)/, function(match, sort) {
+                    return '&sort=' + sortField;
+                });
+
                 $.ajax({
                     url: nextPageUrl,
                     type: 'get',
@@ -222,9 +241,8 @@
                     success: function(data) {
                         $('.spinner').hide();
                         if (data.trim() === "") {
-                            nextPageUrl = null; // No more data to load
+                            moreData = false; // No more data to load
                             $('.datapagination').hide();
-                            return;
                         }
 
                         $('.dbgBodyTable').append(data);
@@ -245,10 +263,15 @@
             }
         }
 
-        window.fetchData = function(sortField = null) {
+        window.refetchData = function(sortField = null) {
             // Get selected filter value
             const filterSelect = document.getElementById('validationDefault05');
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
+            // reset next page url first page
+            nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
+                            return 'page=' + 1;
+                        });
+            moreData = true;
             // Make AJAX call
             $.ajax({
                 url: "{{ url('/contact/groups') }}",
@@ -314,7 +337,7 @@
                console.log(groupContacts);
                openGroupComposeModal(groupContacts);
            });
-           
+
         }
 
         window.getGroupContacts = function(groupIds,callback){
@@ -337,7 +360,7 @@
         }
 
         window.openGroupComposeModal = function (Ids) {
-            
+
             var intIds = Ids.map(id => parseInt(id));
             var selectedContacts = contactList.filter(contact => intIds.includes(contact.id));
             console.log("Open modal ids",selectedContacts);
@@ -347,7 +370,7 @@
                 emailType:"multiple"
             };
             $.ajax({
-                url: '/get/email-create', 
+                url: '/get/email-create',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -362,7 +385,7 @@
                     // Re-initialize Select2
                     $('#toSelect').select2({
                         placeholder: "To",
-                        
+
                     });
 
                     // Open the modal
