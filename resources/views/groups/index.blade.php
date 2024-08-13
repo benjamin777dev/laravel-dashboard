@@ -55,7 +55,7 @@
                     </div>
 
                     <ul class="dropdown-menu gdropdown-ul gdropdownMax" aria-labelledby="dropdownMenuButton1"
-                        onchange="fetchData()">
+                        onchange="refetchData()">
                         @foreach ($groups as $group)
                             <li class="gdropdown" value="{{ $group['id'] }}">{{ $group['name'] }} <input type="checkbox"
                                     {{ $group->isShow == true ? 'checked' : '' }} /></li>
@@ -67,7 +67,7 @@
                 <div class="dbgSortDiv">
                     <div class="dbgGroupDiv">
                         <select class="form-select dbgSelectinfo" placeholder="Sort groups by" id="validationDefault05"
-                            onchange="fetchData()" required>
+                            onchange="refetchData()" required>
                             <option selected value = "">-None-</option>
                             <option value = "has_address">Has Address</option>
                             <option value = "has_email">Has Email</option>
@@ -76,7 +76,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="fetchData()">
+                    <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="refetchData()">
                         <i class="fas fa-filter"></i>
                         Filter
                     </div>
@@ -102,14 +102,14 @@
             <div class="col-md-6 col-sm-12">
                 <div class="row dbgSortDiv">
                     <div class="col-md-6 col-sm-12 dbgGroupDiv">
-                        <select class="form-select dbgSelectinfo" id="validationDefault05" onchange="fetchData()" required>
+                        <select class="form-select dbgSelectinfo" id="validationDefault05" onchange="refetchData()" required>
                             <option selected value = "">--None--</option>
                             @foreach ($groups as $group)
                                 <option value = "{{ $group['id'] }}">{{ $group['name'] }} </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="input-group-text dbgfilterBtn col-md-6 col-sm-12" id="btnGroupAddon" onclick ="fetchData()">
+                    <div class="input-group-text dbgfilterBtn col-md-6 col-sm-12" id="btnGroupAddon" onclick ="refetchData()">
                         <i class="fas fa-filter"></i>
                         Filter
                     </div>
@@ -263,7 +263,7 @@
             }
         }
 
-        window.fetchData = function(sortField = null) {
+        window.refetchData = function(sortField = null) {
             // Get selected filter value
             const filterSelect = document.getElementById('validationDefault05');
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
