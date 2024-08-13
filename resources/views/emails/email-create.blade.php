@@ -1,6 +1,6 @@
 <script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
 <div class="modal-header">
-    <h5 class="modal-title" id="composemodalTitle">New Message</h5>
+    <h5 class="modal-title" id="composemodalTitle">New Email</h5>
     <button type="button" class="btn-close" id="emailModalClose" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
@@ -8,7 +8,7 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
+                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = '';
@@ -34,7 +34,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
                 <select class="form-control select2-multiple" id="ccSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="CC">
                     @foreach($contacts as $contactDetail)
                         <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
@@ -46,7 +46,7 @@
             <label for="example-text-input" class="col-md-2 cmultipleol-form-label">BCC</label>
             <div class="col-md-10">
                 <select class="form-control select2-multiple" id="bccSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="BCC">
                     @foreach($contacts as $contactDetail)
                         <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
@@ -71,7 +71,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary" id = "emailModalClose" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
@@ -236,7 +236,20 @@
         });
 
         // Handle modal reset
+        
+
+        
+
+        // Trigger change event to ensure pre-selected options are displayed correctly
+        $('#toSelect').trigger('change');
+        $('#ccSelect').trigger('change');
+        $('#bccSelect').trigger('change');
+
+    });
+    var button = document.getElementById('emailModalClose');
+        button.addEventListener('click', function () {
         var modal = document.getElementById('composemodal');
+        
         var modalData = document.getElementById('modal-data');
 
         modal.addEventListener('hidden.bs.modal', function () {
@@ -254,14 +267,6 @@
                 });
             }
         });
-
-        
-
-        // Trigger change event to ensure pre-selected options are displayed correctly
-        $('#toSelect').trigger('change');
-        $('#ccSelect').trigger('change');
-        $('#bccSelect').trigger('change');
-
     });
 
     function validateForm() {
@@ -291,7 +296,7 @@
 
 
     window.sendEmails = function(button,email,isEmailSent){
-        button.disabled = true;
+        
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -301,6 +306,7 @@
         if(!isValidate){
             return false;
         };
+        button.disabled = true;
         var formData = 
         {
             "to": to,
@@ -330,16 +336,17 @@
                     } else {
                         // Handle error
                     }
+                    showToast("Email sent successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
-                    fetchEmails()
+                    fetchEmails();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
                     $("#emailModalClose").click();
-
                 }
             });
         }else{
@@ -361,9 +368,11 @@
                     } else {
                         // Handle error
                     }
+                    showToast("Email sent successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
-                    fetchEmails()
+                    fetchEmails();
                 },
                 error: function(xhr, status, error) {
                     // Handle error response
@@ -403,6 +412,9 @@
         $("#templateContent").val(content);
         $('#composemodal').modal('hide');
         $('#templateModal').modal('show'); // Open the modal if validation passes
+        $("#templateModal").removeClass("draft");
+       $("#templateModal").addClass("compose");
+
     }
 }
 </script>

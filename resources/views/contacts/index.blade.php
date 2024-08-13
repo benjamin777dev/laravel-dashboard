@@ -159,7 +159,7 @@
 @vite(['resources/js/toast.js'])
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    var contacts = @json($contactsWithEmails).data;
+    var contacts = @json($contactsWithEmails);
     
     $(document).ready(function(){
         

@@ -30,7 +30,9 @@ class GroupController extends Controller
         }
 
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
-        $contacts = $db->retrieveContactGroups($user, $accessToken);
+        $filter = $request->query('filter');
+        $sort = $request->query('sort');
+        $contacts = $db->retrieveContactGroups($user, $accessToken, $filter, $sort);
         $contactsList = $db->retreiveContactsHavingEmail($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
@@ -241,7 +243,7 @@ class GroupController extends Controller
                 return response()->json($contactGroup);
             }
 
-            
+
         } catch (\Throwable $e) {
             Log::error("Error" . $e->getMessage());
             throw $e;
@@ -437,7 +439,7 @@ class GroupController extends Controller
             }
 
             $input = $request->query('groups');
-            $groups = json_decode($input, true); 
+            $groups = json_decode($input, true);
 
             if (empty($groups) || !is_array($groups)) {
                 return response()->json(['error' => 'Invalid or missing groups parameter'], 400);

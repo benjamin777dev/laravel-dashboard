@@ -2063,7 +2063,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: null,
             defaultContent: "",
         },
-        { 
+        {
             data: null,
             className: "select-checkbox",
             defaultContent: "",
@@ -2593,10 +2593,10 @@ var contactEmailTable = $("#contact-email-table").DataTable({
             render: function (data, type, row) {
                 return `<span class="editable" data-name="emailSubject" data-id="${
                     row.id
-                }" onclick="viewEmail('${
-                    row.id
-                }')" style="cursor:pointer;">${data}</a>
-                ${viewEmailModal(row.id)}</span>`;
+                }" onclick="viewEmail('${row.id}')" style="cursor:pointer;">
+            ${data}
+        </span>
+        <span>${viewEmailModal(row.id)}</span>`;
             },
         },
         {
@@ -2644,15 +2644,14 @@ var contactEmailTable = $("#contact-email-table").DataTable({
 function viewEmailModal(id) {
     return `
                 <div class="modal fade testing p-5" onclick="event.preventDefault();"
-                    id="viewEmailModal${id}" data-bs-backdrop="static"
+                    id="viewEmailDetailModal${id}" data-bs-backdrop="static"
                     data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewEmailLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg deleteModal">
                         <div class="modal-content dtaskmodalContent">
                             <div class="modal-header border-0">
                                 <p class="modal-title dHeaderText">Email</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    onclick="resetValidation()" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body" id="viewEmailDetails${id}">
         
@@ -2664,24 +2663,24 @@ function viewEmailModal(id) {
 }
 
 window.viewEmail = function (emailId) {
-    window.location.href = "/emails?contactId=" + contactId;
-    // event.preventDefault();
-    // $.ajax({
-    //     url: "/get/email/modal/" + emailId,
-    //     method: "GET",
-    //     success: function (response) {
-    //         let viewEmailContainer = $("#viewEmailDetails" + emailId);
-    //         console.log(response, "viewEmailContainer");
-    //         viewEmailContainer.empty();
-    //         const card = viewEmailContainer.html(response);
-    //         $("#viewEmailModal" + emailId).modal("show");
-    //     },
-    //     error: function (xhr, status, error) {
-    //         // Handle error
-    //         showToastError(error);
-    //         console.error("Ajax Error:", error);
-    //     },
-    // });
+    // window.location.href = "/emails?contactId=" + contactId;
+    event.preventDefault();
+    $.ajax({
+        url: "/get/email/modal/" + emailId,
+        method: "GET",
+        success: function (response) {
+            let viewEmailContainer = $("#viewEmailDetails" + emailId);
+            console.log(response, "viewEmailContainer");
+            viewEmailContainer.empty();
+            const card = viewEmailContainer.html(response);
+            $("#viewEmailDetailModal" + emailId).modal("show");
+        },
+        error: function (xhr, status, error) {
+            // Handle error
+            showToastError(error);
+            console.error("Ajax Error:", error);
+        },
+    });
 };
 var templateTableList = $("#template-table-list").DataTable({
     paging: true,
@@ -2692,7 +2691,7 @@ var templateTableList = $("#template-table-list").DataTable({
     dom: "Bfrtip", // Integrates buttons with DataTables
     buttons: [
         {
-            text: "Remove Selected",
+            text: '<i class="far fa-trash-alt"></i><span class="ms-1">  Remove Selected',
             className: "btn btn-dark btn-block waves-effect waves-light",
             action: function (e, dt, node, config) {
                 var selectedIds = [];

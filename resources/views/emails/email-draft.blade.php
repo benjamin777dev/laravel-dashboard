@@ -9,7 +9,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="toDraftSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="To" type="search">
                     @foreach($contacts as $contactDetail)
                         @php
                             $selected = ''; // Initialize variable to hold 'selected' attribute
@@ -25,7 +25,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ $contactDetail['id'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{$selected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
                 <span id="emailErrorDraftTo" style="color: red; display: none;">Please enter a valid email address.</span>
@@ -35,7 +35,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccDraftSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="CC">
                     @foreach($contacts as $contactDetails)
                         @php
                             $ccSelected = ''; // Initialize variable to hold 'ccSelected' attribute
@@ -51,7 +51,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ $contactDetails['id'] }}" {{$ccSelected}}>{{$contactDetails['first_name']}} {{$contactDetails['last_name']}}</option>
+                        <option value="{{ $contactDetails['id'] }}" data-email="{{ $contactDetail['email'] }}" {{$ccSelected}}>{{$contactDetails['first_name']}} {{$contactDetails['last_name']}}</option>
                     @endforeach
                 </select>
                 <span id="emailErrorDraftCC" style="color: red; display: none;">Please enter a valid email address.</span>
@@ -61,7 +61,7 @@
             <label for="example-text-input" class="col-md-2 col-form-label">BCC</label>
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="bccDraftSelect" multiple="multiple"
-                    data-placeholder="To">
+                    data-placeholder="BCC">
                     @foreach($contacts as $contactDetail)
                         @php
                             $bccSelected = ''; // Initialize variable to hold 'selected' attribute
@@ -77,7 +77,7 @@
                                 }
                             }
                         @endphp
-                        <option value="{{ $contactDetail['id'] }}" {{$bccSelected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{$bccSelected}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
                 <span id="emailErrorDraftBCC" style="color: red; display: none;">Please enter a valid email address.</span>
@@ -101,19 +101,14 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
-    <button type="button" class="btn btn-dark" data-bs-target="#templateModal" data-bs-toggle="modal" data-bs-dismiss="modal">Save as template</button>
-    <button type="button" class="btn btn-dark" onclick="sendDraftEmails({{isset($email)?json_encode($email):null}}">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails(this,{{isset($email)?json_encode($email):null}},false)">Save as draft <i class="fab fa-telegram-plane ms-1"></i></button>
+    <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openDraftTemplate()">Save as template</button>
+    <button type="button" class="btn btn-dark" onclick="sendDraftEmails(this,{{isset($email)?json_encode($email):null}},true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
-<div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            @include('emails.email_templates.email-template-create',['contacts'=>$contacts])
-        </div>
-    </div>
-</div>
+
 <script>
+    var emailType = @json($emailType??"");
     $(document).ready(function(){
         function initializeSelect2(selector, placeholder, errorId) {
             $(selector).select2({
@@ -314,7 +309,8 @@
         return isValidate;
     }
 
-    window.sendDraftEmails = function(email,isEmailSent){
+    window.sendDraftEmails = function(button,email,isEmailSent){
+        
         var to = $("#toDraftSelect").val();
         var cc = $("#ccDraftSelect").val();
         var bcc = $("#bccDraftSelect").val();
@@ -324,6 +320,7 @@
         if(!isValidate){
             return false;
         };
+        button.disabled = true;
         var formData = 
         {
             "to": to,
@@ -339,34 +336,108 @@
             "emailId":email.id
         }
 
-        $.ajax({
-            url: "{{ route('send.email') }}",
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                console.info(response);
-                if (response.status === 'process') {
-                    showToastError(response.message);
-                    setTimeout(function() {
-                        window.location.href = response.redirect_url;
-                    }, 5000); // Adjust the delay as needed
-                } else {
-                    // Handle error
+       
+        if(emailType=="multiple"){
+             $.ajax({
+                url: "{{ route('send.multiple.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
+                    }
+                    showToast("Draft saved successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
+                    button.disabled = false;
+                    $("#emaildraftModalClose").click();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                    $("#emaildraftModalClose").click();
+
                 }
-                $("#emaildraftModalClose").click();
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
-                showToastError(xhr.responseText);
-            }
-        });
+            });
+        }else{
+            
+            $.ajax({
+                url: "{{ route('send.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
+                    }
+                    showToast("Draft saved successfully");
+                    $("#contact-email-table").DataTable().ajax.reload();
+                    button.disabled = false;
+                    $("#emaildraftModalClose").click();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                    $("#emaildraftModalClose").click();
+
+                }
+            });
+        }
     }
 
+    window.validateOpenDraftTemplate = function(){
+        var content = tinymce.get('draftEmailEditor').getContent();
+        var subject = $("#emailDraftSubject").val();
+        let isValidateTemplate = true
+        
+
+        if(content==""){
+            showToastError("Please enter content");
+            isValidateTemplate = false;
+            
+        }
+
+        if(subject==""){
+            showToastError("Please enter subject");
+            isValidateTemplate = false;
+            
+        }
+
+        return isValidateTemplate
+    }
+    window.openDraftTemplate = function(){
+    if (validateOpenDraftTemplate()) {
+        var content = tinymce.get('draftEmailEditor').getContent();
+        var subject = $("#emailDraftSubject").val();
+        $("#templateSubject").val(subject);
+        $("#templateContent").val(content);
+        $('#draftModal').modal('hide');
+        $('#templateModal').modal('show'); // Open the modal if validation passes
+        $("#templateModal").removeClass("compose");
+       $("#templateModal").addClass("draft");
+
+    }
+}
     
 </script>
             
