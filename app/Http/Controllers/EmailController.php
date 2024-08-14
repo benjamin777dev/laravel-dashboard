@@ -72,7 +72,7 @@ public function sendEmail(Request $request)
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
 
-        $userVerified = $sendgrid->verifySender($user['email']);
+        $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
 
         if ($inputData['isEmailSent'] === true) {
