@@ -2516,7 +2516,7 @@ class DatabaseService
     {
         try {
             Log::info("submittalId", ['submittal' => $submittalId]);
-            $submittal = Submittals::where([['id', $submittalId],["isSubmittalComplete","true"]])->orWhere('zoho_submittal_id', $submittalId)->with('dealData')->first();
+            $submittal = Submittals::where([['id', $submittalId]])->orWhere('zoho_submittal_id', $submittalId)->with('dealData')->first();
             Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
             return $submittal;
         } catch (\Exception $e) {
