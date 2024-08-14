@@ -91,10 +91,21 @@
                 dropdownParent: $('#composemodal'),
                 createTag: function(params) {
                     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    var isDuplicate = false;
+                    $(selector).select2('data').forEach(function(data) {
+                        var existingEmail = $(data.element).data('email') || '';
+                        if ($.trim(existingEmail).toLowerCase() === $.trim(params.term).toLowerCase()) {
+                            isDuplicate = true;
+                        }
+                    });
+                    if (isDuplicate) {
+                        return null;
+                    }
                     if (!emailPattern.test(params.term)) {
                         $("#" + errorId).show();
                         return null;
                     }
+
                     $("#" + errorId).hide();
                     return {
                         id: params.term,
