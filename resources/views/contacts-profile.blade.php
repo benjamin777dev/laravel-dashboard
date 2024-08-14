@@ -219,7 +219,7 @@
         $('.invalid-feedback').text('');
 
         $.ajax({
-            url: "{{ route('profile.update', Auth::user()->id) }}" ,
+            url: "{{ route('profile.update', Auth::user()->id) }}",
             type: "POST",
             data: formData,
             contentType: false,
@@ -261,7 +261,7 @@
         });
 
         $.ajax({
-            url: "{{ route('contact.update', Auth::user()->contact->id) }}",
+            url: "{{ route('profile.updateAgentInfo', Auth::user()->id) }}",
             type: "POST",
             data: formData,
             contentType: false,
