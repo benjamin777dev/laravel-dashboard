@@ -464,31 +464,6 @@
                              <div class="row">
                                  <div class="col-lg-6">
                                      <div class="mb-3">
-                                         <label for="amountToCHR">Concierge Listing (Optional) </label>
-                                         <div class="d-flex gap-2">
-                                             <div class="mb-3">
-                                                 <input type="radio" id="conciergeListing_yes"
-                                                     {{ $submittal['conciergeListing'] == 'on' ? 'checked' : '' }}
-                                                     name="conciergeListing">
-                                                 <label class="" id="chkNo" for="formCheck1">
-                                                     Yes
-                                                 </label>
-                                             </div>
-                                             <div class="mb-3">
-                                                 <input type="radio" id="conciergeListing_no"
-                                                     {{ $submittal['conciergeListing'] == 'off' ? 'checked' : '' }}
-                                                     name="conciergeListing">
-                                                 <label class="" for="formCheck1">
-                                                     No
-                                                 </label>
-                                             </div>
-                                         </div>
-                                         </input>
-                                     </div>
-                                 </div>
-
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
                                          <label for="titleCompany">Title Company </label>
                                          <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
                                              id="titleCompany" class="form-control validate_err">

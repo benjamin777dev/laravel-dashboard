@@ -21,9 +21,7 @@
     <div class="loader" id="loaderfor" style="display: none;"></div>
     <div class="loader-overlay" id="loaderOverlay" style="display: none;"></div>
         @if ($needsNewDate['count'] > 0)
-            <div class="alert alert-danger text-center">
-                You have {{ $needsNewDate['count'] }} bad dates!
-                &nbsp;&nbsp;<button class="btn btn-dark btn-small" id="btnBadDates">FIX NOW</a>
+            <div class="alert alert-danger text-center bad_dates_top">
             </div>
         @endif
         <div class="row mt-3 text-center">
