@@ -223,7 +223,7 @@ class TeamIndividualController extends Controller
         $db = new DatabaseService();
         $accessToken = $user->getAccessToken();
 
-        return $db->retreiveTasks($user, $accessToken, 'In Progress');
+        return $db->retreiveTasks($user, $accessToken, 'Upcoming');
     }
 
     private function getTransactionsPastFourQuarters($deals)

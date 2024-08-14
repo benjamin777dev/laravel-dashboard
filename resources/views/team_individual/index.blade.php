@@ -128,16 +128,34 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>Task Name</th>
+                                <th>Description</th>
                                 <th>Due Date</th>
-                                <th>Status</th>
+                                <th>Related To</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($openTasks as $task)
                                 <tr>
-                                    <td>{{ $task->name }}</td>
+                                    <td>
+                                        <h5 class="text-truncate font-size-14 m-0">
+                                            <a href="#" class="text-dark">{{ $task->subject ?? 'N/A' }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>{{ $task->description ?? 'No description provided' }}</td>
                                     <td>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</td>
-                                    <td>{{ ucfirst($task->status) }}</td>
+                                    <td>
+                                        @if ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                                            <span>Related to: <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
+                                                {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                                            </a></span>
+                                        @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                                            <span>Related to: <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
+                                                {{ $task->dealData->deal_name ?? 'General' }}
+                                            </a></span>
+                                        @else
+                                            <span>Related to: General</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -149,11 +167,37 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h6 class="text-muted">Task Name</h6>
-                                <p>{{ $task->name }}</p>
+                                <p>{{ $task->subject }}</p>
+                                <h6 class="text-muted">Description</h6>
+                                <p>{{ $task->description ?? 'No description provided' }}</p>
                                 <h6 class="text-muted">Due Date</h6>
-                                <td>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</td>
-                                <h6 class="text-muted">Status</h6>
-                                <p>{{ ucfirst($task->status) }}</p>
+                                <p>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</p>
+                                <h6 class="text-muted">Related To</h6>
+                                <p>
+                                    @if ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
+                                        <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
+                                            {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? '' }}
+                                        </a>
+                                    @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
+                                        <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
+                                            {{ $task->dealData->deal_name ?? 'General' }}
+                                        </a>
+                                    @else
+                                        General
+                                    @endif
+                                </p>
+                                <div class="d-flex">
+                                    @if($task['status'] != "Completed")
+                                        <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $task['zoho_task_id'] }}', '{{ $task->id }}', '{{ $task->subject }}')">
+                                            <i class="fas fa-check"></i> Done
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    @else
+                                        Completed on {{ \Carbon\Carbon::parse($task->completion_date)->format('M d, Y') ?? 'N/A' }}
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -162,6 +206,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Transactions and Volume Section -->
 <div class="row">
@@ -234,9 +279,10 @@
     </div>
 </div>
 
+@include('partials.modals')
 
 <script>
-   // Transactions - Past 4 Quarters Chart
+    // Transactions - Past 4 Quarters Chart
     var ctx = document.getElementById('transactionsChart').getContext('2d');
     var transactionsChart = new Chart(ctx, {
         type: 'bar',
@@ -310,7 +356,8 @@
             }
         }
     });
-</script>
 
+    
+</script>
 
 @endsection
