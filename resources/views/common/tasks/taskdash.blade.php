@@ -94,7 +94,7 @@
                 try {
                     if (id) {
                         $.ajax({
-                            url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', id),
+                            url: "/delete/task"+id,
                             method: 'DELETE', // Change to DELETE method
                             contentType: 'application/json',
                             dataType: 'JSON',
