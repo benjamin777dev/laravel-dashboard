@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddResubmitFieldsToNonTmsAndSubmittals extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -41,4 +41,4 @@ class AddResubmitFieldsToNonTmsAndSubmittals extends Migration
             $table->dropColumn('resubmitting_why_list_all_changes');
         });
     }
-}
+};
