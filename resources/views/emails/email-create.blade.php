@@ -134,14 +134,16 @@
         }
 
         function updateSelectOptions() {
-             console.log("Update fucntion");
-            var toValues = $("#toSelect").val();
-            var ccValues = $("#ccSelect").val();
+            console.log("Update fucntion");
+            var toValues = $("#toSelect").val() || [];
+            var ccValues = $("#ccSelect").val() || [];
             console.log("BEFORE toValues ccValues",toValues,ccValues);
+            toValues = toValues.filter(function(value) {
+                return $("#toSelect option[value='" + value + "']").length > 0;
+            });
             $("#ccSelect option").each(function() {
                 const value = ccValues;
-                const hasEmail = $(this).data('email');
-                if (toValues.includes(value) || !hasEmail) {
+                if (toValues.includes(value)) {
                     $(this).prop('disabled', true);
                 } else {
                     $(this).prop('disabled', false);
@@ -150,9 +152,7 @@
             
             $("#bccSelect option").each(function() {
                 const value = $(this).val();
-                const hasEmail = $(this).data('email');
-
-                if (toValues.includes(value) || ccValues.includes(value) || !hasEmail) {
+                if (toValues.includes(value) || ccValues.includes(value)) {
                     $(this).prop('disabled', true);
                 } else {
                     $(this).prop('disabled', false);
@@ -162,7 +162,6 @@
 
         $("#toSelect, #ccSelect").on('change', function(event) {
             console.log(event);
-            
             updateSelectOptions();
             
         });
@@ -332,6 +331,7 @@
         if(!isValidate){
             return false;
         };
+        return
         button.disabled = true;
         var formData = 
         {
