@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="mt-4 text-center">
-                    <a href="{{ route('contacts.show', Auth::user()->contact->zoho_contact_id) }}" class="btn btn-primary waves-effect waves-light btn-sm">
+                    <a href="{{ route('contacts.show', Auth::user()->contact->id) }}" class="btn btn-primary waves-effect waves-light btn-sm">
                         View/Edit Contact Profile <i class="mdi mdi-arrow-right ms-1"></i>
                     </a>
                 </div>
