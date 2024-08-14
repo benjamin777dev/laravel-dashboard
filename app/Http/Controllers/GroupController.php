@@ -448,7 +448,10 @@ class GroupController extends Controller
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
 
-            $contactGroup = ContactGroups::where('ownerId',$user['id'])->whereIn('groupId', $groups)->select('contactId')->get()->unique('contactId');
+            $contactGroup = ContactGroups::
+                leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id')
+                ->where('contacts.zoho_contact_id', '!=', null)
+                ->where('contacts.contact_owner', $user->root_user_id)->whereIn('groupId', $groups)->select('contactId')->get()->unique('contactId');
 
             return response()->json($contactGroup->values()->all());
 
