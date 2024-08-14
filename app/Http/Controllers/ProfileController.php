@@ -122,10 +122,11 @@ class ProfileController extends Controller
         }
 
         $request->validate([
-            'income_goal' => 'nullable|string|max:191',
-            'initial_cap' => 'nullable|string|max:255',
-            'residual_cap' => 'nullable|string|max:255',
+            'income_goal' => 'numeric|max:99999999.99',
+            'initial_cap' => 'numeric|max:99999999.99',
+            'residual_cap' => 'numeric|max:99999999.99',
         ]);
+        
 
         Log::info('Request data for agent update:', $request->all());
 

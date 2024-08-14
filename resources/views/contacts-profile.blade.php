@@ -311,9 +311,7 @@
             processData: false,
             success: function(response) {
                 if (response.isSuccess) {
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                    alert(response.Message);
                 } else {
                     alert(response.Message);
                 }
