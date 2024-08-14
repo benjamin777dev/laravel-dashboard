@@ -26,13 +26,6 @@ class ProfileController extends Controller
 
         // Validate the incoming request data
         $request->validate([
-            'name' => 'required|string|max:191',
-            'email' => [
-                'required',
-                'email',
-                'max:191',
-                Rule::unique('users')->ignore($user->id),
-            ],
             'mobile' => 'nullable|string|max:191',
             'country' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
@@ -43,15 +36,12 @@ class ProfileController extends Controller
             'verified_sender_email' => [
                 'nullable',
                 'email',
-                'max:191',
                 Rule::unique('users')->ignore($user->id),
             ],
         ]);
 
         // Update the user's profile
         $user->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
             'mobile' => $request->input('mobile'),
             'country' => $request->input('country'),
             'city' => $request->input('city'),

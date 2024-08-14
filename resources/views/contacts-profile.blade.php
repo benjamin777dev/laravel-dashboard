@@ -5,8 +5,8 @@
 @section('content')
 
 @component('components.breadcrumb')
-@slot('li_1') Contacts @endslot
-@slot('title') Profile @endslot
+    @slot('li_1') Contacts @endslot
+    @slot('title') Profile @endslot
 @endcomponent
 
 <div class="row">
@@ -17,7 +17,7 @@
                     <div class="col-7">
                         <div class="text-primary p-3">
                             <h5 class="text-primary">Welcome Back, {{ Auth::user()->name }}!</h5>
-                            <p>Edit your profile information here.</p>
+                            <p>Edit your profile and agent information here.</p>
                         </div>
                     </div>
                     <div class="col-5 align-self-end">
@@ -35,6 +35,54 @@
                 </div>
             </div>
         </div>
+
+        <!-- Agent Information Box -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Agent Information</h4>
+                <form method="POST" id="update-agent-form">
+                    @csrf
+                    <input type="hidden" value="{{ Auth::user()->contact->id }}" id="id">
+
+                    <div class="mb-3">
+                        <label for="income_goal" class="form-label">Income Goal</label>
+                        <input type="text" class="form-control currency-input @error('income_goal') is-invalid @enderror"
+                            value="{{ number_format(Auth::user()->contact->income_goal, 2) }}" id="income_goal" name="income_goal"
+                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
+                            placeholder="Enter income goal">
+                        @error('income_goal')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="initial_cap" class="form-label">Initial Cap</label>
+                        <input type="text" class="form-control currency-input @error('initial_cap') is-invalid @enderror"
+                            value="{{ number_format(Auth::user()->contact->initial_cap, 2) }}" id="initial_cap" name="initial_cap"
+                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
+                            placeholder="Enter initial cap">
+                        @error('initial_cap')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="residual_cap" class="form-label">Residual Cap</label>
+                        <input type="text" class="form-control currency-input @error('residual_cap') is-invalid @enderror"
+                            value="{{ number_format(Auth::user()->contact->residual_cap, 2) }}" id="residual_cap" name="residual_cap"
+                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
+                            placeholder="Enter residual cap">
+                        @error('residual_cap')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mt-3 d-grid">
+                        <button class="btn btn-primary waves-effect waves-light" type="submit">Update Agent Information</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="col-xl-8">
@@ -42,24 +90,35 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title mb-4">Edit User Profile</h4>
-                <form class="form-horizontal" method="POST" id="update-profile">
+                <form class="form-horizontal" id="update-profile-form">
                     @csrf
-                    <input type="hidden" value="{{ Auth::user()->id }}" id="data_id">
+                    <input type="hidden" value="{{ Auth::user()->id }}" id="user_id">
 
                     <!-- User Profile Fields -->
                     <div class="mb-3">
                         <label for="useremail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="useremail" value="{{ Auth::user()->email }}" name="email" readonly>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="useremail"
+                               value="{{ Auth::user()->email }}" name="email" readonly placeholder="Enter email">
+                        @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="username" class="form-label">Name</label>
-                        <input type="text" class="form-control" value="{{ Auth::user()->name }}" id="username" name="name" readonly>
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror"
+                               value="{{ Auth::user()->name }}" id="name" name="name" readonly
+                               placeholder="Enter name">
+                        @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="mobile" class="form-label">Mobile</label>
-                        <input type="text" class="form-control @error('mobile') is-invalid @enderror" value="{{ Auth::user()->mobile }}" id="mobile" name="mobile" placeholder="Enter mobile number">
+                        <input type="text" class="form-control @error('mobile') is-invalid @enderror"
+                               value="{{ Auth::user()->mobile }}" id="mobile" name="mobile"
+                               placeholder="Enter mobile number">
                         @error('mobile')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -67,7 +126,9 @@
 
                     <div class="mb-3">
                         <label for="country" class="form-label">Country</label>
-                        <input type="text" class="form-control @error('country') is-invalid @enderror" value="{{ Auth::user()->country }}" id="country" name="country" placeholder="Enter country">
+                        <input type="text" class="form-control @error('country') is-invalid @enderror"
+                               value="{{ Auth::user()->country }}" id="country" name="country"
+                               placeholder="Enter country">
                         @error('country')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -75,7 +136,9 @@
 
                     <div class="mb-3">
                         <label for="city" class="form-label">City</label>
-                        <input type="text" class="form-control @error('city') is-invalid @enderror" value="{{ Auth::user()->city }}" id="city" name="city" placeholder="Enter city">
+                        <input type="text" class="form-control @error('city') is-invalid @enderror"
+                               value="{{ Auth::user()->city }}" id="city" name="city"
+                               placeholder="Enter city">
                         @error('city')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -83,7 +146,9 @@
 
                     <div class="mb-3">
                         <label for="state" class="form-label">State</label>
-                        <input type="text" class="form-control @error('state') is-invalid @enderror" value="{{ Auth::user()->state }}" id="state" name="state" placeholder="Enter state">
+                        <input type="text" class="form-control @error('state') is-invalid @enderror"
+                               value="{{ Auth::user()->state }}" id="state" name="state"
+                               placeholder="Enter state">
                         @error('state')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -91,7 +156,9 @@
 
                     <div class="mb-3">
                         <label for="zip" class="form-label">Zip</label>
-                        <input type="text" class="form-control @error('zip') is-invalid @enderror" value="{{ Auth::user()->zip }}" id="zip" name="zip" placeholder="Enter zip code">
+                        <input type="text" class="form-control @error('zip') is-invalid @enderror"
+                               value="{{ Auth::user()->zip }}" id="zip" name="zip"
+                               placeholder="Enter zip code">
                         @error('zip')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -99,7 +166,9 @@
 
                     <div class="mb-3">
                         <label for="street" class="form-label">Street</label>
-                        <input type="text" class="form-control @error('street') is-invalid @enderror" value="{{ Auth::user()->street }}" id="street" name="street" placeholder="Enter street address">
+                        <input type="text" class="form-control @error('street') is-invalid @enderror"
+                               value="{{ Auth::user()->street }}" id="street" name="street"
+                               placeholder="Enter street address">
                         @error('street')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -107,7 +176,9 @@
 
                     <div class="mb-3">
                         <label for="transaction_status_reports" class="form-label">Transaction Status Reports</label>
-                        <input type="text" class="form-control @error('transaction_status_reports') is-invalid @enderror" value="{{ Auth::user()->transaction_status_reports }}" id="transaction_status_reports" name="transaction_status_reports" placeholder="Enter transaction status reports">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="transaction_status_reports" name="transaction_status_reports"
+                                {{ Auth::user()->transaction_status_reports ? 'checked' : '' }}>
                         @error('transaction_status_reports')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -115,48 +186,17 @@
 
                     <div class="mb-3">
                         <label for="verified_sender_email" class="form-label">Verified Sender Email</label>
-                        <input type="email" class="form-control @error('verified_sender_email') is-invalid @enderror" value="{{ Auth::user()->verified_sender_email }}" id="verified_sender_email" name="verified_sender_email" placeholder="Enter verified sender email">
+                        <input type="email" class="form-control @error('verified_sender_email') is-invalid @enderror"
+                               value="{{ Auth::user()->verified_sender_email ?? Auth::user()->email }}" id="verified_sender_email"
+                               name="verified_sender_email"
+                               placeholder="Enter verified sender email">
                         @error('verified_sender_email')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Contact Information -->
-                    @if(Auth::user()->contact)
-                        @php
-                            $contact = Auth::user()->contact;
-                            $isPartOfTeam = $contact->teamAndPartnership()->exists();
-                        @endphp
-
-                        <h4 class="card-title mb-4">Contact Information</h4>
-
-                        <div class="mb-3">
-                            <label for="income_goal" class="form-label">Income Goal</label>
-                            <input type="text" class="form-control @error('income_goal') is-invalid @enderror" value="{{ $contact->income_goal }}" id="income_goal" name="income_goal" placeholder="Enter income goal" {{ $isPartOfTeam ? 'readonly' : '' }}>
-                            @error('income_goal')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="initial_cap" class="form-label">Initial Cap</label>
-                            <input type="text" class="form-control @error('initial_cap') is-invalid @enderror" value="{{ $contact->initial_cap }}" id="initial_cap" name="initial_cap" placeholder="Enter initial cap" {{ $isPartOfTeam ? 'readonly' : '' }}>
-                            @error('initial_cap')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="residual_cap" class="form-label">Residual Cap</label>
-                            <input type="text" class="form-control @error('residual_cap') is-invalid @enderror" value="{{ $contact->residual_cap }}" id="residual_cap" name="residual_cap" placeholder="Enter residual cap" {{ $isPartOfTeam ? 'readonly' : '' }}>
-                            @error('residual_cap')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    @endif
-
                     <div class="mt-3 d-grid">
-                        <button class="btn btn-primary waves-effect waves-light UpdateProfile" data-id="{{ Auth::user()->id }}" type="submit">Update</button>
+                        <button class="btn btn-primary waves-effect waves-light" type="submit">Update Profile</button>
                     </div>
                 </form>
             </div>
@@ -166,20 +206,62 @@
 @endsection
 
 @section('script')
-<script src="{{ URL::asset('build/libs/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ URL::asset('build/js/pages/profile.init.js') }}"></script>
 
 <script>
-    $('#update-profile').on('submit', function(event) {
+    // Handle profile update form submission
+    $('#update-profile-form').on('submit', function(event) {
         event.preventDefault();
-        var Id = $('#data_id').val();
+        var userId = $('#user_id').val();
         let formData = new FormData(this);
-        
+
         // Reset errors
         $('.invalid-feedback').text('');
 
         $.ajax({
-            url: "{{ url('update-profile') }}" + "/" + Id,
+            url: "{{ url('update-profile') }}" + "/" + userId,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.isSuccess) {
+                    alert(response.Message);
+                } else {
+                    alert(response.Message);
+                }
+            },
+            error: function(response) {
+                // Display errors
+                $('#mobile').next('.invalid-feedback').text(response.responseJSON.errors.mobile);
+                $('#country').next('.invalid-feedback').text(response.responseJSON.errors.country);
+                $('#city').next('.invalid-feedback').text(response.responseJSON.errors.city);
+                $('#state').next('.invalid-feedback').text(response.responseJSON.errors.state);
+                $('#zip').next('.invalid-feedback').text(response.responseJSON.errors.zip);
+                $('#street').next('.invalid-feedback').text(response.responseJSON.errors.street);
+                $('#transaction_status_reports').next('.invalid-feedback').text(response.responseJSON.errors.transaction_status_reports);
+                $('#verified_sender_email').next('.invalid-feedback').text(response.responseJSON.errors.verified_sender_email);
+            }
+        });
+    });
+
+    // Handle agent information update form submission
+    $('#update-agent-form').on('submit', function(event) {
+        event.preventDefault();
+        var contactId = "{{ Auth::user()->contact->id }}";
+        let formData = new FormData(this);
+
+        // Reset errors
+        $('.invalid-feedback').text('');
+
+        // Strip currency formatting before sending data
+        $('.currency-input').each(function() {
+            let value = $(this).val();
+            $(this).val(value.replace(/,/g, '').replace('$', ''));
+        });
+
+        $.ajax({
+            url: "{{ route('contact.update', Auth::user()->contact->id) }}",
             type: "POST",
             data: formData,
             contentType: false,
@@ -195,18 +277,6 @@
             },
             error: function(response) {
                 // Display errors
-                $('#useremail').next('.invalid-feedback').text(response.responseJSON.errors.email);
-                $('#username').next('.invalid-feedback').text(response.responseJSON.errors.name);
-                $('#mobile').next('.invalid-feedback').text(response.responseJSON.errors.mobile);
-                $('#country').next('.invalid-feedback').text(response.responseJSON.errors.country);
-                $('#city').next('.invalid-feedback').text(response.responseJSON.errors.city);
-                $('#state').next('.invalid-feedback').text(response.responseJSON.errors.state);
-                $('#zip').next('.invalid-feedback').text(response.responseJSON.errors.zip);
-                $('#street').next('.invalid-feedback').text(response.responseJSON.errors.street);
-                $('#transaction_status_reports').next('.invalid-feedback').text(response.responseJSON.errors.transaction_status_reports);
-                $('#verified_sender_email').next('.invalid-feedback').text(response.responseJSON.errors.verified_sender_email);
-
-                // Add for contact fields
                 $('#income_goal').next('.invalid-feedback').text(response.responseJSON.errors.income_goal);
                 $('#initial_cap').next('.invalid-feedback').text(response.responseJSON.errors.initial_cap);
                 $('#residual_cap').next('.invalid-feedback').text(response.responseJSON.errors.residual_cap);
