@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\ZohoCRM;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
@@ -165,4 +166,32 @@ class ProfileController extends Controller
 
         return response()->json(['isSuccess' => $updated, 'Message' => $updated ? 'Agent info updated successfully!' : 'Agent info update failed.']);
     }
+
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        // Check if the current password is correct
+        if (!Hash::check($request->current_password, Auth::user()->password)) {
+            return response()->json([
+                'isSuccess' => false,
+                'Message' => 'Current password does not match.',
+            ]);
+        }
+
+        // Update the password
+        $this->user()->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return response()->json([
+            'isSuccess' => true,
+            'Message' => 'Password changed successfully.',
+        ]);
+    }
+
 }
