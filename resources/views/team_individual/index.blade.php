@@ -155,7 +155,7 @@
                                     </td>
                                     <td>
                                         @if($task['status'] != "Completed")
-                                            <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $task['zoho_task_id'] }}', '{{$task->id}}', '{{$task->subject}}')">
+                                            <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $task['zoho_task_id'] }}', '{{ $task->id }}', '{{ $task->subject }}')">
                                                 <i class="fas fa-check"></i> Done
                                             </button>
                                             <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
@@ -197,7 +197,7 @@
                                 </p>
                                 <div class="d-flex">
                                     @if($task['status'] != "Completed")
-                                        <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $task['zoho_task_id'] }}', '{{$task->id}}', '{{$task->subject}}')">
+                                        <button class="btn btn-dark btn-sm me-2" onclick="closeTask('{{ $task['zoho_task_id'] }}', '{{ $task->id }}', '{{ $task->subject }}')">
                                             <i class="fas fa-check"></i> Done
                                         </button>
                                         <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModalId{{ $task['zoho_task_id'] }}">
@@ -215,8 +215,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- Transactions and Volume Section -->
 <div class="row">
@@ -288,11 +286,11 @@
         </div>
     </div>
 </div>
+
 @include('partials.modals')
 
-
 <script>
-   // Transactions - Past 4 Quarters Chart
+    // Transactions - Past 4 Quarters Chart
     var ctx = document.getElementById('transactionsChart').getContext('2d');
     var transactionsChart = new Chart(ctx, {
         type: 'bar',
@@ -366,7 +364,100 @@
             }
         }
     });
-</script>
 
+    // Close task function
+    function closeTask(taskId, indexId, subject) {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var formData = {
+            "data": [{
+                "Subject": subject,
+                "Status": "Completed"
+            }]
+        };
+
+        $.ajax({
+            url: "{{ route('update.task', ['id' => ':id']) }}".replace(':id', taskId),
+            method: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response?.data[0]?.status === "success") {
+                    window.location.reload();
+                } else {
+                    showToastError("Update failed");
+                }
+            },
+            error: function(xhr, status, error) {
+                showToastError(xhr.responseJSON.error);
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    // Delete task function
+    async function deleteTask(taskId = "", isRemoveSelected = false) {
+        let idsToDelete = taskId || removeAllSelected();
+
+        if (!idsToDelete) return;
+
+        const shouldDelete = await confirmDeletion();
+        if (!shouldDelete) return;
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "{{ route('delete.task', ['id' => ':id']) }}".replace(':id', idsToDelete),
+            method: 'DELETE',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(response) {
+                showToast("Deleted successfully");
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                showToastError(xhr.responseText);
+            }
+        });
+    }
+
+    // Confirm deletion function
+    function confirmDeletion() {
+        return new Promise((resolve) => {
+            $('#confirmModal').modal('show');
+
+            $('#confirmYes').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                resolve(true);
+            });
+
+            $('#confirmNo').off('click').on('click', () => {
+                $('#confirmModal').modal('hide');
+                resolve(false);
+            });
+        });
+    }
+
+    // Remove all selected tasks (checkboxes)
+    function removeAllSelected() {
+        let ids = "";
+        $('input.task_checkbox:checked').each(function() {
+            if (!["light-mode-switch", "dark-rtl-mode-switch", "rtl-mode-switch", "dark-mode-switch", "checkbox_all"].includes(this.id)) {
+                ids += `${this.id},`;
+            }
+        });
+        return ids.replace(/,+$/, '');
+    }
+</script>
 
 @endsection
