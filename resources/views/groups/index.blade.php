@@ -268,7 +268,7 @@
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
             // reset next page url first page
             nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
-                            return 'page=' + 1;
+                            return 'page=2';
                         });
             moreData = true;
             // Make AJAX call
