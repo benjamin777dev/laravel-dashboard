@@ -1608,7 +1608,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 showAndDisableValues(value,'showProp');
             }
         });
-
+ 
         
      
         function showAndDisableValues(value,show) {
