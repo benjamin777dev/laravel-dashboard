@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -24,6 +25,11 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        $request->merge([
+            'transaction_status_reports' => $request->has('transaction_status_reports') ? true : false,
+        ]);
+
+        
         // Validate the incoming request data
         $request->validate([
             'mobile' => 'nullable|string|max:191',
@@ -40,8 +46,11 @@ class ProfileController extends Controller
             ],
         ]);
 
-        // Update the user's profile
-        $user->update([
+        // Log request data to ensure it's being passed correctly
+        Log::info('Request data for profile update:', $request->all());
+
+        // Attempt to update the user's profile
+        $updated = $user->update([
             'mobile' => $request->input('mobile'),
             'country' => $request->input('country'),
             'city' => $request->input('city'),
@@ -52,6 +61,13 @@ class ProfileController extends Controller
             'verified_sender_email' => $request->input('verified_sender_email'),
         ]);
 
-        return response()->json(['isSuccess' => true, 'Message' => 'Profile updated successfully!']);
+        // Log whether the update was successful
+        Log::info('User profile update status:', ['updated' => $updated]);
+
+        // Log the current user data after the update
+        Log::info('User data after update:', $user->toArray());
+
+        return response()->json(['isSuccess' => $updated, 'Message' => $updated ? 'Profile updated successfully!' : 'Profile update failed.']);
     }
+
 }

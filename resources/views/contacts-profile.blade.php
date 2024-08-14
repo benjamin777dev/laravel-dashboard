@@ -219,7 +219,7 @@
         $('.invalid-feedback').text('');
 
         $.ajax({
-            url: "{{ url('update-profile') }}" + "/" + userId,
+            url: "{{ route('profile.update', Auth::user()->id) }}" ,
             type: "POST",
             data: formData,
             contentType: false,
