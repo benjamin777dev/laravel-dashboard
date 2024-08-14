@@ -149,10 +149,6 @@
                                                     value="Yes" 
                                                     {{ isset($submittal['mailoutNeeded']) && $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }}>
                                              <label for="buyerMailoutNeededYes">Yes</label>
-                                             
-                                                    <label class="form-check-label" for="mailoutNeeded_yes">
-                                                        Yes
-                                                    </label>
                                                 </div>
                                                 <div class="mb-3">
                                                     <input type="radio" 

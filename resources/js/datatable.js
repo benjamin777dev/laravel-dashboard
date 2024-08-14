@@ -749,6 +749,29 @@ window.getStageData = function() {
     });
 
 }
+
+window.scrollDown = function(){
+    const btnBadDates = document.getElementById('btnBadDates');
+    if (btnBadDates) {
+        btnBadDates.addEventListener('click', function() {
+            const element = document.getElementById('badDates');
+            if (element) {
+                const offset = 100; // Adjust this value as needed
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            } else {
+                console.log('No bad dates element found.');
+            }
+        });
+    } else {
+        console.log('No btnBadDates element found.');
+    }
+}
 //transaction for dashboard
 var tableDashboard = $("#datatable_transaction").DataTable({
     paging: true,
@@ -874,6 +897,15 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                     "No Bad Dates, <strong>Great Job!</strong>!"
                 );
             }
+            if (data?.data && data.data.length > 0) {
+                $(".bad_dates_top").html(
+                    'You have ' + data.data.length + " Bad Dates! &nbsp <button onclick=scrollDown() class='btn btn-dark btn-small' id='btnBadDates'>FIX NOW</button>"
+                );
+            } else {
+                $(".bad_dates_top").html("");
+            }
+            
+            
             return data?.data; // Return the data array or object from your response
         },
     },
