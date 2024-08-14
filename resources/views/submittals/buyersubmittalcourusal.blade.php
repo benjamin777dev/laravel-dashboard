@@ -258,10 +258,10 @@
                                             <input type="text" class="form-control" placeholder="$" id= "buyerFeesCharged" value="{{ $submittal['buyerFeesCharged'] }}">
                                         </div>
                                     </div>
-
+ 
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="buyerAmountChr">Fees Charged to Buyer at Closing</label>
+                                            <label for="buyerAmountChr">Amount to CHR Gives</label>
                                             <input type="text" class="form-control" placeholder="$" value="{{ $submittal['amountToCHR'] }}" id="buyerAmountChr">
                                         </div>
                                     </div>
