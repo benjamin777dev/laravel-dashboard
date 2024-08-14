@@ -7,7 +7,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-4">CHR -TM</h4>
+                <h4 class="card-title mb-4 title_h4">TM and Property Promotion</h4>
 
                 <div id="basic-example-seller">
                     <!-- Seller Details -->
@@ -1428,8 +1428,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     </div>
             `;
 
-        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"              class="common-label">Brochure Design - <b>Click for
-                                options<b>
+        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"              class="common-label">Brochure Design
                                 
                             </label>
                             <div class="nontm-select-div">
@@ -1442,7 +1441,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>s
+                        </div>
                         <div class="label-div-mb"><label for="add_email" class="common-label">Brochure - Print, Deliver or PDF
                             
                             </label>
@@ -1609,7 +1608,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 showAndDisableValues(value,'showProp');
             }
         });
-
+ 
         
      
         function showAndDisableValues(value,show) {
@@ -1671,16 +1670,15 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 for (let i = 4; i >= 3; i--) {
                     removeStep(i);
                 }
-                addStepChr('Commission Details', innrtHtml);
-                addStepChr('Service Providers', innrtHtml2);
-                addStepChr('Commission Details', innrtHtml3);
-                addStepChr('Service Providers', innrtHtml4);
-                addStepChr('Commission Details', innrtHtml5);
-                addStepChr('Service Providers', innrtHtml6);
-                addStepChr('Commission Details', innrtHtml7);
-                addStepChr('Service Providers', innrtHtml8);
+                addStepChr('Outside Services', innrtHtml);
+                addStepChr('Marketing Items', innrtHtml2);
+                addStepChr('Marketing Items', innrtHtml3);
+                addStepChr('Print Requests', innrtHtml4);
+                addStepChr('Print Requests', innrtHtml5);
+                addStepChr('Print Requests', innrtHtml6);
+                addStepChr('Print Requests', innrtHtml7);
+                addStepChr('Notes', innrtHtml8);
             } else {
-                console.log('yes hereee')
                 if(show !=="showProp" && show !=="showPropinitial"){ 
                     removeStep(7)
                 }

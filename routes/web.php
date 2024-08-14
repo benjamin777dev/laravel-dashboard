@@ -19,6 +19,7 @@ use App\Http\Controllers\TeamIndividualController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -152,7 +153,8 @@ Route::get('/nontm-view/{id}', [NonTmController::class, 'getNonTm'])->middleware
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
 
-// Update User Details
+// User Route
+Route::get('/profile', [HomeController::class, 'index'])->name('user.profile')->middleware('auth');
 Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile')->middleware('auth');
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 
@@ -213,6 +215,13 @@ Route::get('/closing-information', [ClosingInformationController::class, 'index'
 // Team and Individual
 Route::get('/team-individual', [TeamIndividualController::class, 'index'])->name('teamindividual.information')->middleware('auth');
 
+
+Route::middleware('auth')->group(function () {
+    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('profile/update-agent-info/{id}', [ProfileController::class, 'updateAgentInfo'])->name('profile.updateAgentInfo');
+    Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
+});
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);

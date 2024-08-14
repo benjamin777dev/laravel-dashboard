@@ -37,9 +37,8 @@
                     </i>
                     Edit Group
                 </div>
-                <div class="input-group-text dbEditGroups" onclick="selectGroup()"><i class="fab fa-telegram-plane ms-1">
-                    </i>
-                    Compose Email
+                <div class="input-group-text dbEditGroups" onclick="selectGroup()">
+                    Compose Email <i class="mdi mdi-send ms-1"></i>
                 </div>
             </div>
         </div>
@@ -209,7 +208,7 @@
         nextPageUrl = nextPageUrl + '&filter=' + filterValue + '&sort=' + sortField;
 
         let moreData = true;
-        var contactList = @json($contactsList??"").data;
+        var contactList = @json($contactsList??"");
 
         window.onload = function() {
             let isLoading = false;
@@ -269,7 +268,7 @@
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
             // reset next page url first page
             nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
-                            return 'page=' + 1;
+                            return 'page=2';
                         });
             moreData = true;
             // Make AJAX call
