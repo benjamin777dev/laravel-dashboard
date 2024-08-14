@@ -137,13 +137,12 @@
             console.log("Update fucntion");
             var toValues = $("#toSelect").val() || [];
             var ccValues = $("#ccSelect").val() || [];
+            var bccValues = $("#bccSelect").val() || [];
             console.log("BEFORE toValues ccValues",toValues,ccValues);
-            toValues = toValues.filter(function(value) {
-                return $("#toSelect option[value='" + value + "']").length > 0;
-            });
+           
             $("#ccSelect option").each(function() {
-                const value = ccValues;
-                if (toValues.includes(value)) {
+                const value = $(this).val();
+                if (toValues.includes(value)||bccValues.includes(value)) {
                     $(this).prop('disabled', true);
                 } else {
                     $(this).prop('disabled', false);
@@ -160,10 +159,9 @@
             });
         }
 
-        $("#toSelect, #ccSelect").on('change', function(event) {
-            console.log(event);
+        $("#toSelect, #ccSelect","bccSelect").on('change', function() {
             updateSelectOptions();
-            
+            $(this).trigger('select2:select'); // Trigger the select2:select event instead of change
         });
 
         initializeSelect2("#toSelect", "To", "emailErrorTo");
@@ -177,7 +175,7 @@
         });
 
         
-
+        $("#toSelect, #ccSelect").on('change', updateSelectOptions);
         $("#toSelect, #ccSelect, #bccSelect").on('select2:select change', function(e) {
             var suffix = '';
             switch ($(this).attr('id')) {
@@ -267,7 +265,10 @@
             }
         });
 
-       
+       $('#toSelect').trigger('change');
+        $('#ccSelect').trigger('change');
+        $('#bccSelect').trigger('change');
+
 
     });
     var button = document.getElementById('emailModalClose');
