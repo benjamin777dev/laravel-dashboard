@@ -88,7 +88,10 @@ class Submittals extends Model
         'brochurePickupDate',
         'isSubmittalComplete',
         'formType',
-        'qrCodeMainPanel'
+        'qrCodeMainPanel',
+        'resubmit_text',
+        'resubmitting_to_which_team',
+        'resubmitting_why_list_all_changes'
     ];
 
     public static function getZohoContactInfo()
