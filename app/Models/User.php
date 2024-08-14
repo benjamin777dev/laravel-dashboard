@@ -76,6 +76,7 @@ class User extends Authenticatable
         'transaction_status_reports',
         'joined_date',
         'territories',
+        'verified_sender_email'
     ];
 
     /**
