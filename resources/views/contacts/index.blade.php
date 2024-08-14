@@ -44,7 +44,7 @@
                                'id' => 'compose_email',
                                'type' => 'database',
                                'label' => 'Compose Email',
-                               'icon' => 'fab fa-telegram-plane ms-1'
+                               'icon' => 'mdi mdi-send ms-1'
                            ])
                            @endcomponent
                 </div>

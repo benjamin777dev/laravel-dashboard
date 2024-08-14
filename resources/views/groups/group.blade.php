@@ -13,7 +13,7 @@
                 @foreach ($shownGroups as $shownGroup)
                     <th scope="col" class="sticky-head">
                         <div class="dbgheaderFlex">
-                            <p class="mb-0">{{ count($shownGroup['contacts']) }} <i class="fas fa-paper-plane ms-1" onclick="sendGroupMail('{{$shownGroup['id']}}')"></i></p>
+                            <p class="mb-0">{{ count($shownGroup['contacts']) }} <i class="mdi mdi-send ms-1" onclick="sendGroupMail('{{$shownGroup['id']}}')"></i></p>
 
                             <div class="checkboxText">
                                 <p class="mb-0 text-end">{{ $shownGroup['name'] }}</p>

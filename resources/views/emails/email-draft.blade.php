@@ -119,15 +119,43 @@
                 createTag: function(params) {
                     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailPattern.test(params.term)) {
-                        $("#"+errorId).show();
+                        $("#" + errorId).show();
                         return null;
                     }
-                    $("#"+errorId).hide();
+                    $("#" + errorId).hide();
                     return {
                         id: params.term,
                         text: params.term,
                         newTag: true
                     };
+                },
+                matcher: function(params, data) {
+                    // If there are no search terms, return all data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+
+                    // Convert the search term to lower case for case-insensitive matching
+                    var term = params.term.toLowerCase();
+
+                    // Check if the term matches the name or email
+                    var text = data.text.toLowerCase();
+                    var email = $(data.element).data('email') || '';
+
+                    if (text.includes(term) || email.includes(term)) {
+                        return data;
+                    }
+
+                    // If no match, return null to exclude this item
+                    return null;
+                },
+                templateResult: function(data) {
+                    // Format the result to display both name and email (if available)
+                    var email = $(data.element).data('email') || '';
+                    if (email) {
+                        return $('<span>' + data.text + ' (' + email + ')</span>');
+                    }
+                    return $('<span>' + data.text + '</span>');
                 }
             });
         }
@@ -356,8 +384,12 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Draft saved successfully");
-                    $("#contact-email-table").DataTable().ajax.reload();
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+
+                        showToast("Draft saved successfully");
+                    }
                     button.disabled = false;
                     $("#emaildraftModalClose").click();
                 },
@@ -389,7 +421,12 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Draft saved successfully");
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+
+                        showToast("Draft saved successfully");
+                    }
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emaildraftModalClose").click();
