@@ -642,6 +642,7 @@
                 addStepChr("Construction Detials",contruction_detail);
                 }
             } else {
+                
                 removeStep(3)
             }
         }
