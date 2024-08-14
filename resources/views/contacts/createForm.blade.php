@@ -398,7 +398,6 @@
                 },
                 processResults: function(data,params) {
                     params.page = params.page || 1;
-                    console.log(data,'dataaaa')
                     return {
                         results: $.map(data.contacts, function(contact) {
                             return {

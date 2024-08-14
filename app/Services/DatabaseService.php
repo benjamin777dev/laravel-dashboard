@@ -909,47 +909,63 @@ class DatabaseService
             $now = now();
             $startOfToday = $now->copy()->startOfDay();
             $endOfToday = $now->copy()->endOfDay();
-            $tasks = Task::where('owner', $user->id)->with(['dealData', 'contactData']);
-
-            if ($tab == 'Overdue') {
-                // These are any tasks that have a due date less than today and the task status isn't completed
-                $tasks->where([
-                    ['due_date', '<', $startOfToday],
-                    ['status', '!=', 'Completed']
-                ]);
-            } elseif ($tab == 'Upcoming') {
-                // These are any tasks that have a due date greater than or equal to today and are not complete
-                $tasks->where([
-                    ['due_date', '>=', $startOfToday],
-                    ['status', '!=', 'Completed']
-                ]);
-                $tasks->orWhere(function($query) use ($startOfToday, $endOfToday) {
-                    $query->whereNull('due_date')
-                        ->whereBetween('created_at', [$startOfToday, $endOfToday]);
-                });
-                $tasks->orderBy('due_date', 'asc');
-            } elseif ($tab == 'Due Today') {
-                // Tasks with due date within today
-                $tasks->whereBetween('due_date', [$startOfToday, $endOfToday]);
-
-                // Tasks with null due_date but created today
-                $tasks->orWhere(function($query) use ($startOfToday, $endOfToday) {
-                    $query->whereNull('due_date')
-                        ->whereBetween('created_at', [$startOfToday, $endOfToday]);
-                });
-                $tasks->where('status', '!=', 'Completed');
-            } elseif ($tab == 'Completed') {
-                // These are tasks that are completed
-                  $tasks->where('status', 'Completed');
+            $tasksQuery = Task::where('owner', $user->id)
+                ->with(['dealData', 'contactData']);
+    
+            switch ($tab) {
+                case 'Overdue':
+                    // These are any tasks that have a due date less than today and the task status isn't completed
+                    $tasksQuery->where([
+                        ['due_date', '<', $startOfToday],
+                        ['status', '!=', 'Completed']
+                    ]);
+                    break;
+    
+                case 'Upcoming':
+                    // These are any tasks that have a due date greater than or equal to today and are not complete
+                    $tasksQuery->where(function($query) use ($startOfToday,$endOfToday) {
+                        $query->where([
+                            ['due_date', '>=', $startOfToday],
+                            ['status', '!=', 'Completed']
+                        ])->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                            $query->whereNull('due_date')
+                                ->whereBetween('created_at', [$startOfToday, $endOfToday]) ->where('status', '!=', 'Completed');
+                        });
+                    });
+                    $tasksQuery->orderBy('due_date', 'asc');
+                    break;
+    
+                case 'Due Today':
+                    // Tasks with due date within today
+                    $tasksQuery->where(function($query) use ($startOfToday, $endOfToday) {
+                        $query->whereBetween('due_date', [$startOfToday, $endOfToday])
+                            ->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                                $query->whereNull('due_date')
+                                    ->whereBetween('created_at', [$startOfToday, $endOfToday]);
+                            });
+                    })->where('status', '!=', 'Completed');
+                    break;
+    
+                case 'Completed':
+                    // These are tasks that are completed
+                    $tasksQuery->where('status', 'Completed');
+                    break;
+    
+                default:
+                    // Optionally handle the case where $tab is not recognized
+                      "";
             }
-     // Order the tasks by the updated_at field in descending order
-        $tasks = $tasks->orderBy('updated_at', 'desc')->paginate(10);
-        return $tasks;
+    
+            // Order the tasks by the updated_at field in descending order
+            $tasks = $tasksQuery->orderBy('updated_at', 'desc')->paginate(10);
+            return $tasks;
+    
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
+    
     public function getTaskCounts($user)
     {
         try {
@@ -1562,8 +1578,6 @@ class DatabaseService
             }
             $userContact = Contact::where('zoho_contact_id', $user->zoho_id)->first();
             $teamPartnershipId = $userContact->team_partnership ?? null;
-
-
             $deal = Deal::create([
                 'deal_name' => config('variables.dealName'),
                 'isDealCompleted' => false,

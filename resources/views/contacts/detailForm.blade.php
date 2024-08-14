@@ -181,28 +181,22 @@
                 </div>
                 <div class="col-md-6">
                     <label for="validationDefault13" class="form-label nplabelText">Spouse/Partner</label>
-                    <select type="text" name="spouse_partner" class="form-select npinputinfo"
-                        id="validationDefault13" >
-                        <option value="" selected>Search...</option>
-                        @if (!empty($contacts))
-                        @foreach ($contacts as $contactref)
-                            @php
-                                $zoho_contact_id = isset($contactref['zoho_contact_id']) ? (string) $contactref['zoho_contact_id'] : '';
-                                $spouse_partner = isset($contact['spouse_partner']) ? (string) $contact['spouse_partner'] : '';
-                                
-                            @endphp
-                          <option 
-                          value="{{ json_encode(['id' => $zoho_contact_id, 'Full_Name' => $contactref['first_name'] . ' ' . $contactref['last_name']]) }}" 
-                          {{ $zoho_contact_id === $spouse_partner ? 'selected' : '' }}
-                          data-id="{{ $contactref['id'] }}"
-                          data-icon="fas fa-external-link-alt"
-                      >
-                           {{ $contactref['first_name'] . ' ' . $contactref['last_name']  }}
-                      </option>
-                      
-                        @endforeach
-                    @endif
-                    </select>
+                <select type="text" name="spouse_partner" class="form-select npinputinfo"
+                id="validationDefault13" >
+                <option value="" disabled {{ empty( $spouseContact) ? 'selected' : '' }}>Please select
+                </option>
+                @if (!empty($contacts))
+                    @foreach ($contacts as $contactrefs)
+                        <option
+                            value="{{ json_encode(['id' => $contactrefs['zoho_contact_id'], 'Full_Name' => $contactrefs['first_name'] . ' ' . $contactrefs['last_name']]) }}" {{$contactrefs['zoho_contact_id']==$contact['spouse_partner']?'selected':''}}
+                            data-id = {{$contactrefs['id']}}
+                            data-icon="fas fa-external-link-alt">
+                            {{ $contactrefs['first_name'] }} {{ $contactrefs['last_name'] }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+                
                 </div>
                 <div class="col-md-6">
                     <label for="envelope_salutation" class="form-label nplabelText">Envelope Salutation</label>
