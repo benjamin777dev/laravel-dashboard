@@ -1759,62 +1759,58 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
-        DB::enableQueryLog();
         try {
             $condition = [
                 ['contacts.contact_owner', $user->root_user_id],
                 ['contacts.zoho_contact_id', '!=', null],
-                // ['contacts.isContactCompleted', true],
-                // ['contacts.relationship_type', '!=', 'Secondary'],
             ];
 
-            // Fetch primary contacts
+            // Fetch primary contacts with necessary fields and join data
             $primaryContacts = Contact::where($condition)
-    ->leftJoin('contacts as c', function ($join) {
-        $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
-    })
-    ->select(
-        'contacts.id',
-        'contacts.email',
-        'contacts.auto_address',
-        'contacts.contact_owner',
-        'contacts.zoho_contact_id',
-        'contacts.first_name',
-        'contacts.last_name',
-        'contacts.relationship_type',
-        'contacts.spouse_partner',
-        'contacts.has_email',
-        'contacts.has_address',
-        'c.id as secondary_contact_id',
-        'c.first_name as secondary_first_name',
-        'c.last_name as secondary_last_name',
-        'c.relationship_type as secondary_relationship_type',
-        'c.email as secondary_email',
-        'c.auto_address as secondary_auto_address',
-        'c.spouse_partner as secondary_spouse_partner',
-        'c.zoho_contact_id as secondary_zoho_contact_id',
-        'c.contact_owner as secondary_contact_owner',
-        'c.spouse_partner as partner_id'
-    )
-    ->when($filter, function ($query) use ($filter) {
-        if ($filter === "has_email") {
-            $query->where('contacts.email', '!=', null);
-        } elseif ($filter === "has_address") {
-            $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
-        }
-    })
-    ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
-    ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
-    ->orderBy('contacts.updated_at', 'desc')
-    ->get();
-
-
-                Log::info("Query Log", DB::getQueryLog());
-
-            // Fetch all group data for contacts in a single query
-            $contactIds = $primaryContacts->pluck('id')->merge($primaryContacts->pluck('secondary_contact_id'))->filter()->unique();
-            $allGroups = ContactGroups::whereIn('contactId', $contactIds)
+                ->leftJoin('contacts as c', 'c.zoho_contact_id', '=', 'contacts.spouse_partner')
+                ->select(
+                    'contacts.id',
+                    'contacts.email',
+                    'contacts.auto_address',
+                    'contacts.contact_owner',
+                    'contacts.zoho_contact_id',
+                    'contacts.first_name',
+                    'contacts.last_name',
+                    'contacts.relationship_type',
+                    'contacts.spouse_partner',
+                    'contacts.has_email',
+                    'contacts.has_address',
+                    'c.id as secondary_contact_id',
+                    'c.first_name as secondary_first_name',
+                    'c.last_name as secondary_last_name',
+                    'c.relationship_type as secondary_relationship_type',
+                    'c.email as secondary_email',
+                    'c.auto_address as secondary_auto_address',
+                    'c.spouse_partner as secondary_spouse_partner',
+                    'c.zoho_contact_id as secondary_zoho_contact_id',
+                    'c.contact_owner as secondary_contact_owner'
+                )
                 ->when($filter, function ($query) use ($filter) {
+                    if ($filter === "has_email") {
+                        $query->where('contacts.email', '!=', null);
+                    } elseif ($filter === "has_address") {
+                        $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
+                    }
+                })
+                ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
+                ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
+                ->orderBy('contacts.updated_at', 'desc')
+                ->get();
+
+            // Collect contact IDs for fetching group data in a single query
+            $contactIds = $primaryContacts->pluck('id')
+                ->merge($primaryContacts->pluck('secondary_contact_id'))
+                ->filter()
+                ->unique();
+
+            // Fetch all group data in one query, with and without filter
+            $allGroups = ContactGroups::whereIn('contactId', $contactIds)
+                ->when($filter && $filter !== "has_email" && $filter !== "has_address", function ($query) use ($filter) {
                     $query->where('groupId', $filter);
                 })
                 ->get()
@@ -1829,40 +1825,24 @@ class DatabaseService
             $addedContactIds = [];
 
             foreach ($primaryContacts as $contact) {
-                if (!in_array($contact->id, $addedContactIds)) {
+                if (!isset($addedContactIds[$contact->id])) {
                     $contact->groups = $allGroupsNoFilter->get($contact->id, []);
 
-                    // check if $filter is groupId then add contact in list
-                    if ($filter && $filter !== "has_email" && $filter !== "has_address") {
-                        if (empty($allGroups->get($contact->id, []))) {
-                            Log::info("No groups found for contact: ", ['contact' => $contact->id]);
-                        } else {
-                            $transformedContacts[] = $contact;
-                            $addedContactIds[] = $contact->id;
-                        }
-                    } else{
-                        $transformedContacts[] = $contact;
-                        $addedContactIds[] = $contact->id;
-                    }
-                }
-
-                if ($contact->secondary_contact_id) {
-                    // check same group filter is applied on secondary contact
-                    if ($filter && $filter !== "has_email" && $filter !== "has_address") {
-                        if (empty($allGroups->get($contact->secondary_contact_id, []))) {
-                            continue;
-                        }
-                    }
-
-                    if (in_array($contact->secondary_contact_id, $addedContactIds)) {
-                        // shift transformedContacts to this index
-                        $index = array_search($contact->secondary_contact_id, $addedContactIds);
-                        $tfc = $transformedContacts[$index];
-                        // delete the secondary contact from the array
-                        unset($transformedContacts[$index]);
-                        $transformedContacts[] = $tfc;
+                    // Apply group filter if necessary
+                    if ($filter && $filter !== "has_email" && $filter !== "has_address" && empty($allGroups->get($contact->id, []))) {
                         continue;
                     }
+
+                    $transformedContacts[] = $contact;
+                    $addedContactIds[$contact->id] = true;
+                }
+
+                if ($contact->secondary_contact_id && !isset($addedContactIds[$contact->secondary_contact_id])) {
+                    // Skip if group filter doesn't match for secondary contact
+                    if ($filter && $filter !== "has_email" && $filter !== "has_address" && empty($allGroups->get($contact->secondary_contact_id, []))) {
+                        continue;
+                    }
+
                     $secondaryContact = new \stdClass();
                     $secondaryContact->id = $contact->secondary_contact_id;
                     $secondaryContact->email = $contact->secondary_email;
@@ -1875,16 +1855,16 @@ class DatabaseService
                     $secondaryContact->spouse_partner = $contact->secondary_spouse_partner;
                     $secondaryContact->has_email = $contact->has_email; // Assuming secondary contact shares the same has_email status
                     $secondaryContact->has_address = $contact->has_address; // Assuming secondary contact shares the same has_address status
-                    // Assign groups for secondary contact
-                    $secondaryContact->groups = $allGroupsNoFilter->get($secondaryContact->id, []);
+                    $secondaryContact->groups = $allGroupsNoFilter->get($contact->secondary_contact_id, []);
+
                     $transformedContacts[] = $secondaryContact;
-                    $addedContactIds[] = $secondaryContact->id;
+                    $addedContactIds[$secondaryContact->id] = true;
                 }
             }
 
             // Manual pagination
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 15;
+            $perPage = 50;
             $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
             $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
 
@@ -2010,7 +1990,6 @@ class DatabaseService
 
     public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
-        DB::enableQueryLog();
         try {
             Log::info("Retrieve Groups From Database");
 
@@ -2031,10 +2010,7 @@ class DatabaseService
                 $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
                 $query->where('contacts.zoho_contact_id', '!=', null);
                 $query->where('contacts.contact_owner', $user->root_user_id);
-
             }])->get();
-
-            Log::info("Query Log", DB::getQueryLog());
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {
