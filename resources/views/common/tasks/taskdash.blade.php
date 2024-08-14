@@ -94,7 +94,7 @@
                 try {
                     if (id) {
                         $.ajax({
-                            url: "/delete/task"+id,
+                            url: "/delete-task/"+id,
                             method: 'DELETE', // Change to DELETE method
                             contentType: 'application/json',
                             dataType: 'JSON',
