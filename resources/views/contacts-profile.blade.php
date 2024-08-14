@@ -33,11 +33,6 @@
                         <p class="text-muted mb-0">{{ date('d-m-Y', strtotime(Auth::user()->email_verified_at)) }}</p>
                     </div>
                 </div>
-                <div class="mt-4 text-center">
-                    <a href="{{ route('contacts.show', Auth::user()->contact->id) }}" class="btn btn-primary waves-effect waves-light btn-sm">
-                        View/Edit Contact Profile <i class="mdi mdi-arrow-right ms-1"></i>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -54,18 +49,12 @@
                     <!-- User Profile Fields -->
                     <div class="mb-3">
                         <label for="useremail" class="form-label">Email</label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="useremail" value="{{ Auth::user()->email }}" name="email" placeholder="Enter email" autofocus>
-                        @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <input type="email" class="form-control" id="useremail" value="{{ Auth::user()->email }}" name="email" readonly>
                     </div>
 
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" value="{{ Auth::user()->name }}" id="username" name="name" autofocus placeholder="Enter username">
-                        @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <label for="username" class="form-label">Name</label>
+                        <input type="text" class="form-control" value="{{ Auth::user()->name }}" id="username" name="name" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -132,6 +121,40 @@
                         @enderror
                     </div>
 
+                    <!-- Contact Information -->
+                    @if(Auth::user()->contact)
+                        @php
+                            $contact = Auth::user()->contact;
+                            $isPartOfTeam = $contact->teamAndPartnership()->exists();
+                        @endphp
+
+                        <h4 class="card-title mb-4">Contact Information</h4>
+
+                        <div class="mb-3">
+                            <label for="income_goal" class="form-label">Income Goal</label>
+                            <input type="text" class="form-control @error('income_goal') is-invalid @enderror" value="{{ $contact->income_goal }}" id="income_goal" name="income_goal" placeholder="Enter income goal" {{ $isPartOfTeam ? 'readonly' : '' }}>
+                            @error('income_goal')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="initial_cap" class="form-label">Initial Cap</label>
+                            <input type="text" class="form-control @error('initial_cap') is-invalid @enderror" value="{{ $contact->initial_cap }}" id="initial_cap" name="initial_cap" placeholder="Enter initial cap" {{ $isPartOfTeam ? 'readonly' : '' }}>
+                            @error('initial_cap')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="residual_cap" class="form-label">Residual Cap</label>
+                            <input type="text" class="form-control @error('residual_cap') is-invalid @enderror" value="{{ $contact->residual_cap }}" id="residual_cap" name="residual_cap" placeholder="Enter residual cap" {{ $isPartOfTeam ? 'readonly' : '' }}>
+                            @error('residual_cap')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endif
+
                     <div class="mt-3 d-grid">
                         <button class="btn btn-primary waves-effect waves-light UpdateProfile" data-id="{{ Auth::user()->id }}" type="submit">Update</button>
                     </div>
@@ -182,6 +205,11 @@
                 $('#street').next('.invalid-feedback').text(response.responseJSON.errors.street);
                 $('#transaction_status_reports').next('.invalid-feedback').text(response.responseJSON.errors.transaction_status_reports);
                 $('#verified_sender_email').next('.invalid-feedback').text(response.responseJSON.errors.verified_sender_email);
+
+                // Add for contact fields
+                $('#income_goal').next('.invalid-feedback').text(response.responseJSON.errors.income_goal);
+                $('#initial_cap').next('.invalid-feedback').text(response.responseJSON.errors.initial_cap);
+                $('#residual_cap').next('.invalid-feedback').text(response.responseJSON.errors.residual_cap);
             }
         });
     });

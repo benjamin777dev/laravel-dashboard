@@ -68,9 +68,9 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="contacts-profile"><i
-                            class="bx bx-user font-size-16 align-middle me-1"></i> <span
-                            key="t-profile">@lang('Profile')</span></a>
+                    <a class="dropdown-item" href="{{ route('profile.edit') }}"><i
+                        class="bx bx-user font-size-16 align-middle me-1"></i> <span
+                        key="t-profile">@lang('Profile')</span></a>
                     {{-- <a class="dropdown-item" href="#"><i class="bx bx-wallet font-size-16 align-middle me-1"></i>
                         <span key="t-my-wallet">@lang('My_Wallet')</span></a> --}}
                     <a class="dropdown-item d-block" href="#" data-bs-toggle="modal"
