@@ -137,20 +137,24 @@
                         <tbody>
                             @foreach($openTasks as $task)
                                 <tr>
-                                    <td>{{ $task->subject ?? 'New Task' }}</td>
+                                    <td>
+                                        <h5 class="text-truncate font-size-14 m-0">
+                                            <a href="#" class="text-dark">{{ $task->subject ?? 'N/A' }}</a>
+                                        </h5>
+                                    </td>
                                     <td>{{ $task->description ?? 'No description provided' }}</td>
                                     <td>{{ isset($task->due_date) ? $task->due_date->format('Y-m-d') : '' }}</td>
                                     <td>
                                         @if ($task['related_to'] == 'Contacts' && isset($task->contactData->zoho_contact_id))
-                                            <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
-                                                {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? '' }}
-                                            </a>
+                                            <span>Related to: <a href="{{ url('/contacts-view/' . $task->contactData->id ?? '') }}" class="text-primary">
+                                                {{ $task->contactData->first_name ?? '' }} {{ $task->contactData->last_name ?? 'General' }}
+                                            </a></span>
                                         @elseif ($task['related_to'] == 'Deals' && isset($task->dealData->zoho_deal_id))
-                                            <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
+                                            <span>Related to: <a href="{{ url('/pipeline-view/' . $task->dealData->id ?? '') }}" class="text-primary">
                                                 {{ $task->dealData->deal_name ?? 'General' }}
-                                            </a>
+                                            </a></span>
                                         @else
-                                            General
+                                            <span>Related to: General</span>
                                         @endif
                                     </td>
                                     <td>
@@ -215,6 +219,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Transactions and Volume Section -->
 <div class="row">
