@@ -19,7 +19,7 @@ return new class extends Migration
 
         Schema::table('submittals', function (Blueprint $table) {
             $table->text('resubmit_text')->nullable()->after('formType');
-            $table->varchar('resubmitting_to_which_team', 191)->nullable()->after('resubmit_text');
+            $table->text('resubmitting_to_which_team', 191)->nullable()->after('resubmit_text');
             $table->text('resubmitting_why_list_all_changes')->nullable()->after('resubmitting_to_which_team');
         });
     }
