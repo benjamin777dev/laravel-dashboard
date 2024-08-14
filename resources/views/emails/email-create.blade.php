@@ -331,7 +331,6 @@
         if(!isValidate){
             return false;
         };
-        return
         button.disabled = true;
         var formData = 
         {
