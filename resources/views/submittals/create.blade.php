@@ -20,14 +20,12 @@
             </h4>
         </div>
         <div class = "actions d-flex">
-            <a href="{{ url('/pipeline-view/' . $submittal['dealData']['id']) }}">
-                <div class="input-group-text text-white justify-content-center ppipeBtn"  >
-                    <i class="fas fa-times">
-                    </i>
+            <a href="{{ url('/pipeline-view/' . (isset($submittal['dealData']['id']) ? $submittal['dealData']['id'] : '')) }}">
+                <div class="input-group-text text-white justify-content-center ppipeBtn">
+                    <i class="fas fa-times"></i>
                     Cancel
                 </div>
             </a>
-            
             <a>
                 <div class="input-group-text text-white justify-content-center ppipeBtn"  onclick="return validateSubmittal(true)"><i class="fas fa-save">
                     </i>
@@ -134,7 +132,7 @@
 
      window.validateSubmittal=function(isNew) {
         let submittal = @json($submittal);
-        isValid = true
+        isValid = true;
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
             var relatedTransaction = $('#relatedTransaction').val();

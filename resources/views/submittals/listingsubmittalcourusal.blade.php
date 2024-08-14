@@ -7,7 +7,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title mb-4">CHR -TM</h4>
+                <h4 class="card-title mb-4 title_h4">TM and Property Promotion</h4>
 
                 <div id="basic-example-seller">
                     <!-- Seller Details -->
@@ -1680,7 +1680,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 addStepChr('Commission Details', innrtHtml7);
                 addStepChr('Service Providers', innrtHtml8);
             } else {
-                console.log('yes hereee')
                 if(show !=="showProp" && show !=="showPropinitial"){ 
                     removeStep(7)
                 }
