@@ -33,10 +33,10 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">CC</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="ccSelect" multiple="multiple"
-                    data-placeholder="CC">
+                <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
+                    data-placeholder="CC" type="search">
                     @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}"data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
+                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
                 </select>
                 <span id="emailErrorCC" style="color: red; display: none;">Please enter a valid email address.</span>
@@ -45,8 +45,8 @@
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 cmultipleol-form-label">BCC</label>
             <div class="col-md-10">
-                <select class="form-control select2-multiple" id="bccSelect" multiple="multiple"
-                    data-placeholder="BCC">
+                <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
+                    data-placeholder="BCC" type="search">
                     @foreach($contacts as $contactDetail)
                         <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
                     @endforeach
@@ -82,6 +82,8 @@
     $(document).ready(function() {
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder, errorId) {
+            console.log("Initialize fucntion");
+            
             $(selector).select2({
                 placeholder: placeholder,
                 allowClear: true,
@@ -99,16 +101,45 @@
                         text: params.term,
                         newTag: true
                     };
+                },
+                matcher: function(params, data) {
+                    // If there are no search terms, return all data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+
+                    // Convert the search term to lower case for case-insensitive matching
+                    var term = params.term.toLowerCase();
+
+                    // Check if the term matches the name or email
+                    var text = data.text.toLowerCase();
+                    var email = $(data.element).data('email') || '';
+
+                    if (text.includes(term) || email.includes(term)) {
+                        return data;
+                    }
+
+                    // If no match, return null to exclude this item
+                    return null;
+                },
+                templateResult: function(data) {
+                    // Format the result to display both name and email (if available)
+                    var email = $(data.element).data('email') || '';
+                    if (email) {
+                        return $('<span>' + data.text + ' (' + email + ')</span>');
+                    }
+                    return $('<span>' + data.text + '</span>');
                 }
             });
         }
 
         function updateSelectOptions() {
-            var toValues = $("#toSelect").val() || [];
-            var ccValues = $("#ccSelect").val() || [];
-
+             console.log("Update fucntion");
+            var toValues = $("#toSelect").val();
+            var ccValues = $("#ccSelect").val();
+            console.log("BEFORE toValues ccValues",toValues,ccValues);
             $("#ccSelect option").each(function() {
-                const value = $(this).val();
+                const value = ccValues;
                 const hasEmail = $(this).data('email');
                 if (toValues.includes(value) || !hasEmail) {
                     $(this).prop('disabled', true);
@@ -116,7 +147,7 @@
                     $(this).prop('disabled', false);
                 }
             });
-
+            
             $("#bccSelect option").each(function() {
                 const value = $(this).val();
                 const hasEmail = $(this).data('email');
@@ -129,9 +160,11 @@
             });
         }
 
-        $("#toSelect, #ccSelect").on('change', function() {
+        $("#toSelect, #ccSelect").on('change', function(event) {
+            console.log(event);
+            
             updateSelectOptions();
-            $(this).trigger('select2:select'); // Trigger the select2:select event instead of change
+            
         });
 
         initializeSelect2("#toSelect", "To", "emailErrorTo");
@@ -144,7 +177,7 @@
             initializeSelect2("#bccSelect", "BCC", "emailErrorBCC");
         });
 
-        $("#toSelect, #ccSelect").on('change', updateSelectOptions);
+        
 
         $("#toSelect, #ccSelect, #bccSelect").on('select2:select change', function(e) {
             var suffix = '';
@@ -235,15 +268,7 @@
             }
         });
 
-        // Handle modal reset
-        
-
-        
-
-        // Trigger change event to ensure pre-selected options are displayed correctly
-        $('#toSelect').trigger('change');
-        $('#ccSelect').trigger('change');
-        $('#bccSelect').trigger('change');
+       
 
     });
     var button = document.getElementById('emailModalClose');
@@ -303,6 +328,7 @@
         var content = tinymce.get('elmEmail').getContent();
         var subject = $("#emailSubject").val();
         let isValidate = validateForm();
+        console.log("checkvalues",to,cc,bcc, window.ccValuestesttest);
         if(!isValidate){
             return false;
         };
@@ -336,8 +362,11 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Email sent successfully");
-                    $("#contact-email-table").DataTable().ajax.reload();
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+                        showToast("Draft saved successfully");
+                    }
                     button.disabled = false;
                     $("#emailModalClose").click();
                     fetchEmails();
@@ -368,7 +397,11 @@
                     } else {
                         // Handle error
                     }
-                    showToast("Email sent successfully");
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+                        showToast("Draft saved successfully");
+                    }
                     $("#contact-email-table").DataTable().ajax.reload();
                     button.disabled = false;
                     $("#emailModalClose").click();
