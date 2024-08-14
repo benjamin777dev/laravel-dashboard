@@ -270,7 +270,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="buyerRefrealDetails">Referral Details</label>
-                                            <input type="text" class="form-control" value="{{ $submittal['referralDetails'] }}" id="buyerRefrealDetails"
+                                            <input type="text" name="Referral" class="form-control" value="{{ $submittal['referralDetails'] }}" id="buyerRefrealDetails"
                                              placeholder="Enter Details">
                                         </div>
                                     </div>
@@ -450,9 +450,20 @@
                     return isValid;
                 },
                 onFinished: function(event, currentIndex) {
-                    // API call here
+                // Validate the current step
+                const isValid = validateStep(currentIndex);
+
+                if (isValid) {
+                    // If valid, proceed with the API call
                     window.validateSubmittal(true);
+                    // Optionally, you might want to return true explicitly here
+                    return true;
+                } else {
+                    // Return false to indicate that the form submission should not proceed
+                    return false;
                 }
+            }
+
             });
         }
 
@@ -640,7 +651,10 @@
             const $currentSection = $stepsContainer.find(`section:eq(${stepIndex})`);
 
             // Check required fields in this section
+           
+            let reqValmsg;
             $currentSection.find('.required-field').each(function() {
+                reqValmsg = this?.name;
                 if (!$(this).val()) {
                     isValid = false;
                     $(this).addClass('error'); // Add error class for styling
@@ -666,7 +680,7 @@
 
             // Optionally, display a message or highlight errors if invalid
             if (!isValid) {
-                showToastError("Please fill out all required fields.");
+                showToastError(reqValmsg ?`Please fill out ${reqValmsg} Detail required field.`:"Please fill out all required fields.");
             }
 
             return isValid;
@@ -690,6 +704,30 @@
             }
             
         }
+   
+       // Select all radio buttons and the additional field
+        const referralRadioButtons = document.querySelectorAll('input[name="buyerRefrralPay"]');
+        const additionalField = document.getElementById('buyerRefrealDetails');
+
+        // Function to update the additional field requirement
+        function updateAdditionalFieldRequirement() {
+            const isYesSelected = document.querySelector('input[name="buyerRefrralPay"]:checked')?.value === 'Yes';
+            if (isYesSelected) {
+              additionalField.classList.add('required-field', 'validate');
+            } else {
+                additionalField.classList.remove('required-field', 'validate');
+            }
+        }
+
+        // Add event listeners to all radio buttons
+        referralRadioButtons.forEach(radio => {
+            radio.addEventListener('change', updateAdditionalFieldRequirement);
+        });
+
+        // Initial check in case the page is loaded with a pre-selected value
+        updateAdditionalFieldRequirement();
+
+
         });
 
           
