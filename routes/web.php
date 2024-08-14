@@ -152,7 +152,8 @@ Route::get('/nontm-view/{id}', [NonTmController::class, 'getNonTm'])->middleware
 // Customers Route
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.list')->middleware('auth');
 
-// Update User Details
+// User Route
+Route::get('/profile', [HomeController::class, 'index'])->name('user.profile')->middleware('auth');
 Route::post('/update-profile/{id}', [HomeController::class, 'updateProfile'])->name('updateProfile')->middleware('auth');
 Route::post('/update-password/{id}', [HomeController::class, 'updatePassword'])->name('updatePassword')->middleware('auth');
 

@@ -244,7 +244,7 @@ class SubmittalController extends Controller
         if(!$submittalData){
                 $submittalData = $db->retrieveSubmittal($user, $accessToken, $submittalId);;
             }
-        if($submittalData['isSubmittalCompleted']){
+        if($submittalData['isSubmittalComplete']){
             $submittal = $zoho->updateListingSubmittal($submittalData['zoho_submittal_id'],$jsonData);
         }else{
             $submittal = $zoho->createListingSubmittal($jsonData);
@@ -308,7 +308,7 @@ class SubmittalController extends Controller
         if(!$submittalData){
                 $submittalData = $db->retrieveSubmittal($user, $accessToken, $submittalId);;
             }
-        if($submittalData['isSubmittalCompleted']){
+        if($submittalData['isSubmittalComplete']){
             $submittal = $zoho->updateBuyerSubmittal($submittalData['zoho_submittal_id'],$jsonData);
         }else{
             $submittal = $zoho->createBuyerSubmittal($jsonData);

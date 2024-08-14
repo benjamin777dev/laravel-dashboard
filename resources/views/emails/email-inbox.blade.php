@@ -8,7 +8,7 @@
         <!-- Left sidebar -->
         <div class="email-leftbar card">
             <button type="button" class="btn btn-dark btn-block waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal">
-                Compose
+                Compose Email<i class="mdi mdi-send ms-1"></i>
             </button>
             <div class="mail-list mt-4" onclick="fetchEmails(event)">
                 {{-- <a href="javascript: void(0);" class="active " ><i class="mdi mdi-email-outline me-2"></i> Inbox <span class="ms-1 float-end">(18)</span></a>
