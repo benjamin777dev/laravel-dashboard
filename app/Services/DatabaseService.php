@@ -1743,7 +1743,6 @@ class DatabaseService
 
     public function retrieveContactGroups(User $user, $accessToken, $filter = null, $sort = 'asc')
     {
-        DB::enableQueryLog();
         try {
             $condition = [
                 ['contacts.contact_owner', $user->root_user_id],
@@ -1754,46 +1753,43 @@ class DatabaseService
 
             // Fetch primary contacts
             $primaryContacts = Contact::where($condition)
-    ->leftJoin('contacts as c', function ($join) {
-        $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
-    })
-    ->select(
-        'contacts.id',
-        'contacts.email',
-        'contacts.auto_address',
-        'contacts.contact_owner',
-        'contacts.zoho_contact_id',
-        'contacts.first_name',
-        'contacts.last_name',
-        'contacts.relationship_type',
-        'contacts.spouse_partner',
-        'contacts.has_email',
-        'contacts.has_address',
-        'c.id as secondary_contact_id',
-        'c.first_name as secondary_first_name',
-        'c.last_name as secondary_last_name',
-        'c.relationship_type as secondary_relationship_type',
-        'c.email as secondary_email',
-        'c.auto_address as secondary_auto_address',
-        'c.spouse_partner as secondary_spouse_partner',
-        'c.zoho_contact_id as secondary_zoho_contact_id',
-        'c.contact_owner as secondary_contact_owner',
-        'c.spouse_partner as partner_id'
-    )
-    ->when($filter, function ($query) use ($filter) {
-        if ($filter === "has_email") {
-            $query->where('contacts.email', '!=', null);
-        } elseif ($filter === "has_address") {
-            $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
-        }
-    })
-    ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
-    ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
-    ->orderBy('contacts.updated_at', 'desc')
-    ->get();
-
-
-                Log::info("Query Log", DB::getQueryLog());
+            ->leftJoin('contacts as c', function ($join) {
+                $join->on('contacts.zoho_contact_id', '=', 'c.spouse_partner');
+            })
+            ->select(
+                'contacts.id',
+                'contacts.email',
+                'contacts.auto_address',
+                'contacts.contact_owner',
+                'contacts.zoho_contact_id',
+                'contacts.first_name',
+                'contacts.last_name',
+                'contacts.relationship_type',
+                'contacts.spouse_partner',
+                'contacts.has_email',
+                'contacts.has_address',
+                'c.id as secondary_contact_id',
+                'c.first_name as secondary_first_name',
+                'c.last_name as secondary_last_name',
+                'c.relationship_type as secondary_relationship_type',
+                'c.email as secondary_email',
+                'c.auto_address as secondary_auto_address',
+                'c.spouse_partner as secondary_spouse_partner',
+                'c.zoho_contact_id as secondary_zoho_contact_id',
+                'c.contact_owner as secondary_contact_owner',
+                'c.spouse_partner as partner_id'
+            )
+            ->when($filter, function ($query) use ($filter) {
+                if ($filter === "has_email") {
+                    $query->where('contacts.email', '!=', null);
+                } elseif ($filter === "has_address") {
+                    $query->whereRaw("contacts.auto_address IS NOT NULL AND TRIM(REPLACE(contacts.auto_address, ',', '')) != ''");
+                }
+            })
+            ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
+            ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
+            ->orderBy('contacts.updated_at', 'desc')
+            ->get();
 
             // Fetch all group data for contacts in a single query
             $contactIds = $primaryContacts->pluck('id')->merge($primaryContacts->pluck('secondary_contact_id'))->filter()->unique();
@@ -1868,9 +1864,12 @@ class DatabaseService
 
             // Manual pagination
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 15;
+            Log::info("Current Page: " . $currentPage);
+            $perPage = 50;
             $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
+            Log::info("Current Items: " . count($currentItems));
             $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
+            Log::info("Paginated Contacts: " . count($paginatedContacts));
 
             return $paginatedContacts;
         } catch (\Exception $e) {
@@ -1994,7 +1993,6 @@ class DatabaseService
 
     public function retrieveGroups(User $user, $accessToken, $isShown = null)
     {
-        DB::enableQueryLog();
         try {
             Log::info("Retrieve Groups From Database");
 
@@ -2015,10 +2013,7 @@ class DatabaseService
                 $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
                 $query->where('contacts.zoho_contact_id', '!=', null);
                 $query->where('contacts.contact_owner', $user->root_user_id);
-
             }])->get();
-
-            Log::info("Query Log", DB::getQueryLog());
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {
