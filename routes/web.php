@@ -219,6 +219,8 @@ Route::get('/team-individual', [TeamIndividualController::class, 'index'])->name
 Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('profile/update-agent-info/{id}', [ProfileController::class, 'updateAgentInfo'])->name('profile.updateAgentInfo');
+    Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 });
 
 // Language Translation
