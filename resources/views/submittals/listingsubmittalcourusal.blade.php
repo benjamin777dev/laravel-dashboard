@@ -258,22 +258,23 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="bedsBathsTotal">Beds,baths,total sq.ft.<svg xmlns="http://www.w3.org/2000/svg"
-                                                width="19" height="18" viewBox="0 0 19 18"
-                                                fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                    height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                            <label for="bedsBathsTotal">Beds,baths,total sq.ft.<svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                    viewBox="0 0 19 18" fill="none">
+                                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                        height="18">
+                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2151_10662)">
+                                                        <path
+                                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                            fill="#AC5353" />
+                                                    </g>
+                                                </svg></label>
                                             <input type="text" value="{{ $submittal['bedsBathsTotal'] }}"
-                                                class="form-control required-field" placeholder="" id="bedsBathsTotal">
+                                                class="form-control required-field" placeholder=""
+                                                id="bedsBathsTotal">
                                         </div>
                                     </div>
 
@@ -327,667 +328,12 @@
                         </div>
                     </section>
 
-                    <h3>Commission Details</h3>
-             <section>
+                    <h3>Service Providers</h3>
+                    <section>
                         <div>
                             <form>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="feesCharged">Fees Charged to Seller at
-                                                Closing</label>
-                                            <input type="text" name="feesCharged"
-                                                value="{{ $submittal['feesCharged'] }}" id="feesCharged"
-                                                class="form-control " placeholder="$">
-                                            </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralToPay">Referral to Pay</label>
-                                            <select name="additional_charge" id="additonal_fee" class="form-select">
-                                                <option value="" selected>None</option>
-                                                <option value="Yes"
-                                                    {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
-                                                </option>
-                                                <option value="No"
-                                                    {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="amountToCHR">Amount to CHR Gives </label>
-                                            <input type="number"name="amountToCHR" placeholder = "$"
-                                                value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
-                                                class="form-control">
-                                            </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralDetails">Referral Details </label>
-                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
-                                                id="referralDetails" class="form-control">
-                                            </input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-     </section>
-     <h3>Service Providers</h3>
-     <section>
-             <div>
-                 <form>
-                     <div class="row">
-                              <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="builderCommisionPercent">Schedule Sign Install<svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg></label>
-                                         <div class="d-flex gap-2">
-                                             <div class="mb-3">
-                                                 <input type="radio" id="scheduleSignInstall_yes"
-                                                     {{ $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}
-                                                     name="scheduleSignInstall">
-                                                 <label class="" for="formCheck1">
-                                                     Yes
-                                                 </label>
-                                             </div>
-                                             <div class="mb-3">
-                                                 <input type="radio" id="scheduleSignInstall_no"
-                                                     {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
-                                                     name="scheduleSignInstall">
-                                                 <label class="" for="formCheck1">
-                                                     No
-                                                 </label>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </div>
-
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="buyerOtherNotes">Draft Showing Instructions? <svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg></label>
-                                         <div class="d-flex gap-2">
-                                             <div class="mb-3">
-                                                 <input type="radio" id="draftShowingInstructions_yes"
-                                                     {{ $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}
-                                                     name="draftShowingInstructions">
-                                                 <label class="" for="formCheck1">
-                                                     Yes
-                                                 </label>
-                                             </div>
-                                             <div class="mb-3">
-                                                 <input type="radio" id="draftShowingInstructions_no"
-                                                     {{ $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}
-                                                     name="draftShowingInstructions">
-                                                 <label class="" for="formCheck1">
-                                                     No
-                                                 </label>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="titleCompany">Title Company </label>
-                                         <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
-                                             id="titleCompany" class="form-control validate_err">
-                                         </input>
-                                     </div>
-                                 </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="signInstallDate">Sign Install Date </label>
-                                         <input type="date" value="{{ $submittal['signInstallDate'] }}"
-                                             class="form-control" id="signInstallDate">
-                                     </div>
-                                 </div>
-
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="titleCompany">Closer Name & Phone<svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg> </label>
-                                         <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
-                                             id="closerNamePhone" class="form-control validate_err required-field">
-                                         </input>
-                                     </div>
-                                 </div>
-                             </div>
-                         </form>
-                     </div>
-
-  </section>
-
-  <h3>Service Providers</h3>
-       <section>
-              <div>
-                <form>
-                     <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor Info</label>
-                                        <input value="{{ $submittal['signInstallVendor'] }}" name="signInstallVendor"
-                                            id="signInstallVendor" class="form-control">
-                                        </input>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor (if Other)</label>
-                                        <input value="{{ $submittal['signInstallVendorOther'] }}"
-                                            name="signInstallVendorOther" id="signInstallVendorOther"
-                                            class="form-control">
-                                        </input>
-                                    </div>
-                                </div>
-
-
-                            </form>
-                        </div>
-
-     </section>
-
-  <h3>Select MLS</h3>
-  <section>
-              <div>
-                  <form>
-                              <div class="row">
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <div class="row mb-4">
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>REColorado</div>
-                                                  <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>Navica</div>
-                                                  <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>PPAR</div>
-                                                  <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <div class="row mb-4">
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>Grand County</div>
-                                                  <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>IRES</div>
-                                                  <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="row">
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <label for="amountToCHR">MLS public remarks </label>
-                                          <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
-                                      </div>
-                                  </div>
-
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <label for="titleCompany">MLS private remarks</label>
-                                          <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
-                                      </div>
-                                  </div>
-                              </div>
-                          </form>
-                      </div>
-
-</section>
-                </div>
-
-            </div>
-            <!-- end card body -->
-        </div>
-        <!-- end card -->
-    </div>
-    <!-- end col -->
-</div>
-<!-- end row -->
-<!-- jquery step -->
-<script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
-
-<!-- form wizard init -->
-{{-- <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script> --}}
-
-<script>
-    $(document).ready(function() {
-        const $stepsContainer = $('#basic-example-seller');
-
-        function initializeSteps() {
-            $stepsContainer.steps({
-                headerTag: "h3",
-                bodyTag: "section",
-                transitionEffect: "slide",
-                onStepChanging: function(event, currentIndex, newIndex) {
-                    // Perform validation before allowing step change
-                    const isValid = validateStep(currentIndex);
-                    return isValid;
-                },
-                onFinished: function(event, currentIndex) {
-                    // API call here
-                    window.validateSubmittal(true);
-                }
-            });
-        }
-
-        // Initial steps plugin setup
-        initializeSteps();
-           //chr tm start
-           const CommissionDetails = ` <h3>Commission Details</h3>
-        <section>
-            <div>
-                <form>
-                    <div class="row">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                                <label for="feesCharged">Need O&E <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no" value="No" name="needO&E">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralToPay">Has HOA? <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label for="feesCharged">Include Insights in Intro? <svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                    viewBox="0 0 19 18" fill="none">
-                                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="includeInsights_yes" value="Yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input id="includeInsights_no" value="No" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralToPay">Title to Order HOA docs?  <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3"> 
-                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                </div>
-                                                 <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
-                                                    <label class="" for="formCheck1">
-                                                        TBD
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="feesCharged">Mailout Needed? <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="mailoutNeeded_yes" value="Yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="radio" id="mailoutNeeded_no" value="No" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </input>
-                                        </div>
-                                    </div>
-
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label for="referralToPay">Power of Attny Needed?  <svg
-                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                    viewBox="0 0 19 18" fill="none">
-                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                    </mask>
-                                    <g mask="url(#mask0_2151_10662)">
-                                        <path
-                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                            fill="#AC5353" />
-                                    </g>
-                                </svg></label>
-                                <div class="d-flex gap-2">
-                                    <div class="mb-3">
-                                        <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }} name="powerOfAttnyNeeded">
-                                        <label class="" id="chkNo" for="formCheck1">
-                                            Yes
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }} name="powerOfAttnyNeeded">
-                                        <label class="" for="formCheck1">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        
-        </section>`;
-
-        const serviceProvider = `<h3>Service Providerssss</h3>
-         <section>
-                        <div>
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="builderCommisionPercent">HOA Name</label>
-                                            <input type="text" name="additional_charge" id="hoaName" value="{{ $submittal['hoaName'] }}"
-                                            class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="buyerOtherNotes">HOA Phone</label>
-                                            <input type="text" name="additional_charge" value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
-                                            class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="amountToCHR">HOA Website </label>
-                                            <input type="text"
-                                   value="{{ $submittal['hoaWebsite'] }}"
-                                    class="form-control" placeholder="" id="hoaWebsite">
-                                    </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="titleCompany">Misc Notes - Seller, Communication, etc </label>
-                                            <textarea class="form-control" id="miscNotes"  rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="signInstallDate">Are you ready to continue to Property Promotion? </label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input value="1" {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }} type="radio"  name="showPromotion">
-                                                    <label class=""  for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input  value="0"{{ $submittal['showPromotion'] == 0 ? 'checked' : '' }} type="radio" name="showPromotion">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                            </form>
-                        </div>
-                    
-</section>`;
-
-const defaultCHRSec1 = ` <h3>Commission Details</h3>
-     <section>
-                        <div>
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="feesCharged">Fees Charged to Seller at
-                                                Closing</label>
-                                            <input type="text" name="feesCharged"
-                                                value="{{ $submittal['feesCharged'] }}" id="feesCharged"
-                                                class="form-control " placeholder="$">
-                                            </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralToPay">Referral to Pay</label>
-                                            <select name="additional_charge" id="additonal_fee" class="form-select">
-                                                <option value="" selected>None</option>
-                                                <option value="Yes"
-                                                    {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
-                                                </option>
-                                                <option value="No"
-                                                    {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="amountToCHR">Amount to CHR Gives </label>
-                                            <input type="number"name="amountToCHR" placeholder = "$"
-                                                value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
-                                                class="form-control">
-                                            </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralDetails">Referral Details </label>
-                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
-                                                id="referralDetails" class="form-control">
-                                            </input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-     </section>`; 
-
-     const defaultCHRSec2 = `<h3>Service Providers</h3>
-        <section>
-                <div>
-                    <form>
-                        <div class="row">
-                                 <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="builderCommisionPercent">Schedule Sign Install<svg
                                                     xmlns="http://www.w3.org/2000/svg" width="19" height="18"
@@ -1064,6 +410,14 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
+                                            <label for="titleCompany">Title Company </label>
+                                            <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
+                                                id="titleCompany" class="form-control validate_err">
+                                            </input>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
                                             <label for="amountToCHR">Concierge Listing (Optional) </label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
@@ -1083,15 +437,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                                     </label>
                                                 </div>
                                             </div>
-                                            </input>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="titleCompany">Title Company </label>
-                                            <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
-                                                id="titleCompany" class="form-control validate_err">
                                             </input>
                                         </div>
                                     </div>
@@ -1126,41 +471,802 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                                             </input>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="feesCharged">Sign Install Vendor Info</label><br>
+                                                <select class="form-select" name="signInstallVendor"
+                                                    id="signInstallVendor">
+                                                    <option value="-None-"
+                                                        {{ $submittal['signInstallVendor'] === '-None-' ? 'selected' : '' }}>
+                                                        -None-</option>
+                                                    <option value="AXIUM"
+                                                        {{ $submittal['signInstallVendor'] === 'AXIUM' ? 'selected' : '' }}>
+                                                        AXIUM</option>
+                                                    <option value="Rocky Mountain - Brandon"
+                                                        {{ $submittal['signInstallVendor'] === 'Rocky Mountain - Brandon' ? 'selected' : '' }}>
+                                                        Rocky Mountain - Brandon</option>
+                                                    <option value="Others"
+                                                        {{ $submittal['signInstallVendor'] === 'Others' ? 'selected' : '' }}>
+                                                        Others</option>
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="feesCharged">Sign Install Vendor (if Other)</label>
+                                                <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                                    name="signInstallVendorOther" id="signInstallVendorOther"
+                                                    class="form-control">
+                                                </input>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
 
-     </section>`;
+                    </section>
 
-     const defaultCHRSec3 = `<h3>Service Providers</h3>
-       <section>
-              <div>
-                <form>
-                     <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor Info</label>
-                                        <input value="{{ $submittal['signInstallVendor'] }}" name="signInstallVendor"
-                                            id="signInstallVendor" class="form-control">
-                                        </input>
+                    <h3>Select MLS</h3>
+                    <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <div class="row mb-4">
+                                                <div class="col-lg-4 d-flex gap-2">
+                                                    <div>REColorado</div>
+                                                    <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 d-flex gap-2">
+                                                    <div>Navica</div>
+                                                    <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 d-flex gap-2">
+                                                    <div>PPAR</div>
+                                                    <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <div class="row mb-4">
+                                                <div class="col-lg-4 d-flex gap-2">
+                                                    <div>Grand County</div>
+                                                    <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 d-flex gap-2">
+                                                    <div>IRES</div>
+                                                    <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
+                                                        echo 'checked';
+                                                    } ?>>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor (if Other)</label>
-                                        <input value="{{ $submittal['signInstallVendorOther'] }}"
-                                            name="signInstallVendorOther" id="signInstallVendorOther"
-                                            class="form-control">
-                                        </input>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">MLS public remarks </label>
+                                            <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="titleCompany">MLS private remarks</label>
+                                            <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
-
-
                             </form>
                         </div>
 
-     </section>`;
+                    </section>
 
-     const defaultCHRSec4 = ` <h3>Select MLS</h3>
+
+
+                    <h3>Commission Details</h3>
+                    <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Fees Charged to Seller at
+                                                Closing</label>
+                                            <input type="text" name="feesCharged"
+                                                value="{{ $submittal['feesCharged'] }}" id="feesCharged"
+                                                class="form-control " placeholder="$">
+                                            </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Referral to Pay</label>
+                                            <select name="additional_charge" id="additonal_fee" class="form-select">
+                                                <option value="" selected>None</option>
+                                                <option value="Yes"
+                                                    {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
+                                                </option>
+                                                <option value="No"
+                                                    {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">Amount to CHR Gives </label>
+                                            <input type="number"name="amountToCHR" placeholder = "$"
+                                                value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
+                                                class="form-control">
+                                            </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralDetails">Referral Details </label>
+                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
+                                                id="referralDetails" class="form-control">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label for="titleCompany">Misc Notes - Seller, Communication, etc </label>
+                                <textarea class="form-control" id="miscNotes" rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="signInstallDate">Are you ready to continue to Property Promotion? </label>
+                                <div class="d-flex gap-2">
+                                    <div class="mb-3">
+                                        <input value="1" {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }}
+                                            type="radio" name="showPromotion">
+                                        <label class="" for="formCheck1">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input value="0"{{ $submittal['showPromotion'] == 0 ? 'checked' : '' }}
+                                            type="radio" name="showPromotion">
+                                        <label class="" for="formCheck1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <h3>HOA Information</h3>
+                    <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Title to Order HOA docs?  <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3"> 
+                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                                 <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        TBD
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Has HOA? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="builderCommisionPercent">HOA Name</label>
+                                            <input type="text" name="additional_charge" id="hoaName"
+                                                value="{{ $submittal['hoaName'] }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">HOA Phone</label>
+                                            <input type="text" name="additional_charge"
+                                                value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">HOA Website </label>
+                                            <input type="text" value="{{ $submittal['hoaWebsite'] }}"
+                                                class="form-control" placeholder="" id="hoaWebsite">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </section>
+                    
+                   
+                </div>
+
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col -->
+</div>
+<!-- end row -->
+<!-- jquery step -->
+<script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
+
+<!-- form wizard init -->
+{{-- <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script> --}}
+
+<script>
+    function ValidateHoa() {
+        // Select all radio buttons and the additional field
+        const referralRadioButtons = document.querySelectorAll('input[name="hasHOA"]');
+        const hoaName = document.getElementById('hoaName');
+        const hoaPhone = document.getElementById('hoaPhone');
+        const hoaWebsite = document.getElementById('hoaWebsite');
+
+        // Function to update the additional field requirement
+        function updateAdditionalFieldRequirement() {
+            console.log("yesss")
+            const isYesSelected = document.querySelector('input[name="hasHOA"]:checked')?.value === 'Yes';
+            console.log(isYesSelected, 'isYesSelectedisYesSelected')
+            if (isYesSelected) {
+                hoaName?.classList?.add('required-field', 'validate');
+                hoaPhone?.classList?.add('required-field', 'validate');
+                hoaWebsite?.classList?.add('required-field', 'validate');
+            } else {
+                hoaName?.classList.remove('required-field', 'validate');
+                hoaPhone?.classList.remove('required-field', 'validate');
+                hoaWebsite?.classList.remove('required-field', 'validate');
+            }
+        }
+
+        // Add event listeners to all radio buttons
+        referralRadioButtons?.forEach(radio => {
+            radio.addEventListener('change', updateAdditionalFieldRequirement);
+        });
+
+        // Initial check in case the page is loaded with a pre-selected value
+        updateAdditionalFieldRequirement();
+
+    }
+    $(document).ready(function() {
+        const $stepsContainer = $('#basic-example-seller');
+
+        function initializeSteps() {
+            $stepsContainer.steps({
+                headerTag: "h3",
+                enableAllSteps: true,
+                bodyTag: "section",
+                transitionEffect: "slide",
+                onStepChanging: function(event, currentIndex, newIndex) {
+                    // Perform validation before allowing step change
+                    const isValid = validateStep(currentIndex+1);
+                    return isValid;
+                },
+                onFinished: function(event, currentIndex) {
+                    // API call here
+                    console.log(currentIndex,'currentIndex')
+                    const isValid = validateStep(currentIndex+1);
+                    if (isValid) {
+                    // If valid, proceed with the API call
+                    window.validateSubmittal(true);
+                    // Optionally, you might want to return true explicitly here
+                    return true;
+                } else {
+                    // Return false to indicate that the form submission should not proceed
+                    return false;
+                }
+                }
+            });
+        }
+
+        // Initial steps plugin setup
+        initializeSteps();
+        //chr tm start
+        const CommissionDetails = ` <h3></h3>
+        <section>
+    <div>
+        <form>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="feesCharged">Need O&E <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                viewBox="0 0 19 18" fill="none">
+                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                    y="0" width="19" height="18">
+                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_2151_10662)">
+                                    <path
+                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                        fill="#AC5353" />
+                                </g>
+                            </svg></label>
+                        <div class="d-flex gap-2">
+                            <div class="mb-3">
+                                <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE']=='Yes'
+                                    ? 'checked' : '' }} name="needO&E">
+                                <label class="" id="chkNo" for="formCheck1">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <input {{ $submittal['needOE']=='No' ? 'checked' : '' }} type="radio" id="needOE_no"
+                                    value="No" name="needO&E">
+                                <label class="" for="formCheck1">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                        </input>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="feesCharged">Include Insights in Intro? <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                        y="0" width="19" height="18">
+                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_2151_10662)">
+                                        <path
+                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                            fill="#AC5353" />
+                                    </g>
+                                </svg></label>
+                            <div class="d-flex gap-2">
+                                <div class="mb-3">
+                                    <input type="radio" id="includeInsights_yes" value="Yes" {{
+                                        $submittal['includeInsights']=='Yes' ? 'checked' : '' }} name="includeInsights">
+                                    <label class="" id="chkNo" for="formCheck1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="mb-3">
+                                    <input id="includeInsights_no" value="No" {{ $submittal['includeInsights']=='No'
+                                        ? 'checked' : '' }} type="radio" name="includeInsights">
+                                    <label class="" for="formCheck1">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                            </input>
+                        </div>
+                    </div>
+            </div>
+
+
+                <div class="row">
+                    <div class="col-lg-6">
+                    <div class="mb-3">
+                        <label for="referralToPay">Power of Attny Needed? <svg xmlns="http://www.w3.org/2000/svg"
+                                width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                    y="0" width="19" height="18">
+                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_2151_10662)">
+                                    <path
+                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                        fill="#AC5353" />
+                                </g>
+                            </svg></label>
+                        <div class="d-flex gap-2">
+                            <div class="mb-3">
+                                <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{
+                                    $submittal['powerOfAttnyNeeded']=='Yes' ? 'checked' : '' }}
+                                    name="powerOfAttnyNeeded">
+                                <label class="" id="chkNo" for="formCheck1">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{
+                                    $submittal['powerOfAttnyNeeded']=='No' ? 'checked' : '' }}
+                                    name="powerOfAttnyNeeded">
+                                <label class="" for="formCheck1">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="feesCharged">Mailout Needed? <svg xmlns="http://www.w3.org/2000/svg" width="19"
+                                    height="18" viewBox="0 0 19 18" fill="none">
+                                    <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                        y="0" width="19" height="18">
+                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_2151_10662)">
+                                        <path
+                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                            fill="#AC5353" />
+                                    </g>
+                                </svg></label>
+                            <div class="d-flex gap-2">
+                                <div class="mb-3">
+                                    <input type="radio" id="mailoutNeeded_yes" value="Yes" {{
+                                        $submittal['mailoutNeeded']=='Yes' ? 'checked' : '' }} name="mailoutNeeded">
+                                    <label class="" id="chkNo" for="formCheck1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="radio" id="mailoutNeeded_no" value="No" {{
+                                        $submittal['mailoutNeeded']=='No' ? 'checked' : '' }} name="mailoutNeeded">
+                                    <label class="" for="formCheck1">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                            </input>
+                        </div>
+                    </div>
+                </div>
+                
+        </form>
+    </div>
+
+</section>`;
+
+        const defaultCHRSec1 = ` <h3></h3>
+      <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Fees Charged to Seller at
+                                                Closing</label>
+                                            <input type="text" name="feesCharged"
+                                                value="{{ $submittal['feesCharged'] }}" id="feesCharged"
+                                                class="form-control " placeholder="$">
+                                            </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Referral to Pay</label>
+                                            <select name="additional_charge" id="additonal_fee" class="form-select">
+                                                <option value="" selected>None</option>
+                                                <option value="Yes"
+                                                    {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
+                                                </option>
+                                                <option value="No"
+                                                    {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">Amount to CHR Gives </label>
+                                            <input type="number"name="amountToCHR" placeholder = "$"
+                                                value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
+                                                class="form-control">
+                                            </input>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralDetails">Referral Details </label>
+                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
+                                                id="referralDetails" class="form-control">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label for="titleCompany">Misc Notes - Seller, Communication, etc </label>
+                                <textarea class="form-control" id="miscNotes" rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="signInstallDate">Are you ready to continue to Property Promotion? </label>
+                                <div class="d-flex gap-2">
+                                    <div class="mb-3">
+                                        <input value="1" {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }}
+                                            type="radio" name="showPromotion">
+                                        <label class="" for="formCheck1">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input value="0"{{ $submittal['showPromotion'] == 0 ? 'checked' : '' }}
+                                            type="radio" name="showPromotion">
+                                        <label class="" for="formCheck1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>`;
+
+        const defaultCHRSec2 = `<h3>Service Providers</h3>
+          <section>
+             <div>
+                 <form>
+                     <div class="row">
+                              <div class="col-lg-6">
+                                     <div class="mb-3">
+                                         <label for="builderCommisionPercent">Schedule Sign Install<svg
+                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                 viewBox="0 0 19 18" fill="none">
+                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                     height="18">
+                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                 </mask>
+                                                 <g mask="url(#mask0_2151_10662)">
+                                                     <path
+                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                         fill="#AC5353" />
+                                                 </g>
+                                             </svg></label>
+                                         <div class="d-flex gap-2">
+                                             <div class="mb-3">
+                                                 <input type="radio" id="scheduleSignInstall_yes"
+                                                     {{ $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}
+                                                     name="scheduleSignInstall">
+                                                 <label class="" for="formCheck1">
+                                                     Yes
+                                                 </label>
+                                             </div>
+                                             <div class="mb-3">
+                                                 <input type="radio" id="scheduleSignInstall_no"
+                                                     {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
+                                                     name="scheduleSignInstall">
+                                                 <label class="" for="formCheck1">
+                                                     No
+                                                 </label>
+                                             </div>
+                                         </div>
+                                     </div>
+                         </div>
+
+                                 <div class="col-lg-6">
+                                     <div class="mb-3">
+                                         <label for="buyerOtherNotes">Draft Showing Instructions? <svg
+                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                 viewBox="0 0 19 18" fill="none">
+                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                     height="18">
+                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                 </mask>
+                                                 <g mask="url(#mask0_2151_10662)">
+                                                     <path
+                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                         fill="#AC5353" />
+                                                 </g>
+                                             </svg></label>
+                                         <div class="d-flex gap-2">
+                                             <div class="mb-3">
+                                                 <input type="radio" id="draftShowingInstructions_yes"
+                                                     {{ $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}
+                                                     name="draftShowingInstructions">
+                                                 <label class="" for="formCheck1">
+                                                     Yes
+                                                 </label>
+                                             </div>
+                                             <div class="mb-3">
+                                                 <input type="radio" id="draftShowingInstructions_no"
+                                                     {{ $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}
+                                                     name="draftShowingInstructions">
+                                                 <label class="" for="formCheck1">
+                                                     No
+                                                 </label>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-lg-6">
+                                     <div class="mb-3">
+                                         <label for="titleCompany">Title Company </label>
+                                         <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
+                                             id="titleCompany" class="form-control validate_err">
+                                         </input>
+                                     </div>
+                                 </div>
+                                 <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="amountToCHR">Concierge Listing (Optional) </label>
+                                        <div class="d-flex gap-2">
+                                            <div class="mb-3">
+                                                <input type="radio" id="conciergeListing_yes"
+                                                    {{ $submittal['conciergeListing'] == 'on' ? 'checked' : '' }}
+                                                    name="conciergeListing">
+                                                <label class="" id="chkNo" for="formCheck1">
+                                                    Yes
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="radio" id="conciergeListing_no"
+                                                    {{ $submittal['conciergeListing'] == 'off' ? 'checked' : '' }}
+                                                    name="conciergeListing">
+                                                <label class="" for="formCheck1">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                        </input>
+                                    </div>
+                                </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-lg-6">
+                                     <div class="mb-3">
+                                         <label for="signInstallDate">Sign Install Date </label>
+                                         <input type="date" value="{{ $submittal['signInstallDate'] }}"
+                                             class="form-control" id="signInstallDate">
+                                     </div>
+                                 </div>
+
+                                 <div class="col-lg-6">
+                                     <div class="mb-3">
+                                         <label for="titleCompany">Closer Name & Phone<svg
+                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                 viewBox="0 0 19 18" fill="none">
+                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                     height="18">
+                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                 </mask>
+                                                 <g mask="url(#mask0_2151_10662)">
+                                                     <path
+                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                         fill="#AC5353" />
+                                                 </g>
+                                             </svg> </label>
+                                         <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
+                                             id="closerNamePhone" class="form-control validate_err required-field">
+                                         </input>
+                                     </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Sign Install Vendor Info</label><br>
+                                            <select class="form-select" name="signInstallVendor" id="signInstallVendor">
+                                                <option value="-None-" {{ $submittal['signInstallVendor'] === '-None-' ? 'selected' : '' }}>-None-</option>
+                                                <option value="AXIUM" {{ $submittal['signInstallVendor'] === 'AXIUM' ? 'selected' : '' }}>AXIUM</option>
+                                                <option value="Rocky Mountain - Brandon" {{ $submittal['signInstallVendor'] === 'Rocky Mountain - Brandon' ? 'selected' : '' }}>Rocky Mountain - Brandon</option>
+                                                <option value="Others" {{ $submittal['signInstallVendor'] === 'Others' ? 'selected' : '' }}>Others</option>
+                                            </select>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="feesCharged">Sign Install Vendor (if Other)</label>
+                                            <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                                name="signInstallVendorOther" id="signInstallVendorOther"
+                                                class="form-control">
+                                            </input>
+                                        </div>
+                                    </div>
+                                 </div>
+                             </div>
+                         </form>
+                     </div>
+
+  </section>`;
+
+        const defaultCHRSec4 = ` <h3>Select MLS</h3>
     <section>
                 <div>
                     <form>
@@ -1233,8 +1339,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         </div>
 
  </section>`;
-                      //chr tm End
-          
+        //chr tm End
+
         //confirm details
         const confirmDetail = ` <h3>Confirm Detail</h3>
                     <section>
@@ -1260,8 +1366,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     <label for="add_email" class="common-label">Matterport</label>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" <?php if ($submittal['matterport']) {
-                                            echo 'checked';
-                                        } ?>  id="matterport">
+                            echo 'checked';
+                        } ?>  id="matterport">
                     </div>
                 </div>
             </div>
@@ -1270,8 +1376,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     <label for="add_email" class="common-label">Floor Plans</label>
                     <div class="form-check mb-3">
                         <input class="form-check-input" <?php if ($submittal['floorPlans']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="floorPlans">
+                            echo 'checked';
+                        } ?> type="checkbox" id="floorPlans">
 
                     </div>
                 </div>
@@ -1284,8 +1390,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">3D Zillow Tour</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input" <?php if ($submittal['threeDZillowTour']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="threeDZillowTour">
+                                echo 'checked';
+                            } ?> type="checkbox" id="threeDZillowTour">
                         </div>
                     </div>
                 </div>
@@ -1294,8 +1400,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">Onsite Video</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input" <?php if ($submittal['onsiteVideo']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="onsiteVideo">
+                                echo 'checked';
+                            } ?> type="checkbox" id="onsiteVideo">
 
                         </div>
                     </div>
@@ -1309,8 +1415,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">Email Blast to Sphere</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input" <?php if ($submittal['emailBlastSphere']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="emailBlastSphere">
+                                echo 'checked';
+                            } ?> type="checkbox" id="emailBlastSphere">
                         </div>
                     </div>
                 </div>
@@ -1319,8 +1425,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">Email Blast to Reverse Prospect List</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input" <?php if ($submittal['emailBlastReverseProspect']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="emailBlastReverseProspect">
+                                echo 'checked';
+                            } ?> type="checkbox" id="emailBlastReverseProspect">
 
                         </div>
                     </div>
@@ -1333,8 +1439,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">Social Media Ads</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input" <?php if ($submittal['socialMediaAds']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="socialMediaAds">
+                                echo 'checked';
+                            } ?> type="checkbox" id="socialMediaAds">
                         </div>
                     </div>
                 </div>
@@ -1343,8 +1449,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         <label for="add_email" class="common-label">Social Media Images</label>
                         <div class="form-check mb-3">
                             <input class="form-check-input"  <?php if ($submittal['socialMediaImages']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="socialMediaImages">
+                                echo 'checked';
+                            } ?> type="checkbox" id="socialMediaImages">
 
                         </div>
                     </div>
@@ -1355,8 +1461,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     <label for="add_email" class="common-label">Price Improvement Package</label>
                     <div class="form-check mb-3">
                         <input class="form-check-input"  <?php if ($submittal['priceImprovementPackage']) {
-                                            echo 'checked';
-                                        } ?> type="checkbox" id="priceImprovementPackage">
+                            echo 'checked';
+                        } ?> type="checkbox" id="priceImprovementPackage">
 
                     </div>
                 </div>
@@ -1368,8 +1474,8 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                             <label for="add_email" class="common-label">Property Website</label>
                             <div class="form-check mb-3">
                                 <input <?php if ($submittal['propertyWebsite']) {
-                                            echo 'checked';
-                                        } ?>  type="checkbox" id="propertyWebsite">
+                                    echo 'checked';
+                                } ?>  type="checkbox" id="propertyWebsite">
                             </div>
                         </div>
                     </div>
@@ -1403,7 +1509,7 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     </div>
             `;
 
-        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"              class="common-label">Brochure Design
+        const innrtHtml4 = `<div class="label-div-mb property"><label for="add_email"                        class="common-label">Brochure Design
                                 
                             </label>
                             <div class="nontm-select-div">
@@ -1558,15 +1664,129 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                         </div>
                         `;
 
-        //properties end
+        const HoaInfo = ` <h3></h3>
+                    <section>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Title to Order HOA docs?  <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3"> 
+                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                </div>
+                                                 <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <label class="" for="formCheck1">
+                                                        TBD
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="referralToPay">Has HOA? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="builderCommisionPercent">HOA Name</label>
+                                            <input type="text" name="additional_charge" id="hoaName"
+                                                value="{{ $submittal['hoaName'] }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="buyerOtherNotes">HOA Phone</label>
+                                            <input type="text" name="additional_charge"
+                                                value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="amountToCHR">HOA Website </label>
+                                            <input type="text" value="{{ $submittal['hoaWebsite'] }}"
+                                                class="form-control" placeholder="" id="hoaWebsite">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </section>`;
+
+     const resubmit = ` <h3></h3>
+                    <section>
+                       <h1>resubmit</h1>
+
+                    </section>`;
+                        //properties end
         // Event listeners and other logic
         let initialCHrusingValue = document.querySelector('input[name="usingCHR"]:checked')?.value;
         setTimeout(() => {
-            let initialshowPromotion = document.querySelector('input[name="showPromotion"]:checked')?.value;
-            showAndDisableValues(initialshowPromotion,'showPropinitial');
+            let initialshowPromotion = document.querySelector('input[name="showPromotion"]:checked')
+                ?.value;
+            showAndDisableValues(initialshowPromotion, 'showPropinitial');
         }, 500);
         showAndDisableValues(initialCHrusingValue);
-        
+
 
         document.addEventListener('change', event => {
             if (event.target.matches('input[name="usingCHR"]')) {
@@ -1580,14 +1800,14 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
             if (event.target.matches('input[name="showPromotion"]')) {
                 const radioButton = event.target;
                 const value = radioButton.value;
-                showAndDisableValues(value,'showProp');
+                showAndDisableValues(value, 'showProp');
             }
         });
- 
-        
-     
-        function showAndDisableValues(value,show) {
-             if(value==1 && show ==="showProp"){
+
+
+
+        function showAndDisableValues(value, show) {
+            if (value == 1 && show === "showProp") {
                 addStepChr('Commission Details', innrtHtml);
                 addStepChr('Service Providers', innrtHtml2);
                 addStepChr('Commission Details', innrtHtml3);
@@ -1596,48 +1816,60 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 addStepChr('Service Providers', innrtHtml6);
                 addStepChr('Commission Details', innrtHtml7);
                 addStepChr('Service Providers', innrtHtml8);
-             }else if(value==0 && show ==="showProp"){
-                   removeStep(8);
-                   removeStep(9);
-                   removeStep(10);
-                   removeStep(11);
-                   removeStep(12);
-                   removeStep(13);
-                   removeStep(14);
-                   for (let i = 8; i <=13; i++) {
+                removeStep(8);
+                addStepChr('resubmit', resubmit,16);
+            } else if (value == 0 && show === "showProp") {
+                removeStep(8);
+                removeStep(9);
+                removeStep(10);
+                removeStep(11);
+                removeStep(12);
+                removeStep(13);
+                removeStep(14);
+                for (let i = 8; i <= 13; i++) {
                     removeStep(i);
-                    }
-                    for (let i = 8; i <=10; i++) {
+                }
+                for (let i = 8; i <= 10; i++) {
                     removeStep(i);
-                    }
-                    for (let i = 8; i <=9; i++) {
+                }
+                for (let i = 8; i <= 9; i++) {
                     removeStep(i);
-                    }
-             }
+                }
+                addStepChr('resubmit', resubmit,8);
+            }
             if (value === "Yes" && value !== undefined) {
-                if($('.property').length===8){
-                    console.log( $('.property').length,'lengththth')
-                    for (let i = 3; i <=14; i++) {
-                    removeStep(i);
+                console.log("test it out")
+                if ($('.property').length === 8) {
+                    console.log($('.property').length, 'lengththth')
+                    for (let i = 3; i <= 14; i++) {
+                        removeStep(i);
                     }
-                    for (let i = 3; i <=7; i++) {
-                    removeStep(i);
+                    for (let i = 3; i <= 7; i++) {
+                        removeStep(i);
                     }
-                    for (let i = 3; i <=4; i++) {
-                    removeStep(i);
+                    for (let i = 3; i <= 4; i++) {
+                        removeStep(i);
                     }
-                    for (let i = 3; i <=3; i++) {
-                    removeStep(i);
+                    for (let i = 3; i <= 3; i++) {
+                        removeStep(i);
                     }
-                    addStepChr('Commission Details', defaultCHRSec1);
-                    addStepChr('Commission Details', defaultCHRSec2);
-                    addStepChr('Service Providers', defaultCHRSec3);
-                    addStepChr('Select MLS', defaultCHRSec4);
+                    addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
+                    addStepChr('Service Provider', defaultCHRSec2, 4);
+                    addStepChr('Select Mls', defaultCHRSec4, 5);
+                    addStepChr('Commission Detail', defaultCHRSec1, 6);
+                    addStepChr('Hoa Information', HoaInfo, 7);
+                    addStepChr('resubmit', resubmit,8);
+                    ValidateHoa();
                     
-                    }
-                addStepChr('Commission Details', CommissionDetails,3);
-                addStepChr('Service Providers', serviceProvider,4);
-            
+                    return;
+
+                }
+                addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
+                addStepChr('resubmit', resubmit,8);
+                
+                // addStepChr('Service Providers', serviceProvider,4);
+                ValidateHoa();
+
             } else if (value === "No") {
                 for (let i = 6; i >= 3; i--) {
                     removeStep(i);
@@ -1653,8 +1885,9 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                 addStepChr('Print Requests', innrtHtml6);
                 addStepChr('Print Requests', innrtHtml7);
                 addStepChr('Notes', innrtHtml8);
+                addStepChr('resubmit', resubmit);
             } else {
-                if(show !=="showProp" && show !=="showPropinitial"){ 
+                if (show !== "showProp" && show !== "showPropinitial") {
                     removeStep(7)
                 }
             }
@@ -1663,13 +1896,12 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
         function validateStep(stepIndex) {
             let isValid = true;
             const $currentSection = $stepsContainer.find(`section:eq(${stepIndex})`);
-
             // Check required fields in this section
             $currentSection.find('.required-field').each(function() {
-                if($(this).val()==="-None-"){
+                if ($(this).val() === "-None-") {
                     isValid = false;
-                    $(this).addClass('error'); 
-                }else {
+                    $(this).addClass('error');
+                } else {
                     $(this).removeClass('error'); // Remove error class if valid
                 }
                 if (!$(this).val()) {
@@ -1683,7 +1915,6 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
             // Check radio buttons
             $currentSection.find('input[type="radio"]').each(function() {
                 const name = $(this).attr('name');
-
                 if (name !== "conciergeListing") {
                     const $radioGroup = $currentSection.find(`input[name="${name}"]`);
                     if ($radioGroup.filter(':checked').length === 0) {
@@ -1704,6 +1935,12 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
         }
 
         function addStepChr(title, content, index = null) {
+            // Check if index is provided and is a number
+            if (index !== null && !Number.isInteger(index)) {
+                console.error('Index must be an integer or null.');
+                return;
+            }
+
             if (index === null) {
                 // Add at the end if no index is provided
                 $stepsContainer.steps('add', {
@@ -1713,30 +1950,41 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     content: content
                 });
             } else {
-                console.log(index,'yes here inde')
                 // Insert at the specified index
-                $stepsContainer.steps('add', {
-                    index: index,
+                $stepsContainer.steps('insert', index, {
                     headerTag: "h3",
                     bodyTag: "section",
                     title: title,
+                    index: index,
                     content: content
                 });
-          }
-}
+            }
+        }
 
 
         function removeStep(index) {
-            console.log(index,'index is hereee')
+            console.log(index, 'index is hereee')
             if (!$stepsContainer || !$stepsContainer.length) {
                 console.error('$stepsContainer is not initialized.');
                 return;
             }
-          
-                $stepsContainer.steps('remove', index);
-          
-            
-        }
-    })
 
+            $stepsContainer.steps('remove', index);
+
+
+        }
+
+        var dropdown = document.getElementById('signInstallVendor');
+        var additionalField = document.getElementById('signInstallVendorOther');
+
+        dropdown.addEventListener('change', function() {
+            console.log("hdsfkshdkf")
+            if (dropdown.value === 'Others') {
+                additionalField.classList.add('required-field', 'validate');
+            } else {
+                additionalField.classList.remove('required-field', 'validate');
+            }
+        });
+
+    })
 </script>
