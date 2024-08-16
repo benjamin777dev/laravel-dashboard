@@ -1855,7 +1855,7 @@
                     }
                     addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
                     addStepChr('Service Provider', defaultCHRSec2, 4);
-                    addStepChr('Select Mls', defaultCHRSec4, 5);
+                    addStepChr('Select MLS', defaultCHRSec4, 5);
                     addStepChr('Commission Detail', defaultCHRSec1, 6);
                     addStepChr('Hoa Information', HoaInfo, 7);
                     addStepChr('resubmit', resubmit,8);
