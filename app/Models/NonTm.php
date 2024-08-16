@@ -33,7 +33,8 @@ class NonTm extends Model
         'homeWarrentyDescription',
         'additionalFeesAmount',
         'additionalFeesDescription',
-        'resubmit_text'
+        'resubmit_text',
+        'resubmitting_why_list_all_changes'
     ];
 
     public static function getZohoContactInfo()

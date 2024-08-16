@@ -18,18 +18,18 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label>Transaction Name <svg xmlns="http://www.w3.org/2000/svg" width="19"
-                                                height="18" viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                    height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                            height="18" viewBox="0 0 19 18" fill="none">
+                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                height="18">
+                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2151_10662)">
+                                                <path
+                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                    fill="#AC5353" />
+                                            </g>
+                                        </svg></label>
                                         <select name="related_transaction" id="transactionName"
                                             class="form-select validate_err required-field" disabled>
                                             @foreach ($deals as $currDeal)
@@ -327,8 +327,10 @@
                         </div>
                     </section>
 
+                  
+
                     <h3>Commission Details</h3>
-             <section>
+                    <section>
                         <div>
                             <form>
                                 <div class="row">
@@ -380,234 +382,278 @@
                                 </div>
                             </form>
                         </div>
+                    </section>
 
-     </section>
-     <h3>Service Providers</h3>
-     <section>
-             <div>
-                 <form>
-                     <div class="row">
-                              <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="builderCommisionPercent">Schedule Sign Install<svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg></label>
-                                         <div class="d-flex gap-2">
-                                             <div class="mb-3">
-                                                 <input type="radio" id="scheduleSignInstall_yes"
-                                                     {{ $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}
-                                                     name="scheduleSignInstall">
-                                                 <label class="" for="formCheck1">
-                                                     Yes
-                                                 </label>
-                                             </div>
-                                             <div class="mb-3">
-                                                 <input type="radio" id="scheduleSignInstall_no"
-                                                     {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
-                                                     name="scheduleSignInstall">
-                                                 <label class="" for="formCheck1">
-                                                     No
-                                                 </label>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </div>
+                    <h3>Service Providers</h3>
+                    <section>
+                            <div>
+                                <form>
+                                    <div class="row">
+                                            <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label for="builderCommisionPercent">Schedule Sign Install<svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                                viewBox="0 0 19 18" fill="none">
+                                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                    height="18">
+                                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                                </mask>
+                                                                <g mask="url(#mask0_2151_10662)">
+                                                                    <path
+                                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                        fill="#AC5353" />
+                                                                </g>
+                                                            </svg></label>
+                                                        <div class="d-flex gap-2">
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="scheduleSignInstall_yes"
+                                                                    {{ $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}
+                                                                    name="scheduleSignInstall">
+                                                                <label class="" for="formCheck1">
+                                                                    Yes
+                                                                </label>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="scheduleSignInstall_no"
+                                                                    {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
+                                                                    name="scheduleSignInstall">
+                                                                <label class="" for="formCheck1">
+                                                                    No
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="buyerOtherNotes">Draft Showing Instructions? <svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg></label>
-                                         <div class="d-flex gap-2">
-                                             <div class="mb-3">
-                                                 <input type="radio" id="draftShowingInstructions_yes"
-                                                     {{ $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}
-                                                     name="draftShowingInstructions">
-                                                 <label class="" for="formCheck1">
-                                                     Yes
-                                                 </label>
-                                             </div>
-                                             <div class="mb-3">
-                                                 <input type="radio" id="draftShowingInstructions_no"
-                                                     {{ $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}
-                                                     name="draftShowingInstructions">
-                                                 <label class="" for="formCheck1">
-                                                     No
-                                                 </label>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="titleCompany">Title Company </label>
-                                         <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
-                                             id="titleCompany" class="form-control validate_err">
-                                         </input>
-                                     </div>
-                                 </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="signInstallDate">Sign Install Date </label>
-                                         <input type="date" value="{{ $submittal['signInstallDate'] }}"
-                                             class="form-control" id="signInstallDate">
-                                     </div>
-                                 </div>
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label for="buyerOtherNotes">Draft Showing Instructions? <svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                                viewBox="0 0 19 18" fill="none">
+                                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                    height="18">
+                                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                                </mask>
+                                                                <g mask="url(#mask0_2151_10662)">
+                                                                    <path
+                                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                        fill="#AC5353" />
+                                                                </g>
+                                                            </svg></label>
+                                                        <div class="d-flex gap-2">
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="draftShowingInstructions_yes"
+                                                                    {{ $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}
+                                                                    name="draftShowingInstructions">
+                                                                <label class="" for="formCheck1">
+                                                                    Yes
+                                                                </label>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="draftShowingInstructions_no"
+                                                                    {{ $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}
+                                                                    name="draftShowingInstructions">
+                                                                <label class="" for="formCheck1">
+                                                                    No
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label for="titleCompany">Title Company </label>
+                                                        <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
+                                                            id="titleCompany" class="form-control validate_err">
+                                                        </input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label for="signInstallDate">Sign Install Date </label>
+                                                        <input type="date" value="{{ $submittal['signInstallDate'] }}"
+                                                            class="form-control" id="signInstallDate">
+                                                    </div>
+                                                </div>
 
-                                 <div class="col-lg-6">
-                                     <div class="mb-3">
-                                         <label for="titleCompany">Closer Name & Phone<svg
-                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                 viewBox="0 0 19 18" fill="none">
-                                                 <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                     maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                     height="18">
-                                                     <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                 </mask>
-                                                 <g mask="url(#mask0_2151_10662)">
-                                                     <path
-                                                         d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                         fill="#AC5353" />
-                                                 </g>
-                                             </svg> </label>
-                                         <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
-                                             id="closerNamePhone" class="form-control validate_err required-field">
-                                         </input>
-                                     </div>
-                                 </div>
-                             </div>
-                         </form>
-                     </div>
-
-  </section>
-
-  <h3>Service Providers</h3>
-       <section>
-              <div>
-                <form>
-                     <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor Info</label>
-                                        <input value="{{ $submittal['signInstallVendor'] }}" name="signInstallVendor"
-                                            id="signInstallVendor" class="form-control">
-                                        </input>
+                                                <div class="col-lg-6">
+                                                    <div class="mb-3">
+                                                        <label for="titleCompany">Closer Name & Phone<svg
+                                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                                viewBox="0 0 19 18" fill="none">
+                                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                    height="18">
+                                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                                </mask>
+                                                                <g mask="url(#mask0_2151_10662)">
+                                                                    <path
+                                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                        fill="#AC5353" />
+                                                                </g>
+                                                            </svg> </label>
+                                                        <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
+                                                            id="closerNamePhone" class="form-control validate_err required-field">
+                                                        </input>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <label for="feesCharged">Sign Install Vendor (if Other)</label>
-                                        <input value="{{ $submittal['signInstallVendorOther'] }}"
-                                            name="signInstallVendorOther" id="signInstallVendorOther"
-                                            class="form-control">
-                                        </input>
+
+                    </section>
+
+                    <h3>Service Providers</h3>
+                        <section>
+                                <div>
+                                    <form>
+                                        <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="feesCharged">Sign Install Vendor Info</label>
+                                                            <input value="{{ $submittal['signInstallVendor'] }}" name="signInstallVendor"
+                                                                id="signInstallVendor" class="form-control">
+                                                            </input>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="feesCharged">Sign Install Vendor (if Other)</label>
+                                                            <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                                                name="signInstallVendorOther" id="signInstallVendorOther"
+                                                                class="form-control">
+                                                            </input>
+                                                        </div>
+                                                    </div>
+
+
+                                                </form>
+                                            </div>
+
+                        </section>
+
+                    <h3>Select MLS</h3>
+                    <section>
+                                <div>
+                                    <form>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <div class="row mb-4">
+                                                                <div class="col-lg-4 d-flex gap-2">
+                                                                    <div>REColorado</div>
+                                                                    <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
+                                                                        echo 'checked';
+                                                                    } ?>>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 d-flex gap-2">
+                                                                    <div>Navica</div>
+                                                                    <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
+                                                                        echo 'checked';
+                                                                    } ?>>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 d-flex gap-2">
+                                                                    <div>PPAR</div>
+                                                                    <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
+                                                                        echo 'checked';
+                                                                    } ?>>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <div class="row mb-4">
+                                                                <div class="col-lg-4 d-flex gap-2">
+                                                                    <div>Grand County</div>
+                                                                    <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
+                                                                        echo 'checked';
+                                                                    } ?>>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-4 d-flex gap-2">
+                                                                    <div>IRES</div>
+                                                                    <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
+                                                                        echo 'checked';
+                                                                    } ?>>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="amountToCHR">MLS public remarks </label>
+                                                            <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="titleCompany">MLS private remarks</label>
+                                                            <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                    </section>
+                      <!-- Resubmit -->
+                    @if($resubmit==true||$resubmit==1||$resubmit=='1'||$resubmit=='true')
+                        <h3>Resubmittal Information</h3>
+                        <section>
+                            <div>
+                                <form>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="resubmitting_to_which_team">Resubmitting to Which Team?</label>
+                                                <select name="resubmitting_to_which_team" id="resubmitting_to_which_team" class="form-select">
+                                                    <option value="" selected>None</option>
+                                                    <option value="TM"
+                                                        {{ $submittal['resubmitting_to_which_team'] == 'TM' ? 'selected' : '' }}>TM
+                                                    </option>
+                                                    <option value="Marketing"
+                                                        {{ $submittal['resubmitting_to_which_team'] == 'Marketing' ? 'selected' : '' }}>Marketing
+                                                    </option>
+                                                    <option value="BOTH"
+                                                        {{ $submittal['resubmitting_to_which_team'] == 'BOTH' ? 'selected' : '' }}>BOTH
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="resubmitting_why_list_all_changes">Resubmitting? Why? --LIST ALL CHANGES--</label>
+                                                <textarea class="form-control" id="resubmitting_why_list_all_changes" aria-label="With textarea">{{ $submittal['resubmitting_why_list_all_changes'] }}</textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 d-flex gap-2">
+                                            <div>Re-Submitted</div>
+                                            <div ><input type="checkbox" id="resubmit_text" <?php if ($submittal['resubmit_text']) {
+                                                echo 'checked';
+                                            } ?> disabled>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-
-
-                            </form>
-                        </div>
-
-     </section>
-
-  <h3>Select MLS</h3>
-  <section>
-              <div>
-                  <form>
-                              <div class="row">
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <div class="row mb-4">
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>REColorado</div>
-                                                  <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>Navica</div>
-                                                  <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>PPAR</div>
-                                                  <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <div class="row mb-4">
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>Grand County</div>
-                                                  <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                              <div class="col-lg-4 d-flex gap-2">
-                                                  <div>IRES</div>
-                                                  <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
-                                                      echo 'checked';
-                                                  } ?>>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="row">
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <label for="amountToCHR">MLS public remarks </label>
-                                          <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
-                                      </div>
-                                  </div>
-
-                                  <div class="col-lg-6">
-                                      <div class="mb-3">
-                                          <label for="titleCompany">MLS private remarks</label>
-                                          <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
-                                      </div>
-                                  </div>
-                              </div>
-                          </form>
-                      </div>
-
-</section>
+                                </form>
+                            </div>
+                        </section>
+                    @endif
                 </div>
 
             </div>
@@ -1704,6 +1750,12 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
         }
 
         function addStepChr(title, content, index = null) {
+            // Check if index is provided and is a number
+            if (index !== null && !Number.isInteger(index)) {
+                console.error('Index must be an integer or null.');
+                return;
+            }
+
             if (index === null) {
                 // Add at the end if no index is provided
                 $stepsContainer.steps('add', {
@@ -1713,16 +1765,15 @@ const defaultCHRSec1 = ` <h3>Commission Details</h3>
                     content: content
                 });
             } else {
-                console.log(index,'yes here inde')
                 // Insert at the specified index
-                $stepsContainer.steps('add', {
-                    index: index,
+                $stepsContainer.steps('insert', index, {
                     headerTag: "h3",
                     bodyTag: "section",
                     title: title,
+                    index:index,
                     content: content
                 });
-          }
+            }
 }
 
 

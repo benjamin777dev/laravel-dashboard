@@ -2580,6 +2580,9 @@ class DatabaseService
         $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
         $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
         $submittal->showPromotion = isset($submittalData["showPromotion"]) ? $submittalData["showPromotion"] : false;
+        $submittal->resubmitting_to_which_team = isset($submittalData["Resubmitting_to_Which_Team"]) ? $submittalData["Resubmitting_to_Which_Team"] : null;
+        $submittal->resubmitting_why_list_all_changes = isset($submittalData["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $submittalData["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
+        $submittal->resubmit_text = isset($submittalData["resubmit_text"]) ? $submittalData["resubmit_text"] : null;
         if ($isNew) {
            $submittal->isSubmittalComplete = $isNew;
         }
