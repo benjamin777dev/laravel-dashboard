@@ -29,7 +29,7 @@
                                     <li>
                                         <a href="{{ route('teamindividual.information') }}" class="waves-effect">
                                             <i class="bx bx-line-chart"></i>
-                                            <span key="t-team-individual">Team/Individual Info</span>
+                                            <span key="t-team-individual">Pipeline Info</span>
                                         </a>
                                     </li>
                                     <li>

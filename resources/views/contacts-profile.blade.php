@@ -311,9 +311,7 @@
             processData: false,
             success: function(response) {
                 if (response.isSuccess) {
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                    alert(response.Message);
                 } else {
                     alert(response.Message);
                 }
@@ -325,8 +323,9 @@
                 $('#residual_cap').next('.invalid-feedback').text(response.responseJSON.errors.residual_cap);
             }
         });
+    }); // This closes the update-agent-form handler
 
-        // Handle change password form submission
+    // Handle change password form submission
     $('#change-password-form').on('submit', function(event) {
         event.preventDefault();
         let formData = new FormData(this);
@@ -356,4 +355,5 @@
         });
     });
 </script>
+
 @endsection
