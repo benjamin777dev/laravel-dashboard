@@ -19,7 +19,7 @@
                 @endif
             </h4>
         </div>
-        <div class = "actions d-flex">
+        {{-- <div class = "actions d-flex">
             <a href="{{ url('/pipeline-view/' . (isset($submittal['dealData']['id']) ? $submittal['dealData']['id'] : '')) }}">
                 <div class="input-group-text text-white justify-content-center ppipeBtn">
                     <i class="fas fa-times"></i>
@@ -32,7 +32,7 @@
                     Save
                 </div>
             </a>
-        </div>
+        </div> --}}
         
     </div>
 
