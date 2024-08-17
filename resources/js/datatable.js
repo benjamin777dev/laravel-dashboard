@@ -749,7 +749,6 @@ window.getStageData = function() {
     });
 
 }
-
 window.scrollDown = function(){
     const btnBadDates = document.getElementById('btnBadDates');
     if (btnBadDates) {

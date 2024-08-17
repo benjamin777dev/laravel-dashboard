@@ -163,6 +163,7 @@ class SubmittalController extends Controller
         $submittalType = request()->route('type');
         $submittalId = request()->route('submittalId');
         $listingSubmittaltype = request()->query('formType');
+        $resubmit = request()->query('resubmit');
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
@@ -170,7 +171,7 @@ class SubmittalController extends Controller
         $stickyDots = config('variables.stickyDots');
         $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','broucherLines','stickyDots','featuresCard'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','broucherLines','stickyDots','featuresCard','resubmit'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)

@@ -3,18 +3,6 @@
 @section('title', 'zPortal | NonTm')
 
 @section('content')
-<div class="nontm-header">
-    <div class="non-title-div">
-        <p>NON-TM CHECK REQUEST WIZARD</p>
-    </div>
-    <div class="non-btns">
-       
-        <div class="nontm-save-btn" onclick="updateNonTm({{ $dealData }},true)" >
-            <button>Update</button>
-
-        </div>
-    </div>
-</div>
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -318,21 +306,28 @@
                             </div>
                         </form>
                     </section>
-                    <!-- Confirm Details -->
-                    <h3>Confirm Detail</h3>
+                   
+                    <h3>Resubmittal Information</h3>
                     <section>
-                        <div class="row justify-content-center">
-                            <div class="col-lg-6">
-                                <div class="text-center">
-                                    <div class="mb-4">
-                                        <i class="mdi mdi-check-circle-outline text-success display-4"></i>
+                        <div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="resubmitting_why_list_all_changes">Resubmitting? Why? --LIST ALL CHANGES--</label>
+                                            <textarea class="form-control" id="resubmitting_why_list_all_changes" aria-label="With textarea">{{ $dealData['resubmitting_why_list_all_changes'] }}</textarea>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h5>Confirm Detail</h5>
-                                        <p class="text-muted"></p>
+
+                                    <div class="col-lg-4 d-flex gap-2">
+                                        <div>Re-Submitted</div>
+                                        <div ><input type="checkbox" id="resubmit_text" <?php if ($dealData['resubmit_text']) {
+                                            echo 'checked';
+                                        } ?> disabled>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </section>
                 </div>
@@ -353,12 +348,17 @@
     <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
 
 <script type="text/javascript">
+    var dealData = @json($dealData);
     window.onload = function() {
         $(function () {
                 $("#basic-example-nontm-view").steps({
                     headerTag: "h3",
                     bodyTag: "section",
-                    transitionEffect: "slide"
+                    transitionEffect: "slide",
+                    onFinished: function(event, currentIndex) {
+                        // API call here
+                        window.updateNonTm(dealData,true);
+                    }
                     });
                 });
 
@@ -666,6 +666,7 @@
         // let additonal_fee = document.getElementById("additonal_fee");
         let other_comm_notes = document.getElementById("other_comm_notes");
         let agent_comments = document.getElementById("agent_comments");
+        let resubmitting_why_list_all_changes = document.getElementById("resubmitting_why_list_all_changes");
         let referralFeeAmount = document.getElementById("referralFeeAmount");
         let referralFeeBrokerage = document.getElementById("referralFeeBrokerage");
         let referralAgreement = document.getElementById("referralAgreement");
@@ -701,6 +702,8 @@
                 "CHR_Gives_Amount_to_Give":amount_chr? amount_chr.value.trim():undefined,
                 "Other_Commission_Notes":other_comm_notes.value? other_comm_notes.value.trim():undefined,
                 "Agent_Comments_Remarks_Instructions":agent_comments.value ? agent_comments.value.trim():undefined,
+                "Resubmitting_Why_LIST_ALL_CHANGES":resubmitting_why_list_all_changes.value ? resubmitting_why_list_all_changes.value.trim():undefined,
+                "resubmit_text":true,
                 "Related_Transaction":selectedValue ? {
                     "id": selectedValue.trim(),
                     "name": selectedText.trim(),

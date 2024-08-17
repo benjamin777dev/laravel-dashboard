@@ -149,6 +149,8 @@ class NonTmController extends Controller
             'additionalFeesDescription' => isset($jsonData['data'][0]['Additional_Fees_Description']) ? $jsonData['data'][0]['Additional_Fees_Description'] : null,
             'isNonTmCompleted' => ($status == true) ? true : false,
             "dealId" => isset($jsonData['data'][0]['Related_Transaction']['id']) ? $jsonData['data'][0]['Related_Transaction']['id'] : null,
+            "resubmitting_why_list_all_changes" => isset($jsonData['data'][0]['Resubmitting_Why_LIST_ALL_CHANGES']) ? $jsonData['data'][0]['Resubmitting_Why_LIST_ALL_CHANGES'] : null,
+            "resubmit_text" => isset($jsonData['data'][0]['resubmit_text']) ? $jsonData['data'][0]['resubmit_text'] : null,
         ];
         if($nonTm->zoho_nontm_id === null){
             $updateNonTmData['zoho_nontm_id'] = $zohoNonTm['data']['0']['details']['id'];

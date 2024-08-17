@@ -54,7 +54,7 @@
 
     function getListingForm(){
         $.ajax({
-            url: "/listing/form/"+submittalId+`?formType=${showOtherListingForm}`,
+            url: "/listing/form/"+submittalId+`?formType=${showOtherListingForm}&resubmit=true`,
             type: 'GET',
             success: function (response) {
                 $(".listingForm").html(response)
@@ -336,6 +336,11 @@
             var deliveryAddress = $('#deliveryAddress').val();
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
+            var resubmitting_to_which_team = $('#resubmitting_to_which_team').val();
+            var resubmitting_why_list_all_changes = $('#resubmitting_why_list_all_changes').val();
+            var resubmit_text = true;
+
+            
             // Select all div elements
             const listingSubmittalsContainer = document.getElementById('listingSubmittal');
             if (listingSubmittalsContainer) {
@@ -472,7 +477,10 @@
                         "Sign_Install_Vendor_Info": signInstallVendor,
                         "Delivery_Only_Shipping_Address_Name": deliveryAddress,
                         "Fees_Charged_to_Seller_at_Closing": feesCharged,
-                        "showPromotion":showPromotion
+                        "showPromotion":showPromotion,
+                        'Resubmitting_Why_LIST_ALL_CHANGES' : resubmitting_why_list_all_changes,
+                        'Resubmitting_to_Which_Team' : resubmitting_to_which_team,
+                        'resubmit_text':resubmit_text
                     }],
                     "_token": '{{ csrf_token() }}'
                 }
