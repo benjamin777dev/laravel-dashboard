@@ -45,7 +45,7 @@
             <!-- Profile Info -->
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingProfileInfo">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfileInfo" aria-expanded="true" aria-controls="collapseProfileInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfileInfo" aria-expanded="false" aria-controls="collapseProfileInfo">
                         Profile Information
                     </button>
                 </h2>
