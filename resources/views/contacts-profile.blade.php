@@ -1,6 +1,26 @@
 @extends('layouts.master')
 
 @section('title') @lang('Profile') @endsection
+<style>
+    /* Non-active accordion items */
+    .accordion-button.collapsed {
+        background-color: #2222;
+        color: #ffffff;
+    }
+
+    /* Active accordion item */
+    .accordion-button:not(.collapsed) {
+        background-color: #74788d; /* Replace with your dark gray color */
+        color: #ffffff;
+    }
+
+    /* Optional: Hover state for non-active items */
+    .accordion-button.collapsed:hover {
+        background-color: #1c1c1c;
+        color: #ffffff;
+    }
+</style>
+
 
 @section('content')
 @component('components.breadcrumb')
@@ -9,63 +29,95 @@
 @endcomponent
 
 <div class="row">
-    <div class="col-xl-12">
-        <ul class="nav nav-tabs" id="profileTab" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="profile-info-tab" data-bs-toggle="tab" href="#profile-info" role="tab" aria-controls="profile-info" aria-selected="true">Profile Information</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="agent-info-tab" data-bs-toggle="tab" href="#agent-info" role="tab" aria-controls="agent-info" aria-selected="false">Agent Information</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="marketing-info-tab" data-bs-toggle="tab" href="#marketing-info" role="tab" aria-controls="marketing-info" aria-selected="false">Marketing Information</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="listing-defaults-tab" data-bs-toggle="tab" href="#listing-defaults" role="tab" aria-controls="listing-defaults" aria-selected="false">Listing Submittal Defaults</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="buyer-defaults-tab" data-bs-toggle="tab" href="#buyer-defaults" role="tab" aria-controls="buyer-defaults" aria-selected="false">Buyer Submittal Defaults</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="change-password-tab" data-bs-toggle="tab" href="#change-password" role="tab" aria-controls="change-password" aria-selected="false">Change Password</a>
-            </li>
-        </ul>
-
-        <div class="tab-content mt-3" id="profileTabContent">
-            <!-- Profile Information Tab -->
-            <div class="tab-pane fade show active" id="profile-info" role="tabpanel" aria-labelledby="profile-info-tab">
-                <!-- Profile Info Form Content -->
-                @include('profile.partials.profile-info')
+    <div class="col-lg-3 col-md-4">
+        <!-- User Info Panel -->
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>Welcome, {{ Auth::user()->name }}</h4>
+                <p class="text-muted">{{ Auth::user()->email }}</p>
             </div>
+        </div>
 
-            <!-- Agent Information Tab -->
-            <div class="tab-pane fade" id="agent-info" role="tabpanel" aria-labelledby="agent-info-tab">
-                <!-- Agent Info Form Content -->
-                @include('profile.partials.agent-info')
-            </div>
-
-            <!-- Marketing Information Tab -->
-            <div class="tab-pane fade" id="marketing-info" role="tabpanel" aria-labelledby="marketing-info-tab">
-                <!-- Marketing Info Form Content -->
-                @include('profile.partials.marketing-info')
-            </div>
-
-            <!-- Listing Submittal Defaults Tab -->
-            <div class="tab-pane fade" id="listing-defaults" role="tabpanel" aria-labelledby="listing-defaults-tab">
-                <!-- Listing Submittal Defaults Form Content -->
-                @include('profile.partials.listing-defaults')
-            </div>
-
-            <!-- Buyer Submittal Defaults Tab -->
-            <div class="tab-pane fade" id="buyer-defaults" role="tabpanel" aria-labelledby="buyer-defaults-tab">
-                <!-- Buyer Submittal Defaults Form Content -->
-                @include('profile.partials.buyer-defaults')
-            </div>
-
-            <!-- Change Password Tab -->
-            <div class="tab-pane fade" id="change-password" role="tabpanel" aria-labelledby="change-password-tab">
-                <!-- Change Password Form Content -->
+        <!-- Change Password Panel -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5>Change Password</h5>
                 @include('profile.partials.change-password')
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9 col-md-8">
+        <!-- Profile Info Section -->
+        <div class="accordion" id="profileAccordion">
+            <!-- Profile Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingProfileInfo">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfileInfo" aria-expanded="true" aria-controls="collapseProfileInfo">
+                        Profile Information
+                    </button>
+                </h2>
+                <div id="collapseProfileInfo" class="accordion-collapse collapse show" aria-labelledby="headingProfileInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.profile-info')
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingAgentInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAgentInfo" aria-expanded="false" aria-controls="collapseAgentInfo">
+                        Agent Information
+                    </button>
+                </h2>
+                <div id="collapseAgentInfo" class="accordion-collapse collapse" aria-labelledby="headingAgentInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.agent-info')
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marketing Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingMarketingInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMarketingInfo" aria-expanded="false" aria-controls="collapseMarketingInfo">
+                        Marketing Information
+                    </button>
+                </h2>
+                <div id="collapseMarketingInfo" class="accordion-collapse collapse" aria-labelledby="headingMarketingInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.marketing-info')
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listing Submittal Defaults -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingListingDefaults">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseListingDefaults" aria-expanded="false" aria-controls="collapseListingDefaults">
+                        Listing Submittal Defaults
+                    </button>
+                </h2>
+                <div id="collapseListingDefaults" class="accordion-collapse collapse" aria-labelledby="headingListingDefaults" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.listing-defaults')
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buyer Submittal Defaults -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingBuyerDefaults">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBuyerDefaults" aria-expanded="false" aria-controls="collapseBuyerDefaults">
+                        Buyer Submittal Defaults
+                    </button>
+                </h2>
+                <div id="collapseBuyerDefaults" class="accordion-collapse collapse" aria-labelledby="headingBuyerDefaults" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.buyer-defaults')
+                    </div>
+                </div>
             </div>
         </div>
     </div>
