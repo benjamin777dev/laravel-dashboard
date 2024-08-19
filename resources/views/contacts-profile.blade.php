@@ -2,19 +2,11 @@
 
 @section('title') @lang('Profile') @endsection
 <style>
-    /* Non-active accordion items */
     .accordion-button.collapsed {
-        background-color: #2222;
-        color: #ffffff;
-    }
+        background-color: #222 !important;
+        color: #fff;
+    }   
 
-    /* Active accordion item */
-    .accordion-button:not(.collapsed) {
-        background-color: #74788d; /* Replace with your dark gray color */
-        color: #ffffff;
-    }
-
-    /* Optional: Hover state for non-active items */
     .accordion-button.collapsed:hover {
         background-color: #1c1c1c;
         color: #ffffff;
