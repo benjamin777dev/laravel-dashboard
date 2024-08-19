@@ -121,45 +121,39 @@ class ProfileController extends Controller
             return response()->json(['isSuccess' => false, 'Message' => 'No contact record found, unable to update contact info!']);
         }
     
-        // Determine which fields are being submitted and only process those
+        // Boolean fields that might be in the request
         $booleanFields = [
-            'tm_preference', 'need_o_e', 'include_insights_in_intro', 'sign_install', 'draft_showing_instructions',
+            'tm_preference', 'need_o_e', 'include_insights_in_intro', 'sign_install', 
             'outsourced_mktg_3d_zillow_tour', 'outsourced_mktg_floorplans', 'outsourced_mktg_onsite_video',
             'property_website_qr_code', 'social_media_images', 'social_media_ads', 'feature_cards_or_sheets',
             'print_qr_code_sheet', 'qr_code_sign_rider', 'mls_recolorado', 'mls_ppar', 'mls_ires', 'mls_navica'
         ];
     
-        // Only merge and validate the boolean fields that are included in the request
+        // Merge boolean fields that are present in the request
         foreach ($booleanFields as $field) {
             if ($request->has($field)) {
                 $request->merge([$field => true]);
             }
         }
     
-        // Gather only the fields that are present in the request
-        $validatableFields = $request->only([
-            'income_goal', 'initial_cap', 'residual_cap', 'agent_name_on_marketing', 
-            'additional_email_for_confirmation', 'email_to_cc_on_all_marketing_comms', 
-            'sign_vendor', 'title_company', 'closer_name_phone', 
-            'fees_charged_to_seller_at_closing', 'chr_gives_amount', 
+        // Fields that can be validated
+        $fieldsToValidate = array_filter([
+            'income_goal' => $request->has('income_goal') ? 'nullable|numeric|max:99999999.99' : null,
+            'initial_cap' => $request->has('initial_cap') ? 'nullable|numeric|max:99999999.99' : null,
+            'residual_cap' => $request->has('residual_cap') ? 'nullable|numeric|max:99999999.99' : null,
+            'agent_name_on_marketing' => $request->has('agent_name_on_marketing') ? 'nullable|string|max:255' : null,
+            'additional_email_for_confirmation' => $request->has('additional_email_for_confirmation') ? 'nullable|email|max:255' : null,
+            'email_to_cc_on_all_marketing_comms' => $request->has('email_to_cc_on_all_marketing_comms') ? 'nullable|email|max:255' : null,
+            'sign_vendor' => $request->has('sign_vendor') ? 'nullable|string|max:255' : null,
+            'draft_showing_instructions' => $request->has('draft_showing_instructions') ? 'nullable|string|max:255' : null,
+            'title_company' => $request->has('title_company') ? 'nullable|string|max:255' : null,
+            'closer_name_phone' => $request->has('closer_name_phone') ? 'nullable|string|max:255' : null,
+            'fees_charged_to_seller_at_closing' => $request->has('fees_charged_to_seller_at_closing') ? 'nullable|numeric|max:99999999.99' : null,
+            'chr_gives_amount' => $request->has('chr_gives_amount') ? 'nullable|numeric|max:99999999.99' : null,
         ]);
     
-        // Validate only the fields that are present in the request
-        $validatedData = $request->validate(array_filter([
-            'income_goal' => $validatableFields['income_goal'] !== null ? 'nullable|numeric|max:99999999.99' : null,
-            'initial_cap' => $validatableFields['initial_cap'] !== null ? 'nullable|numeric|max:99999999.99' : null,
-            'residual_cap' => $validatableFields['residual_cap'] !== null ? 'nullable|numeric|max:99999999.99' : null,
-            'agent_name_on_marketing' => $validatableFields['agent_name_on_marketing'] !== null ? 'nullable|string|max:255' : null,
-            'additional_email_for_confirmation' => $validatableFields['additional_email_for_confirmation'] !== null ? 'nullable|email|max:255' : null,
-            'email_to_cc_on_all_marketing_comms' => $validatableFields['email_to_cc_on_all_marketing_comms'] !== null ? 'nullable|email|max:255' : null,
-            'sign_vendor' => $validatableFields['sign_vendor'] !== null ? 'nullable|string|max:255' : null,
-            'title_company' => $validatableFields['title_company'] !== null ? 'nullable|string|max:255' : null,
-            'closer_name_phone' => $validatableFields['closer_name_phone'] !== null ? 'nullable|string|max:255' : null,
-            'fees_charged_to_seller_at_closing' => $validatableFields['fees_charged_to_seller_at_closing'] !== null ? 'nullable|numeric|max:99999999.99' : null,
-            'chr_gives_amount' => $validatableFields['chr_gives_amount'] !== null ? 'nullable|numeric|max:99999999.99' : null,
-        ], function ($rule) {
-            return $rule !== null; // Only include rules that are not null
-        }));
+        // Validate the present fields only
+        $validatedData = $request->validate($fieldsToValidate);
     
         Log::info('Request data for agent update:', $validatedData);
     
