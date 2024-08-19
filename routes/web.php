@@ -94,6 +94,7 @@ Route::get('/group', [ContactController::class, 'databaseGroup'])->name('contact
 Route::put('/update-contact/{id}', [ContactController::class, 'updateContact'])->name('update.contact')->middleware('auth');
 Route::get('/contact/roles', [DashboardController::class, 'getContactRole'])->name('contact.roles')->middleware('auth');
 Route::get('/contact/email/list/{contactId}', [ContactController::class, 'contactEmailList'])->name('contact.email.list')->middleware('auth');
+
 //notes fetch in json for contact
 Route::get('/contact/list', [ContactController::class, 'contactList'])->name('contacts.list')->middleware('auth');
 Route::get('/note/{contactId}', [ContactController::class, 'retriveNotesForContact'])->name('notes.fetch')->middleware('auth');
@@ -171,9 +172,6 @@ Route::post('/buyer/submittal/create/{dealId}', [SubmittalController::class,
 'createBuyerSubmittal'])->name('buyer.submittal.create')->middleware('auth');
 Route::put('/buyer/submittal/update/{submittalId}', [SubmittalController::class, 'updateBuyerSubmittal'])->name('buyer.submittal.update')->middleware('auth');
 
-// Catch-all route for SPA (Single Page Application) - place this last to avoid conflicts
-// Route::get('{any}', [HomeController::class, 'index'])->where('any', '.*')->name('index');
-
 //task routes
 Route::get('/task', [TaskController::class, 'index'])->name('task.index')->middleware('auth');
 Route::post('/update-task-contact/{id}', [TaskController::class, 'updateTask'])->name('update.tasks')->middleware('auth');
@@ -208,13 +206,8 @@ Route::get('/read/template/detail/{templateId}',[TemplateController::class,'read
 Route::post('/delete/templates',[TemplateController::class,'deleteTemplates'])->name('delete.template')->middleware('auth');
 Route::patch('/update/template/{templateId}',[TemplateController::class,'updateTemplate'])->name('delete.template')->middleware('auth');
 
-
 // Closing Information Route
 Route::get('/closing-information', [ClosingInformationController::class, 'index'])->name('closing.information')->middleware('auth');
-
-// Team and Individual
-Route::get('/team-individual', [TeamIndividualController::class, 'index'])->name('teamindividual.information')->middleware('auth');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

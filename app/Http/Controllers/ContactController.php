@@ -131,7 +131,7 @@ class ContactController extends Controller
         $user_id = $user->root_user_id;
         $name = $user->name;
         $db = new DatabaseService();
-        // $contactInfo = Contact::getZohoContactInfo();
+
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         Log::info('CONTACTIDDATA' . $contactId);
