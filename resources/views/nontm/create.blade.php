@@ -3,23 +3,7 @@
 @section('title', 'zPortal | NonTm')
 
 @section('content')
-<div class="nontm-header">
-    <div class="non-title-div">
-        <p>NON-TM CHECK REQUEST WIZARD</p>
-    </div>
-    <div class="non-btns">
-        <a href="{{ url('/pipeline-view/' . $dealData['dealData']['id']) }}">
-            <div class="input-group-text text-white justify-content-center ppipeBtn"  >
-                <i class="fas fa-times">
-                </i>
-                Cancel
-            </div>
-        </a>
-        <div class="ppipeBtn" onclick="updateNonTm({{ $dealData }},true)">
-            <i class="fas fa-save saveIcon"></i> Save 
-        </div>
-    </div>
-</div>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -323,23 +307,6 @@
                             </div>
                         </form>
                     </section>
-                    <!-- Confirm Details -->
-                    <h3>Confirm Detail</h3>
-                    <section>
-                        <div class="row justify-content-center">
-                            <div class="col-lg-6">
-                                <div class="text-center">
-                                    <div class="mb-4">
-                                        <i class="mdi mdi-check-circle-outline text-success display-4"></i>
-                                    </div>
-                                    <div>
-                                        <h5>Confirm Detail</h5>
-                                        <p class="text-muted"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                 </div>
 
             </div>
@@ -349,83 +316,92 @@
     </div>
     <!-- end col -->
 </div>
-    @endsection
+@endsection
             <!-- jquery step -->
-            <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
+<script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>   
+    const $stepsContainer = $('#basic-example-nontm-create');
+    var dealData = @json($dealData);
+    window.onload = function(){
+        $(function () {
+            $("#basic-example-nontm-create").steps({
+            headerTag: "h3",
+            bodyTag: "section",
+            transitionEffect: "slide",
+            // onStepChanging:function(event, currentIndex, newIndex){
+            //     const isValid = validateNonTMStep(currentIndex);
+            //     return isValid;
+            // },
+            onFinished: function(event, currentIndex) {
+                // API call here
+                window.updateNonTm(dealData,true);
+            }
+            });
+        });
+        let related_transaction = document.getElementById("related_transaction");
+        let add_email = document.getElementById("add_email");
+        let close_date = document.getElementById("close_date");
+        let commission = document.getElementById("commission");
+        let final_purchase = document.getElementById("final_purchase");
+        let amount_chr = document.getElementById("amount_chr");
 
-            <script>
-                
-        window.onload = function(){
-            $(function () {
-                        $("#basic-example-nontm-create").steps({
-                    headerTag: "h3",
-                    bodyTag: "section",
-                    transitionEffect: "slide"
-                    });
-                });
-                let related_transaction = document.getElementById("related_transaction");
-                let add_email = document.getElementById("add_email");
-                let close_date = document.getElementById("close_date");
-                let commission = document.getElementById("commission");
-                let final_purchase = document.getElementById("final_purchase");
-                let amount_chr = document.getElementById("amount_chr");
-        
 
 
         // Select all radio buttons
-                const radioButtons = document.querySelectorAll('input[type="radio"]');
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
 
-                // Initialize an object to store the values
-                window.values = {};
+        // Initialize an object to store the values
+        window.values = {};
 
-                radioButtons.forEach(radioButton => {
-                    if (radioButton.checked) {
-                        const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
-                        const value = radioButton.value;
-                        window.values[question] = value;
-                        openNewFields();
-                    }
-                
-                });
+        radioButtons.forEach(radioButton => {
+            if (radioButton.checked) {
+                const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+                const value = radioButton.value;
+                window.values[question] = value;
+                openNewFields();
+            }
+        
+        });
 
-                // Add event listener to each radio button
-                document.addEventListener('change', event => {
-                if (event.target.matches('input[type="radio"]')) {
-                    const radioButton = event.target;
-                    const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
-                    const value = radioButton.value;
-                    window.values[question] = value;
-                        openNewFields();
-                    }
-                });
+        // Add event listener to each radio button
+        document.addEventListener('change', event => {
+        if (event.target.matches('input[type="radio"]')) {
+            const radioButton = event.target;
+            const question = radioButton.closest('.accordion-item').querySelector('button').textContent.trim();
+            const value = radioButton.value;
+            window.values[question] = value;
+                openNewFields();
+            }
+        });
 
-                // Get all accordion buttons
-                const accordionButtons = document.querySelectorAll('.accordion-button');
+        // Get all accordion buttons
+        const accordionButtons = document.querySelectorAll('.accordion-button');
 
-                // Add event listener to each button
-                accordionButtons.forEach((button) => {
-                    // Get the accordion item
-                    const accordionItem = button.closest('.accordion-item');
+        // Add event listener to each button
+        accordionButtons.forEach((button) => {
+            // Get the accordion item
+            const accordionItem = button.closest('.accordion-item');
 
-                    // Get the collapse element
-                    const collapseElement = accordionItem.querySelector('.accordion-collapse');
+            // Get the collapse element
+            const collapseElement = accordionItem.querySelector('.accordion-collapse');
 
-                    // Toggle the collapse element
-                    collapseElement.classList.toggle('show');
+            // Toggle the collapse element
+            collapseElement.classList.toggle('show');
 
 
-                    // Update the aria-expanded attribute
-                    if (collapseElement.classList.contains('show')) {
-                        button.classList.remove('collapsed');
-                        button.setAttribute('aria-expanded', 'true');
-                    } else {
-                        button.classList.add('collapsed');
-                        button.setAttribute('aria-expanded', 'false');
-                    }
-                });
-     }
+            // Update the aria-expanded attribute
+            if (collapseElement.classList.contains('show')) {
+                button.classList.remove('collapsed');
+                button.setAttribute('aria-expanded', 'true');
+            } else {
+                button.classList.add('collapsed');
+                button.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 
- window.openNewFields=function(field){
+    window.openNewFields=function(field){
         let referralData =window.values['Referral Fee Paid Out?']
         let homeWarrentyData =window.values['Home Warranty Paid Out Agent?']
         let additionalFees =window.values['Any Additional Fees Charged?']
@@ -459,6 +435,53 @@
             '(\\#[-a-z\\d_]*)?$', 'i' // fragment locator
         );
         return regex.test(url);
+    }
+
+    function validateNonTMStep(stepIndex) {
+        let isValid = true;
+        const $currentSection = $stepsContainer.find(`section:eq(${stepIndex})`);
+
+        // Check required fields in this section
+        $currentSection.find('.required-field').each(function() {
+            if($(this).val()==="-None-"){
+                isValid = false;
+                $(this).addClass('error'); 
+            }else {
+                $(this).removeClass('error'); // Remove error class if valid
+            }
+            if (!$(this).val()) {
+                isValid = false;
+                $(this).addClass('error'); // Add error class for styling
+            } else {
+                $(this).removeClass('error'); // Remove error class if valid
+            }
+            if ($(this).val()=='') {
+                isValid = false;
+                $(this).addClass('error'); // Add error class for styling
+            } else {
+                $(this).removeClass('error'); // Remove error class if valid
+            }
+        });
+
+        // Check radio buttons
+        $currentSection.find('input[type="radio"]').each(function() {
+            const name = $(this).attr('name');
+
+            const $radioGroup = $currentSection.find(`input[name="${name}"]`);
+            if ($radioGroup.filter(':checked').length === 0) {
+                isValid = false;
+                $radioGroup.addClass('error'); // Add error class for styling
+            } else {
+                $radioGroup.removeClass('error'); // Remove error class if valid
+            }
+        });
+
+        // Optionally, display a message or highlight errors if invalid
+        if (!isValid) {
+            showToastError("Please fill out all required fields.");
+        }
+
+        return isValid;
     }
 
     function validateNonTm() {
@@ -737,6 +760,6 @@
 
     }
            
-            </script>
+</script>
 
 
