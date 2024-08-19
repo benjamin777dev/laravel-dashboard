@@ -100,15 +100,16 @@
             <!-- Draft Showing Instructions -->
             <div class="mb-3">
                 <label for="draft_showing_instructions" class="form-label">Draft Showing Instructions?</label>
-                <input type="text" class="form-control @error('draft_showing_instructions') is-invalid @enderror"
-                    value="{{ Auth::user()->contact->draft_showing_instructions }}" id="draft_showing_instructions" name="draft_showing_instructions"
-                    placeholder="Draft Showing Instructions?"> 
-                @error('draft_showing_instructions')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <div class="form-check form-switch">
+                    <input class="form-check-input @error('draft_showing_instructions') is-invalid @enderror" type="checkbox" id="draft_showing_instructions" name="draft_showing_instructions"
+                        {{ Auth::user()->contact->draft_showing_instructions ? 'checked' : '' }}>
+                    @error('draft_showing_instructions')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
-            <!-- Title Company -->
+             <!-- Title Company -->
             <div class="mb-3">
                 <label for="title_company" class="form-label">Title Company</label>
                 <input type="text" class="form-control @error('title_company') is-invalid @enderror"
@@ -281,7 +282,7 @@
                     placeholder="Select Your Brochures?"> 
                 @error('select_your_prints')
                 <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                @enderror 
             </div>
 
             <!-- Feature Cards -->
