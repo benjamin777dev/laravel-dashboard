@@ -12,7 +12,7 @@
                 <div id="basic-example-seller">
                     <!-- Seller Details -->
                     <h3>Basic Information</h3>
-                    <section>
+                    <section class="default-slide">
                         <form>
                             <div class="row">
                                 <div class="col-lg-6">
@@ -117,7 +117,7 @@
 
                     <!-- Company Document -->
                     <h3>Basic Information</h3>
-                    <section>
+                    <section class="default-slide">
                         <form>
                             <div class="row">
                                 <div class="col-lg-6">
@@ -235,7 +235,7 @@
 
                     <!-- Bank Details -->
                     <h3>Basic Information</h3>
-                    <section>
+                    <section class="default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -328,7 +328,7 @@
                         </div>
                     </section>
 
-                    <h3>Service Providers</h3>
+                    <h3 class="default-slide">Service Providers</h3>
                     <section>
                         <div>
                             <form>
@@ -510,7 +510,7 @@
                     </section>
 
                     <h3>Select MLS</h3>
-                    <section>
+                    <section class="default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -586,7 +586,7 @@
 
 
                     <h3>Commission Details</h3>
-                    <section>
+                    <section class="default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -670,7 +670,7 @@
                     </section>
 
                     <h3>HOA Information</h3>
-                    <section>
+                    <section class="default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -830,21 +830,37 @@
     $(document).ready(function() {
         var resubmitData = @json($resubmit);
         const $stepsContainer = $('#basic-example-seller');
-
+        let hasTriggeredOnce = false;
         function initializeSteps() {
             $stepsContainer.steps({
                 headerTag: "h3",
-                enableAllSteps: true,
                 bodyTag: "section",
                 transitionEffect: "slide",
                 onStepChanging: function(event, currentIndex, newIndex) {
                     // Perform validation before allowing step change
-                    const isValid = validateStep(currentIndex);
+                    const elements = document.querySelectorAll('.add_default-slide');
+                    let isValid = true;
+                    if (resubmitData === "true" && elements.length === 1 || elements.length === 5) {
+                        if (hasTriggeredOnce) {
+                            console.log(elements,'yes if')
+                            // Second time the condition is triggered, validate the next step
+                            isValid = validateStep(currentIndex + 1);
+                        } else {
+                            console.log(elements,'yes else')
+                            // First time the condition is triggered
+                            isValid = validateStep(currentIndex);
+                            // Set the flag to true so the next time it triggers differently
+                            hasTriggeredOnce = true;
+                        }
+                    } else {
+                        // Normal validation if condition is not met
+                        isValid = validateStep(currentIndex);
+                    }
+
                     return isValid;
                 },
                 onFinished: function(event, currentIndex) {
                     // API call here
-                    console.log(currentIndex,'currentIndex')
                     const isValid = validateStep(currentIndex);
                     if (isValid) {
                     // If valid, proceed with the API call
@@ -863,7 +879,7 @@
         initializeSteps();
         //chr tm start
         const CommissionDetails = ` <h3></h3>
-            <section>
+            <section class="add_default-slide">
                 <div>
                 <form>
                 <div class="row">
@@ -1012,7 +1028,7 @@
             </section>`;
 
         const defaultCHRSec1 = ` <h3></h3>
-                <section>
+                <section class="add_default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -1096,7 +1112,7 @@
                     </section>`;
 
         const defaultCHRSec2 = `<h3>Service Providers</h3>
-          <section>
+          <section class="add_default-slide">
              <div>
                  <form>
                      <div class="row">
@@ -1126,7 +1142,7 @@
                                                  </label>
                                              </div>
                                              <div class="mb-3">
-                                                 <input type="radio" id="scheduleSignInstall_no"
+                                                 <input  type="radio" id="scheduleSignInstall_no"
                                                      {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
                                                      name="scheduleSignInstall">
                                                  <label class="" for="formCheck1">
@@ -1268,7 +1284,7 @@
                 </section>`;
 
         const defaultCHRSec4 = ` <h3>Select MLS</h3>
-            <section>
+            <section class="add_default-slide">
                 <div>
                     <form>
                                 <div class="row">
@@ -1666,7 +1682,7 @@
                         `;
 
         const HoaInfo = ` <h3></h3>
-                    <section>
+                    <section class="add_default-slide">
                         <div>
                             <form>
                                 <div class="row">
@@ -1895,6 +1911,9 @@
                     }
                     addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
                     addStepChr('Service Provider', defaultCHRSec2, 4);
+                    var dropdown = document.getElementById('signInstallVendor');
+                    var additionalField = document.getElementById('signInstallVendorOther');
+                    addOtheInfoValidation(dropdown,additionalField);
                     addStepChr('Select MLS', defaultCHRSec4, 5);
                     addStepChr('Commission Detail', defaultCHRSec1, 6);
                     addStepChr('Hoa Information', HoaInfo, 7);
@@ -1961,6 +1980,7 @@
             // Check radio buttons
             $currentSection.find('input[type="radio"]').each(function() {
                 const name = $(this).attr('name');
+                console.log("radio button",name)
                 if (name !== "conciergeListing") {
                     const $radioGroup = $currentSection.find(`input[name="${name}"]`);
                     if ($radioGroup.filter(':checked').length === 0) {
@@ -2022,15 +2042,17 @@
 
         var dropdown = document.getElementById('signInstallVendor');
         var additionalField = document.getElementById('signInstallVendorOther');
-
+        addOtheInfoValidation(dropdown,additionalField);
+    })
+    function addOtheInfoValidation(dropdown,additionalField){
         dropdown.addEventListener('change', function() {
             console.log("hdsfkshdkf")
             if (dropdown.value === 'Others') {
-                additionalField.classList.add('required-field', 'validate');
+                additionalField.classList.add('required-field', 'validate','infoooo');
+                 
             } else {
                 additionalField.classList.remove('required-field', 'validate');
             }
         });
-
-    })
+    }
 </script>
