@@ -1,247 +1,115 @@
 @extends('layouts.master')
 
 @section('title') @lang('Profile') @endsection
+<style>
+    .accordion-button.collapsed {
+        background-color: #222 !important;
+        color: #fff;
+    }   
+
+    .accordion-button.collapsed:hover {
+        background-color: #1c1c1c;
+        color: #ffffff;
+    }
+</style>
+
 
 @section('content')
-
 @component('components.breadcrumb')
     @slot('li_1') Contacts @endslot
     @slot('title') Profile @endslot
 @endcomponent
 
 <div class="row">
-    <div class="col-xl-4">
-        <div class="card overflow-hidden">
-            <div class="bg-primary-subtle">
-                <div class="row">
-                    <div class="col-7">
-                        <div class="text-primary p-3">
-                            <h5 class="text-primary">Welcome Back, {{ Auth::user()->name }}!</h5>
-                            <p>Edit your profile and agent information here.</p>
-                        </div>
-                    </div>
-                    <div class="col-5 align-self-end">
-                        <img src="{{ URL::asset('build/images/profile-img.png') }}" alt="" class="img-fluid">
-                    </div>
-                </div>
-            </div>
-            <div class="card-body pt-0">
-                <div class="row">
-                    <div class="col-sm-12 text-center">
-                        <h5 class="font-size-15 text-truncate">{{ Auth::user()->name }}</h5>
-                        <p class="text-muted mb-0">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
+    <div class="col-lg-3 col-md-4">
+        <!-- User Info Panel -->
+        <div class="card">
+            <div class="card-body text-center">
+                <h4>Welcome, {{ Auth::user()->name }}</h4>
+                <p class="text-muted">{{ Auth::user()->email }}</p>
             </div>
         </div>
 
-        <!-- Agent Information Box -->
-        <div class="card mt-4">
+        <!-- Change Password Panel -->
+        <div class="card mt-3">
             <div class="card-body">
-                <h4 class="card-title mb-4">Agent Information</h4>
-                <form method="POST" id="update-agent-form">
-                    @csrf
-                    <input type="hidden" value="{{ Auth::user()->contact->id }}" id="id">
-
-                    <div class="mb-3">
-                        <label for="income_goal" class="form-label">Income Goal</label>
-                        <input type="text" class="form-control currency-input @error('income_goal') is-invalid @enderror"
-                            value="{{ number_format(Auth::user()->contact->income_goal, 2) }}" id="income_goal" name="income_goal"
-                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
-                            placeholder="Enter income goal">
-                        @error('income_goal')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="initial_cap" class="form-label">Initial Cap</label>
-                        <input type="text" class="form-control currency-input @error('initial_cap') is-invalid @enderror"
-                            value="{{ number_format(Auth::user()->contact->initial_cap, 2) }}" id="initial_cap" name="initial_cap"
-                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
-                            placeholder="Enter initial cap">
-                        @error('initial_cap')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="residual_cap" class="form-label">Residual Cap</label>
-                        <input type="text" class="form-control currency-input @error('residual_cap') is-invalid @enderror"
-                            value="{{ number_format(Auth::user()->contact->residual_cap, 2) }}" id="residual_cap" name="residual_cap"
-                            @if(Auth::user()->contact->isPartOfTeam()) readonly @endif
-                            placeholder="Enter residual cap">
-                        @error('residual_cap')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3 d-grid">
-                        <button class="btn btn-primary waves-effect waves-light" type="submit">Update Agent Information</button>
-                    </div>
-                </form>
+                <h5>Change Password</h5>
+                @include('profile.partials.change-password')
             </div>
         </div>
-
-        <!-- Change Password Form -->
-        <div class="card mt-4">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Change Password</h4>
-                <form class="form-horizontal" id="change-password-form">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="current_password" class="form-label">Current Password</label>
-                        <input type="password" class="form-control @error('current_password') is-invalid @enderror"
-                            id="current_password" name="current_password"
-                            placeholder="Enter current password">
-                        @error('current_password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="new_password" class="form-label">New Password</label>
-                        <input type="password" class="form-control @error('new_password') is-invalid @enderror"
-                            id="new_password" name="new_password"
-                            placeholder="Enter new password">
-                        @error('new_password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control @error('new_password_confirmation') is-invalid @enderror"
-                            id="new_password_confirmation" name="new_password_confirmation"
-                            placeholder="Confirm new password">
-                        @error('new_password_confirmation')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3 d-grid">
-                        <button class="btn btn-primary waves-effect waves-light" type="submit">Change Password</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
     </div>
 
-    <div class="col-xl-8">
-        <!-- User Profile Edit Form -->
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title mb-4">Edit User Profile</h4>
-                <form class="form-horizontal" id="update-profile-form">
-                    @csrf
-                    <input type="hidden" value="{{ Auth::user()->id }}" id="user_id">
-
-                    <!-- User Profile Fields -->
-                    <div class="mb-3">
-                        <label for="useremail" class="form-label">Email</label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="useremail"
-                               value="{{ Auth::user()->email }}" name="email" readonly placeholder="Enter email">
-                        @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+    <div class="col-lg-9 col-md-8">
+        <!-- Profile Info Section -->
+        <div class="accordion" id="profileAccordion">
+            <!-- Profile Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingProfileInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProfileInfo" aria-expanded="false" aria-controls="collapseProfileInfo">
+                        Profile Information
+                    </button>
+                </h2>
+                <div id="collapseProfileInfo" class="accordion-collapse collapse show" aria-labelledby="headingProfileInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.profile-info')
                     </div>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror"
-                               value="{{ Auth::user()->name }}" id="name" name="name" readonly
-                               placeholder="Enter name">
-                        @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+            <!-- Agent Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingAgentInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAgentInfo" aria-expanded="false" aria-controls="collapseAgentInfo">
+                        Agent Information
+                    </button>
+                </h2>
+                <div id="collapseAgentInfo" class="accordion-collapse collapse" aria-labelledby="headingAgentInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.agent-info')
                     </div>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label for="mobile" class="form-label">Mobile</label>
-                        <input type="text" class="form-control @error('mobile') is-invalid @enderror"
-                               value="{{ Auth::user()->mobile }}" id="mobile" name="mobile"
-                               placeholder="Enter mobile number">
-                        @error('mobile')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+            <!-- Marketing Info -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingMarketingInfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMarketingInfo" aria-expanded="false" aria-controls="collapseMarketingInfo">
+                        Marketing Information
+                    </button>
+                </h2>
+                <div id="collapseMarketingInfo" class="accordion-collapse collapse" aria-labelledby="headingMarketingInfo" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.marketing-info')
                     </div>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label for="country" class="form-label">Country</label>
-                        <input type="text" class="form-control @error('country') is-invalid @enderror"
-                               value="{{ Auth::user()->country }}" id="country" name="country"
-                               placeholder="Enter country">
-                        @error('country')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+            <!-- Listing Submittal Defaults -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingListingDefaults">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseListingDefaults" aria-expanded="false" aria-controls="collapseListingDefaults">
+                        Listing Submittal Defaults
+                    </button>
+                </h2>
+                <div id="collapseListingDefaults" class="accordion-collapse collapse" aria-labelledby="headingListingDefaults" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.listing-defaults')
                     </div>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label for="city" class="form-label">City</label>
-                        <input type="text" class="form-control @error('city') is-invalid @enderror"
-                               value="{{ Auth::user()->city }}" id="city" name="city"
-                               placeholder="Enter city">
-                        @error('city')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+            <!-- Buyer Submittal Defaults -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingBuyerDefaults">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBuyerDefaults" aria-expanded="false" aria-controls="collapseBuyerDefaults">
+                        Buyer Submittal Defaults
+                    </button>
+                </h2>
+                <div id="collapseBuyerDefaults" class="accordion-collapse collapse" aria-labelledby="headingBuyerDefaults" data-bs-parent="#profileAccordion">
+                    <div class="accordion-body">
+                        @include('profile.partials.buyer-defaults')
                     </div>
-
-                    <div class="mb-3">
-                        <label for="state" class="form-label">State</label>
-                        <input type="text" class="form-control @error('state') is-invalid @enderror"
-                               value="{{ Auth::user()->state }}" id="state" name="state"
-                               placeholder="Enter state">
-                        @error('state')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="zip" class="form-label">Zip</label>
-                        <input type="text" class="form-control @error('zip') is-invalid @enderror"
-                               value="{{ Auth::user()->zip }}" id="zip" name="zip"
-                               placeholder="Enter zip code">
-                        @error('zip')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="street" class="form-label">Street</label>
-                        <input type="text" class="form-control @error('street') is-invalid @enderror"
-                               value="{{ Auth::user()->street }}" id="street" name="street"
-                               placeholder="Enter street address">
-                        @error('street')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="transaction_status_reports" class="form-label">Transaction Status Reports</label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="transaction_status_reports" name="transaction_status_reports"
-                                {{ Auth::user()->transaction_status_reports ? 'checked' : '' }}>
-                        @error('transaction_status_reports')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="verified_sender_email" class="form-label">Verified Sender Email</label>
-                        <input type="email" class="form-control @error('verified_sender_email') is-invalid @enderror"
-                               value="{{ Auth::user()->verified_sender_email ?? Auth::user()->email }}" id="verified_sender_email"
-                               name="verified_sender_email"
-                               placeholder="Enter verified sender email">
-                        @error('verified_sender_email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="mt-3 d-grid">
-                        <button class="btn btn-primary waves-effect waves-light" type="submit">Update Profile</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -255,7 +123,6 @@
     // Handle profile update form submission
     $('#update-profile-form').on('submit', function(event) {
         event.preventDefault();
-        var userId = $('#user_id').val();
         let formData = new FormData(this);
 
         // Reset errors
@@ -268,62 +135,56 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                if (response.isSuccess) {
-                    alert(response.Message);
-                } else {
-                    alert(response.Message);
-                }
+                alert(response.Message);
             },
             error: function(response) {
                 // Display errors
-                $('#mobile').next('.invalid-feedback').text(response.responseJSON.errors.mobile);
-                $('#country').next('.invalid-feedback').text(response.responseJSON.errors.country);
-                $('#city').next('.invalid-feedback').text(response.responseJSON.errors.city);
-                $('#state').next('.invalid-feedback').text(response.responseJSON.errors.state);
-                $('#zip').next('.invalid-feedback').text(response.responseJSON.errors.zip);
-                $('#street').next('.invalid-feedback').text(response.responseJSON.errors.street);
-                $('#transaction_status_reports').next('.invalid-feedback').text(response.responseJSON.errors.transaction_status_reports);
-                $('#verified_sender_email').next('.invalid-feedback').text(response.responseJSON.errors.verified_sender_email);
+                $.each(response.responseJSON.errors, function(field, message) {
+                    $(`#${field}`).next('.invalid-feedback').text(message);
+                });
             }
         });
     });
 
-    // Handle agent information update form submission
-    $('#update-agent-form').on('submit', function(event) {
-        event.preventDefault();
-        var contactId = "{{ Auth::user()->contact->id }}";
-        let formData = new FormData(this);
+    // General function to handle agent information form submissions
+    function handleAgentInfoFormSubmission(formId) {
+        $(`#${formId}`).on('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
 
-        // Reset errors
-        $('.invalid-feedback').text('');
+            // Reset errors
+            $('.invalid-feedback').text('');
 
-        // Strip currency formatting before sending data
-        $('.currency-input').each(function() {
-            let value = $(this).val();
-            $(this).val(value.replace(/,/g, '').replace('$', ''));
-        });
+            // Strip currency formatting before sending data
+            $('.currency-input').each(function() {
+                let value = $(this).val();
+                $(this).val(value.replace(/,/g, '').replace('$', ''));
+            });
 
-        $.ajax({
-            url: "{{ route('profile.updateAgentInfo', Auth::user()->id) }}",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.isSuccess) {
+            $.ajax({
+                url: "{{ route('profile.updateAgentInfo', Auth::user()->id) }}",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
                     alert(response.Message);
-                } else {
-                    alert(response.Message);
+                },
+                error: function(response) {
+                    // Display errors
+                    $.each(response.responseJSON.errors, function(field, message) {
+                        $(`#${field}`).next('.invalid-feedback').text(message);
+                    });
                 }
-            },
-            error: function(response) {
-                // Display errors
-                $('#income_goal').next('.invalid-feedback').text(response.responseJSON.errors.income_goal);
-                $('#initial_cap').next('.invalid-feedback').text(response.responseJSON.errors.initial_cap);
-                $('#residual_cap').next('.invalid-feedback').text(response.responseJSON.errors.residual_cap);
-            }
+            });
         });
-    }); // This closes the update-agent-form handler
+    }
+
+    // Attach the handler to all the agent-related forms
+    handleAgentInfoFormSubmission('update-agent-form');
+    handleAgentInfoFormSubmission('update-agent-marketing-information-form');
+    handleAgentInfoFormSubmission('update-agent-listing-submittal-defaults-form');
+    handleAgentInfoFormSubmission('update-agent-buyer-submittal-defaults-form');
 
     // Handle change password form submission
     $('#change-password-form').on('submit', function(event) {
@@ -340,20 +201,17 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                if (response.isSuccess) {
-                    alert(response.Message);
-                } else {
-                    alert(response.Message);
-                }
+                alert(response.Message);
             },
             error: function(response) {
                 // Display errors
-                $('#current_password').next('.invalid-feedback').text(response.responseJSON.errors.current_password);
-                $('#new_password').next('.invalid-feedback').text(response.responseJSON.errors.new_password);
-                $('#new_password_confirmation').next('.invalid-feedback').text(response.responseJSON.errors.new_password_confirmation);
+                $.each(response.responseJSON.errors, function(field, message) {
+                    $(`#${field}`).next('.invalid-feedback').text(message);
+                });
             }
         });
     });
 </script>
+
 
 @endsection

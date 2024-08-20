@@ -27,12 +27,6 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('teamindividual.information') }}" class="waves-effect">
-                                            <i class="bx bx-line-chart"></i>
-                                            <span key="t-team-individual">Pipeline Info</span>
-                                        </a>
-                                    </li>
-                                    <li>
                                         <a href="{{ route('pipeline.index') }}" class="waves-effect">
                                             <i class="bx bx-share-alt"></i>
                                             <span key="t-pipeline">@lang('Pipeline')</span>

@@ -235,12 +235,6 @@
                     <input type="text" value="{{ $contact['mailing_zip'] }}" name="zip_code"
                         class="form-control npinputinfo" id="validationDefault17">
                 </div>
-                <!-- <div class="col-md-6">
-                    <label for="validationDefault18" class="form-label nplabelText">Email</label>
-                    <input type="text" value="{{ $contact['secondory_email'] }}" name="email_primary"
-                        class="form-control npinputinfo" id="validationDefault18">
-                </div> -->
-
             </div>
         </div>
 
@@ -355,8 +349,77 @@
     <table id="contact-email-table" class="table table-bordered dt-responsive nowrap w-100">
     </table>
 </div>
+
+
+{{-- Transactions s--}}
+
+<div class="p-4 d-flex justify-content-between ">
+    <div class="">
+        <h2 class='pText mt-3 text-center'> Transactions </h2>
+    </div>
+</div>
+
+<div class="dealsList">
+    @php
+        $transHeader = [
+        "Transaction",
+        "Stage",
+        "Representing",
+        "Price",
+        "Close Date",
+        "Commission"
+    ]
+    @endphp
+    <div class="table-responsive d-none d-md-block">
+        <table id="contact-transaction-table" class="table table-bordered dt-responsive nowrap w-100">
+            <thead class="bg-light">
+                <tr>
+                    @foreach($transHeader as $th)
+                       <th>{{$th}}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($deals as $deal)
+                   <tr>
+                      <td><a href="{{route('pipeline.view', $deal->id)}}">{{$deal->deal_name}}</a></td>
+                      <td>{{$deal->stage}}</td>
+                      <td>{{$deal->representing}}</td>
+                      <td>${{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}</td>
+                      <td>{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}</td>
+                      <td>{{ number_format($deal['commission'] ?? '0', 2) }}%</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <!-- Stacked View for Mobile -->
+    <div class="d-md-none">
+        @foreach($deals as $deal)
+            <div class="border mb-3 p-2">
+                <h5><a href="{{route('pipeline.view', $deal->id)}}">{{$deal->deal_name}}</a></h5>
+                <p><strong>Stage:</strong> {{$deal->stage}}</p>
+                <p><strong>Representing:</strong> {{$deal->representing}}</p>
+                <p><strong>Price:</strong> ${{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}</p>
+                <p><strong>Close Date:</strong> {{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}</p>
+                <p><strong>Commission:</strong> {{ number_format($deal['commission'] ?? '0', 2) }}%</p>
+            </div>
+        @endforeach
+    </div>
+</div>
+
+
+
+
+
+
+
+
 @vite(['resources/js/pipeline.js'])
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+
 
 <script>
     contact=@json($contact);
