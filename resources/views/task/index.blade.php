@@ -6,15 +6,6 @@
 
 @section('content')
 
-    @component('components.breadcrumb')
-        @slot('li_1')
-            Tasks
-        @endslot
-        @slot('title')
-            Task List
-        @endslot
-    @endcomponent
-
     <div class="row">
         <div class="d-flex justify-content-between">
             <p class="dFont800 dFont15">Tasks</p>

@@ -140,7 +140,7 @@
                 }
             }
             if(window.clickedValue == 'Template'){
-                $("#template-table-list").DataTable().ajax.reload();
+                
                 $("#emailList").hide();
                 $("#templateList").show();
             } else {

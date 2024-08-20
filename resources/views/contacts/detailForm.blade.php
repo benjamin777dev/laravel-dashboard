@@ -370,29 +370,7 @@
         "Commission"
     ]
     @endphp
-    <div class="table-responsive d-none d-md-block">
-        <table id="contact-transaction-table" class="table table-bordered dt-responsive nowrap w-100">
-            <thead class="bg-light">
-                <tr>
-                    @foreach($transHeader as $th)
-                       <th>{{$th}}</th>
-                    @endforeach
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($deals as $deal)
-                   <tr>
-                      <td><a href="{{route('pipeline.view', $deal->id)}}">{{$deal->deal_name}}</a></td>
-                      <td>{{$deal->stage}}</td>
-                      <td>{{$deal->representing}}</td>
-                      <td>${{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}</td>
-                      <td>{{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}</td>
-                      <td>{{ number_format($deal['commission'] ?? '0', 2) }}%</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+     @include('components.common-table',['id'=>"contact-transaction-table"])
     <!-- Stacked View for Mobile -->
     <div class="d-md-none">
         @foreach($deals as $deal)

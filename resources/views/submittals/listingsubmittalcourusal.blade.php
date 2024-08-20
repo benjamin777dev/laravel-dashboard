@@ -676,6 +676,37 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
+                                            <label for="referralToPay">Has HOA? <svg
+                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                viewBox="0 0 19 18" fill="none">
+                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2151_10662)">
+                                                    <path
+                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                        fill="#AC5353" />
+                                                </g>
+                                            </svg></label>
+                                            <div class="d-flex gap-2">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" id="chkNo" for="formCheck1">
+                                                        Yes
+                                                    </label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <label class="" for="formCheck1">
+                                                        No
+                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <div class="col-lg-6">
+                                        <div class="mb-3">
                                             <label for="referralToPay">Title to Order HOA docs?  <svg
                                                 xmlns="http://www.w3.org/2000/svg" width="19" height="18"
                                                 viewBox="0 0 19 18" fill="none">
@@ -711,39 +742,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="referralToPay">Has HOA? <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
-                                            <div class="d-flex gap-2">
-                                                <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
-                                                    <label class="" id="chkNo" for="formCheck1">
-                                                        Yes
-                                                    </label>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
-                                                    <label class="" for="formCheck1">
-                                                        No
-                                                    </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
+                            </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
@@ -838,13 +838,15 @@
                 transitionEffect: "slide",
                 onStepChanging: function(event, currentIndex, newIndex) {
                     // Perform validation before allowing step change
+                    console.log({newIndex:newIndex,currentIndex:currentIndex})
                     const elements = document.querySelectorAll('.add_default-slide');
                     let isValid = true;
-                    if (resubmitData === "true" && elements.length === 1 || elements.length === 5) {
+                    console.log(elements.length,resubmitData,'resubmitDataaaaaaaa!!!!!!!')
+                    if (resubmitData === "true" || elements.length === 1 || elements.length === 5) {
                         if (hasTriggeredOnce) {
                             console.log(elements,'yes if')
                             // Second time the condition is triggered, validate the next step
-                            isValid = validateStep(currentIndex + 1);
+                            isValid = validateStep(currentIndex);
                         } else {
                             console.log(elements,'yes else')
                             // First time the condition is triggered
@@ -853,6 +855,7 @@
                             hasTriggeredOnce = true;
                         }
                     } else {
+                        console.log("yes double elese")
                         // Normal validation if condition is not met
                         isValid = validateStep(currentIndex);
                     }
