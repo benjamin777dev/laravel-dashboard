@@ -71,15 +71,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
     processing: true,
     serverSide: true,
     responsive: false,
-    columnDefs: [{ responsivePriority: 2, targets: -9 }],
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
+         {
             data: null,
             title: "Actions",
             render: function (data, type, row) {
@@ -545,13 +539,6 @@ var tableContactRole = $("#contact_role_table_pipeline").DataTable({
     processing: true,
     serverSide: true,
     columns: [
-        // {
-        //     className: 'dt-control',
-        //     orderable: false,
-        //     data: null,
-        //     defaultContent: ''
-        // },
-
         {
             data: "name",
             title: "Name",
@@ -778,15 +765,9 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     processing: true,
     serverSide: true,
     responsive: false,
-    columnDefs: [{ responsivePriority: 1, targets: -10 }],
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
+         {
             data: "deal_name",
             title: "Transaction",
             render: function (data, type, row) {
@@ -1116,12 +1097,6 @@ var tableTasks = $("#datatable_tasks").DataTable({
     serverSide: true,
     responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -1457,12 +1432,6 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
     serverSide: true,
     responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -2073,7 +2042,7 @@ var tableContact = $("#datatable_contact").DataTable({
     serverSide: true,
 
     columnDefs: [
-        { responsivePriority: 2, targets: -7 },
+        {},
         {
             targets: 0,
             orderable: false,
@@ -2089,12 +2058,6 @@ var tableContact = $("#datatable_contact").DataTable({
     ],
     order: [0, "desac"],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             className: "select-checkbox",
@@ -2784,12 +2747,6 @@ var templateTableList = $("#template-table-list").DataTable({
     ],
     columns: [
         {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
             data: null,
             className: "select-checkbox",
             defaultContent: "",
@@ -2957,14 +2914,8 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
     processing: true,
     serverSide: true,
     responsive: false,
-    columnDefs: [{ responsivePriority: 1, targets: -10 }],
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: "deal_name",
             title: "Transaction",
