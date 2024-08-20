@@ -92,20 +92,24 @@
                 createTag: function(params) {
                     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     var isDuplicate = false;
-                    $(selector).select2('data').forEach(function(data) {
-                        var existingEmail = $(data.element).data('email') || '';
-                        if ($.trim(existingEmail).toLowerCase() === $.trim(params.term).toLowerCase()) {
-                            isDuplicate = true;
-                        }
-                    });
-                    if (isDuplicate) {
-                        return null;
+                    var allOptions = $(selector).find('option').map(function() {
+                        return $(this).data('email');
+                    }).get();
+                    
+                    // Check if the entered value already exists
+                    if (allOptions.includes(params.term.toLowerCase())) {
+                        isDuplicate = true;
                     }
+                    
+                    if (isDuplicate) {
+                        return null; // Ignore duplicate tags
+                    }
+                    
                     if (!emailPattern.test(params.term)) {
                         $("#" + errorId).show();
-                        return null;
+                        return null; // Ignore invalid email
                     }
-
+                    
                     $("#" + errorId).hide();
                     return {
                         id: params.term,
@@ -118,30 +122,28 @@
                     if ($.trim(params.term) === '') {
                         return data;
                     }
-
-                    // Convert the search term to lower case for case-insensitive matching
+                    
                     var term = params.term.toLowerCase();
-
-                    // Check if the term matches the name or email
                     var text = data.text.toLowerCase();
                     var email = $(data.element).data('email') || '';
-
+                    
                     if (text.includes(term) || email.includes(term)) {
                         return data;
                     }
-
-                    // If no match, return null to exclude this item
-                    return null;
+                    
+                    return null; // No match
                 },
                 templateResult: function(data) {
-                    // Format the result to display both name and email (if available)
                     var email = $(data.element).data('email') || '';
                     if (email) {
                         return $('<span>' + data.text + ' (' + email + ')</span>');
                     }
                     return $('<span>' + data.text + '</span>');
-                }
+                },
+                
             });
+            
+
         }
 
         function updateSelectOptions() {
@@ -280,28 +282,52 @@
         $('#ccSelect').trigger('change');
         $('#bccSelect').trigger('change');
 
+        const pathname = window.location.pathname;
 
-    });
-    var button = document.getElementById('emailModalClose');
+        const pathSegments = pathname.split('/');
+
+        const secondSegment = pathSegments[1];
+
+        console.log(secondSegment);
+       
+            
+       
+        var button = document.getElementById('emailModalClose');
         button.addEventListener('click', function () {
-        var modal = document.getElementById('composemodal');
-        
-        var modalData = document.getElementById('modal-data');
+            var modal = document.getElementById('composemodal');
+            
+            var modalData = document.getElementById('modal-data');
 
-        modal.addEventListener('hidden.bs.modal', function () {
-            if (modalData) {
-                modalData.querySelectorAll('input, textarea').forEach(function (element) {
-                    if (element.tagName.toLowerCase() === 'select') {
-                        $(element).val([]).trigger('change');
-                    } 
-                    else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
-                        tinymce.get(element.id).setContent('');
+            modal.addEventListener('hidden.bs.modal', function () {
+                if (modalData) {
+                    if (secondSegment === 'contacts-view') {
+                        modalData.querySelectorAll('input, textarea').forEach(function (element) {
+                            if (element.tagName.toLowerCase() === 'select') {
+                                $(element).val([]).trigger('change');
+                            } 
+                            else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
+                                tinymce.get(element.id).setContent('');
+                            }
+                            else {
+                                element.value = '';
+                            }
+                        });
                     }
-                    else {
-                        element.value = '';
+                    else{
+                        modalData.querySelectorAll('input, textarea,select').forEach(function (element) {
+                            if (element.tagName.toLowerCase() === 'select') {
+                                $(element).val([]).trigger('change');
+                            } 
+                            else if (element.tagName.toLowerCase() === 'textarea' && element.id === 'elmEmail') {
+                                tinymce.get(element.id).setContent('');
+                            }
+                            else {
+                                element.value = '';
+                            }
+                        });
                     }
-                });
-            }
+                }
+            });
         });
     });
 

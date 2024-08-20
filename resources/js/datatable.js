@@ -733,44 +733,44 @@ $("#Reset_All").on("click", function () {
     table.search("").draw();
 });
 
-window.getStageData = function() {
+window.getStageData = function () {
     // Make AJAX call
     $.ajax({
-        url: '/getStage',
-        method: 'GET',
-        dataType: 'html',
-        success: function(data) {
-            $('.dashboard-cards').html(data);
+        url: "/getStage",
+        method: "GET",
+        dataType: "html",
+        success: function (data) {
+            $(".dashboard-cards").html(data);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             // Handle errors
-            console.error('Error:', error);
-        }
+            console.error("Error:", error);
+        },
     });
-
-}
-window.scrollDown = function(){
-    const btnBadDates = document.getElementById('btnBadDates');
+};
+window.scrollDown = function () {
+    const btnBadDates = document.getElementById("btnBadDates");
     if (btnBadDates) {
-        btnBadDates.addEventListener('click', function() {
-            const element = document.getElementById('badDates');
+        btnBadDates.addEventListener("click", function () {
+            const element = document.getElementById("badDates");
             if (element) {
                 const offset = 100; // Adjust this value as needed
                 const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                const offsetPosition =
+                    elementPosition + window.pageYOffset - offset;
 
                 window.scrollTo({
                     top: offsetPosition,
-                    behavior: 'smooth'
+                    behavior: "smooth",
                 });
             } else {
-                console.log('No bad dates element found.');
+                console.log("No bad dates element found.");
             }
         });
     } else {
-        console.log('No btnBadDates element found.');
+        console.log("No btnBadDates element found.");
     }
-}
+};
 //transaction for dashboard
 var tableDashboard = $("#datatable_transaction").DataTable({
     paging: true,
@@ -898,13 +898,14 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             }
             if (data?.data && data.data.length > 0) {
                 $(".bad_dates_top").html(
-                    'You have ' + data.data.length + " Bad Dates! &nbsp <button onclick=scrollDown() class='btn btn-dark btn-small' id='btnBadDates'>FIX NOW</button>"
+                    "You have " +
+                        data.data.length +
+                        " Bad Dates! &nbsp <button onclick=scrollDown() class='btn btn-dark btn-small' id='btnBadDates'>FIX NOW</button>"
                 );
             } else {
                 $(".bad_dates_top").html("");
             }
-            
-            
+
             return data?.data; // Return the data array or object from your response
         },
     },
@@ -1053,7 +1054,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                             $("#datatable_transaction")
                                 .DataTable()
                                 .ajax.reload();
-                                getStageData();
+                            getStageData();
                         }
                     },
                     error: function (error) {
@@ -2076,13 +2077,13 @@ var tableContact = $("#datatable_contact").DataTable({
         {
             targets: 0,
             orderable: false,
-            className: "select-checkbox",
+            className: "select-checkbox1",
             defaultContent: "",
         },
         {
             targets: 1,
             orderable: false,
-            className: "select-checkbox",
+            className: "select_count",
             defaultContent: "",
         },
     ],
@@ -2098,6 +2099,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: null,
             className: "select-checkbox",
             defaultContent: "",
+            title:"Selected",
             orderable: false,
             render: function (data, type, row) {
                 return `<input type="checkbox" id= "email-checkbox${
@@ -2375,6 +2377,22 @@ var tableContact = $("#datatable_contact").DataTable({
                 });
             }
         }
+
+          // Function to update the selected count
+            function updateSelectedCount() {
+                var selectedCount = $('.emailCheckbox:checked').length;
+                console.log($('.select_count')[0],'selectedCount')
+                let selectText = (selectedCount === 0 ? "Select" : "Selected: " + selectedCount);
+                $('.select_count').eq(0).text(selectText);
+            }
+
+            // Event handler for checkbox changes
+            $('#datatable_contact').on('change', '.emailCheckbox', function() {
+                updateSelectedCount();
+            });
+
+            // Initial count update
+            updateSelectedCount();
 
         // Click event to enter editing mode
         $("#datatable_contact tbody").on("click", "span.editable", function () {
@@ -2843,7 +2861,7 @@ function viewTemplateModal(id, name) {
                 <div class="modal-content dtaskmodalContent">
                     <div class="modal-header border-0">
                         <p class="modal-title dHeaderText" id="templateName${id}" onclick="editName('${id}')">${name}</p>
-                        <button type="button" class="btn-close" id="templateViewClose" data-bs-dismiss="modal" 
+                        <button type="button" class="btn-close" id="templateViewClose${id}" data-bs-dismiss="modal" 
                          aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="viewTemplateData${id}">
@@ -2901,11 +2919,16 @@ window.updateTemplate = function (templateId) {
     var content = tinymce.get("templateContent" + templateId).getContent();
     var name = $("#templateName" + templateId).val();
 
-    var jsonData = {
-        subject: subject,
-        content: content,
-        name: name,
-    };
+    var jsonData = {};
+    if (subject) {
+        jsonData.subject = subject;
+    }
+    if (content) {
+        jsonData.content = content;
+    }
+    if (name) {
+        jsonData.name = name;
+    }
     $.ajax({
         url: "/update/template/" + templateId,
         method: "PATCH",
@@ -2916,8 +2939,8 @@ window.updateTemplate = function (templateId) {
         dataType: "JSON",
         data: JSON.stringify(jsonData),
         success: function (response) {
+            $("#templateViewClose" + templateId).click();
             showToast("Template update successfully");
-            $("#templateViewClose").click();
         },
         error: function (xhr, status, error) {
             showToastError(
@@ -2927,3 +2950,127 @@ window.updateTemplate = function (templateId) {
         },
     });
 };
+
+var tableDashboard = $("#contact-transaction-table").DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    responsive: true,
+    columnDefs: [{ responsivePriority: 1, targets: -10 }],
+    columns: [
+        {
+            className: "dt-control",
+            orderable: false,
+            data: null,
+            defaultContent: "",
+        },
+        {
+            data: "deal_name",
+            title: "Transaction",
+            render: function (data, type, row) {
+                return `<a href="/pipeline-view/${row?.id}" target="_blank"><span class='icon-container max-width-500' >${data}</span></a>`;
+            },
+        },
+        {
+            data: "primary_contact",
+            title: "Client Name",
+            render: function (data, type, row) {
+                console.log("Data", data);
+                let jsonString, name;
+                if (data) {
+                    jsonString = data?.replace(/&quot;/g, '"');
+
+                    // Parse the string as JSON
+                    data = JSON.parse(jsonString);
+                    name = (data[0] &&
+                            data[0].Primary_Contact &&
+                            data[0].Primary_Contact.name) ??
+                        "";
+                }
+                return `<span>${name || "N/A"}</span>`;
+            },
+        },
+        {
+            data: "stage",
+            title: "Status",
+            render: function (data, type, row) {
+                return `<span>${data}</span>`;
+            },
+        },
+        {
+            data: "representing",
+            title: "Representing",
+            render: function (data, type, row) {
+                return `<span >${data}</span>`;
+            },
+        },
+        {
+            data: "sale_price",
+            title: "Price",
+            render: function (data, type, row) {
+                console.log(data, "datattas");
+                return `<span >$${number_format(data, 0, ".", ",")}</span>`;
+            },
+        },
+        {
+            data: "closing_date",
+            title: "Close Date",
+            render: function (data, type, row) {
+                return `<span class="editable badDateInput" data-name="closing_date" data-id="${
+                    row.id
+                }">${formateDate(data) || "N/A"}</span>`;
+            },
+        },
+        {
+            data: "commission",
+            title: "Commission",
+            render: function (data, type, row) {
+                return `<span >${data}%</span>`;
+            },
+        },
+        {
+            data: "potential_gci",
+            title: "Potential GCI",
+            render: function (data, type, row) {
+                return `<span >${data}</span>`;
+            },
+        },
+        {
+            data: "pipeline_probability",
+            title: "Probability",
+            render: function (data, type, row) {
+                return `<span >${data}%</span>`;
+            },
+        },
+        {
+            data: null,
+            title: "Probable GCI",
+            render: function (data, type, row) {
+                // Calculate probable GCI
+                var probableGCI =
+                    (row.sale_price ?? 0) *
+                    ((row.commission ?? 0) / 100) *
+                    ((row.pipeline_probability ?? 0) / 100);
+                return `$${number_format(probableGCI, 0, ".", ",")}`; // Format probableGCI as currency
+            },
+        },
+    ],
+    ajax: {
+        url: "/contacts-trasactions/"+contactId, // Ensure this URL is correct
+        type: "GET", // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            (request.stage = $("#related_to_stage").val()),
+                (request.page = request.start / request.length + 1);
+            request.search = request.search.value;
+        },
+        dataSrc: function (data) { 
+            return data?.data; // Return the data array or object from your response
+        },
+    },
+});
+
+
+

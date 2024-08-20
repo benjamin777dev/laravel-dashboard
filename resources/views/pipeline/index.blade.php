@@ -52,13 +52,6 @@
             --}}
             </div>
             <div class="w-control">
-                 @component('components.button', [
-                    'label' => 'Filter',
-                    'icon' => 'fas fa-filter'
-                ])
-                @endcomponent
-            </div>
-            <div class="w-control">
                    @component('components.button', [
                     'label' => 'Reset All',
                     'icon' => 'fas fa-sync'

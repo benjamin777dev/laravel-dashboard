@@ -170,6 +170,28 @@ class ContactController extends Controller
         return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts','contactsWithEmails'));
     }
 
+    public function retriveDealForContacts(Request $request)
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return redirect('/login');
+        }
+        $accessToken = $user->getAccessToken();
+        $db = new DatabaseService();
+        $contactId = request()->route('contactId');
+        Log::info('CONTACTIDDATA' . $contactId);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        if (!$contact) {
+           return response()->json(["redirect" => "/contacts"]);
+        }
+       
+        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        return Datatables::of($deals)->make(true);
+
+        
+    }
+
     public function getContactJson(){
         {
             try{
