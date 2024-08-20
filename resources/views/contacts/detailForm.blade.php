@@ -346,7 +346,7 @@
 </div>
 
 <div class="contactEmailList">
-    <table id="contact-email-table" class="table table-bordered dt-responsive nowrap w-100">
+    <table id="contact-email-table" class="table table-bordered nowrap w-100">
     </table>
 </div>
 
