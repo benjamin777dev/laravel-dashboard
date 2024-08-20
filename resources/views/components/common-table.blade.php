@@ -16,7 +16,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table id="{{ $id }}" class="table table-bordered nowrap w-100 min-mobile-p">
+                <table id="{{ $id }}" class="table table-bordered table-responsive nowrap w-100 min-mobile-p">
                     @if ($id==="datatable_transaction")
                         @if ($needsNewDate['count'] > 0)
                         <p class="fw-bold">Bad Dates | <span class="text-danger bad_date_count">{{$needsNewDate['count']}}</span></p>
