@@ -633,7 +633,7 @@ class DatabaseService
                         break;
                 }
             } else {
-                $deals->orderBy('updated_at', 'desc');
+                $deals->orderBy('closing_date', 'desc');
             }
 
             // Date filter logic
