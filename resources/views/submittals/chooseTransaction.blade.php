@@ -57,9 +57,13 @@
 
     function addSubmittal (type,deal=null,formType=null){
         let dealsArray = @json($deals);
+        console.log(dealsArray,'checkdealarray')
         if(dealsArray?.length && window?.dealId){
             let matchingDeal = dealsArray.find(dealObj => String(dealObj?.id) === String(window?.dealId));
             deal = matchingDeal;
+        }
+        if(deal==undefined){
+            return showToastError("Deal id not match");
         }
         if(type == "buyer-submittal"){
             var formData = {
