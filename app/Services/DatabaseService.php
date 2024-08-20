@@ -2535,7 +2535,8 @@ class DatabaseService
         $submittal->onsiteVideo = isset($submittalData["Onsite_Video"]) ? $submittalData["Onsite_Video"] : null;
         $submittal->customDomainName = isset($submittalData["Custom_Domain_Name"]) ? $submittalData["Custom_Domain_Name"] : null;
         $submittal->bullets = isset($submittalData["bullets_4_words_per_bullet"]) ? $submittalData["bullets_4_words_per_bullet"] : null;
-        $submittal->headlineForBrochure = isset($submittalData["Word_Headline_If_Opting_for_A_Line_Brochure"]) ? $submittalData["Word_Headline_If_Opting_for_A_Line_Brochure"] : null;
+        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["paragraph_200_words_4_page_brochure_or_look_book"]) ? $submittalData["paragraph_200_words_4_page_brochure_or_look_book"] : null;
+        $submittal->buyer_agent_compensation_offering = isset($submittalData["buyer_agent_compensation_offering"]) ? $submittalData["buyer_agent_compensation_offering"] : null;
         $submittal->printedItemsPickupDate = isset($submittalData["In_House_Printed_Brochure_Pick_Up_Date"]) ? $submittalData["In_House_Printed_Brochure_Pick_Up_Date"] : null;
         $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
         $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
