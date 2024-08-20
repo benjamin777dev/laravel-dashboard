@@ -6,16 +6,16 @@ use App\Models\Contact;
 use App\Models\ContactGroups;
 use App\Models\Groups;
 use App\Models\User;
+use App\Rules\ValidMobile;
 use App\Services\DatabaseService;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Rules\ValidMobile;
 
 class ContactController extends Controller
 {
@@ -43,7 +43,7 @@ class ContactController extends Controller
             return Response::json(['view' => $view, 'nextPageUrl' => $contacts->nextPageUrl()]);
         }
 
-        return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend','contactsWithEmails'));
+        return view('contacts.index', compact('contacts', 'userContact', 'retrieveModuleData', 'apend', 'contactsWithEmails'));
     }
 
     public function contactList(Request $request)
@@ -60,8 +60,8 @@ class ContactController extends Controller
         $missingFeild = $request->input('missingField');
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
-        
-        return response()->json(['contacts'=>$contacts]);
+
+        return response()->json(['contacts' => $contacts]);
     }
 
     public function showCreateContactForm()
@@ -77,11 +77,11 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-         if (!$contact) {
+        if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-        return view('contacts.create', compact('contactId','retrieveModuleData','contact'));
+        return view('contacts.create', compact('contactId', 'retrieveModuleData', 'contact'));
 
     }
     public function contactCreateForm(Request $request)
@@ -116,7 +116,7 @@ class ContactController extends Controller
             }
         }
 
-        return view('contacts.createForm', compact('contact','retrieveModuleData','contacts',  'users', 'spouseContact',  'contactId', 'groups', 'contactsGroups'))->render();
+        return view('contacts.createForm', compact('contact', 'retrieveModuleData', 'contacts', 'users', 'spouseContact', 'contactId', 'groups', 'contactsGroups'))->render();
 
     }
 
@@ -137,7 +137,7 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-           return response()->json(["redirect" => "/contacts"]);
+            return response()->json(["redirect" => "/contacts"]);
         }
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
@@ -164,10 +164,10 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        $selectedContacts = $contacts->filter(function($contact) use ($contactId) {
-            return $contact->id === (int)$contactId;
+        $selectedContacts = $contacts->filter(function ($contact) use ($contactId) {
+            return $contact->id === (int) $contactId;
         });
-        return view('contacts.detail', compact('contact','allstages','deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact','emails','selectedContacts','contactsWithEmails'));
+        return view('contacts.detail', compact('contact', 'allstages', 'deals', 'userContact', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups', 'spouseContact', 'emails', 'selectedContacts', 'contactsWithEmails'));
     }
 
     public function retriveDealForContacts(Request $request)
@@ -183,92 +183,93 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-           return response()->json(["redirect" => "/contacts"]);
+            return response()->json(["redirect" => "/contacts"]);
         }
-       
+
         $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
         return Datatables::of($deals)->make(true);
 
-        
     }
 
-    public function getContactJson(){
+    public function getContactJson()
+    {
         {
-            try{
-            $user = $this->user();
-    
-            if (!$user) {
-                return redirect('/login');
+            try {
+                $user = $this->user();
+
+                if (!$user) {
+                    return redirect('/login');
+                }
+                $db = new DatabaseService();
+                $search = request()->query('search');
+                $stage = request()->query('stage');
+                $filterobj = request()->query('filterobj');
+                // $contactInfo = Contact::getZohoContactInfo();
+                $accessToken = $user->getAccessToken(); // Method to get the access token.
+                if (!$accessToken) {
+                    return "invalid token.";
+                }
+                $contacts = $db->retreiveContactsJson($user, $accessToken, $search, $stage, $filterobj);
+                if (!$contacts) {
+                    return response()->json(["redirect" => "/contacts"]);
+                }
+                return Datatables::of($contacts)->make(true);
+            } catch (\Exception $e) {
+                Log::error("Error retrieving contacts: " . $e->getMessage());
+                throw $e;
             }
-            $db = new DatabaseService();
-            $search = request()->query('search');
-            $stage = request()->query('stage');
-            $filterobj = request()->query('filterobj');
-            // $contactInfo = Contact::getZohoContactInfo();
-            $accessToken = $user->getAccessToken(); // Method to get the access token.
-            if(!$accessToken){
-                return "invalid token.";
-            }
-            $contacts = $db->retreiveContactsJson($user, $accessToken,$search,$stage,$filterobj);
-            if (!$contacts) {
-               return response()->json(["redirect" => "/contacts"]);
-            }
-            return Datatables::of($contacts)->make(true);
-        } catch (\Exception $e) {
-            Log::error("Error retrieving contacts: " . $e->getMessage());
-            throw $e;
-        }
         }
     }
 
-    public function updateContactField(Request $request){
+    public function updateContactField(Request $request)
+    {
         try {
             $user = $this->user();
-    
+
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
             $id = $request->input('id');
             $dbfield = $request->input('field');
             $value = $request->input('value');
-               // Define validation rules and messages
-           // Define validation rules and messages
-           $rules = [
-            'id' => 'required|exists:contacts,id',
-            'field' => 'required|in:email,mobile,phone,salutation_s',
-            'value' => 'nullable', // Allow the value to be nullable (empty)
-        ];
+            // Define validation rules and messages
+            // Define validation rules and messages
+            $rules = [
+                'id' => 'required|exists:contacts,id',
+                'field' => 'required|in:email,mobile,phone,salutation_s',
+                'value' => 'nullable', // Allow the value to be nullable (empty)
+            ];
 
-        $messages = [
-            'id.required' => 'Contact ID is required.',
-            'id.exists' => 'Invalid contact ID.',
-            'field.required' => 'Field type is required.',
-            'field.in' => 'Invalid field type.',
-            'value.email' => 'Invalid email format.',
-            'value.regex' => 'Invalid mobile phone format.',
-            'value.numeric' => $dbfield .' number must be numeric.',
-        ];
+            $messages = [
+                'id.required' => 'Contact ID is required.',
+                'id.exists' => 'Invalid contact ID.',
+                'field.required' => 'Field type is required.',
+                'field.in' => 'Invalid field type.',
+                'value.email' => 'Invalid email format.',
+                'value.regex' => 'Invalid mobile phone format.',
+                'value.numeric' => $dbfield . ' number must be numeric.',
+            ];
 
-        // Add custom validation for email format and phone number format if value is not empty
-        if (!empty($request->input('value'))) {
-            if ($request->input('field') === 'email') {
-                $rules['value'] .= '|email';
-            } elseif ($request->input('field') === 'mobile' || $request->input('field') === 'phone') {
-                $rules['value'] .= '|regex:/^\d{3}[-.\s]?\d{3}[-.\s]?\d{3,4}$/';
+            // Add custom validation for email format and phone number format if value is not empty
+            if (!empty($request->input('value'))) {
+                if ($request->input('field') === 'email') {
+                    $rules['value'] .= '|email';
+                } elseif ($request->input('field') === 'mobile' || $request->input('field') === 'phone') {
+                    $rules['value'] .= '|regex:/^\d{3}[-.\s]?\d{3}[-.\s]?\d{3,4}$/';
+                }
             }
-        }
 
-        // Validate request inputs
-        $validator = Validator::make($request->all(), $rules, $messages);
+            // Validate request inputs
+            $validator = Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
-        }
-        
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
+            }
+
             $zoho = new ZohoCRM();
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
-    
+
             $field = "";
             switch ($dbfield) {
                 case "email":
@@ -286,9 +287,9 @@ class ContactController extends Controller
                 default:
                     return response()->json(['error' => 'Invalid field '], Response::HTTP_BAD_REQUEST);
             }
-    
+
             $contact = Contact::findOrFail($id);
-    
+
             $formData = [
                 'data' => [
                     [
@@ -297,26 +298,24 @@ class ContactController extends Controller
                 ],
                 'skip_mandatory' => true,
             ];
-    
+
             $zohoContact = $zoho->createContactData($formData, $contact->zoho_contact_id);
-    
+
             if (!$zohoContact->successful()) {
                 return response()->json(['error' => 'Zoho Contact update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-    
+
             // Update local contact record
             $contact->$dbfield = $value;
             $contact->save();
-    
+
             return response()->json(['data' => $zohoContact, 'message' => "Successfully Updated"]);
-    
+
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    
-    
 
     public function showDetailForm($contactId)
     {
@@ -335,7 +334,7 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-           return response()->json(["redirect" => "/contacts"]);
+            return response()->json(["redirect" => "/contacts"]);
         }
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
@@ -356,9 +355,8 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        return view('contacts.detailForm', compact('contact', 'userContact','deals','allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'));
+        return view('contacts.detailForm', compact('contact', 'userContact', 'deals', 'allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups', 'spouseContact'));
     }
-
 
     public function getContact(Request $request)
     {
@@ -432,13 +430,13 @@ class ContactController extends Controller
 
                 $salutation = "";
                 if (isset($frontData['data'][0]['Salutation'])) {
-                    $salutation = $frontData['data'][0]['Salutation'];  
-                } 
+                    $salutation = $frontData['data'][0]['Salutation'];
+                }
 
                 $abcd = "";
                 if (isset($frontData['data'][0]['ABCD'])) {
-                    $abcd = $frontData['data'][0]['ABCD'];  
-                } 
+                    $abcd = $frontData['data'][0]['ABCD'];
+                }
                 $validEmail = "";
                 if (isset($frontData['data'][0]['Email'])) {
 
@@ -532,7 +530,7 @@ class ContactController extends Controller
                     $validatedRefferedData = $refferedData;
                 }
             }
-        
+
             if (isset($request->spouse_partner) && $request->spouse_partner !== '' && is_object(json_decode($request->spouse_partner))) {
                 $spouse_partner = json_decode($request->spouse_partner, true);
                 // Check if the 'id' is null
@@ -569,8 +567,8 @@ class ContactController extends Controller
 
             if ($validator->fails()) {
                 return redirect()->back()
-                                ->withErrors($validator)
-                                ->withInput();
+                    ->withErrors($validator)
+                    ->withInput();
             }
             if (isset($input['email']) && $input['email'] !== '') {
                 $rules['email'] = 'required|string|email';
@@ -626,7 +624,7 @@ class ContactController extends Controller
             if (isset($input['secondry_address']) && $input['secondry_address'] !== '') {
                 $rules['secondry_address'] = 'required|string|max:255';
             }
-            
+
             // Validate the request data using the defined rules
             $validatedData = $request->validate($rules);
 
@@ -662,7 +660,7 @@ class ContactController extends Controller
                             "name" => $validatedRefferedData['Full_Name'] ?? "",
                         ] ?? '-None-',
                         "Lead_Source_Detail" => $validatedData['lead_source_detail'] ?? "",
-                        "Salutation_s"=> $validatedData['envelope_salutation'] ?? "-None-",
+                        "Salutation_s" => $validatedData['envelope_salutation'] ?? "-None-",
                         "Spouse_Partner" => [
                             "id" => $validatedSpouse['id'] ?? $request->spouse_partner ?? "",
                             "name" => $validatedSpouse['Full_Name'] ?? "",
@@ -701,19 +699,19 @@ class ContactController extends Controller
                     ];
                 }
             }
-             if($responseData['data'][0]['Email']!=''){
-                $responseData['data'][0]['Has_Email']=true;
-                $validatedData['has_email'] =true;
-            }else{
-                 $responseData['data'][0]['Has_Email']=false;
-                $validatedData['has_email'] =false;
+            if ($responseData['data'][0]['Email'] != '') {
+                $responseData['data'][0]['Has_Email'] = true;
+                $validatedData['has_email'] = true;
+            } else {
+                $responseData['data'][0]['Has_Email'] = false;
+                $validatedData['has_email'] = false;
             }
-            if($responseData['data'][0]['Mailing_Street']!=''||$responseData['data'][0]['Mailing_City']!=''||$responseData['data'][0]['Mailing_State']!=''||$responseData['data'][0]['Mailing_Zip']!=''){
-                $responseData['data'][0]['Has_Address']=true;
-                $validatedData['has_address'] =true;
-            }else{
-                 $responseData['data'][0]['Has_Address']=false;
-                $validatedData['has_address'] =false;
+            if ($responseData['data'][0]['Mailing_Street'] != '' || $responseData['data'][0]['Mailing_City'] != '' || $responseData['data'][0]['Mailing_State'] != '' || $responseData['data'][0]['Mailing_Zip'] != '') {
+                $responseData['data'][0]['Has_Address'] = true;
+                $validatedData['has_address'] = true;
+            } else {
+                $responseData['data'][0]['Has_Address'] = false;
+                $validatedData['has_address'] = false;
             }
             if (empty($responseData["data"][0]["Groups"])) {
                 unset($responseData["data"][0]["Groups"]);
@@ -773,14 +771,14 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Salutation'])) {
                 unset($responseData['data'][0]['Salutation']);
             }
-            
+
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
-            
+
             $contactInstance = Contact::where('id', $id)->first();
-            $getContactFromZoho=null;
-           
+            $getContactFromZoho = null;
+
             if (!$contactInstance) {
                 return redirect('/contacts');
             }
@@ -788,35 +786,35 @@ class ContactController extends Controller
                 $response = $zoho->createContactData($responseData, $contactInstance->zoho_contact_id);
             } else {
                 $response = $zoho->createNewContactData($responseData);
-                
+
             }
             $data = json_decode($response, true);
             if (isset($response['data']) && is_array($response['data'])) {
-                if(!empty($contactInstance->zoho_contact_id)){
+                if (!empty($contactInstance->zoho_contact_id)) {
                     $getContactFromZoho = $zoho->getZohoContact($contactInstance->zoho_contact_id);
-                }else{
+                } else {
                     $getContactFromZoho = $zoho->getZohoContact($response['data'][0]['details']['id']);
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($id,$zohoContactValues);
+                $db->storeContactIntoDB($id, $zohoContactValues);
                 $contactGroups = $this->getGroupsForDelete($id);
                 $groupNames = $contactGroups->map(function ($item) {
                     return [
                         'name' => $item->groupData['name'],
-                        'id' => $item->groupData['id']
+                        'id' => $item->groupData['id'],
                     ]; // Access both the group name and id
                 })->toArray(); // Convert the result to an array
 
                 $match_abcd = ["A", "A+", "B", "C", "D"];
                 $targetGroup = $zohoContactValues['ABCD'];
-                
+
                 // Remove all contact groups that match $match_abcd except the one specified in $targetGroup
                 foreach ($groupNames as $groupName) {
                     if (in_array($groupName['name'], $match_abcd) && $groupName['name'] !== $targetGroup) {
                         // Find the group by id
                         $group = Groups::where('id', $groupName['id'])->first();
-                        
+
                         if ($group) {
                             // Remove the contact group entry
                             ContactGroups::where('contactId', $contactInstance['id'])
@@ -824,7 +822,7 @@ class ContactController extends Controller
                                 ->delete();
                         }
                     }
-                }   
+                }
                 // Ensure that the target group is added or updated
                 $getGroup = Groups::where('name', $targetGroup)->first();
                 if ($getGroup) {
@@ -838,11 +836,11 @@ class ContactController extends Controller
                         ]
                     );
                 }
-                
+
                 if (isset($zohoContactValues['Groups']) && is_array($zohoContactValues['Groups']) && count($zohoContactValues['Groups']) !== 0) {
                     foreach ($zohoContactValues['Groups'] as $group) {
-                        
-                        if(isset($group['Groups'])){
+
+                        if (isset($group['Groups'])) {
                             // Find the group instance in the database
                             $groupsInstance = Groups::where('zoho_group_id', $group['Groups']['id'])->first();
 
@@ -952,7 +950,7 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $db = new DatabaseService();
-       
+
         // $contactInfo = Contact::getZohoContactInfo();
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactsGroups = $db->retrieveContactGroupsDataForDelte($user, $accessToken, $contactId);
@@ -1007,26 +1005,24 @@ class ContactController extends Controller
         $type = "Contacts";
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-        return view('common.notes.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
+        return view('common.notes.create', compact('retrieveModuleData', 'contact', "type"))->render();
     }
 
-        public function createTasksForContact()
-            {
-                $user = $this->user();
+    public function createTasksForContact()
+    {
+        $user = $this->user();
 
-                if (!$user) {
-                    return redirect('/login');
-                }
-                $db = new DatabaseService();
-                $contactId = request()->route('contactId');
-                $accessToken = $user->getAccessToken();
-                $type = "Contacts";
-                $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
-                $contact = $db->retrieveContactById($user, $accessToken, $contactId);
-                return view('common.tasks.create', compact( 'retrieveModuleData', 'contact',"type"))->render();
-        }   
-
-    
+        if (!$user) {
+            return redirect('/login');
+        }
+        $db = new DatabaseService();
+        $contactId = request()->route('contactId');
+        $accessToken = $user->getAccessToken();
+        $type = "Contacts";
+        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $contact = $db->retrieveContactById($user, $accessToken, $contactId);
+        return view('common.tasks.create', compact('retrieveModuleData', 'contact', "type"))->render();
+    }
 
     public function createContactId(Request $request)
     {
@@ -1083,7 +1079,7 @@ class ContactController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
-           // Clear existing session value if it exists
+        // Clear existing session value if it exists
         if (session()->has('spouseContact')) {
             session()->forget('spouseContact');
         }
@@ -1130,14 +1126,14 @@ class ContactController extends Controller
         session(['spouseContact' => $contact]);
         // Redirect to the route without passing the contact object
         return response()->json([
-            'spouseContact'=>$contact
+            'spouseContact' => $contact,
         ]);
     }
 
-    public function contactEmailList(Request $request )
+    public function contactEmailList(Request $request)
     {
         try {
-            $db= new DatabaseService();
+            $db = new DatabaseService();
             $contactId = $request->route('contactId');
             $emails = $db->getContactEmailList($contactId);
             return Datatables::of($emails)->make(true);

@@ -70,7 +70,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columnDefs: [{ responsivePriority: 2, targets: -9 }],
     columns: [
         {
@@ -777,7 +777,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columnDefs: [{ responsivePriority: 1, targets: -10 }],
     columns: [
         {
@@ -1114,7 +1114,7 @@ var tableTasks = $("#datatable_tasks").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
         {
             className: "dt-control",
@@ -1455,7 +1455,7 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
         {
             className: "dt-control",
@@ -2069,7 +2069,7 @@ var tableContact = $("#datatable_contact").DataTable({
     paging: true,
     searching: true,
     processing: true,
-    responsive: true,
+    responsive: false,
     serverSide: true,
 
     columnDefs: [
@@ -2632,7 +2632,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
     columns: [
@@ -2736,7 +2736,7 @@ var templateTableList = $("#template-table-list").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     dom: "Bfrtip", // Integrates buttons with DataTables
     buttons: [
         {
@@ -2956,7 +2956,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columnDefs: [{ responsivePriority: 1, targets: -10 }],
     columns: [
         {
