@@ -733,44 +733,44 @@ $("#Reset_All").on("click", function () {
     table.search("").draw();
 });
 
-window.getStageData = function() {
+window.getStageData = function () {
     // Make AJAX call
     $.ajax({
-        url: '/getStage',
-        method: 'GET',
-        dataType: 'html',
-        success: function(data) {
-            $('.dashboard-cards').html(data);
+        url: "/getStage",
+        method: "GET",
+        dataType: "html",
+        success: function (data) {
+            $(".dashboard-cards").html(data);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             // Handle errors
-            console.error('Error:', error);
-        }
+            console.error("Error:", error);
+        },
     });
-
-}
-window.scrollDown = function(){
-    const btnBadDates = document.getElementById('btnBadDates');
+};
+window.scrollDown = function () {
+    const btnBadDates = document.getElementById("btnBadDates");
     if (btnBadDates) {
-        btnBadDates.addEventListener('click', function() {
-            const element = document.getElementById('badDates');
+        btnBadDates.addEventListener("click", function () {
+            const element = document.getElementById("badDates");
             if (element) {
                 const offset = 100; // Adjust this value as needed
                 const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                const offsetPosition =
+                    elementPosition + window.pageYOffset - offset;
 
                 window.scrollTo({
                     top: offsetPosition,
-                    behavior: 'smooth'
+                    behavior: "smooth",
                 });
             } else {
-                console.log('No bad dates element found.');
+                console.log("No bad dates element found.");
             }
         });
     } else {
-        console.log('No btnBadDates element found.');
+        console.log("No btnBadDates element found.");
     }
-}
+};
 //transaction for dashboard
 var tableDashboard = $("#datatable_transaction").DataTable({
     paging: true,
@@ -898,13 +898,14 @@ var tableDashboard = $("#datatable_transaction").DataTable({
             }
             if (data?.data && data.data.length > 0) {
                 $(".bad_dates_top").html(
-                    'You have ' + data.data.length + " Bad Dates! &nbsp <button onclick=scrollDown() class='btn btn-dark btn-small' id='btnBadDates'>FIX NOW</button>"
+                    "You have " +
+                        data.data.length +
+                        " Bad Dates! &nbsp <button onclick=scrollDown() class='btn btn-dark btn-small' id='btnBadDates'>FIX NOW</button>"
                 );
             } else {
                 $(".bad_dates_top").html("");
             }
-            
-            
+
             return data?.data; // Return the data array or object from your response
         },
     },
@@ -1053,7 +1054,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
                             $("#datatable_transaction")
                                 .DataTable()
                                 .ajax.reload();
-                                getStageData();
+                            getStageData();
                         }
                     },
                     error: function (error) {
@@ -2860,7 +2861,7 @@ function viewTemplateModal(id, name) {
                 <div class="modal-content dtaskmodalContent">
                     <div class="modal-header border-0">
                         <p class="modal-title dHeaderText" id="templateName${id}" onclick="editName('${id}')">${name}</p>
-                        <button type="button" class="btn-close" id="templateViewClose" data-bs-dismiss="modal" 
+                        <button type="button" class="btn-close" id="templateViewClose${id}" data-bs-dismiss="modal" 
                          aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="viewTemplateData${id}">
@@ -2918,11 +2919,16 @@ window.updateTemplate = function (templateId) {
     var content = tinymce.get("templateContent" + templateId).getContent();
     var name = $("#templateName" + templateId).val();
 
-    var jsonData = {
-        subject: subject,
-        content: content,
-        name: name,
-    };
+    var jsonData = {};
+    if (subject) {
+        jsonData.subject = subject;
+    }
+    if (content) {
+        jsonData.content = content;
+    }
+    if (name) {
+        jsonData.name = name;
+    }
     $.ajax({
         url: "/update/template/" + templateId,
         method: "PATCH",
@@ -2933,8 +2939,8 @@ window.updateTemplate = function (templateId) {
         dataType: "JSON",
         data: JSON.stringify(jsonData),
         success: function (response) {
+            $("#templateViewClose" + templateId).click();
             showToast("Template update successfully");
-            $("#templateViewClose").click();
         },
         error: function (xhr, status, error) {
             showToastError(
