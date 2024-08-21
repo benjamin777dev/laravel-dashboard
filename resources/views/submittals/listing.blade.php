@@ -896,7 +896,7 @@
                         "Onsite_Video": onsiteVideo,
                         "Custom_Domain_Name": customDomainName,
                         "bullets_4_words_per_bullet": bullets,
-                        "Buyer_Agent_Compensation_Offering": buyerAgentCompensationOffering,
+                        "Buyer_Agent_Compensation_Offering": buyer_agent_compensation_offering,
                         "Paragraph_200_Words_4_Page_Brochure_or_Look_Book": paragraph_200_words_4_page_brochure_or_look_book,
                         "In_House_Printed_Brochure_Pick_Up_Date": printedItemsPickupDate,
                         "IRES": ires,
