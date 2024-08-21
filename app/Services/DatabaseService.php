@@ -2584,6 +2584,8 @@ class DatabaseService
         $submittal->resubmitting_to_which_team = isset($submittalData["Resubmitting_to_Which_Team"]) ? $submittalData["Resubmitting_to_Which_Team"] : null;
         $submittal->resubmitting_why_list_all_changes = isset($submittalData["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $submittalData["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
         $submittal->resubmit_text = isset($submittalData["resubmit_text"]) ? $submittalData["resubmit_text"] : null;
+        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"]) ? $submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"] : null;
+        $submittal->buyer_agent_compensation_offering = isset($submittalData["Buyer_Agent_Compensation_Offering"]) ? $submittalData["Buyer_Agent_Compensation_Offering"] : null;
         if ($isNew) {
            $submittal->isSubmittalComplete = $isNew;
         }
