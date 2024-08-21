@@ -177,18 +177,6 @@ class Deal extends Model
                         'email' => $contact->email,
                     ]);
                     $existingIds->push($contact->id); // Add the ID to existing IDs
-    
-                    // $spouse = $contact->getSpouse();
-                    // if ($spouse && !$existingIds->contains($spouse->id)) {
-                    //     $roles->push([
-                    //         'name' => $spouse->first_name . ' ' . $spouse->last_name,
-                    //         'role' => 'Client',
-                    //         'id' => $spouse->id,
-                    //         'phone' => $spouse->phone,
-                    //         'email' => $spouse->email,
-                    //     ]);
-                    //     $existingIds->push($spouse->id); // Add the ID to existing IDs
-                    // }
                 }
             }
         }
@@ -264,12 +252,56 @@ class Deal extends Model
         // Determine contactNameId
         $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] ?? null : $data['Contact_Name'] ?? null;
         if ($contactNameId == null) {
-            Log::error("No contact ID found! ", ['data' => $data]);
+            Log::info("Contact Name for deal: $idkey: is null");
             $contactNameId = $source == "webhook" ? $data['Owner']['id'] ?? null : $data['Owner'] ?? null;
             if (!$contactNameId) {
+                Log::error("No contact ID found! and No Owner found", ['data' => $data]);
                 return [];
             }
         }
+
+        // Check if Client_Name_Only is provided and format it correctly
+        $clientNameId = null;
+        if (isset($data['Client_Name_Only']) && !empty($data['Client_Name_Only'])) {
+            $clientData = explode('||', $data['Client_Name_Only']);
+            if (count($clientData) == 2) {
+                $clientNameId = trim($clientData[1]);  // Get the ID part after splitting
+            }
+        }
+
+        $primary_contact_json = [];
+        if ($clientNameId) {
+            $clientRecord = Contact::where('zoho_contact_id', $clientNameId)->first();
+            if ($clientRecord) {
+                // Add the primary contact (client)
+                $primary_contact_json[] = [
+                    'Primary_Contact' => [
+                        'id' => $clientRecord->zoho_contact_id,
+                        'name' => $clientRecord->first_name . ' ' . $clientRecord->last_name,
+                    ],
+                    'id' => $idkey
+                ];
+                Log::info("Primary Contact from Client_Name_Only: ", ['data' => $primary_contact_json]);
+
+                // Check if the client has a spouse
+                $spouse = $clientRecord->getSpouse();
+                if ($spouse) {
+                    // Add the spouse as another primary contact
+                    $primary_contact_json[] = [
+                        'Primary_Contact' => [
+                            'id' => $spouse->zoho_contact_id,
+                            'name' => $spouse->first_name . ' ' . $spouse->last_name,
+                        ],
+                        'id' => $idkey
+                    ];
+                }
+            } else {
+                Log::warning("No client found for ID extracted from Client_Name_Only: " . $clientNameId);
+            }
+        } else {
+            Log::warning("Client_Name_Only not provided or incorrectly formatted");
+        }
+
 
         // Check if the deal is owned by a team
         $teamPartnershipId = $source == "webhook" ? ($data['Team_Partnership']['id'] ?? null) : ($data['Team_Partnership'] ?? null);
@@ -278,7 +310,7 @@ class Deal extends Model
             $leadAgentId = $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null);
             if ($leadAgentId) {
                 // Since there's a lead agent, it's that user we will use
-                $dealUser = User::where('zoho_id', $leadAgentId)->first();
+                $dealUser = User::where('root_user_id', $leadAgentId)->first();
             } else {
                 Log::error("Deal: $idkey has a team/partnership, but no lead Agent assigned!");
             }
@@ -286,6 +318,13 @@ class Deal extends Model
             // Deal is owned by a single agent, use contactNameId
             $dealUser = User::where("zoho_id", $contactNameId)->first();
         }
+
+
+        $leadAgentId = $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null);
+        if ($leadAgentId) {
+            // Since there's a lead agent, it's that user we will use
+            $dealUser = User::where('root_user_id', $leadAgentId)->first();
+        } 
 
         // Get the userId if available
         if ($dealUser) {
@@ -367,7 +406,7 @@ class Deal extends Model
             'import_batch_id' => $data['Import_Batch_ID'] ?? null,
             'isDealCompleted' => (int)($data['isDealCompleted'] ?? 1),
             'isInZoho' => (int)($data['isInZoho'] ?? 1),
-            'lead_agent' => $data['Lead_Agent']['name'] ?? null,
+            'lead_agent' => $leadAgentId ?? null,
             'lead_agent_email' => $data['Lead_Agent']['email'] ?? null,
             'lead_agent_id' => $leadAgentId ?? null, // Correct assignment
             'lead_agent_name' => $data['Lead_Agent']['name'] ?? null,
@@ -397,6 +436,7 @@ class Deal extends Model
             'pipeline1' => $data['Pipeline1'] ?? null,
             'pipeline_probability' => (float)$pipelineProbability,
             'potential_gci' => $data['Potential_GCI'] ?? null,
+            'primary_contact' => json_encode($primary_contact_json),
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
             'probability' => (float)($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
@@ -425,6 +465,10 @@ class Deal extends Model
             'zip' => $data['Zip'] ?? null,
         ];
 
+        if (!empty($mappedData['primary_contact'])) {
+            Log::info($mappedData['primary_contact']);
+        }
+        
         return $mappedData;
     }
 

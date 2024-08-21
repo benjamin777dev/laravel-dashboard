@@ -23,15 +23,15 @@ class MigrateRandomNotes extends Command
         parent::__construct();
         $this->zoho = $zoho;
 
-        $user = User::where('email', 'phillip@coloradohomerealty.com')->first();
-        $accessToken = $user->getAccessToken();
-        $this->zoho->access_token = $accessToken;
-
-
     }
 
     public function handle()
     {
+
+        $user = User::where('email', 'phillip@coloradohomerealty.com')->first();
+        $accessToken = $user->getAccessToken();
+        $this->zoho->access_token = $accessToken;
+
         $contacts = Contact::whereNotNull('random_notes')
             ->where('random_notes', '!=', '')
             ->get();
