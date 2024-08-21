@@ -486,6 +486,9 @@ class DatabaseService
 
             // Update or create the contact
             Contact::updateOrCreate(['id' => $id], $mappedData);
+            if($contact['id']){
+                Contact::updateOrCreate(['zoho_contact_id' => $contact['id']], $mappedData);
+            }
 
         Log::info("Contacts stored into database successfully.");
     }

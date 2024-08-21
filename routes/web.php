@@ -86,7 +86,7 @@ Route::post('/contact/update/{id}', [ContactController::class, 'updateContactFie
 Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
 Route::get('/contact/create/form/{contactId}', [ContactController::class, 'contactCreateForm'])->name('contacts.create.form')->middleware('auth');
 Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
-Route::get('/contacts-trasactions/{contactId}', [ContactController::class, 'retriveDealForContacts'])->name('contacts.show')->middleware('auth');
+Route::get('/contacts-trasactions/{contactId}', [ContactController::class, 'retriveDealForContacts'])->name('contacts.dealdata')->middleware('auth');
 Route::get('/contact/detail/form/{contactId}', [ContactController::class, 'showDetailForm'])->name('contacts.detail.form')->middleware('auth');
 Route::post('/contact/spouse/create/{contactId}', [ContactController::class, 'createSpouseContact'])->name('contact.spouse.create');
 Route::get('/get-groups', [ContactController::class, 'getGroups'])->name('group.sort')->middleware('auth');

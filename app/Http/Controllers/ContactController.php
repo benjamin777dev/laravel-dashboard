@@ -137,8 +137,9 @@ class ContactController extends Controller
         Log::info('CONTACTIDDATA' . $contactId);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
-           return response()->json(["redirect" => "/contacts"]);
+            return response()->json(["redirect" => "/contacts"]);
         }
+        $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $tab = request()->query('tab') ?? 'In Progress';

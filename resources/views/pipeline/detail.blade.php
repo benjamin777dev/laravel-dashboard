@@ -435,7 +435,6 @@
        
         </div>
 {{-- Add New Submittal --}}
-
 @if (
     isset($deal['representing']) && 
     isset($deal['tm_preference']) &&

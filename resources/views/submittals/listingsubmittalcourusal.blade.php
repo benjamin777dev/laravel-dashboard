@@ -836,32 +836,6 @@
                 headerTag: "h3",
                 bodyTag: "section",
                 transitionEffect: "slide",
-                onStepChanging: function(event, currentIndex, newIndex) {
-                    // Perform validation before allowing step change
-                    console.log({newIndex:newIndex,currentIndex:currentIndex})
-                    const elements = document.querySelectorAll('.add_default-slide');
-                    let isValid = true;
-                    console.log(elements.length,resubmitData,'resubmitDataaaaaaaa!!!!!!!')
-                    if (resubmitData === "true" || elements.length === 1 || elements.length === 5) {
-                        if (hasTriggeredOnce) {
-                            console.log(elements,'yes if')
-                            // Second time the condition is triggered, validate the next step
-                            isValid = validateStep(currentIndex);
-                        } else {
-                            console.log(elements,'yes else')
-                            // First time the condition is triggered
-                            isValid = validateStep(currentIndex);
-                            // Set the flag to true so the next time it triggers differently
-                            hasTriggeredOnce = true;
-                        }
-                    } else {
-                        console.log("yes double elese")
-                        // Normal validation if condition is not met
-                        isValid = validateStep(currentIndex);
-                    }
-
-                    return isValid;
-                },
                 onFinished: function(event, currentIndex) {
                     // API call here
                     const isValid = validateStep(currentIndex);
