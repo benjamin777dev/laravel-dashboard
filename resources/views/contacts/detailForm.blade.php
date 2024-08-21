@@ -278,7 +278,6 @@
     </form>
     </div>
 </div>
-@include('pipeline.transaction',['deals'=>$deals,'allstages'=>$allstages,'contactId'=>$contact['zoho_contact_id']])
 {{-- view group secton --}}
 <div class="modal fade p-5" id="staticBackdropforViewGroupforDetails" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -346,45 +345,13 @@
 </div>
 
 <div class="contactEmailList">
-    <table id="contact-email-table" class="table table-bordered nowrap w-100">
-    </table>
+  @include('components.common-table',['id'=>"contact-email-table"])
+</div>
+<div class="contactEmailList">
+  @include('components.common-table',['id'=>"contact-transaction-table"])
 </div>
 
 
-{{-- Transactions s--}}
-
-<div class="p-4 d-flex justify-content-between ">
-    <div class="">
-        <h2 class='pText mt-3 text-center'> Transactions </h2>
-    </div>
-</div>
-
-<div class="dealsList">
-    @php
-        $transHeader = [
-        "Transaction",
-        "Stage",
-        "Representing",
-        "Price",
-        "Close Date",
-        "Commission"
-    ]
-    @endphp
-     @include('components.common-table',['id'=>"contact-transaction-table"])
-    <!-- Stacked View for Mobile -->
-    <div class="d-md-none">
-        @foreach($deals as $deal)
-            <div class="border mb-3 p-2">
-                <h5><a href="{{route('pipeline.view', $deal->id)}}">{{$deal->deal_name}}</a></h5>
-                <p><strong>Stage:</strong> {{$deal->stage}}</p>
-                <p><strong>Representing:</strong> {{$deal->representing}}</p>
-                <p><strong>Price:</strong> ${{ number_format($deal['sale_price'] ?? '0', 0, '.', ',') }}</p>
-                <p><strong>Close Date:</strong> {{ $deal['closing_date'] ? \Carbon\Carbon::parse($deal['closing_date'])->format('Y-m-d') : '' }}</p>
-                <p><strong>Commission:</strong> {{ number_format($deal['commission'] ?? '0', 2) }}%</p>
-            </div>
-        @endforeach
-    </div>
-</div>
 
 
 

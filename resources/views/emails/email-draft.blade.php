@@ -118,10 +118,25 @@
                 dropdownParent: $('#draftModal'),
                 createTag: function(params) {
                     var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    var isDuplicate = false;
+                    var allOptions = $(selector).find('option').map(function() {
+                        return $(this).data('email');
+                    }).get();
+                    
+                    // Check if the entered value already exists
+                    if (allOptions.includes(params.term.toLowerCase())) {
+                        isDuplicate = true;
+                    }
+                    
+                    if (isDuplicate) {
+                        return null; // Ignore duplicate tags
+                    }
+                    
                     if (!emailPattern.test(params.term)) {
                         $("#" + errorId).show();
-                        return null;
+                        return null; // Ignore invalid email
                     }
+                    
                     $("#" + errorId).hide();
                     return {
                         id: params.term,
