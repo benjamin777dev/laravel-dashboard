@@ -70,7 +70,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columnDefs: [{}],
     columns: [
         {
@@ -2925,7 +2925,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
         {
             data: "deal_name",
