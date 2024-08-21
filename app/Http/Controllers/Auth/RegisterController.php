@@ -174,8 +174,9 @@ class RegisterController extends Controller
         $encryptedRefreshToken = Crypt::encryptString($tokenData['refresh_token']);
         
         // Create or update the user in the database
-        $constraint = ['zoho_id' => $contactId];
+        $constraint = ['root_user_id' => $rootUserId];
         $userDBData = [
+            'zoho_id' => $contactId,
             'email' => $hashedEmail, // Store hashed email
             'name' => $validatedData['name'],
             'password' => Hash::make($validatedData['password']),

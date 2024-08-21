@@ -786,6 +786,15 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
+
+            if ($contacts) {
+                // Get all related deals
+                $allDeals = $contacts->allRelatedDeals();
+    
+                // Optionally, you can attach these deals to the contact or return them separately
+                $contacts->deals = $allDeals;
+            }
+
             Log::info("Retrieved Contact From Database", ['contacts' => $contacts]);
             return $contacts;
         } catch (\Exception $e) {
