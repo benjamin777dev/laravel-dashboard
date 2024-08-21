@@ -1887,7 +1887,7 @@
                     removeStep(i);
                 }
                 if(resubmitData){
-                    addStepChr('Resubmittal Information', resubmit,8);
+                    addStepChr('Resubmittal Information', resubmit,9);
                 }
             }
             if (value === "Yes" && value !== undefined) {

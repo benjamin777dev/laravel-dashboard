@@ -485,7 +485,10 @@ class DatabaseService
             ];
 
             // Update or create the contact
+            Log::info("Contacts stored into database successfully.".$contact['id']);
             Contact::updateOrCreate(['id' => $id], $mappedData);
+           
+           
 
         Log::info("Contacts stored into database successfully.");
     }
