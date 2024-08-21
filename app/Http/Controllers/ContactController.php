@@ -199,7 +199,8 @@ class ContactController extends Controller
             return response()->json(["redirect" => "/contacts"]);
         }
 
-        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        //$deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $deals = $contact->deals ?? [];
         return Datatables::of($deals)->make(true);
 
     }

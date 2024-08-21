@@ -144,14 +144,14 @@ class Contact extends Model
         'unsubscribed_time',
         'mls_ppar',
         'outsourced_mktg_3d_zillow_tour',
-        'marketing_specialist',               
-        'default_commission_plan_id',        
-        'agent_name_on_marketing',           
-        'feature_cards_or_sheets',            
-        'termination_reason',                
-        'transaction_manager',                
-        'auto_address',     
-        'has_address'                 
+        'marketing_specialist',
+        'default_commission_plan_id',
+        'agent_name_on_marketing',
+        'feature_cards_or_sheets',
+        'termination_reason',
+        'transaction_manager',
+        'auto_address',
+        'has_address',
     ];
 
     public function teamAndPartnership()
@@ -170,9 +170,36 @@ class Contact extends Model
         return self::select('zoho_contact_id', 'last_name', 'first_name')->get();
     }
 
+    public function dealsByClientNameOnly()
+    {
+        return Deal::where('client_name_only', 'LIKE', "%{$this->zoho_contact_id}%")->get();
+    }
+
+    public function dealsByPrimaryContacts()
+    {
+        return Deal::where('primary_contact', 'LIKE', "%{$this->zoho_contact_id}%")->get();
+    }
+
+    public function allRelatedDeals()
+    {
+
+        Log::info("fetching all deals that are like " . $this->zoho_contact_id);
+
+        $clientNameOnlyDeals = $this->dealsByClientNameOnly();
+        Log::info("Client name only deals: ", ['cnoDeals' => $clientNameOnlyDeals]);
+
+        // Use LIKE for a simpler match in the primary_contact JSON field
+        $primaryContactsDeals = Deal::where('primary_contact', 'LIKE', "%{$this->zoho_contact_id}%")->get();
+
+        Log::info("Primary contact Deals: ", ['pcDeals' => $primaryContactsDeals]);
+
+        // Merge the two collections
+        return $clientNameOnlyDeals->merge($primaryContactsDeals);
+    }
+
     public function userData()
     {
-        return $this->belongsTo(User::class, 'contact_owner','root_user_id');
+        return $this->belongsTo(User::class, 'contact_owner', 'root_user_id');
     }
 
     public function spouseContact()
@@ -184,7 +211,7 @@ class Contact extends Model
     {
         return $this->belongsTo(Contact::class, 'contactId');
     }
-    
+
     public function groupsData()
     {
         return $this->hasMany(ContactGroups::class, 'contactId');
@@ -219,13 +246,9 @@ class Contact extends Model
         if (is_null($this->spouse_partner) || $this->spouse_partner == '') {
             return null;
         }
-    
+
         return Contact::where('zoho_contact_id', $this->spouse_partner)->first();
     }
-
-
-
-
 
     /**
      * Map Zoho data to contact model attributes.
@@ -237,24 +260,23 @@ class Contact extends Model
     public static function mapZohoData(array $data, $source)
     {
         $data['Created_Time'] = isset($data['Created_Time']) ? Carbon::parse($data['Created_Time'])->format('Y-m-d H:i:s') : null;
-        $data['Last_Called'] = isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s')  : null;
-        $data['Last_Emailed'] = isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s')  : null;
-        $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s')  : null;
-        $data['Termination_Date'] = isset($data['Termination_Date']) ? Carbon::parse($data['Termination_Date'])->format('Y-m-d H:i:s')  : null;
+        $data['Last_Called'] = isset($data['Last_Called']) ? Carbon::parse($data['Last_Called'])->format('Y-m-d H:i:s') : null;
+        $data['Last_Emailed'] = isset($data['Last_Emailed']) ? Carbon::parse($data['Last_Emailed'])->format('Y-m-d H:i:s') : null;
+        $data['Modified_Time'] = isset($data['Modified_Time']) ? Carbon::parse($data['Modified_Time'])->format('Y-m-d H:i:s') : null;
+        $data['Termination_Date'] = isset($data['Termination_Date']) ? Carbon::parse($data['Termination_Date'])->format('Y-m-d H:i:s') : null;
         $data['License_Start_Date'] = isset($data['License_Start_Date']) ? Carbon::parse($data['License_Start_Date'])->format('Y-m-d H:i:s') : null;
-        $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s')  : null;
-        $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s')  : null;
+        $data['Unsubscribed_Time'] = isset($data['Unsubscribed_Time']) ? Carbon::parse($data['Unsubscribed_Time'])->format('Y-m-d H:i:s') : null;
+        $data['Last_Activity_Time'] = isset($data['Last_Activity_Time']) ? Carbon::parse($data['Last_Activity_Time'])->format('Y-m-d H:i:s') : null;
 
         $incomeGoal = isset($data['Income_Goal']) ? $data['Income_Goal'] : null;
-    
+
         // Remove commas and dollar signs for easier numeric validation
         if (!is_null($incomeGoal)) {
             $incomeGoal = str_replace(['$', ','], '', $incomeGoal);
         }
 
-
         $mappedData = [
-            'zoho_contact_id' => $source === 'webhook' ? $data['id'] :  $data['Id'],
+            'zoho_contact_id' => $source === 'webhook' ? $data['id'] : $data['Id'],
             'contact_owner' => $source === 'webhook' ? (isset($data['Owner']['id']) ? $data['Owner']['id'] : null) : (isset($data['Owner']) ? $data['Owner'] : null),
             'email' => isset($data['Email']) ? $data['Email'] : null,
             'first_name' => isset($data['First_Name']) ? $data['First_Name'] : null,
@@ -276,7 +298,7 @@ class Contact extends Model
             'isContactCompleted' => $source == "webhook" || $source == "csv",
             'isInZoho' => $source == "webhook" || $source == "csv",
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
-            'referred_id' => $source === 'webhook' 
+            'referred_id' => $source === 'webhook'
             ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
             : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
             //'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
@@ -284,53 +306,53 @@ class Contact extends Model
             'spouse_partner' => isset($data['Spouse_Partner']) ? (is_array($data['Spouse_Partner']) ? $data['Spouse_Partner']['id'] : $data['Spouse_Partner']) : null,
             'last_called' => $data['Last_Called'],
             'last_emailed' => $data['Last_Emailed'],
-            'email_blast_opt_in' => isset($data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In']) ? (int)$data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In'] : null,
+            'email_blast_opt_in' => isset($data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In']) ? (int) $data[$source === 'webhook' ? 'Email_Blast_Opt_In' : 'Email_Opt_In'] : null,
             'twitter_url' => isset($data[$source === 'webhook' ? 'Twitter_URL' : 'Twitter']) ? $data[$source === 'webhook' ? 'Twitter_URL' : 'Twitter'] : null,
             'emergency_contact_phone' => isset($data['Emergency_Contact_Phone']) ? $data['Emergency_Contact_Phone'] : null,
-            'print_qr_code_sheet' => isset($data['Print_QR_Code_Sheet']) ? (int)$data['Print_QR_Code_Sheet'] : null,
-            'invalid_address_usps' => isset($data['Invalid_Address_USPS']) ? (int)$data['Invalid_Address_USPS'] : null,
-            'mls_recolorado' => isset($data['MLS_REColorado']) ? (int)$data['MLS_REColorado'] : null,
-            'mls_navica' => isset($data['MLS_Navica']) ? (int)$data['MLS_Navica'] : null,
-            'perfect' => isset($data['Perfect']) ? (int)$data['Perfect'] : null,
+            'print_qr_code_sheet' => isset($data['Print_QR_Code_Sheet']) ? (int) $data['Print_QR_Code_Sheet'] : null,
+            'invalid_address_usps' => isset($data['Invalid_Address_USPS']) ? (int) $data['Invalid_Address_USPS'] : null,
+            'mls_recolorado' => isset($data['MLS_REColorado']) ? (int) $data['MLS_REColorado'] : null,
+            'mls_navica' => isset($data['MLS_Navica']) ? (int) $data['MLS_Navica'] : null,
+            'perfect' => isset($data['Perfect']) ? (int) $data['Perfect'] : null,
             'realtor_board' => isset($data['Realtor_Board']) ? $data['Realtor_Board'] : null,
             'initial_split' => isset($data['Initial_Split']) ? $data['Initial_Split'] : null,
-            'has_missing_important_date' => isset($data['HasMissingImportantDate']) ? (int)$data['HasMissingImportantDate'] : null,
-            'need_o_e' => isset($data['Need_O_E']) ? (int)$data['Need_O_E'] : null,
+            'has_missing_important_date' => isset($data['HasMissingImportantDate']) ? (int) $data['HasMissingImportantDate'] : null,
+            'need_o_e' => isset($data['Need_O_E']) ? (int) $data['Need_O_E'] : null,
             'culture_index' => isset($data['Culture_Index']) ? $data['Culture_Index'] : null,
             'sticky_dots' => isset($data['Sticky_Dots']) ? $data['Sticky_Dots'] : null,
             'strategy_group' => isset($data['Strategy_Group']) ? $data['Strategy_Group'] : null,
-            'weekly_email' => isset($data['Weekly_Email']) ? (int)$data['Weekly_Email'] : null,
+            'weekly_email' => isset($data['Weekly_Email']) ? (int) $data['Weekly_Email'] : null,
             'number_of_chats' => isset($data['Number_Of_Chats']) ? $data['Number_Of_Chats'] : null,
-            'notepad_mailer_opt_in' => isset($data['Notepad_Mailer_Opt_In']) ? (int)$data['Notepad_Mailer_Opt_In'] : null,
+            'notepad_mailer_opt_in' => isset($data['Notepad_Mailer_Opt_In']) ? (int) $data['Notepad_Mailer_Opt_In'] : null,
             'chr_gives_amount' => isset($data['CHR_Gives_Amount']) ? $data['CHR_Gives_Amount'] : null,
             'other_zip' => isset($data['Other_Zip']) ? $data['Other_Zip'] : null,
-            'market_mailer_opt_in' => isset($data['Market_Mailer_Opt_In']) ? (int)$data['Market_Mailer_Opt_In'] : null,
+            'market_mailer_opt_in' => isset($data['Market_Mailer_Opt_In']) ? (int) $data['Market_Mailer_Opt_In'] : null,
             'groups' => isset($data['Groups']) ? $data['Groups'] : null,
             'closer_name_phone' => isset($data['Closer_Name_Phone']) ? $data['Closer_Name_Phone'] : null,
-            'unsubscribe_from_reviews' => isset($data['Unsubscribe_From_Reviews']) ? (int)$data['Unsubscribe_From_Reviews'] : null,
-            'outsourced_mktg_onsite_video' => isset($data['Outsourced_Mktg_Onsite_Video']) ? (int)$data['Outsourced_Mktg_Onsite_Video'] : null,
+            'unsubscribe_from_reviews' => isset($data['Unsubscribe_From_Reviews']) ? (int) $data['Unsubscribe_From_Reviews'] : null,
+            'outsourced_mktg_onsite_video' => isset($data['Outsourced_Mktg_Onsite_Video']) ? (int) $data['Outsourced_Mktg_Onsite_Video'] : null,
             'random_notes' => isset($data['Random_Notes']) ? $data['Random_Notes'] : null,
             'residual_cap' => isset($data['Residual_Cap']) ? $data['Residual_Cap'] : null,
-            'email_blast_to_reverse_prospect_list' => isset($data['Email_Blast_to_Reverse_Prospect_List']) ? (int)$data['Email_Blast_to_Reverse_Prospect_List'] : null,
-            'review_generation' => isset($data['Review_Generation']) ? (int)$data['Review_Generation'] : null,
+            'email_blast_to_reverse_prospect_list' => isset($data['Email_Blast_to_Reverse_Prospect_List']) ? (int) $data['Email_Blast_to_Reverse_Prospect_List'] : null,
+            'review_generation' => isset($data['Review_Generation']) ? (int) $data['Review_Generation'] : null,
             'zillow_url' => isset($data['Zillow_URL']) ? $data['Zillow_URL'] : null,
             'agent_assistant' => isset($data['Agent_Assistant']) ? $data['Agent_Assistant'] : null,
-            'social_media_ads' => isset($data['Social_Media_Ads']) ? (int)$data['Social_Media_Ads'] : null,
-            'referred_by' => $source === 'webhook' 
+            'social_media_ads' => isset($data['Social_Media_Ads']) ? (int) $data['Social_Media_Ads'] : null,
+            'referred_by' => $source === 'webhook'
             ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
             : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
             //'referred_by' => isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null,
             'peer_advisor' => isset($data['Peer_Advisor']) ? $data['Peer_Advisor'] : null,
             'agent_name_on_marketing' => isset($data['Agent_Name_on_Marketing']) ? $data['Agent_Name_on_Marketing'] : null,
             'other_street' => isset($data['Other_Street']) ? $data['Other_Street'] : null,
-            'qr_code_sign_rider' => isset($data['QR_Code_Sign_Rider']) ? (int)$data['QR_Code_Sign_Rider'] : null,
+            'qr_code_sign_rider' => isset($data['QR_Code_Sign_Rider']) ? (int) $data['QR_Code_Sign_Rider'] : null,
             'google_business_page_url' => isset($data['Google_Business_Page_URL']) ? $data['Google_Business_Page_URL'] : null,
-            'has_email' => isset($data['Has_Email']) ? (int)$data['Has_Email'] : null,
+            'has_email' => isset($data['Has_Email']) ? (int) $data['Has_Email'] : null,
             'salesforce_id' => isset($data['Salesforce_ID']) ? $data['Salesforce_ID'] : null,
-            'mls_ires' => isset($data['MLS_IRES']) ? (int)$data['MLS_IRES'] : null,
-            'outsourced_mktg_floorplans' => isset($data['Outsourced_Mktg_Floorplans']) ? (int)$data['Outsourced_Mktg_Floorplans'] : null,
+            'mls_ires' => isset($data['MLS_IRES']) ? (int) $data['MLS_IRES'] : null,
+            'outsourced_mktg_floorplans' => isset($data['Outsourced_Mktg_Floorplans']) ? (int) $data['Outsourced_Mktg_Floorplans'] : null,
             'income_goal' => is_numeric($incomeGoal) ? $incomeGoal : 250000,
-            'locked_s' => isset($data['Locked__s']) ? (int)$data['Locked__s'] : null,
+            'locked_s' => isset($data['Locked__s']) ? (int) $data['Locked__s'] : null,
             'tag' => isset($data['Tag']) ? json_encode($data['Tag']) : null,
             'import_batch' => isset($data['Import_Batch']) ? $data['Import_Batch'] : null,
             'termination_date' => $data['Termination_Date'],
@@ -347,14 +369,14 @@ class Contact extends Model
             'email_to_cc_on_all_marketing_comms' => isset($data['Email_to_CC_on_All_Marketing_Comms']) ? $data['Email_to_CC_on_All_Marketing_Comms'] : null,
             'tm_preference' => isset($data['TM_Preference']) ? $data['TM_Preference'] : null,
             'salutation_s' => isset($data['Salutation_s']) ? $data['Salutation_s'] : null,
-            '$locked_for_me' => isset($data['$locked_for_me']) ? (int)$data['$locked_for_me'] : null,
-            '$approved' => isset($data['$approved']) ? (int)$data['$approved'] : null,
+            '$locked_for_me' => isset($data['$locked_for_me']) ? (int) $data['$locked_for_me'] : null,
+            '$approved' => isset($data['$approved']) ? (int) $data['$approved'] : null,
             'email_cc_1' => isset($data['Email_CC_1']) ? $data['Email_CC_1'] : null,
             'google_business' => isset($data['Google_Business']) ? $data['Google_Business'] : null,
             'email_cc_2' => isset($data['Email_CC_2']) ? $data['Email_CC_2'] : null,
             'days_visited' => isset($data['Days_Visited']) ? $data['Days_Visited'] : null,
             'pipeline_stage' => isset($data['Pipeline_Stage']) ? $data['Pipeline_Stage'] : null,
-            'social_media_images' => isset($data['Social_Media_Images']) ? (int)$data['Social_Media_Images'] : null,
+            'social_media_images' => isset($data['Social_Media_Images']) ? (int) $data['Social_Media_Images'] : null,
             'fees_charged_to_seller_at_closing' => isset($data['Fees_Charged_to_Seller_at_Closing']) ? $data['Fees_Charged_to_Seller_at_Closing'] : null,
             'realtor_com_url' => isset($data['Realtor_com_URL']) ? $data['Realtor_com_URL'] : null,
             'title_company' => isset($data['Title_Company']) ? $data['Title_Company'] : null,
@@ -365,28 +387,28 @@ class Contact extends Model
             'lender_company_name' => isset($data['Lender_Company_Name']) ? $data['Lender_Company_Name'] : null,
             '$zia_owner_assignment' => isset($data['$zia_owner_assignment']) ? $data['$zia_owner_assignment'] : null,
             'secondary_email' => isset($data['Secondary_Email']) ? $data['Secondary_Email'] : null,
-            'current_annual_academy' => isset($data['Current_Annual_Academy']) ? (int)$data['Current_Annual_Academy'] : null,
-            'transaction_status_reports' => isset($data['Transaction_Status_Reports']) ? (int)$data['Transaction_Status_Reports'] : null,
+            'current_annual_academy' => isset($data['Current_Annual_Academy']) ? (int) $data['Current_Annual_Academy'] : null,
+            'transaction_status_reports' => isset($data['Transaction_Status_Reports']) ? (int) $data['Transaction_Status_Reports'] : null,
             'non_tm_assignment' => isset($data['Non_TM_Assignment']) ? $data['Non_TM_Assignment'] : null,
             'user' => $source === 'webhook' ? (isset($data['User']['id']) ? $data['User']['id'] : null) : (isset($data['User']) ? $data['User'] : null),
             'lender_email' => isset($data['Lender_Email']) ? $data['Lender_Email'] : null,
-            'sign_install' => isset($data['Sign_Install']) ? (int)$data['Sign_Install'] : null,
+            'sign_install' => isset($data['Sign_Install']) ? (int) $data['Sign_Install'] : null,
             'team_name' => isset($data['Team_Name']) ? $data['Team_Name'] : null,
             'pintrest_url' => isset($data['Pintrest_URL']) ? $data['Pintrest_URL'] : null,
             'youtube_url' => isset($data['Youtube_URL']) ? $data['Youtube_URL'] : null,
-            'include_insights_in_intro' => isset($data['Include_Insights_in_Intro']) ? (int)$data['Include_Insights_in_Intro'] : null,
+            'include_insights_in_intro' => isset($data['Include_Insights_in_Intro']) ? (int) $data['Include_Insights_in_Intro'] : null,
             'import_id' => isset($data['Import_ID']) ? $data['Import_ID'] : null,
             'business_info' => isset($data['Business_Info']) ? $data['Business_Info'] : null,
             'email_signature' => isset($data['Email_Signature']) ? $data['Email_Signature'] : null,
-            'property_website_qr_code' => isset($data['Property_Website_QR_Code']) ? (int)$data['Property_Website_QR_Code'] : null,
-            'draft_showing_instructions' => isset($data['Draft_Showing_Instructions']) ? (int)$data['Draft_Showing_Instructions'] : null,
+            'property_website_qr_code' => isset($data['Property_Website_QR_Code']) ? (int) $data['Property_Website_QR_Code'] : null,
+            'draft_showing_instructions' => isset($data['Draft_Showing_Instructions']) ? (int) $data['Draft_Showing_Instructions'] : null,
             'additional_email_for_confirmation' => isset($data['Additional_Email_for_Confirmation']) ? $data['Additional_Email_for_Confirmation'] : null,
-            'important_date_added' => isset($data['Important_Date_Added']) ? (int)$data['Important_Date_Added'] : null,
+            'important_date_added' => isset($data['Important_Date_Added']) ? (int) $data['Important_Date_Added'] : null,
             'emergency_contact_name' => isset($data['Emergency_Contact_Name']) ? $data['Emergency_Contact_Name'] : null,
             'initial_cap' => isset($data['Initial_Cap']) ? $data['Initial_Cap'] : null,
             'unsubscribed_time' => $data['Unsubscribed_Time'],
-            'mls_ppar' => isset($data['MLS_PPAR']) ? (int)$data['MLS_PPAR'] : null,
-            'outsourced_mktg_3d_zillow_tour' => isset($data['Outsourced_Mktg_3D_Zillow_Tour']) ? (int)$data['Outsourced_Mktg_3D_Zillow_Tour'] : null,
+            'mls_ppar' => isset($data['MLS_PPAR']) ? (int) $data['MLS_PPAR'] : null,
+            'outsourced_mktg_3d_zillow_tour' => isset($data['Outsourced_Mktg_3D_Zillow_Tour']) ? (int) $data['Outsourced_Mktg_3D_Zillow_Tour'] : null,
             'marketing_specialist' => isset($data['Marketing_Specialist']) ? $data['Marketing_Specialist'] : null,
             'default_commission_plan_id' => isset($data['Default_Commission_Plan_Id']) ? $data['Default_Commission_Plan_Id'] : null,
             'feature_cards_or_sheets' => isset($data['Feature_Cards_or_Sheets']) ? $data['Feature_Cards_or_Sheets'] : null,
@@ -394,17 +416,14 @@ class Contact extends Model
             'transaction_manager' => isset($data['Transaction_Manager']) ? $data['Transaction_Manager'] : null,
             'auto_address' => isset($data['Auto_Address']) ? $data['Auto_Address'] : null,
             'has_address' => !empty($data['Mailing_Street']) && !empty($data['Mailing_City']) && !empty($data['Mailing_State']) && !empty($data['Mailing_Zip']),
-            
+
         ];
-        
+
         Log::info("Team_Partnership Value:", ['team_partnership' => $data['Team_Partnership'], 'type' => gettype($data['Team_Partnership'])]);
 
-        $mappedData['team_partnership'] = !empty($data['Team_Partnership']) ? 
-        ($source === 'webhook' ? $data['Team_Partnership']['id'] : $data['Team_Partnership']) 
+        $mappedData['team_partnership'] = !empty($data['Team_Partnership']) ?
+        ($source === 'webhook' ? $data['Team_Partnership']['id'] : $data['Team_Partnership'])
         : null;
-
-
-            
 
         if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {
             $user = User::where('email', $mappedData['email'])->first();
@@ -415,8 +434,7 @@ class Contact extends Model
             }
         }
 
-      
-        Log::info("Mapped Data: " , ['data' => $mappedData]);
+        Log::info("Mapped Data: ", ['data' => $mappedData]);
 
         return $mappedData;
     }
