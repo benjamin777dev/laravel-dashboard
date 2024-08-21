@@ -71,14 +71,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
     processing: true,
     serverSide: true,
     responsive: true,
-    columnDefs: [{ responsivePriority: 2, targets: -9 }],
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: "Actions",
@@ -195,6 +189,16 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 // Join names into a single string, separated by commas
                 const namesString = names.join(", ") || "N/A";
                 return `<span class="primary-contact-names">${namesString}</span>`;
+            },
+        },
+        {
+            data: "lead_agent",
+            title: "Co-Listing Agent",
+            render: function (data, type, row) {
+                console.log(data, "sdfsdhfshd");
+                return `<span data-name="leadAgent" data-id="${row.id}">${
+                    data || "N/A"
+                }</span>`;
             },
         },
         {
@@ -545,13 +549,6 @@ var tableContactRole = $("#contact_role_table_pipeline").DataTable({
     processing: true,
     serverSide: true,
     columns: [
-        // {
-        //     className: 'dt-control',
-        //     orderable: false,
-        //     data: null,
-        //     defaultContent: ''
-        // },
-
         {
             data: "name",
             title: "Name",
@@ -777,15 +774,9 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
-    columnDefs: [{ responsivePriority: 1, targets: -10 }],
+    responsive: false,
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: "deal_name",
             title: "Transaction",
@@ -1114,14 +1105,8 @@ var tableTasks = $("#datatable_tasks").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -1455,14 +1440,8 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -2069,11 +2048,11 @@ var tableContact = $("#datatable_contact").DataTable({
     paging: true,
     searching: true,
     processing: true,
-    responsive: true,
+    responsive: false,
     serverSide: true,
 
     columnDefs: [
-        { responsivePriority: 2, targets: -7 },
+        {},
         {
             targets: 0,
             orderable: false,
@@ -2090,16 +2069,10 @@ var tableContact = $("#datatable_contact").DataTable({
     order: [0, "desac"],
     columns: [
         {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
             data: null,
             className: "select-checkbox",
             defaultContent: "",
-            title:"Selected",
+            title: "Selected",
             orderable: false,
             render: function (data, type, row) {
                 return `<input type="checkbox" id= "email-checkbox${
@@ -2378,21 +2351,22 @@ var tableContact = $("#datatable_contact").DataTable({
             }
         }
 
-          // Function to update the selected count
-            function updateSelectedCount() {
-                var selectedCount = $('.emailCheckbox:checked').length;
-                console.log($('.select_count')[0],'selectedCount')
-                let selectText = (selectedCount === 0 ? "Select" : "Selected: " + selectedCount);
-                $('.select_count').eq(0).text(selectText);
-            }
+        // Function to update the selected count
+        function updateSelectedCount() {
+            var selectedCount = $(".emailCheckbox:checked").length;
+            console.log($(".select_count")[0], "selectedCount");
+            let selectText =
+                selectedCount === 0 ? "Select" : "Selected: " + selectedCount;
+            $(".select_count").eq(0).text(selectText);
+        }
 
-            // Event handler for checkbox changes
-            $('#datatable_contact').on('change', '.emailCheckbox', function() {
-                updateSelectedCount();
-            });
-
-            // Initial count update
+        // Event handler for checkbox changes
+        $("#datatable_contact").on("change", ".emailCheckbox", function () {
             updateSelectedCount();
+        });
+
+        // Initial count update
+        updateSelectedCount();
 
         // Click event to enter editing mode
         $("#datatable_contact tbody").on("click", "span.editable", function () {
@@ -2632,7 +2606,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
     columns: [
@@ -2736,7 +2710,7 @@ var templateTableList = $("#template-table-list").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     dom: "Bfrtip", // Integrates buttons with DataTables
     buttons: [
         {
@@ -2783,12 +2757,6 @@ var templateTableList = $("#template-table-list").DataTable({
         },
     ],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             className: "select-checkbox",
@@ -2941,6 +2909,7 @@ window.updateTemplate = function (templateId) {
         success: function (response) {
             $("#templateViewClose" + templateId).click();
             showToast("Template update successfully");
+            $("#template-table-list").DataTable().ajax.reload();
         },
         error: function (xhr, status, error) {
             showToastError(
@@ -2957,14 +2926,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
     processing: true,
     serverSide: true,
     responsive: true,
-    columnDefs: [{ responsivePriority: 1, targets: -10 }],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: "deal_name",
             title: "Transaction",
@@ -2983,7 +2945,8 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
 
                     // Parse the string as JSON
                     data = JSON.parse(jsonString);
-                    name = (data[0] &&
+                    name =
+                        (data[0] &&
                             data[0].Primary_Contact &&
                             data[0].Primary_Contact.name) ??
                         "";
@@ -3057,7 +3020,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
         },
     ],
     ajax: {
-        url: "/contacts-trasactions/"+contactId, // Ensure this URL is correct
+        url: "/contacts-trasactions/" + contactId, // Ensure this URL is correct
         type: "GET", // or 'POST' depending on your server setup
         data: function (request) {
             request._token = "{{ csrf_token() }}";
@@ -3066,11 +3029,8 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
                 (request.page = request.start / request.length + 1);
             request.search = request.search.value;
         },
-        dataSrc: function (data) { 
+        dataSrc: function (data) {
             return data?.data; // Return the data array or object from your response
         },
     },
 });
-
-
-

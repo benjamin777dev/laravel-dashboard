@@ -325,7 +325,8 @@
             var brochureLine = $('#brochureLine').val();
             var brochurePrint = $('#brochurePrint').val();
             var bullets = $('#bullets').val();
-            var headlineForBrochure = $('#headlineForBrochure').val();
+            var paragraph_200_words_4_page_brochure_or_look_book = $('#paragraph_200_words_4_page_brochure_or_look_book').val();
+            var buyer_agent_compensation_offering = $('#buyer_agent_compensation_offering').val();
             var stickyDots = $('#stickyDots').val();
             var qrCodeSheet = $('#qrCodeSheet').val();
             var qrCodeSignRider = $('#qrCodeSignRider').prop('checked');
@@ -453,7 +454,8 @@
                         "Onsite_Video":onsiteVideo,
                         "Custom_Domain_Name":customDomainName,
                         "bullets_4_words_per_bullet":bullets,
-                        "Word_Headline_If_Opting_for_A_Line_Brochure":headlineForBrochure,
+                        "Buyer_Agent_Compensation_Offering": buyer_agent_compensation_offering,
+                        "Paragraph_200_Words_4_Page_Brochure_or_Look_Book": paragraph_200_words_4_page_brochure_or_look_book,
                         "In_House_Printed_Brochure_Pick_Up_Date":printedItemsPickupDate,
                         "IRES": ires,
                         "Price": price,
