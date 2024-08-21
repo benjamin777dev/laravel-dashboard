@@ -135,11 +135,23 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Method to get the access token.
         $contactId = request()->route('contactId');
         Log::info('CONTACTIDDATA' . $contactId);
+        $zoho = new ZohoCRM();
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
-        $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
+        $getContactFromZoho=null;
+        if(!empty($contact->zoho_contact_id)){
+            $zoho->access_token = $accessToken;
+            $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
+            Log::info('contcattesting hereeee' . $getContactFromZoho);
+            $zohoContact_Array = json_decode($getContactFromZoho, true);
+            if (isset($zohoContact_Array['data']) && is_array($zohoContact_Array['data'])) {
+                $zohoContactValues = $zohoContact_Array['data'][0];
+                $db->storeContactIntoDB($contact->id,$zohoContactValues);
+            }
+
+        }
         $groups = $db->retrieveGroups($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $tab = request()->query('tab') ?? 'In Progress';

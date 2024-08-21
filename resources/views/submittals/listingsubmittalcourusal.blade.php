@@ -33,20 +33,24 @@
                                         <select name="related_transaction" id="transactionName"
                                             class="form-select validate_err required-field" disabled>
                                             @foreach ($deals as $currDeal)
-                                                <option value="{{ $currDeal }}"
-                                                    {{ $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
-                                                    {{ $currDeal['deal_name'] }}
-                                                </option>
+                                                @if (is_array($currDeal) && isset($currDeal['zoho_deal_id']) && !is_null($currDeal['zoho_deal_id']))
+                                                    <option value="{{ $currDeal['zoho_deal_id'] }}"
+                                                        {{ isset($submittal['dealData']['zoho_deal_id']) && $currDeal['zoho_deal_id'] == $submittal['dealData']['zoho_deal_id'] ? 'selected' : '' }}>
+                                                        {{ $currDeal['deal_name'] ?? 'Unknown Deal' }}
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         </select>
+
+
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="basicpill-phoneno-input">Additional Email for Confirmation</label>
                                         <input type="email" class="form-control"
-                                            value="{{ $submittal['additionalEmail'] }}" id="additionalEmail"
-                                            placeholder="Enter Your Email.">
+                                            value="{{ isset($submittal['additionalEmail']) ? $submittal['additionalEmail'] : '' }}"
+                                            id="additionalEmail" placeholder="Enter Your Email.">
                                     </div>
                                 </div>
                             </div>
@@ -71,8 +75,8 @@
                                                 </g>
                                             </svg></label>
                                         <input type="text" class="validate_err form-control required-field"
-                                            value="{{ $submittal['agentName'] }}" placeholder="Enter agent Name"
-                                            id="agentName" />
+                                            value="{{ isset($submittal['agentName']) ? htmlspecialchars($submittal['agentName'], ENT_QUOTES, 'UTF-8') : '' }}"
+                                            placeholder="Enter Agent Name" id="agentName" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
@@ -93,17 +97,16 @@
                                             </svg></label>
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
-                                                <input type="radio" id="commingSoon_yes"
-                                                    {{ $submittal['commingSoon'] == 'on' ? 'checked' : '' }}
-                                                    name="commingSoon">
+                                                <input type="radio" id="commingSoon_yes" name="commingSoon"
+                                                    {{ isset($submittal['commingSoon']) && $submittal['commingSoon'] == 'on' ? 'checked' : '' }}>
                                                 <label class="" for="commingSoon_yes">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="commingSoon_no"
-                                                    {{ $submittal['commingSoon'] == 'off' ? 'checked' : '' }}
-                                                    name="commingSoon">
+                                                <input type="radio" id="commingSoon_yes" name="commingSoon"
+                                                    {{ isset($submittal['commingSoon']) && $submittal['commingSoon'] == 'off' ? 'checked' : '' }}>
+
                                                 <label class="" for="commingSoon_no">
                                                     No
                                                 </label>
@@ -123,7 +126,7 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="comingSoonDate">Coming Soon MLS date </label>
-                                        <input type="date" value="{{ $submittal['comingSoonDate'] }}"
+                                        <input type="date" value="{{ $submittal['comingSoonDate'] ?? '' }}"
                                             class="form-control" id="comingSoonDate">
                                     </div>
                                 </div>
@@ -143,7 +146,8 @@
                                                         fill="#AC5353" />
                                                 </g>
                                             </svg></label>
-                                        <input type="text" value="{{ $submittal['dealData']['tmName']['name'] }}"
+                                        <input type="text"
+                                            value="{{ $submittal['dealData']['tmName']['name'] ?? '' }}"
                                             class="form-control validate_err required-field" placeholder=""
                                             id="tmName">
                                     </div>
@@ -166,7 +170,8 @@
                                                         fill="#AC5353" />
                                                 </g>
                                             </svg></label>
-                                        <input type="date" id="activeDate" value="{{ $submittal['activeDate'] }}"
+                                        <input type="date" id="activeDate"
+                                            value="{{ $submittal['activeDate'] ?? '' }}"
                                             class="form-control validate_err required-field" id="activeDate">
                                     </div>
                                 </div>
@@ -190,16 +195,16 @@
                                         <div class="d-flex gap-2">
                                             <div class="mb-3">
                                                 <input type="radio" id="agreementExecuted_yes"
-                                                    {{ $submittal['agreementExecuted'] == 'on' ? 'checked' : '' }}
-                                                    name="agreementExecuted">
+                                                    name="agreementExecuted"
+                                                    {{ isset($submittal['agreementExecuted']) && $submittal['agreementExecuted'] == 'on' ? 'checked' : '' }}>
                                                 <label class="" for="agreementExecuted_yes">
                                                     Yes
                                                 </label>
                                             </div>
                                             <div class="mb-3">
-                                                <input type="radio" id="agreementExecuted_no"
-                                                    {{ $submittal['agreementExecuted'] == 'off' ? 'checked' : '' }}
-                                                    name="agreementExecuted">
+                                                <input type="radio" id="agreementExecuted_yes"
+                                                    name="agreementExecuted"
+                                                    {{ isset($submittal['agreementExecuted']) && $submittal['agreementExecuted'] == 'off' ? 'checked' : '' }}>
                                                 <label class="" for="agreementExecuted_no">
                                                     No
                                                 </label>
@@ -224,8 +229,9 @@
                                                         fill="#AC5353" />
                                                 </g>
                                             </svg></label>
-                                        <input type="number" value="{{ $submittal['price'] }}" placeholder="$"
-                                            class="form-control validate_err required-field" id="price">
+                                        <input type="number" value="{{ $submittal['price'] ?? '' }}"
+                                            placeholder="$" class="form-control validate_err required-field"
+                                            id="price">
                                     </div>
                                 </div>
                             </div>
@@ -242,7 +248,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="photoDate">Photo Date</label>
-                                            <input type="date" value="{{ $submittal['photoDate'] }}"
+                                            <input type="date" value="{{ $submittal['photoDate'] ?? '' }}"
                                                 class="form-control" id="photoDate">
                                         </div>
                                     </div>
@@ -250,7 +256,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="photoURL">Photo Url</label>
-                                            <input type="text" value="{{ $submittal['photoURL'] }}"
+                                            <input type="text" value="{{ $submittal['photoURL'] ?? '' }}"
                                                 class="form-control" placeholder="" id="photoURL">
                                         </div>
                                     </div>
@@ -272,7 +278,7 @@
                                                             fill="#AC5353" />
                                                     </g>
                                                 </svg></label>
-                                            <input type="text" value="{{ $submittal['bedsBathsTotal'] }}"
+                                            <input type="text" value="{{ $submittal['bedsBathsTotal'] ?? '' }}"
                                                 class="form-control required-field" placeholder=""
                                                 id="bedsBathsTotal">
                                         </div>
@@ -281,7 +287,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="tourURL">3D Tour URL</label>
-                                            <input type="text" value="{{ $submittal['tourURL'] }}"
+                                            <input type="text" value="{{ $submittal['tourURL'] ?? '' }}"
                                                 class="form-control validate_err" placeholder="" id="tourURL">
                                         </div>
                                     </div>
@@ -305,17 +311,17 @@
                                                 </svg></label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
-                                                    <input value="Yes" id="usingCHR_yes"
-                                                        {{ $submittal['usingCHR'] == 'Yes' ? 'checked' : '' }}
-                                                        type="radio" name="usingCHR">
+                                                    <input type="radio" id="usingCHR_yes" name="usingCHR"
+                                                        value="Yes"
+                                                        {{ isset($submittal['usingCHR']) && $submittal['usingCHR'] == 'Yes' ? 'checked' : '' }}>
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input value="No" id="usingCHR_no"
-                                                        {{ $submittal['usingCHR'] == 'No' ? 'checked' : '' }}
-                                                        type="radio" name="usingCHR">
+                                                    <input type="radio" id="usingCHR_yes" name="usingCHR"
+                                                        value="No"
+                                                        {{ isset($submittal['usingCHR']) && $submittal['usingCHR'] == 'No' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
@@ -352,16 +358,17 @@
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="scheduleSignInstall_yes"
-                                                        {{ $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}
-                                                        name="scheduleSignInstall">
+                                                        name="scheduleSignInstall" value="on"
+                                                        {{ isset($submittal['scheduleSignInstall']) && $submittal['scheduleSignInstall'] == 'on' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="scheduleSignInstall_no"
-                                                        {{ $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}
-                                                        name="scheduleSignInstall">
+                                                    <input type="radio" id="scheduleSignInstall_yes"
+                                                    name="scheduleSignInstall"
+                                                    value="off"
+                                                    {{ isset($submittal['scheduleSignInstall']) && $submittal['scheduleSignInstall'] == 'off' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
@@ -389,16 +396,18 @@
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="draftShowingInstructions_yes"
-                                                        {{ $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}
-                                                        name="draftShowingInstructions">
+                                                    name="draftShowingInstructions"
+                                                    value="on"
+                                                    {{ isset($submittal['draftShowingInstructions']) && $submittal['draftShowingInstructions'] == 'on' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="draftShowingInstructions_no"
-                                                        {{ $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}
-                                                        name="draftShowingInstructions">
+                                                    <input type="radio" id="draftShowingInstructions_yes"
+                                                    name="draftShowingInstructions"
+                                                    value="off"
+                                                    {{ isset($submittal['draftShowingInstructions']) && $submittal['draftShowingInstructions'] == 'off' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
@@ -411,7 +420,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="titleCompany">Title Company </label>
-                                            <input value="{{ $submittal['titleCompany'] }}" name="titleCompany"
+                                            <input value="{{ $submittal['titleCompany'] ?? "" }}" name="titleCompany"
                                                 id="titleCompany" class="form-control validate_err">
                                             </input>
                                         </div>
@@ -422,16 +431,18 @@
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="conciergeListing_yes"
-                                                        {{ $submittal['conciergeListing'] == 'on' ? 'checked' : '' }}
-                                                        name="conciergeListing">
+                                                    name="conciergeListing"
+                                                    value="on"
+                                                    {{ isset($submittal['conciergeListing']) && $submittal['conciergeListing'] == 'on' ? 'checked' : '' }}>
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="conciergeListing_no"
-                                                        {{ $submittal['conciergeListing'] == 'off' ? 'checked' : '' }}
-                                                        name="conciergeListing">
+                                                    <input type="radio" id="conciergeListing_yes"
+                                                    name="conciergeListing"
+                                                    value="off"
+                                                    {{ isset($submittal['conciergeListing']) && $submittal['conciergeListing'] == 'off' ? 'checked' : '' }}>
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
@@ -445,7 +456,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="signInstallDate">Sign Install Date </label>
-                                            <input type="date" value="{{ $submittal['signInstallDate'] }}"
+                                            <input type="date" value="{{ $submittal['signInstallDate'] ?? ""}}"
                                                 class="form-control" id="signInstallDate">
                                         </div>
                                     </div>
@@ -466,7 +477,7 @@
                                                             fill="#AC5353" />
                                                     </g>
                                                 </svg> </label>
-                                            <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] }}"
+                                            <input name="closerNamePhone" value="{{ $submittal['closerNamePhone'] ?? ""}}"
                                                 id="closerNamePhone" class="form-control validate_err required-field">
                                             </input>
                                         </div>
@@ -475,28 +486,31 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="feesCharged">Sign Install Vendor Info</label><br>
-                                                <select class="form-select" name="signInstallVendor"
-                                                    id="signInstallVendor">
+                                                <select class="form-select" name="signInstallVendor" id="signInstallVendor">
                                                     <option value="-None-"
-                                                        {{ $submittal['signInstallVendor'] === '-None-' ? 'selected' : '' }}>
-                                                        -None-</option>
+                                                        {{ isset($submittal['signInstallVendor']) && $submittal['signInstallVendor'] === '-None-' ? 'selected' : '' }}>
+                                                        -None-
+                                                    </option>
                                                     <option value="AXIUM"
-                                                        {{ $submittal['signInstallVendor'] === 'AXIUM' ? 'selected' : '' }}>
-                                                        AXIUM</option>
+                                                        {{ isset($submittal['signInstallVendor']) && $submittal['signInstallVendor'] === 'AXIUM' ? 'selected' : '' }}>
+                                                        AXIUM
+                                                    </option>
                                                     <option value="Rocky Mountain - Brandon"
-                                                        {{ $submittal['signInstallVendor'] === 'Rocky Mountain - Brandon' ? 'selected' : '' }}>
-                                                        Rocky Mountain - Brandon</option>
+                                                        {{ isset($submittal['signInstallVendor']) && $submittal['signInstallVendor'] === 'Rocky Mountain - Brandon' ? 'selected' : '' }}>
+                                                        Rocky Mountain - Brandon
+                                                    </option>
                                                     <option value="Others"
-                                                        {{ $submittal['signInstallVendor'] === 'Others' ? 'selected' : '' }}>
-                                                        Others</option>
-                                                </select>
+                                                        {{ isset($submittal['signInstallVendor']) && $submittal['signInstallVendor'] === 'Others' ? 'selected' : '' }}>
+                                                        Others
+                                                    </option>
+                                                </select>                                                
 
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="feesCharged">Sign Install Vendor (if Other)</label>
-                                                <input value="{{ $submittal['signInstallVendorOther'] }}"
+                                                <input value="{{ $submittal['signInstallVendorOther'] ?? "" }}"
                                                     name="signInstallVendorOther" id="signInstallVendorOther"
                                                     class="form-control">
                                                 </input>
@@ -519,23 +533,28 @@
                                             <div class="row mb-4">
                                                 <div class="col-lg-4 d-flex gap-2">
                                                     <div>REColorado</div>
-                                                    <div> <input type="checkbox" id="reColorado" <?php if ($submittal['reColorado']) {
-                                                        echo 'checked';
-                                                    } ?>>
+                                                    <div>
+                                                        <input type="checkbox" id="reColorado"
+                                                        <?php if (isset($submittal['reColorado']) && $submittal['reColorado']) {
+                                                            echo 'checked';
+                                                        } ?>>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 d-flex gap-2">
                                                     <div>Navica</div>
-                                                    <div> <input type="checkbox" id="navica" <?php if ($submittal['navica']) {
-                                                        echo 'checked';
-                                                    } ?>>
+                                                    <div> <input type="checkbox" id="navica"
+                                                        <?php if (isset($submittal['navica']) && $submittal['navica']) {
+                                                            echo 'checked';
+                                                        } ?>>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 d-flex gap-2">
                                                     <div>PPAR</div>
-                                                    <div><input type="checkbox" id="ppar" <?php if ($submittal['ppar']) {
-                                                        echo 'checked';
-                                                    } ?>>
+                                                    <div>
+                                                     <input type="checkbox" id="ppar"
+                                                     <?php if (isset($submittal['ppar']) && $submittal['ppar']) {
+                                                         echo 'checked';
+                                                     } ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -547,16 +566,20 @@
                                             <div class="row mb-4">
                                                 <div class="col-lg-4 d-flex gap-2">
                                                     <div>Grand County</div>
-                                                    <div><input type="checkbox" id="grandCounty" <?php if ($submittal['grandCounty']) {
-                                                        echo 'checked';
-                                                    } ?>>
+                                                    <div>
+                                                     <input type="checkbox" id="grandCounty"
+                                                     <?php if (isset($submittal['grandCounty']) && $submittal['grandCounty']) {
+                                                         echo 'checked';
+                                                     } ?>>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4 d-flex gap-2">
                                                     <div>IRES</div>
-                                                    <div><input type="checkbox" id="ires" <?php if ($submittal['ires']) {
-                                                        echo 'checked';
-                                                    } ?>>
+                                                    <div>
+                                                     <input type="checkbox" id="ires"
+                                                     <?php if (isset($submittal['ires']) && $submittal['ires']) {
+                                                         echo 'checked';
+                                                     } ?>>
                                                     </div>
                                                 </div>
                                             </div>
@@ -567,14 +590,14 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="amountToCHR">MLS public remarks </label>
-                                            <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] }}</textarea>
+                                            <textarea class="form-control" id="mlsPrivateRemarks" aria-label="With textarea">{{ $submittal['mlsPrivateRemarks'] ?? "" }}</textarea>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="titleCompany">MLS private remarks</label>
-                                            <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] }}</textarea>
+                                            <textarea class="form-control" id="mlsPublicRemarks" aria-label="With textarea">{{ $submittal['mlsPublicRemarks'] ?? ""}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -595,7 +618,7 @@
                                             <label for="feesCharged">Fees Charged to Seller at
                                                 Closing</label>
                                             <input type="text" name="feesCharged"
-                                                value="{{ $submittal['feesCharged'] }}" id="feesCharged"
+                                                value="{{ $submittal['feesCharged'] ?? ""}}" id="feesCharged"
                                                 class="form-control " placeholder="$">
                                             </input>
                                         </div>
@@ -604,15 +627,19 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="referralToPay">Referral to Pay</label>
-                                            <select name="additional_charge" id="additonal_fee" class="form-select">
-                                                <option value="" selected>None</option>
+                                            <select name="additional_charge" id="additional_fee" class="form-select">
+                                                <option value="" {{ !isset($submittal['referralToPay']) || $submittal['referralToPay'] === '' ? 'selected' : '' }}>
+                                                    None
+                                                </option>
                                                 <option value="Yes"
-                                                    {{ $submittal['referralToPay'] == 'Yes' ? 'selected' : '' }}>Yes
+                                                    {{ isset($submittal['referralToPay']) && $submittal['referralToPay'] === 'Yes' ? 'selected' : '' }}>
+                                                    Yes
                                                 </option>
                                                 <option value="No"
-                                                    {{ $submittal['referralToPay'] == 'No' ? 'selected' : '' }}>No
+                                                    {{ isset($submittal['referralToPay']) && $submittal['referralToPay'] === 'No' ? 'selected' : '' }}>
+                                                    No
                                                 </option>
-                                            </select>
+                                            </select>                                            
                                         </div>
                                     </div>
                                 </div>
@@ -621,7 +648,7 @@
                                         <div class="mb-3">
                                             <label for="amountToCHR">Amount to CHR Gives </label>
                                             <input type="number"name="amountToCHR" placeholder = "$"
-                                                value="{{ $submittal['amountToCHR'] }}" id="amountToCHR"
+                                                value="{{ $submittal['amountToCHR'] ??""}}" id="amountToCHR"
                                                 class="form-control">
                                             </input>
                                         </div>
@@ -630,7 +657,7 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="referralDetails">Referral Details </label>
-                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] }}"
+                                            <input name="referralDetails" value="{{ $submittal['referralDetails'] ?? ""}}"
                                                 id="referralDetails" class="form-control">
                                             </input>
                                         </div>
@@ -642,7 +669,7 @@
                         <div class="col-lg-12">
                             <div class="mb-3">
                                 <label for="titleCompany">Misc Notes - Seller, Communication, etc </label>
-                                <textarea class="form-control" id="miscNotes" rows="4" cols="50">{{ $submittal['miscNotes'] }}</textarea>
+                                <textarea class="form-control" id="miscNotes" rows="4" cols="50">{{ $submittal['miscNotes'] ?? ""}}</textarea>
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -650,15 +677,19 @@
                                 <label for="signInstallDate">Are you ready to continue to Property Promotion? </label>
                                 <div class="d-flex gap-2">
                                     <div class="mb-3">
-                                        <input value="1" {{ $submittal['showPromotion'] == 1 ? 'checked' : '' }}
-                                            type="radio" name="showPromotion">
+                                        <input type="radio" id="showPromotion_yes"
+                                        name="showPromotion"
+                                        value="1"
+                                        {{ isset($submittal['showPromotion']) && $submittal['showPromotion'] == 1 ? 'checked' : '' }}>
                                         <label class="" for="formCheck1">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <input value="0"{{ $submittal['showPromotion'] == 0 ? 'checked' : '' }}
-                                            type="radio" name="showPromotion">
+                                        <input type="radio" id="showPromotion_yes"
+                                        name="showPromotion"
+                                        value="0"
+                                        {{ isset($submittal['showPromotion']) && $submittal['showPromotion'] == 0 ? 'checked' : '' }}>
                                         <label class="" for="formCheck1">
                                             No
                                         </label>
@@ -677,64 +708,76 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="referralToPay">Has HOA? <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                    viewBox="0 0 19 18" fill="none">
+                                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                        height="18">
+                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2151_10662)">
+                                                        <path
+                                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                            fill="#AC5353" />
+                                                    </g>
+                                                </svg></label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes"
+                                                        {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }}
+                                                        name="hasHOA">
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <input type="radio" id="hasHOA_no" value="No"
+                                                        {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }}
+                                                        name="hasHOA">
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="referralToPay">Title to Order HOA docs?  <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                            <label for="referralToPay">Title to Order HOA docs? <svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                    viewBox="0 0 19 18" fill="none">
+                                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                        height="18">
+                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2151_10662)">
+                                                        <path
+                                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                            fill="#AC5353" />
+                                                    </g>
+                                                </svg></label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes"
+                                                        {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
-                                                <div class="mb-3"> 
-                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_no" value="No"
+                                                        {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
                                                 </div>
-                                                 <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No"
+                                                        {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" for="formCheck1">
                                                         TBD
                                                     </label>
@@ -743,49 +786,48 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="builderCommisionPercent">HOA Name</label>
-                                            <input type="text" name="additional_charge" id="hoaName"
-                                                value="{{ $submittal['hoaName'] }}" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="buyerOtherNotes">HOA Phone</label>
-                                            <input type="text" name="additional_charge"
-                                                value="{{ $submittal['hoaPhone'] }}" id="hoaPhone"
-                                                class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="amountToCHR">HOA Website </label>
-                                            <input type="text" value="{{ $submittal['hoaWebsite'] }}"
-                                                class="form-control" placeholder="" id="hoaWebsite">
-                                            </input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="builderCommisionPercent">HOA Name</label>
+                                    <input type="text" name="additional_charge" id="hoaName"
+                                        value="{{ $submittal['hoaName'] }}" class="form-control">
+                                </div>
+                            </div>
 
-                    </section>
-                    
-                   
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="buyerOtherNotes">HOA Phone</label>
+                                    <input type="text" name="additional_charge"
+                                        value="{{ $submittal['hoaPhone'] }}" id="hoaPhone" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="amountToCHR">HOA Website </label>
+                                    <input type="text" value="{{ $submittal['hoaWebsite'] }}"
+                                        class="form-control" placeholder="" id="hoaWebsite">
+                                    </input>
+                                </div>
+                            </div>
+                        </div>
+                        </form>
                 </div>
 
+                </section>
+
+
             </div>
-            <!-- end card body -->
+
         </div>
-        <!-- end card -->
+        <!-- end card body -->
     </div>
-    <!-- end col -->
+    <!-- end card -->
+</div>
+<!-- end col -->
 </div>
 <!-- end row -->
 <!-- jquery step -->
@@ -831,6 +873,7 @@
         var resubmitData = @json($resubmit);
         const $stepsContainer = $('#basic-example-seller');
         let hasTriggeredOnce = false;
+
         function initializeSteps() {
             $stepsContainer.steps({
                 headerTag: "h3",
@@ -840,14 +883,14 @@
                     // API call here
                     const isValid = validateStep(currentIndex);
                     if (isValid) {
-                    // If valid, proceed with the API call
-                    window.validateSubmittal(true);
-                    // Optionally, you might want to return true explicitly here
-                    return true;
-                } else {
-                    // Return false to indicate that the form submission should not proceed
-                    return false;
-                }
+                        // If valid, proceed with the API call
+                        window.validateSubmittal(true);
+                        // Optionally, you might want to return true explicitly here
+                        return true;
+                    } else {
+                        // Return false to indicate that the form submission should not proceed
+                        return false;
+                    }
                 }
             });
         }
@@ -876,14 +919,13 @@
                                 </svg></label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE']=='Yes'
-                                        ? 'checked' : '' }} name="needO&E">
+                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
                                     <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input {{ $submittal['needOE']=='No' ? 'checked' : '' }} type="radio" id="needOE_no"
+                                    <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no"
                                         value="No" name="needO&E">
                                     <label class="" for="formCheck1">
                                         No
@@ -909,15 +951,13 @@
                                     </svg></label>
                                 <div class="d-flex gap-2">
                                     <div class="mb-3">
-                                        <input type="radio" id="includeInsights_yes" value="Yes" {{
-                                            $submittal['includeInsights']=='Yes' ? 'checked' : '' }} name="includeInsights">
+                                        <input type="radio" id="includeInsights_yes" value="Yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
                                         <label class="" id="chkNo" for="formCheck1">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <input id="includeInsights_no" value="No" {{ $submittal['includeInsights']=='No'
-                                            ? 'checked' : '' }} type="radio" name="includeInsights">
+                                        <input id="includeInsights_no" value="No" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
                                         <label class="" for="formCheck1">
                                             No
                                         </label>
@@ -946,16 +986,14 @@
                                 </svg></label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{
-                                        $submittal['powerOfAttnyNeeded']=='Yes' ? 'checked' : '' }}
+                                    <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}
                                         name="powerOfAttnyNeeded">
                                     <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{
-                                        $submittal['powerOfAttnyNeeded']=='No' ? 'checked' : '' }}
+                                    <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}
                                         name="powerOfAttnyNeeded">
                                     <label class="" for="formCheck1">
                                         No
@@ -980,15 +1018,13 @@
                                     </svg></label>
                                 <div class="d-flex gap-2">
                                     <div class="mb-3">
-                                        <input type="radio" id="mailoutNeeded_yes" value="Yes" {{
-                                            $submittal['mailoutNeeded']=='Yes' ? 'checked' : '' }} name="mailoutNeeded">
+                                        <input type="radio" id="mailoutNeeded_yes" value="Yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
                                         <label class="" id="chkNo" for="formCheck1">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <input type="radio" id="mailoutNeeded_no" value="No" {{
-                                            $submittal['mailoutNeeded']=='No' ? 'checked' : '' }} name="mailoutNeeded">
+                                        <input type="radio" id="mailoutNeeded_no" value="No" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
                                         <label class="" for="formCheck1">
                                             No
                                         </label>
@@ -1765,7 +1801,7 @@
                         </div>
 
                     </section>`;
-            const resubmit = `<h3></h3>
+        const resubmit = `<h3></h3>
                         <section>
                             <div>
                                 <form>
@@ -1806,7 +1842,7 @@
                                 </form>
                             </div>
                         </section>`;
-                        //properties end
+        //properties end
         // Event listeners and other logic
         let initialCHrusingValue = document.querySelector('input[name="usingCHR"]:checked')?.value;
         setTimeout(() => {
@@ -1845,9 +1881,9 @@
                 addStepChr('Print Request', innrtHtml6);
                 addStepChr('Print Request', innrtHtml7);
                 addStepChr('Notes', innrtHtml8);
-                if(resubmitData){
+                if (resubmitData) {
                     removeStep(8);
-                    addStepChr('Resubmittal Information', resubmit,16);
+                    addStepChr('Resubmittal Information', resubmit, 16);
                 }
             } else if (value == 0 && show === "showProp") {
                 removeStep(8);
@@ -1866,8 +1902,8 @@
                 for (let i = 8; i <= 9; i++) {
                     removeStep(i);
                 }
-                if(resubmitData){
-                    addStepChr('Resubmittal Information', resubmit,8);
+                if (resubmitData) {
+                    addStepChr('Resubmittal Information', resubmit, 8);
                 }
             }
             if (value === "Yes" && value !== undefined) {
@@ -1890,23 +1926,23 @@
                     addStepChr('Service Provider', defaultCHRSec2, 4);
                     var dropdown = document.getElementById('signInstallVendor');
                     var additionalField = document.getElementById('signInstallVendorOther');
-                    addOtheInfoValidation(dropdown,additionalField);
+                    addOtheInfoValidation(dropdown, additionalField);
                     addStepChr('Select MLS', defaultCHRSec4, 5);
                     addStepChr('Commission Detail', defaultCHRSec1, 6);
                     addStepChr('Hoa Information', HoaInfo, 7);
-                    if(resubmitData){
-                        addStepChr('Resubmittal Information', resubmit,8);
+                    if (resubmitData) {
+                        addStepChr('Resubmittal Information', resubmit, 8);
                     }
                     ValidateHoa();
-                    
+
                     return;
 
                 }
                 addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
-                if(resubmitData){
-                    addStepChr('Resubmittal Information', resubmit,8);
+                if (resubmitData) {
+                    addStepChr('Resubmittal Information', resubmit, 8);
                 }
-                
+
                 // addStepChr('Service Providers', serviceProvider,4);
                 ValidateHoa();
 
@@ -1925,7 +1961,7 @@
                 addStepChr('Print Requests', innrtHtml6);
                 addStepChr('Print Requests', innrtHtml7);
                 addStepChr('Notes', innrtHtml8);
-                if(resubmitData){
+                if (resubmitData) {
                     addStepChr('Resubmittal Information', resubmit);
                 }
             } else {
@@ -1957,7 +1993,7 @@
             // Check radio buttons
             $currentSection.find('input[type="radio"]').each(function() {
                 const name = $(this).attr('name');
-                console.log("radio button",name)
+                console.log("radio button", name)
                 if (name !== "conciergeListing") {
                     const $radioGroup = $currentSection.find(`input[name="${name}"]`);
                     if ($radioGroup.filter(':checked').length === 0) {
@@ -2019,14 +2055,15 @@
 
         var dropdown = document.getElementById('signInstallVendor');
         var additionalField = document.getElementById('signInstallVendorOther');
-        addOtheInfoValidation(dropdown,additionalField);
+        addOtheInfoValidation(dropdown, additionalField);
     })
-    function addOtheInfoValidation(dropdown,additionalField){
+
+    function addOtheInfoValidation(dropdown, additionalField) {
         dropdown.addEventListener('change', function() {
             console.log("hdsfkshdkf")
             if (dropdown.value === 'Others') {
-                additionalField.classList.add('required-field', 'validate','infoooo');
-                 
+                additionalField.classList.add('required-field', 'validate', 'infoooo');
+
             } else {
                 additionalField.classList.remove('required-field', 'validate');
             }
