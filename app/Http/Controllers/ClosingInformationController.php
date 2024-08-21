@@ -28,20 +28,20 @@ class ClosingInformationController extends Controller
 
         // Fetch KPIs
         $transactionCountYTD = $this->calculateTransactionCountYTD($contact, $teamAndPartnership);
-        $gciYTD = $this->calculateGCIYTD($contact, $teamAndPartnership);
-        $volumeYTD = $this->calculateVolumeYTD($contact, $teamAndPartnership);
-        $capAmountPaidYTD = $this->calculateCapAmountPaidYTD($contact, $teamAndPartnership);
-        $averageSalePrice = $this->calculateAverageSalePrice($contact, $teamAndPartnership);
+        $gciYTD = $this->calculateGCIYTD($contact, $teamAndPartnership) ?? 0;
+        $volumeYTD = $this->calculateVolumeYTD($contact, $teamAndPartnership) ?? 0;
+        $capAmountPaidYTD = $this->calculateCapAmountPaidYTD($contact, $teamAndPartnership) ?? 0;
+        $averageSalePrice = $this->calculateAverageSalePrice($contact, $teamAndPartnership) ?? 0;
         $incomeGoal = $contact->income_goal ?? 0;
-        $averageCommissionPercent = $this->calculateAverageCommissionPercent($contact, $teamAndPartnership);
+        $averageCommissionPercent = $this->calculateAverageCommissionPercent($contact, $teamAndPartnership) ?? 0;
         $initialCap = $contact->initial_cap ?? 0;
         $residualCap = $contact->residual_cap ?? 0;
-        $irs1099Amount = $this->calculate1099Amount($contact, $teamAndPartnership);
+        $irs1099Amount = $this->calculate1099Amount($contact, $teamAndPartnership) ?? 0;
 
         // Fetch Table Data
         $agentReport = $this->getAgentReportData($contact, $teamAndPartnership);
-        $transactionsSoldYTD = $this->getTransactionsSoldYTD($contact, $teamAndPartnership);
-        $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership);
+        $transactionsSoldYTD = $this->getTransactionsSoldYTD($contact, $teamAndPartnership) ?? 0;
+        $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership) ?? 0;
 
         return view('closing_information.index', compact(
             'transactionCountYTD', 'gciYTD', 'volumeYTD',

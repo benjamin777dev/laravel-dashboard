@@ -267,58 +267,11 @@ class Deal extends Model
         // Determine contactNameId
         $contactNameId = $source == "webhook" ? $data['Contact_Name']['id'] ?? null : $data['Contact_Name'] ?? null;
         if ($contactNameId == null) {
-            Log::info("Contact Name for deal: $idkey: is null");
             $contactNameId = $source == "webhook" ? $data['Owner']['id'] ?? null : $data['Owner'] ?? null;
             if (!$contactNameId) {
                 Log::error("No contact ID found! and No Owner found", ['data' => $data]);
                 return [];
             }
-        }
-
-        // Check if Client_Name_Only is provided and format it correctly
-        $clientNameId = null;
-        if (isset($data['Client_Name_Only']) && !empty($data['Client_Name_Only'])) {
-            $clientData = explode('||', $data['Client_Name_Only']);
-            if (count($clientData) == 2) {
-                $clientNameId = trim($clientData[1]);  // Get the ID part after splitting
-            }
-        }
-
-        $primary_contact_json = [];
-        if ($clientNameId) {
-            $clientRecord = Contact::where('zoho_contact_id', $clientNameId)->first();
-            if ($clientRecord) {
-                // Add the primary contact (client)
-                $primary_contact_json[] = [
-                    'Primary_Contact' => [
-                        'id' => $clientRecord->zoho_contact_id,
-                        'name' => $clientRecord->first_name . ' ' . $clientRecord->last_name,
-                    ],
-                    'id' => $idkey
-                ];
-                Log::info("Primary Contact from Client_Name_Only: ", ['data' => $primary_contact_json]);
-
-                // Check if the client has a spouse
-                $spouse = $clientRecord->getSpouse();
-                if ($spouse) {
-                    // Add the spouse as another primary contact
-                    $primary_contact_json[] = [
-                        'Primary_Contact' => [
-                            'id' => $spouse->zoho_contact_id,
-                            'name' => $spouse->first_name . ' ' . $spouse->last_name,
-                        ],
-                        'id' => $idkey
-                    ];
-                }
-            } else {
-                Log::warning("No client found for ID extracted from Client_Name_Only: " . $clientNameId);
-            }
-        } else {
-            Log::warning("Client_Name_Only not provided or incorrectly formatted");
-        }
-
-        if (isset($data['Primary_Contact'])) {
-            $primary_contact_json = $data['Primary_Contact'];
         }
 
         // Check if the deal is owned by a team
@@ -342,7 +295,7 @@ class Deal extends Model
         if ($leadAgentId) {
             // Since there's a lead agent, it's that user we will use
             $dealUser = User::where('root_user_id', $leadAgentId)->first();
-        } 
+        }
 
         // Get the userId if available
         if ($dealUser) {
@@ -454,7 +407,7 @@ class Deal extends Model
             'pipeline1' => $data['Pipeline1'] ?? null,
             'pipeline_probability' => (float)$pipelineProbability,
             'potential_gci' => $data['Potential_GCI'] ?? null,
-            'primary_contact' => json_encode($primary_contact_json),
+            'primary_contact' => isset($data['Primary_Contact']) ? $data['Primary_Contacts'] ?? null : null,
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
             'probability' => (float)($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
@@ -483,12 +436,7 @@ class Deal extends Model
             'zip' => $data['Zip'] ?? null,
         ];
 
-        if (!empty($mappedData['primary_contact'])) {
-            Log::info($mappedData['primary_contact']);
-        }
-        
         return $mappedData;
     }
-
 
 }
