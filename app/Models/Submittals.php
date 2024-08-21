@@ -76,7 +76,6 @@ class Submittals extends Model
         'brochureLine',
         'brochurePrint',
         'bullets',
-        'headlineForBrochure',
         'stickyDots',
         'qrCodeSheet',
         'qrCodeSignRider',
@@ -91,7 +90,9 @@ class Submittals extends Model
         'qrCodeMainPanel',
         'resubmit_text',
         'resubmitting_to_which_team',
-        'resubmitting_why_list_all_changes'
+        'resubmitting_why_list_all_changes',
+        'paragraph_200_words_4_page_brochure_or_look_book',
+        'buyer_agent_compensation_offering'
     ];
 
     public static function getZohoContactInfo()

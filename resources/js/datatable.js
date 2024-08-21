@@ -70,16 +70,10 @@ var table = $("#datatable_pipe_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
-    columnDefs: [{ responsivePriority: 2, targets: -9 }],
+    responsive: false,
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
+         {
             data: null,
             title: "Actions",
             render: function (data, type, row) {
@@ -545,13 +539,6 @@ var tableContactRole = $("#contact_role_table_pipeline").DataTable({
     processing: true,
     serverSide: true,
     columns: [
-        // {
-        //     className: 'dt-control',
-        //     orderable: false,
-        //     data: null,
-        //     defaultContent: ''
-        // },
-
         {
             data: "name",
             title: "Name",
@@ -777,16 +764,10 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
-    columnDefs: [{ responsivePriority: 1, targets: -10 }],
+    responsive: false,
+    columnDefs: [{}],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
+         {
             data: "deal_name",
             title: "Transaction",
             render: function (data, type, row) {
@@ -1114,14 +1095,8 @@ var tableTasks = $("#datatable_tasks").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -1455,14 +1430,8 @@ var tableTaskspipe = $("#datatable_tasks1").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             title: '<input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)" />',
@@ -2069,36 +2038,31 @@ var tableContact = $("#datatable_contact").DataTable({
     paging: true,
     searching: true,
     processing: true,
-    responsive: true,
+    responsive: false,
     serverSide: true,
 
     columnDefs: [
-        { responsivePriority: 2, targets: -7 },
+        {},
         {
             targets: 0,
             orderable: false,
-            className: "select-checkbox",
+            className: "select-checkbox1",
             defaultContent: "",
         },
         {
             targets: 1,
             orderable: false,
-            className: "select-checkbox",
+            className: "select_count",
             defaultContent: "",
         },
     ],
     order: [0, "desac"],
     columns: [
         {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
-        {
             data: null,
             className: "select-checkbox",
             defaultContent: "",
+            title:"Selected",
             orderable: false,
             render: function (data, type, row) {
                 return `<input type="checkbox" id= "email-checkbox${
@@ -2377,6 +2341,22 @@ var tableContact = $("#datatable_contact").DataTable({
             }
         }
 
+          // Function to update the selected count
+            function updateSelectedCount() {
+                var selectedCount = $('.emailCheckbox:checked').length;
+                console.log($('.select_count')[0],'selectedCount')
+                let selectText = (selectedCount === 0 ? "Select" : "Selected: " + selectedCount);
+                $('.select_count').eq(0).text(selectText);
+            }
+
+            // Event handler for checkbox changes
+            $('#datatable_contact').on('change', '.emailCheckbox', function() {
+                updateSelectedCount();
+            });
+
+            // Initial count update
+            updateSelectedCount();
+
         // Click event to enter editing mode
         $("#datatable_contact tbody").on("click", "span.editable", function () {
             enterEditMode(this);
@@ -2615,7 +2595,7 @@ var contactEmailTable = $("#contact-email-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     pageLength: 5,
     lengthMenu: [5, 10, 25, 50, 75, 100],
     columns: [
@@ -2719,7 +2699,7 @@ var templateTableList = $("#template-table-list").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: true,
+    responsive: false,
     dom: "Bfrtip", // Integrates buttons with DataTables
     buttons: [
         {
@@ -2766,12 +2746,6 @@ var templateTableList = $("#template-table-list").DataTable({
         },
     ],
     columns: [
-        {
-            className: "dt-control",
-            orderable: false,
-            data: null,
-            defaultContent: "",
-        },
         {
             data: null,
             className: "select-checkbox",
@@ -2934,3 +2908,121 @@ window.updateTemplate = function (templateId) {
         },
     });
 };
+
+var tableDashboard = $("#contact-transaction-table").DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    responsive: false,
+    columnDefs: [{}],
+    columns: [
+        {
+            data: "deal_name",
+            title: "Transaction",
+            render: function (data, type, row) {
+                return `<a href="/pipeline-view/${row?.id}" target="_blank"><span class='icon-container max-width-500' >${data}</span></a>`;
+            },
+        },
+        {
+            data: "primary_contact",
+            title: "Client Name",
+            render: function (data, type, row) {
+                console.log("Data", data);
+                let jsonString, name;
+                if (data) {
+                    jsonString = data?.replace(/&quot;/g, '"');
+
+                    // Parse the string as JSON
+                    data = JSON.parse(jsonString);
+                    name = (data[0] &&
+                            data[0].Primary_Contact &&
+                            data[0].Primary_Contact.name) ??
+                        "";
+                }
+                return `<span>${name || "N/A"}</span>`;
+            },
+        },
+        {
+            data: "stage",
+            title: "Status",
+            render: function (data, type, row) {
+                return `<span>${data}</span>`;
+            },
+        },
+        {
+            data: "representing",
+            title: "Representing",
+            render: function (data, type, row) {
+                return `<span >${data}</span>`;
+            },
+        },
+        {
+            data: "sale_price",
+            title: "Price",
+            render: function (data, type, row) {
+                console.log(data, "datattas");
+                return `<span >$${number_format(data, 0, ".", ",")}</span>`;
+            },
+        },
+        {
+            data: "closing_date",
+            title: "Close Date",
+            render: function (data, type, row) {
+                return `<span class="editable badDateInput" data-name="closing_date" data-id="${
+                    row.id
+                }">${formateDate(data) || "N/A"}</span>`;
+            },
+        },
+        {
+            data: "commission",
+            title: "Commission",
+            render: function (data, type, row) {
+                return `<span >${data}%</span>`;
+            },
+        },
+        {
+            data: "potential_gci",
+            title: "Potential GCI",
+            render: function (data, type, row) {
+                return `<span >${data}</span>`;
+            },
+        },
+        {
+            data: "pipeline_probability",
+            title: "Probability",
+            render: function (data, type, row) {
+                return `<span >${data}%</span>`;
+            },
+        },
+        {
+            data: null,
+            title: "Probable GCI",
+            render: function (data, type, row) {
+                // Calculate probable GCI
+                var probableGCI =
+                    (row.sale_price ?? 0) *
+                    ((row.commission ?? 0) / 100) *
+                    ((row.pipeline_probability ?? 0) / 100);
+                return `$${number_format(probableGCI, 0, ".", ",")}`; // Format probableGCI as currency
+            },
+        },
+    ],
+    ajax: {
+        url: "/contacts-trasactions/"+contactId, // Ensure this URL is correct
+        type: "GET", // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            (request.stage = $("#related_to_stage").val()),
+                (request.page = request.start / request.length + 1);
+            request.search = request.search.value;
+        },
+        dataSrc: function (data) { 
+            return data?.data; // Return the data array or object from your response
+        },
+    },
+});
+
+
+
