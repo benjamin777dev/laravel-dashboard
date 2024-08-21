@@ -70,7 +70,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: false,
+    responsive: true,
     columnDefs: [{}],
     columns: [
         {
@@ -189,6 +189,16 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 // Join names into a single string, separated by commas
                 const namesString = names.join(", ") || "N/A";
                 return `<span class="primary-contact-names">${namesString}</span>`;
+            },
+        },
+        {
+            data: "lead_agent",
+            title: "Co-Listing Agent",
+            render: function (data, type, row) {
+                console.log(data, "sdfsdhfshd");
+                return `<span data-name="leadAgent" data-id="${row.id}">${
+                    data || "N/A"
+                }</span>`;
             },
         },
         {
