@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class Deal extends Model
@@ -66,9 +67,23 @@ class Deal extends Model
         return $this->belongsTo(User::class, 'tm_name_id', 'root_user_id');
     }
 
+
     public function leadAgent()
     {
         return $this->belongsTo(User::class, 'lead_agent_id', 'root_user_id');
+    }
+
+    public function getLeadAgentNameAttribute()
+    {
+        $leadAgent = $this->leadAgent()->first();
+
+        if ($leadAgent) {
+            return (object)[
+                'name' => $leadAgent->first_name . ' ' . $leadAgent->last_name,
+            ];
+        }
+
+        return null;
     }
 
     public function client()
@@ -302,6 +317,9 @@ class Deal extends Model
             Log::warning("Client_Name_Only not provided or incorrectly formatted");
         }
 
+        if (isset($data['Primary_Contact'])) {
+            $primary_contact_json = $data['Primary_Contact'];
+        }
 
         // Check if the deal is owned by a team
         $teamPartnershipId = $source == "webhook" ? ($data['Team_Partnership']['id'] ?? null) : ($data['Team_Partnership'] ?? null);

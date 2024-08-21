@@ -662,6 +662,13 @@ class DatabaseService
             } else {
                 $deals = $deals->where($conditions)->with('submittals')->get();
             }
+
+            // load the relationship for leadAgent
+            $deals->each(function ($deal) {
+                $deal->leadAgent ?? null;
+            });
+
+
             return $deals;
         } catch (\Exception $e) {
             Log::error("Error retrieving deals: " . $e->getMessage());
@@ -1586,7 +1593,6 @@ class DatabaseService
                 'isDealCompleted' => false,
                 'userID' => $user->id,
                 'isInZoho' => false,
-                // 'zoho_deal_id' => $zohoDeal['id'],
                 'client_name_primary' => isset($dealData['Client_Name_Primary']) ? $dealData['Client_Name_Primary'] : null,
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
