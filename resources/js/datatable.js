@@ -197,7 +197,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
             render: function (data, type, row) {
                 console.log(data, "sdfsdhfshd");
                 return `<span data-name="leadAgent" data-id="${row.id}">${
-                    data || "N/A"
+                    data?.name || "N/A"
                 }</span>`;
             },
         },

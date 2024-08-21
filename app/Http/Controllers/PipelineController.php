@@ -9,11 +9,12 @@ use App\Services\DatabaseService;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class PipelineController extends Controller
@@ -350,13 +351,6 @@ class PipelineController extends Controller
         if ($isIncompleteDeal) {
             return response()->json($isIncompleteDeal);
         } else {
-
-            // $zohoDeal = $zoho->createZohoDeal($jsonData);
-            // if (!$zohoDeal->successful()) {
-            //     return "error somthing" . $zohoDeal;
-            // }
-            // $zohoDealArray = json_decode($zohoDeal, true);
-            // $data = $zohoDealArray['data'][0]['details'];
             $dealData = $jsonData['data'][0];
             $deal = $db->createDeal($user, $accessToken, $dealData);
             return response()->json($deal);
@@ -525,7 +519,7 @@ class PipelineController extends Controller
             }
              // If the stage is "Under Contract", update the locked_s field separately in the database
         if ($dbfield === "stage" && $value === "Under Contract") {
-            \DB::table('deals')
+            DB::table('deals')
                 ->where('id', $id)
                 ->update(['locked_s' => 1]);
         }
