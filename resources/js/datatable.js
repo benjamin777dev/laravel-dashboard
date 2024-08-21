@@ -73,7 +73,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     responsive: false,
     columnDefs: [{}],
     columns: [
-         {
+        {
             data: null,
             title: "Actions",
             render: function (data, type, row) {
@@ -767,7 +767,7 @@ var tableDashboard = $("#datatable_transaction").DataTable({
     responsive: false,
     columnDefs: [{}],
     columns: [
-         {
+        {
             data: "deal_name",
             title: "Transaction",
             render: function (data, type, row) {
@@ -2062,7 +2062,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: null,
             className: "select-checkbox",
             defaultContent: "",
-            title:"Selected",
+            title: "Selected",
             orderable: false,
             render: function (data, type, row) {
                 return `<input type="checkbox" id= "email-checkbox${
@@ -2341,21 +2341,22 @@ var tableContact = $("#datatable_contact").DataTable({
             }
         }
 
-          // Function to update the selected count
-            function updateSelectedCount() {
-                var selectedCount = $('.emailCheckbox:checked').length;
-                console.log($('.select_count')[0],'selectedCount')
-                let selectText = (selectedCount === 0 ? "Select" : "Selected: " + selectedCount);
-                $('.select_count').eq(0).text(selectText);
-            }
+        // Function to update the selected count
+        function updateSelectedCount() {
+            var selectedCount = $(".emailCheckbox:checked").length;
+            console.log($(".select_count")[0], "selectedCount");
+            let selectText =
+                selectedCount === 0 ? "Select" : "Selected: " + selectedCount;
+            $(".select_count").eq(0).text(selectText);
+        }
 
-            // Event handler for checkbox changes
-            $('#datatable_contact').on('change', '.emailCheckbox', function() {
-                updateSelectedCount();
-            });
-
-            // Initial count update
+        // Event handler for checkbox changes
+        $("#datatable_contact").on("change", ".emailCheckbox", function () {
             updateSelectedCount();
+        });
+
+        // Initial count update
+        updateSelectedCount();
 
         // Click event to enter editing mode
         $("#datatable_contact tbody").on("click", "span.editable", function () {
@@ -2914,8 +2915,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
     searching: true,
     processing: true,
     serverSide: true,
-    responsive: false,
-    columnDefs: [{}],
+    responsive: true,
     columns: [
         {
             data: "deal_name",
@@ -2935,7 +2935,8 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
 
                     // Parse the string as JSON
                     data = JSON.parse(jsonString);
-                    name = (data[0] &&
+                    name =
+                        (data[0] &&
                             data[0].Primary_Contact &&
                             data[0].Primary_Contact.name) ??
                         "";
@@ -3009,7 +3010,7 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
         },
     ],
     ajax: {
-        url: "/contacts-trasactions/"+contactId, // Ensure this URL is correct
+        url: "/contacts-trasactions/" + contactId, // Ensure this URL is correct
         type: "GET", // or 'POST' depending on your server setup
         data: function (request) {
             request._token = "{{ csrf_token() }}";
@@ -3018,11 +3019,8 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
                 (request.page = request.start / request.length + 1);
             request.search = request.search.value;
         },
-        dataSrc: function (data) { 
+        dataSrc: function (data) {
             return data?.data; // Return the data array or object from your response
         },
     },
 });
-
-
-
