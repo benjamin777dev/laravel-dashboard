@@ -2924,6 +2924,7 @@ window.updateTemplate = function (templateId) {
         success: function (response) {
             $("#templateViewClose" + templateId).click();
             showToast("Template update successfully");
+            $("#template-table-list").DataTable().ajax.reload();
         },
         error: function (xhr, status, error) {
             showToastError(
