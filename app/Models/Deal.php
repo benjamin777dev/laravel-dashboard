@@ -278,7 +278,7 @@ class Deal extends Model
             $leadAgentId = $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null);
             if ($leadAgentId) {
                 // Since there's a lead agent, it's that user we will use
-                $dealUser = User::where('zoho_id', $leadAgentId)->first();
+                $dealUser = User::where('root_user_id', $leadAgentId)->first();
             } else {
                 Log::error("Deal: $idkey has a team/partnership, but no lead Agent assigned!");
             }
@@ -286,6 +286,13 @@ class Deal extends Model
             // Deal is owned by a single agent, use contactNameId
             $dealUser = User::where("zoho_id", $contactNameId)->first();
         }
+
+
+        $leadAgentId = $source == "webhook" ? ($data['Lead_Agent']['id'] ?? null) : ($data["Lead_Agent"] ?? null);
+        if ($leadAgentId) {
+            // Since there's a lead agent, it's that user we will use
+            $dealUser = User::where('root_user_id', $leadAgentId)->first();
+        } 
 
         // Get the userId if available
         if ($dealUser) {
@@ -367,7 +374,7 @@ class Deal extends Model
             'import_batch_id' => $data['Import_Batch_ID'] ?? null,
             'isDealCompleted' => (int)($data['isDealCompleted'] ?? 1),
             'isInZoho' => (int)($data['isInZoho'] ?? 1),
-            'lead_agent' => $data['Lead_Agent']['name'] ?? null,
+            'lead_agent' => $leadAgentId ?? null,
             'lead_agent_email' => $data['Lead_Agent']['email'] ?? null,
             'lead_agent_id' => $leadAgentId ?? null, // Correct assignment
             'lead_agent_name' => $data['Lead_Agent']['name'] ?? null,
