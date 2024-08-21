@@ -304,7 +304,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
         },
     ],
     ajax: {
-        url: "/pipeline_view", // Ensure this URL is correct
+        url: "/pipeline_view", 
         type: "GET", // or 'POST' depending on your server setup
         data: function (request) {
             request._token = "{{ csrf_token() }}";
