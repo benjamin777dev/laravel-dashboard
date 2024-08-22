@@ -319,26 +319,30 @@
 @endsection
             <!-- jquery step -->
 <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>   
-    const $stepsContainer = $('#basic-example-nontm-create');
-    var dealData = @json($dealData);
-    window.onload = function(){
-        $(function () {
-            $("#basic-example-nontm-create").steps({
-            headerTag: "h3",
-            bodyTag: "section",
-            transitionEffect: "slide",
-            // onStepChanging:function(event, currentIndex, newIndex){
-            //     const isValid = validateNonTMStep(currentIndex);
-            //     return isValid;
-            // },
-            onFinished: function(event, currentIndex) {
+    $(document).ready(function() {
+        var dealData = @json($dealData);
+        const $stepsContainer = $('#basic-example-nontm-create');
+      
+            function initializeSteps() {
+            $stepsContainer.steps({
+                headerTag: "h3",
+                enableAllSteps: true,
+                bodyTag: "section",
+                transitionEffect: "slide",
+                // onStepChanging: function(event, currentIndex, newIndex) {
+                //     // Perform validation before allowing step change
+                //     const isValid = validateStep(currentIndex);
+                //     return isValid;
+                // },
+                onFinished: function(event, currentIndex) {
                 // API call here
                 window.updateNonTm(dealData,true);
             }
             });
-        });
+        }
+        initializeSteps();
+     
         let related_transaction = document.getElementById("related_transaction");
         let add_email = document.getElementById("add_email");
         let close_date = document.getElementById("close_date");
@@ -399,7 +403,7 @@
                 button.setAttribute('aria-expanded', 'false');
             }
         });
-    }
+  
 
     window.openNewFields=function(field){
         let referralData =window.values['Referral Fee Paid Out?']
@@ -759,6 +763,7 @@
         })
 
     }
+});
            
 </script>
 

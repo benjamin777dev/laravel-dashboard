@@ -503,7 +503,7 @@ class ZohoCRM
 
     public function createZohoDeal($inputJson)
     {
-        Log::info('Creating Zoho Deal');
+        Log::info('Creating Zoho Deal',[$inputJson]);
         // trigger workflows
         $inputJson['trigger'] = 'workflow';
         $response = Http::withHeaders([

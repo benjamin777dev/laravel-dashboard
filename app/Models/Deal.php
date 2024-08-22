@@ -101,6 +101,13 @@ class Deal extends Model
         return $this->hasMany(Submittals::class, 'dealId', 'zoho_deal_id');
     }
 
+    public function nontms()
+    {
+        return $this->hasMany(NonTm::class, 'dealId', 'zoho_deal_id');
+    }
+
+   
+
     public function getClientFromClientNameOnly()
     {
         if (is_null($this->client_name_only) || $this->client_name_only == '') {

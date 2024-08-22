@@ -579,6 +579,8 @@
             data: JSON.stringify(formData),
             dataType: 'json',
             success: function(data) {
+                console.log("contactData",data);
+                
                 document.getElementById("loaderOverlay").style.display = "none";
                 document.getElementById("loaderfor").style.display = "none";
                 // Handle success response, such as redirecting to a new page

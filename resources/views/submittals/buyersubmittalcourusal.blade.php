@@ -97,7 +97,7 @@
                                             </g>
                                         </svg></label>
                                         <input type="date" class="form-control required-field"
-                                        value="{{ isset($submittal['buyerClosingDate']) ? $submittal['buyerClosingDate'] : (isset($submittal['dealData']['closing_date']) ? $submittal['dealData']['closing_date'] : '') }}"
+                                        value="{{ \Carbon\Carbon::parse($submittal['buyerClosingDate'] ?? $submittal['dealData']['closing_date'] ?? '')->format('Y-m-d') }}"
                                         id="buyerClosingDate">                                 
                                     </div>
                                 </div>
@@ -456,9 +456,6 @@
 <!-- end row -->
 <!-- jquery step -->
 <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
-
-<!-- form wizard init -->
-<script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script>
 
 <script>
       

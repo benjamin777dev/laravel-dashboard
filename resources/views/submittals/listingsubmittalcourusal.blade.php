@@ -335,19 +335,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="referralToPay">Title to Order HOA docs?  <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                            <label for="titleToOrderHOA" id="titleToOrderHOA" >Title to Order HOA docs?  </label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
@@ -772,9 +760,6 @@
 <!-- jquery step -->
 <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
-<!-- form wizard init -->
-{{-- <script src="{{ URL::asset('build/js/pages/form-wizard.init.js') }}"></script> --}}
-
 <script>
     function ValidateHoa() {
         // Select all radio buttons and the additional field
@@ -782,6 +767,7 @@
         const hoaName = document.getElementById('hoaName');
         const hoaPhone = document.getElementById('hoaPhone');
         const hoaWebsite = document.getElementById('hoaWebsite');
+        const titleToOrderHOA = document.getElementById('titleToOrderHOA');
 
         // Function to update the additional field requirement
         function updateAdditionalFieldRequirement() {
@@ -792,10 +778,27 @@
                 hoaName?.classList?.add('required-field', 'validate');
                 hoaPhone?.classList?.add('required-field', 'validate');
                 hoaWebsite?.classList?.add('required-field', 'validate');
+                titleToOrderHOA.innerHTML = `
+                    <label for="referralToPay">
+                    Title to Order HOA docs?
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
+                        <mask id="mask0_2151_10662" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
+                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                        </mask>
+                        <g mask="url(#mask0_2151_10662)">
+                            <path d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z" fill="#AC5353" />
+                        </g>
+                    </svg>
+                </label>
+            `;
             } else {
                 hoaName?.classList.remove('required-field', 'validate');
                 hoaPhone?.classList.remove('required-field', 'validate');
                 hoaWebsite?.classList.remove('required-field', 'validate');
+                titleToOrderHOA.innerHTML=`
+                <label for="referralToPay">
+                    Title to Order HOA docs?
+                </label>`
             }
         }
 
@@ -824,18 +827,10 @@
                 //     return isValid;
                 // },
                 onFinished: function(event, currentIndex) {
-                    // API call here
-                    console.log(currentIndex,'currentIndex')
-                    const isValid = validateStep(currentIndex);
-                    if (isValid) {
-                    // If valid, proceed with the API call
+                  
                     window.validateSubmittal(true);
                     // Optionally, you might want to return true explicitly here
                     return true;
-                } else {
-                    // Return false to indicate that the form submission should not proceed
-                    return false;
-                }
                 }
             });
         }
@@ -1692,19 +1687,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="referralToPay">Title to Order HOA docs?  <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                            <label for="referralToPay" id="titleToOrderHOA">Title to Order HOA docs?</label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
@@ -1800,7 +1783,7 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="resubmitting_to_which_team">Resubmitting to Which Team?</label>
-                                                <select name="resubmitting_to_which_team" id="resubmitting_to_which_team" class="form-select">
+                                                <select name="resubmitting_to_which_team" id="resubmitting_to_which_team" class="form-select validate">
                                                     <option value="" selected>None</option>
                                                     <option value="TM"
                                                         {{ $submittal['resubmitting_to_which_team'] == 'TM' ? 'selected' : '' }}>TM
@@ -1818,7 +1801,7 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="resubmitting_why_list_all_changes">Resubmitting? Why? --LIST ALL CHANGES--</label>
-                                                <textarea class="form-control" id="resubmitting_why_list_all_changes" aria-label="With textarea">{{ $submittal['resubmitting_why_list_all_changes'] }}</textarea>
+                                                <textarea class="form-control validate" id="resubmitting_why_list_all_changes" aria-label="With textarea">{{ $submittal['resubmitting_why_list_all_changes'] }}</textarea>
                                             </div>
                                         </div>
 
@@ -1894,16 +1877,19 @@
                 console.log("test it out")
                 if ($('.property').length === 6) {
                     console.log($('.property').length, 'lengththth')
-                    for (let i = 3; i <= 12; i++) {
+                    if(resubmitData){
+                        for (let i = 3; i <= 12; i++) {
+                            removeStep(i);
+                        }
+                    }else{
+                        for (let i = 3; i <= 13; i++) {
+                            removeStep(i);
+                        }
+                    }
+                    for (let i = 3; i <= 6; i++) {
                         removeStep(i);
                     }
-                    for (let i = 3; i <= 5; i++) {
-                        removeStep(i);
-                    }
-                    for (let i = 3; i <= 2; i++) {
-                        removeStep(i);
-                    }
-                    for (let i = 3; i <= 1; i++) {
+                    for (let i = 3; i <= 3; i++) {
                         removeStep(i);
                     }
                     addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
