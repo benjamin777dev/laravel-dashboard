@@ -657,12 +657,12 @@ class DatabaseService
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
-            if ($all) {
-                $deals = $deals->where($conditions)->with('submittals')->get();
-            } else {
-                $deals = $deals->where($conditions)->with('submittals')->get();
-            }
+                $deals = $deals
+                ->where($conditions)
+                ->with(['submittals', 'nontms']) // eager load the 'submittals' and 'nontm' relationships
+                ->get();
 
+           
             // load the relationship for leadAgent
             $deals->each(function ($deal) {
                 $deal->leadAgent ?? null;

@@ -77,6 +77,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
             data: null,
             title: "Actions",
             render: function (data, type, row) {
+               console.log(row,'testrow')
                 let lockIcon = "";
                 if (data.stage === "Under Contract") {
                     lockIcon = `<i class="fas fa-lock"></i>`;
@@ -104,6 +105,30 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     <div style="color:#222;" class="ps-2" id="addSubmittal">
                        <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
                title="View Submittal" aria-hidden="true"></i>
+                    </div>
+                </a>
+            `;
+                    }
+                }
+                if (
+                    (
+                        data.tm_preference === "Non-TM" &&
+                        data.representing === "Buyer"
+                    )
+                ) {
+                    if (row?.nontms?.length === 0) {
+                        submittalSection = `
+            <div style="color:#222;" class="ps-2" id="addnon-tm" onclick="addNonTmForIndex('${row?.zoho_deal_id}','${row?.deal_name}')">
+                <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon"
+               title="Add Non-Tm"></i>
+            </div>
+        `;
+                    } else {
+                        submittalSection = `
+                <a href="/nontm-view/${row?.nontms[0]?.id}" target="_blank">
+                    <div style="color:#222;" class="ps-2" id="addnon-tm">
+                       <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
+               title="View Non-Tm" aria-hidden="true"></i>
                     </div>
                 </a>
             `;
