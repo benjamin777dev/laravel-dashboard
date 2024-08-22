@@ -14,57 +14,40 @@
             </div>
         </a>
         @endif
-
-                            <div class="input-group-text npcontactbtn text-end" id="addSubmittal" onclick="showSubmittalFormTypeindex()">
-                                <i class="fas fa-plus plusicon"></i>
-                                @if ($submittals->count() === 0)
-                                    Add New Submittal
-                                @else
-                                    Show Submittal
-                                @endif
+        @component('components.common-table', [
+        'id'=>'datatable_submittal',
+        "type" =>"submittal",
+        ])
+        <!-- Card View -->
+        <div class="row mt-4">
+            @forelse($submittals as $submittal)
+                <div class="col-md-4 mb-3">
+                    <div class="npNom-TM-Card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="npcommonheaderText">Submittal Name</p>
+                                <p class="npcommontableBodytext">{{ $submittal['submittalName'] }}</p>
+                            </div>
+                            <div>
+                                <p class="npcommonheaderText">Submittal Type</p>
+                                <p class="npcommontableBodytext">{{ $submittal['submittalType'] }}</p>
+                            </div>
+                            <div>
+                                <p class="npcommonheaderText">Owner</p>
+                                <p class="npcommontableBodyDatetext">{{ $submittal['userData']['name'] }}</p>
                             </div>
                         </div>
-                      
-                   
-                       @component('components.common-table', [
-                        'id'=>'datatable_submittal',
-                        "type" =>"submittal",
-                      ])
+                        <div class="npCardPhoneDiv">
+                            <p class="npcommonheaderText">Created Time</p>
+                            <p class="npcommontableBodyDatetext">{{ $submittal['created_at'] }}</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Card View -->
-                <div class="row mt-4">
-                    @forelse($submittals as $submittal)
-                        <div class="col-md-4 mb-3">
-                            <div class="npNom-TM-Card">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="npcommonheaderText">Submittal Name</p>
-                                        <p class="npcommontableBodytext">{{ $submittal['submittalName'] }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="npcommonheaderText">Submittal Type</p>
-                                        <p class="npcommontableBodytext">{{ $submittal['submittalType'] }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="npcommonheaderText">Owner</p>
-                                        <p class="npcommontableBodyDatetext">{{ $submittal['userData']['name'] }}</p>
-                                    </div>
-                                </div>
-                                <div class="npCardPhoneDiv">
-                                    <p class="npcommonheaderText">Created Time</p>
-                                    <p class="npcommontableBodyDatetext">{{ $submittal['created_at'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="col-12">
-                            <p class="text-center notesAsignedText">No Submittal assigned</p>
-                        </div>
-                    @endforelse
+            @empty
+                <div class="col-12">
+                    <p class="text-center notesAsignedText">No Submittal assigned</p>
                 </div>
-            </div>
+            @endforelse
         </div>
     </div>
 </div>

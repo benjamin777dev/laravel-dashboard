@@ -83,7 +83,7 @@ Route::post('/contact/create', [ContactController::class, 'createContactId'])->n
 Route::get('/contact_view', [ContactController::class, 'getContactJson'])->name('contact.get_contact')->middleware('auth');
 Route::post('/contact/update/{id}', [ContactController::class, 'updateContactField'])->name('contact.update')->middleware('auth');
 
-Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm'])->name('contacts.create');
+Route::get('/contacts-create/{contactId}', [ContactController::class, 'showCreateContactForm']);
 Route::get('/contact/create/form/{contactId}', [ContactController::class, 'contactCreateForm'])->name('contacts.create.form')->middleware('auth');
 Route::get('/contacts-view/{contactId}', [ContactController::class, 'show'])->name('contacts.show')->middleware('auth');
 Route::get('/contacts-trasactions/{contactId}', [ContactController::class, 'retriveDealForContacts'])->name('contact.deal')->middleware('auth');

@@ -466,12 +466,6 @@
 </div>
 @endif
 
-
-
-        </div>
-    </div>
-</div>
-
 @if (
     isset($deal['representing']) && 
     isset($deal['tm_preference']) &&
@@ -573,7 +567,7 @@
             var removedItem={}
             console.log("removedItemId",removedItemId);
             deal.primary_contact = JSON.parse(deal.primary_contact)
-            var removedItemData = deal.primary_contact.find((val)=>val.Primary_Contact.id===removedItemId)
+            var removedItemData = deal.primary_contact.find((val)=>val.Primary_Contact?.id&&val.Primary_Contact.id===removedItemId)
            
             console.log("removedItemData",removedItemData);
             

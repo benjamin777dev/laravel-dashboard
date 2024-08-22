@@ -340,36 +340,61 @@
             var printedItemsPickupDate = $('#printedItemsPickupDate').val();
             var brochurePickupDate = $('#brochurePickupDate').val();
             // Select all div elements
-            const listingSubmittalsContainer = document.getElementById('listingSubmittal');
-            if (listingSubmittalsContainer) {
+            
                 if (
-                    (!transactionName&&transactionName!="" && $('#transactionName').length > 0) ||
-                    (!agentName &&agentName!="" && $('#agentName').length > 0) ||
-                    (!commingSoon &&commingSoon!="" && $('#commingSoon').length > 0) ||
-                    (!tmName &&tmName!="" && $('#tmName').length > 0) ||
-                    (!activeDate &&activeDate!="" && $('#activeDate').length > 0) ||
-                    (!price &&price!="" && $('#price').length > 0) ||
-                    (!agreementExecuted &&agreementExecuted!="" && $('input[name="agreementExecuted"]').length > 0) ||
-                    (!usingCHR &&usingCHR!="" && $('input[name="usingCHR"]').length > 0) ||
-                    (!needOE &&needOE!="" && $('input[name="needO&E"]').length > 0) ||
-                    (!hasHOA &&hasHOA!="" && $('input[name="hasHOA"]').length > 0) ||
-                    (!includeInsights &&includeInsights!="" && $('input[name="includeInsights"]').length > 0) ||
-                    (!titleToOrderHOA &&titleToOrderHOA!="" && $('input[name="titleToOrderHOA"]').length > 0) ||
-                    (!mailoutNeeded &&mailoutNeeded!="" && $('input[name="mailoutNeeded"]').length > 0) ||
-                    (!powerOfAttnyNeeded &&powerOfAttnyNeeded!="" && $('input[name="powerOfAttnyNeeded"]').length > 0) ||
-                    (!scheduleSignInstall &&scheduleSignInstall!="" && $('input[name="scheduleSignInstall"]').length > 0) ||
-                    (!draftShowingInstructions &&draftShowingInstructions!="" && $('input[name="draftShowingInstructions"]').length > 0) ||
-                    (!closerNamePhone &&closerNamePhone!="" && $('#closerNamePhone').length > 0) ||
-                    (!showPromotion &&showPromotion!="" && $('input[name="showPromotion"]').length > 0) ||
-                    (!brochureLine &&brochureLine!="" && $('#brochureLine').length > 0) ||
-                    (!brochurePickupDate &&brochurePickupDate!="" && $('#brochurePickupDate').length > 0)
+                    (!transactionName&&transactionName=="" ) ||
+                    (!agentName &&agentName=="" ) ||
+                    (!commingSoon &&commingSoon=="" ) ||
+                    (!tmName &&tmName=="" ) ||
+                    (!activeDate &&activeDate=="" ) ||
+                    (!agreementExecuted &&agreementExecuted=="" ) ||
+                    (!price &&price=="" ) ||
+                    (!bedsBathsTotal &&bedsBathsTotal=="" ) ||
+                    (!usingCHR &&usingCHR=="" ) ||
+                    (!needOE &&needOE=="") ||
+                    (!includeInsights &&includeInsights=="" ) ||
+                    (!powerOfAttnyNeeded &&powerOfAttnyNeeded=="" ) ||
+                    (!mailoutNeeded &&mailoutNeeded=="" ) ||
+                    (!hasHOA &&hasHOA=="" )||
+                    (!scheduleSignInstall &&scheduleSignInstall=="" ) ||
+                    (!closerNamePhone &&closerNamePhone=="" ) ||
+                    (!draftShowingInstructions &&draftShowingInstructions=="" ) ||
+                    (!showPromotion &&showPromotion=="" ) 
                 ) {
                     isValid = false
                     showToastError('Please fill all required fields');
                 }
+
+                if(hasHOA &&hasHOA=="Yes"){
+                    if(
+                        (!titleToOrderHOA &&titleToOrderHOA=="") ||
+                        (!hoaName &&hoaName=="") ||
+                        (!hoaPhone &&hoaPhone=="") ||
+                        (!hoaWebsite &&hoaWebsite=="") 
+                    ){
+                        isValid = false
+                        showToastError('Please fill all required fields');
+                    }
+                }
+
+                if(scheduleSignInstall &&scheduleSignInstall=="Other"){
+                    if(
+                        (!signInstallVendorOther &&signInstallVendorOther=="") 
+                    ){
+                        isValid = false
+                        showToastError('Please enter Sign Install Vendor (if Other)');
+                    }
+                }
+
+                if(scheduleSignInstall &&scheduleSignInstall=="Others"){
+                    if(
+                        (!signInstallVendorOther &&signInstallVendorOther=="") 
+                    ){
+                        isValid = false
+                        showToastError('Please enter Sign Install Vendor (if Other)');
+                    }
+                }
                 
-                
-            }
 
             if((additionalEmail!='')&&(!(isValidEmail(additionalEmail)))){
                 showToastError("Additional Email for confirmation should be in email format")
