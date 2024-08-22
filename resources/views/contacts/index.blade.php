@@ -98,7 +98,7 @@
 
     
 
-        <div class="contactlist overflow-auto" id="contactlist">
+        <div class="contactlist" id="contactlist">
             @component('components.common-table', [
                 'id'=>'datatable_contact',
                 'commonArr' =>$contacts,
