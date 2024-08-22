@@ -213,7 +213,7 @@ class DatabaseService
                 'mailing_city' => $contact['Mailing_City'] ?? null,
                 'mailing_state' => $contact['Mailing_State'] ?? null,
                 'mailing_zip' => $contact['Mailing_Zip'] ?? null,
-                'isContactCompleted' => isset($contact['Is_Active']) ? (bool) $contact['Is_Active'] : 1,
+                'isContactCompleted' => true,
                 'isInZoho' => isset($contact['$state']) && $contact['$state'] == 'save' ? 1 : 0,
                 'Lead_Source' => $contact['Lead_Source'] ?? null,
                 'referred_id' => $contact['Referred_By']['id'] ?? null,
@@ -366,7 +366,7 @@ class DatabaseService
                 'mailing_city' => $contact['Mailing_City'] ?? null,
                 'mailing_state' => $contact['Mailing_State'] ?? null,
                 'mailing_zip' => $contact['Mailing_Zip'] ?? null,
-                'isContactCompleted' => isset($contact['Is_Active']) ? (bool) $contact['Is_Active'] : 1,
+                'isContactCompleted' => true,
                 'isInZoho' => isset($contact['$state']) && $contact['$state'] == 'save' ? 1 : 0,
                 'Lead_Source' => $contact['Lead_Source'] ?? null,
                 'referred_id' => $contact['Referred_By']['id'] ?? null,
@@ -657,10 +657,15 @@ class DatabaseService
             Log::info("Deal Conditions", ['deals' => $conditions]);
 
             // Retrieve deals based on the conditions
-                $deals = $deals
-                ->where($conditions)
-                ->with(['submittals', 'nontms']) // eager load the 'submittals' and 'nontm' relationships
-                ->get();
+            if ($all) {
+                $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
+                       $query->where('isSubmittalComplete', 'true');
+                   }])->with('nontms')->get();
+            } else {
+                $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
+                       $query->where('isSubmittalComplete', 'true');
+                   }])->with('nontms')->get();
+            }
 
            
             // load the relationship for leadAgent
@@ -787,7 +792,7 @@ class DatabaseService
             // Retrieve deals based on the conditions
             $contacts = $contacts->where($conditions)->first();
 
-            if ($contacts) {
+            if ($contacts->zoho_contact_id) {
                 // Get all related deals
                 $allDeals = $contacts->allRelatedDeals();
     
@@ -2165,8 +2170,8 @@ class DatabaseService
         try {
 
             //old query
-            // $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
-            $submittalData = Submittals::where([['dealId', $dealId]])->with('userData','dealData')->orderBy('updated_at','desc')->get();
+            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
+            // $submittalData = Submittals::where([['dealId', $dealId]])->with('userData','dealData')->orderBy('updated_at','desc')->get();
             return $submittalData;
         } catch (\Exception $e) {
 
