@@ -1690,7 +1690,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="referralToPay">Title to Order HOA docs?</label>
+                                            <label for="referralToPay" id="titleToOrderHOA">Title to Order HOA docs?</label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
                                                     <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
