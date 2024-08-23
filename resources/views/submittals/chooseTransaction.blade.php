@@ -54,7 +54,8 @@
     function generateRandom4DigitNumber() {
             return Math.floor(1000 + Math.random() * 9000);
         }
-        function addNonTmForIndex(id="",dealname="") {
+
+    function addNonTmForIndex(id="",dealname="") {
         let formData = {
             "data": [{
                 "Owner": {
