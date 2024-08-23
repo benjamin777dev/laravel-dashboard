@@ -1816,7 +1816,9 @@
         setTimeout(() => {
             let initialshowPromotion = document.querySelector('input[name="showPromotion"]:checked')
                 ?.value;
-            showAndDisableValues(initialshowPromotion, 'showProp');
+                console.log(initialshowPromotion,'initialshowPromotion');
+                
+            showAndDisableValues(initialshowPromotion, 'showProp',true);
         }, 500);
         showAndDisableValues(initialCHrusingValue);
 
@@ -1833,14 +1835,15 @@
             if (event.target.matches('input[name="showPromotion"]')) {
                 const radioButton = event.target;
                 const value = radioButton.value;
-                showAndDisableValues(value, 'showProp');
+                showAndDisableValues(value, 'showProp',false);
             }
         });
 
 
 
-        function showAndDisableValues(value, show) {
+        function showAndDisableValues(value, show,domloaded=true) {
             if (value == 1 && show === "showProp") {
+                console.log("show prop yes")
                 addStepChr('Outside Services', innrtHtml);
                 addStepChr('Marketing Items', innrtHtml2);
                 addStepChr('Marketing Items', innrtHtml3);
@@ -1849,9 +1852,10 @@
                 addStepChr('Notes', innrtHtml8);
                 if(resubmitData){
                     removeStep(9);
-                    addStepChr('Resubmittal Information', resubmit,15);
+                    addStepChr('Resubmittal Information', resubmit);
                 }
-            } else if (value == 0 && show === "showProp") {
+            } else if (value == 0 && show === "showProp" && !domloaded) {
+                 console.log("show prop no")
                 removeStep(8);
                 removeStep(9);
                 removeStep(10);
@@ -1868,9 +1872,10 @@
                 }
             }
             if (value === "Yes" && value !== undefined) {
+                 console.log(" yes")
                 console.log("test it out")
                 if ($('.property').length === 6) {
-                    console.log($('.property').length, 'lengththth')
+                    console.log('sdkfhkslhdfklshdflhadksfhjkasdhfjkh')
                     if(resubmitData){
                         for (let i = 3; i <= 12; i++) {
                             removeStep(i);
@@ -1903,6 +1908,7 @@
                 }
                 addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
                 if(resubmitData){
+                    addStepChr('Commission Detail',defaultCHRSec1 , 8);
                     removeStep(9);
                     addStepChr('Resubmittal Information', resubmit,9);
                 }
@@ -1911,6 +1917,7 @@
                 ValidateHoa();
 
             } else if (value === "No") {
+                 console.log("no")
                 for (let i = 7; i >= 3; i--) {
                     removeStep(i);
                 }

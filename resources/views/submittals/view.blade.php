@@ -121,6 +121,8 @@
 
     window.validateSubmittal=function(isNew) {
         let submittal = @json($submittal);
+        console.log("submittal data",submittal);
+        
         isValid = true
         if(submittal.submittalType == 'buyer-submittal'){
             // Get values from Basic Info section
@@ -236,7 +238,7 @@
                     success: function (response) {
                         console.log("response",response);
                         showToast("Submittal updated successfully");
-                        window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
+                        // window.location.href = `{{ url('/pipeline-view/${submittal.deal_data.id}') }}`;
                     },
                     error: function (xhr, status, error) {
                         // Handle error response
@@ -418,93 +420,116 @@
                 showToastError(error.message) 
             }
             console.log("isValid", isValid,additionalEmail);
+            function getField(field,defaultValue = null){
+                let value = submittal[field];
+                console.log("Value of fields",value);
+                
+                if (value == 0) {
+                    value = false;
+                } else if (value == 1) {
+                    value = true;
+                } 
+                if (value == "on") {
+                    value = "Yes";
+                } else if (value == "off") {
+                    value = "No";
+                } 
+                console.log("Check value diffrenece",value,defaultValue);
+                return value !== defaultValue&&defaultValue!=""&&defaultValue!=null ? defaultValue : undefined;
+            };
+            
             if(isValid == true){
                 var formdata = {
                 "data": [{
                         "Transaction_Name": {
                             "module": "Potentials",
-                            "name": submittal.deal_data.deal_name,
-                            "id": submittal.deal_data.zoho_deal_id
+                            "name": submittal.deal_data ? submittal.deal_data.deal_name : null,
+                            "id": submittal.deal_data ? submittal.deal_data.zoho_deal_id : null
                         },
-                        "Beds_Baths_Total_Sq_Ft": bedsBathsTotal,
-                        "Referral_Details": referralDetails,
-                        "Navica": navica,
-                        "HOA_Phone": hoaPhone,
-                        "Has_HOA": hasHOA,
-                        "PPAR": ppar,
-                        "Sign_Install_Date": signInstallDate,
+                        "Beds_Baths_Total_Sq_Ft": getField('bedsBathsTotal', bedsBathsTotal),
+                        "Referral_Details": getField('referralDetails', referralDetails),
+                        "Navica": getField('navica', navica),
+                        "HOA_Phone": getField('hoaPhone', hoaPhone),
+                        "Has_HOA": getField('hasHOA', hasHOA),
+                        "PPAR": getField('ppar', ppar),
+                        "Sign_Install_Date": getField('signInstallDate', signInstallDate),
                         "Currency": "USD",
-                        "Pick_Up_Date": brochurePickupDate,
-                        "HOA_Name": hoaName,
-                        "Using_CHR_TM": usingCHR,
-                        "Email_Blast_to_Sphere": emailBlastSphere,
-                        "Print_QR_Code_Sheet": qrCodeSheet,
-                        "MLS_Private_Remarks": mlsPrivateRemarks,
-                        "MLS_Public_Remarks":mlsPublicRemarks,
-                        "Feature_Cards_or_Sheets": featureCards,
-                        "Sticky_Dots": stickyDots,
-                        "Brochure_Line": brochureLine,
-                        "Select_your_prints": brochurePrint,
-                        "HOA_Website": hoaWebsite,
-                        "HOA_Website": hoaWebsite,
-                        "Photo_URL": photoURL,
-                        "3D_Tour_URL":tourURL,
-                        "Closer_Name_Phone": closerNamePhone,
-                        "Listing_Agreement_Executed": agreementExecuted,
-                        "Sign_Install_Vendor_if_Other": signInstallVendorOther,
-                        "D_Zillow_Tour": threeDZillowTour,
-                        "Email_Blast_to_Reverse_Prospect_List": emailBlastReverseProspect,
-                        "Social_Media_Ads": socialMediaAds,
-                        "QR_Code_Sign_Rider": qrCodeSignRider,
-                        "QR_Code_Main_Panel": qrCodeMainPanel,
-                        "Grand_County": grandCounty,
-                        "Agent_Name": agentName,
-                        "Mailout_Needed1": mailoutNeeded,
-                        "Photo_Date": photoDate,
-                        "Social_Media_Images": socialMediaImages,
-                        "Add_Feature_Card_or_Sheet_Copy": featureCardCopy,
-                        "Title_Company": titleCompany,
-                        "Referral_to_Pay": referralToPay,
-                        "Property_Promotion_Notes": marketingNotes,
-                        "TM_Notes": miscNotes,
-                        "Concierge_Listing_Optional":conciergeListing,
-                        "Draft_Showing_Instructions1":draftShowingInstructions,
-                        "Floor_Plans":floorPlans,
-                        "Onsite_Video":onsiteVideo,
-                        "Custom_Domain_Name":customDomainName,
-                        "bullets_4_words_per_bullet":bullets,
-                        "Buyer_Agent_Compensation_Offering": buyer_agent_compensation_offering,
-                        "Paragraph_200_Words_4_Page_Brochure_or_Look_Book": paragraph_200_words_4_page_brochure_or_look_book,
-                        "In_House_Printed_Brochure_Pick_Up_Date":printedItemsPickupDate,
-                        "IRES": ires,
-                        "Price": price,
-                        "Coming_Soon": commingSoon,
-                        "Title_to_Order_HOA_docs": titleToOrderHOA,
-                        "Include_Insights_in_Intro1": includeInsights,
-                        "Features_Needed_for_Video": featuresNeededForVideo,
-                        "Matterport": matterport,
-                        "Schedule_Sign_Install": scheduleSignInstall,
-                        "Pick_Up_Delivery_Date": brochureDeliveryDate,
-                        "Property_Website_QR_Code": propertyWebsite,
-                        "Power_of_Attny_Needed1": powerOfAttnyNeeded,
-                        "Additional_Email_for_Confirmation": additionalEmail,
-                        "TM_Name": tmName,
-                        "Property_Highlight_Video": propertyHighlightVideo,
-                        "Coming_Soon_MLS_Date": comingSoonDate,
-                        "Amount_to_CHR_Gives": amountToCHR,
-                        "REColorado": reColorado,
-                        "Active_Date": activeDate,
-                        "Need_O_E1": needOE,
-                        "Sign_Install_Vendor_Info": signInstallVendor,
-                        "Delivery_Only_Shipping_Address_Name": deliveryAddress,
-                        "Fees_Charged_to_Seller_at_Closing": feesCharged,
-                        "showPromotion":showPromotion,
-                        'Resubmitting_Why_LIST_ALL_CHANGES' : resubmitting_why_list_all_changes,
-                        'Resubmitting_to_Which_Team' : resubmitting_to_which_team,
-                        'resubmit_text':resubmit_text
+                        "Pick_Up_Date": getField('brochurePickupDate', brochurePickupDate),
+                        "HOA_Name": getField('hoaName', hoaName),
+                        "Using_CHR_TM": getField('usingCHR', usingCHR),
+                        "Email_Blast_to_Sphere": getField('emailBlastSphere', emailBlastSphere),
+                        "Print_QR_Code_Sheet": getField('qrCodeSheet', qrCodeSheet),
+                        "MLS_Private_Remarks": getField('mlsPrivateRemarks', mlsPrivateRemarks),
+                        "MLS_Public_Remarks": getField('mlsPublicRemarks', mlsPublicRemarks),
+                        "Feature_Cards_or_Sheets": getField('featureCards', featureCards),
+                        "Sticky_Dots": getField('stickyDots', stickyDots),
+                        "Brochure_Line": getField('brochureLine', brochureLine),
+                        "Select_your_prints": getField('brochurePrint', brochurePrint),
+                        "HOA_Website": getField('hoaWebsite', hoaWebsite),
+                        "Photo_URL": getField('photoURL', photoURL),
+                        "3D_Tour_URL": getField('tourURL', tourURL),
+                        "Closer_Name_Phone": getField('closerNamePhone', closerNamePhone),
+                        "Listing_Agreement_Executed": getField('agreementExecuted', agreementExecuted),
+                        "Sign_Install_Vendor_if_Other": getField('signInstallVendorOther', signInstallVendorOther),
+                        "D_Zillow_Tour": getField('threeDZillowTour', threeDZillowTour),
+                        "Email_Blast_to_Reverse_Prospect_List": getField('emailBlastReverseProspect', emailBlastReverseProspect),
+                        "Social_Media_Ads": getField('socialMediaAds', socialMediaAds),
+                        "QR_Code_Sign_Rider": getField('qrCodeSignRider', qrCodeSignRider),
+                        "QR_Code_Main_Panel": getField('qrCodeMainPanel', qrCodeMainPanel),
+                        "Grand_County": getField('grandCounty', grandCounty),
+                        "Agent_Name": getField('agentName', agentName),
+                        "Mailout_Needed1": getField('mailoutNeeded', mailoutNeeded),
+                        "Photo_Date": getField('photoDate', photoDate),
+                        "Social_Media_Images": getField('socialMediaImages', socialMediaImages),
+                        "Add_Feature_Card_or_Sheet_Copy": getField('featureCardCopy', featureCardCopy),
+                        "Title_Company": getField('titleCompany', titleCompany),
+                        "Referral_to_Pay": getField('referralToPay', referralToPay),
+                        "Property_Promotion_Notes": getField('marketingNotes', marketingNotes),
+                        "TM_Notes": getField('miscNotes', miscNotes),
+                        "Concierge_Listing_Optional": getField('conciergeListing', conciergeListing),
+                        "Draft_Showing_Instructions1": getField('draftShowingInstructions', draftShowingInstructions),
+                        "Floor_Plans": getField('floorPlans', floorPlans),
+                        "Onsite_Video": getField('onsiteVideo', onsiteVideo),
+                        "Custom_Domain_Name": getField('customDomainName', customDomainName),
+                        "bullets_4_words_per_bullet": getField('bullets', bullets),
+                        "Buyer_Agent_Compensation_Offering": getField('buyer_agent_compensation_offering', buyer_agent_compensation_offering),
+                        "Paragraph_200_Words_4_Page_Brochure_or_Look_Book": getField('paragraph_200_words_4_page_brochure_or_look_book', paragraph_200_words_4_page_brochure_or_look_book),
+                        "In_House_Printed_Brochure_Pick_Up_Date": getField('printedItemsPickupDate', printedItemsPickupDate),
+                        "IRES": getField('ires', ires),
+                        "Price": getField('price', price),
+                        "Coming_Soon": getField('comingSoon', commingSoon),
+                        "Title_to_Order_HOA_docs": getField('titleToOrderHOA', titleToOrderHOA),
+                        "Include_Insights_in_Intro1": getField('includeInsights', includeInsights),
+                        "Features_Needed_for_Video": getField('featuresNeededForVideo', featuresNeededForVideo),
+                        "Matterport": getField('matterport', matterport),
+                        "Schedule_Sign_Install": getField('scheduleSignInstall', scheduleSignInstall),
+                        "Pick_Up_Delivery_Date": getField('brochureDeliveryDate', brochureDeliveryDate),
+                        "Property_Website_QR_Code": getField('propertyWebsite', propertyWebsite),
+                        "Power_of_Attny_Needed1": getField('powerOfAttnyNeeded', powerOfAttnyNeeded),
+                        "Additional_Email_for_Confirmation": getField('additionalEmail', additionalEmail),
+                        "TM_Name": getField('tmName', tmName),
+                        "Property_Highlight_Video": getField('propertyHighlightVideo', propertyHighlightVideo),
+                        "Coming_Soon_MLS_Date": getField('comingSoonDate', comingSoonDate),
+                        "Amount_to_CHR_Gives": getField('amountToCHR', amountToCHR),
+                        "REColorado": getField('reColorado', reColorado),
+                        "Active_Date": getField('activeDate', activeDate),
+                        "Need_O_E1": getField('needOE', needOE),
+                        "Sign_Install_Vendor_Info": getField('signInstallVendor', signInstallVendor),
+                        "Delivery_Only_Shipping_Address_Name": getField('deliveryAddress', deliveryAddress),
+                        "Fees_Charged_to_Seller_at_Closing": getField('feesCharged', feesCharged),
+                        "showPromotion": getField('showPromotion', showPromotion),
+                        "Resubmitting_Why_LIST_ALL_CHANGES": getField('resubmitting_why_list_all_changes', resubmitting_why_list_all_changes),
+                        "Resubmitting_to_Which_Team": getField('resubmitting_to_which_team', resubmitting_to_which_team),
+                        "resubmit_text": true
                     }],
                     "_token": '{{ csrf_token() }}'
                 }
+                
+                formdata.data[0] = Object.fromEntries(
+                    Object.entries(formdata.data[0]).filter(([_, value]) => value !== undefined)
+                );
+                console.log("Check value diffrenece",formdata.data[0]);
+                
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
