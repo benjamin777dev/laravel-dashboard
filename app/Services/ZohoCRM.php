@@ -278,7 +278,7 @@ class ZohoCRM
             'criteria' => $search,
         ]);
 
-        Log::info('Zoho deals data response: ' . print_r($response, true));
+        Log::info('Zoho getDealsData data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -511,7 +511,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->apiUrl . 'Deals', $inputJson);
 
-        //Log::info('Zoho deals data response: ' . print_r($response, true));
+        Log::info('Zoho createZohoDeal data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -526,7 +526,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->post($this->bulkUrl . 'Non_TM_Check_Requests', $inputJson);
 
-        //Log::info('Zoho deals data response: ' . print_r($response, true));
+        Log::info('Zoho createZohoNonTm data response: ' . print_r($response, true));
 
         return $response;
     }
@@ -543,7 +543,7 @@ class ZohoCRM
                 'Content-Type' => 'application/json',
             ])->patch($this->bulkUrl . 'Non_TM_Check_Requests/' . $id, $inputJson);
 
-            Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+            Log::info('Zoho updateZohoNontm data response: ' . print_r($response->body(), true));
 
             return $response;
         } catch (RequestException $exception) {
@@ -605,7 +605,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Deals/' . $id);
 
-        Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+        Log::info('Zoho getZohoDeal data response: ' . print_r($response->body(), true));
 
         return $response;
     }
@@ -619,7 +619,7 @@ class ZohoCRM
             'Content-Type' => 'application/json',
         ])->get($this->apiUrl . 'Contacts/' . $id);
 
-        Log::info('Zoho deals data response: ' . print_r($response->body(), true));
+        Log::info('Zoho getZohoContact data response: ' . print_r($response->body(), true));
 
         return $response;
     }
