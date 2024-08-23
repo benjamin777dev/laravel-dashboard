@@ -318,14 +318,6 @@
                                             <textarea class="form-control" id="resubmitting_why_list_all_changes" aria-label="With textarea">{{ $dealData['resubmitting_why_list_all_changes'] }}</textarea>
                                         </div>
                                     </div>
-
-                                    <div class="col-lg-4 d-flex gap-2">
-                                        <div>Re-Submitted</div>
-                                        <div ><input type="checkbox" id="resubmit_text" <?php if ($dealData['resubmit_text']) {
-                                            echo 'checked';
-                                        } ?> disabled>
-                                        </div>
-                                    </div>
                                 </div>
                             </form>
                         </div>
