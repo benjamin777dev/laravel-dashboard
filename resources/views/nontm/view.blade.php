@@ -43,8 +43,6 @@
                                         <div id="related_transaction_error" class="text-danger">
                                         </div>
                                     </div>
-<<<<<<< HEAD
-=======
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="basicpill-lastname-input">Additional Email for Confirmation </label>
@@ -296,7 +294,6 @@
                                             </div>
                                         </div>
                                     </div>
->>>>>>> 36604a1f5cf33cd7800b46f5c91a7a2fd6f13aaa
                                 </div>
                             </form>
                         </section>
