@@ -31,7 +31,7 @@
                                                     </g>
                                                 </svg></label>
                                             <select name="related_transaction" id="related_transaction"
-                                                class="form-select validate_err required-field" disabled>
+                                                class="form-select validate_err" disabled>
                                                 @foreach ($deals as $deal)
                                                     <option value="{{ $deal->zoho_deal_id }}"
                                                         {{ $deal->zoho_deal_id == $dealData->dealId ? 'selected' : '' }}>
@@ -73,7 +73,7 @@
                                                             fill="#AC5353" />
                                                     </g>
                                                 </svg></label>
-                                            <input type="date" class="form-control required-field"
+                                            <input type="date" class="form-control required-field validate"
                                                 value="{{ isset($dealData['dealData']['closing_date']) ? \Carbon\Carbon::parse($dealData['dealData']['closing_date'])->format('Y-m-d') : '' }}"
                                                 id="close_date">
                                             <div id="close_date_error" class="text-danger">
@@ -99,7 +99,7 @@
                                                 </svg></label>
                                             <input type="text"
                                                 value="{{ isset($dealData['dealData']['commission']) ? $dealData['dealData']['commission'] : '' }}"
-                                                class="form-control required-field integer-field" id="commission">
+                                                class="form-control required-field validate integer-field" id="commission">
                                             <div id="commission_error" class="text-danger">
                                             </div>
                                         </div>
@@ -135,11 +135,18 @@
                                         <div id="collapseReferral" class="accordion-collapse collapse"
                                             aria-labelledby="headingOne">
                                             <div class="accordion-body">
-                                                <label class="switch">
-                                                    <input type="checkbox" id="referralSwitch"
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="referralFee" value="yes" id="referralYes"
                                                         {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === 'YES' ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
+                                                    <label class="form-check-label" for="referralYes">Yes</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="referralFee" value="no" id="referralNo"
+                                                        {{ isset($dealData['referral_fee_paid_out']) && $dealData['referral_fee_paid_out'] === 'NO' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="referralNo">No</label>
+                                                </div>
                                                 <div class="referralCustomFields label-div-mb"
                                                     style="margin-top:10px;display:none;">
                                                     <div class="referralFeeAmount label-div-mb">
@@ -160,24 +167,62 @@
                                                         <div class="referralFeeBrokerage_error text-danger"
                                                             id="referralFeeBrokerage_error"></div>
                                                     </div>
-                                                    <div class="referralAgreement label-div-mb">
-                                                        <label for="referralAgreement" class="common-label">Referral Fee
-                                                            Agreement Executed</label>
-                                                        <input type="text"
-                                                            value="{{ isset($dealData['referralAgreement']) ? $dealData['referralAgreement'] : '' }}"
-                                                            class="form-control" id="referralAgreement">
-                                                        <div class="referralAgreement_error text-danger"
-                                                            id="referralAgreement_error"></div>
+                                                    <div class="referralFeeBrokerage label-div-mb">
+                                                        <label for="referralFeeBrokerage"
+                                                            class="common-label validate">Referral
+                                                            Fee Agreement Executed</label>
+                                                        <div class="d-flex gap-2">
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="referralAgreementYes"
+                                                                    {{ isset($dealData['referralAgreement']) && $dealData['referralAgreement'] == 'yes' ? 'checked' : '' }}
+                                                                    name="referralAgreement" value="yes"
+                                                                    class="form-check-input">
+                                                                <label for="referralAgreementYes">
+                                                                    Yes
+                                                                </label>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="referralAgreementNo"
+                                                                    {{ isset($dealData['referralAgreement']) && $dealData['referralAgreement'] == 'no' ? 'checked' : '' }}
+                                                                    name="referralAgreement" value="no"
+                                                                    class="form-check-input">
+                                                                <label for="referralAgreementNo">
+                                                                    No
+                                                                </label>
+                                                            </div>
+                                                            <div class="referralAgreement_error text-danger"
+                                                                id="referralAgreement_error"></div>
+                                                        </div>
                                                     </div>
+
+
                                                     <div class="hasW9Provided label-div-mb">
-                                                        <label for="hasW9Provided" class="common-label">Has the W-9 been
+                                                        <label class="common-label validate">Has the W-9 been
                                                             provided</label>
-                                                        <input type="text"
-                                                            value="{{ isset($dealData['hasW9Provided']) ? $dealData['hasW9Provided'] : '' }}"
-                                                            class="form-control" id="hasW9Provided">
+                                                        <div class="d-flex gap-2">
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="hasW9ProvidedYes"
+                                                                    {{ isset($dealData['hasW9Provided']) && $dealData['hasW9Provided'] == 'yes' ? 'checked' : '' }}
+                                                                    name="hasW9Provided" value="yes"
+                                                                    class="form-check-input">
+                                                                <label for="hasW9ProvidedYes">
+                                                                    Yes
+                                                                </label>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <input type="radio" id="hasW9ProvidedNo"
+                                                                    {{ isset($dealData['hasW9Provided']) && $dealData['hasW9Provided'] == 'no' ? 'checked' : '' }}
+                                                                    name="hasW9Provided" value="no"
+                                                                    class="form-check-input">
+                                                                <label for="hasW9ProvidedNo">
+                                                                    No
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                         <div class="hasW9Provided_error text-danger"
                                                             id="hasW9Provided_error"></div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -207,11 +252,18 @@
                                         <div id="collapseHomeWarranty1" class="accordion-collapse collapse"
                                             aria-labelledby="headingTwo">
                                             <div class="accordion-body">
-                                                <label class="switch">
-                                                    <input type="checkbox" id="homeWarrantyYes"
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="homeWarranty" value="yes" id="homeWarrantyYes"
                                                         {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === 'YES' ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
+                                                    <label class="form-check-label" for="homeWarrantyYes">Yes</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="homeWarranty" value="no" id="homeWarrantyNo"
+                                                        {{ isset($dealData['home_warranty_paid_out_agent']) && $dealData['home_warranty_paid_out_agent'] === 'NO' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="homeWarrantyNo">No</label>
+                                                </div>
                                                 <div class="homeWarrentyFields label-div-mb"
                                                     style="margin-top:10px;display:none;">
                                                     <div class="homeWarrentyAmount label-div-mb">
@@ -261,15 +313,18 @@
                                         <div id="collapseAdditionalFees" class="accordion-collapse collapse"
                                             aria-labelledby="headingThree">
                                             <div class="accordion-body">
-                                                <label class="switch">
-                                                    <input type="checkbox" name="additionalFees" value="yes"
-                                                        id="additionalFeesYes"
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="additionalFees" value="yes" id="additionalFeesYes"
                                                         {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === 'YES' ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
-
-
-
+                                                    <label class="form-check-label" for="additionalFeesYes">Yes</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input ignore-validation" type="radio"
+                                                        name="additionalFees" value="no" id="additionalFeesNo"
+                                                        {{ isset($dealData['any_additional_fees_charged']) && $dealData['any_additional_fees_charged'] === 'NO' ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="additionalFeesNo">No</label>
+                                                </div>
                                                 <div class="additionalFeesFields label-div-mb"
                                                     style="margin-top:10px;display:none;">
                                                     <div class="additionalFeeAmount label-div-mb">
@@ -277,7 +332,7 @@
                                                             Fee Amount</label>
                                                         <input type="text"
                                                             value="{{ isset($dealData['additionalFeesAmount']) ? $dealData['additionalFeesAmount'] : '' }}"
-                                                            class="form-control " id="additionalFeeAmount">
+                                                            class="form-control" id="additionalFeeAmount">
                                                         <div class="additionalFeeAmount_error text-danger"
                                                             id="additionalFeeAmount_error"></div>
                                                     </div>
@@ -286,7 +341,7 @@
                                                             class="common-label">Additional Fee Description</label>
                                                         <input type="text"
                                                             value="{{ isset($dealData['additionalFeesDescription']) ? $dealData['additionalFeesDescription'] : '' }}"
-                                                            class="form-control " id="additionalFeeDescription">
+                                                            class="form-control" id="additionalFeeDescription">
                                                         <div class="additionalFeeDescription_error text-danger"
                                                             id="additionalFeeDescription_error"></div>
                                                     </div>
@@ -319,8 +374,11 @@
                                                 </svg></label>
                                             <input type="text"
                                                 value="{{ isset($dealData['final_purchase_price']) ? $dealData['final_purchase_price'] : '' }}"
-                                                placeholder="$" class="form-control required-field integer-field" id="final_purchase">
-                                         
+                                                placeholder="$" class="form-control required-field validate integer-field"
+                                                id="final_purchase">
+                                            <div id="final_purchase_error" class="text-danger">
+
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -328,7 +386,7 @@
                                             <label for="basicpill-lastname-input">Amount to CHR GIves </label>
                                             <input type="text"
                                                 value="{{ isset($dealData['amount_to_chr_gives']) ? $dealData['amount_to_chr_gives'] : '' }}"
-                                                placeholder="$" class="form-control nontm-input integer-field" id="amount_chr">
+                                                placeholder="$" class="form-control nontm-input" id="amount_chr">
                                             <div id="amount_chr_error" class="text-danger">
                                             </div>
                                         </div>
@@ -348,7 +406,20 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="basicpill-phoneno-input">Agent
-                                                    Comments/Remarks/Instructions</label>
+                                                    Comments/Remarks/Instructions<svg xmlns="http://www.w3.org/2000/svg"
+                                                        width="19" height="18" viewBox="0 0 19 18"
+                                                        fill="none">
+                                                        <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                            maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                            height="18">
+                                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_2151_10662)">
+                                                            <path
+                                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                fill="#AC5353" />
+                                                        </g>
+                                                    </svg></label>
                                                 <textarea placeholder="Add Copy" id="agent_comments" class="form-control" rows="2"
                                                     placeholder="Enter Your Address">{{ isset($dealData['agent_comments']) ? $dealData['agent_comments'] : '' }}</textarea>
                                             </div>
@@ -402,10 +473,9 @@
 <!-- jquery step -->
 <script defer src="{{ URL::asset('build/libs/jquery-steps/build/jquery.steps.min.js') }}"></script>
 
-<script type="text/javascript">
-    var dealData = @json($dealData);
-
+<script>
     window.onload = function() {
+        var dealData = @json($dealData);
         const $stepsContainer = $('#basic-example-nontm-view');
 
         function initializeSteps() {
@@ -417,8 +487,7 @@
 
                 onStepChanging: function(event, currentIndex, newIndex) {
                     // Perform validation before allowing step change
-                    const isValid = validateStep(currentIndex);
-                    return isValid;
+                    return validateStep(currentIndex);
                 },
                 onFinished: function(event, currentIndex) {
                     // API call here
@@ -427,88 +496,204 @@
             });
         }
 
-        // Initial steps plugin setup
         initializeSteps();
 
-        // Initialize the values object
+        let related_transaction = document.getElementById("related_transaction");
+        let add_email = document.getElementById("add_email");
+        let close_date = document.getElementById("close_date");
+        let commission = document.getElementById("commission");
+        let final_purchase = document.getElementById("final_purchase");
+        let amount_chr = document.getElementById("amount_chr");
+
+
+
+        // Select all radio buttons
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+        // Initialize an object to store the values
         window.values = {};
-        
+
+        radioButtons.forEach(radioButton => {
+
+            if (radioButton.checked) {
+                const question = radioButton.closest('.accordion-item').querySelector('button').textContent
+                    .trim();
+                const value = radioButton.value;
+                window.values[question] = value;
+                openNewFields();
+            }
+
+        });
+
         const fieldUpdates = {
-            'Referral Fee Paid Out?': [
-                { id: 'referralFeeAmount', required: true,integer:'integer-field' },
-                { id: 'referralFeeBrokerage', required: true,integer:'' },
-                { id: 'referralAgreement', required: true ,integer:''},
-                { id: 'hasW9Provided', required: true ,integer:''}
+            'Referral Fee Paid Out?': [{
+                    id: 'referralFeeAmount',
+                    required: true,
+                    integer: 'integer-field'
+                },
+                {
+                    id: 'referralFeeBrokerage',
+                    required: true,
+                    integer: ''
+                },
+                {
+                    id: 'referralAgreement',
+                    required: true,
+                    integer: ''
+                },
+                {
+                    id: 'hasW9Provided',
+                    required: true,
+                    integer: ''
+                }
             ],
-            'Home Warranty Paid Out Agent?': [
-                { id: 'homeWarrentyAmount', required: true ,integer:'integer-field'},
-                { id: 'homeWarrentyDescription', required: true ,integer:''}
+            'Home Warranty Paid Out Agent?': [{
+                    id: 'homeWarrentyAmount',
+                    required: true,
+                    integer: 'integer-field'
+                },
+                {
+                    id: 'homeWarrentyDescription',
+                    required: true,
+                    integer: ''
+                }
             ],
-            'Any Additional Fees Charged?': [
-                { id: 'additionalFeeAmount', required: true ,integer:'integer-field'},
-                { id: 'additionalFeeDescription', required: true,integer:'' }
+            'Any Additional Fees Charged?': [{
+                    id: 'additionalFeeAmount',
+                    required: true,
+                    integer: 'integer-field'
+                },
+                {
+                    id: 'additionalFeeDescription',
+                    required: true,
+                    integer: ''
+                }
             ]
         };
-        // Handle checkbox state change
+
+        // Add event listener to each radio button
         document.addEventListener('change', event => {
-            if (event.target.matches('input[type="checkbox"]')) {
-                const checkbox = event.target;
-                const question = checkbox.closest('.accordion-item').querySelector('button').textContent
-                    .trim();
-                const value = checkbox.checked ? 'YES' : 'NO';
-                console.log(question,'sdfjsldf')
-                // Update the window.values object
-                window.values[question] = value;
+            if (event.target.matches('input[type="radio"]')) {
+                const radioButton = event.target;
+                const validIds = [
+                    "referralYes", "referralNo",
+                    "homeWarrantyYes", "homeWarrantyNo",
+                    "additionalFeesYes", "additionalFeesNo"
+                ];
 
-                // Update the UI based on the new values
-                openNewFields();
-                const updateFields = (question, value) => {
-            const updates = fieldUpdates[question];
-            if (updates) {
-                updates.forEach(({ id, required,integer }) => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        if (required) {
-                            value === 'YES' ? element.classList.add('required-field','validate',integer) : element.classList.remove('required-field');
+                if (validIds.includes(radioButton.id)) {
+                    const question = radioButton.closest('.accordion-item').querySelector('button')
+                        .textContent.trim();
+                    const value = radioButton.value;
+
+                    // Initialize window.values if not already defined
+                    window.values = window.values || {};
+                    window.values[question] = value;
+
+                    openNewFields(); // Ensure this function is defined elsewhere
+
+                    // Define the updateFields function
+                    const updateFields = (question, value) => {
+                        const updates = fieldUpdates[question];
+                        if (updates) {
+                            updates.forEach(({
+                                id,
+                                required,
+                                integer
+                            }) => {
+                                const element = document.getElementById(id);
+                                if (element) {
+
+                                    console.log(element, 'test')
+                                    if (element.type === 'radio') {
+                                        // For radio buttons, update their state based on the value
+                                        if (value === 'yes') {
+                                            if (integer) {
+                                                element.classList.add('required-field',
+                                                    'validate', integer);
+                                            } else {
+                                                element.classList.add('required-field',
+                                                    'validate');
+                                            }
+                                        } else {
+                                            element.classList.remove('required-field',
+                                                'validate', integer || '');
+                                        }
+                                    } else {
+                                        // For text inputs and other fields, add/remove classes based on required status
+                                        if (required) {
+                                            if (value === 'yes') {
+                                                if (integer) {
+                                                    element.classList.add('required-field',
+                                                        'validate', integer);
+                                                } else {
+                                                    element.classList.add('required-field',
+                                                        'validate');
+                                                }
+                                            } else {
+                                                element.classList.remove('required-field',
+                                                    'validate', integer || '');
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    console.warn(`Element with ID ${id} not found.`);
+                                }
+                            });
+                        } else {
+                            console.warn(`No updates found for question: ${question}`);
                         }
-                    }
-                });
-            }
-        };
+                    };
 
-        updateFields(question, value);
+                    // Call the updateFields function with the question and value
+                    updateFields(question, value);
+                }
             }
         });
 
-        console.log(window.values,'window.values')
 
 
-        // Get all accordion buttons and toggle their collapse elements
+        // Get all accordion buttons
         const accordionButtons = document.querySelectorAll('.accordion-button');
+
+        // Add event listener to each button
         accordionButtons.forEach((button) => {
+            // Get the accordion item
             const accordionItem = button.closest('.accordion-item');
+
+            // Get the collapse element
             const collapseElement = accordionItem.querySelector('.accordion-collapse');
 
-            button.addEventListener('click', () => {
-                collapseElement.classList.toggle('show');
-                button.classList.toggle('collapsed');
-                button.setAttribute('aria-expanded', collapseElement.classList.contains('show') ?
-                    'true' : 'false');
-            });
+            // Toggle the collapse element
+            collapseElement.classList.toggle('show');
+
+
+            // Update the aria-expanded attribute
+            if (collapseElement.classList.contains('show')) {
+                button.classList.remove('collapsed');
+                button.setAttribute('aria-expanded', 'true');
+            } else {
+                button.classList.add('collapsed');
+                button.setAttribute('aria-expanded', 'false');
+            }
         });
+
 
         function openNewFields() {
             let referralData = window.values['Referral Fee Paid Out?'];
             let homeWarrentyData = window.values['Home Warranty Paid Out Agent?'];
             let additionalFees = window.values['Any Additional Fees Charged?'];
-            $(".referralCustomFields").toggle(referralData === 'YES');
-            $(".homeWarrentyFields").toggle(homeWarrentyData === 'YES');
-            $(".additionalFeesFields").toggle(additionalFees === 'YES');
 
-        }
+            console.log("Referral Fee Paid Out?", referralData);
+
+            $(".referralCustomFields").toggle(referralData === "yes");
+            $(".homeWarrentyFields").toggle(homeWarrentyData === "yes");
+            $(".additionalFeesFields").toggle(additionalFees === "yes");
+        };
+
 
         function isValidUrl(url) {
-            const regex = new RegExp(
+            var regex = new RegExp(
                 '^(https?:\\/\\/)' + // protocol
                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
                 '((\\d{1,3}\\.){3}\\d{1,3})|' + // OR ip (v4) address
@@ -520,194 +705,205 @@
             return regex.test(url);
         }
 
-        // Initialize the values object with the current state of checkboxes
-        function initializeCheckboxes() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                const accordionItem = checkbox.closest('.accordion-item');
-                const button = accordionItem ? accordionItem.querySelector('button') : null;
-                const question = button ? button.textContent.trim() : '';
-                const value = checkbox.checked ? 'YES' : 'NO';
-                window.values[question] = value;
+        function validateStep(stepIndex) {
+            let isValid = true;
+            const $currentSection = $stepsContainer.find(`section:eq(${stepIndex})`);
+
+            // Clear previous error messages
+            $currentSection.find('.error').removeClass('error');
+            $currentSection.find('.error-message').text('');
+
+            const invalidFields = [];
+
+            // Check required fields
+            $currentSection.find('.required-field').each(function() {
+                const $field = $(this);
+                const value = $field.val();
+                if (value === "-None-" || !value) {
+                    isValid = false;
+                    $field.addClass('error');
+                } else {
+                    $field.removeClass('error');
+                }
             });
 
-            // Update the UI based on initial values
-                openNewFields();
-            
-            console.log(window.values,'window.values intitiallallall')
-        }
-        // Call initializeCheckboxes when the page loads
-        initializeCheckboxes();
+            // Check radio button groups
+            $currentSection.find('input[type="radio"]').each(function() {
+                const $radioGroup = $currentSection.find(`input[name="${$(this).attr('name')}"]`);
+                console.log($radioGroup, 'radioGroup');
 
+                // Check if the radio group does not have a specific class (e.g., 'ignore-validation')
+                const hasIgnoreValidationClass = $radioGroup.hasClass('ignore-validation');
 
-        function validateStep(stepIndex) {
-                let isValid = true;
-                const $currentSection = $stepsContainer.find(`section:eq(${stepIndex})`);
-                // Check required fields in this section
-                $currentSection.find('.required-field').each(function() {
-                    if ($(this).val() === "-None-") {
+                // Check if at least one radio button is selected
+                const hasCheckedRadio = $radioGroup.filter(':checked').length > 0;
+
+                if (!hasIgnoreValidationClass || !hasCheckedRadio) {
+                    if (!hasCheckedRadio) {
                         isValid = false;
-                        $(this).addClass('error');
+                        $radioGroup.addClass('error');
                     } else {
-                        $(this).removeClass('error'); // Remove error class if valid
+                        $radioGroup.removeClass('error');
                     }
-                    if (!$(this).val()) {
-                        isValid = false;
-                        $(this).addClass('error'); // Add error class for styling
-                    } else {
-                        $(this).removeClass('error'); // Remove error class if valid
-                    }
-                });
+                } else {
+                    console.log("yes hee comesss")
+                    isValid = true;
+                    // If 'ignore-validation' class is present and at least one radio button is selected
+                    $radioGroup.removeClass('error');
+                }
+            });
 
-                // Check radio buttons
-                $currentSection.find('input[type="radio"]').each(function() {
-                    const name = $(this).attr('name');
-                    const $radioGroup = $currentSection.find(`input[name="${name}"]`);
-                    if ($radioGroup.filter(':checked').length === 0) {
-                        isValid = false;
-                        $radioGroup.addClass('error'); // Add error class for styling
-                    } else {
-                        $radioGroup.removeClass('error'); // Remove error class if valid
-                    }
-                });
-
-                let message = "Please fill out all required fields";
-                const invalidFields = [];
-                  // Check integer fields
-                $currentSection.find('.integer-field').each(function() {
-                    const value = $(this).val();
-                    const $label = $(this).siblings('label');
-                    const labelText = $label.text().trim(); 
-                    console.log(labelText,'$label')
-                    if (!/^\d+$/.test(value)) { // Regular expression to check for integers
-                        isValid = false;
-                        $(this).addClass('error'); // Add error class for styling
-                        $(this).siblings('.error-message').text('Please enter a valid integer.'); // Show error message
-                        invalidFields.push(labelText);
-                    } else {
-                        $(this).removeClass('error'); // Remove error class if valid
-                        $(this).siblings('.error-message').text(''); // Clear error message
-                    }
-                    message = `Invalid ${labelText} format`;
-                });
-                // After checking all fields, report the invalid fields
-            if (invalidFields.length > 0) {
-                console.log('Invalid fields:', invalidFields.join(', '));
-                // You can also show an overall error message or handle the invalid fields as needed
-                showToastError('Please correct the following fields: ' + invalidFields.join(', '));
-                return;
-            } else {
-                console.log('All fields are valid.');
-            }
-
-                // Optionally, display a message or highlight errors if invalid
-                if (!isValid) {
-                    showToastError(message);
+            // Check integer fields
+            $currentSection.find('.integer-field').each(function() {
+                const $field = $(this);
+                const value = $field.val();
+                const $label = $field.siblings('label');
+                const labelText = $label.text().trim();
+                const numberStr = value.toString();
+                if (/^\d+(\.\d+)?$/.test(numberStr)) { // Check if the value is an integer
+                    isValid = true;
+                    $field.removeClass('error');
+                    $field.siblings('.error-message').text('');
+                } else {
+                    isValid = false;
+                    $field.addClass('error');
+                    $field.siblings('.error-message').text('Please enter a valid integer.');
+                    if (labelText) invalidFields.push(labelText);
                 }
 
-        return isValid;
-    }
+            });
+
+            // Check specific radio button groups from fieldUpdates
+            Object.keys(fieldUpdates).forEach(question => {
+                const updates = fieldUpdates[question];
+                updates.forEach(({
+                    id
+                }) => {
+                    const element = document.getElementById(id);
+                    if (element && element.type === 'radio') {
+                        const $radioGroup = $currentSection.find(`input[name="${element.name}"]`);
+                        if ($radioGroup.filter(':checked').length === 0) {
+                            isValid = false;
+                            $radioGroup.addClass('error');
+                        } else {
+                            $radioGroup.removeClass('error');
+                        }
+                    }
+                });
+            });
+
+            // Handle invalid fields and overall message
+            if (invalidFields.length > 0) {
+                showToastError('Please correct the following fields: ' + invalidFields.join(', '));
+            } else if (!isValid) {
+                showToastError('Please fill out all required fields.');
+            }
+
+            return isValid;
+        }
 
 
-    };
 
-
-    window.updateNonTm = function(dealData, status) {
-        // dealData = JSON.parse(dealData)
-        console.log(dealData);
-        id = dealData.id
-
-        let related_transaction = document.getElementById("related_transaction");
-        let add_email = document.getElementById("add_email");
-        let close_date = document.getElementById("close_date");
-        let commission = document.getElementById("commission");
-        let final_purchase = document.getElementById("final_purchase");
-        let amount_chr = document.getElementById("amount_chr");
-        // let additonal_fee = document.getElementById("additonal_fee");
-        let other_comm_notes = document.getElementById("other_comm_notes");
-        let agent_comments = document.getElementById("agent_comments");
-        let resubmitting_why_list_all_changes = document.getElementById("resubmitting_why_list_all_changes");
-        let referralFeeAmount = document.getElementById("referralFeeAmount");
-        let referralFeeBrokerage = document.getElementById("referralFeeBrokerage");
-        let referralAgreement = document.getElementById("referralAgreement");
-        let hasW9Provided = document.getElementById("hasW9Provided");
-        let homeWarrentyAmount = document.getElementById("homeWarrentyAmount");
-        let homeWarrentyDescription = document.getElementById("homeWarrentyDescription");
-        let additionalFeeAmount = document.getElementById("additionalFeeAmount");
-        let additionalFeeDescription = document.getElementById("additionalFeeDescription");
-        var selectedOption = related_transaction.options[related_transaction.selectedIndex];
-        // Get the value and text of the selected option
-        var selectedValue = selectedOption.value;
-        var selectedText = selectedOption.textContent;
-        let formData = {
-            "data": [{
-                "Commission": commission?.value?.trim().split('.')[0] ?? undefined,
-                "Final_Purchase_Price": final_purchase ? final_purchase.value.trim() : undefined,
-                "Any_Additional_Fees_Charged": window?.values["Any Additional Fees Charged?"] ? window
-                    ?.values["Any Additional Fees Charged?"]
-                    ?.toUpperCase() : undefined,
-                "Additonal_Fees_Amount": additionalFeeAmount ? additionalFeeAmount.value.trim() :
-                    undefined,
-                "Additional_Fees_Description": additionalFeeDescription ? additionalFeeDescription.value
-                    .trim() :
-                    undefined,
-                "Additional_Email_for_Confirmation": add_email ? add_email.value.trim() : undefined,
-                "Referral_Fee_Paid_Out": window.values['Referral Fee Paid Out?'] ? window.values[
-                    'Referral Fee Paid Out?']?.toUpperCase() : undefined,
-                "Referral_Fee_Amount": referralFeeAmount ? referralFeeAmount.value.trim() : undefined,
-                "Referral_Fee_Brokerage_Name": referralFeeBrokerage ? referralFeeBrokerage.value
-                .trim() : undefined,
-                "Referral_Fee_Agreement_Executed": referralAgreement ? referralAgreement.value.trim() :
-                    undefined,
-                "Has_the_W-9_been_provided": hasW9Provided ? hasW9Provided.value.trim() : undefined,
-                "Close_Date": close_date ? close_date.value.trim() : undefined,
-                "Home_Warranty_Paid_by_Agent": window.values['Home Warranty Paid Out Agent?'] ? window
-                    .values['Home Warranty Paid Out Agent?']?.toUpperCase() : undefined,
-                "Home_Warranty_Amount": homeWarrentyAmount ? homeWarrentyAmount.value.trim() :
-                    undefined,
-                "Home_Warranty_Description": homeWarrentyDescription ? homeWarrentyDescription.value
-                    .trim() : undefined,
-                "CHR_Gives_Amount_to_Give": amount_chr ? amount_chr.value.trim() : undefined,
-                "Other_Commission_Notes": other_comm_notes.value ? other_comm_notes.value.trim() :
-                    undefined,
-                "Agent_Comments_Remarks_Instructions": agent_comments.value ? agent_comments.value
-                .trim() : undefined,
-                "Resubmitting_Why_LIST_ALL_CHANGES": resubmitting_why_list_all_changes.value ?
+        window.updateNonTm = function(dealData, status) {
+            // dealData = JSON.parse(dealData)
+            console.log(dealData);
+            id = dealData.id
+            let related_transaction = document.getElementById("related_transaction");
+            let add_email = document.getElementById("add_email");
+            let close_date = document.getElementById("close_date");
+            let commission = document.getElementById("commission");
+            let final_purchase = document.getElementById("final_purchase");
+            let amount_chr = document.getElementById("amount_chr");
+            // let additonal_fee = document.getElementById("additonal_fee");
+            let other_comm_notes = document.getElementById("other_comm_notes");
+            let agent_comments = document.getElementById("agent_comments");
+            let referralFeeAmount = document.getElementById("referralFeeAmount");
+            let referralFeeBrokerage = document.getElementById("referralFeeBrokerage");
+            let referralAgreement = document.querySelector('input[name="referralAgreement"]:checked')?.value;
+            let hasW9Provided = document.querySelector('input[name="hasW9Provided"]:checked')?.value;
+            let homeWarrentyAmount = document.getElementById("homeWarrentyAmount");
+            let homeWarrentyDescription = document.getElementById("homeWarrentyDescription");
+            let additionalFeeAmount = document.getElementById("additionalFeeAmount");
+            let resubmitting_why_list_all_changes = document.getElementById("resubmitting_why_list_all_changes");
+            const resubmit_text = document.getElementById('resubmit_text');
+            const resubmit_text_isChecked = resubmit_text.checked;
+            let additionalFeeDescription = document.getElementById("additionalFeeDescription");
+            var selectedOption = related_transaction.options[related_transaction.selectedIndex];
+            // Get the value and text of the selected option
+            var selectedValue = selectedOption.value;
+            var selectedText = selectedOption.textContent;
+            let formData = {
+                "data": [{
+                    "Commission": commission?.value?.trim().split('.')[0] ?? undefined,
+                    "Final_Purchase_Price": final_purchase ? final_purchase.value.trim() :
+                        undefined,
+                    "Any_Additional_Fees_Charged": window?.values["Any Additional Fees Charged?"] ?
+                        window?.values["Any Additional Fees Charged?"]
+                        ?.toUpperCase() : undefined,
+                    "Additonal_Fees_Amount": additionalFeeAmount ? additionalFeeAmount.value
+                        .trim() : undefined,
+                    "Additional_Fees_Description": additionalFeeDescription ?
+                        additionalFeeDescription.value.trim() : undefined,
+                    "Additional_Email_for_Confirmation": add_email ? add_email.value.trim() :
+                        undefined,
+                    "Referral_Fee_Paid_Out": window.values['Referral Fee Paid Out?'] ? window
+                        .values['Referral Fee Paid Out?']?.toUpperCase() : undefined,
+                    "Referral_Fee_Amount": referralFeeAmount ? referralFeeAmount.value.trim() :
+                        undefined,
+                    "Referral_Fee_Brokerage_Name": referralFeeBrokerage ? referralFeeBrokerage.value
+                        .trim() : undefined,
+                    "Referral_Fee_Agreement_Executed": referralAgreement ? referralAgreement
+                        .trim() : undefined,
+                    "Has_the_W-9_been_provided": hasW9Provided ? hasW9Provided.trim() : undefined,
+                    "Close_Date": close_date ? close_date.value.trim() : undefined,
+                    "Home_Warranty_Paid_by_Agent": window.values['Home Warranty Paid Out Agent?'] ?
+                        window.values['Home Warranty Paid Out Agent?']?.toUpperCase() : undefined,
+                    "Home_Warranty_Amount": homeWarrentyAmount ? homeWarrentyAmount.value.trim() :
+                        undefined,
+                    "Home_Warranty_Description": homeWarrentyDescription ? homeWarrentyDescription
+                        .value.trim() : undefined,
+                    "CHR_Gives_Amount_to_Give": amount_chr ? amount_chr.value.trim() : undefined,
+                    "Other_Commission_Notes": other_comm_notes.value ? other_comm_notes.value
+                        .trim() : undefined,
+                    "Agent_Comments_Remarks_Instructions": agent_comments.value ? agent_comments
+                        .value.trim() : undefined,
+                        "Resubmitting_Why_LIST_ALL_CHANGES": resubmitting_why_list_all_changes.value ?
                     resubmitting_why_list_all_changes.value.trim() : undefined,
                 "resubmit_text": true,
-                "Related_Transaction": selectedValue ? {
-                    "id": selectedValue.trim(),
-                    "name": selectedText.trim(),
-                } : undefined,
-            }]
-        }
-
-        formData.data[0] = Object.fromEntries(
-            Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
-        );
-
-        $.ajax({
-            url: '/nontm-update/' + id + '?status=' + status,
-            type: 'PUT',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(formData),
-            success: function(response) {
-                if (response?.data && response.data[0]?.message) {
-                    // Convert message to uppercase and then display
-                    const upperCaseMessage = response.data[0].message.toUpperCase();
-                    showToast(upperCaseMessage);
-                    window.location.href = "/pipeline-view/" + dealData.deal_data.id;
-                }
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.error(xhr.responseText);
+                    "Related_Transaction": selectedValue ? {
+                        "id": selectedValue.trim(),
+                        "name": selectedText.trim(),
+                    } : undefined,
+                }]
             }
-        })
 
+            formData.data[0] = Object.fromEntries(
+                Object.entries(formData.data[0]).filter(([_, value]) => value !== undefined)
+            );
+
+            $.ajax({
+                url: '/nontm-update/' + id + '?status=' + status,
+                type: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response?.data && response.data[0]?.message) {
+                        // Convert message to uppercase and then display
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                        window.location.href = "/pipeline-view/" + dealData.deal_data.id;
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+
+        }
     }
 </script>
