@@ -660,13 +660,14 @@ class DatabaseService
             if ($all) {
                 $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
                        $query->where('isSubmittalComplete', 'true');
-                   }])->get();
+                   }])->with('nontms')->get();
             } else {
                 $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
                        $query->where('isSubmittalComplete', 'true');
-                   }])->get();
+                   }])->with('nontms')->get();
             }
 
+           
             // load the relationship for leadAgent
             $deals->each(function ($deal) {
                 $deal->leadAgent ?? null;
