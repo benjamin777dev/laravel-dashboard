@@ -660,11 +660,15 @@ class DatabaseService
             if ($all) {
                 $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
                        $query->where('isSubmittalComplete', 'true');
-                   }])->with('nontms')->get();
+                   }])->with(['nontms' => function ($query) {
+                    $query->where('isNonTmCompleted', true);
+                }])->get();
             } else {
                 $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
                        $query->where('isSubmittalComplete', 'true');
-                   }])->with('nontms')->get();
+                   }])->with(['nontms' => function ($query) {
+                    $query->where('isNonTmCompleted', true);
+                }])->get();
             }
 
            

@@ -642,6 +642,50 @@ function addSubmittal(type, deal, formType = null) {
     });
 }
 
+function addNonTmForIndex(id="",dealname="") {
+    let formData = {
+        "data": [{
+            "Owner": {
+                "id": "{{ auth()->user()->root_user_id }}",
+                "full_name": "{{ auth()->user()->name }}"
+            },
+            "Exchange_Rate": 1,
+            "Currency": "USD",
+            "Related_Transaction": {
+                "id": id,
+                "name": dealname
+            },
+            "Name": 'N'+(generateRandom4DigitNumber()),
+            "$zia_owner_assignment": "owner_recommendation_unavailable",
+            "zia_suggested_users": {}
+        }],
+        "skip_mandatory": false
+    }
+    console.log(formData, 'sdfjsdfjsd');
+    
+    $.ajax({
+        url: '/create-nontm',
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(formData),
+        success: function(response) {
+            if (response) {
+                const url = `{{ url('/nontm-create/${response?.id}') }}`
+                window.open(url,'_blank')
+                // window.location.reload();
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText);
+        }
+    })
+}
+
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({
     paging: true,

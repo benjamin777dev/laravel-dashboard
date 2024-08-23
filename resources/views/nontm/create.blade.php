@@ -152,7 +152,19 @@
                                                     style="margin-top:10px;display:none;">
                                                     <div class="referralFeeAmount label-div-mb">
                                                         <label for="referralFeeAmount" class="common-label">Referral Fee
-                                                            Amount</label>
+                                                            Amount</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['referralFeeAmount']) ? $dealData['referralFeeAmount'] : '' }}"
                                                             class="form-control" id="referralFeeAmount">
@@ -161,7 +173,19 @@
                                                     </div>
                                                     <div class="referralFeeBrokerage label-div-mb">
                                                         <label for="referralFeeBrokerage" class="common-label">Referral
-                                                            Fee Brokerage Name</label>
+                                                            Fee Brokerage Name</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['referralFeeBrokerage']) ? $dealData['referralFeeBrokerage'] : '' }}"
                                                             class="form-control" id="referralFeeBrokerage">
@@ -170,8 +194,20 @@
                                                     </div>
                                                     <div class="referralFeeBrokerage label-div-mb">
                                                         <label for="referralFeeBrokerage"
-                                                            class="common-label validate">Referral
-                                                            Fee Agreement Executed</label>
+                                                            class="common-label">Referral
+                                                            Fee Agreement Executed</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <div class="d-flex gap-2">
                                                             <div class="mb-3">
                                                                 <input type="radio" id="referralAgreementYes"
@@ -198,8 +234,20 @@
 
 
                                                     <div class="hasW9Provided label-div-mb">
-                                                        <label class="common-label validate">Has the W-9 been
-                                                            provided</label>
+                                                        <label class="common-label">Has the W-9 been
+                                                            provided</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <div class="d-flex gap-2">
                                                             <div class="mb-3">
                                                                 <input type="radio" id="hasW9ProvidedYes"
@@ -269,7 +317,19 @@
                                                     style="margin-top:10px;display:none;">
                                                     <div class="homeWarrentyAmount label-div-mb">
                                                         <label for="homeWarrentyAmount" class="common-label">Home Warranty
-                                                            Amount</label>
+                                                            Amount</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['homeWarrentyAmount']) ? $dealData['homeWarrentyAmount'] : '' }}"
                                                             class="form-control" id="homeWarrentyAmount">
@@ -278,7 +338,19 @@
                                                     </div>
                                                     <div class="homeWarrentyDescription label-div-mb">
                                                         <label for="homeWarrentyDescription" class="common-label">Home
-                                                            Warranty Description</label>
+                                                            Warranty Description</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['homeWarrentyDescription']) ? $dealData['homeWarrentyDescription'] : '' }}"
                                                             class="form-control" id="homeWarrentyDescription">
@@ -330,7 +402,19 @@
                                                     style="margin-top:10px;display:none;">
                                                     <div class="additionalFeeAmount label-div-mb">
                                                         <label for="additionalFeeAmount" class="common-label">Additional
-                                                            Fee Amount</label>
+                                                            Fee Amount</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['additionalFeesAmount']) ? $dealData['additionalFeesAmount'] : '' }}"
                                                             class="form-control" id="additionalFeeAmount">
@@ -339,7 +423,19 @@
                                                     </div>
                                                     <div class="additionalFeeDescription label-div-mb">
                                                         <label for="additionalFeeDescription"
-                                                            class="common-label">Additional Fee Description</label>
+                                                            class="common-label">Additional Fee Description</label><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                                            <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                                maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                                height="18">
+                                                                <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                            </mask>
+                                                            <g mask="url(#mask0_2151_10662)">
+                                                                <path
+                                                                    d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                                    fill="#AC5353" />
+                                                            </g>
+                                                        </svg>
                                                         <input type="text"
                                                             value="{{ isset($dealData['additionalFeesDescription']) ? $dealData['additionalFeesDescription'] : '' }}"
                                                             class="form-control" id="additionalFeeDescription">
@@ -406,20 +502,7 @@
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="basicpill-phoneno-input">Agent
-                                                    Comments/Remarks/Instructions<svg xmlns="http://www.w3.org/2000/svg"
-                                                        width="19" height="18" viewBox="0 0 19 18"
-                                                        fill="none">
-                                                        <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                            maskUnits="userSpaceOnUse" x="0" y="0" width="19"
-                                                            height="18">
-                                                            <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                        </mask>
-                                                        <g mask="url(#mask0_2151_10662)">
-                                                            <path
-                                                                d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                                fill="#AC5353" />
-                                                        </g>
-                                                    </svg></label>
+                                                    Comments/Remarks/Instructions</label>
                                                 <textarea placeholder="Add Copy" id="agent_comments" class="form-control" rows="2"
                                                     placeholder="Enter Your Address">{{ isset($dealData['agent_comments']) ? $dealData['agent_comments'] : '' }}</textarea>
                                             </div>
@@ -511,18 +594,6 @@
         // Initialize an object to store the values
         window.values = {};
 
-        radioButtons.forEach(radioButton => {
-
-            if (radioButton.checked) {
-                const question = radioButton.closest('.accordion-item').querySelector('button').textContent
-                    .trim();
-                const value = radioButton.value;
-                window.values[question] = value;
-                openNewFields();
-            }
-
-        });
-
         const fieldUpdates = {
             'Referral Fee Paid Out?': [{
                     id: 'referralFeeAmount',
@@ -569,6 +640,20 @@
             ]
         };
 
+        radioButtons.forEach(radioButton => {
+
+            if (radioButton.checked) {
+                const question = radioButton.closest('.accordion-item').querySelector('button').textContent
+                    .trim();
+                const value = radioButton.value;
+                window.values[question] = value;
+                openNewFields();
+            }
+
+        });
+
+      
+
         // Add event listener to each radio button
         document.addEventListener('change', event => {
             if (event.target.matches('input[type="radio"]')) {
@@ -588,60 +673,7 @@
                     window.values = window.values || {};
                     window.values[question] = value;
 
-                    openNewFields(); // Ensure this function is defined elsewhere
-
-                    // Define the updateFields function
-                    const updateFields = (question, value) => {
-                        const updates = fieldUpdates[question];
-                        if (updates) {
-                            updates.forEach(({
-                                id,
-                                required,
-                                integer
-                            }) => {
-                                const element = document.getElementById(id);
-                                if (element) {
-
-                                    console.log(element, 'test')
-                                    if (element.type === 'radio') {
-                                        // For radio buttons, update their state based on the value
-                                        if (value === 'yes') {
-                                            if (integer) {
-                                                element.classList.add('required-field',
-                                                    'validate', integer);
-                                            } else {
-                                                element.classList.add('required-field',
-                                                    'validate');
-                                            }
-                                        } else {
-                                            element.classList.remove('required-field',
-                                                'validate', integer || '');
-                                        }
-                                    } else {
-                                        // For text inputs and other fields, add/remove classes based on required status
-                                        if (required) {
-                                            if (value === 'yes') {
-                                                if (integer) {
-                                                    element.classList.add('required-field',
-                                                        'validate', integer);
-                                                } else {
-                                                    element.classList.add('required-field',
-                                                        'validate');
-                                                }
-                                            } else {
-                                                element.classList.remove('required-field',
-                                                    'validate', integer || '');
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    console.warn(`Element with ID ${id} not found.`);
-                                }
-                            });
-                        } else {
-                            console.warn(`No updates found for question: ${question}`);
-                        }
-                    };
+                    openNewFields(); // Ensure this function is defined elsewher
 
                     // Call the updateFields function with the question and value
                     updateFields(question, value);
@@ -687,6 +719,64 @@
             $(".referralCustomFields").toggle(referralData === "yes");
             $(".homeWarrentyFields").toggle(homeWarrentyData === "yes");
             $(".additionalFeesFields").toggle(additionalFees === "yes");
+            if (referralData === "yes" || homeWarrentyData === "yes" || additionalFees === "yes") {
+                updateFields('Referral Fee Paid Out?', referralData);
+                updateFields('Home Warranty Paid Out Agent?', homeWarrentyData);
+                updateFields('Any Additional Fees Charged?', additionalFees);
+            }
+        };
+
+        function updateFields(question, value) {
+            const updates = fieldUpdates[question];
+            if (updates) {
+                updates.forEach(({
+                    id,
+                    required,
+                    integer
+                }) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        console.log(element, 'test');
+                        if (element.type === 'radio') {
+                            // For radio buttons, update their state based on the value
+                            if (value === 'yes') {
+                                if (integer) {
+                                    element.classList.add('required-field', 'validate', integer);
+                                } else {
+                                    element.classList.add('required-field', 'validate');
+                                }
+                            } else {
+                                element.classList.remove('required-field', 'validate');
+                                // Remove the integer class only if it exists
+                                if (integer) {
+                                    element.classList.remove(integer);
+                                }
+                            }
+                        } else {
+                            // For text inputs and other fields, add/remove classes based on required status
+                            if (required) {
+                                if (value === 'yes') {
+                                    if (integer) {
+                                        element.classList.add('required-field', 'validate', integer);
+                                    } else {
+                                        element.classList.add('required-field', 'validate');
+                                    }
+                                } else {
+                                    element.classList.remove('required-field', 'validate');
+                                    // Remove the integer class only if it exists
+                                    if (integer) {
+                                        element.classList.remove(integer);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        console.warn(`Element with ID ${id} not found.`);
+                    }
+                });
+            } else {
+                console.warn(`No updates found for question: ${question}`);
+            }
         };
 
 
@@ -759,7 +849,6 @@
                 const labelText = $label.text().trim();
                 const numberStr = value.toString();
                 if (/^\d+(\.\d+)?$/.test(numberStr)) { // Check if the value is an integer
-                    isValid = true;
                     $field.removeClass('error');
                     $field.siblings('.error-message').text('');
                 } else {
