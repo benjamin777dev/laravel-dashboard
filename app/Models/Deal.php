@@ -443,6 +443,7 @@ class Deal extends Model
         ];
 
         // Check if the Primary_Contact field is set
+        $primaryContactSet = false;
         if (isset($data['Primary_Contact'])) {
             $primaryContact = $data['Primary_Contact'];
 
@@ -450,6 +451,47 @@ class Deal extends Model
             if (is_string($primaryContact) && json_decode($primaryContact, true) !== null) {
                 // Set the primary_contact field in the mappedData array
                 $mappedData['primary_contact'] = $primaryContact;
+                $primaryContactSet = true;
+            }
+        }
+
+        // If Primary_Contact is not set or not valid JSON, check Client_Name_Only
+        if (!$primaryContactSet) {
+            // Check if Client_Name_Only has a value
+            if (isset($data['Client_Name_Only']) && !empty($data['Client_Name_Only'])) {
+                // Extract client name and ID from Client_Name_Only
+                $clientData = explode('||', $data['Client_Name_Only']);
+                if (count($clientData) == 2) {
+                    $clientName = $clientData[0];
+                    $clientId = $clientData[1];
+
+                    // Build a structure for Primary_Contact
+                    $primaryContactArray = [
+                        [
+                            'Primary_Contact' => [
+                                'name' => $clientName,
+                                'id' => $clientId,
+                            ]
+                        ]
+                    ];
+
+                    // Set the primary_contact field in the mappedData array
+                    $mappedData['primary_contact'] = json_encode($primaryContactArray);
+                    $primaryContactSet = true;
+                }
+            }
+        }
+
+        if (!$primaryContactSet) {
+            // Check if the record already exists in the database
+            $existingDeal = self::where('zoho_deal_id', $idkey)->first();
+        
+            if ($existingDeal) {
+                // Use the existing value from the database
+                $mappedData['primary_contact'] = $existingDeal->primary_contact;
+            } else {
+                // Set to null if the record does not exist in the database
+                $mappedData['primary_contact'] = null;
             }
         }
 

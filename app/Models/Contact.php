@@ -277,6 +277,7 @@ class Contact extends Model
 
         $mappedData = [
             'zoho_contact_id' => $source === 'webhook' ? $data['id'] : $data['Id'],
+            'team_partnership' => $source === 'webhook' ? (isset($data['Team_Partnership']['id']) ? $data['Team_Partnership']['id'] : null) : (isset($data['Team_Partnership']) ? $data['Team_Partnership'] : null),
             'contact_owner' => $source === 'webhook' ? (isset($data['Owner']['id']) ? $data['Owner']['id'] : null) : (isset($data['Owner']) ? $data['Owner'] : null),
             'email' => isset($data['Email']) ? $data['Email'] : null,
             'first_name' => isset($data['First_Name']) ? $data['First_Name'] : null,
@@ -419,11 +420,6 @@ class Contact extends Model
 
         ];
 
-        Log::info("Team_Partnership Value:", ['team_partnership' => $data['Team_Partnership'], 'type' => gettype($data['Team_Partnership'])]);
-
-        $mappedData['team_partnership'] = !empty($data['Team_Partnership']) ?
-        ($source === 'webhook' ? $data['Team_Partnership']['id'] : $data['Team_Partnership'])
-        : null;
 
         if (isset($mappedData['email']) && isset($mappedData['chr_relationship']) && $mappedData['chr_relationship'] == 'Agent') {
             $user = User::where('email', $mappedData['email'])->first();
@@ -434,7 +430,7 @@ class Contact extends Model
             }
         }
 
-        Log::info("Mapped Data: ", ['data' => $mappedData]);
+        //Log::info("Mapped Data: ", ['data' => $mappedData]);
 
         return $mappedData;
     }
