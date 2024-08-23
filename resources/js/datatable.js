@@ -92,22 +92,22 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     )
                 ) {
                     if (row?.submittals?.length === 0) {
-                        console.log(row, "row is hereeeetexxttt");
+                        console.log(typeof row, "row is hereeeetexxttt");
+                        const rowStr = encodeURIComponent(JSON.stringify(row));
                         submittalSection = `
-            <div style="color:#222;" class="ps-2" id="addSubmittal" onclick="showSubmittalFormType('${row?.representing}', '${row?.tm_preference}', '${row?.id}')">
-                <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon"
-               title="Add Submittal"></i>
-            </div>
-        `;
+        <div style="color:#222;" class="ps-2" id="addSubmittal" data-row="${rowStr}" onclick="showSubmittalFormType(this)">
+            <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon" title="Add Submittal"></i>
+        </div>
+    `;
                     } else {
                         submittalSection = `
-                <a href="/submittal-view/${row.submittals[0]?.submittalType}/${row?.submittals[0]?.id}" target="_blank">
-                    <div style="color:#222;" class="ps-2" id="addSubmittal">
-                       <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
-               title="View Submittal" aria-hidden="true"></i>
-                    </div>
-                </a>
-            `;
+                            <a href="/submittal-view/${row.submittals[0]?.submittalType}/${row?.submittals[0]?.id}" target="_blank">
+                                <div style="color:#222;" class="ps-2" id="addSubmittal">
+                                <i class="fa fa-eye fa-lg ppiplinecommonIcon" alt="Split screen icon"
+                        title="View Submittal" aria-hidden="true"></i>
+                                </div>
+                            </a>
+                        `;
                     }
                 }
                 if (
@@ -329,7 +329,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
         },
     ],
     ajax: {
-        url: "/pipeline_view", 
+        url: "/pipeline_view",
         type: "GET", // or 'POST' depending on your server setup
         data: function (request) {
             request._token = "{{ csrf_token() }}";
@@ -555,17 +555,92 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
-window.showSubmittalFormType = function (representing, tm_preference, rowid) {
-    window.dealId = rowid;
+window.showSubmittalFormType = function (element) {
+    let deal = JSON.parse(decodeURIComponent(element.getAttribute("data-row")));
+    console.log("Deal", deal);
     let submittalData;
-    if (representing === "Buyer" && tm_preference === "CHR TM") {
-        addSubmittal("buyer-submittal", null);
-    } else if (representing === "Seller" && tm_preference === "CHR TM") {
-        addSubmittal("listing-submittal", null);
-    } else if (representing === "Seller" && tm_preference === "Non-TM") {
-        addSubmittal("listing-submittal", null, "Non-TM");
+    if (deal?.representing === "Buyer" && deal?.tm_preference === "CHR TM") {
+        addSubmittal("buyer-submittal", deal);
+    } else if (
+        deal?.representing === "Seller" &&
+        deal?.tm_preference === "CHR TM"
+    ) {
+        addSubmittal("listing-submittal", deal);
+    } else if (
+        deal?.representing === "Seller" &&
+        deal?.tm_preference === "Non-TM"
+    ) {
+        addSubmittal("listing-submittal", deal, "Non-TM");
     }
 };
+
+function redirectUrl(
+    submittalType = null,
+    submittalData = null,
+    formType = null
+) {
+    const url = `submittal-create/${submittalType}/${submittalData.id}?formType=${formType}`;
+    window.open(url, "_blank");
+}
+
+function generateRandom4DigitNumber() {
+    return Math.floor(1000 + Math.random() * 9000);
+}
+
+function addSubmittal(type, deal, formType = null) {
+    let formData = {
+        data: [
+            {
+                Transaction_Name: {
+                    id: deal.zoho_deal_id,
+                    name: deal.deal_name,
+                },
+                TM_Name: deal.tmName,
+                Name:
+                    type === "buyer-submittal"
+                        ? "BS-" + generateRandom4DigitNumber()
+                        : "LS-" + generateRandom4DigitNumber(),
+                Owner: {
+                    id: "{{ auth()->user()->root_user_id }}",
+                    name: "{{ auth()->user()->name }}",
+                    email: "{{ auth()->user()->email }}",
+                },
+                formType: formType,
+            },
+        ],
+    };
+
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+
+    const baseUrl = window.location.origin;
+    const endpoint = `${
+        type === "buyer-submittal" ? "buyer" : "listing"
+    }/submittal/create`;
+    const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify(formData),
+        success: function (response) {
+            console.log("response", response);
+            redirectUrl(type, response, formType);
+            if (response?.data && response.data[0]?.message) {
+                const upperCaseMessage = response.data[0].message.toUpperCase();
+                showToast(upperCaseMessage);
+            }
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+        },
+    });
+}
 
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({

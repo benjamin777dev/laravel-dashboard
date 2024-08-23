@@ -720,52 +720,52 @@
             let matchingDeal = dealsArray.find(dealObj => String(dealObj?.id) === String(window?.dealId));
             deal = matchingDeal;
         }
-    let formData = {
-        "data": [{
-            "Transaction_Name": {
-                "id": deal.zoho_deal_id,
-                "name": deal.deal_name
-            },
-            "TM_Name": deal.tmName,
-            'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
-            "Owner": {
-                "id": "{{ auth()->user()->root_user_id }}",
-                "name": "{{ auth()->user()->name }}",
-                "email": "{{ auth()->user()->email }}"
-            },
-            'formType': formType
-        }]
-    };
+        let formData = {
+            "data": [{
+                "Transaction_Name": {
+                    "id": deal.zoho_deal_id,
+                    "name": deal.deal_name
+                },
+                "TM_Name": deal.tmName,
+                'Name': type === "buyer-submittal" ? 'BS-' + generateRandom4DigitNumber() : 'LS-' + generateRandom4DigitNumber(),
+                "Owner": {
+                    "id": "{{ auth()->user()->root_user_id }}",
+                    "name": "{{ auth()->user()->name }}",
+                    "email": "{{ auth()->user()->email }}"
+                },
+                'formType': formType
+            }]
+        };
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    const baseUrl = window.location.origin;
-    const endpoint = `${type === "buyer-submittal" ? "buyer" : "listing"}/submittal/create`;
-    const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
-
-    $.ajax({
-        url: url,
-        type: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function (response) {
-            console.log("response", response);
-            redirectUrl(type, response, formType);
-            if (response?.data && response.data[0]?.message) {
-                const upperCaseMessage = response.data[0].message.toUpperCase();
-                showToast(upperCaseMessage);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-        }
-    });
-}
+        });
+
+        const baseUrl = window.location.origin;
+        const endpoint = `${type === "buyer-submittal" ? "buyer" : "listing"}/submittal/create`;
+        const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function (response) {
+                console.log("response", response);
+                redirectUrl(type, response, formType);
+                if (response?.data && response.data[0]?.message) {
+                    const upperCaseMessage = response.data[0].message.toUpperCase();
+                    showToast(upperCaseMessage);
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
     function setTmName() {
         var users = @json($users);
 

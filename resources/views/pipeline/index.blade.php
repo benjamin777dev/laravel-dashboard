@@ -76,7 +76,7 @@
                 </div>
             @endif
         </div>
-        @include('submittals.chooseTransaction',['deals'=>$submittalDeals])
+        
     </div>
     @vite(['resources/js/pipeline.js'])
 

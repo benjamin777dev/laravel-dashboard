@@ -414,7 +414,7 @@ class Deal extends Model
             'pipeline1' => $data['Pipeline1'] ?? null,
             'pipeline_probability' => (float)$pipelineProbability,
             'potential_gci' => $data['Potential_GCI'] ?? null,
-            'primary_contact' => isset($data['Primary_Contact']) ? $data['Primary_Contacts'] ?? null : null,
+            // 'primary_contact' => isset($data['Primary_Contact']) ? $data['Primary_Contacts'] ?? null : null,
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
             'probability' => (float)($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
