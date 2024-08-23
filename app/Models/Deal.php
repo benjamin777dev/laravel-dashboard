@@ -414,7 +414,6 @@ class Deal extends Model
             'pipeline1' => $data['Pipeline1'] ?? null,
             'pipeline_probability' => (float)$pipelineProbability,
             'potential_gci' => $data['Potential_GCI'] ?? null,
-            'primary_contact' => isset($data['Primary_Contact']) ? $data['Primary_Contact'] ?? null : null,
             'primary_contact_email' => $data['Primary_Contact_Email'] ?? null,
             'probability' => (float)($data['Probability'] ?? null),
             'probable_volume' => $data['Probable_Volume'] ?? null,
@@ -442,6 +441,17 @@ class Deal extends Model
             'z_project_id' => $data['Z_Project_ID'] ?? null,
             'zip' => $data['Zip'] ?? null,
         ];
+
+        // Check if the Primary_Contact field is set
+        if (isset($data['Primary_Contact'])) {
+            $primaryContact = $data['Primary_Contact'];
+
+            // Check if Primary_Contact is valid JSON
+            if (is_string($primaryContact) && json_decode($primaryContact, true) !== null) {
+                // Set the primary_contact field in the mappedData array
+                $mappedData['primary_contact'] = $primaryContact;
+            }
+        }
 
         return $mappedData;
     }
