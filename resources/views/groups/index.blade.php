@@ -118,7 +118,7 @@
         <div class = "group-container">
             @include('groups.group')
         </div>
-        <div class="datapagination d-none">
+        <div class="datapagination">
             @include('common.pagination', ['module' => $contacts])
         </div>
     </div>
@@ -209,17 +209,21 @@
 
         let moreData = true;
         var contactList = @json($contactsList??"");
-
         window.onload = function() {
+            $(document).on('click', '.pagination a', function(event) {
+                event.preventDefault();
+                var page = $(this).attr('href').split('page=')[1];
+                loadMorePosts(page);
+            });
             let isLoading = false;
 
-            $(window).scroll(function() {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading && moreData) {
-                    loadMorePosts();
-                }
-            });
+            // $(window).scroll(function() {
+            //     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading && moreData) {
+            //         loadMorePosts();
+            //     }
+            // });
 
-            function loadMorePosts() {
+            function loadMorePosts(page) {
                 isLoading = true; // Prevent multiple AJAX calls
                 filterSelect = document.getElementById('validationDefault05');
                 filterValue = filterSelect.options[filterSelect.selectedIndex].value;
@@ -232,7 +236,7 @@
                 });
 
                 $.ajax({
-                    url: nextPageUrl,
+                    url: '/group?filter='+ filterValue + '&sort=' + sortField+'&page='+page,
                     type: 'get',
                     beforeSend: function() {
                         $('.spinner').show();
