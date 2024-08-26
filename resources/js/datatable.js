@@ -77,7 +77,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
             data: null,
             title: "Actions",
             render: function (data, type, row) {
-               console.log(row,'testrow')
+                console.log(row, "testrow");
                 let lockIcon = "";
                 if (data.stage === "Under Contract") {
                     lockIcon = `<i class="fas fa-lock"></i>`;
@@ -111,10 +111,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     }
                 }
                 if (
-                    (
-                        data.tm_preference === "Non-TM" &&
-                        data.representing === "Buyer"
-                    )
+                    data.tm_preference === "Non-TM" &&
+                    data.representing === "Buyer"
                 ) {
                     if (row?.nontms?.length === 0) {
                         submittalSection = `
@@ -426,7 +424,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
                 $(element)
                     .replaceWith(
-                        `<select class="edit-input form-control editable" onchange="openContractModal(${this},${dataId})" data-name="${dataName}" data-id="${dataId}">
+                        `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId}),${row}" data-name="${dataName}" data-id="${dataId}">
                     ${selectOptions}
                 </select>`
                     )
@@ -456,8 +454,22 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 .focus();
         }
 
+        window.handleStageChange = function (selectElement, dataId,row) {
+            var selectedValue = selectElement.value;
+            console.log(row,'rowrowrow')
+            if (selectedValue === "Under Contract") {
+                console.log(
+                    selectedValue,
+                    " under cont hai re bhaiiiiiiii........."
+                );
+                // Open the modal when "Under Contract" is selected
+                openContractModal(dataId);
+            }
+        };
+
         // Function to handle exiting editing mode
         function exitEditMode(inputElement) {
+            return;
             var newValue = $(inputElement).val();
             var dataName = $(inputElement).data("name");
             var dataId = $(inputElement).data("id");
@@ -558,113 +570,174 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
-window.openContractModal= function(testmonial,dealId) {
-       console.log(testmonial,'testmoniallllll')
-    return `<div class="modal fade" onclick="event.preventDefault();"
-                    id="underContractModal${dealId}" data-bs-backdrop="static"
-                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered deleteModal">
-                        <div class="modal-content dtaskmodalContent">
-                            <div class="modal-header border-0">
-                                <p class="modal-title dHeaderText">Notes</p>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    onclick="resetValidation()" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="underContractContainer${dealId}">
-        
-                            </div>
-                        </div>
+window.openContractModal = function (dealId) {
+    const modalHTML = `
+        <div class="modal fade" id="underContractModal${dealId}" data-bs-backdrop="static"
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered deleteModal">
+                <div class="modal-content dtaskmodalContent">
+                    <div class="modal-header border-0">
+                        <p class="modal-title dHeaderText">Required Fields</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="underContractContainer${dealId}">
+                        <!-- Content will go here -->
+                         <div class="col-md-12">
+                    <label for="validationDefault07" class="form-label nplabelText">Address</label>
+                    <input type="text" class="form-control npinputinfo validate required-field" id="address"
+                       >
+                </div>
+                 <div class="col-md-12">
+                    <label for="validationDefault08" class="form-label nplabelText">City</label>
+                    <input type="text" class="form-control npinputinfo validate required-field" id="city" required
+                        >
+                </div>
+                <div class="col-md-12">
+                    <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
+                    <input type="text" class="form-control npinputinfo validate required-field" id="zip" required
+                        >
+                </div>
+                <div class="col-md-12">
+                    <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
+                    <select class="form-select npinputinfo validate required-field" id="property" required>
+                        <option selected disabled value="">--None--</option>
+                        <option value="Residential">
+                            Residential</option>
+                        <option value="Land" >Land</option>
+                        <option value="Farm" >Farm</option>
+                        <option value="Commercial">
+                            Commercial
+                        </option>
+                        <option value="Lease">Lease</option>
+                    </select>
+                </div>
+                 <div class="col-md-12">
+                    <label for="validationDefault12" class="form-label nplabelText required-field">Financing</label>
+                    <select class="form-select npinputinfo validate" id="financing" required>
+                        <option selected disabled value="">--None--</option>
+                        <option value="Cash">
+                            Cash</option>
+                        <option value="Loan" >Loan</option>
+                    </select>
+                </div>
+                  <div class="p-1">
+                   <button type="button" onclick="saveUnderConReqField(${dealId})" class="btn btn-dark float-left pt-2">Save</button>
+                   <button type="button" class=" btn btn-light float-left pt-2" data-bs-dismiss="modal"
+                            aria-label="Close">Cancel</button>
+                    </div>
                     </div>
                 </div>
-            `;
- 
+            </div>
+        </div>
+    `;
+
+    // Append modal to the body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Show the modal using Bootstrap's modal method
+    const modalElement = new bootstrap.Modal(document.getElementById(`underContractModal${dealId}`));
+    modalElement.show();
 };
-window.showSubmittalFormType = function (element) {
-    let deal = JSON.parse(decodeURIComponent(element.getAttribute("data-row")));
-    console.log("Deal", deal);
-    let submittalData;
-    if (deal?.representing === "Buyer" && deal?.tm_preference === "CHR TM") {
-        addSubmittal("buyer-submittal", deal);
-    } else if (
-        deal?.representing === "Seller" &&
-        deal?.tm_preference === "CHR TM"
-    ) {
-        addSubmittal("listing-submittal", deal);
-    } else if (
-        deal?.representing === "Seller" &&
-        deal?.tm_preference === "Non-TM"
-    ) {
-        addSubmittal("listing-submittal", deal, "Non-TM");
+
+window.saveUnderConReqField = function(dealId) {
+    // Perform validation
+    if (!validateRequiredField()) {
+        // If validation fails, exit the function
+        return;
     }
-};
-
-function redirectUrl(
-    submittalType = null,
-    submittalData = null,
-    formType = null
-) {
-    const url = `submittal-create/${submittalType}/${submittalData.id}?formType=${formType}`;
-    window.open(url, "_blank");
-}
-
-function generateRandom4DigitNumber() {
-    return Math.floor(1000 + Math.random() * 9000);
-}
-
-function addSubmittal(type, deal, formType = null) {
+  
+    var address = $("#address").val();
+    var city = $("#city").val();
+    var zip = $("#zip").val();
+    var property = $("#property").val();
+    var financing = $("#financing").val();
     let formData = {
-        data: [
-            {
-                Transaction_Name: {
-                    id: deal.zoho_deal_id,
-                    name: deal.deal_name,
-                },
-                TM_Name: deal.tmName,
-                Name:
-                    type === "buyer-submittal"
-                        ? "BS-" + generateRandom4DigitNumber()
-                        : "LS-" + generateRandom4DigitNumber(),
-                Owner: {
-                    id: "{{ auth()->user()->root_user_id }}",
-                    name: "{{ auth()->user()->name }}",
-                    email: "{{ auth()->user()->email }}",
-                },
-                formType: formType,
-            },
-        ],
-    };
-
+        Address: address,
+        City: city,
+        Zip: zip,
+        Property_Type: property,
+        Financing:financing
+    }
+    
+    // Proceed with saving logic if validation passes
+    // Add your saving logic here, e.g., collecting form data and sending it to the server
     $.ajaxSetup({
         headers: {
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
         },
     });
-
-    const baseUrl = window.location.origin;
-    const endpoint = `${
-        type === "buyer-submittal" ? "buyer" : "listing"
-    }/submittal/create`;
-    const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
-
+    // Send AJAX request
     $.ajax({
-        url: url,
-        type: "POST",
+        url: "/pipeline/update/" + dealId,
+        type: "PUT",
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify(formData),
         success: function (response) {
-            console.log("response", response);
-            redirectUrl(type, response, formType);
             if (response?.data && response.data[0]?.message) {
-                const upperCaseMessage = response.data[0].message.toUpperCase();
+                // Convert message to uppercase and then display
+                const upperCaseMessage =
+                response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
+                $("#datatable_pipe_transaction")
+                .DataTable()
+                .ajax.reload();
+                
+                // window.location.reload();
             }
         },
-        error: function (xhr) {
-            console.error(xhr.responseText);
+        error: function (xhr, status, error) {
+            showToastError(xhr?.responseJSON?.error);
+            $("#datatable_pipe_transaction")
+            .DataTable()
+            .ajax.reload();
         },
     });
+    
+    console.log("Form is valid. Proceed with saving...");
+    
+    // Close the modal
+    const modalElement = document.querySelector('.modal.fade.show');
+    const bsModal = bootstrap.Modal.getInstance(modalElement);
+    bsModal.hide();
+};
+
+
+function validateRequiredField() {
+    let isValid = true;
+
+    // Find the modal by querying the currently opened modal
+    const modalElement = document.querySelector('.modal.fade.show');
+    const modalId = modalElement.getAttribute('id');
+    const modalBody = modalElement.querySelector('.modal-body');
+
+    // Clear previous error messages
+    modalBody.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
+
+    const invalidFields = [];
+
+    // Check required fields within the modal
+    modalBody.querySelectorAll('.required-field').forEach(field => {
+        const value = field.value;
+        if (value === "" || (field.tagName === 'SELECT' && value === "--None--")) {
+            isValid = false;
+            field.classList.add('error');
+            invalidFields.push(field.previousElementSibling.textContent);
+        } else {
+            field.classList.remove('error');
+        }
+    });
+
+    // Handle invalid fields and show error message
+    if (invalidFields.length > 0) {
+        showToastError('Please enter the following fields: ' + invalidFields.join(', '));
+    } else if (!isValid) {
+        showToastError('Please fill out all required fields.');
+    }
+
+    return isValid;
 }
 
 
