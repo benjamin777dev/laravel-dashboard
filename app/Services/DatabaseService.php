@@ -1791,9 +1791,9 @@ class DatabaseService
                 ['contacts.contact_owner', $user->root_user_id],
                 ['contacts.zoho_contact_id', '!=', null],
             ];
-
+    
             // Fetch primary contacts with necessary fields and join data
-            $primaryContacts = Contact::where($condition)
+            $query = Contact::where($condition)
                 ->leftJoin('contacts as c', 'c.zoho_contact_id', '=', 'contacts.spouse_partner')
                 ->select(
                     'contacts.id',
@@ -1826,15 +1826,18 @@ class DatabaseService
                 })
                 ->orderByRaw('CASE WHEN contacts.relationship_type = "Primary" THEN 0 ELSE 1 END')
                 ->orderByRaw("TRIM(CONCAT_WS(' ', COALESCE(contacts.first_name, ''), COALESCE(contacts.last_name, ''))) $sort")
-                ->orderBy('contacts.updated_at', 'desc')
-                ->get();
-
+                ->orderBy('contacts.updated_at', 'desc');
+    
+            // Paginate the query results
+            $perPage = 10;
+            $primaryContacts = $query->paginate($perPage);
+    
             // Collect contact IDs for fetching group data in a single query
             $contactIds = $primaryContacts->pluck('id')
                 ->merge($primaryContacts->pluck('secondary_contact_id'))
                 ->filter()
                 ->unique();
-
+    
             // Fetch all group data in one query, with and without filter
             $allGroups = ContactGroups::whereIn('contactId', $contactIds)
                 ->when($filter && $filter !== "has_email" && $filter !== "has_address", function ($query) use ($filter) {
@@ -1842,34 +1845,34 @@ class DatabaseService
                 })
                 ->get()
                 ->groupBy('contactId');
-
+    
             $allGroupsNoFilter = ContactGroups::whereIn('contactId', $contactIds)
                 ->get()
                 ->groupBy('contactId');
-
+    
             // Transform results to include secondary contacts as additional rows
             $transformedContacts = [];
             $addedContactIds = [];
-
+    
             foreach ($primaryContacts as $contact) {
                 if (!isset($addedContactIds[$contact->id])) {
                     $contact->groups = $allGroupsNoFilter->get($contact->id, []);
-
+    
                     // Apply group filter if necessary
                     if ($filter && $filter !== "has_email" && $filter !== "has_address" && empty($allGroups->get($contact->id, []))) {
                         continue;
                     }
-
+    
                     $transformedContacts[] = $contact;
                     $addedContactIds[$contact->id] = true;
                 }
-
+    
                 if ($contact->secondary_contact_id && !isset($addedContactIds[$contact->secondary_contact_id])) {
                     // Skip if group filter doesn't match for secondary contact
                     if ($filter && $filter !== "has_email" && $filter !== "has_address" && empty($allGroups->get($contact->secondary_contact_id, []))) {
                         continue;
                     }
-
+    
                     $secondaryContact = new \stdClass();
                     $secondaryContact->id = $contact->secondary_contact_id;
                     $secondaryContact->email = $contact->secondary_email;
@@ -1883,24 +1886,28 @@ class DatabaseService
                     $secondaryContact->has_email = $contact->has_email; // Assuming secondary contact shares the same has_email status
                     $secondaryContact->has_address = $contact->has_address; // Assuming secondary contact shares the same has_address status
                     $secondaryContact->groups = $allGroupsNoFilter->get($contact->secondary_contact_id, []);
-
+    
                     $transformedContacts[] = $secondaryContact;
                     $addedContactIds[$secondaryContact->id] = true;
                 }
             }
-
-            // Manual pagination
-            $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 50;
-            $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
-            $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
-
+    
+            // Create a LengthAwarePaginator with the transformed contacts
+            $paginatedContacts = new LengthAwarePaginator(
+                $transformedContacts,
+                $primaryContacts->total(),  // Total items count from the initial paginated result
+                $perPage,
+                $primaryContacts->currentPage(),
+                ['path' => LengthAwarePaginator::resolveCurrentPath()]
+            );
+    
             return $paginatedContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving contacts: " . $e->getMessage());
             throw $e;
         }
     }
+    
 
     public function retrieveContactGroupsData(User $user, $accessToken, $contactId, $filter = null, $sortType = null, $sortValue = null, $sort = null)
     {

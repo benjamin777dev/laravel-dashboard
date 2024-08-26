@@ -362,6 +362,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
             return `${year}-${month}-${day}`;
         }
 
+        
+
         function enterEditMode(element) {
             if ($(element).hasClass("editing")) {
                 return; // Do nothing if already editing
@@ -424,7 +426,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
                 $(element)
                     .replaceWith(
-                        `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                        `<select class="edit-input form-control editable" onchange="openContractModal(${this},${dataId})" data-name="${dataName}" data-id="${dataId}">
                     ${selectOptions}
                 </select>`
                     )
@@ -473,6 +475,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     "display",
                     "block"
                 );
+                return;
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
                     url: "/deals/update/" + dataId,
@@ -555,6 +558,28 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
+window.openContractModal= function(testmonial,dealId) {
+       console.log(testmonial,'testmoniallllll')
+    return `<div class="modal fade" onclick="event.preventDefault();"
+                    id="underContractModal${dealId}" data-bs-backdrop="static"
+                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                        <div class="modal-content dtaskmodalContent">
+                            <div class="modal-header border-0">
+                                <p class="modal-title dHeaderText">Notes</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    onclick="resetValidation()" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="underContractContainer${dealId}">
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+ 
+};
 window.showSubmittalFormType = function (element) {
     let deal = JSON.parse(decodeURIComponent(element.getAttribute("data-row")));
     console.log("Deal", deal);
@@ -642,49 +667,7 @@ function addSubmittal(type, deal, formType = null) {
     });
 }
 
-function addNonTmForIndex(id="",dealname="") {
-    let formData = {
-        "data": [{
-            "Owner": {
-                "id": "{{ auth()->user()->root_user_id }}",
-                "full_name": "{{ auth()->user()->name }}"
-            },
-            "Exchange_Rate": 1,
-            "Currency": "USD",
-            "Related_Transaction": {
-                "id": id,
-                "name": dealname
-            },
-            "Name": 'N'+(generateRandom4DigitNumber()),
-            "$zia_owner_assignment": "owner_recommendation_unavailable",
-            "zia_suggested_users": {}
-        }],
-        "skip_mandatory": false
-    }
-    console.log(formData, 'sdfjsdfjsd');
-    
-    $.ajax({
-        url: '/create-nontm',
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-            if (response) {
-                const url = `{{ url('/nontm-create/${response?.id}') }}`
-                window.open(url,'_blank')
-                // window.location.reload();
-            }
-        },
-        error: function(xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText);
-        }
-    })
-}
+
 
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({
