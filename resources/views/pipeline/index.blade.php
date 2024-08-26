@@ -152,49 +152,132 @@
         function generateRandom4DigitNumber() {
             return Math.floor(1000 + Math.random() * 9000);
         }
-        function addNonTmForIndex(id="",dealname="") {
-    let formData = {
-        "data": [{
-            "Owner": {
-                "id": "{{ auth()->user()->root_user_id }}",
-                "full_name": "{{ auth()->user()->name }}"
-            },
-            "Exchange_Rate": 1,
-            "Currency": "USD",
-            "Related_Transaction": {
-                "id": id,
-                "name": dealname
-            },
-            "Name": 'N'+(generateRandom4DigitNumber()),
-            "$zia_owner_assignment": "owner_recommendation_unavailable",
-            "zia_suggested_users": {}
-        }],
-        "skip_mandatory": false
-    }
-    console.log(formData, 'sdfjsdfjsd');
-    
-    $.ajax({
-        url: '/create-nontm',
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-            if (response) {
-                const url = `{{ url('/nontm-create/${response?.id}') }}`
-                window.open(url,'_blank')
-                // window.location.reload();
+        window.showSubmittalFormType = function (element) {
+            let deal = JSON.parse(decodeURIComponent(element.getAttribute("data-row")));
+            console.log("Deal", deal);
+            let submittalData;
+            if (deal?.representing === "Buyer" && deal?.tm_preference === "CHR TM") {
+                addSubmittal("buyer-submittal", deal);
+            } else if (
+                deal?.representing === "Seller" &&
+                deal?.tm_preference === "CHR TM"
+            ) {
+                addSubmittal("listing-submittal", deal);
+            } else if (
+                deal?.representing === "Seller" &&
+                deal?.tm_preference === "Non-TM"
+            ) {
+                addSubmittal("listing-submittal", deal, "Non-TM");
             }
-        },
-        error: function(xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText);
+        };
+
+        function redirectUrl(
+            submittalType = null,
+            submittalData = null,
+            formType = null
+        ) {
+            const url = `submittal-create/${submittalType}/${submittalData.id}?formType=${formType}`;
+            window.open(url, "_blank");
         }
-    })
-}
+
+        function addSubmittal(type, deal, formType = null) {
+            let formData = {
+                data: [
+                    {
+                        Transaction_Name: {
+                            id: deal.zoho_deal_id,
+                            name: deal.deal_name,
+                        },
+                        TM_Name: deal.tmName,
+                        Name:
+                            type === "buyer-submittal"
+                                ? "BS-" + generateRandom4DigitNumber()
+                                : "LS-" + generateRandom4DigitNumber(),
+                        Owner: {
+                            id: "{{ auth()->user()->root_user_id }}",
+                            name: "{{ auth()->user()->name }}",
+                            email: "{{ auth()->user()->email }}",
+                        },
+                        formType: formType,
+                    },
+                ],
+            };
+
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+            });
+
+            const baseUrl = window.location.origin;
+            const endpoint = `${
+                type === "buyer-submittal" ? "buyer" : "listing"
+            }/submittal/create`;
+            const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    console.log("response", response);
+                    redirectUrl(type, response, formType);
+                    if (response?.data && response.data[0]?.message) {
+                        const upperCaseMessage = response.data[0].message.toUpperCase();
+                        showToast(upperCaseMessage);
+                    }
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                },
+            });
+        }
+        
+        function addNonTmForIndex(id="",dealname="") {
+            let formData = {
+                "data": [{
+                    "Owner": {
+                        "id": "{{ auth()->user()->root_user_id }}",
+                        "full_name": "{{ auth()->user()->name }}"
+                    },
+                    "Exchange_Rate": 1,
+                    "Currency": "USD",
+                    "Related_Transaction": {
+                        "id": id,
+                        "name": dealname
+                    },
+                    "Name": 'N'+(generateRandom4DigitNumber()),
+                    "$zia_owner_assignment": "owner_recommendation_unavailable",
+                    "zia_suggested_users": {}
+                }],
+                "skip_mandatory": false
+            }
+            console.log(formData, 'sdfjsdfjsd');
+            
+            $.ajax({
+                url: '/create-nontm',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    if (response) {
+                        const url = `{{ url('/nontm-create/${response?.id}') }}`
+                        window.open(url,'_blank')
+                        // window.location.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            })
+        }
 
         window.fetchDeal = function(sortField, sortDirection, resetall = "", clickedCoulmn) {
             let searchInput = $('#pipelineSearch');

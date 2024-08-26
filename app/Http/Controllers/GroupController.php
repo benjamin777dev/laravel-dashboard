@@ -293,8 +293,9 @@ class GroupController extends Controller
 
             // Create CSV data
             $csvData = [];
-            $jsonInput = $request->input('laravelData');
-            $keyValueArray = json_decode($jsonInput, true);
+            $jsonInput = $request->json()->all();
+            $keyValueArray = $jsonInput['data'];
+            Log::info("Group Input",[$keyValueArray]);
             // Define CSV headers
             $csvHeaders = ["Contacts", "Groups"];
             foreach ($keyValueArray as $record) {

@@ -886,7 +886,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback" => [
-                    "url" => $this->serverUrl . "/bulkJob/update",
+                    "url" => "https://agent-commander.local/bulkJob/update",
                     "method" => "post"
                 ],
                 "resource" => [

@@ -77,7 +77,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
             data: null,
             title: "Actions",
             render: function (data, type, row) {
-               console.log(row,'testrow')
+                console.log(row, "testrow");
                 let lockIcon = "";
                 if (data.stage === "Under Contract") {
                     lockIcon = `<i class="fas fa-lock"></i>`;
@@ -111,10 +111,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     }
                 }
                 if (
-                    (
-                        data.tm_preference === "Non-TM" &&
-                        data.representing === "Buyer"
-                    )
+                    data.tm_preference === "Non-TM" &&
+                    data.representing === "Buyer"
                 ) {
                     if (row?.nontms?.length === 0) {
                         submittalSection = `
@@ -424,7 +422,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
                 $(element)
                     .replaceWith(
-                        `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}">
+                        `<select class="edit-input form-control editable" data-name="${dataName}" data-id="${dataId}" onchange="handleStageChange(this, '${dataId}')">
                     ${selectOptions}
                 </select>`
                     )
@@ -454,8 +452,27 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 .focus();
         }
 
+        window.handleStageChange = function (selectElement, dataId) {
+            var selectedValue = selectElement.value;
+
+            if (selectedValue === "Under Contract") {
+                console.log(
+                    selectedValue,
+                    " under cont hai re bhaiiiiiiii........."
+                );
+                // Open the modal when "Under Contract" is selected
+                openContractModal(dataId);
+                var modalElement = document.getElementById(
+                    "underContractModal" + dataId
+                );
+                var modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+        };
+
         // Function to handle exiting editing mode
         function exitEditMode(inputElement) {
+            return;
             var newValue = $(inputElement).val();
             var dataName = $(inputElement).data("name");
             var dataId = $(inputElement).data("id");
@@ -555,136 +572,27 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
-window.showSubmittalFormType = function (element) {
-    let deal = JSON.parse(decodeURIComponent(element.getAttribute("data-row")));
-    console.log("Deal", deal);
-    let submittalData;
-    if (deal?.representing === "Buyer" && deal?.tm_preference === "CHR TM") {
-        addSubmittal("buyer-submittal", deal);
-    } else if (
-        deal?.representing === "Seller" &&
-        deal?.tm_preference === "CHR TM"
-    ) {
-        addSubmittal("listing-submittal", deal);
-    } else if (
-        deal?.representing === "Seller" &&
-        deal?.tm_preference === "Non-TM"
-    ) {
-        addSubmittal("listing-submittal", deal, "Non-TM");
-    }
+window.openContractModal = function (dealId) {
+    return `
+                <div class="modal fade show" onclick="event.preventDefault();"
+                    id="underContractModal${dealId}" data-bs-backdrop="static"
+                    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered deleteModal">
+                        <div class="modal-content dtaskmodalContent">
+                            <div class="modal-header border-0">
+                                <p class="modal-title dHeaderText">Notes</p>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    onclick="resetValidation()" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="underContractContainer${dealId}">
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
 };
-
-function redirectUrl(
-    submittalType = null,
-    submittalData = null,
-    formType = null
-) {
-    const url = `submittal-create/${submittalType}/${submittalData.id}?formType=${formType}`;
-    window.open(url, "_blank");
-}
-
-function generateRandom4DigitNumber() {
-    return Math.floor(1000 + Math.random() * 9000);
-}
-
-function addSubmittal(type, deal, formType = null) {
-    let formData = {
-        data: [
-            {
-                Transaction_Name: {
-                    id: deal.zoho_deal_id,
-                    name: deal.deal_name,
-                },
-                TM_Name: deal.tmName,
-                Name:
-                    type === "buyer-submittal"
-                        ? "BS-" + generateRandom4DigitNumber()
-                        : "LS-" + generateRandom4DigitNumber(),
-                Owner: {
-                    id: "{{ auth()->user()->root_user_id }}",
-                    name: "{{ auth()->user()->name }}",
-                    email: "{{ auth()->user()->email }}",
-                },
-                formType: formType,
-            },
-        ],
-    };
-
-    $.ajaxSetup({
-        headers: {
-            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-        },
-    });
-
-    const baseUrl = window.location.origin;
-    const endpoint = `${
-        type === "buyer-submittal" ? "buyer" : "listing"
-    }/submittal/create`;
-    const url = `${baseUrl}/${endpoint}/${deal.zoho_deal_id}`;
-
-    $.ajax({
-        url: url,
-        type: "POST",
-        contentType: "application/json",
-        dataType: "json",
-        data: JSON.stringify(formData),
-        success: function (response) {
-            console.log("response", response);
-            redirectUrl(type, response, formType);
-            if (response?.data && response.data[0]?.message) {
-                const upperCaseMessage = response.data[0].message.toUpperCase();
-                showToast(upperCaseMessage);
-            }
-        },
-        error: function (xhr) {
-            console.error(xhr.responseText);
-        },
-    });
-}
-
-function addNonTmForIndex(id="",dealname="") {
-    let formData = {
-        "data": [{
-            "Owner": {
-                "id": "{{ auth()->user()->root_user_id }}",
-                "full_name": "{{ auth()->user()->name }}"
-            },
-            "Exchange_Rate": 1,
-            "Currency": "USD",
-            "Related_Transaction": {
-                "id": id,
-                "name": dealname
-            },
-            "Name": 'N'+(generateRandom4DigitNumber()),
-            "$zia_owner_assignment": "owner_recommendation_unavailable",
-            "zia_suggested_users": {}
-        }],
-        "skip_mandatory": false
-    }
-    console.log(formData, 'sdfjsdfjsd');
-    
-    $.ajax({
-        url: '/create-nontm',
-        type: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(formData),
-        success: function(response) {
-            if (response) {
-                const url = `{{ url('/nontm-create/${response?.id}') }}`
-                window.open(url,'_blank')
-                // window.location.reload();
-            }
-        },
-        error: function(xhr, status, error) {
-            // Handle error response
-            console.error(xhr.responseText);
-        }
-    })
-}
 
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({
