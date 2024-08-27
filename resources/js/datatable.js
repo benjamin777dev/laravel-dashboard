@@ -595,7 +595,7 @@ window.openContractModal = function (dealId) {
                             <label for="validationDefault09" class="form-label nplabelText">State</label>
                             <input type="text" 
                                 class="form-control npinputinfo validate required-field" 
-                                id="validationDefault09" 
+                                id="state" 
                                 value="">
                                 <div id="stateError" class="d-none text-danger">Please fill state</div>
                         </div>
@@ -662,7 +662,7 @@ window.saveUnderConReqField = function (dealId) {
     var city = $("#city").val();
     var zip = $("#zip").val();
     var property = $("#property").val();
-    var financing = $("#financing").val();
+    var state = $("#state").val();
     let formData = {
         data: [
             {
@@ -670,7 +670,7 @@ window.saveUnderConReqField = function (dealId) {
                 City: city,
                 Zip: zip,
                 Property_Type: property,
-                Financing: financing,
+                state: state,
                 Stage: "Under Contract",
             },
         ],
