@@ -670,7 +670,7 @@ window.saveUnderConReqField = function (dealId) {
                 City: city,
                 Zip: zip,
                 Property_Type: property,
-                state: state,
+                State: state,
                 Stage: "Under Contract",
             },
         ],
