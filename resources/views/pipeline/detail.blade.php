@@ -208,7 +208,7 @@
                             id="validationDefault15"
                             @if($deal['locked_s']) disabled @endif 
                             required
-                            value="{{$deal['pipeline_probability']}}">
+                            value="{{$deal['pipeline_probability']}}" disabled>
                     </div>
                     <div class="col-md-6">
                         <label for="validationDefault11" class="form-label nplabelText"></label>

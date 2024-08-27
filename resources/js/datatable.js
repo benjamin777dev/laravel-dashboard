@@ -424,7 +424,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
                 $(element)
                     .replaceWith(
-                        `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId}),${row}" data-name="${dataName}" data-id="${dataId}">
+                        `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId})" data-name="${dataName}" data-id="${dataId}">
                     ${selectOptions}
                 </select>`
                     )
@@ -469,7 +469,6 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
         // Function to handle exiting editing mode
         function exitEditMode(inputElement) {
-            return;
             var newValue = $(inputElement).val();
             var dataName = $(inputElement).data("name");
             var dataId = $(inputElement).data("id");
@@ -487,7 +486,6 @@ var table = $("#datatable_pipe_transaction").DataTable({
                     "display",
                     "block"
                 );
-                return;
                 // Example AJAX call (replace with your actual endpoint and data):
                 $.ajax({
                     url: "/deals/update/" + dataId,

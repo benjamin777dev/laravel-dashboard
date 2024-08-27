@@ -39,7 +39,10 @@ class GroupController extends Controller
         $ownerGroups = $db->getOwnerGroups($user, $accessToken);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
-            return view('groups.group', compact('contacts','groups','shownGroups','ownerGroups','contactsList'))->render();
+            return response()->json([
+                'html' => view('groups.group', compact('contacts', 'groups', 'shownGroups', 'ownerGroups', 'contactsList'))->render(),
+                'pagination' => view('common.pagination', ['module' => $contacts])->render()
+            ]);
         }
         return view('groups.index', compact('contacts','groups','shownGroups', 'ownerGroups','contactsList'));
     }

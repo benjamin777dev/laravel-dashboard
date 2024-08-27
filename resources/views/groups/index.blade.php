@@ -25,64 +25,64 @@
             </ul>
         </div>
     @endif
-        <div class="container full-width-container">
+    <div class="container full-width-container">
+        <div class="dbgroupsFlex">
+            <p class="ngText">Database Groups</p>
             <div class="dbgroupsFlex">
-                <p class="ngText">Database Groups</p>
-                <div class="dbgroupsFlex">
-                    <div class="input-group-text dbNewGroups" onclick="addGroup()"><i class="fas fa-plus plusicon">
-                        </i>
-                        Add Group
-                    </div>
-                    <div class="input-group-text dbEditGroups" onclick="EditGroup()"><i class="fas fa-edit plusicon">
-                        </i>
-                        Edit Group
-                    </div>
-                    <div class="input-group-text dbEditGroups" onclick="selectGroup()">
-                        Compose Email <i class="mdi mdi-send ms-1"></i>
-                    </div>
+                <div class="input-group-text dbNewGroups" onclick="addGroup()"><i class="fas fa-plus plusicon">
+                    </i>
+                    Add Group
+                </div>
+                <div class="input-group-text dbEditGroups" onclick="EditGroup()"><i class="fas fa-edit plusicon">
+                    </i>
+                    Edit Group
+                </div>
+                <div class="input-group-text dbEditGroups" onclick="selectGroup()">
+                    Compose Email <i class="mdi mdi-send ms-1"></i>
                 </div>
             </div>
-            <div class="row" style="gap: 24px">
-                <div class="col-md-6 col-sm-12 dbgSelectDiv">
-                    <div class="dropdown gdropdown-div dbgSelectinfo">
-                        <div class="dropdown-toggle gdropdown-select " type="button" id="dropdownMenuButton1"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <input class="gdropdown-btn" value="Select columns to display" readonly />
-                            <div>
-                                <i class="fas fa-angle-down"></i>
-                            </div>
+        </div>
+        <div class="row" style="gap: 24px">
+            <div class="col-md-6 col-sm-12 dbgSelectDiv">
+                <div class="dropdown gdropdown-div dbgSelectinfo">
+                    <div class="dropdown-toggle gdropdown-select " type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <input class="gdropdown-btn" value="Select columns to display" readonly />
+                        <div>
+                            <i class="fas fa-angle-down"></i>
                         </div>
+                    </div>
 
-                        <ul class="dropdown-menu gdropdown-ul gdropdownMax" aria-labelledby="dropdownMenuButton1"
-                            onchange="refetchData()">
-                            @foreach ($groups as $group)
-                                <li class="gdropdown" value="{{ $group['id'] }}">{{ $group['name'] }} <input
-                                        type="checkbox" {{ $group->isShow == true ? 'checked' : '' }} /></li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    <ul class="dropdown-menu gdropdown-ul gdropdownMax" aria-labelledby="dropdownMenuButton1"
+                        onchange="refetchData()">
+                        @foreach ($groups as $group)
+                            <li class="gdropdown" value="{{ $group['id'] }}">{{ $group['name'] }} <input type="checkbox"
+                                    {{ $group->isShow == true ? 'checked' : '' }} /></li>
+                        @endforeach
+                    </ul>
                 </div>
-                <div class="col-md-6 col-sm-12">
-                    <div class="dbgSortDiv">
-                        <div class="dbgGroupDiv">
-                            <select class="form-select dbgSelectinfo" placeholder="Sort groups by" id="validationDefault05"
-                                onchange="refetchData()" required>
-                                <option selected value = "">-None-</option>
-                                <option value = "has_address">Has Address</option>
-                                <option value = "has_email">Has Email</option>
-                                @foreach ($groups as $group)
-                                    <option value = "{{ $group['id'] }}">{{ $group['name'] }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="refetchData()">
-                            <i class="fas fa-filter"></i>
-                            Filter
-                        </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="dbgSortDiv">
+                    <div class="dbgGroupDiv">
+                        <select class="form-select dbgSelectinfo" placeholder="Sort groups by" id="validationDefault05"
+                            onchange="refetchData()" required>
+                            <option selected value = "">-None-</option>
+                            <option value = "has_address">Has Address</option>
+                            <option value = "has_email">Has Email</option>
+                            @foreach ($groups as $group)
+                                <option value = "{{ $group['id'] }}">{{ $group['name'] }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="input-group-text dbgfilterBtn " id="btnGroupAddon" onclick ="refetchData()">
+                        <i class="fas fa-filter"></i>
+                        Filter
                     </div>
                 </div>
             </div>
-            {{-- <div class="row" style="gap: 24px">
+        </div>
+        {{-- <div class="row" style="gap: 24px">
             <div class="col-md-6 col-sm-12 dbgSelectDiv">
                 <div class="dropdown gdropdown-div dbgSelectinfo">
                     <div class="dropdown-toggle gdropdown-select " type="button" id="dropdownMenuButton1"
@@ -115,93 +115,90 @@
                 </div>
             </div>
         </div> --}}
-            <div class = "group-container">
-                @include('groups.group')
-            </div>
-            <div class="datapagination">
-                @include('common.pagination', ['module' => $contacts])
-            </div>
+        <div class = "group-container">
+            @include('groups.group')
         </div>
-        @include('common.group.createModal', ['groups' => $groups])
-        @include('common.group.editModal', ['groups' => $ownerGroups])
-        <div class="modal fade p-5" id="selectGroupModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title">Select Group</h5>
-                        <button type="button" class="btn-close" id="selectGroupModalClose" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="selectGroupForm">
-                            <div class="table-container">
-                                @if (count($groups))
-                                    <table class="table">
-                                        <thead>
+        <div class="datapagination">
+            @include('common.pagination', ['module' => $contacts])
+        </div>
+    </div>
+    @include('common.group.createModal', ['groups' => $groups])
+    @include('common.group.editModal', ['groups' => $ownerGroups])
+    <div class="modal fade p-5" id="selectGroupModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Select Group</h5>
+                    <button type="button" class="btn-close" id="selectGroupModalClose" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="selectGroupForm">
+                        <div class="table-container">
+                            @if (count($groups))
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Group Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($groups as $group)
                                             <tr>
-                                                <th></th>
-                                                <th>Group Name</th>
+                                                <td>
+                                                    <input type="checkbox" name="group_{{ $group['id'] }}"
+                                                        id="{{ $group['id'] }}">
+                                                </td>
+                                                <td>
+                                                    <label for="group_{{ $group['id'] }}">{{ $group['name'] }}</label>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($groups as $group)
-                                                <tr>
-                                                    <td>
-                                                        <input type="checkbox" name="group_{{ $group['id'] }}"
-                                                            id="{{ $group['id'] }}">
-                                                    </td>
-                                                    <td>
-                                                        <label
-                                                            for="group_{{ $group['id'] }}">{{ $group['name'] }}</label>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @else
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th>Group Name</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td colspan="3">No Groups Available</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                @endif
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Group Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">No Groups Available</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            @endif
 
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary taskModalSaveBtn"
-                            onclick="sendMultipleGroupMail();">
-                            <i class="fas fa-save saveIcon"></i> Send Mail
-                        </button>
-                    </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary taskModalSaveBtn" onclick="sendMultipleGroupMail();">
+                        <i class="fas fa-save saveIcon"></i> Send Mail
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1"
-            aria-labelledby="composemodalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content" id="modalValues">
-                </div>
+    <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="composemodalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="modalValues">
             </div>
         </div>
-        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    @include('emails.email_templates.email-template-create', ['contact' => null])
-                </div>
+    </div>
+    <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                @include('emails.email_templates.email-template-create', ['contact' => null])
             </div>
         </div>
+    </div>
     <script>
         let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
 
@@ -217,10 +214,11 @@
             $(document).on('click', '.pagination a', function(event) {
                 event.preventDefault();
                 var page = $(this).attr('href').split('page=')[1];
-                loadMorePosts(page);
+                fetchPaginatedData(page);
             });
             let isLoading = false;
-            function loadMorePosts(page) {
+
+            function fetchPaginatedData(page) {
                 isLoading = true; // Prevent multiple AJAX calls
                 filterSelect = document.getElementById('validationDefault05');
                 filterValue = filterSelect.options[filterSelect.selectedIndex].value;
@@ -236,16 +234,18 @@
                     url: '/group?filter=' + filterValue + '&sort=' + sortField + '&page=' + page,
                     type: 'get',
                     beforeSend: function() {
-                       
+
                     },
                     success: function(data) {
-                        console.log(data,'data is here')
-                        if (data.trim() === "") {
+                        console.log(data, 'data is here')
+                        if (data.html.trim() === "") {
                             moreData = false; // No more data to load
                             $('.datapagination').hide();
+
                         }
 
-                        $('.groupTable').html(data);
+                        $('.groupTable').html(data.html);
+                        $('.datapagination').html(data.pagination);
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading more posts:", error);
@@ -253,6 +253,9 @@
                     }
                 });
             }
+            $("#validationDefault05").on("change", function() {
+                fetchPaginatedData(1)
+            });
         }
 
         window.refetchData = function(sortField = null) {
