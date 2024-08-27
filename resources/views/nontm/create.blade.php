@@ -531,13 +531,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4 d-flex gap-2">
-                                            <div>Re-Submitted</div>
-                                            <div><input type="checkbox" id="resubmit_text" <?php if ($dealData['resubmit_text']) {
-                                                echo 'checked';
-                                            } ?> disabled>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </form>
                             </div>
@@ -955,7 +949,7 @@
                         .value.trim() : undefined,
                         "Resubmitting_Why_LIST_ALL_CHANGES": resubmitting_why_list_all_changes.value ?
                     resubmitting_why_list_all_changes.value.trim() : undefined,
-                "resubmit_text": true,
+                    "resubmit_text": true,
                     "Related_Transaction": selectedValue ? {
                         "id": selectedValue.trim(),
                         "name": selectedText.trim(),

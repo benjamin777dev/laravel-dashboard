@@ -246,15 +246,23 @@ class SubmittalController extends Controller
                 $submittalData = $db->retrieveSubmittal($user, $accessToken, $submittalId);;
             }
         if($submittalData['isSubmittalComplete']=="true"){
-            $submittal = $zoho->updateListingSubmittal($submittalData['zoho_submittal_id'],$jsonData);
+            $zohoData = $zoho->updateListingSubmittal($submittalData['zoho_submittal_id'],$jsonData);
         }else{
-            $submittal = $zoho->createListingSubmittal($jsonData);
+            $zohoData = $zoho->createListingSubmittal($jsonData);
         }
-        if (!$submittal->successful()) {
-            return "error something" . $submittal;
+       
+        if (!$zohoData->successful()) {
+            return "error something" . $zohoData;
         }
-        $submittalArray = json_decode($submittal, true);
+        $submittalArray = json_decode($zohoData, true);
         $data = $submittalArray['data'][0]['details'];
+
+        $zohoGetData = $zoho->getListingSubmittal($data['id']);
+        if (!$zohoGetData->successful()) {
+            return "error something" . $zohoGetData;
+        }
+        $submittalGetArray = json_decode($zohoGetData, true);
+        $data = $submittalGetArray['data'][0];
         $submittalData = $jsonData['data'][0];
         $submittalData['id']=$submittalId;
         $deal = $db->updateListingSubmittal($user, $accessToken, $data,$submittalData,$isNew);

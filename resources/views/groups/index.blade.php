@@ -4,27 +4,27 @@
 
 @section('content')
     @vite(['resources/css/custom.css'])
-    @if(session('message'))
-    <div class="alert alert-info">
-        {{ session('message') }}
-    </div>
-@endif
+    @if (session('message'))
+        <div class="alert alert-info">
+            {{ session('message') }}
+        </div>
+    @endif
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="container full-width-container">
         <div class="dbgroupsFlex">
             <p class="ngText">Database Groups</p>
@@ -135,7 +135,7 @@
                 <div class="modal-body">
                     <form id="selectGroupForm">
                         <div class="table-container">
-                            @if(count($groups))
+                            @if (count($groups))
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -144,7 +144,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($groups as $group)
+                                        @foreach ($groups as $group)
                                             <tr>
                                                 <td>
                                                     <input type="checkbox" name="group_{{ $group['id'] }}"
@@ -185,19 +185,20 @@
         </div>
     </div>
 
-    <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="composemodalTitle" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content" id="modalValues">
-                </div>
+    <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="composemodalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="modalValues">
             </div>
         </div>
-        <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    @include('emails.email_templates.email-template-create',['contact'=>null])
-                </div>
+    </div>
+    <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                @include('emails.email_templates.email-template-create', ['contact' => null])
             </div>
         </div>
+    </div>
     <script>
         let nextPageUrl = '{{ $contacts->nextPageUrl() ? str_replace('/', '', $contacts->nextPageUrl()) : null }}';
 
@@ -208,22 +209,16 @@
         nextPageUrl = nextPageUrl + '&filter=' + filterValue + '&sort=' + sortField;
 
         let moreData = true;
-        var contactList = @json($contactsList??"");
+        var contactList = @json($contactsList ?? '');
         window.onload = function() {
             $(document).on('click', '.pagination a', function(event) {
                 event.preventDefault();
                 var page = $(this).attr('href').split('page=')[1];
-                loadMorePosts(page);
+                fetchPaginatedData(page);
             });
             let isLoading = false;
 
-            // $(window).scroll(function() {
-            //     if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100 && nextPageUrl && !isLoading && moreData) {
-            //         loadMorePosts();
-            //     }
-            // });
-
-            function loadMorePosts(page) {
+            function fetchPaginatedData(page) {
                 isLoading = true; // Prevent multiple AJAX calls
                 filterSelect = document.getElementById('validationDefault05');
                 filterValue = filterSelect.options[filterSelect.selectedIndex].value;
@@ -236,34 +231,31 @@
                 });
 
                 $.ajax({
-                    url: '/group?filter='+ filterValue + '&sort=' + sortField+'&page='+page,
+                    url: '/group?filter=' + filterValue + '&sort=' + sortField + '&page=' + page,
                     type: 'get',
                     beforeSend: function() {
-                        $('.spinner').show();
+
                     },
                     success: function(data) {
-                        $('.spinner').hide();
-                        if (data.trim() === "") {
+                        console.log(data, 'data is here')
+                        if (data.html.trim() === "") {
                             moreData = false; // No more data to load
                             $('.datapagination').hide();
+
                         }
 
-                        $('.dbgBodyTable').append(data);
-                        $('.ptableCardDiv').append(data);
-
-                        // Increment page number from next page url query string value and append it to the next page url
-                        nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
-                            return 'page=' + (parseInt(pageNumber) + 1);
-                        });
-                        isLoading = false; // Allow next AJAX call
+                        $('.groupTable').html(data.html);
+                        $('.datapagination').html(data.pagination);
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading more posts:", error);
-                        $('.spinner').hide();
                         isLoading = false; // Allow next AJAX call even if there is an error
                     }
                 });
             }
+            $("#validationDefault05").on("change", function() {
+                fetchPaginatedData(1)
+            });
         }
 
         window.refetchData = function(sortField = null) {
@@ -272,8 +264,8 @@
             const filterValue = filterSelect.options[filterSelect.selectedIndex].value;
             // reset next page url first page
             nextPageUrl = nextPageUrl.replace(/page=(\d+)/, function(match, pageNumber) {
-                            return 'page=2';
-                        });
+                return 'page=2';
+            });
             moreData = true;
             // Make AJAX call
             $.ajax({
@@ -323,11 +315,11 @@
             $('#editGroupModal').modal('show');
         }
 
-         window.selectGroup = function() {
+        window.selectGroup = function() {
             $('#selectGroupModal').modal('show');
         }
 
-        window.sendMultipleGroupMail = function(){
+        window.sendMultipleGroupMail = function() {
             let selectedGroups = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(function(checkbox) {
                 if (checkbox.id && checkbox.name.startsWith('group_')) {
@@ -336,14 +328,14 @@
             });
 
             console.log(selectedGroups);
-           getGroupContacts(selectedGroups,function(groupContacts){
-               console.log(groupContacts);
-               openGroupComposeModal(groupContacts);
-           });
+            getGroupContacts(selectedGroups, function(groupContacts) {
+                console.log(groupContacts);
+                openGroupComposeModal(groupContacts);
+            });
 
         }
 
-        window.getGroupContacts = function(groupIds,callback){
+        window.getGroupContacts = function(groupIds, callback) {
             $.ajax({
                 url: '/get/group/contacts', // Your endpoint here
                 type: 'GET',
@@ -362,15 +354,15 @@
             });
         }
 
-        window.openGroupComposeModal = function (Ids) {
+        window.openGroupComposeModal = function(Ids) {
 
             var intIds = Ids.map(id => parseInt(id));
             var selectedContacts = contactList.filter(contact => intIds.includes(contact.id));
-            console.log("Open modal ids",selectedContacts);
+            console.log("Open modal ids", selectedContacts);
             var data = {
                 contacts: contactList,
                 selectedContacts: selectedContacts,
-                emailType:"multiple"
+                emailType: "multiple"
             };
             $.ajax({
                 url: '/get/email-create',
@@ -381,7 +373,7 @@
                 dataType: 'html',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                success: function (response) {
+                success: function(response) {
                     // Update the modal content with the response
                     $('#modalValues').html(response);
 
@@ -397,7 +389,7 @@
                     //     $('#email-checkbox'+element.id).prop('checked', false);
                     // });
                 },
-                error: function () {
+                error: function() {
                     // Handle any errors
                     alert('Failed to load modal content');
                 }
