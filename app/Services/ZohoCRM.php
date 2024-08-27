@@ -1174,6 +1174,36 @@ class ZohoCRM
         }
     }
 
+    public function getListingSubmittal($submittalId)
+    {
+        try {
+            Log::info('Creating Zoho contacts', [$submittalId,$this->apiUrl . "Listing_Submittals/" . $submittalId]);
+
+           
+            // Adjust the URL and HTTP method based on your Zoho API requirements
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+                'Content-Type' => 'application/json',
+            ])->get($this->apiUrl . "Listing_Submittals/" . $submittalId);
+
+
+            $responseData = $response->json();
+
+            // Check if the request was successful
+            if (!$response->successful()) {
+                Log::error('Zoho contacts creation failed: ' . print_r($responseData, true));
+                throw new \Exception('Failed to create Zoho contacts');
+            }
+
+            Log::info('Zoho contacts creation response: ' . print_r($responseData, true));
+
+            return $response;
+        } catch (\Throwable $th) {
+            Log::error('Error creating Zoho contacts: ' . $th->getMessage());
+            throw new \Exception('Failed to create Zoho contacts');
+        }
+    }
+
     public function createBuyerSubmittal($inputJson)
     {
         try {
