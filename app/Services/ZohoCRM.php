@@ -578,9 +578,10 @@ class ZohoCRM
                 if (isset($responseData['message']) && $responseData['message'] === "the id given seems to be invalid") {
                     $db = new DatabaseService();
                     $db->removeDealFromDB($id);
+                    throw new \Exception("Zoho Deal Id not found");
                 }
 
-                if (!(isset($responseData['message']) && $responseData['message'] === "duplicate association")) {
+                if ((isset($responseData['message']) && $responseData['message'] === "duplicate association")) {
                     throw new \Exception("Client Name already associated to Deal.");
                 }
             }

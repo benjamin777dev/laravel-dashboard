@@ -221,7 +221,7 @@ class PipelineController extends Controller
             $inputs['filter']?? null // filter
         ); 
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
+        $closingDate = isset($deal['closing_date'])??Carbon::parse($helper->convertToMST($deal['closing_date']));
         $allStages = config('variables.dealStages');
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
