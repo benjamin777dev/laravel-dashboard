@@ -423,8 +423,8 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 $(element)
                     .replaceWith(
                         `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId})" data-name="${dataName}" data-id="${dataId}">
-                            ${selectOptions}
-                        </select>`
+                    ${selectOptions}
+                </select>`
                     )
                     .addClass("editing");
             } else if (dataName === "representing") {

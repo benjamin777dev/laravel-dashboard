@@ -84,19 +84,19 @@
             ])
         </div>
         @include('contacts.detailForm',[
-            'contact'=>$contact, 
+            'contact'=>$contact,
             'userContact'=>$userContact,
             'deals'=>$deals,
             'allstages'=>$allstages,
-            'user_id'=>$user_id, 
-            'tab'=>$tab, 
-            'name'=>$name, 
+            'user_id'=>$user_id,
+            'tab'=>$tab,
+            'name'=>$name,
             'contacts'=>$contacts,
-            'contactsWithEmails'=>$contactsWithEmails, 
-            'tasks'=>$tasks, 
+            'contactsWithEmails'=>$contactsWithEmails,
+            'tasks'=>$tasks,
             'notes'=>$notes, 
-            'getdealsTransaction'=>$getdealsTransaction, 
-            'retrieveModuleData'=>$retrieveModuleData, 
+            'getdealsTransaction'=>$getdealsTransaction,
+            'retrieveModuleData'=>$retrieveModuleData,
             'dealContacts'=>$dealContacts, 'contactId', 'users', 'groups', 'contactsGroups','spouseContact'])
     </div>
     <div class="dnotesBottomIcon" type="button" data-bs-toggle="modal"
@@ -106,8 +106,6 @@
             <span class="tooltiptext">Add Notes</span>
         </div>
     </div>
-
-
 
     {{-- task modal --}}
     @include('common.tasks.create', [
