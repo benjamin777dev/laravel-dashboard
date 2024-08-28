@@ -140,15 +140,15 @@ class ContactController extends Controller
         if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
-        $getContactFromZoho=null;
-        if(!empty($contact->zoho_contact_id)){
+        $getContactFromZoho = null;
+        if (!empty($contact->zoho_contact_id)) {
             $zoho->access_token = $accessToken;
             $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
             Log::info('contcattesting hereeee' . $getContactFromZoho);
             $zohoContact_Array = json_decode($getContactFromZoho, true);
             if (isset($zohoContact_Array['data']) && is_array($zohoContact_Array['data'])) {
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($contact->id,$zohoContactValues);
+                $db->storeContactIntoDB($contact->id, $zohoContactValues);
             }
 
         }
@@ -207,32 +207,31 @@ class ContactController extends Controller
 
     public function getContactJson()
     {
-        {
-            try {
-                $user = $this->user();
+        try {
+            $user = $this->user();
 
-                if (!$user) {
-                    return redirect('/login');
-                }
-                $db = new DatabaseService();
-                $search = request()->query('search');
-                $stage = request()->query('stage');
-                $filterobj = request()->query('filterobj');
-                // $contactInfo = Contact::getZohoContactInfo();
-                $accessToken = $user->getAccessToken(); // Method to get the access token.
-                if (!$accessToken) {
-                    return "invalid token.";
-                }
-                $contacts = $db->retreiveContactsJson($user, $accessToken, $search, $stage, $filterobj);
-                if (!$contacts) {
-                    return response()->json(["redirect" => "/contacts"]);
-                }
-                return Datatables::of($contacts)->make(true);
-            } catch (\Exception $e) {
-                Log::error("Error retrieving contacts: " . $e->getMessage());
-                throw $e;
+            if (!$user) {
+                return redirect('/login');
             }
+            $db = new DatabaseService();
+            $search = request()->query('search');
+            $stage = request()->query('stage');
+            $filterobj = request()->query('filterobj');
+            // $contactInfo = Contact::getZohoContactInfo();
+            $accessToken = $user->getAccessToken(); // Method to get the access token.
+            if (!$accessToken) {
+                return "invalid token.";
+            }
+            $contacts = $db->retreiveContactsJson($user, $accessToken, $search, $stage, $filterobj);
+            if (!$contacts) {
+                return response()->json(["redirect" => "/contacts"]);
+            }
+            return Datatables::of($contacts)->make(true);
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
         }
+
     }
 
     public function updateContactField(Request $request)
@@ -1108,7 +1107,7 @@ class ContactController extends Controller
         $contactId = $id;
 
         $inputData =
-            [
+        [
             "data" => [
                 [
                     "Relationship_Type" => "Secondary",

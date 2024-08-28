@@ -20,7 +20,6 @@ use DataTables;
 
 class DashboardController extends Controller
 {
-    
     protected $db;
     protected $helper;
 
@@ -81,7 +80,8 @@ class DashboardController extends Controller
         ));
     }
 
-    public function getStageForDashboard(){
+    public function getStageForDashboard()
+    {
         $user = $this->user();
         if (!$user) {
             return redirect('/login');
@@ -265,7 +265,8 @@ class DashboardController extends Controller
         return $allACI;
     }
 
-    public function needNewDateMethod() {
+    public function needNewDateMethod()
+    {
         $db = new DatabaseService();
         $helper = new Helper();
         $user = $this->user();
@@ -273,11 +274,11 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-          //Get Date Range
-          $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
+        //Get Date Range
+        $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
-         // Needs New Date
-         $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
+        // Needs New Date
+        $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
             $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
             $now = now();
         
@@ -309,7 +310,8 @@ class DashboardController extends Controller
         
     }
 
-    public function retriveTaskforDatatable() {
+    public function retriveTaskforDatatable()
+    {
         $db = new DatabaseService();
         $helper = new Helper();
         $user = $this->user();
@@ -322,8 +324,6 @@ class DashboardController extends Controller
         return Datatables::of($tasks)->make(true);
         
     }
-
-   
 
     //get notes data function
     private function retrieveNOTESFromZoho(User $user, $accessToken)
@@ -390,13 +390,13 @@ class DashboardController extends Controller
     {
         $filteredDeals = $deals;
         $totalProbableGCI = 0;
-        foreach ($filteredDeals as $deal ) {
+        foreach ($filteredDeals as $deal) {
             $salePrice = $deal->sale_price ?? 0;
             $commission = $deal->commission ?? 0;
             $pipelineProbability = $deal->pipeline_probability ?? 0;
             $totalProbableGCI += ($salePrice * ($commission / 100)) * ($pipelineProbability / 100);
         }
-       
+
         return $totalProbableGCI;
     }
 
@@ -431,7 +431,7 @@ class DashboardController extends Controller
         $What_Id;
         $priority;
         $contact;
-        $seModule=null;
+        $seModule = null;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
             $subject = $data['Subject'] ?? null;
@@ -488,13 +488,13 @@ class DashboardController extends Controller
             // Create a new Task record using the Task model
             $task = Task::create([
                 'subject' => $subject,
-                'detail' => $detail?? null,
+                'detail' => $detail ?? null,
                 'zoho_task_id' => $zoho_id,
                 'owner' => "1",
-                'status' =>$status ?? null,
+                'status' => $status ?? null,
                 'who_id' => $contact['id'] ?? null,
-                'due_date' =>$Due_Date ?? null,
-                'what_id' =>$deal['id'] ?? null,
+                'due_date' => $Due_Date ?? null,
+                'what_id' => $deal['id'] ?? null,
                 // 'closed_time' => $closed_time ?? null,
                 'created_by' => $user->id,
                 // 'priority' => $priority ?? null,
@@ -528,7 +528,7 @@ class DashboardController extends Controller
             if (strpos($id, ',') === false) {
                 $response = $zoho->deleteTask($jsonData, $id);
                 if (!$response->successful()) {
-                    return response()->json(['error' => "Not found in Zoho crm"],401);
+                    return response()->json(['error' => "Not found in Zoho crm"], 401);
                 }
                 $task = Task::where('zoho_task_id', $id)->first();
                 if (!$task) {
@@ -539,7 +539,7 @@ class DashboardController extends Controller
                 // Multiple IDs provided
                 $response = $zoho->deleteTaskSelected($jsonData, $id);
                 if (!$response->successful()) {
-                    return response()->json(['error' => "Not found in Zoho crm"],401);
+                    return response()->json(['error' => "Not found in Zoho crm"], 401);
                 }
                 $idArray = explode(',', $id);
                 $tasks = Task::whereIn('zoho_task_id', $idArray)->delete();
@@ -1039,10 +1039,10 @@ class DashboardController extends Controller
         $db = new DatabaseService();
         $zoho->access_token = $accessToken;
         try {
-            $notesInfo = $this->db->retrieveNotes($user, $accessToken,'');
+            $notesInfo = $this->db->retrieveNotes($user, $accessToken, '');
             $notes = $this->fetchNotes();
             Log::info("notesInfo " . print_r($notesInfo, true));
-            return view('common.notes.showMoreNotes', compact('notesInfo','notes'));
+            return view('common.notes.showMoreNotes', compact('notesInfo', 'notes'));
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw $e;

@@ -20,14 +20,12 @@ class NonTmController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        try{
+        try {
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
-           /*  print_r($nontms);
-            die; */
             // return view('nontm.index', compact('deal','nontms'))->render(); 
             return Datatables::of($nontms)->make(true);
 
@@ -51,7 +49,7 @@ class NonTmController extends Controller
         $dealId = request()->route('id');
         $dealData = $db->retrieveNonTmById($user, $accessToken, $dealId);
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
-        return view('nontm.view',compact('dealData','deals'))->render();
+        return view('nontm.view', compact('dealData', 'deals'))->render();
     }
 
 
@@ -68,11 +66,11 @@ class NonTmController extends Controller
         $dealId = request()->route('id');
         $dealData = $db->retrieveNonTmById($user, $accessToken, $dealId);
         $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
-        return view('nontm.create',compact('dealData','deals'))->render();
+        return view('nontm.create', compact('dealData', 'deals'))->render();
     }
     
-    public function createNontm(Request $request) {
-
+    public function createNontm(Request $request) 
+    {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = auth()->user();
@@ -83,10 +81,10 @@ class NonTmController extends Controller
         $zoho->access_token = $accessToken;
         $jsonData = $request->json()->all();
         $nontm = null;
-        if(isset($jsonData['data'][0]['Related_Transaction']['id'])){
+        if (isset($jsonData['data'][0]['Related_Transaction']['id'])) {
             $nontm = $jsonData['data'][0]['Related_Transaction']['id'];
         }
-        $isIncompleteDeal = $db->getIncompleteNonTm($user, $accessToken,$nontm);
+        $isIncompleteDeal = $db->getIncompleteNonTm($user, $accessToken, $nontm);
         if ($isIncompleteDeal) {
             return response()->json($isIncompleteDeal);
         } else {
@@ -97,12 +95,13 @@ class NonTmController extends Controller
             //     return "error somthing" . $zohoDeal;
             // }
             // $zohoDealArray = json_decode($zohoDeal, true);
-            $deal = $db->createNonTmData($user, $accessToken,$dealData ,null);
+            $deal = $db->createNonTmData($user, $accessToken, $dealData, null);
             return response()->json($deal);
         }
     }
 
-    public function updateNonTm(Request $request){
+    public function updateNonTm(Request $request)
+    {
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $helper = new Helper();
@@ -115,14 +114,14 @@ class NonTmController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho->access_token = $accessToken;
         $jsonData = $request->json()->all();
-        $nonTm = $db->retrieveNonTmById($user,$accessToken,$nontmId);
-        if(!$nonTm){
+        $nonTm = $db->retrieveNonTmById($user, $accessToken, $nontmId);
+        if (!$nonTm) {
             return response()->json(['error' => 'Non TM Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        if($nonTm->isNonTmCompleted){
-            $zohoNonTm = $zoho->updateZohoNonTm($jsonData,$nonTm->zoho_nontm_id);
-        }else{
-            $zohoNonTm= $zoho->createZohoNonTm($jsonData);
+        if ($nonTm->isNonTmCompleted) {
+            $zohoNonTm = $zoho->updateZohoNonTm($jsonData, $nonTm->zoho_nontm_id);
+        } else {
+            $zohoNonTm = $zoho->createZohoNonTm($jsonData);
         }
         if (!$zohoNonTm->successful()) {
             return "error somthing" . $zohoNonTm;
@@ -135,8 +134,8 @@ class NonTmController extends Controller
             "final_purchase_price" => isset($jsonData['data'][0]['Final_Purchase_Price']) ? $jsonData['data'][0]['Final_Purchase_Price'] : null,
             "referral_fee_paid_out" => isset($jsonData['data'][0]['Referral_Fee_Paid_Out']) ? $jsonData['data'][0]['Referral_Fee_Paid_Out'] : null,
             "home_warranty_paid_out_agent" => isset($jsonData['data'][0]['Home_Warranty_Paid_by_Agent']) ? $jsonData['data'][0]['Home_Warranty_Paid_by_Agent'] : null,
-            "any_additional_fees_charged" =>isset($jsonData['data'][0]['Any_Additional_Fees_Charged']) ? $jsonData['data'][0]['Any_Additional_Fees_Charged'] : null,
-            "amount_to_chr_gives" =>isset($jsonData['data'][0]['CHR_Gives_Amount_to_Give']) ? $jsonData['data'][0]['CHR_Gives_Amount_to_Give'] : null,
+            "any_additional_fees_charged" => isset($jsonData['data'][0]['Any_Additional_Fees_Charged']) ? $jsonData['data'][0]['Any_Additional_Fees_Charged'] : null,
+            "amount_to_chr_gives" => isset($jsonData['data'][0]['CHR_Gives_Amount_to_Give']) ? $jsonData['data'][0]['CHR_Gives_Amount_to_Give'] : null,
             'agent_comments' => isset($jsonData['data'][0]['Agent_Comments_Remarks_Instructions']) ? $jsonData['data'][0]['Agent_Comments_Remarks_Instructions'] : null,
             'other_commission_notes' => isset($jsonData['data'][0]['Other_Commission_Notes']) ? $jsonData['data'][0]['Other_Commission_Notes'] : null,
             'referralFeeAmount' => isset($jsonData['data'][0]['Referral_Fee_Amount']) ? $jsonData['data'][0]['Referral_Fee_Amount'] : null,
@@ -152,10 +151,10 @@ class NonTmController extends Controller
             "resubmitting_why_list_all_changes" => isset($jsonData['data'][0]['Resubmitting_Why_LIST_ALL_CHANGES']) ? $jsonData['data'][0]['Resubmitting_Why_LIST_ALL_CHANGES'] : null,
             "resubmit_text" => isset($jsonData['data'][0]['resubmit_text']) ? $jsonData['data'][0]['resubmit_text'] : null,
         ];
-        if($nonTm->zoho_nontm_id === null){
+        if ($nonTm->zoho_nontm_id === null) {
             $updateNonTmData['zoho_nontm_id'] = $zohoNonTm['data']['0']['details']['id'];
         }
-        NonTm::updateOrCreate(['id' => $nontmId],$updateNonTmData );
+        NonTm::updateOrCreate(['id' => $nontmId], $updateNonTmData);
         return $zohoNonTm;
     }
 }

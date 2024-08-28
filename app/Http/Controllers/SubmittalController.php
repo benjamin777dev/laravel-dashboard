@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use DataTables;
 
-
-
 class SubmittalController extends Controller
 {
     public function index(Request $request)
@@ -27,7 +25,7 @@ class SubmittalController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        try{
+        try {
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');
@@ -43,8 +41,10 @@ class SubmittalController extends Controller
         }
         
     }
-    public function createACI(Request $request){
-       $aci = $request->data;
+    
+    public function createACI(Request $request)
+    {
+        $aci = $request->data;
         if (isset($aci['CHR_Agent'])) {
             $user = User::where('zoho_id', $aci['CHR_Agent']['id'])->first();
         }
@@ -56,34 +56,34 @@ class SubmittalController extends Controller
             return redirect('/login');
         }
         try {
-        $accessToken = $user->getAccessToken();
-        $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-        $response = $zoho->createAciData($aci);
-        if (!$response->successful()) {
-            Log::error("Error retrieving aci: " . $response->body());
-            throw $response->body();
-        }
-        $helper = new Helper();
-        Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
-            "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
-            "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
-            "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
-            "userId" => isset($user['id']) ? $user['id'] : null,
-            "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
-            "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
-            "total" => isset($aci['Total']) ? $aci['Total'] : null,
-            "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
-            'dealId' => isset($deal['id']) ? $deal['id'] : null,
-            'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
-            'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
-        ]);
-        return $response;
-     } catch (\Exception $e) {
+            $accessToken = $user->getAccessToken();
+            $zoho = new ZohoCRM();
+            $zoho->access_token = $accessToken;
+            $response = $zoho->createAciData($aci);
+            if (!$response->successful()) {
+                Log::error("Error retrieving aci: " . $response->body());
+                throw $response->body();
+            }
+            $helper = new Helper();
+            Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
+                "closing_date" => isset($aci['Closing_Date']) ? $helper->convertToUTC($aci['Closing_Date']) : null,
+                "current_year" => isset($aci['Current_Year']) ? $aci['Current_Year'] : null,
+                "agent_check_amount" => isset($aci['Agent_Check_Amount']) ? $aci['Agent_Check_Amount'] : null,
+                "userId" => isset($user['id']) ? $user['id'] : null,
+                "irs_reported_1099_income_for_this_transaction" => isset($aci['IRS_Reported_1099_Income_For_This_Transaction']) ? $aci['IRS_Reported_1099_Income_For_This_Transaction'] : null,
+                "stage" => isset($aci['Stage']) ? $aci['Stage'] : null,
+                "total" => isset($aci['Total']) ? $aci['Total'] : null,
+                "zoho_aci_id" => isset($aci['id']) ? $aci['id'] : null,
+                'dealId' => isset($deal['id']) ? $deal['id'] : null,
+                'agentName' => isset($aci['Name']) ? $aci['Name'] : null,
+                'less_split_to_chr' => isset($aci['Less_Split_to_CHR']) ? $aci['Less_Split_to_CHR'] : null,
+            ]);
+            return $response;
+        } catch (\Exception $e) {
             Log::error("Error retrieving aci: " . $e->getMessage());
             return $e;
         }
-    }  
+    }
 
     public function showSubmittalView(Request $request)
     {
@@ -123,7 +123,7 @@ class SubmittalController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
-        return view('submittals.view', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','featuresCard','broucherLines','stickyDots','submittalId'));
+        return view('submittals.view', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'qrCodeSheets', 'featuresCard', 'broucherLines', 'stickyDots', 'submittalId'));
     }
 
     public function showSubmittalCreate(Request $request)
@@ -145,7 +145,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         // $broucherPrint = config('variables.broucherPrint');
         // $featuresCard = config('variables.featuresCard');
-        return view('submittals.create', compact('submittal','submittalType','listingSubmittaltype','submittalId'));
+        return view('submittals.create', compact('submittal', 'submittalType', 'listingSubmittaltype', 'submittalId'));
     }
 
     public function showListingSubmittalForm(Request $request)
@@ -171,7 +171,7 @@ class SubmittalController extends Controller
         $stickyDots = config('variables.stickyDots');
         $qrCodeSheets = config('variables.qrCodeSheet');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.listingsubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','qrCodeSheets','broucherLines','stickyDots','featuresCard','resubmit'))->render();
+        return view('submittals.listingsubmittalcourusal', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'qrCodeSheets', 'broucherLines', 'stickyDots', 'featuresCard', 'resubmit'))->render();
     }
 
     public function showBuyerSubmittalForm(Request $request)
@@ -193,7 +193,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.buyersubmittalcourusal', compact('deals','submittalType','listingSubmittaltype','submittal','broucherPrint','featuresCard'))->render();
+        return view('submittals.buyersubmittalcourusal', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'featuresCard'))->render();
     }
 
     public function createListingSubmittal(Request $request)
@@ -209,7 +209,7 @@ class SubmittalController extends Controller
         $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
         $formType = $jsonData['data'][0]['formType'];
-        $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken,$dealId,'listing-submittal',$formType);
+        $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken, $dealId, 'listing-submittal', $formType);
         // $isIncompleteSubmittal =null;
         if ($isIncompleteSubmittal) {
             return response()->json($isIncompleteSubmittal);
@@ -221,7 +221,7 @@ class SubmittalController extends Controller
             // $submittalArray = json_decode($submittal, true);
             // $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
-            $deal = $db->createListingSubmittal($user, $accessToken, null,$submittalData,$dealId,'listing-submittal');
+            $deal = $db->createListingSubmittal($user, $accessToken, null, $submittalData, $dealId, 'listing-submittal');
             return response()->json($deal);
         }
 
@@ -256,8 +256,8 @@ class SubmittalController extends Controller
         $submittalArray = json_decode($submittal, true);
         $data = $submittalArray['data'][0]['details'];
         $submittalData = $jsonData['data'][0];
-        $submittalData['id']=$submittalId;
-        $deal = $db->updateListingSubmittal($user, $accessToken, $data,$submittalData,$isNew);
+        $submittalData['id'] = $submittalId;
+        $deal = $db->updateListingSubmittal($user, $accessToken, $data, $submittalData, $isNew);
         return response()->json($deal);
     }
 
@@ -273,7 +273,7 @@ class SubmittalController extends Controller
         $zoho->access_token = $accessToken;
         $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
-        $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken,$dealId,'buyer-submittal',null);
+        $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken, $dealId, 'buyer-submittal', null);
         // $isIncompleteSubmittal =null;
         if ($isIncompleteSubmittal) {
             return response()->json($isIncompleteSubmittal);
@@ -285,7 +285,7 @@ class SubmittalController extends Controller
             // $submittalArray = json_decode($submittal, true);
             // $data = $submittalArray['data'][0]['details'];
             $submittalData = $jsonData['data'][0];
-            $deal = $db->createListingSubmittal($user, $accessToken, null,$submittalData,$dealId,'buyer-submittal');
+            $deal = $db->createListingSubmittal($user, $accessToken, null, $submittalData, $dealId, 'buyer-submittal');
             return response()->json($deal);
         }
 
@@ -320,8 +320,8 @@ class SubmittalController extends Controller
         $submittalArray = json_decode($submittal, true);
         $data = $submittalArray['data'][0]['details'];
         $submittalData = $jsonData['data'][0];
-        $submittalData['id']=$submittalId;
-        $deal = $db->updateBuyerSubmittal($user, $accessToken, $data,$submittalData,$isNew);
+        $submittalData['id'] = $submittalId;
+        $deal = $db->updateBuyerSubmittal($user, $accessToken, $data, $submittalData, $isNew);
         return response()->json($deal);
     }
 }

@@ -50,12 +50,12 @@ class NonTm extends Model
 
     public function dealData()
     {
-        return $this->belongsTo(Deal::class, 'dealId','zoho_deal_id');
+        return $this->belongsTo(Deal::class, 'dealId', 'zoho_deal_id');
     }
 
     public function contactData()
     {
         return $this->belongsTo(Contact::class, 'contactId');
     }
-    
+
 }

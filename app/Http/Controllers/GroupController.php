@@ -35,13 +35,13 @@ class GroupController extends Controller
         $contacts = $db->retrieveContactGroups($user, $accessToken, $filter, $sort);
         $contactsList = $db->retreiveContactsHavingEmail($user, $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
-        $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
+        $shownGroups = $db->retrieveGroups($user, $accessToken, "shownGroups");
         $ownerGroups = $db->getOwnerGroups($user, $accessToken);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
-            return view('groups.load', compact('contacts','groups','shownGroups'))->render();
+            return view('groups.load', compact('contacts', 'groups', 'shownGroups'))->render();
         }
-        return view('groups.index', compact('contacts','groups','shownGroups', 'ownerGroups','contactsList'));
+        return view('groups.index', compact('contacts', 'groups', 'shownGroups', 'ownerGroups', 'contactsList'));
     }
 
     public function createGroup(Request $request)
@@ -125,7 +125,7 @@ class GroupController extends Controller
                 ]
             ];
             $response = $zoho->updateGroup($jsonData, $group->zoho_group_id);
-            if (!$response['data'][0]['code']==="SUCCESS") {
+            if (!$response['data'][0]['code'] === "SUCCESS") {
                 return response()->json(['status' => 'error', 'message' => 'Failed to update group']);
             }
             Log::info('Update GRoup RESPONSE ' . json_encode($response));
@@ -166,7 +166,7 @@ class GroupController extends Controller
 
             $response = $zoho->deleteGroup($group->zoho_group_id);
             Log::info('Update Group RESPONSE ' . json_encode($response));
-            if (!$response['data'][0]['code']==="SUCCESS") {
+            if (!$response['data'][0]['code'] === "SUCCESS") {
                 return response()->json(['status' => 'error', 'message' => 'Failed to delete group']);
             }
             if ($group) {
@@ -191,16 +191,17 @@ class GroupController extends Controller
         $columnShowArray = json_decode($columnShow, true);
         $filter = $request->query('filter');
         $sort = $request->query('sort');
-        if($columnShowArray!=[]){
-            $db->updateGroups($user, $accessToken,$columnShowArray);
+        if ($columnShowArray != []) {
+            $db->updateGroups($user, $accessToken, $columnShowArray);
         }
-        $shownGroups = $db->retrieveGroups($user, $accessToken,"shownGroups");
-        $contacts = $db->retrieveContactGroups($user, $accessToken,$filter,$sort);
+        $shownGroups = $db->retrieveGroups($user, $accessToken, "shownGroups");
+        $contacts = $db->retrieveContactGroups($user, $accessToken, $filter, $sort);
         // return response()->json(['shownGroups' => $shownGroups, 'contacts' => $contacts]);
-        return view('groups.group', compact('shownGroups','contacts'))->render();
+        return view('groups.group', compact('shownGroups', 'contacts'))->render();
     }
 
-    public function updateContactGroup(Request $request){
+    public function updateContactGroup(Request $request)
+    {
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
@@ -214,24 +215,24 @@ class GroupController extends Controller
             $jsonInput = $request->json()->all();
             $jsonData = $jsonInput['data'][0];
             $response = $zoho->updateContactGroup($jsonInput);
-            if (!$response['data'][0]['code']==="SUCCESS") {
-                return "error something".$response;
+            if (!$response['data'][0]['code'] === "SUCCESS") {
+                return "error something" . $response;
             }
             $responseArray = json_decode($response, true);
             $data = $responseArray['data'][0]['details'];
             Log::info('Update GRoup RESPONSE ' . json_encode($data));
-            $contact = Contact::where('zoho_contact_id',$jsonData['Contacts']['id'])->first();
+            $contact = Contact::where('zoho_contact_id', $jsonData['Contacts']['id'])->first();
 
-            $group = Groups::where('zoho_group_id',$jsonData['Groups']['id'])->first();
+            $group = Groups::where('zoho_group_id', $jsonData['Groups']['id'])->first();
             // Check if the record already exists
             $existingContactGroup = ContactGroups::where('zoho_contact_group_id', $data['id'])->first();
             if ($existingContactGroup) {
-               $existingContactGroup->ownerId = $user->id;
-               $existingContactGroup->contactId = $contact['id'] ?? null;
-               $existingContactGroup->groupId = $group['id'] ?? null;
-               $existingContactGroup->save();
+                $existingContactGroup->ownerId = $user->id;
+                $existingContactGroup->contactId = $contact['id'] ?? null;
+                $existingContactGroup->groupId = $group['id'] ?? null;
+                $existingContactGroup->save();
                 return response()->json($existingContactGroup);
-            }else{
+            } else {
                 $contactGroup = ContactGroups::create(
                     [
                         'ownerId' => $user->id,
@@ -250,7 +251,8 @@ class GroupController extends Controller
         }
     }
 
-    public function deleteContactGroup(Request $request,$id){
+    public function deleteContactGroup(Request $request, $id)
+    {
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
@@ -299,8 +301,8 @@ class GroupController extends Controller
             $csvHeaders = ["Contacts", "Groups"];
             foreach ($keyValueArray as $record) {
                 $csvData[] = [
-                    "Contacts" =>$record['contactId'],
-                    "Groups" =>$record['groupId']
+                    "Contacts" => $record['contactId'],
+                    "Groups" => $record['groupId']
                 ];
             }
 
@@ -332,7 +334,7 @@ class GroupController extends Controller
             //Bulk Write
             $bulkJob = $zoho->bulkWriteJob($fileId);
             $jobID = $bulkJob['details']['id'];
-            $saveBulkJobInDB = $db->saveBulkJobInDB($fileId,$user->id,$jobID);
+            $saveBulkJobInDB = $db->saveBulkJobInDB($fileId, $user->id, $jobID);
             // Return download response for the zip file
             return response()->json($saveBulkJobInDB);
         } catch (\Exception $e) {
@@ -366,21 +368,21 @@ class GroupController extends Controller
         $zipFile = $getJobDetail['result']['download_url'];
         Log::info('ZIPFILE:', ['ZIPFILE' => $zipFile]);
         $getBulkJob->file = $zipFile;
-        $extractZipFile = $helper->extractZipFile($zipFile,$zoho);
+        $extractZipFile = $helper->extractZipFile($zipFile, $zoho);
         $extractedFilesJSON = $helper->csvToJson($extractZipFile);
 
         $statusToFind = 'ADDED';
-        $recordByStatus = $helper->array_find($extractedFilesJSON, function($item) use ($statusToFind) {
+        $recordByStatus = $helper->array_find($extractedFilesJSON, function ($item) use ($statusToFind) {
             return $item['STATUS'] !== $statusToFind;
         });
         if ($recordByStatus) {
             $getBulkJob->jobStatus = 'cancelled';
-        }else{
+        } else {
             $getBulkJob->jobStatus = 'completed';
         }
-        for ($i=0; $i < count($extractedFilesJSON); $i++) {
+        for ($i = 0; $i < count($extractedFilesJSON); $i++) {
             $curr = $extractedFilesJSON[$i];
-            if ($curr['STATUS']=='ADDED') {
+            if ($curr['STATUS'] == 'ADDED') {
                 $contact = Contact::where('zoho_contact_id', $curr['Contacts'])->first();
                 $group = Groups::where('zoho_group_id', $curr['Groups'])->first();
                 $contactGroup = ContactGroups::create(

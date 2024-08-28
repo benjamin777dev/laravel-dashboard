@@ -217,12 +217,12 @@ class Aci extends Model
 
         $mappedData['transaction_id'] = $dealRecord->id;
         $mappedData['zoho_aci_id'] = $idKey;
-        
+
         if ($dealRecord->teamPartnership) {
             Log::info("Team Partnership:" . $dealRecord->teamPartnership);
             $mappedData['team_partnership_id'] = $dealRecord->teamPartnership ?? null;
         }
-        
+
 
 
         //Log::info("Mapped Data: ", ['data' => $mappedData]);

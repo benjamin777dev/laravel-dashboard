@@ -16,7 +16,6 @@ class ContactRole extends Model
         'zoho_role_id',
     ];
 
-    
     public function userData()
     {
         return $this->belongsTo(User::class, 'userId');

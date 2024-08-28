@@ -338,157 +338,157 @@ class DatabaseService
         Log::info("Contacts stored into database successfully.");
     }
 
-    public function storeContactIntoDB($id,$contact)
+    public function storeContactIntoDB($id, $contact)
     {
         $helper = new Helper();
         Log::info('Storing Contacts Into Database', ['contact' => $contact]);
 
 
         $user = User::where('root_user_id', $contact['Owner']['id'])->first();
-            // Map the data correctly
-            $mappedData = [
-                'contact_owner' => $user ? $user->root_user_id : null,
-                'zoho_contact_id' => $contact['id'] ?? null,
-                'email' => $contact['Email'] ?? null,
-                'first_name' => $contact['First_Name'] ?? null,
-                'last_name' => $contact['Last_Name'] ?? null,
-                'phone' => $contact['Phone'] ?? null,
-                'business_name' => $contact['Business_Name'] ?? null,
-                'business_information' => $contact['Business_Info'] ?? null,
-                'secondory_email' => $contact['Secondary_Email'] ?? null,
-                'relationship_type' => $contact['Relationship_Type'] ?? null,
-                'market_area' => $contact['Market_Area'] ?? null,
-                'envelope_salutation' => $contact['Salutation_s'] ?? null,
-                'mobile' => $contact['Mobile'] ?? null,
-                'created_time' => isset($contact['Created_Time']) ? $helper->convertToUTC($contact['Created_Time']) : null,
-                'abcd' => $contact['ABCD'] ?? null,
-                'mailing_address' => $contact['Mailing_Street'] ?? null,
-                'mailing_city' => $contact['Mailing_City'] ?? null,
-                'mailing_state' => $contact['Mailing_State'] ?? null,
-                'mailing_zip' => $contact['Mailing_Zip'] ?? null,
-                'isContactCompleted' => true,
-                'isInZoho' => isset($contact['$state']) && $contact['$state'] == 'save' ? 1 : 0,
-                'Lead_Source' => $contact['Lead_Source'] ?? null,
-                'referred_id' => $contact['Referred_By']['id'] ?? null,
-                'lead_source_detail' => $contact['Lead_Source_Detail'] ?? null,
-                'spouse_partner' => $contact['Spouse_Partner']['id'] ?? null,
-                'last_called' => isset($contact['Last_Called']) ? $helper->convertToUTC($contact['Last_Called']) : null,
-                'last_emailed' => isset($contact['Last_Emailed']) ? $helper->convertToUTC($contact['Last_Emailed']) : null,
-                'email_blast_opt_in' => $contact['Email_Blast_Opt_In'] ?? null,
-                'twitter_url' => $contact['Twitter_URL'] ?? null,
-                'emergency_contact_phone' => $contact['Emergency_Contact_Phone'] ?? null,
-                'print_qr_code_sheet' => $contact['Print_QR_Code_Sheet'] ?? null,
-                'invalid_address_usps' => $contact['Invalid_Address_USPS'] ?? null,
-                'mls_recolorado' => $contact['MLS_REColorado'] ?? null,
-                'mls_navica' => $contact['MLS_Navica'] ?? null,
-                'perfect' => $contact['Perfect'] ?? null,
-                'realtor_board' => $contact['Realtor_Board'] ?? null,
-                'initial_split' => $contact['Initial_Split'] ?? null,
-                'has_missing_important_date' => $contact['HasMissingImportantDate'] ?? null,
-                'need_o_e' => $contact['Need_O_E'] ?? null,
-                'culture_index' => $contact['Culture_Index'] ?? null,
-                'sticky_dots' => $contact['Sticky_Dots'] ?? null,
-                'strategy_group' => $contact['Strategy_Group'] ?? null,
-                'weekly_email' => $contact['Weekly_Email'] ?? null,
-                'number_of_chats' => $contact['Number_Of_Chats'] ?? null,
-                'notepad_mailer_opt_in' => $contact['Notepad_Mailer_Opt_In'] ?? null,
-                'chr_gives_amount' => $contact['CHR_Gives_Amount'] ?? null,
-                'other_zip' => $contact['Other_Zip'] ?? null,
-                'market_mailer_opt_in' => $contact['Market_Mailer_Opt_In'] ?? null,
-                'groups' => json_encode($contact['Groups']) ?? null,
-                'closer_name_phone' => $contact['Closer_Name_Phone'] ?? null,
-                'unsubscribe_from_reviews' => $contact['Unsubscribe_From_Reviews'] ?? null,
-                'outsourced_mktg_onsite_video' => $contact['Outsourced_Mktg_Onsite_Video'] ?? null,
-                'random_notes' => $contact['Random_Notes'] ?? null,
-                'residual_cap' => $contact['Residual_Cap'] ?? null,
-                'email_blast_to_reverse_prospect_list' => $contact['Email_Blast_to_Reverse_Prospect_List'] ?? null,
-                'review_generation' => $contact['Review_Generation'] ?? null,
-                'zillow_url' => $contact['Zillow_URL'] ?? null,
-                'agent_assistant' => $contact['Agent_Assistant'] ?? null,
-                'social_media_ads' => $contact['Social_Media_Ads'] ?? null,
-                'referred_by' => $contact['Referred_By'] ?? null,
-                'peer_advisor' => $contact['Peer_Advisor'] ?? null,
-                'agent_name_on_marketing' => $contact['Agent_Name_on_Marketing'] ?? null,
-                'other_street' => $contact['Other_Street'] ?? null,
-                'qr_code_sign_rider' => $contact['QR_Code_Sign_Rider'] ?? null,
-                'google_business_page_url' => $contact['Google_Business_Page_URL'] ?? null,
-                'has_email' => $contact['Has_Email'] ?? null,
-                'has_address' => $contact['Has_Address'] ?? null,
-                'salesforce_id' => $contact['Salesforce_ID'] ?? null,
-                'mls_ires' => $contact['MLS_IRES'] ?? null,
-                'outsourced_mktg_floorplans' => $contact['Outsourced_Mktg_Floorplans'] ?? null,
-                'income_goal' => $contact['Income_Goal'] ?? null,
-                'chr_relationship' => $contact['CHR_Relationship'] ?? null,
-                'locked_s' => $contact['Locked__s'] ?? null,
-                'tag' => isset($contact['Tag']) ? json_encode($contact['Tag']) : null,
-                'import_batch' => $contact['Import_Batch'] ?? null,
-                'termination_date' => isset($contact['Termination_Date']) ? $helper->convertToUTC($contact['Termination_Date']) : null,
-                'license_start_date' => isset($contact['License_Start_Date']) ? $helper->convertToUTC($contact['License_Start_Date']) : null,
-                'brokermint_id' => $contact['Brokermint_ID'] ?? null,
-                'residual_split' => $contact['Residual_Split'] ?? null,
-                'visitor_score' => $contact['Visitor_Score'] ?? null,
-                'sign_vendor' => $contact['Sign_Vendor'] ?? null,
-                'other_state' => $contact['Other_State'] ?? null,
-                'last_activity_time' => isset($contact['Last_Activity_Time']) ? $helper->convertToUTC($contact['Last_Activity_Time']) : null,
-                'unsubscribed_mode' => $contact['Unsubscribed_Mode'] ?? null,
-                'license_number' => $contact['License_Number'] ?? null,
-                'exchange_rate' => $contact['Exchange_Rate'] ?? null,
-                'email_to_cc_on_all_marketing_comms' => $contact['Email_to_CC_on_All_Marketing_Comms'] ?? null,
-                'tm_preference' => $contact['TM_Preference'] ?? null,
-                'salutation_s' => $contact['Salutation_s'] ?? null,
-                '$locked_for_me' => $contact['$locked_for_me'] ?? null,
-                '$approved' => $contact['$approved'] ?? null,
-                'email_cc_1' => $contact['Email_CC_1'] ?? null,
-                'google_business' => $contact['Google_Business'] ?? null,
-                'email_cc_2' => $contact['Email_CC_2'] ?? null,
-                'days_visited' => $contact['Days_Visited'] ?? null,
-                'pipeline_stage' => $contact['Pipeline_Stage'] ?? null,
-                'social_media_images' => $contact['Social_Media_Images'] ?? null,
-                'fees_charged_to_seller_at_closing' => $contact['Fees_Charged_to_Seller_at_Closing'] ?? null,
-                'realtor_com_url' => $contact['Realtor_com_URL'] ?? null,
-                'title_company' => $contact['Title_Company'] ?? null,
-                'select_your_prints' => $contact['Select_your_prints'] ?? null,
-                'role' => $contact['Role'] ?? null,
-                'missing' => $contact['Missing'] ?? null,
-                'groups_tags' => json_encode($contact['Groups_Tags']) ?? null,
-                'lender_company_name' => $contact['Lender_Company_Name'] ?? null,
-                '$zia_owner_assignment' => $contact['$zia_owner_assignment'] ?? null,
-                'secondary_email' => $contact['Secondary_Email'] ?? null,
-                'current_annual_academy' => $contact['Current_Annual_Academy'] ?? null,
-                'transaction_status_reports' => $contact['Transaction_Status_Reports'] ?? null,
-                'non_tm_assignment' => $contact['Non_TM_Assignment'] ?? null,
-                'user' => $contact['User']['id'] ?? null,
-                'lender_email' => $contact['Lender_Email'] ?? null,
-                'sign_install' => $contact['Sign_Install'] ?? null,
-                'team_name' => $contact['Team_Name'] ?? null,
-                'pintrest_url' => $contact['Pintrest_URL'] ?? null,
-                'youtube_url' => $contact['Youtube_URL'] ?? null,
-                'include_insights_in_intro' => $contact['Include_Insights_in_Intro'] ?? null,
-                'import_id' => $contact['Import_ID'] ?? null,
-                'business_info' => $contact['Business_Info'] ?? null,
-                'email_signature' => $contact['Email_Signature'] ?? null,
-                'property_website_qr_code' => $contact['Property_Website_QR_Code'] ?? null,
-                'draft_showing_instructions' => $contact['Draft_Showing_Instructions'] ?? null,
-                'additional_email_for_confirmation' => $contact['Additional_Email_for_Confirmation'] ?? null,
-                'important_date_added' => $contact['Important_Date_Added'] ?? null,
-                'emergency_contact_name' => $contact['Emergency_Contact_Name'] ?? null,
-                'initial_cap' => $contact['Initial_Cap'] ?? null,
-                'unsubscribed_time' => isset($contact['Unsubscribed_Time']) ? $helper->convertToUTC($contact['Unsubscribed_Time']) : null,
-                'mls_ppar' => $contact['MLS_PPAR'] ?? null,
-                'outsourced_mktg_3d_zillow_tour' => $contact['Outsourced_Mktg_3D_Zillow_Tour'] ?? null,
-                'marketing_specialist' => $contact['Marketing_Specialist'] ?? null,
-                'default_commission_plan_id' => $contact['Default_Commission_Plan_Id'] ?? null,
-                'feature_cards_or_sheets' => $contact['Feature_Cards_or_Sheets'] ?? null,
-                'termination_reason' => $contact['Termination_Reason'] ?? null,
-                'transaction_manager' => $contact['Transaction_Manager'] ?? null,
-                'auto_address' => $contact['Auto_Address'] ?? null,
-            ];
+        // Map the data correctly
+        $mappedData = [
+            'contact_owner' => $user ? $user->root_user_id : null,
+            'zoho_contact_id' => $contact['id'] ?? null,
+            'email' => $contact['Email'] ?? null,
+            'first_name' => $contact['First_Name'] ?? null,
+            'last_name' => $contact['Last_Name'] ?? null,
+            'phone' => $contact['Phone'] ?? null,
+            'business_name' => $contact['Business_Name'] ?? null,
+            'business_information' => $contact['Business_Info'] ?? null,
+            'secondory_email' => $contact['Secondary_Email'] ?? null,
+            'relationship_type' => $contact['Relationship_Type'] ?? null,
+            'market_area' => $contact['Market_Area'] ?? null,
+            'envelope_salutation' => $contact['Salutation_s'] ?? null,
+            'mobile' => $contact['Mobile'] ?? null,
+            'created_time' => isset($contact['Created_Time']) ? $helper->convertToUTC($contact['Created_Time']) : null,
+            'abcd' => $contact['ABCD'] ?? null,
+            'mailing_address' => $contact['Mailing_Street'] ?? null,
+            'mailing_city' => $contact['Mailing_City'] ?? null,
+            'mailing_state' => $contact['Mailing_State'] ?? null,
+            'mailing_zip' => $contact['Mailing_Zip'] ?? null,
+            'isContactCompleted' => true,
+            'isInZoho' => isset($contact['$state']) && $contact['$state'] == 'save' ? 1 : 0,
+            'Lead_Source' => $contact['Lead_Source'] ?? null,
+            'referred_id' => $contact['Referred_By']['id'] ?? null,
+            'lead_source_detail' => $contact['Lead_Source_Detail'] ?? null,
+            'spouse_partner' => $contact['Spouse_Partner']['id'] ?? null,
+            'last_called' => isset($contact['Last_Called']) ? $helper->convertToUTC($contact['Last_Called']) : null,
+            'last_emailed' => isset($contact['Last_Emailed']) ? $helper->convertToUTC($contact['Last_Emailed']) : null,
+            'email_blast_opt_in' => $contact['Email_Blast_Opt_In'] ?? null,
+            'twitter_url' => $contact['Twitter_URL'] ?? null,
+            'emergency_contact_phone' => $contact['Emergency_Contact_Phone'] ?? null,
+            'print_qr_code_sheet' => $contact['Print_QR_Code_Sheet'] ?? null,
+            'invalid_address_usps' => $contact['Invalid_Address_USPS'] ?? null,
+            'mls_recolorado' => $contact['MLS_REColorado'] ?? null,
+            'mls_navica' => $contact['MLS_Navica'] ?? null,
+            'perfect' => $contact['Perfect'] ?? null,
+            'realtor_board' => $contact['Realtor_Board'] ?? null,
+            'initial_split' => $contact['Initial_Split'] ?? null,
+            'has_missing_important_date' => $contact['HasMissingImportantDate'] ?? null,
+            'need_o_e' => $contact['Need_O_E'] ?? null,
+            'culture_index' => $contact['Culture_Index'] ?? null,
+            'sticky_dots' => $contact['Sticky_Dots'] ?? null,
+            'strategy_group' => $contact['Strategy_Group'] ?? null,
+            'weekly_email' => $contact['Weekly_Email'] ?? null,
+            'number_of_chats' => $contact['Number_Of_Chats'] ?? null,
+            'notepad_mailer_opt_in' => $contact['Notepad_Mailer_Opt_In'] ?? null,
+            'chr_gives_amount' => $contact['CHR_Gives_Amount'] ?? null,
+            'other_zip' => $contact['Other_Zip'] ?? null,
+            'market_mailer_opt_in' => $contact['Market_Mailer_Opt_In'] ?? null,
+            'groups' => json_encode($contact['Groups']) ?? null,
+            'closer_name_phone' => $contact['Closer_Name_Phone'] ?? null,
+            'unsubscribe_from_reviews' => $contact['Unsubscribe_From_Reviews'] ?? null,
+            'outsourced_mktg_onsite_video' => $contact['Outsourced_Mktg_Onsite_Video'] ?? null,
+            'random_notes' => $contact['Random_Notes'] ?? null,
+            'residual_cap' => $contact['Residual_Cap'] ?? null,
+            'email_blast_to_reverse_prospect_list' => $contact['Email_Blast_to_Reverse_Prospect_List'] ?? null,
+            'review_generation' => $contact['Review_Generation'] ?? null,
+            'zillow_url' => $contact['Zillow_URL'] ?? null,
+            'agent_assistant' => $contact['Agent_Assistant'] ?? null,
+            'social_media_ads' => $contact['Social_Media_Ads'] ?? null,
+            'referred_by' => $contact['Referred_By'] ?? null,
+            'peer_advisor' => $contact['Peer_Advisor'] ?? null,
+            'agent_name_on_marketing' => $contact['Agent_Name_on_Marketing'] ?? null,
+            'other_street' => $contact['Other_Street'] ?? null,
+            'qr_code_sign_rider' => $contact['QR_Code_Sign_Rider'] ?? null,
+            'google_business_page_url' => $contact['Google_Business_Page_URL'] ?? null,
+            'has_email' => $contact['Has_Email'] ?? null,
+            'has_address' => $contact['Has_Address'] ?? null,
+            'salesforce_id' => $contact['Salesforce_ID'] ?? null,
+            'mls_ires' => $contact['MLS_IRES'] ?? null,
+            'outsourced_mktg_floorplans' => $contact['Outsourced_Mktg_Floorplans'] ?? null,
+            'income_goal' => $contact['Income_Goal'] ?? null,
+            'chr_relationship' => $contact['CHR_Relationship'] ?? null,
+            'locked_s' => $contact['Locked__s'] ?? null,
+            'tag' => isset($contact['Tag']) ? json_encode($contact['Tag']) : null,
+            'import_batch' => $contact['Import_Batch'] ?? null,
+            'termination_date' => isset($contact['Termination_Date']) ? $helper->convertToUTC($contact['Termination_Date']) : null,
+            'license_start_date' => isset($contact['License_Start_Date']) ? $helper->convertToUTC($contact['License_Start_Date']) : null,
+            'brokermint_id' => $contact['Brokermint_ID'] ?? null,
+            'residual_split' => $contact['Residual_Split'] ?? null,
+            'visitor_score' => $contact['Visitor_Score'] ?? null,
+            'sign_vendor' => $contact['Sign_Vendor'] ?? null,
+            'other_state' => $contact['Other_State'] ?? null,
+            'last_activity_time' => isset($contact['Last_Activity_Time']) ? $helper->convertToUTC($contact['Last_Activity_Time']) : null,
+            'unsubscribed_mode' => $contact['Unsubscribed_Mode'] ?? null,
+            'license_number' => $contact['License_Number'] ?? null,
+            'exchange_rate' => $contact['Exchange_Rate'] ?? null,
+            'email_to_cc_on_all_marketing_comms' => $contact['Email_to_CC_on_All_Marketing_Comms'] ?? null,
+            'tm_preference' => $contact['TM_Preference'] ?? null,
+            'salutation_s' => $contact['Salutation_s'] ?? null,
+            '$locked_for_me' => $contact['$locked_for_me'] ?? null,
+            '$approved' => $contact['$approved'] ?? null,
+            'email_cc_1' => $contact['Email_CC_1'] ?? null,
+            'google_business' => $contact['Google_Business'] ?? null,
+            'email_cc_2' => $contact['Email_CC_2'] ?? null,
+            'days_visited' => $contact['Days_Visited'] ?? null,
+            'pipeline_stage' => $contact['Pipeline_Stage'] ?? null,
+            'social_media_images' => $contact['Social_Media_Images'] ?? null,
+            'fees_charged_to_seller_at_closing' => $contact['Fees_Charged_to_Seller_at_Closing'] ?? null,
+            'realtor_com_url' => $contact['Realtor_com_URL'] ?? null,
+            'title_company' => $contact['Title_Company'] ?? null,
+            'select_your_prints' => $contact['Select_your_prints'] ?? null,
+            'role' => $contact['Role'] ?? null,
+            'missing' => $contact['Missing'] ?? null,
+            'groups_tags' => json_encode($contact['Groups_Tags']) ?? null,
+            'lender_company_name' => $contact['Lender_Company_Name'] ?? null,
+            '$zia_owner_assignment' => $contact['$zia_owner_assignment'] ?? null,
+            'secondary_email' => $contact['Secondary_Email'] ?? null,
+            'current_annual_academy' => $contact['Current_Annual_Academy'] ?? null,
+            'transaction_status_reports' => $contact['Transaction_Status_Reports'] ?? null,
+            'non_tm_assignment' => $contact['Non_TM_Assignment'] ?? null,
+            'user' => $contact['User']['id'] ?? null,
+            'lender_email' => $contact['Lender_Email'] ?? null,
+            'sign_install' => $contact['Sign_Install'] ?? null,
+            'team_name' => $contact['Team_Name'] ?? null,
+            'pintrest_url' => $contact['Pintrest_URL'] ?? null,
+            'youtube_url' => $contact['Youtube_URL'] ?? null,
+            'include_insights_in_intro' => $contact['Include_Insights_in_Intro'] ?? null,
+            'import_id' => $contact['Import_ID'] ?? null,
+            'business_info' => $contact['Business_Info'] ?? null,
+            'email_signature' => $contact['Email_Signature'] ?? null,
+            'property_website_qr_code' => $contact['Property_Website_QR_Code'] ?? null,
+            'draft_showing_instructions' => $contact['Draft_Showing_Instructions'] ?? null,
+            'additional_email_for_confirmation' => $contact['Additional_Email_for_Confirmation'] ?? null,
+            'important_date_added' => $contact['Important_Date_Added'] ?? null,
+            'emergency_contact_name' => $contact['Emergency_Contact_Name'] ?? null,
+            'initial_cap' => $contact['Initial_Cap'] ?? null,
+            'unsubscribed_time' => isset($contact['Unsubscribed_Time']) ? $helper->convertToUTC($contact['Unsubscribed_Time']) : null,
+            'mls_ppar' => $contact['MLS_PPAR'] ?? null,
+            'outsourced_mktg_3d_zillow_tour' => $contact['Outsourced_Mktg_3D_Zillow_Tour'] ?? null,
+            'marketing_specialist' => $contact['Marketing_Specialist'] ?? null,
+            'default_commission_plan_id' => $contact['Default_Commission_Plan_Id'] ?? null,
+            'feature_cards_or_sheets' => $contact['Feature_Cards_or_Sheets'] ?? null,
+            'termination_reason' => $contact['Termination_Reason'] ?? null,
+            'transaction_manager' => $contact['Transaction_Manager'] ?? null,
+            'auto_address' => $contact['Auto_Address'] ?? null,
+        ];
 
-            // Update or create the contact
-            Log::info("Contacts stored into database successfully.".$contact['id']);
-            Contact::updateOrCreate(['id' => $id], $mappedData);
-           
-           
+        // Update or create the contact
+        Log::info("Contacts stored into database successfully." . $contact['id']);
+        Contact::updateOrCreate(['id' => $id], $mappedData);
+
+
 
         Log::info("Contacts stored into database successfully.");
     }
@@ -658,20 +658,28 @@ class DatabaseService
 
             // Retrieve deals based on the conditions
             if ($all) {
-                $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
-                       $query->where('isSubmittalComplete', 'true');
-                   }])->with(['nontms' => function ($query) {
-                    $query->where('isNonTmCompleted', true);
-                }])->get();
+                $deals = $deals->where($conditions)->with([
+                    'submittals' => function ($query) {
+                        $query->where('isSubmittalComplete', 'true');
+                    }
+                ])->with([
+                    'nontms' => function ($query) {
+                        $query->where('isNonTmCompleted', true);
+                    }
+                ])->get();
             } else {
-                $deals = $deals->where($conditions)->with(['submittals' => function ($query) {
-                       $query->where('isSubmittalComplete', 'true');
-                   }])->with(['nontms' => function ($query) {
-                    $query->where('isNonTmCompleted', true);
-                }])->get();
+                $deals = $deals->where($conditions)->with([
+                    'submittals' => function ($query) {
+                        $query->where('isSubmittalComplete', 'true');
+                    }
+                ])->with([
+                    'nontms' => function ($query) {
+                        $query->where('isNonTmCompleted', true);
+                    }
+                ])->get();
             }
 
-           
+
             // load the relationship for leadAgent
             $deals->each(function ($deal) {
                 $deal->leadAgent ?? null;
@@ -702,7 +710,7 @@ class DatabaseService
 
             // Retrieve deals based on the conditions and ensure zoho_deal_id is not in submittals dealId
             $submittalsDealIds = DB::table('submittals')->whereNotNull('dealId')->pluck('dealId');
-             Log::info("SUBMITTALDEALIDS", ['query' => $submittalsDealIds->toArray()]);
+            Log::info("SUBMITTALDEALIDS", ['query' => $submittalsDealIds->toArray()]);
 
             $dealsQuery = Deal::where($conditions)
                 ->whereNotIn('stage', config('variables.dealPipelineStages'))
@@ -751,8 +759,8 @@ class DatabaseService
 
             // Retrieve the deal based on the conditions
             $deal = Deal::with('userData', 'contactName', 'leadAgent')
-                        ->where($conditions)
-                        ->first();
+                ->where($conditions)
+                ->first();
 
             return $deal;
         } catch (\Exception $e) {
@@ -789,7 +797,7 @@ class DatabaseService
             $conditions = [['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+            $contacts = Contact::with('userData', 'contactName', 'spouseContact', 'groupsData');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -799,7 +807,7 @@ class DatabaseService
             if ($contacts->zoho_contact_id) {
                 // Get all related deals
                 $allDeals = $contacts->allRelatedDeals();
-    
+
                 // Optionally, you can attach these deals to the contact or return them separately
                 $contacts->deals = $allDeals;
             }
@@ -822,7 +830,7 @@ class DatabaseService
             $conditions = [['id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+            $contacts = Contact::with('userData', 'contactName', 'spouseContact', 'groupsData');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -846,7 +854,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['email', $email]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact','groupsData');
+            $contacts = Contact::with('userData', 'contactName', 'spouseContact', 'groupsData');
 
             Log::info("Contacts Conditions", ['contacts' => $conditions]);
 
@@ -893,7 +901,7 @@ class DatabaseService
             $conditions = [['contact_owner', $user->root_user_id], ['zoho_contact_id', $contactId]];
 
             // Adjust query to include contactName table using join
-            $contacts = Contact::with('userData', 'contactName','spouseContact');
+            $contacts = Contact::with('userData', 'contactName', 'spouseContact');
 
             Log::info("Deal Conditions", ['contacts' => $conditions]);
 
@@ -939,7 +947,7 @@ class DatabaseService
             $endOfToday = $now->copy()->endOfDay();
             $tasksQuery = Task::where('owner', $user->id)
                 ->with(['dealData', 'contactData']);
-    
+
             switch ($tab) {
                 case 'Overdue':
                     // These are any tasks that have a due date less than today and the task status isn't completed
@@ -948,52 +956,52 @@ class DatabaseService
                         ['status', '!=', 'Completed']
                     ]);
                     break;
-    
+
                 case 'Upcoming':
                     // These are any tasks that have a due date greater than or equal to today and are not complete
-                    $tasksQuery->where(function($query) use ($startOfToday,$endOfToday) {
+                    $tasksQuery->where(function ($query) use ($startOfToday, $endOfToday) {
                         $query->where([
                             ['due_date', '>=', $startOfToday],
                             ['status', '!=', 'Completed']
-                        ])->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                        ])->orWhere(function ($query) use ($startOfToday, $endOfToday) {
                             $query->whereNull('due_date')
-                                ->whereBetween('created_at', [$startOfToday, $endOfToday]) ->where('status', '!=', 'Completed');
+                                ->whereBetween('created_at', [$startOfToday, $endOfToday])->where('status', '!=', 'Completed');
                         });
                     });
                     $tasksQuery->orderBy('due_date', 'asc');
                     break;
-    
+
                 case 'Due Today':
                     // Tasks with due date within today
-                    $tasksQuery->where(function($query) use ($startOfToday, $endOfToday) {
+                    $tasksQuery->where(function ($query) use ($startOfToday, $endOfToday) {
                         $query->whereBetween('due_date', [$startOfToday, $endOfToday])
-                            ->orWhere(function($query) use ($startOfToday, $endOfToday) {
+                            ->orWhere(function ($query) use ($startOfToday, $endOfToday) {
                                 $query->whereNull('due_date')
                                     ->whereBetween('created_at', [$startOfToday, $endOfToday]);
                             });
                     })->where('status', '!=', 'Completed');
                     break;
-    
+
                 case 'Completed':
                     // These are tasks that are completed
                     $tasksQuery->where('status', 'Completed');
                     break;
-    
+
                 default:
                     // Optionally handle the case where $tab is not recognized
-                      "";
+                    "";
             }
-    
+
             // Order the tasks by the updated_at field in descending order
             $tasks = $tasksQuery->orderBy('updated_at', 'desc')->paginate(10);
             return $tasks;
-    
+
         } catch (\Exception $e) {
             Log::error("Error retrieving tasks: " . $e->getMessage());
             throw $e;
         }
     }
-    
+
     public function getTaskCounts($user)
     {
         try {
@@ -1059,20 +1067,20 @@ class DatabaseService
             if ($tab == 'Overdue') {
                 // Tasks that have a due date less than today and the task status isn't completed
                 $tasks->where([['due_date', '<', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'asc');
+                    ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Upcoming') {
                 // Tasks that have a due date greater than or equal to today and are not complete
                 $tasks->where([['due_date', '>=', now()->startOfDay()], ['status', '!=', 'Completed']])
-                      ->orderBy('due_date', 'asc');
+                    ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Due Today') {
                 // Tasks that are due today and are not complete
                 $tasks->whereDate('due_date', now()->toDateString())
-                      ->where('status', '!=', 'Completed')
-                      ->orderBy('due_date', 'asc');
+                    ->where('status', '!=', 'Completed')
+                    ->orderBy('due_date', 'asc');
             } elseif ($tab == 'Completed') {
                 // Completed tasks
                 $tasks->where('status', 'Completed')
-                      ->orderBy('updated_at', 'desc');
+                    ->orderBy('updated_at', 'desc');
             } else {
                 // Default case: no specific tab selected (perhaps all tasks)
                 $tasks->orderBy('updated_at', 'desc');
@@ -1126,7 +1134,7 @@ class DatabaseService
     {
         try {
             Log::info("Retrieve Contact From Database");
-            $conditions = [['contact_owner', $user->root_user_id],['isContactCompleted',true]];
+            $conditions = [['contact_owner', $user->root_user_id], ['isContactCompleted', true]];
             $contacts = Contact::where($conditions); // Initialize the query with basic conditions
 
             if ($search !== null && $search !== '') {
@@ -1147,13 +1155,13 @@ class DatabaseService
             // Apply missing field conditions
             if ($missingField) {
                 if (isset($missingField['email']) && $missingField['email'] !== false) {
-                    $contacts->whereNull('email')->orWhere('email','==',' ');
+                    $contacts->whereNull('email')->orWhere('email', '==', ' ');
                 }
                 if (isset($missingField['mobile']) && $missingField['mobile'] !== false) {
-                    $contacts->whereNull('phone')->orWhere('phone','==',' ');
+                    $contacts->whereNull('phone')->orWhere('phone', '==', ' ');
                 }
                 if (isset($missingField['abcd']) && $missingField['abcd'] !== false) {
-                    $contacts->whereNull('abcd')->orWhere('abcd','==',' ');
+                    $contacts->whereNull('abcd')->orWhere('abcd', '==', ' ');
                 }
             }
 
@@ -1165,7 +1173,7 @@ class DatabaseService
             // Apply sorting if specified
             if ($sortValue && $sortType) {
                 if ($sortValue == 'first_name,last_name') {
-                   $contacts->orderByRaw("CONCAT_WS(' ', first_name, last_name) $sortType");
+                    $contacts->orderByRaw("CONCAT_WS(' ', first_name, last_name) $sortType");
                 } else {
                     $contacts->orderBy($sortValue, $sortType);
                 }
@@ -1203,19 +1211,19 @@ class DatabaseService
             throw $e;
         }
     }
-    public function retreiveContactsJson(User $user, $accessToken, $search = null, $stage = null,$filterobj=null)
+    public function retreiveContactsJson(User $user, $accessToken, $search = null, $stage = null, $filterobj = null)
     {
         try {
             Log::info("Retrieve contacts from database");
 
-            $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]])->with('userData')->orderBy('updated_at', 'desc');
+            $query = Contact::where([['contact_owner', $user->root_user_id], ['isContactCompleted', true]])->with('userData')->orderBy('updated_at', 'desc');
 
             if (!empty($search)) {
                 $searchTerms = urldecode($search);
                 $query->where(function ($query) use ($searchTerms) {
                     $query->where('last_name', 'like', '%' . $searchTerms . '%')
-                          ->orWhere('email', 'like', '%' . $searchTerms . '%')
-                          ->orWhere('phone', 'like', '%' . $searchTerms . '%');
+                        ->orWhere('email', 'like', '%' . $searchTerms . '%')
+                        ->orWhere('phone', 'like', '%' . $searchTerms . '%');
                 });
             }
 
@@ -1246,7 +1254,7 @@ class DatabaseService
             if (!empty($stage)) {
                 $searchStage = urldecode($stage);
                 $query->where(function ($query) use ($searchStage) {
-                    $searchStage ==="A1" ? $searchStage="A+" : $searchStage;
+                    $searchStage === "A1" ? $searchStage = "A+" : $searchStage;
                     $query->where('abcd', '=', $searchStage);
                 });
             }
@@ -1266,48 +1274,48 @@ class DatabaseService
     {
 
 
-            try {
-                Log::info("Retrieve Tasks From Database");
-                // Get the current date and time
-                $now = now();
-                $startOfToday = $now->copy()->startOfDay();
-                $endOfToday = $now->copy()->endOfDay();
-                // Initialize the query
-                $tasks = Task::where('what_id', $dealId)->with(['dealData']);
+        try {
+            Log::info("Retrieve Tasks From Database");
+            // Get the current date and time
+            $now = now();
+            $startOfToday = $now->copy()->startOfDay();
+            $endOfToday = $now->copy()->endOfDay();
+            // Initialize the query
+            $tasks = Task::where('what_id', $dealId)->with(['dealData']);
 
-                if ($tab == 'Overdue') {
-                    // Tasks where due_date is before the start of today and status is not 'Completed'
-                    $tasks->where([
-                        ['due_date', '<', $startOfToday],
-                        ['status', '!=', 'Completed']
-                    ]);
-                } elseif ($tab == 'Upcoming') {
-                    // Tasks where due_date is after the end of today and status is not 'Completed'
-                    $tasks->where([
-                        ['due_date', '>', $endOfToday],
-                        ['status', '!=', 'Completed']
-                    ]);
-                }  elseif ($tab == 'In Progress') {
-                    // Tasks where due_date is between start and end of today or is null and status is not 'Completed'
-                    $tasks->where(function($query) use ($startOfToday, $endOfToday) {
-                        $query->where(function($query) use ($startOfToday, $endOfToday) {
-                            $query->whereBetween('due_date', [$startOfToday, $endOfToday])
-                                  ->orWhereNull('due_date');
-                        })
+            if ($tab == 'Overdue') {
+                // Tasks where due_date is before the start of today and status is not 'Completed'
+                $tasks->where([
+                    ['due_date', '<', $startOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
+            } elseif ($tab == 'Upcoming') {
+                // Tasks where due_date is after the end of today and status is not 'Completed'
+                $tasks->where([
+                    ['due_date', '>', $endOfToday],
+                    ['status', '!=', 'Completed']
+                ]);
+            } elseif ($tab == 'In Progress') {
+                // Tasks where due_date is between start and end of today or is null and status is not 'Completed'
+                $tasks->where(function ($query) use ($startOfToday, $endOfToday) {
+                    $query->where(function ($query) use ($startOfToday, $endOfToday) {
+                        $query->whereBetween('due_date', [$startOfToday, $endOfToday])
+                            ->orWhereNull('due_date');
+                    })
                         ->where('status', '!=', 'Completed');
-                    });
-                } elseif ($tab == 'Completed') {
-                    // Tasks where status is 'Completed'
-                    $tasks->where('status', 'Completed');
-                }
-
-                // Order the tasks by the updated_at field in descending order
-                $tasks = $tasks->orderBy('updated_at', 'desc')->get();
-                return $tasks;
-            } catch (\Exception $e) {
-                Log::error("Error retrieving tasks: " . $e->getMessage());
-                throw $e;
+                });
+            } elseif ($tab == 'Completed') {
+                // Tasks where status is 'Completed'
+                $tasks->where('status', 'Completed');
             }
+
+            // Order the tasks by the updated_at field in descending order
+            $tasks = $tasks->orderBy('updated_at', 'desc')->get();
+            return $tasks;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving tasks: " . $e->getMessage());
+            throw $e;
+        }
 
     }
 
@@ -1336,14 +1344,14 @@ class DatabaseService
                     ['due_date', '>', $endOfToday],
                     ['status', '!=', 'Completed']
                 ]);
-            }  elseif ($tab == 'In Progress') {
+            } elseif ($tab == 'In Progress') {
                 // Tasks where due_date is between start and end of today or is null and status is not 'Completed'
-                $tasks->where(function($query) use ($startOfToday, $endOfToday) {
-                    $query->where(function($query) use ($startOfToday, $endOfToday) {
+                $tasks->where(function ($query) use ($startOfToday, $endOfToday) {
+                    $query->where(function ($query) use ($startOfToday, $endOfToday) {
                         $query->whereBetween('due_date', [$startOfToday, $endOfToday])
-                              ->orWhereNull('due_date');
+                            ->orWhereNull('due_date');
                     })
-                    ->where('status', '!=', 'Completed');
+                        ->where('status', '!=', 'Completed');
                 });
             } elseif ($tab == 'Completed') {
                 // Tasks where status is 'Completed'
@@ -1419,7 +1427,7 @@ class DatabaseService
         }
     }
 
-    public function retrieveNotes(User $user, $accessToken,$paginate)
+    public function retrieveNotes(User $user, $accessToken, $paginate)
     {
 
         try {
@@ -1551,19 +1559,19 @@ class DatabaseService
         }
     }
 
-    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null,$submittalType = null,$formType = null)
+    public function getIncompleteSubmittal(User $user, $accessToken, $dealId = null, $submittalType = null, $formType = null)
     {
-    try {
-    Log::info("Retrieve Submittal Contact From Database",[['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id],['formType', $formType]]);
-    $condition = [['isSubmittalComplete', "false"],['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id],['formType', $formType]];
-    $submittal = Submittals::where($condition)->first();
-    Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
-    return $submittal;
-    } catch (\Exception $e) {
-    Log::error("Error retrieving submittal contacts: " . $e->getMessage());
-    throw $e;
+        try {
+            Log::info("Retrieve Submittal Contact From Database", [['isSubmittalComplete', "false"], ['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id], ['formType', $formType]]);
+            $condition = [['isSubmittalComplete', "false"], ['submittalType', $submittalType], ['dealId', $dealId], ['userId', $user->id], ['formType', $formType]];
+            $submittal = Submittals::where($condition)->first();
+            Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+            return $submittal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+            throw $e;
+        }
     }
-}
     public function getIncompleteNonTm(User $user, $accessToken, $nontm = null)
     {
         try {
@@ -1615,10 +1623,10 @@ class DatabaseService
                 'client_name_only' => isset($dealData['Client_Name_Only']) ? $dealData['Client_Name_Only'] : null,
                 'stage' => "Potential",
                 'contactId' => isset($contact->id) ? $contact->id : null,
-                'contact_name' => isset($contact_name) ? $contact_name->first_name." ".$contact_name->last_name : null,
+                'contact_name' => isset($contact_name) ? $contact_name->first_name . " " . $contact_name->last_name : null,
                 'contact_name_id' => isset($contact_name) ? $contact_name->zoho_contact_id : null,
-                'primary_contact'=> isset($dealData['Primary_Contact'])?json_encode($dealData['Primary_Contact']):null,
-                'teamPartnership'=> isset($teamPartnershipId)?$teamPartnershipId:null
+                'primary_contact' => isset($dealData['Primary_Contact']) ? json_encode($dealData['Primary_Contact']) : null,
+                'teamPartnership' => isset($teamPartnershipId) ? $teamPartnershipId : null
             ]);
             Log::info("Retrieved Deal Contact From Database", ['deal' => $deal]);
             return $deal;
@@ -1629,17 +1637,17 @@ class DatabaseService
     }
 
 
-    public function createNonTmData(User $user, $accessToken, $dealData ,$zohoDealArray)
+    public function createNonTmData(User $user, $accessToken, $dealData, $zohoDealArray)
     {
         try {
             Log::info("zohoDealArray Deatils" . json_encode($zohoDealArray));
 
             $nontm = NonTm::create([
-                'name' =>$dealData['Name'],
+                'name' => $dealData['Name'],
                 'userId' => $user->id,
                 'dealId' => $dealData['Related_Transaction']['id'],
                 // 'zoho_nontm_id' => $zohoDealArray['data'][0]['details']['id'],
-                'isNonTmCompleted' =>false,
+                'isNonTmCompleted' => false,
             ]);
             Log::info("Retrieved Deal nontm From Database", ['nontm' => $nontm]);
             return $nontm;
@@ -1679,7 +1687,7 @@ class DatabaseService
 
                 $contact = Contact::where('zoho_contact_id', trim($clientId[1]))->first();
             }
-             $updatedDealData = [
+            $updatedDealData = [
                 'personal_transaction' => isset($zohoDeal['Personal_Transaction']) ? ($zohoDeal['Personal_Transaction'] == true ? 1 : 0) : null,
                 'double_ended' => isset($zohoDeal['Double_Ended']) ? ($zohoDeal['Double_Ended'] == true ? 1 : 0) : null,
                 'address' => isset($zohoDeal['Address']) ? $zohoDeal['Address'] : null,
@@ -1700,7 +1708,7 @@ class DatabaseService
                 'pipeline_probability' => isset($zohoDeal['Pipeline_Probability']) ? $zohoDeal['Pipeline_Probability'] : 0,
                 'property_type' => isset($zohoDeal['Property_Type']) ? $zohoDeal['Property_Type'] : null,
                 'potential_gci' => isset($zohoDeal['Potential_GCI']) ? $zohoDeal['Potential_GCI'] : null,
-                'primary_contact'=>isset($zohoDeal['Primary_Contact']) ? $zohoDeal['Primary_Contact'] : null,
+                'primary_contact' => isset($zohoDeal['Primary_Contact']) ? $zohoDeal['Primary_Contact'] : null,
                 'review_gen_opt_out' => isset($zohoDeal['Review_Gen_Opt_Out']) ? $zohoDeal['Review_Gen_Opt_Out'] : false,
                 'deadline_em_opt_out' => isset($zohoDeal['Deadline_Emails']) ? $zohoDeal['Deadline_Emails'] : false,
                 'status_rpt_opt_out' => isset($zohoDeal['Status_Reports']) ? $zohoDeal['Status_Reports'] : false,
@@ -1714,8 +1722,8 @@ class DatabaseService
                 'financing' => isset($zohoDeal['Financing']) ? $zohoDeal['Financing'] : null,
                 'lender_company' => isset($zohoDeal['Lender_Company']) ? $zohoDeal['Lender_Company'] : null,
                 'modern_mortgage_lender' => isset($zohoDeal['Modern_Mortgage_Lender']) ? $zohoDeal['Modern_Mortgage_Lender'] : null,
-             ];
-            if($DBdeal->zoho_deal_id === null){
+            ];
+            if ($DBdeal->zoho_deal_id === null) {
                 $updatedDealData['zoho_deal_id'] = $zohoDeal['id'];
             }
 
@@ -1948,9 +1956,9 @@ class DatabaseService
 
             // Retrieve a single contact group based on the provided contactId
             $contact = ContactGroups::with('groupData') // Load the related groups
-            ->where('ownerId', $user->id)
-            ->where('contactId', $contactId)
-            ->get();
+                ->where('ownerId', $user->id)
+                ->where('contactId', $contactId)
+                ->get();
 
             // If no contact is found, return null or handle as needed
             if (!$contact) {
@@ -2033,11 +2041,13 @@ class DatabaseService
             });
 
             // Get all groups
-            $groups = $query->with(['contacts' => function ($query) use ($user) {
-                $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
-                $query->where('contacts.zoho_contact_id', '!=', null);
-                $query->where('contacts.contact_owner', $user->root_user_id);
-            }])->get();
+            $groups = $query->with([
+                'contacts' => function ($query) use ($user) {
+                    $query->leftJoin('contacts', 'contact_groups.contactId', '=', 'contacts.id');
+                    $query->where('contacts.zoho_contact_id', '!=', null);
+                    $query->where('contacts.contact_owner', $user->root_user_id);
+                }
+            ])->get();
 
             // Separate the groups into different categories
             $abcdGroups = $groups->filter(function ($group) {
@@ -2137,7 +2147,7 @@ class DatabaseService
 
             Log::info("Retrieve NonTm From Database");
 
-            $NonTm = NonTm::where([['dealId', $dealId],['isNonTmCompleted',true]])->get();
+            $NonTm = NonTm::where([['dealId', $dealId], ['isNonTmCompleted', true]])->get();
             Log::info("Retrieved NonTm From Database", ['NonTm' => $NonTm->toArray()]);
             return $NonTm;
         } catch (\Exception $e) {
@@ -2169,12 +2179,12 @@ class DatabaseService
         Log::info("Submittals stored into database successfully.");
     }
 
-    public function retreiveSubmittals($dealId="")
+    public function retreiveSubmittals($dealId = "")
     {
         try {
 
             //old query
-            $submittalData = Submittals::where([['dealId', $dealId],['isSubmittalComplete','true']])->with('userData','dealData')->orderBy('updated_at','desc')->get();
+            $submittalData = Submittals::where([['dealId', $dealId], ['isSubmittalComplete', 'true']])->with('userData', 'dealData')->orderBy('updated_at', 'desc')->get();
             // $submittalData = Submittals::where([['dealId', $dealId]])->with('userData','dealData')->orderBy('updated_at','desc')->get();
             return $submittalData;
         } catch (\Exception $e) {
@@ -2254,9 +2264,9 @@ class DatabaseService
         foreach ($filteredModules as $module) {
             $query = null;
             if ($module->api_name === 'Deals') {
-                $query = Deal::where([['userID', $user->id],['isDealCompleted',true]]);
+                $query = Deal::where([['userID', $user->id], ['isDealCompleted', true]]);
             } elseif ($module->api_name === 'Contacts') {
-                $query = Contact::where([['contact_owner', $user->root_user_id],['isContactCompleted',true]]);
+                $query = Contact::where([['contact_owner', $user->root_user_id], ['isContactCompleted', true]]);
             }
 
             if ($query && $searchQuery) {
@@ -2266,14 +2276,14 @@ class DatabaseService
                         $q->where(function ($subQuery) use ($term, $module) {
                             if ($module->api_name === 'Deals') {
                                 $subQuery->where('deal_name', 'like', "%$term%")
-                                        ->orWhere('address', 'like', "%$term%");
+                                    ->orWhere('address', 'like', "%$term%");
                             } elseif ($module->api_name === 'Contacts') {
                                 $subQuery->where('first_name', 'like', "%$term%")
-                                        ->orWhere('last_name', 'like', "%$term%")
-                                        ->orWhere('email', 'like', "%$term%")
-                                        ->orWhere('phone', 'like', "%$term%")
-                                        ->orWhere('mobile', 'like', "%$term%")
-                                        ->orWhere('mailing_address', 'like', "%$term%");
+                                    ->orWhere('last_name', 'like', "%$term%")
+                                    ->orWhere('email', 'like', "%$term%")
+                                    ->orWhere('phone', 'like', "%$term%")
+                                    ->orWhere('mobile', 'like', "%$term%")
+                                    ->orWhere('mailing_address', 'like', "%$term%");
                             }
                         });
                     }
@@ -2355,7 +2365,8 @@ class DatabaseService
                 try {
                     // Dynamically call the mapping method based on the module
                     $mappedData = $this->mapDataByModule($module, $record);
-                    if ($mappedData == [] || is_null($mappedData)) continue;
+                    if ($mappedData == [] || is_null($mappedData))
+                        continue;
                     $dataBatch[] = $mappedData;
                 } catch (\Exception $e) {
                     Log::error("Error mapping record for module {$module}: " . $e->getMessage());
@@ -2442,7 +2453,7 @@ class DatabaseService
                     \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
 
-                    // Add other cases as needed
+                // Add other cases as needed
             }
         } catch (\Exception $e) {
             Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
@@ -2493,26 +2504,26 @@ class DatabaseService
         }
     }
 
-    public function createListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$dealId,$submittalType)
+    public function createListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData, $dealId, $submittalType)
     {
-    try {
+        try {
 
-        $submittal = Submittals::create([
-            'isSubmittalComplete' => "false",
-            'userId' => $user->id,
-            'isInZoho' => true,
-            // 'zoho_submittal_id' => $zohoSubmittal['id'],
-            'dealId'=>$dealId,
-            'submittalType'=>$submittalType,
-            'submittalName'=>$submittalData['Name'],
-            'formType'=>$submittalData['formType']
-        ]);
-        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
-        return $submittal;
-    } catch (\Exception $e) {
-        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
-        throw $e;
-    }
+            $submittal = Submittals::create([
+                'isSubmittalComplete' => "false",
+                'userId' => $user->id,
+                'isInZoho' => true,
+                // 'zoho_submittal_id' => $zohoSubmittal['id'],
+                'dealId' => $dealId,
+                'submittalType' => $submittalType,
+                'submittalName' => $submittalData['Name'],
+                'formType' => $submittalData['formType']
+            ]);
+            Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+            return $submittal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function retrieveSubmittal(User $user, $accessToken, $submittalId)
@@ -2528,108 +2539,109 @@ class DatabaseService
         }
     }
 
-    public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
+    public function updateListingSubmittal($user, $accessToken, $zohoSubmittal, $submittalData, $isNew)
     {
-    try {
+        try {
 
-        $submittal = Submittals::where('id', $submittalData['id'])->orWhere('zoho_submittal_id', $submittalData['id'])->first();
-        if (!$submittal) {
-            throw new \Exception("Submittal not found for zoho_submittal_id: {$submittalData['id']}");
-        }
-        $submittal->dealId = isset($submittalData["Transaction_Name"]["id"]) ? $submittalData["Transaction_Name"]["id"] : null;
-        $submittal->bedsBathsTotal = isset($submittalData["Beds_Baths_Total_Sq_Ft"]) ? $submittalData["Beds_Baths_Total_Sq_Ft"] : null;
-        $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
-        $submittal->mlsPublicRemarks = isset($submittalData["MLS_Public_Remarks"]) ? $submittalData["MLS_Public_Remarks"] : null;
-        $submittal->navica = isset($submittalData["Navica"]) ? $submittalData["Navica"] : null;
-        $submittal->hoaPhone = isset($submittalData["HOA_Phone"]) ? $submittalData["HOA_Phone"] : null;
-        $submittal->hasHOA = isset($submittalData["Has_HOA"]) ? $submittalData["Has_HOA"] : null;
-        $submittal->ppar = isset($submittalData["PPAR"]) ? $submittalData["PPAR"] : null;
-        $submittal->signInstallDate = isset($submittalData["Sign_Install_Date"]) ? $submittalData["Sign_Install_Date"] : null;
-        $submittal->brochurePickupDate = isset($submittalData["Pick_Up_Date"]) ? $submittalData["Pick_Up_Date"] : null;
-        $submittal->hoaName = isset($submittalData["HOA_Name"]) ? $submittalData["HOA_Name"] : null;
-        $submittal->usingCHR = isset($submittalData["Using_CHR_TM"]) ? $submittalData["Using_CHR_TM"] : null;
-        $submittal->emailBlastSphere = isset($submittalData["Email_Blast_to_Sphere"]) ? $submittalData["Email_Blast_to_Sphere"] : null;
-        $submittal->qrCodeSheet = isset($submittalData["Print_QR_Code_Sheet"]) ? $submittalData["Print_QR_Code_Sheet"] : null;
-        $submittal->mlsPrivateRemarks = isset($submittalData["MLS_Private_Remarks"]) ? $submittalData["MLS_Private_Remarks"] : null;
-        $submittal->featureCards = isset($submittalData["Feature_Cards_or_Sheets"]) ? $submittalData["Feature_Cards_or_Sheets"] : null;
-        $submittal->stickyDots = isset($submittalData["Sticky_Dots"]) ? $submittalData["Sticky_Dots"] : null;
-        $submittal->brochureLine = isset($submittalData["Brochure_Line"]) ? $submittalData["Brochure_Line"] : null;
-        $submittal->brochurePrint = isset($submittalData["Select_your_prints"]) ? $submittalData["Select_your_prints"] : null;
-        $submittal->miscNotes = isset($submittalData["TM_Notes"]) ? $submittalData["TM_Notes"] : null;
-        $submittal->conciergeListing = isset($submittalData["Concierge_Listing_Optional"]) ? $submittalData["Concierge_Listing_Optional"] : null;
-        $submittal->draftShowingInstructions = isset($submittalData["Draft_Showing_Instructions1"]) ? $submittalData["Draft_Showing_Instructions1"] : null;
-        $submittal->floorPlans = isset($submittalData["Floor_Plans"]) ? $submittalData["Floor_Plans"] : null;
-        $submittal->onsiteVideo = isset($submittalData["Onsite_Video"]) ? $submittalData["Onsite_Video"] : null;
-        $submittal->customDomainName = isset($submittalData["Custom_Domain_Name"]) ? $submittalData["Custom_Domain_Name"] : null;
-        $submittal->bullets = isset($submittalData["bullets_4_words_per_bullet"]) ? $submittalData["bullets_4_words_per_bullet"] : null;
-        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["paragraph_200_words_4_page_brochure_or_look_book"]) ? $submittalData["paragraph_200_words_4_page_brochure_or_look_book"] : null;
-        $submittal->buyer_agent_compensation_offering = isset($submittalData["buyer_agent_compensation_offering"]) ? $submittalData["buyer_agent_compensation_offering"] : null;
-        $submittal->printedItemsPickupDate = isset($submittalData["In_House_Printed_Brochure_Pick_Up_Date"]) ? $submittalData["In_House_Printed_Brochure_Pick_Up_Date"] : null;
-        $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
-        $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
-        $submittal->tourURL = isset($submittalData["3D_Tour_URL"]) ? $submittalData["3D_Tour_URL"] : null;
-        $submittal->closerNamePhone = isset($submittalData["Closer_Name_Phone"]) ? $submittalData["Closer_Name_Phone"] : null;
-        $submittal->agreementExecuted = isset($submittalData["Listing_Agreement_Executed"]) ? $submittalData["Listing_Agreement_Executed"] : null;
-        $submittal->signInstallVendorOther = isset($submittalData["Sign_Install_Vendor_if_Other"]) ? $submittalData["Sign_Install_Vendor_if_Other"] : null;
-        $submittal->threeDZillowTour = isset($submittalData["D_Zillow_Tour"]) ? $submittalData["D_Zillow_Tour"] : null;
-        $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
-        $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
-        $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
-        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : false;
-        $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
-        $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
-        $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;
-        $submittal->photoDate = isset($submittalData["Photo_Date"]) ? $submittalData["Photo_Date"] : null;
-        $submittal->socialMediaImages = isset($submittalData["Social_Media_Images"]) ? $submittalData["Social_Media_Images"] : null;
-        $submittal->featureCardCopy = isset($submittalData["Add_Feature_Card_or_Sheet_Copy"]) ? $submittalData["Add_Feature_Card_or_Sheet_Copy"] : null;
-        $submittal->titleCompany = isset($submittalData["Title_Company"]) ? $submittalData["Title_Company"] : null;
-        $submittal->referralToPay = isset($submittalData["Referral_to_Pay"]) ? $submittalData["Referral_to_Pay"] : null;
-        $submittal->marketingNotes = isset($submittalData["Property_Promotion_Notes"]) ? $submittalData["Property_Promotion_Notes"] : null;
-        $submittal->ires = isset($submittalData["IRES"]) ? $submittalData["IRES"] : null;
-        $submittal->price = isset($submittalData["Price"]) ? $submittalData["Price"] : null;
-        $submittal->commingSoon = isset($submittalData["Coming_Soon"]) ? $submittalData["Coming_Soon"] : null;
-        $submittal->titleToOrderHOA = isset($submittalData["Title_to_Order_HOA_docs"]) ? $submittalData["Title_to_Order_HOA_docs"] : null;
-        $submittal->includeInsights = isset($submittalData["Include_Insights_in_Intro1"]) ? $submittalData["Include_Insights_in_Intro1"] : null;
-        $submittal->featuresNeededForVideo = isset($submittalData["Features_Needed_for_Video"]) ? $submittalData["Features_Needed_for_Video"] : null;
-        $submittal->matterport = isset($submittalData["Matterport"]) ? $submittalData["Matterport"] : null;
-        $submittal->scheduleSignInstall = isset($submittalData["Schedule_Sign_Install"]) ? $submittalData["Schedule_Sign_Install"] : null;
-        $submittal->brochureDeliveryDate = isset($submittalData["Pick_Up_Delivery_Date"]) ? $submittalData["Pick_Up_Delivery_Date"] : null;
-        $submittal->propertyWebsite = isset($submittalData["Property_Website_QR_Code"]) ? $submittalData["Property_Website_QR_Code"] : null;
-        $submittal->powerOfAttnyNeeded = isset($submittalData["Power_of_Attny_Needed1"]) ? $submittalData["Power_of_Attny_Needed1"] : null;
-        $submittal->additionalEmail = isset($submittalData["Additional_Email_for_Confirmation"]) ? $submittalData["Additional_Email_for_Confirmation"] : null;
-        $submittal->tmName = isset($submittalData["TM_Name"]) ? $submittalData["TM_Name"] : null;
-        $submittal->propertyHighlightVideo = isset($submittalData["Property_Highlight_Video"]) ? $submittalData["Property_Highlight_Video"] : null;
-        $submittal->comingSoonDate = isset($submittalData["Coming_Soon_MLS_Date"]) ? $submittalData["Coming_Soon_MLS_Date"] : null;
-        $submittal->amountToCHR = isset($submittalData["Amount_to_CHR_Gives"]) ? $submittalData["Amount_to_CHR_Gives"] : null;
-        $submittal->reColorado = isset($submittalData["REColorado"]) ? $submittalData["REColorado"] : null;
-        $submittal->activeDate = isset($submittalData["Active_Date"]) ? $submittalData["Active_Date"] : null;
-        $submittal->needOE = isset($submittalData["Need_O_E1"]) ? $submittalData["Need_O_E1"] : null;
-        $submittal->signInstallVendor = isset($submittalData["Sign_Install_Vendor_Info"]) ? $submittalData["Sign_Install_Vendor_Info"] : null;
-        $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
-        $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
-        $submittal->showPromotion = isset($submittalData["showPromotion"]) ? $submittalData["showPromotion"] : false;
-        $submittal->resubmitting_to_which_team = isset($submittalData["Resubmitting_to_Which_Team"]) ? $submittalData["Resubmitting_to_Which_Team"] : null;
-        $submittal->resubmitting_why_list_all_changes = isset($submittalData["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $submittalData["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
-        $submittal->resubmit_text = isset($submittalData["resubmit_text"]) ? $submittalData["resubmit_text"] : null;
-        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"]) ? $submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"] : null;
-        $submittal->buyer_agent_compensation_offering = isset($submittalData["Buyer_Agent_Compensation_Offering"]) ? $submittalData["Buyer_Agent_Compensation_Offering"] : null;
-        if ($isNew) {
-           $submittal->isSubmittalComplete = $isNew;
-        }
-        if ( $submittal->zoho_submittal_id === null) {
-           $submittal->zoho_submittal_id = isset($zohoSubmittal['id']) ? $zohoSubmittal['id'] : null;;
-        }
+            $submittal = Submittals::where('id', $submittalData['id'])->orWhere('zoho_submittal_id', $submittalData['id'])->first();
+            if (!$submittal) {
+                throw new \Exception("Submittal not found for zoho_submittal_id: {$submittalData['id']}");
+            }
+            $submittal->dealId = isset($submittalData["Transaction_Name"]["id"]) ? $submittalData["Transaction_Name"]["id"] : null;
+            $submittal->bedsBathsTotal = isset($submittalData["Beds_Baths_Total_Sq_Ft"]) ? $submittalData["Beds_Baths_Total_Sq_Ft"] : null;
+            $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
+            $submittal->mlsPublicRemarks = isset($submittalData["MLS_Public_Remarks"]) ? $submittalData["MLS_Public_Remarks"] : null;
+            $submittal->navica = isset($submittalData["Navica"]) ? $submittalData["Navica"] : null;
+            $submittal->hoaPhone = isset($submittalData["HOA_Phone"]) ? $submittalData["HOA_Phone"] : null;
+            $submittal->hasHOA = isset($submittalData["Has_HOA"]) ? $submittalData["Has_HOA"] : null;
+            $submittal->ppar = isset($submittalData["PPAR"]) ? $submittalData["PPAR"] : null;
+            $submittal->signInstallDate = isset($submittalData["Sign_Install_Date"]) ? $submittalData["Sign_Install_Date"] : null;
+            $submittal->brochurePickupDate = isset($submittalData["Pick_Up_Date"]) ? $submittalData["Pick_Up_Date"] : null;
+            $submittal->hoaName = isset($submittalData["HOA_Name"]) ? $submittalData["HOA_Name"] : null;
+            $submittal->usingCHR = isset($submittalData["Using_CHR_TM"]) ? $submittalData["Using_CHR_TM"] : null;
+            $submittal->emailBlastSphere = isset($submittalData["Email_Blast_to_Sphere"]) ? $submittalData["Email_Blast_to_Sphere"] : null;
+            $submittal->qrCodeSheet = isset($submittalData["Print_QR_Code_Sheet"]) ? $submittalData["Print_QR_Code_Sheet"] : null;
+            $submittal->mlsPrivateRemarks = isset($submittalData["MLS_Private_Remarks"]) ? $submittalData["MLS_Private_Remarks"] : null;
+            $submittal->featureCards = isset($submittalData["Feature_Cards_or_Sheets"]) ? $submittalData["Feature_Cards_or_Sheets"] : null;
+            $submittal->stickyDots = isset($submittalData["Sticky_Dots"]) ? $submittalData["Sticky_Dots"] : null;
+            $submittal->brochureLine = isset($submittalData["Brochure_Line"]) ? $submittalData["Brochure_Line"] : null;
+            $submittal->brochurePrint = isset($submittalData["Select_your_prints"]) ? $submittalData["Select_your_prints"] : null;
+            $submittal->miscNotes = isset($submittalData["TM_Notes"]) ? $submittalData["TM_Notes"] : null;
+            $submittal->conciergeListing = isset($submittalData["Concierge_Listing_Optional"]) ? $submittalData["Concierge_Listing_Optional"] : null;
+            $submittal->draftShowingInstructions = isset($submittalData["Draft_Showing_Instructions1"]) ? $submittalData["Draft_Showing_Instructions1"] : null;
+            $submittal->floorPlans = isset($submittalData["Floor_Plans"]) ? $submittalData["Floor_Plans"] : null;
+            $submittal->onsiteVideo = isset($submittalData["Onsite_Video"]) ? $submittalData["Onsite_Video"] : null;
+            $submittal->customDomainName = isset($submittalData["Custom_Domain_Name"]) ? $submittalData["Custom_Domain_Name"] : null;
+            $submittal->bullets = isset($submittalData["bullets_4_words_per_bullet"]) ? $submittalData["bullets_4_words_per_bullet"] : null;
+            $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["paragraph_200_words_4_page_brochure_or_look_book"]) ? $submittalData["paragraph_200_words_4_page_brochure_or_look_book"] : null;
+            $submittal->buyer_agent_compensation_offering = isset($submittalData["buyer_agent_compensation_offering"]) ? $submittalData["buyer_agent_compensation_offering"] : null;
+            $submittal->printedItemsPickupDate = isset($submittalData["In_House_Printed_Brochure_Pick_Up_Date"]) ? $submittalData["In_House_Printed_Brochure_Pick_Up_Date"] : null;
+            $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
+            $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
+            $submittal->tourURL = isset($submittalData["3D_Tour_URL"]) ? $submittalData["3D_Tour_URL"] : null;
+            $submittal->closerNamePhone = isset($submittalData["Closer_Name_Phone"]) ? $submittalData["Closer_Name_Phone"] : null;
+            $submittal->agreementExecuted = isset($submittalData["Listing_Agreement_Executed"]) ? $submittalData["Listing_Agreement_Executed"] : null;
+            $submittal->signInstallVendorOther = isset($submittalData["Sign_Install_Vendor_if_Other"]) ? $submittalData["Sign_Install_Vendor_if_Other"] : null;
+            $submittal->threeDZillowTour = isset($submittalData["D_Zillow_Tour"]) ? $submittalData["D_Zillow_Tour"] : null;
+            $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
+            $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
+            $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
+            $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : false;
+            $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
+            $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
+            $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;
+            $submittal->photoDate = isset($submittalData["Photo_Date"]) ? $submittalData["Photo_Date"] : null;
+            $submittal->socialMediaImages = isset($submittalData["Social_Media_Images"]) ? $submittalData["Social_Media_Images"] : null;
+            $submittal->featureCardCopy = isset($submittalData["Add_Feature_Card_or_Sheet_Copy"]) ? $submittalData["Add_Feature_Card_or_Sheet_Copy"] : null;
+            $submittal->titleCompany = isset($submittalData["Title_Company"]) ? $submittalData["Title_Company"] : null;
+            $submittal->referralToPay = isset($submittalData["Referral_to_Pay"]) ? $submittalData["Referral_to_Pay"] : null;
+            $submittal->marketingNotes = isset($submittalData["Property_Promotion_Notes"]) ? $submittalData["Property_Promotion_Notes"] : null;
+            $submittal->ires = isset($submittalData["IRES"]) ? $submittalData["IRES"] : null;
+            $submittal->price = isset($submittalData["Price"]) ? $submittalData["Price"] : null;
+            $submittal->commingSoon = isset($submittalData["Coming_Soon"]) ? $submittalData["Coming_Soon"] : null;
+            $submittal->titleToOrderHOA = isset($submittalData["Title_to_Order_HOA_docs"]) ? $submittalData["Title_to_Order_HOA_docs"] : null;
+            $submittal->includeInsights = isset($submittalData["Include_Insights_in_Intro1"]) ? $submittalData["Include_Insights_in_Intro1"] : null;
+            $submittal->featuresNeededForVideo = isset($submittalData["Features_Needed_for_Video"]) ? $submittalData["Features_Needed_for_Video"] : null;
+            $submittal->matterport = isset($submittalData["Matterport"]) ? $submittalData["Matterport"] : null;
+            $submittal->scheduleSignInstall = isset($submittalData["Schedule_Sign_Install"]) ? $submittalData["Schedule_Sign_Install"] : null;
+            $submittal->brochureDeliveryDate = isset($submittalData["Pick_Up_Delivery_Date"]) ? $submittalData["Pick_Up_Delivery_Date"] : null;
+            $submittal->propertyWebsite = isset($submittalData["Property_Website_QR_Code"]) ? $submittalData["Property_Website_QR_Code"] : null;
+            $submittal->powerOfAttnyNeeded = isset($submittalData["Power_of_Attny_Needed1"]) ? $submittalData["Power_of_Attny_Needed1"] : null;
+            $submittal->additionalEmail = isset($submittalData["Additional_Email_for_Confirmation"]) ? $submittalData["Additional_Email_for_Confirmation"] : null;
+            $submittal->tmName = isset($submittalData["TM_Name"]) ? $submittalData["TM_Name"] : null;
+            $submittal->propertyHighlightVideo = isset($submittalData["Property_Highlight_Video"]) ? $submittalData["Property_Highlight_Video"] : null;
+            $submittal->comingSoonDate = isset($submittalData["Coming_Soon_MLS_Date"]) ? $submittalData["Coming_Soon_MLS_Date"] : null;
+            $submittal->amountToCHR = isset($submittalData["Amount_to_CHR_Gives"]) ? $submittalData["Amount_to_CHR_Gives"] : null;
+            $submittal->reColorado = isset($submittalData["REColorado"]) ? $submittalData["REColorado"] : null;
+            $submittal->activeDate = isset($submittalData["Active_Date"]) ? $submittalData["Active_Date"] : null;
+            $submittal->needOE = isset($submittalData["Need_O_E1"]) ? $submittalData["Need_O_E1"] : null;
+            $submittal->signInstallVendor = isset($submittalData["Sign_Install_Vendor_Info"]) ? $submittalData["Sign_Install_Vendor_Info"] : null;
+            $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
+            $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
+            $submittal->showPromotion = isset($submittalData["showPromotion"]) ? $submittalData["showPromotion"] : false;
+            $submittal->resubmitting_to_which_team = isset($submittalData["Resubmitting_to_Which_Team"]) ? $submittalData["Resubmitting_to_Which_Team"] : null;
+            $submittal->resubmitting_why_list_all_changes = isset($submittalData["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $submittalData["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
+            $submittal->resubmit_text = isset($submittalData["resubmit_text"]) ? $submittalData["resubmit_text"] : null;
+            $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"]) ? $submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"] : null;
+            $submittal->buyer_agent_compensation_offering = isset($submittalData["Buyer_Agent_Compensation_Offering"]) ? $submittalData["Buyer_Agent_Compensation_Offering"] : null;
+            if ($isNew) {
+                $submittal->isSubmittalComplete = $isNew;
+            }
+            if ($submittal->zoho_submittal_id === null) {
+                $submittal->zoho_submittal_id = isset($zohoSubmittal['id']) ? $zohoSubmittal['id'] : null;
+                ;
+            }
 
-        $submittal->save();
-        Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
-        return $submittal;
-    } catch (\Exception $e) {
-        Log::error("Error retrieving submittal contacts: " . $e->getMessage());
-        throw $e;
+            $submittal->save();
+            Log::info("Retrieved Submittal Contact From Database", ['submittal' => $submittal]);
+            return $submittal;
+        } catch (\Exception $e) {
+            Log::error("Error retrieving submittal contacts: " . $e->getMessage());
+            throw $e;
+        }
     }
-    }
 
-    public function updateBuyerSubmittal($user, $accessToken, $zohoSubmittal, $submittalData,$isNew)
+    public function updateBuyerSubmittal($user, $accessToken, $zohoSubmittal, $submittalData, $isNew)
     {
         try {
 
@@ -2660,10 +2672,11 @@ class DatabaseService
             $submittal->builderCommision = isset($submittalData["Builder_Commission_Based_On"]) ? $submittalData["Builder_Commission_Based_On"] : null;
             $submittal->contractExecuted = isset($submittalData["Contract_Fully_Executed"]) ? $submittalData["Contract_Fully_Executed"] : null;
             if ($isNew) {
-            $submittal->isSubmittalComplete = $isNew;
+                $submittal->isSubmittalComplete = $isNew;
             }
-            if ($submittal['zoho_submittal_id']===null) {
-            $submittal->zoho_submittal_id = isset($zohoSubmittal["id"]) ? $zohoSubmittal["id"] : null;;
+            if ($submittal['zoho_submittal_id'] === null) {
+                $submittal->zoho_submittal_id = isset($zohoSubmittal["id"]) ? $zohoSubmittal["id"] : null;
+                ;
             }
 
             $submittal->save();
@@ -2697,7 +2710,7 @@ class DatabaseService
         }
     }
 
-    public function saveEmail($user,$accessToken,$input)
+    public function saveEmail($user, $accessToken, $input)
     {
         try {
             // Log the input data for debugging
@@ -2714,7 +2727,7 @@ class DatabaseService
                 'message_id' => $input['message_id'] ?? null,
                 'userId' => $user->id ?? null,
                 'isEmailSent' => $input['isEmailSent'] ?? null,
-                'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
+                'sendEmailFrom' => $input['sendEmailFrom'] ?? null,
             ];
 
             // Log the prepared email data
@@ -2745,12 +2758,12 @@ class DatabaseService
 
     }
 
-    public function saveMultipleEmail($user,$accessToken,$inputArray)
+    public function saveMultipleEmail($user, $accessToken, $inputArray)
     {
         try {
             // Log the input data for debugging
             Log::info('Email Input', $inputArray);
-            $createdEmails=[];
+            $createdEmails = [];
             // Validate and encode email data
             foreach ($inputArray as $input) {
                 $emailData = [
@@ -2763,7 +2776,7 @@ class DatabaseService
                     'message_id' => $input['message_id'] ?? null,
                     'userId' => $user->id ?? null,
                     'isEmailSent' => $input['isEmailSent'] ?? false,
-                    'sendEmailFrom'=> $input['sendEmailFrom'] ?? null,
+                    'sendEmailFrom' => $input['sendEmailFrom'] ?? null,
                 ];
 
                 // Log the prepared email data
@@ -2774,7 +2787,7 @@ class DatabaseService
                     ['id' => $input['emailId'] ?? null],
                     $emailData
                 );
-                $createdEmails[]=$email;
+                $createdEmails[] = $email;
 
                 // Log the result of the database operation
                 Log::info('Email record updated or created', ['email' => $email]);
@@ -2794,31 +2807,31 @@ class DatabaseService
 
     }
 
-    public function getEmails($user,$filter='Sent Email',$contactId)
+    public function getEmails($user, $filter = 'Sent Email', $contactId)
     {
         try {
-            $condition = [['userId',$user->id]];
-            if($filter){
+            $condition = [['userId', $user->id]];
+            if ($filter) {
                 $cleanedFilter = strtok($filter, "\n");
-                if($cleanedFilter=="Draft"){
-                    $condition[]=['isEmailSent',false];
-                     $condition[] = ['isDeleted', false];
-                }else if($cleanedFilter == "Sent Mail"){
+                if ($cleanedFilter == "Draft") {
+                    $condition[] = ['isEmailSent', false];
+                    $condition[] = ['isDeleted', false];
+                } else if ($cleanedFilter == "Sent Mail") {
                     $condition[] = ['isEmailSent', true];
                     $condition[] = ['isDeleted', false];
                     // Add raw SQL condition to check within JSON field
-                }else if($cleanedFilter=='Trash'){
-                    $condition[]=['isDeleted',true];
-                }else if($cleanedFilter == 'Inbox'){
-                    $condition[]=['isEmailSent',true];
+                } else if ($cleanedFilter == 'Trash') {
+                    $condition[] = ['isDeleted', true];
+                } else if ($cleanedFilter == 'Inbox') {
+                    $condition[] = ['isEmailSent', true];
                 }
             }
 
             $emails = Email::where($condition);
-            if($contactId){
-             $emails= $emails->whereJsonContains('toEmail', $contactId);
+            if ($contactId) {
+                $emails = $emails->whereJsonContains('toEmail', $contactId);
             }
-            $emailList = $emails->with('fromUserData')->orderBy('updated_at','DESC')->paginate(10);
+            $emailList = $emails->with('fromUserData')->orderBy('updated_at', 'DESC')->paginate(10);
             return $emailList;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2829,7 +2842,7 @@ class DatabaseService
     public function getEmailDetail($emailId)
     {
         try {
-            $email = Email::where('id',$emailId)->first();
+            $email = Email::where('id', $emailId)->first();
             return $email;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2837,10 +2850,10 @@ class DatabaseService
         }
     }
 
-    public function moveToTrash($emailIds,$isDeleted)
+    public function moveToTrash($emailIds, $isDeleted)
     {
         try {
-            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted'=>$isDeleted]);
+            $emails = Email::whereIn('id', $emailIds)->update(['isDeleted' => $isDeleted]);
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2859,7 +2872,7 @@ class DatabaseService
         }
     }
 
-    public function createTemplate($user,$accessToken,$input)
+    public function createTemplate($user, $accessToken, $input)
     {
         try {
             // Log the input data for debugging
@@ -2904,7 +2917,7 @@ class DatabaseService
     {
         try {
             $id = (string) $id;
-            $emails = Email::whereJsonContains('toEmail', $id) ->with('fromUserData')->orderBy('updated_at', 'desc')->get();
+            $emails = Email::whereJsonContains('toEmail', $id)->with('fromUserData')->orderBy('updated_at', 'desc')->get();
             return $emails;
         } catch (\Exception $e) {
             Log::error("Error retrieving email list for contact ID {$id}: " . $e->getMessage());
@@ -2916,7 +2929,7 @@ class DatabaseService
     public function getContactsByMultipleId($ids)
     {
         try {
-            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
+            $bulkContacts = Contact::whereIn('id', $ids)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email', 'id')->get();
             return $bulkContacts;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2935,10 +2948,10 @@ class DatabaseService
                     'favorite' => $template['favorite'] ?? null,
                     'consent_linked' => $template['consent_linked'] ?? null,
                     'associated' => $template['associated'] ?? null,
-                    'content'=>$template['content'] ??null,
+                    'content' => $template['content'] ?? null,
                     'templateType' => 'public',
                     'folder' => json_encode($template['folder']) ?? null,
-                    'zoho_template_id'=>$template['id']
+                    'zoho_template_id' => $template['id']
                 ];
 
                 Template::updateOrCreate(
@@ -2958,9 +2971,9 @@ class DatabaseService
     {
         try {
 
-                $templateList = Template::whereOr(
-                    [['templateType'=>"Public"],['ownerId',$user->id]],
-                )->orderBy('updated_at','DESC')->get();
+            $templateList = Template::whereOr(
+                [['templateType' => "Public"], ['ownerId', $user->id]],
+            )->orderBy('updated_at', 'DESC')->get();
             return $templateList;
         } catch (\Exception $e) {
             Log::error("Error retrieving deal contacts: " . $e->getMessage());
@@ -2984,7 +2997,7 @@ class DatabaseService
     {
         try {
             $templateDetail = Template::where('zoho_template_id', $templateId)
-                                    ->update(['content' => $template['mail_content']]);
+                ->update(['content' => $template['mail_content']]);
             return $templateDetail;
         } catch (\Exception $e) {
             Log::error("Error updating template: " . $e->getMessage());
@@ -3003,15 +3016,15 @@ class DatabaseService
         }
     }
 
-    public function updateTemplate($user,$accessToken,$templateId,$template)
+    public function updateTemplate($user, $accessToken, $templateId, $template)
     {
         try {
             $templateData = [
                 'subject' => $template['subject'] ?? null,
                 'name' => $template['name'] ?? null,
-                'content'=>$template['content'] ??null,
+                'content' => $template['content'] ?? null,
                 'templateType' => 'private',
-                'ownerId'=>$user->id,
+                'ownerId' => $user->id,
             ];
 
             Template::updateOrCreate(
@@ -3028,7 +3041,7 @@ class DatabaseService
     public function createContactIfNotExists($user, $emails)
     {
         try {
-            $createdContacts=[];
+            $createdContacts = [];
             foreach ($emails as $email) {
                 $contact = [
                     'email' => $email['email'],
@@ -3043,7 +3056,7 @@ class DatabaseService
             }
 
             // Fetch newly created contacts to return them
-            $newContacts = Contact::whereIn('id', $createdContacts)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email','id')->get();
+            $newContacts = Contact::whereIn('id', $createdContacts)->select(DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as name"), 'email', 'id')->get();
 
             // Log the newly created contacts
             Log::info('New Contacts Created', ['contacts' => $newContacts]);

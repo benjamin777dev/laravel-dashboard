@@ -44,13 +44,21 @@ class ClosingInformationController extends Controller
         $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership) ?? 0;
 
         return view('closing_information.index', compact(
-            'transactionCountYTD', 'gciYTD', 'volumeYTD',
-            'capAmountPaidYTD', 'averageSalePrice', 'incomeGoal',
-            'averageCommissionPercent', 'initialCap', 'residualCap',
-            'irs1099Amount', 'agentReport', 'transactionsSoldYTD', 'soldByYear'
+            'transactionCountYTD',
+            'gciYTD',
+            'volumeYTD',
+            'capAmountPaidYTD',
+            'averageSalePrice',
+            'incomeGoal',
+            'averageCommissionPercent',
+            'initialCap',
+            'residualCap',
+            'irs1099Amount',
+            'agentReport',
+            'transactionsSoldYTD',
+            'soldByYear'
         ));
     }
-
 
     private function buildTransactionQuery($contact, $teamAndPartnership, $startDate = null, $endDate = null)
     {
@@ -70,7 +78,6 @@ class ClosingInformationController extends Controller
 
         return $query;
     }
-
 
     private function calculateTransactionCountYTD($contact, $teamAndPartnership)
     {

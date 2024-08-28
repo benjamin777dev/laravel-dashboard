@@ -35,10 +35,10 @@ class PipelineController extends Controller
             $user, // user
             $accessToken,  // access token 
             $inputs['search'] ?? null, // search filters if exist
-            $inputs['sort']?? null,  // sort filter if exist
-            $inputs['sortType']?? null,  // sort type if exist
+            $inputs['sort'] ?? null,  // sort filter if exist
+            $inputs['sortType'] ?? null,  // sort type if exist
             null,  // date filter (none)
-            $inputs['filter']?? null // filter
+            $inputs['filter'] ?? null // filter
         ); 
 
         $allDeals = $db->retrieveDeals(
@@ -69,8 +69,8 @@ class PipelineController extends Controller
             'allstages' => $allstages,
             'retrieveModuleData' => $retrieveModuleData,
             'getdealsTransaction' => $deals,
-            'allDeals'=>$allDeals,
-            'submittalDeals'=>$submittalDeals,
+            'allDeals' => $allDeals,
+            'submittalDeals' => $submittalDeals,
         ]);
 
         if ($request->ajax()) {
@@ -144,7 +144,7 @@ class PipelineController extends Controller
         LOG::info('Access Token Decrypted' . $accessToken);
         $search = request()->query('search');
         $stage = request()->query('stage');
-        $deals = $db->retrieveDeals($user, $accessToken, $search,null,null,null,$stage);
+        $deals = $db->retrieveDeals($user, $accessToken, $search, null, null, null, $stage);
         return Datatables::of($deals)->make(true);
        
     }
@@ -215,11 +215,11 @@ class PipelineController extends Controller
             $user, // user
             $accessToken,  // access token 
             $inputs['search'] ?? null, // search filters if exist
-            $inputs['sort']?? null,  // sort filter if exist
-            $inputs['sortType']?? null,  // sort type if exist
+            $inputs['sort'] ?? null,  // sort filter if exist
+            $inputs['sortType'] ?? null,  // sort type if exist
             null,  // date filter (none)
-            $inputs['filter']?? null // filter
-        ); 
+            $inputs['filter'] ?? null // filter
+        );
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $allStages = config('variables.dealStages');
@@ -228,10 +228,7 @@ class PipelineController extends Controller
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         
-        
         return view('pipeline.view', compact('deal','users','deals', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
-
-
     }
 
     public function showViewPipelineForm(Request $request)
@@ -256,7 +253,7 @@ class PipelineController extends Controller
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         $allStages = config('variables.dealStages');
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
-        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId','submittals','nontms'))->render();
+        return view('pipeline.detail', compact('users', 'contacts', 'deal', 'closingDate', 'allStages', 'dealId', 'submittals', 'nontms'))->render();
 
     }
 
@@ -333,7 +330,6 @@ class PipelineController extends Controller
 
     public function createPipeline(Request $request)
     {
-          
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
@@ -371,20 +367,20 @@ class PipelineController extends Controller
             $zoho->access_token = $accessToken;
 
             $jsonData = $request->json()->all();
-            Log::info("zoho deal Request on creation",[$jsonData]);
-            $deal = $db->retrieveDealById($user,$accessToken,$id);
-            if(!$deal){
-                $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
-                if(!$deal){
+            Log::info("zoho deal Request on creation", [$jsonData]);
+            $deal = $db->retrieveDealById($user, $accessToken, $id);
+            if (!$deal) {
+                $deal = $db->retrieveDealByZohoId($user, $accessToken, $id);
+                if (!$deal) {
                     return response()->json(['error' => 'Deal Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
-            if($deal->isDealCompleted){
+            if ($deal->isDealCompleted) {
                 $zohoDeal = $zoho->updateZohoDeal($jsonData, $deal->zoho_deal_id);
-            }else{
-                $zohoDeal= $zoho->createZohoDeal($jsonData);
+            } else {
+                $zohoDeal = $zoho->createZohoDeal($jsonData);
             }
-            Log::info("zoho deal response",[$zohoDeal]);
+            Log::info("zoho deal response", [$zohoDeal]);
             if (!$zohoDeal->successful()) {
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
@@ -408,11 +404,12 @@ class PipelineController extends Controller
         }
     }
 
-    public function updateDeals(Request $request){
+    public function updateDeals(Request $request)
+    {
         try {
             $user = $this->user();
             $accessToken = $user->getAccessToken();
-             $db = new DatabaseService();
+            $db = new DatabaseService();
             if (!$user) {
                 return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
             }
@@ -431,13 +428,13 @@ class PipelineController extends Controller
                 'field.required' => 'Field type is required.',
                 'field.in' => 'Invalid field type.',
                 'value.email' => 'Invalid email format.',
-                'value.regex' => 'Invalid '.$dbfield .' phone format.',
+                'value.regex' => 'Invalid ' . $dbfield . ' phone format.',
                 'value.numeric' => ' number must be numeric.',
             ];
     
             // Add custom validation for email format and phone number format if value is not empty
             if (!empty($request->input('value'))) {
-                 if(in_array($request->input('field'), ['sale_price', 'commission', 'pipeline_probability'])) {
+                if (in_array($request->input('field'), ['sale_price', 'commission', 'pipeline_probability'])) {
                     $rules['value'] .= '|regex:/^\d+(\.\d{1})?$/'; // Numeric with optional one decimal place
                 }
             }
@@ -448,45 +445,45 @@ class PipelineController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], Response::HTTP_BAD_REQUEST);
             }
-            $deal = $db->retrieveDealById($user,$accessToken,$id);
-            if(!$deal){
-                $deal = $db->retrieveDealByZohoId($user,$accessToken,$id);
-                if(!$deal){
+            $deal = $db->retrieveDealById($user, $accessToken, $id);
+            if (!$deal) {
+                $deal = $db->retrieveDealByZohoId($user, $accessToken, $id);
+                if (!$deal) {
                     return response()->json(['error' => 'Deal Id Not Found'], Response::HTTP_INTERNAL_SERVER_ERROR);
                 }
             }
+            
             $zoho = new ZohoCRM();
- 
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $field;
-            if($dbfield==="deal_name"){
+            if ($dbfield === "deal_name") {
                 $field = "Deal_Name";
             }
-            if($dbfield==="pipeline_probability"){
+            if ($dbfield === "pipeline_probability") {
                 $field = "Pipeline_Probability";
             }
-            if($dbfield==="client_name_primary"){
+            if ($dbfield === "client_name_primary") {
                 $field = "Client_Name_Primary";
             }
-            if($dbfield==="stage"){
+            if ($dbfield === "stage") {
                 $field = "Stage";
             }
-            if($dbfield==="representing"){
+            if ($dbfield === "representing") {
                 $field = "Representing";
             }
 
-            if($dbfield==="sale_price"){
+            if ($dbfield === "sale_price") {
                 $field = "Sale_Price";
             }
-            if($dbfield==="closing_date"){
+            if ($dbfield === "closing_date") {
                 $field = "Closing_Date";
             }
 
-            if($dbfield==="commission"){
+            if ($dbfield === "commission") {
                 $field = "Commission";
             }
-            if($dbfield==="address"){
+            if ($dbfield === "address") {
                 $field = "Address";
             }
             if (empty($field)) {
@@ -518,11 +515,11 @@ class PipelineController extends Controller
                 return response()->json(['error' => 'Zoho Deal update failed'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
              // If the stage is "Under Contract", update the locked_s field separately in the database
-        if ($dbfield === "stage" && $value === "Under Contract") {
-            DB::table('deals')
-                ->where('id', $id)
-                ->update(['locked_s' => 1]);
-        }
+            if ($dbfield === "stage" && $value === "Under Contract") {
+                DB::table('deals')
+                    ->where('id', $id)
+                    ->update(['locked_s' => 1]);
+            }
             $zohoDealArray = json_decode($zohoDeal, true);
             $zohoDealData = $zohoDealArray['data'][0]['details'];
             $resp = $zoho->getZohoDeal($zohoDealData['id']);
@@ -534,8 +531,8 @@ class PipelineController extends Controller
             $zohoDeal_Array = json_decode($resp, true);
             $zohoDealValues = $zohoDeal_Array['data'][0];
             $data = $jsonData['data'];
-            $dealDatas =  $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
-            return response()->json(['data'=>$dealDatas,'message'=>"Successfully Updated"]);
+            $dealDatas = $db->updateDeal($user, $accessToken, $zohoDealValues, $deal);
+            return response()->json(['data' => $dealDatas, 'message' => "Successfully Updated"]);
         } catch (\Throwable $th) {
             // Handle the exception here
             return response()->json(['error' => $th->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -654,7 +651,7 @@ class PipelineController extends Controller
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        return view('common.notes.create', compact("retrieveModuleData","deal","type"))->render();
+        return view('common.notes.create', compact("retrieveModuleData", "deal", "type"))->render();
     }
 
     public function createTasksForDeal()
@@ -671,7 +668,7 @@ class PipelineController extends Controller
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        return view('common.tasks.create', compact("retrieveModuleData","deal","type"))->render();
+        return view('common.tasks.create', compact("retrieveModuleData", "deal", "type"))->render();
     }
 
 
@@ -741,7 +738,8 @@ class PipelineController extends Controller
 
         // return view('contactRole.index', compact('dealContacts', 'deal', 'contacts', 'contactRoles'))->render();
     }
-    public  function piplineCardUpdate(Request $request) {
+    public function piplineCardUpdate(Request $request)
+    {
         $user = $this->user();
         if (!$user) {
             return redirect('/login');

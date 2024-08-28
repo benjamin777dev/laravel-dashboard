@@ -120,9 +120,9 @@ class RegisterController extends Controller
                 'token_data' => $tokenData,
                 'contact_id' => $contactId,
                 'root_user_id' => $rootUserId,
-                'contact_data'=>$cdrData
+                'contact_data' => $cdrData
             ]);
-             $userAlreadyExists = User::where("email", $userData["email"])->first();
+            $userAlreadyExists = User::where("email", $userData["email"])->first();
             if ($userAlreadyExists) {
                 Log::info("User data found in response!" . $userAlreadyExists);
                 return redirect()->route('reset');
@@ -180,7 +180,7 @@ class RegisterController extends Controller
             'email' => $hashedEmail, // Store hashed email
             'name' => $validatedData['name'],
             'password' => Hash::make($validatedData['password']),
-            'access_token' =>  $encryptedAccessToken,
+            'access_token' => $encryptedAccessToken,
             'refresh_token' => $encryptedRefreshToken,
             'token_expires_at' => now()->addSeconds($tokenData['expires_in']),
             'root_user_id' => $rootUserId,
@@ -194,23 +194,21 @@ class RegisterController extends Controller
             $userDBData
         );
 
-        
-       Contact::updateOrCreate(
+        Contact::updateOrCreate(
             ['zoho_contact_id' => $contactId],
             [
                 'email' => $hashedEmail, // Store hashed email
-                'zoho_contact_id'=>$contactId,
-                'first_name'=>$contactData['First_Name'],
-                "last_name"=>$contactData['Last_Name'],
-                "phone"=>$contactData['Phone'],
+                'zoho_contact_id' => $contactId,
+                'first_name' => $contactData['First_Name'],
+                "last_name" => $contactData['Last_Name'],
+                "phone" => $contactData['Phone'],
             ]
         );
-
 
         Auth::login($user);
         Log::info('User registered and logged in.');
         RunScheduledTasks::dispatch()->afterResponse();
-        
+
         return redirect($this->redirectTo);
     }
 }

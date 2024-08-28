@@ -55,10 +55,20 @@ class TeamIndividualController extends Controller
         $myGroups = $this->getMyGroups($user);
 
         return view('team_individual.index', compact(
-            'averagePipelineProbability', 'averageCommPercentage', 'averageSalePrice',
-            'pipelineValue', 'incomeGoal', 'abcdContacts', 'missingAbcd',
-            'needsAddress', 'needsPhone', 'needsEmail', 'openTasks',
-            'transactionsPastFourQuarters', 'volumePastFourQuarters', 'pipelineByMonth',
+            'averagePipelineProbability',
+            'averageCommPercentage',
+            'averageSalePrice',
+            'pipelineValue',
+            'incomeGoal',
+            'abcdContacts',
+            'missingAbcd',
+            'needsAddress',
+            'needsPhone',
+            'needsEmail',
+            'openTasks',
+            'transactionsPastFourQuarters',
+            'volumePastFourQuarters',
+            'pipelineByMonth',
             'myGroups'
         ));
     }
