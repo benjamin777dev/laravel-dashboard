@@ -95,10 +95,10 @@ var table = $("#datatable_pipe_transaction").DataTable({
                         console.log(typeof row, "row is hereeeetexxttt");
                         const rowStr = encodeURIComponent(JSON.stringify(row));
                         submittalSection = `
-        <div style="color:#222;" class="ps-2" id="addSubmittal" data-row="${rowStr}" onclick="showSubmittalFormType(this)">
-            <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon" title="Add Submittal"></i>
-        </div>
-    `;
+                            <div style="color:#222;" class="ps-2" id="addSubmittal" data-row="${rowStr}" onclick="showSubmittalFormType(this)">
+                                <i class="fa fa-plus fa-lg ppiplinecommonIcon" aria-hidden="true" alt="Split screen icon" title="Add Submittal"></i>
+                            </div>
+                        `;
                     } else {
                         submittalSection = `
                             <a href="/submittal-view/${row.submittals[0]?.submittalType}/${row?.submittals[0]?.id}" target="_blank">
@@ -236,7 +236,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                         data || "N/A"
                     }</span>`;
                 }
-                return `<span class="editable" data-name="stage" style="color:${getTextColorForStage(
+                return `<span class="editable" data-name="stage" data-representing='${
+                    row.representing
+                }' style="color:${getTextColorForStage(
                     data
                 )}; background-color:${getColorForStage(data)}" data-id="${
                     row.id
@@ -345,7 +347,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
         },
     },
 
-    initComplete: function () {
+    initComplete: function (settings, json) {
         // Function to handle editing mode
         var currentText;
 
@@ -381,6 +383,10 @@ var table = $("#datatable_pipe_transaction").DataTable({
             currentText = currentTextfilter.replace(/\$|%|,|.00/g, ""); // Set currentText when entering edit mode
             var dataName = $(element).data("name");
             var dataId = $(element).data("id");
+            console.log("element", element);
+            var representing = $(element).data("representing");
+
+            console.log("representing", representing);
 
             // Replace span with input or select for editing
             if (
@@ -422,7 +428,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
 
                 $(element)
                     .replaceWith(
-                        `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId})" data-name="${dataName}" data-id="${dataId}">
+                        `<select class="edit-input form-control editable" onchange="handleStageChange(this,${dataId},'${representing}')" data-name="${dataName}" data-id="${dataId}">
                     ${selectOptions}
                 </select>`
                     )
@@ -452,11 +458,17 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 .focus();
         }
 
-        window.handleStageChange = function (selectElement, dataId) {
+        window.handleStageChange = function (
+            selectElement,
+            dataId,
+            representing
+        ) {
             var selectedValue = selectElement.value;
+            console.log("ONCHANGE DEAL", selectElement, dataId, representing);
+
             if (selectedValue === "Under Contract") {
                 // Open the modal when "Under Contract" is selected
-                openContractModal(dataId);
+                openContractModal(dataId, representing);
             }
         };
 
@@ -564,7 +576,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
     },
 });
 
-window.openContractModal = function (dealId) {
+window.openContractModal = function (dealId, representing) {
     const modalHTML = `
         <div class="modal fade" id="underContractModal${dealId}" data-bs-backdrop="static"
             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -577,63 +589,101 @@ window.openContractModal = function (dealId) {
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="underContractContainer${dealId}">
-                        <!-- Content will go here -->
                         <div class="col-md-12">
                             <label for="validationDefault07" class="form-label nplabelText">Address</label>
-                            <input type="text" class="form-control npinputinfo validate required-field" id="address"
-                            >
+                            <input type="text" class="form-control npinputinfo validate required-field" id="address">
                             <div id="addressError" class="d-none text-danger">Please fill address</div>
                         </div>
-                    
                         <div class="col-md-12">
                             <label for="validationDefault08" class="form-label nplabelText">City</label>
-                            <input type="text" class="form-control npinputinfo validate required-field" id="city" required
-                                >
-                                <div id="cityError" class="d-none text-danger">Please fill city</div>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="city" required>
+                            <div id="cityError" class="d-none text-danger">Please fill city</div>
                         </div>
                         <div class="col-md-12">
                             <label for="validationDefault09" class="form-label nplabelText">State</label>
-                            <input type="text" 
-                                class="form-control npinputinfo validate required-field" 
-                                id="state" 
-                                value="">
-                                <div id="stateError" class="d-none text-danger">Please fill state</div>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="state" value="">
+                            <div id="stateError" class="d-none text-danger">Please fill state</div>
                         </div>
                         <div class="col-md-12">
                             <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
-                            <input type="text" class="form-control npinputinfo validate required-field" id="zip" required
-                                >
-                                <div id="zipError" class="d-none text-danger">Please fill zip</div>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="zip" required>
+                            <div id="zipError" class="d-none text-danger">Please fill zip</div>
                         </div>
                         <div class="col-md-12">
                             <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
                             <select class="form-select npinputinfo validate required-field" id="property" required>
                                 <option selected disabled value="">--None--</option>
-                                <option value="Residential">
-                                    Residential</option>
-                                <option value="Land" >Land</option>
-                                <option value="Farm" >Farm</option>
-                                <option value="Commercial">
-                                    Commercial
-                                </option>
+                                <option value="Residential">Residential</option>
+                                <option value="Land">Land</option>
+                                <option value="Farm">Farm</option>
+                                <option value="Commercial">Commercial</option>
                                 <option value="Lease">Lease</option>
                             </select>
                             <div id="property_typeError" class="d-none text-danger">Please fill property type</div>
                         </div>
-                        
                         <div class="modal-footer">
-                            <button type="button" onclick="saveUnderConReqField(${dealId})" class="btn  btn-dark float-left pt-2">
+                            <button type="button" onclick="saveUnderConReqField(${dealId},'${representing}')" class="btn btn-dark float-left pt-2">
                                 <i class="fas fa-save saveIcon"></i> Save
                             </button>
-                            <button type="button" class=" btn btn-light float-left pt-2" data-bs-dismiss="modal"
-                                    aria-label="Close">Cancel</button>
+                            <button type="button" class="btn btn-light float-left pt-2" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
+
+    // Insert modal into the DOM
     document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+    // Append additional fields if representing is "Buyer"
+    if (representing === "Buyer") {
+        $(`#underContractContainer${dealId} .modal-footer`).before(`
+            <div class="col-md-12">
+                <label for="finance" class="form-label nplabelText">Financing</label>
+                        <select class="form-select npinputinfo validate" id="finance" required onchange="showMoreInputs(this)">
+                            <option value="" >--None--</option>
+                            <option value="Cash" >Cash</option>
+                            <option value="Loan" >Loan
+                            </option>
+                        </select>
+                <div id="financeError" class="d-none text-danger">Please select finance</div>
+            </div>
+            <div class="col-md-12">
+                <label for="validationDefault11" class="form-label nplabelText">Lender Company</label>
+                <select class="form-select npinputinfo required-field" id="lender_company" required onchange="showMoreInputs(this)">
+                    <option selected disabled value="">--None--</option>
+                    <option value="Modern Mortgage">Modern Mortgage</option>
+                    <option value="Other">Other</option>
+                </select>
+                <div id="lender_companyError" class="d-none text-danger">Please fill lender company</div>
+            </div>
+            <div class="col-md-12">
+                <label for="modern_mortgage_lender" class="form-label nplabelText ">Modern Mortgage Lender</label>
+                        <select class="form-select npinputinfo" id="modern_mortgage_lender" required >
+                            <option value="" >--None--</option>
+                            <option value="Joe Biniasz" >Joe Biniasz</option>
+                            <option value="Laura Berry" >Laura Berry
+                            </option>
+                            <option value="Virginia Shank" >Virginia Shank
+                            </option>
+                        </select>
+                <div id="modern_mortgage_lenderError" class="d-none text-danger">Please fill modern mortgage lender</div>
+            </div>
+            <div class="col-md-12 d-none" id="lender_company_name_div">
+                 <label for="lender_company_name" class="form-label nplabelText">Lender Company Name</label>
+                        <input type="text" class="form-control npinputinfo validate"
+                            id="lender_company_name" value = "" required>
+                <div id="lender_company_nameError" class="d-none text-danger">Please fill lender company name</div>
+            </div>
+            <div class="col-md-12 d-none" id="lender_name_div">
+                <label for="lender_name" class="form-label nplabelText">Lender Name</label>
+                        <input type="text" class="form-control npinputinfo validate"
+                            id="lender_name" value = "" required>
+                <div id="lender_nameError" class="d-none text-danger">Please fill lender name</div>
+            </div>
+        `);
+    }
 
     // Show the modal using Bootstrap's modal method
     const modalElement = new bootstrap.Modal(
@@ -641,7 +691,7 @@ window.openContractModal = function (dealId) {
     );
     modalElement.show();
 
-    // Add an event listener to remove the modal from DOM after it is hidd+en
+    // Add an event listener to remove the modal from DOM after it is hidden
     document
         .getElementById(`underContractModal${dealId}`)
         .addEventListener("hidden.bs.modal", function (e) {
@@ -649,7 +699,26 @@ window.openContractModal = function (dealId) {
         });
 };
 
-window.saveUnderConReqField = function (dealId) {
+window.showMoreInputs = function (selectedElement) {
+    var value = selectedElement.value;
+    if (value == "Loan") {
+        $("#lender_company").addClass("validate");
+    } else {
+        $("#lender_company").removeClass("validate");
+    }
+    if (value == "Modern Mortgage") {
+        $("#modern_mortgage_lender").addClass("validate");
+        $("#lender_company_name_div").addClass("d-none");
+        $("#lender_name_div").addClass("d-none");
+    } else if (value == "Other") {
+        $("#modern_mortgage_lender").removeClass("validate");
+        $("#lender_company_name_div").removeClass("d-none");
+        $("#lender_name_div").removeClass("d-none");
+    }
+    //     //set condtion to add validate class if value ==loan
+    // $("#modern_mortgage_lender_div").removeClass("d-none");
+};
+window.saveUnderConReqField = function (dealId, representing) {
     console.log("call saveUnderConReqField function");
 
     // Perform validation
@@ -675,6 +744,15 @@ window.saveUnderConReqField = function (dealId) {
             },
         ],
     };
+    if (representing == "Buyer") {
+        formData.data[0].Finance = $("#finance").val();
+        formData.data[0].Lender_Company = $("#lender_company").val();
+        formData.data[0].Modern_Mortgage_Lender = $(
+            "#modern_mortgage_lender"
+        ).val();
+        formData.data[0].Lender_Company_Name = $("#lender_company_name").val();
+        formData.data[0].Lender_Name = $("#lender_name").val();
+    }
 
     // Proceed with saving logic if validation passes
     // Add your saving logic here, e.g., collecting form data and sending it to the server
