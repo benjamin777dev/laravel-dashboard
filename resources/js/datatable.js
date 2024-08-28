@@ -358,8 +358,6 @@ var table = $("#datatable_pipe_transaction").DataTable({
             return `${year}-${month}-${day}`;
         }
 
-        
-
         function enterEditMode(element) {
             if ($(element).hasClass("editing")) {
                 return; // Do nothing if already editing
@@ -452,14 +450,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 .focus();
         }
 
-        window.handleStageChange = function (selectElement, dataId,row) {
+        window.handleStageChange = function (selectElement, dataId) {
             var selectedValue = selectElement.value;
-            console.log(row,'rowrowrow')
             if (selectedValue === "Under Contract") {
-                console.log(
-                    selectedValue,
-                    " under cont hai re bhaiiiiiiii........."
-                );
                 // Open the modal when "Under Contract" is selected
                 openContractModal(dataId);
             }
@@ -471,6 +464,9 @@ var table = $("#datatable_pipe_transaction").DataTable({
             var dataName = $(inputElement).data("name");
             var dataId = $(inputElement).data("id");
 
+            if (newValue === "Under Contract") {
+                return;
+            }
             // Replace input or select with span
             $(inputElement)
                 .replaceWith(
@@ -580,83 +576,104 @@ window.openContractModal = function (dealId) {
                     </div>
                     <div class="modal-body" id="underContractContainer${dealId}">
                         <!-- Content will go here -->
-                         <div class="col-md-12">
-                    <label for="validationDefault07" class="form-label nplabelText">Address</label>
-                    <input type="text" class="form-control npinputinfo validate required-field" id="address"
-                       >
-                </div>
-                 <div class="col-md-12">
-                    <label for="validationDefault08" class="form-label nplabelText">City</label>
-                    <input type="text" class="form-control npinputinfo validate required-field" id="city" required
-                        >
-                </div>
-                <div class="col-md-12">
-                    <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
-                    <input type="text" class="form-control npinputinfo validate required-field" id="zip" required
-                        >
-                </div>
-                <div class="col-md-12">
-                    <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
-                    <select class="form-select npinputinfo validate required-field" id="property" required>
-                        <option selected disabled value="">--None--</option>
-                        <option value="Residential">
-                            Residential</option>
-                        <option value="Land" >Land</option>
-                        <option value="Farm" >Farm</option>
-                        <option value="Commercial">
-                            Commercial
-                        </option>
-                        <option value="Lease">Lease</option>
-                    </select>
-                </div>
-                 <div class="col-md-12">
-                    <label for="validationDefault12" class="form-label nplabelText required-field">Financing</label>
-                    <select class="form-select npinputinfo validate" id="financing" required>
-                        <option selected disabled value="">--None--</option>
-                        <option value="Cash">
-                            Cash</option>
-                        <option value="Loan" >Loan</option>
-                    </select>
-                </div>
-                  <div class="p-1">
-                   <button type="button" onclick="saveUnderConReqField(${dealId})" class="btn btn-dark float-left pt-2">Save</button>
-                   <button type="button" class=" btn btn-light float-left pt-2" data-bs-dismiss="modal"
-                            aria-label="Close">Cancel</button>
-                    </div>
+                        <div class="col-md-12">
+                            <label for="validationDefault07" class="form-label nplabelText">Address</label>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="address"
+                            >
+                            <div id="addressError" class="d-none text-danger">Please fill address</div>
+                        </div>
+                    
+                        <div class="col-md-12">
+                            <label for="validationDefault08" class="form-label nplabelText">City</label>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="city" required
+                                >
+                                <div id="cityError" class="d-none text-danger">Please fill city</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="validationDefault09" class="form-label nplabelText">State</label>
+                            <input type="text" 
+                                class="form-control npinputinfo validate required-field" 
+                                id="state" 
+                                value="">
+                                <div id="stateError" class="d-none text-danger">Please fill state</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="validationDefault10" class="form-label nplabelText">ZIP</label>
+                            <input type="text" class="form-control npinputinfo validate required-field" id="zip" required
+                                >
+                                <div id="zipError" class="d-none text-danger">Please fill zip</div>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="validationDefault12" class="form-label nplabelText">Property Type</label>
+                            <select class="form-select npinputinfo validate required-field" id="property" required>
+                                <option selected disabled value="">--None--</option>
+                                <option value="Residential">
+                                    Residential</option>
+                                <option value="Land" >Land</option>
+                                <option value="Farm" >Farm</option>
+                                <option value="Commercial">
+                                    Commercial
+                                </option>
+                                <option value="Lease">Lease</option>
+                            </select>
+                            <div id="property_typeError" class="d-none text-danger">Please fill property type</div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" onclick="saveUnderConReqField(${dealId})" class="btn  btn-dark float-left pt-2">
+                                <i class="fas fa-save saveIcon"></i> Save
+                            </button>
+                            <button type="button" class=" btn btn-light float-left pt-2" data-bs-dismiss="modal"
+                                    aria-label="Close">Cancel</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
-
-    // Append modal to the body
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    document.body.insertAdjacentHTML("beforeend", modalHTML);
 
     // Show the modal using Bootstrap's modal method
-    const modalElement = new bootstrap.Modal(document.getElementById(`underContractModal${dealId}`));
+    const modalElement = new bootstrap.Modal(
+        document.getElementById(`underContractModal${dealId}`)
+    );
     modalElement.show();
+
+    // Add an event listener to remove the modal from DOM after it is hidd+en
+    document
+        .getElementById(`underContractModal${dealId}`)
+        .addEventListener("hidden.bs.modal", function (e) {
+            e.target.remove();
+        });
 };
 
-window.saveUnderConReqField = function(dealId) {
+window.saveUnderConReqField = function (dealId) {
+    console.log("call saveUnderConReqField function");
+
     // Perform validation
     if (!validateRequiredField()) {
         // If validation fails, exit the function
         return;
     }
-  
+
     var address = $("#address").val();
     var city = $("#city").val();
     var zip = $("#zip").val();
     var property = $("#property").val();
-    var financing = $("#financing").val();
+    var state = $("#state").val();
     let formData = {
-        Address: address,
-        City: city,
-        Zip: zip,
-        Property_Type: property,
-        Financing:financing
-    }
-    
+        data: [
+            {
+                Address: address,
+                City: city,
+                Zip: zip,
+                Property_Type: property,
+                State: state,
+                Stage: "Under Contract",
+            },
+        ],
+    };
+
     // Proceed with saving logic if validation passes
     // Add your saving logic here, e.g., collecting form data and sending it to the server
     $.ajaxSetup({
@@ -674,69 +691,67 @@ window.saveUnderConReqField = function(dealId) {
         success: function (response) {
             if (response?.data && response.data[0]?.message) {
                 // Convert message to uppercase and then display
-                const upperCaseMessage =
-                response.data[0].message.toUpperCase();
+                const upperCaseMessage = response.data[0].message.toUpperCase();
                 showToast(upperCaseMessage);
-                $("#datatable_pipe_transaction")
-                .DataTable()
-                .ajax.reload();
-                
+                $("#datatable_pipe_transaction").DataTable().ajax.reload();
+
                 // window.location.reload();
             }
         },
         error: function (xhr, status, error) {
             showToastError(xhr?.responseJSON?.error);
-            $("#datatable_pipe_transaction")
-            .DataTable()
-            .ajax.reload();
+            $("#datatable_pipe_transaction").DataTable().ajax.reload();
         },
     });
-    
+
     console.log("Form is valid. Proceed with saving...");
-    
+
     // Close the modal
-    const modalElement = document.querySelector('.modal.fade.show');
+    const modalElement = document.querySelector(".modal.fade.show");
     const bsModal = bootstrap.Modal.getInstance(modalElement);
     bsModal.hide();
 };
 
-
 function validateRequiredField() {
+    console.log("call validateRequiredField function");
+
     let isValid = true;
 
     // Find the modal by querying the currently opened modal
-    const modalElement = document.querySelector('.modal.fade.show');
-    const modalId = modalElement.getAttribute('id');
-    const modalBody = modalElement.querySelector('.modal-body');
+    const modalElement = document.querySelector(".modal.fade.show");
+    const modalBody = modalElement.querySelector(".modal-body");
 
     // Clear previous error messages
-    modalBody.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
+    modalBody
+        .querySelectorAll(".error")
+        .forEach((field) => field.classList.remove("error"));
 
     const invalidFields = [];
 
     // Check required fields within the modal
-    modalBody.querySelectorAll('.required-field').forEach(field => {
+    modalBody.querySelectorAll(".required-field").forEach((field) => {
         const value = field.value;
-        if (value === "" || (field.tagName === 'SELECT' && value === "--None--")) {
+        let errorElement = document.getElementById(
+            field.previousElementSibling.textContent
+                .toLowerCase()
+                .replace(" ", "_") + "Error"
+        );
+        console.log("Error Element", errorElement);
+
+        if (
+            value === "" ||
+            (field.tagName === "SELECT" && value === "--None--")
+        ) {
             isValid = false;
-            field.classList.add('error');
-            invalidFields.push(field.previousElementSibling.textContent);
+
+            errorElement.classList.remove("d-none");
         } else {
-            field.classList.remove('error');
+            errorElement.classList.add("d-none");
         }
     });
 
-    // Handle invalid fields and show error message
-    if (invalidFields.length > 0) {
-        showToastError('Please enter the following fields: ' + invalidFields.join(', '));
-    } else if (!isValid) {
-        showToastError('Please fill out all required fields.');
-    }
-
     return isValid;
 }
-
-
 
 //contact role table pipeline
 var tableContactRole = $("#contact_role_table_pipeline").DataTable({
@@ -1202,6 +1217,8 @@ var tableDashboard = $("#datatable_transaction").DataTable({
 
         // Function to handle exiting editing mode
         function exitEditMode(inputElement) {
+            console.log("call exitEditMode function");
+
             var newValue = $(inputElement).val();
             var dataName = $(inputElement).data("name");
             var dataId = $(inputElement).data("id");
