@@ -339,7 +339,7 @@ window.updateDataDeal = function (dealId, dbDealId) {
                         id: contact_name_id ?? "",
                     },
                     Review_Gen_Opt_Out: review_gen_opt_out,
-                    Commission_Flat_Free: commission_flat_free,
+                    Commission_Flat_Fee: parseFloat(commission_flat_free),
                     TM_Preference: tm_preference,
                     Transaction_Owner: transaction_owner,
                     Contact: {
