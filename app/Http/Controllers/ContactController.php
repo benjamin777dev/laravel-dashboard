@@ -811,7 +811,7 @@ class ContactController extends Controller
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($id, $zohoContactValues);
+               $updatedContact = $db->storeContactIntoDB($id, $zohoContactValues);
                 $contactGroups = $this->getGroupsForDelete($id);
                 $groupNames = $contactGroups->map(function ($item) {
                     return [
@@ -873,7 +873,7 @@ class ContactController extends Controller
                 }
             }
             // Redirect back with a success message
-            return response()->json(['data' => $contactInstance], 200);
+            return response()->json(['data' => $updatedContact], 200);
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw new \Exception($e->getMessage());

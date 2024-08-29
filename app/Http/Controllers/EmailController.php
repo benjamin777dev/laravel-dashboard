@@ -371,7 +371,7 @@ public function sendMultipleEmail(Request $request)
         ];
 
         $DBInput = [];
-        foreach ($inputData['toData'] as $toData) {
+        foreach ($inputData['to'] as $toData) {
             $DBInput[]=[
                     'to' => [$toData],
                     'cc' => $inputData['ccData'],
