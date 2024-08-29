@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Aci;
 use App\Models\Deal;
 use App\Models\User;
@@ -170,7 +171,7 @@ class PipelineController extends Controller
             $response = $zoho->createAciData($aci);
             if (!$response->successful()) {
                 Log::error("Error retrieving aci: " . $response->body());
-                throw $response->body();
+                throw new Exception($response->body());
             }
             $helper = new Helper();
             Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
@@ -456,7 +457,7 @@ class PipelineController extends Controller
             $zoho = new ZohoCRM();
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
-            $field;
+            $field = "";
             if ($dbfield === "deal_name") {
                 $field = "Deal_Name";
             }

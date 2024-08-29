@@ -199,7 +199,7 @@ if(!empty($status) && $status==="Upcomming"){
  
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
-            $field;
+            $field = "";
             if($dbfield==="subject"){
                 $field = "Subject";
             }
@@ -235,8 +235,8 @@ if(!empty($status) && $status==="Upcomming"){
 
         }
        
-        $deal;
-        $contact;
+        $deal = null;
+        $contact = null;
         if ($dbfield === 'related_to') {
             $contact = Contact::find($value); // Using findOrFail to handle the case where the record is no
             if (!empty($contact->zoho_contact_id)) {

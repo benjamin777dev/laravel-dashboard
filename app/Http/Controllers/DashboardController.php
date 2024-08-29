@@ -424,13 +424,13 @@ class DashboardController extends Controller
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
          
-        $subject;
-        $whoid;
-        $status;
-        $Due_Date;
-        $What_Id;
-        $priority;
-        $contact;
+        $subject = null;
+        // $whoid = null;
+        $status = null;
+        $Due_Date = null;
+        // $What_Id = null;
+        // $priority = null;
+        $contact = null;
         $seModule = null;
         // Access the 'Subject' field
         if (!empty($data['Subject'])) {
@@ -506,7 +506,7 @@ class DashboardController extends Controller
 
             // $task->modified_by_name = $modifiedByName;
             // $task->modified_by_id = $modifiedById;
-            return $data;
+            // return $data;
 
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
