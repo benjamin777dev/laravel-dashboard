@@ -310,9 +310,7 @@ var table = $("#datatable_pipe_transaction").DataTable({
                 if (row.stage === "Under Contract") {
                     return `<span>${data || "N/A"}</span>`;
                 }
-                return `<span class="editable" data-name="pipeline_probability" data-id="${
-                    row.id
-                }">${data || "N/A"}%</span>`;
+                return `<span>${data || "N/A"}%</span>`;
             },
         },
         {
