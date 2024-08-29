@@ -918,8 +918,7 @@
             let additionalFeeAmount = document.getElementById("additionalFeeAmount");
             let resubmitting_why_list_all_changes = document.getElementById(
                 "resubmitting_why_list_all_changes");
-            const resubmit_text = document.getElementById('resubmit_text');
-            const resubmit_text_isChecked = resubmit_text.checked;
+            
             let additionalFeeDescription = document.getElementById("additionalFeeDescription");
             var selectedOption = related_transaction.options[related_transaction.selectedIndex];
             // Get the value and text of the selected option
