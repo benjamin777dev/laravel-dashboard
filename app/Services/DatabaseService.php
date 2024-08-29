@@ -34,8 +34,6 @@ class DatabaseService
     {
         $helper = new Helper();
         $zoho = new ZohoCRM();
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         Log::info("Storing the following deals into the database:", ['deals' => $dealsData]);
         $dealCount = count($dealsData);
         for ($i = 0; $i < $dealCount; $i++) {
@@ -1741,8 +1739,6 @@ class DatabaseService
     {
         $helper = new Helper();
         $zoho = new ZohoCRM();
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
 
         Log::info("Storing Groups Into Database only group");
 
@@ -1765,8 +1761,6 @@ class DatabaseService
     {
         $helper = new Helper();
         $zoho = new ZohoCRM();
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
 
         Log::info("Storing Groups Into Database");
 

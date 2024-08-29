@@ -55,8 +55,6 @@ class GroupController extends Controller
                 return redirect('/login');
             }
 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $jsonInput = $request->all();
             $jsonData = [];
             $group_name = $jsonInput['group_name'] ?? null;
@@ -149,8 +147,6 @@ class GroupController extends Controller
                 return redirect('/login');
             }
 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $groupId = $request->route('groupId');
 
             // if group is present in contact group table then return error
@@ -210,8 +206,6 @@ class GroupController extends Controller
                 return redirect('/login');
             }
 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $jsonInput = $request->json()->all();
             $jsonData = $jsonInput['data'][0];
             $response = $zoho->updateContactGroup($jsonInput);
@@ -261,8 +255,6 @@ class GroupController extends Controller
                 return redirect('/login');
             }
 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $zohoGroupId = $request->route('contactGroupId');
             $response = $zoho->deleteContactGroup($zohoGroupId);
             Log::info('Update GRoup RESPONSE ' . json_encode($response));
@@ -358,7 +350,6 @@ class GroupController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
 
         // Example: Log the payload
         Log::info('Webhook received:', $payload);
@@ -412,7 +403,6 @@ class GroupController extends Controller
             }
 
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
 
             // Create CSV data
             $csvData = [];

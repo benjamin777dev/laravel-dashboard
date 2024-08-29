@@ -142,7 +142,6 @@ class ContactController extends Controller
         }
         $getContactFromZoho = null;
         if (!empty($contact->zoho_contact_id)) {
-            $zoho->access_token = $accessToken;
             $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
             Log::info('contcattesting hereeee' . $getContactFromZoho);
             $zohoContact_Array = json_decode($getContactFromZoho, true);
@@ -280,8 +279,6 @@ class ContactController extends Controller
             }
 
             $zoho = new ZohoCRM();
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
 
             $field = "";
             switch ($dbfield) {
@@ -406,10 +403,8 @@ class ContactController extends Controller
             }
             $rules = [];
             $helper = new Helper();
-            $accessToken = $user->getAccessToken();
             $zoho = new ZohoCRM();
             $db = new DatabaseService();
-            $zoho->access_token = $accessToken;
             $frontData = $request->all();
             if (!empty($frontData['data'])) {
                 $first_name = "";
@@ -1100,8 +1095,6 @@ class ContactController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-
-        $zoho->access_token = $accessToken;
 
         $jsonData = $request->all();
         $contactId = $id;

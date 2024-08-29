@@ -22,7 +22,6 @@ class NonTmController extends Controller
         }
         try {
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
@@ -45,7 +44,6 @@ class NonTmController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $dealId = request()->route('id');
         $dealData = $db->retrieveNonTmById($user, $accessToken, $dealId);
         $deals = $db->retrieveDeals($user, null, null, null, null, null);
@@ -78,7 +76,6 @@ class NonTmController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $jsonData = $request->json()->all();
         $nontm = null;
         if (isset($jsonData['data'][0]['Related_Transaction']['id'])) {
@@ -112,7 +109,6 @@ class NonTmController extends Controller
         $nontmId = request()->route('id');
         $status = request()->query('status');
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $jsonData = $request->json()->all();
         $nonTm = $db->retrieveNonTmById($user, $accessToken, $nontmId);
         if (!$nonTm) {

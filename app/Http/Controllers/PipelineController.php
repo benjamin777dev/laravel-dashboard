@@ -514,9 +514,7 @@ class PipelineController extends Controller
             }
              // If the stage is "Under Contract", update the locked_s field separately in the database
             if ($dbfield === "stage" && $value === "Under Contract") {
-                DB::table('deals')
-                    ->where('id', $id)
-                    ->update(['locked_s' => 1]);
+                Deal::where('id', $id)->update(['locked_s' => 1]);
             }
             $zohoDealArray = json_decode($zohoDeal, true);
             $zohoDealData = $zohoDealArray['data'][0]['details'];

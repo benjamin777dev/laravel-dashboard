@@ -28,7 +28,6 @@ class SubmittalController extends Controller
         }
         try {
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $dealId = request()->route('dealId');
             $deal = $db->retrieveDealById($user, $accessToken, $dealId);
             $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
@@ -59,7 +58,6 @@ class SubmittalController extends Controller
         try {
             $accessToken = $user->getAccessToken();
             $zoho = new ZohoCRM();
-            $zoho->access_token = $accessToken;
             $response = $zoho->createAciData($aci);
             if (!$response->successful()) {
                 Log::error("Error retrieving aci: " . $response->body());
@@ -206,7 +204,6 @@ class SubmittalController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
         $formType = $jsonData['data'][0]['formType'];
@@ -238,7 +235,6 @@ class SubmittalController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $submittalId = $request->route('submittalId');
         $isNew = $request->query('isNew');
         $jsonData = $request->json()->all();
@@ -271,7 +267,6 @@ class SubmittalController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $dealId = $request->route('dealId');
         $jsonData = $request->json()->all();
         $isIncompleteSubmittal = $db->getIncompleteSubmittal($user, $accessToken, $dealId, 'buyer-submittal', null);
@@ -302,7 +297,6 @@ class SubmittalController extends Controller
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
         $submittalId = $request->route('submittalId');
         $isNew = $request->query('isNew');
         $jsonData = $request->json()->all();

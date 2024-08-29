@@ -198,7 +198,6 @@ if(!empty($status) && $status==="Upcomming"){
             $zoho = new ZohoCRM();
  
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $field = "";
             if($dbfield==="subject"){
                 $field = "Subject";

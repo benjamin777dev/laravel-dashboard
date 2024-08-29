@@ -69,7 +69,6 @@ class EmailController extends Controller
             }
 
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $inputData = $request->json()->all();
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
@@ -277,7 +276,6 @@ class EmailController extends Controller
             }
 
             $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $inputData = $request->json()->all();
 
             $userVerified = false;
@@ -501,8 +499,6 @@ class EmailController extends Controller
                 return redirect('/login');
             }
 
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
             $csvResponse = $this->exportCsv($associateInput, $contactId);
             $zipFilename = $csvResponse->getData()->zip_filename;
             $zipPath = storage_path('app/' . $zipFilename);

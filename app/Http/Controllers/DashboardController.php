@@ -152,7 +152,7 @@ class DashboardController extends Controller
 
     private function getNeedsNewDateData($deals)
     {
-        $endDate30Days = Carbon::now()->addMonth(1);
+        $endDate30Days = Carbon::now()->addMonth();
 
         $needsNewDate = $deals->filter(function ($deal) use ($endDate30Days) {
             $closingDate = Carbon::parse($this->helper->convertToMST($deal['closing_date']));
@@ -235,7 +235,6 @@ class DashboardController extends Controller
         Log::info("Retrieving aci for criteria: $criteria");
 
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
 
         try {
             while ($hasMorePages) {
@@ -275,7 +274,7 @@ class DashboardController extends Controller
             return redirect('/login');
         }
         //Get Date Range
-        $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
+        $endDate30Days = Carbon::now()->addMonth()->format('d.m.Y'); // 30 days
         $deals = $db->retrieveDeals($user, null, null, null, null, null, true);
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
@@ -339,7 +338,6 @@ class DashboardController extends Controller
         Log::info("Retrieving notes for criteria: $criteria");
 
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
 
         try {
             while ($hasMorePages) {
@@ -417,10 +415,7 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
-        Log::info("Access Token,$accessToken");
         $jsonData = $request->json()->all();
         $data = $jsonData['data'][0];
          
@@ -520,10 +515,8 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $accessToken = $user->getAccessToken();
         $jsonData = $request->json()->all();
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
         try {
             if (strpos($id, ',') === false) {
                 $response = $zoho->deleteTask($jsonData, $id);
@@ -566,7 +559,6 @@ class DashboardController extends Controller
 
         Log::info("JSON TASK INPUT: " . json_encode($jsonData));
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
         $task = Task::where('zoho_task_id', $id)->first() ?? Task::where('id', $id)->first();
 
         if (!$task) {
@@ -609,7 +601,6 @@ class DashboardController extends Controller
         Log::info("Retrieving deal for criteria: $criteria");
 
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
 
         try {
             while ($hasMorePages) {
@@ -790,10 +781,8 @@ class DashboardController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        $accessToken = $user->getAccessToken();
         // $jsonData = $request->json()->all();
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
         try {
             // if (strpos($id, ',') === false) {
             //     $response = $zoho->deleteTask($jsonData,$id);
@@ -853,7 +842,6 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $db = new DatabaseService();
-        $zoho->access_token = $accessToken;
 
         $jsonData = [
             "data" => [
@@ -955,7 +943,6 @@ class DashboardController extends Controller
         }
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
-        $zoho->access_token = $accessToken;
         try {
             $jsonData = [
                 "data" => [
@@ -996,7 +983,6 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $db = new DatabaseService();
-        $zoho->access_token = $accessToken;
         try {
             $tab = request()->query('tab') ?? 'In Progress';
             $tasks = $db->retreiveTasks($user, $accessToken, $tab);
@@ -1016,7 +1002,6 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $db = new DatabaseService();
-        $zoho->access_token = $accessToken;
         try {
             $contactRoles = $zoho->getContactRoles($user, $accessToken);
             $saveInDB = $db->storeRolesIntoDB($contactRoles, $this->user());
@@ -1037,7 +1022,6 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $zoho = new ZohoCRM();
         $db = new DatabaseService();
-        $zoho->access_token = $accessToken;
         try {
             $notesInfo = $this->db->retrieveNotes($user, $accessToken, '');
             $notes = $this->fetchNotes();

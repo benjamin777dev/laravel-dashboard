@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Client\RequestException;
 use App\Services\DatabaseService;
 
@@ -29,6 +30,11 @@ class ZohoCRM
         $this->client_secret = config('services.zoho.client_secret');
         $this->redirect_uri = route('auth.callback');
         $this->serverUrl = config('app.url');
+
+        if(Auth::check()) {
+            $user = Auth::user();
+            $this->access_token = $user->getAccessToken();
+        }
 
         Log::info('Zoho CRM initialized');
     }
