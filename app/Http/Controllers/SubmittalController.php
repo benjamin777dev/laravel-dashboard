@@ -9,6 +9,7 @@ use App\Services\DatabaseService;
 use App\Services\Helper;
 use App\Services\ZohoCRM;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
@@ -62,7 +63,7 @@ class SubmittalController extends Controller
             $response = $zoho->createAciData($aci);
             if (!$response->successful()) {
                 Log::error("Error retrieving aci: " . $response->body());
-                throw $response->body();
+                throw new Exception($response->body());
             }
             $helper = new Helper();
             Aci::updateOrCreate(['zoho_aci_id' => $aci['id']], [
@@ -100,7 +101,7 @@ class SubmittalController extends Controller
         $submittalType = request()->route('type');
         $submittalId = request()->route('submittalId');
         $listingSubmittaltype = request()->query('formType');
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $broucherLines = config('variables.broucherLines');
@@ -112,7 +113,7 @@ class SubmittalController extends Controller
         Log::info("Task Details: " . print_r($tasks, true));
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         $attachments = $db->retreiveAttachment($dealId);
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
@@ -120,7 +121,7 @@ class SubmittalController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $users = User::all();
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         $contactRoles = $db->retrieveRoles($user); */
         return view('submittals.view', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'qrCodeSheets', 'featuresCard', 'broucherLines', 'stickyDots', 'submittalId'));
@@ -141,7 +142,7 @@ class SubmittalController extends Controller
         $submittalType = request()->route('type');
         $submittalId = request()->route('submittalId');
         $listingSubmittaltype = request()->query('formType');
-        // $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        // $deals = $db->retrieveDeals($user, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         // $broucherPrint = config('variables.broucherPrint');
         // $featuresCard = config('variables.featuresCard');
@@ -164,7 +165,7 @@ class SubmittalController extends Controller
         $submittalId = request()->route('submittalId');
         $listingSubmittaltype = request()->query('formType');
         $resubmit = request()->query('resubmit');
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $broucherLines = config('variables.broucherLines');
@@ -189,7 +190,7 @@ class SubmittalController extends Controller
         $submittalType = request()->route('type');
         $submittalId = request()->route('submittalId');
         $listingSubmittaltype = request()->query('formType');
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');

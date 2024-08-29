@@ -34,7 +34,7 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
         $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $apend = false;
         if ($request->ajax()) {
@@ -80,7 +80,7 @@ class ContactController extends Controller
         if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         return view('contacts.create', compact('contactId', 'retrieveModuleData', 'contact'));
 
     }
@@ -108,7 +108,7 @@ class ContactController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $groups = $db->retrieveGroups($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         if ($spouseContact) {
             // Ensure $spouseContact is an array or an object, not a string
             if (is_string($spouseContact)) {
@@ -159,13 +159,13 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $allstages = config('variables.dealStages');
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         $emails = $db->getContactEmailList($contact['id']);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
@@ -199,7 +199,7 @@ class ContactController extends Controller
             return response()->json(["redirect" => "/contacts"]);
         }
 
-        //$deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        //$deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $deals = $contact->deals ?? [];
         return Datatables::of($deals)->make(true);
 
@@ -356,12 +356,12 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $allstages = config('variables.dealStages');
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         if ($spouseContact) {
             // Ensure $spouseContact is an array or an object, not a string
             if (is_string($spouseContact)) {
@@ -387,8 +387,8 @@ class ContactController extends Controller
         $filter = $request->input('filter');
         $missingFeild = $request->input('missingField');
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $apend = false;
         return view('contacts.contact', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'))->render();
@@ -1000,7 +1000,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesForContact($user, $accessToken, $contactId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'contact'))->render();
     }
@@ -1016,7 +1016,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.notes.create', compact('retrieveModuleData', 'contact', "type"))->render();
     }
@@ -1032,7 +1032,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.tasks.create', compact('retrieveModuleData', 'contact', "type"))->render();
     }

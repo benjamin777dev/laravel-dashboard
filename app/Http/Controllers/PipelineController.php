@@ -34,7 +34,6 @@ class PipelineController extends Controller
 
         $deals = $db->retrieveDeals(
             $user, // user
-            $accessToken,  // access token 
             $inputs['search'] ?? null, // search filters if exist
             $inputs['sort'] ?? null,  // sort filter if exist
             $inputs['sortType'] ?? null,  // sort type if exist
@@ -44,7 +43,6 @@ class PipelineController extends Controller
 
         $allDeals = $db->retrieveDeals(
             $user, // user
-            $accessToken,  // access token 
             null, // search filters if exist
             null,  // sort filter if exist
             null,  // sort type if exist
@@ -61,7 +59,7 @@ class PipelineController extends Controller
         $stats = $this->calculateDealStatistics($allDeals);
 
         $allstages = config('variables.dealStages');
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
 
         $viewData = array_merge($stats, [
@@ -125,10 +123,10 @@ class PipelineController extends Controller
         $sortField = $request->input('sort');
         $sortType = $request->input('sortType');
         $filter = $request->input('filter');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, $sortField, $sortType, null, $filter);
+        $deals = $db->retrieveDeals($user, $search, $sortField, $sortType, null, $filter);
         $allstages = config('variables.dealStages');
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         // return response()->json($deals);
         return view('pipeline.transaction', compact('deals', 'allstages', 'retrieveModuleData', 'getdealsTransaction'))->render();
     }
@@ -145,7 +143,7 @@ class PipelineController extends Controller
         LOG::info('Access Token Decrypted' . $accessToken);
         $search = request()->query('search');
         $stage = request()->query('stage');
-        $deals = $db->retrieveDeals($user, $accessToken, $search, null, null, null, $stage);
+        $deals = $db->retrieveDeals($user, $search, null, null, null, $stage);
         return Datatables::of($deals)->make(true);
        
     }
@@ -214,7 +212,6 @@ class PipelineController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $deals = $db->retrieveDeals(
             $user, // user
-            $accessToken,  // access token 
             $inputs['search'] ?? null, // search filters if exist
             $inputs['sort'] ?? null,  // sort filter if exist
             $inputs['sortType'] ?? null,  // sort type if exist
@@ -226,7 +223,7 @@ class PipelineController extends Controller
         $allStages = config('variables.dealStages');
         $submittals = $db->retreiveSubmittals($deal->zoho_deal_id);
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
         
         return view('pipeline.view', compact('deal','users','deals', 'dealId','contacts','closingDate', 'notesInfo','allStages', 'retrieveModuleData', 'tab','submittals','nontms'))->render();
@@ -272,13 +269,13 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $dealId = request()->route('dealId');
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
-        // $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        // $deals = $db->retrieveDeals($user, null, null, null, null, null);
         // $tab = request()->query('tab') ?? 'In Progress';
         // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
         // Log::info("Task Details: " . print_r($tasks, true));
         // $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        // $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         // $attachments = $db->retreiveAttachment($dealId);
         // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
@@ -286,7 +283,7 @@ class PipelineController extends Controller
         // $contacts = $db->retreiveContactsJson($user, $accessToken);
         // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         // $users = User::all();
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         // $allStages = config('variables.dealCreateStages');
         // $contactRoles = $db->retrieveRoles($user);
         return view('pipeline.create', compact('dealId', 'deal', 'retrieveModuleData'));
@@ -309,13 +306,13 @@ class PipelineController extends Controller
         if (!$deal) {
             return response()->json(["redirect" => "/pipeline"]);
         }
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         // $tab = request()->query('tab') ?? 'In Progress';
         // $tasks = $db->retreiveTasksFordeal($user, $accessToken, $tab, $deal->zoho_deal_id);
         // Log::info("Task Details: " . print_r($tasks, true));
         // $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
         // $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $deal->zoho_deal_id);
-        // $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        // $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         // $dealaci = $db->retrieveAciFordeal($user, $accessToken, $dealId);
         // $attachments = $db->retreiveAttachment($dealId);
         // $nontms = $db->retreiveNonTm($deal->zoho_deal_id);
@@ -323,7 +320,7 @@ class PipelineController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         // $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
         $users = User::all();
-        // $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        // $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         // $contactRoles = $db->retrieveRoles($user);
         return view('pipeline.createForm', compact('deal', 'contacts', 'allStages', 'users'))->render();
@@ -633,7 +630,7 @@ class PipelineController extends Controller
         $dealId = request()->route('dealId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'deal'))->render();
     }
@@ -650,7 +647,7 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $type = "Deals";
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.notes.create', compact("retrieveModuleData", "deal", "type"))->render();
     }
@@ -667,7 +664,7 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $type = "Deals";
         $notesInfo = $db->retrieveNotesFordeal($user, $accessToken, $dealId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken, "Deals");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $deal = $db->retrieveDealById($user, $accessToken, $dealId);
         return view('common.tasks.create', compact("retrieveModuleData", "deal", "type"))->render();
     }
@@ -749,7 +746,6 @@ class PipelineController extends Controller
         $accessToken = $user->getAccessToken();
         $allDeals = $db->retrieveDeals(
             $user, // user
-            $accessToken,  // access token 
             null, // search filters if exist
             null,  // sort filter if exist
             null,  // sort type if exist

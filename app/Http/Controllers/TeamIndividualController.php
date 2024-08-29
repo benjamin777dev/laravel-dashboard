@@ -33,7 +33,7 @@ class TeamIndividualController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
-        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $deals = $this->db->retrieveDeals($user, null, null, null, null, null, true);
 
         // Fetch KPIs
         $averagePipelineProbability = $this->calculateAveragePipelineProbability($deals);

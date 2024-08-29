@@ -49,10 +49,10 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $cRecord = Contact::where('zoho_contact_id', $user->zoho_id)->first();
         $goal = $cRecord->income_goal ?? 250000;
-        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $deals = $this->db->retrieveDeals($user, null, null, null, null, null, true);
 
         $progress = $this->calculateProgress($deals, $goal);
-        $totalGciForDah = $this->totalGCIForDash($deals, $goal);
+        $totalGciForDah = $this->totalGCIForDash($deals);
         Log::info("Progress: $progress");
 
         $stageData = $this->getStageData($deals, $goal);
@@ -90,7 +90,7 @@ class DashboardController extends Controller
         $accessToken = $user->getAccessToken();
         $cRecord = Contact::where('zoho_contact_id', $user->zoho_id)->first();
         $goal = $cRecord->income_goal ?? 250000;
-        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $deals = $this->db->retrieveDeals($user, null, null, null, null, null, true);
         $stageData = $this->getStageData($deals, $goal);
         return view('components.dash-cards', compact('stageData'))->render();
     }
@@ -276,7 +276,7 @@ class DashboardController extends Controller
         }
         //Get Date Range
         $endDate30Days = Carbon::now()->addMonth(1)->format('d.m.Y'); // 30 days
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null, true);
         // Needs New Date
         $needsNewDate = $deals->filter(function ($deal) use ($helper, $endDate30Days) {
             $closingDate = Carbon::parse($helper->convertToMST($deal['closing_date']));
@@ -386,7 +386,7 @@ class DashboardController extends Controller
         return min($progress, 100);
     }
 
-    private function totalGCIForDash($deals, $goal)
+    private function totalGCIForDash($deals)
     {
         $filteredDeals = $deals;
         $totalProbableGCI = 0;
@@ -747,7 +747,7 @@ class DashboardController extends Controller
         Log::info("Goal: $goal");
 
         // Retrieve deals from Zoho CRM
-        $deals = $db->retrieveDeals($user, $accessToken);
+        $deals = $db->retrieveDeals($user);
         $stages = ['Potential', 'Pre-Active', 'Active', 'Under Contract'];
 
         $stageData = collect($stages)->mapWithKeys(function ($stage) use ($deals, $goal, $start_date, $end_date) {

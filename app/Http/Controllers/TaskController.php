@@ -28,8 +28,8 @@ class TaskController extends Controller
         $inProgressTasks = $db->retreiveTasks($user, $accessToken, 'Due Today');
         $completedTasks = $db->retreiveTasks($user, $accessToken, 'Completed');
         $overdueTasks = $db->retreiveTasks($user, $accessToken, 'Overdue');
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $taskcal = $this->taskCalculation();
         $status = $request->input('status');
         if(!empty($status)){
@@ -109,7 +109,7 @@ if(!empty($status) && $status==="Upcomming"){
             return redirect('/contacts');
         } 
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
-        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($accessToken);
 
        return view('common.tasks',
             compact('tasks','contact','retrieveModuleData','tab'));
@@ -132,7 +132,7 @@ if(!empty($status) && $status==="Upcomming"){
             return redirect('/contacts');
         } 
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->id);
-        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($accessToken);
         return Datatables::of($tasks)->make(true);
     
     }
@@ -329,7 +329,7 @@ if(!empty($status) && $status==="Upcomming"){
             return redirect('/pipeline');
         } 
         $tasks = $db->retreiveTasksForDeal($user, $accessToken, $tab, $deal->zoho_deal_id);
-        $retrieveModuleData =  $db->retrieveModuleDataDB($user,$accessToken);
+        $retrieveModuleData =  $db->retrieveModuleDataDB($accessToken);
 
        return view('common.tasks',
             compact('tasks','deal','retrieveModuleData','tab'));

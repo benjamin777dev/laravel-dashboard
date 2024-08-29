@@ -553,7 +553,7 @@ class DatabaseService
         Log::info("Module stored into database successfully.");
     }
 
-    public function retrieveModuleDataDB(User $user, $accessToken, $filter = null)
+    public function retrieveModuleDataDB($accessToken, $filter = null)
     {
         try {
             // Validate user token (pseudo-code, replace it with your actual validation logic)
@@ -583,7 +583,7 @@ class DatabaseService
 
 
 
-    public function retrieveDeals(User $user, $accessToken, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
+    public function retrieveDeals(User $user, $search = null, $sortValue = null, $sortType = null, $dateFilter = null, $filter = null, $all = false)
     {
         try {
             Log::info("Retrieve Deals From Database");

@@ -48,7 +48,7 @@ class NonTmController extends Controller
         $zoho->access_token = $accessToken;
         $dealId = request()->route('id');
         $dealData = $db->retrieveNonTmById($user, $accessToken, $dealId);
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         return view('nontm.view', compact('dealData', 'deals'))->render();
     }
 
@@ -65,7 +65,7 @@ class NonTmController extends Controller
         $zoho->access_token = $accessToken;
         $dealId = request()->route('id');
         $dealData = $db->retrieveNonTmById($user, $accessToken, $dealId);
-        $deals = $db->retrieveDeals($user, $accessToken, null, null, null, null, null);
+        $deals = $db->retrieveDeals($user, null, null, null, null, null);
         return view('nontm.create', compact('dealData', 'deals'))->render();
     }
     
