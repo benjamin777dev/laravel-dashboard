@@ -820,7 +820,7 @@ class ContactController extends Controller
                 })->toArray(); // Convert the result to an array
 
                 $match_abcd = ["A", "A+", "B", "C", "D"];
-                $targetGroup = $zohoContactValues['ABCD'];
+                $targetGroup = $zohoContactValues['ABCD'] ?? null;
 
                 // Remove all contact groups that match $match_abcd except the one specified in $targetGroup
                 foreach ($groupNames as $groupName) {

@@ -395,7 +395,7 @@ class DatabaseService
             'chr_gives_amount' => $contact['CHR_Gives_Amount'] ?? null,
             'other_zip' => $contact['Other_Zip'] ?? null,
             'market_mailer_opt_in' => $contact['Market_Mailer_Opt_In'] ?? null,
-            'groups' => json_encode($contact['Groups']) ?? null,
+            'groups' => isset($contact['Groups']) ? json_encode($contact['Groups']) : null,
             'closer_name_phone' => $contact['Closer_Name_Phone'] ?? null,
             'unsubscribe_from_reviews' => $contact['Unsubscribe_From_Reviews'] ?? null,
             'outsourced_mktg_onsite_video' => $contact['Outsourced_Mktg_Onsite_Video'] ?? null,
@@ -413,7 +413,7 @@ class DatabaseService
             'qr_code_sign_rider' => $contact['QR_Code_Sign_Rider'] ?? null,
             'google_business_page_url' => $contact['Google_Business_Page_URL'] ?? null,
             'has_email' => $contact['Has_Email'] ?? null,
-            'has_address' => $contact['Has_Address'] ?? null,
+            'has_address' => $contact['Has_Address'] ?? 0,
             'salesforce_id' => $contact['Salesforce_ID'] ?? null,
             'mls_ires' => $contact['MLS_IRES'] ?? null,
             'outsourced_mktg_floorplans' => $contact['Outsourced_Mktg_Floorplans'] ?? null,
@@ -450,7 +450,7 @@ class DatabaseService
             'select_your_prints' => $contact['Select_your_prints'] ?? null,
             'role' => $contact['Role'] ?? null,
             'missing' => $contact['Missing'] ?? null,
-            'groups_tags' => json_encode($contact['Groups_Tags']) ?? null,
+            'groups_tags' => isset($contact['Groups_Tags']) ? json_encode($contact['Groups_Tags']) : null,
             'lender_company_name' => $contact['Lender_Company_Name'] ?? null,
             '$zia_owner_assignment' => $contact['$zia_owner_assignment'] ?? null,
             'secondary_email' => $contact['Secondary_Email'] ?? null,
@@ -1681,7 +1681,7 @@ class DatabaseService
         try {
             $helper = new Helper();
             Log::info("User Details", $zohoDeal);
-            if ($zohoDeal['Client_Name_Only']) {
+            if (isset($zohoDeal['Client_Name_Only'])) {
                 $clientId = explode("||", $zohoDeal['Client_Name_Only']);
                 Log::info("clientId: " . implode(", ", $clientId));
 
@@ -1689,7 +1689,7 @@ class DatabaseService
             }
             $updatedDealData = [
                 'personal_transaction' => isset($zohoDeal['Personal_Transaction']) ? ($zohoDeal['Personal_Transaction'] == true ? 1 : 0) : null,
-                'double_ended' => isset($zohoDeal['Double_Ended']) ? ($zohoDeal['Double_Ended'] == true ? 1 : 0) : null,
+                'double_ended' => isset($zohoDeal['Double_Ended']) ? ($zohoDeal['Double_Ended'] == true ? 1 : 0) : 0,
                 'address' => isset($zohoDeal['Address']) ? $zohoDeal['Address'] : null,
                 'representing' => isset($zohoDeal['Representing']) ? $zohoDeal['Representing'] : null,
                 'client_name_only' => isset($zohoDeal['Client_Name_Only']) ? $zohoDeal['Client_Name_Only'] : null,
