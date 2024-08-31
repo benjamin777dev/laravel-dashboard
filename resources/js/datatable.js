@@ -2291,9 +2291,9 @@ function generateModalHtml(data) {
                                     data.zoho_contact_id
                                         ? data.zoho_contact_id
                                         : data.zoho_deal_id
-                                }','${
-        data.zoho_contact_id ? "Contacts" : "Deals"
-    }')"
+                                    }','${
+                                        data.zoho_contact_id ? "Contacts" : "Deals"
+                                    }')"
                                     class="btn btn-secondary taskModalSaveBtn">
                                     <i class="fas fa-save saveIcon"></i> Save Changes
                                 </button>
@@ -2443,16 +2443,15 @@ var tableContact = $("#datatable_contact").DataTable({
             data: "mobile",
             title: "Mobile",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="mobile" data-id="${
-                    row.id
-                }">${data || "N/A"}</span>`;
+                return `${data ? "<a href ='tel: " + data + "' onclick = 'addCallRecord(" + row.id + ")'> <i class='fas fa-mobile-alt table-call-btn'></i></a>" : ""}
+                    <span class="editable" data-name="mobile" data-id="${row.id}">${data || "N/A"}</span>`;
             },
         },
         {
             data: "phone",
             title: "Phone",
             render: function (data, type, row) {
-                return `<span class="editable" data-name="phone" data-id="${
+                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + ")'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
                     row.id
                 }">${data || "N/A"}</span>`;
             },
@@ -3325,3 +3324,54 @@ var tableDashboard = $("#contact-transaction-table").DataTable({
         },
     },
 });
+
+var callRecordBoard = $("#call-record-table").DataTable({
+    paging: true,
+    searching: true,
+    processing: true,
+    serverSide: true,
+    responsive: false,
+    columns: [
+        {
+            data: "contact",
+            title: "Contact",
+            render: function (data, type, row) {
+                return `<span >${data}</span>`;
+            },
+        },
+        {
+            data: "phone_number",
+            title: "Phone Number",
+            render: function (data, type, row) {
+                return `${data ? "<a href = 'tel:" + data + "' onclick = 'console.log(" + row.id + ")'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
+                    row.id
+                }">${data || "N/A"}</span>`;
+            },
+        },
+        {
+            data: "start_time",
+            title: "Start Time",
+            render: function (data, type, row) {
+                return `<span>${data}</span>`;
+            },
+        }
+    ],
+    ajax: {
+        url: "/get-call-records/", // Ensure this URL is correct
+        type: "POST", // or 'POST' depending on your server setup
+        data: function (request) {
+            request._token = "{{ csrf_token() }}";
+            request.perPage = request.length;
+            (request.stage = $("#related_to_stage").val()),
+                (request.page = request.start / request.length + 1);
+            request.search = request.search.value;
+        },
+        dataSrc: function (data) {
+            return data?.data; // Return the data array or object from your response
+        },
+    },
+});
+
+window.addCallRecord = function(id) {
+    console.log("Add Call Record function.");
+}

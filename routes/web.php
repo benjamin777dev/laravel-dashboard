@@ -225,3 +225,9 @@ Route::get('/strategy-group', [StrategyGroupController::class, 'index'])->name('
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
+
+// Call Record Route
+Route::middleware('auth')->group(function () {
+    Route::get('get-call-records', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('add-call-records/{id}', [ProfileController::class, 'update'])->name('profile.update');
+});

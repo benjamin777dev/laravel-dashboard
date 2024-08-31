@@ -1624,5 +1624,31 @@ class ZohoCRM
             throw $e;
         }
     }
+
+    public function getCallRecord()
+    {
+        Log::info('Getting Zoho Call data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+        ])->get($this->apiUrl . 'Calls');
+
+        //Log::info('Zoho user data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function saveCallRecord($callRecord)
+    {
+        Log::info('Saving Zoho Call data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+        ])->post($this->apiUrl . 'Calls', $callRecord);
+
+        //Log::info('Zoho user data response: ' . print_r($response, true));
+
+        return $response;
+    }
 }
 

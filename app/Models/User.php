@@ -200,4 +200,9 @@ class User extends Authenticatable
         // Fallback check using TeamAndPartnership model
         return TeamAndPartnership::isTeamAgent($this->id);
     }
+
+    public function callRecord()
+    {
+        $this->hasMany(CallRecord::class, 'user_id');
+    }
 }

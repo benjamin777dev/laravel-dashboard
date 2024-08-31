@@ -351,6 +351,9 @@
   @include('components.common-table',['id'=>"contact-transaction-table"])
 </div>
 
+<div class="callRecordList">
+    @include('components.common-table',['id'=>"call-record-table"])
+</div>
 
 
 
