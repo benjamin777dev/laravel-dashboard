@@ -53,11 +53,11 @@ class Task extends Model
 
     public function dealData()
     {
-        return $this->belongsTo(Deal::class, 'what_id','id');
+        return $this->belongsTo(Deal::class, 'what_id', 'id');
     }
     public function contactData()
     {
-        return $this->belongsTo(Contact::class, 'who_id','id');
+        return $this->belongsTo(Contact::class, 'who_id', 'id');
     }
 
     public function owner()
@@ -162,7 +162,7 @@ class Task extends Model
         $eUser = User::where("root_user_id", $zOwner)->first();
         $mappedData['owner'] = $eUser ? $eUser->id : $zOwner;
 
-       
+
 
         return $mappedData;
     }

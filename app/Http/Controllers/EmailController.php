@@ -40,7 +40,7 @@ class EmailController extends Controller
         $accessToken = $user->getAccessToken();
         $contactId = $request->query('contactId');
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
-        return view('emails.email-inbox',compact('contacts','contactId'));
+        return view('emails.email-inbox', compact('contacts', 'contactId'));
     }
 
     public function emailList(Request $request)
@@ -50,329 +50,324 @@ class EmailController extends Controller
         $accessToken = $user->getAccessToken();
         $filter = $request->query('filter');
         $toEmail = $request->query('contactId');
-        $emails = $db->getEmails($user,$filter,$toEmail);
-        $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);          
-        return view('emails.email-list',compact('contacts','emails'))->render();
+        $emails = $db->getEmails($user, $filter, $toEmail);
+        $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
+        return view('emails.email-list', compact('contacts', 'emails'))->render();
     }
 
-public function sendEmail(Request $request)
-{
-    try {
-        $db = new DatabaseService();
-        $zoho = new ZohoCRM();
-        $user = $this->user();
-        $sendgrid = new SendGrid();
-        $helper = new Helper();
+    public function sendEmail(Request $request)
+    {
+        try {
+            $db = new DatabaseService();
+            $zoho = new ZohoCRM();
+            $user = $this->user();
+            $sendgrid = new SendGrid();
+            $helper = new Helper();
 
-        if (!$user) {
-            return redirect('/login');
-        }
-
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
-        $inputData = $request->json()->all();
-
-        $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
-        Log::info('User Verification', ['userVerified' => $userVerified]);
-
-        // Initialize contact arrays
-        $contactTypes = ['to', 'cc', 'bcc'];
-        $contactData = [];
-
-        foreach ($contactTypes as $type) {
-            $emails = [];
-            $ids = [];
-            if (isset($inputData[$type])) {
-                list($emails, $ids) = $helper->filterEmailsAndNumbers($inputData[$type]);
+            if (!$user) {
+                return redirect('/login');
             }
 
-            // Fetch existing contacts by IDs
-            if (!empty($ids)) {
-                $existingContacts = $db->getContactsByMultipleId($ids);
-                Log::info("Combined emails",[$existingContacts]);
-                $contactData[$type]['existing'] = $existingContacts->keyBy('id');
-            } else {
-                $contactData[$type]['existing'] = collect([]);
-            }
+            $accessToken = $user->getAccessToken();
+            $inputData = $request->json()->all();
 
-            // Create new contacts if emails are provided
-            if (!empty($emails)) {
-                $createContacts = function ($emails) use ($user, $zoho, $db, &$inputData, $contactData, $type) {
-                    // Call Zoho API to create contacts
-                    $response = $zoho->createMultipleContact($user, $emails);
-                    
-                    // Create contacts in the database if they don't exist, then filter them
-                    $newContacts = $db->createContactIfNotExists($user, $response);
+            $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
+            Log::info('User Verification', ['userVerified' => $userVerified]);
 
-                    // Loop through the new contacts and add their IDs to the input data
-                    foreach ($newContacts as $contact) {
-                        Log::info("Input Type", [$inputData[$type]]);
-                        $emailKey = array_search($contact['email'], $inputData[$type]);
-                        if ($emailKey !== false) {
-                            $inputData[$type][$emailKey] = (string)$contact['id'];
+            // Initialize contact arrays
+            $contactTypes = ['to', 'cc', 'bcc'];
+            $contactData = [];
+
+            foreach ($contactTypes as $type) {
+                $emails = [];
+                $ids = [];
+                if (isset($inputData[$type])) {
+                    list($emails, $ids) = $helper->filterEmailsAndNumbers($inputData[$type]);
+                }
+
+                // Fetch existing contacts by IDs
+                if (!empty($ids)) {
+                    $existingContacts = $db->getContactsByMultipleId($ids);
+                    Log::info("Combined emails", [$existingContacts]);
+                    $contactData[$type]['existing'] = $existingContacts->keyBy('id');
+                } else {
+                    $contactData[$type]['existing'] = collect([]);
+                }
+
+                // Create new contacts if emails are provided
+                if (!empty($emails)) {
+                    $createContacts = function ($emails) use ($user, $zoho, $db, &$inputData, $contactData, $type) {
+                        // Call Zoho API to create contacts
+                        $response = $zoho->createMultipleContact($user, $emails);
+
+                        // Create contacts in the database if they don't exist, then filter them
+                        $newContacts = $db->createContactIfNotExists($user, $response);
+
+                        // Loop through the new contacts and add their IDs to the input data
+                        foreach ($newContacts as $contact) {
+                            Log::info("Input Type", [$inputData[$type]]);
+                            $emailKey = array_search($contact['email'], $inputData[$type]);
+                            if ($emailKey !== false) {
+                                $inputData[$type][$emailKey] = (string) $contact['id'];
+                            }
                         }
-                    }
 
-                    // Log the updated inputData
-                    Log::info("Updated inputData: ", $inputData);
+                        // Log the updated inputData
+                        Log::info("Updated inputData: ", $inputData);
 
-                    return $newContacts;
-                };
+                        return $newContacts;
+                    };
 
 
-                $contactData[$type]['new'] = $createContacts($emails);
-            } else {
-                $contactData[$type]['new'] = collect([]);
+                    $contactData[$type]['new'] = $createContacts($emails);
+                } else {
+                    $contactData[$type]['new'] = collect([]);
+                }
+
+                // Combine existing and new contacts
+                $combined = $contactData[$type]['existing']
+                    ->merge($contactData[$type]['new']->keyBy('id'))
+                    ->keyBy('id')
+                    ->values()
+                    ->toArray();
+                $contactData[$type]['combined'] = $combined;
+                Log::info("Combined emails", [$contactData[$type]]);
             }
 
-            // Combine existing and new contacts
-            $combined = $contactData[$type]['existing']
-                ->merge($contactData[$type]['new']->keyBy('id'))
-                ->keyBy('id')
-                ->values()
-                ->toArray();
-                    $contactData[$type]['combined'] = $combined;
-                    Log::info("Combined emails",[$contactData[$type]]);
-        }
-
-        // Prepare data for SendGrid and Zoho
-        $prepareEmailData = function ($details) {
-            return array_map(function ($contact) {
-                // Check if the email field is missing or if contact is an array
-                if (is_array($contact)) {
-                    $contact = (object) $contact; // Convert array to object if necessary
-                }
-                if (empty($contact->email)) {
-                    throw new \Exception("Email is not available for {$contact->name}");
-                }
-                return [
-                    'user_name' => $contact->name,
-                    'email' => $contact->email,
-                ];
-            }, $details);
-        };
+            // Prepare data for SendGrid and Zoho
+            $prepareEmailData = function ($details) {
+                return array_map(function ($contact) {
+                    // Check if the email field is missing or if contact is an array
+                    if (is_array($contact)) {
+                        $contact = (object) $contact; // Convert array to object if necessary
+                    }
+                    if (empty($contact->email)) {
+                        throw new \Exception("Email is not available for {$contact->name}");
+                    }
+                    return [
+                        'user_name' => $contact->name,
+                        'email' => $contact->email,
+                    ];
+                }, $details);
+            };
 
 
-        $inputData['toData'] = $prepareEmailData($contactData['to']['combined']);
-        $inputData['ccData'] = $prepareEmailData($contactData['cc']['combined']);
-        $inputData['bccData'] = $prepareEmailData($contactData['bcc']['combined']);
+            $inputData['toData'] = $prepareEmailData($contactData['to']['combined']);
+            $inputData['ccData'] = $prepareEmailData($contactData['cc']['combined']);
+            $inputData['bccData'] = $prepareEmailData($contactData['bcc']['combined']);
 
-        $zohoInput = [
-            "data" => [
-                [
-                    'to' => $inputData['toData'],
-                    'cc' => $inputData['ccData'],
-                    'bcc' => $inputData['bccData'],
-                    'from' => [
-                        "user_name" => $user['name'],
-                        'email' => $user['email'],
-                    ],
-                    'subject' => $inputData['subject'],
-                    'content' => $inputData['content'],
-                    "consent_email" => false,
+            $zohoInput = [
+                "data" => [
+                    [
+                        'to' => $inputData['toData'],
+                        'cc' => $inputData['ccData'],
+                        'bcc' => $inputData['bccData'],
+                        'from' => [
+                            "user_name" => $user['name'],
+                            'email' => $user['email'],
+                        ],
+                        'subject' => $inputData['subject'],
+                        'content' => $inputData['content'],
+                        "consent_email" => false,
+                    ]
                 ]
-            ]
-        ];
+            ];
 
-        $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
-        
-        if ($inputData['isEmailSent'] === true) {
-            if ($userVerified) {
-                
-                $sendGridInput = [
-                    'personalizations' => [
-                        [
-                            'to' => $inputData['toData'],
-                            'subject' => $inputData['subject']
+            $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
+
+            if ($inputData['isEmailSent'] === true) {
+                if ($userVerified) {
+                    $sendGridInput = [
+                        'personalizations' => [
+                            [
+                                'to' => $inputData['toData'],
+                                'subject' => $inputData['subject']
+                            ]
+                        ],
+                        'from' => [
+                            "name" => $user['name'],
+                            'email' => $user['email'],
+                        ],
+                        'content' => [
+                            [
+                                'type' => 'text/html',
+                                'value' => $inputData['content']
+                            ]
                         ]
-                    ],
-                    'from' => [
-                        "name" => $user['name'],
-                        'email' => $user['email'],
-                    ],
-                    'content' => [
-                        [
-                            'type' => 'text/html',
-                            'value' => $inputData['content']
-                        ]
-                    ]
-                ];
-    
-                if (!empty($inputData['ccData'])) {
-                    $sendGridInput['personalizations'][0]['cc'] = $inputData['ccData'];
-                }
-                if (!empty($inputData['bccData'])) {
-                    $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
-                }
+                    ];
 
-                $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
-
-                $associateZohoInput = [
-                    "Emails" => [
-                        [
-                            'to' => $inputData['toData'],
-                            'cc' => $inputData['ccData'],
-                            'bcc' => $inputData['bccData'],
-                            'from' => [
-                                "user_name" => $user['name'],
-                                'email' => $user['email'],
-                            ],
-                            'subject' => $inputData['subject'],
-                            'content' => $inputData['content'],
-                            "consent_email" => false,
-                            
-                        ]
-                    ]
-                ];
-
-                $associateZohoInput['Emails'][0] += [
-                    'sent' => true,
-                    'date_time' => now(),
-                    'original_message_id' => Str::uuid(),
-                ];
-
-                $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
-                if ($associateEmail === "AUTHENTICATION_FAILURE") {
-                    $this->guard()->logout();
-                    return response()->json([
-                        'status' => 'process',
-                        'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                        'redirect_url' => route('login')
-                    ]);
-                }
-
-                $inputData['sendEmailFrom'] = "SendGrid";
-                $inputData['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
-            } else {
-                $sendEmail = $zoho->sendZohoEmail($zohoInput, $contact['zoho_contact_id']);
-                if ($sendEmail === "AUTHENTICATION_FAILURE") {
-                    $this->guard()->logout();
-                    return response()->json([
-                        'status' => 'process',
-                        'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                        'redirect_url' => route('login')
-                    ]);
-                }
-                $inputData['sendEmailFrom'] = "Zoho";
-                $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
-            }
-        }
-        $response = $db->saveEmail($user, $accessToken, $inputData);
-        return response()->json($response);
-    } catch (\Throwable $th) {
-        Log::error('Error sending email', ['error' => $th->getMessage()]);
-        throw $th;
-    }
-}
-
-public function sendMultipleEmail(Request $request)
-{
-    try {
-        $db = new DatabaseService();
-        $zoho = new ZohoCRM();
-        $user = $this->user();
-        $sendgrid = new SendGrid();
-        $helper = new Helper();
-
-        if (!$user) {
-            return redirect('/login');
-        }
-
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
-        $inputData = $request->json()->all();
-
-        $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
-        Log::info('User Verification', ['userVerified' => $userVerified]);
-
-        // Initialize contact arrays
-        $contactTypes = ['to', 'cc', 'bcc'];
-        $contactData = [];
-
-        foreach ($contactTypes as $type) {
-            $emails = [];
-            $ids = [];
-            if (isset($inputData[$type])) {
-                list($emails, $ids) = $helper->filterEmailsAndNumbers($inputData[$type]);
-            }
-
-            // Fetch existing contacts by IDs
-            if (!empty($ids)) {
-                $existingContacts = $db->getContactsByMultipleId($ids);
-                Log::info("Combined emails",[$existingContacts]);
-                $contactData[$type]['existing'] = $existingContacts->keyBy('id');
-            } else {
-                $contactData[$type]['existing'] = collect([]);
-            }
-
-            // Create new contacts if emails are provided
-            if (!empty($emails)) {
-                $createContacts = function ($emails) use ($user, $zoho, $db, &$inputData, $contactData, $type) {
-                    // Call Zoho API to create contacts
-                    $response = $zoho->createMultipleContact($user, $emails);
-                    
-                    // Create contacts in the database if they don't exist, then filter them
-                    $newContacts = $db->createContactIfNotExists($user, $response);
-
-                    // Loop through the new contacts and add their IDs to the input data
-                    foreach ($newContacts as $contact) {
-                        $emailKey = array_search($contact['email'], $inputData[$type]);
-                        if ($emailKey !== false) {
-                            $inputData[$type] = (string)$contact['id'];
-                        }
+                    if (!empty($inputData['ccData'])) {
+                        $sendGridInput['personalizations'][0]['cc'] = $inputData['ccData'];
+                    }
+                    if (!empty($inputData['bccData'])) {
+                        $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
                     }
 
-                    // Log the updated inputData
-                    Log::info("Updated inputData: ", $inputData);
+                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
 
-                    return $newContacts;
-                };
+                    $associateZohoInput = [
+                        "Emails" => [
+                            [
+                                'to' => $inputData['toData'],
+                                'cc' => $inputData['ccData'],
+                                'bcc' => $inputData['bccData'],
+                                'from' => [
+                                    "user_name" => $user['name'],
+                                    'email' => $user['email'],
+                                ],
+                                'subject' => $inputData['subject'],
+                                'content' => $inputData['content'],
+                                "consent_email" => false,
+                            ]
+                        ]
+                    ];
 
+                    $associateZohoInput['Emails'][0] += [
+                        'sent' => true,
+                        'date_time' => now(),
+                        'original_message_id' => Str::uuid(),
+                    ];
 
-                $contactData[$type]['new'] = $createContacts($emails);
-            } else {
-                $contactData[$type]['new'] = collect([]);
+                    $associateEmail = $zoho->associateEmail($associateZohoInput, $contact['zoho_contact_id']);
+                    if ($associateEmail === "AUTHENTICATION_FAILURE") {
+                        $this->guard()->logout();
+                        return response()->json([
+                            'status' => 'process',
+                            'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                            'redirect_url' => route('login')
+                        ]);
+                    }
+
+                    $inputData['sendEmailFrom'] = "SendGrid";
+                    $inputData['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
+                } else {
+                    $sendEmail = $zoho->sendZohoEmail($zohoInput, $contact['zoho_contact_id']);
+                    if ($sendEmail === "AUTHENTICATION_FAILURE") {
+                        $this->guard()->logout();
+                        return response()->json([
+                            'status' => 'process',
+                            'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                            'redirect_url' => route('login')
+                        ]);
+                    }
+                    $inputData['sendEmailFrom'] = "Zoho";
+                    $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
+                }
+            }
+            $response = $db->saveEmail($user, $accessToken, $inputData);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            Log::error('Error sending email', ['error' => $th->getMessage()]);
+            throw $th;
+        }
+    }
+
+    public function sendMultipleEmail(Request $request)
+    {
+        try {
+            $db = new DatabaseService();
+            $zoho = new ZohoCRM();
+            $user = $this->user();
+            $sendgrid = new SendGrid();
+            $helper = new Helper();
+
+            if (!$user) {
+                return redirect('/login');
             }
 
-            // Combine existing and new contacts
-            $combined = $contactData[$type]['existing']
-                ->merge($contactData[$type]['new']->keyBy('id'))
-                ->keyBy('id')
-                ->values()
-                ->toArray();
-                    $contactData[$type]['combined'] = $combined;
-                    Log::info("Combined emails",[$contactData[$type]]);
-        }
+            $accessToken = $user->getAccessToken();
+            $inputData = $request->json()->all();
 
-        // Prepare data for SendGrid and Zoho
-        $prepareEmailData = function ($details) {
-            return array_map(function ($contact) {
-                // Check if the email field is missing or if contact is an array
-                if (is_array($contact)) {
-                    $contact = (object) $contact; // Convert array to object if necessary
+            $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
+            Log::info('User Verification', ['userVerified' => $userVerified]);
+
+            // Initialize contact arrays
+            $contactTypes = ['to', 'cc', 'bcc'];
+            $contactData = [];
+
+            foreach ($contactTypes as $type) {
+                $emails = [];
+                $ids = [];
+                if (isset($inputData[$type])) {
+                    list($emails, $ids) = $helper->filterEmailsAndNumbers($inputData[$type]);
                 }
-                if (empty($contact->email)) {
-                    throw new \Exception("Email is not available for {$contact->name}");
+
+                // Fetch existing contacts by IDs
+                if (!empty($ids)) {
+                    $existingContacts = $db->getContactsByMultipleId($ids);
+                    Log::info("Combined emails", [$existingContacts]);
+                    $contactData[$type]['existing'] = $existingContacts->keyBy('id');
+                } else {
+                    $contactData[$type]['existing'] = collect([]);
                 }
-                return [
-                    'user_name' => $contact->name,
-                    'email' => $contact->email,
-                ];
-            }, $details);
-        };
+
+                // Create new contacts if emails are provided
+                if (!empty($emails)) {
+                    $createContacts = function ($emails) use ($user, $zoho, $db, &$inputData, $contactData, $type) {
+                        // Call Zoho API to create contacts
+                        $response = $zoho->createMultipleContact($user, $emails);
+                        // Create contacts in the database if they don't exist, then filter them
+                        $newContacts = $db->createContactIfNotExists($user, $response);
+
+                        // Loop through the new contacts and add their IDs to the input data
+                        foreach ($newContacts as $contact) {
+                            $emailKey = array_search($contact['email'], $inputData[$type]);
+                            if ($emailKey !== false) {
+                                $inputData[$type] = (string) $contact['id'];
+                            }
+                        }
+
+                        // Log the updated inputData
+                        Log::info("Updated inputData: ", $inputData);
+
+                        return $newContacts;
+                    };
 
 
-        $inputData['toData'] = $prepareEmailData($contactData['to']['combined']);
-        $inputData['ccData'] = $prepareEmailData($contactData['cc']['combined']);
-        $inputData['bccData'] = $prepareEmailData($contactData['bcc']['combined']);
+                    $contactData[$type]['new'] = $createContacts($emails);
+                } else {
+                    $contactData[$type]['new'] = collect([]);
+                }
 
-        $zohoInput = [
-            "data" => []
-        ];
+                // Combine existing and new contacts
+                $combined = $contactData[$type]['existing']
+                    ->merge($contactData[$type]['new']->keyBy('id'))
+                    ->keyBy('id')
+                    ->values()
+                    ->toArray();
+                $contactData[$type]['combined'] = $combined;
+                Log::info("Combined emails", [$contactData[$type]]);
+            }
 
-        $DBInput = [];
-        foreach ($inputData['to'] as $toData) {
-            $DBInput[]=[
+            // Prepare data for SendGrid and Zoho
+            $prepareEmailData = function ($details) {
+                return array_map(function ($contact) {
+                    // Check if the email field is missing or if contact is an array
+                    if (is_array($contact)) {
+                        $contact = (object) $contact; // Convert array to object if necessary
+                    }
+                    if (empty($contact->email)) {
+                        throw new \Exception("Email is not available for {$contact->name}");
+                    }
+                    return [
+                        'user_name' => $contact->name,
+                        'email' => $contact->email,
+                    ];
+                }, $details);
+            };
+
+
+            $inputData['toData'] = $prepareEmailData($contactData['to']['combined']);
+            $inputData['ccData'] = $prepareEmailData($contactData['cc']['combined']);
+            $inputData['bccData'] = $prepareEmailData($contactData['bcc']['combined']);
+
+            $zohoInput = [
+                "data" => []
+            ];
+
+            $DBInput = [];
+            foreach ($inputData['to'] as $toData) {
+                $DBInput[] = [
                     'to' => [$toData],
                     'cc' => $inputData['ccData'],
                     'bcc' => $inputData['bccData'],
@@ -385,7 +380,7 @@ public function sendMultipleEmail(Request $request)
                     "isEmailSent" => false,
                 ];
 
-                $zohoInput['data'][]=[
+                $zohoInput['data'][] = [
                     'to' => [$toData],
                     'cc' => $inputData['ccData'],
                     'bcc' => $inputData['bccData'],
@@ -397,48 +392,48 @@ public function sendMultipleEmail(Request $request)
                     'content' => $inputData['content'],
                     "consent_email" => false,
                 ];
-        }
+            }
 
-        $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
-        
-        if ($inputData['isEmailSent'] === true) {
-            if ($userVerified) {
-                Log::info("RECIEPNTS TOTAL",[$inputData['toData']]);
+            $contact = $db->retrieveContactByEmail($user, $accessToken, $user['email']);
 
-                $sendGridInput = [
-                    'personalizations' => [],
-                    'from' => [
-                        "name" => $user['name'],
-                        'email' => $user['email'],
-                    ],
-                    'content' => [
-                        [
-                            'type' => 'text/html',
-                            'value' => $inputData['content']
+            if ($inputData['isEmailSent'] === true) {
+                if ($userVerified) {
+                    Log::info("RECIEPNTS TOTAL", [$inputData['toData']]);
+
+                    $sendGridInput = [
+                        'personalizations' => [],
+                        'from' => [
+                            "name" => $user['name'],
+                            'email' => $user['email'],
+                        ],
+                        'content' => [
+                            [
+                                'type' => 'text/html',
+                                'value' => $inputData['content']
+                            ]
                         ]
-                    ]
-                ];
-                foreach ($inputData['toData'] as $toData) {
-                    $sendGridInput['personalizations'][] = [
-                        "to"=>[$toData],
-                        'subject' => $inputData['subject']
                     ];
-                }
-                if (!empty($inputData['ccData'])) {
-                    $sendGridInput['personalizations'][0]['cc'] = $inputData['ccData'];
-                }
-                if (!empty($inputData['bccData'])) {
-                    $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
-                }
-                
-                $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
+                    foreach ($inputData['toData'] as $toData) {
+                        $sendGridInput['personalizations'][] = [
+                            "to" => [$toData],
+                            'subject' => $inputData['subject']
+                        ];
+                    }
+                    if (!empty($inputData['ccData'])) {
+                        $sendGridInput['personalizations'][0]['cc'] = $inputData['ccData'];
+                    }
+                    if (!empty($inputData['bccData'])) {
+                        $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
+                    }
 
-                $associateZohoInput = [
-                    "Emails" => []
-                ];
+                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
 
-                foreach ($inputData['toData'] as $index=> $toData) {
-                    $associateZohoInput['Emails'][0] = [
+                    $associateZohoInput = [
+                        "Emails" => []
+                    ];
+
+                    foreach ($inputData['toData'] as $index => $toData) {
+                        $associateZohoInput['Emails'][0] = [
                             'to' => [$toData],
                             'cc' => $inputData['ccData'],
                             'bcc' => $inputData['bccData'],
@@ -466,117 +461,115 @@ public function sendMultipleEmail(Request $request)
                             $DBInput[$index]['message_id'] = $associateEmail['Emails'][0]['details']['message_id'];
                             $DBInput[$index]['sendEmailFrom'] = 'SendGrid';
                         }
+                    }
+                } else {
+                    $sendEmail = $zoho->sendMultipleZohoEmail($zohoInput, $contact['zoho_contact_id']);
+                    if ($sendEmail === "AUTHENTICATION_FAILURE") {
+                        $this->guard()->logout();
+                        return response()->json([
+                            'status' => 'process',
+                            'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
+                            'redirect_url' => route('login')
+                        ]);
+                    }
+                    $inputData['sendEmailFrom'] = "Zoho";
+                    $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
                 }
-            } else {
-                $sendEmail = $zoho->sendMultipleZohoEmail($zohoInput, $contact['zoho_contact_id']);
-                if ($sendEmail === "AUTHENTICATION_FAILURE") {
-                    $this->guard()->logout();
-                    return response()->json([
-                        'status' => 'process',
-                        'message' => 'AUTHENTICATION_FAILURE, Please Re-signup in ZOHO',
-                        'redirect_url' => route('login')
-                    ]);
-                }
-                $inputData['sendEmailFrom'] = "Zoho";
-                $inputData['message_id'] = $sendEmail['data'][0]['details']['message_id'];
             }
-        }
 
-        $response = $db->saveMultipleEmail($user, $accessToken, $DBInput);
-        return response()->json($response);
-    } catch (\Throwable $th) {
-        Log::error('Error sending email', ['error' => $th->getMessage()]);
-        throw $th;
+            $response = $db->saveMultipleEmail($user, $accessToken, $DBInput);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            Log::error('Error sending email', ['error' => $th->getMessage()]);
+            throw $th;
+        }
     }
-}
 
-public function associateMultipleEmail($associateInput,$contactId)
-{
-    try {
-        $zoho = new ZohoCRM();
-        $user = $this->user();
-        
-        if (!$user) {
-            return redirect('/login');
+    public function associateMultipleEmail($associateInput, $contactId)
+    {
+        try {
+            $zoho = new ZohoCRM();
+            $user = $this->user();
+
+            if (!$user) {
+                return redirect('/login');
+            }
+
+            $csvResponse = $this->exportCsv($associateInput, $contactId);
+            $zipFilename = $csvResponse->getData()->zip_filename;
+            $zipPath = storage_path('app/' . $zipFilename);
+            $FileId = $zoho->uploadZipFile($zipPath);
+            Log::info("CSV FILE", [$FileId]);
+            $fileId = $FileId['details']['file_id'];
+            //Bulk Write
+            $bulkJob = $zoho->associateEmailBulk($fileId, $contactId);
+            $jobID = $bulkJob['details']['id'];
+            return response()->json($csvResponse);
+        } catch (\Throwable $th) {
+            Log::error('Error sending email', ['error' => $th->getMessage()]);
+            throw $th;
         }
-
-        $accessToken = $user->getAccessToken();
-        $zoho->access_token = $accessToken;
-        $csvResponse = $this->exportCsv($associateInput,$contactId);
-        $zipFilename = $csvResponse->getData()->zip_filename;
-        $zipPath = storage_path('app/' . $zipFilename);
-        $FileId = $zoho->uploadZipFile($zipPath);
-        Log::info("CSV FILE",[$FileId]);
-        $fileId = $FileId['details']['file_id'];
-        //Bulk Write
-        $bulkJob = $zoho->associateEmailBulk($fileId,$contactId);
-        $jobID = $bulkJob['details']['id'];
-        return response()->json($csvResponse);
-    } catch (\Throwable $th) {
-        Log::error('Error sending email', ['error' => $th->getMessage()]);
-        throw $th;
     }
-}
 
-public function exportCsv($associateInput,$contactId)
-{
-    try {
-        $csv = Writer::createFromString('');
-        $csv->insertOne(['to_email', 'cc_email', 'bcc_email', 'from_email', 'subject', 'content', 'date_time', 'original_message_id']);
+    public function exportCsv($associateInput, $contactId)
+    {
+        try {
+            $csv = Writer::createFromString('');
+            $csv->insertOne(['to_email', 'cc_email', 'bcc_email', 'from_email', 'subject', 'content', 'date_time', 'original_message_id']);
 
-        // Process JSON data and write to CSV
-        foreach ($associateInput as $item) {
-            $toEmails = implode(', ', array_column($item['to'], 'email'));
-            $ccEmails = implode(', ', $item['cc']);
-            $bccEmails = implode(', ', $item['bcc']);
-            $fromEmail = $item['from']['email'];
-            $subject = $item['subject'];
-            $content = strip_tags($item['content']); // Remove HTML tags for CSV
-            $dateTime = $item['date_time'];
-            $originalMessageId = $item['original_message_id'];
+            // Process JSON data and write to CSV
+            foreach ($associateInput as $item) {
+                $toEmails = implode(', ', array_column($item['to'], 'email'));
+                $ccEmails = implode(', ', $item['cc']);
+                $bccEmails = implode(', ', $item['bcc']);
+                $fromEmail = $item['from']['email'];
+                $subject = $item['subject'];
+                $content = strip_tags($item['content']); // Remove HTML tags for CSV
+                $dateTime = $item['date_time'];
+                $originalMessageId = $item['original_message_id'];
 
-            $csv->insertOne([
-                $toEmails,
-                $ccEmails,
-                $bccEmails,
-                $fromEmail,
-                $subject,
-                $content,
-                $dateTime,
-                $originalMessageId
-            ]);
+                $csv->insertOne([
+                    $toEmails,
+                    $ccEmails,
+                    $bccEmails,
+                    $fromEmail,
+                    $subject,
+                    $content,
+                    $dateTime,
+                    $originalMessageId
+                ]);
+            }
+
+            // Prepare the response
+            $csvContent = $csv->getContent();
+            $csvFilename = 'emails_' . date('Y_m_d_H_i_s') . '.csv';
+
+            // Create a temporary file for the CSV
+            $tempCsvPath = storage_path('app/' . $csvFilename);
+            file_put_contents($tempCsvPath, $csvContent);
+
+            // Create a zip archive
+            $zip = new ZipArchive;
+            $zipFilename = 'emails_' . date('Y_m_d_H_i_s') . '.zip';
+            $zipPath = storage_path('app/' . $zipFilename);
+
+            if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+                // Add the CSV file to the zip archive
+                $zip->addFile($tempCsvPath, $csvFilename);
+                $zip->close();
+            }
+
+            // Remove the temporary CSV file
+            unlink($tempCsvPath);
+
+            // Return the zip file name
+            return response()->json(['zip_filename' => $zipFilename]);
+
+        } catch (\Throwable $th) {
+            Log::error('Error sending email', ['error' => $th->getMessage()]);
+            throw $th;
         }
-
-        // Prepare the response
-        $csvContent = $csv->getContent();
-        $csvFilename = 'emails_' . date('Y_m_d_H_i_s') . '.csv';
-
-        // Create a temporary file for the CSV
-        $tempCsvPath = storage_path('app/' . $csvFilename);
-        file_put_contents($tempCsvPath, $csvContent);
-
-        // Create a zip archive
-        $zip = new ZipArchive;
-        $zipFilename = 'emails_' . date('Y_m_d_H_i_s') . '.zip';
-        $zipPath = storage_path('app/' . $zipFilename);
-
-        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
-            // Add the CSV file to the zip archive
-            $zip->addFile($tempCsvPath, $csvFilename);
-            $zip->close();
-        }
-
-        // Remove the temporary CSV file
-        unlink($tempCsvPath);
-
-        // Return the zip file name
-        return response()->json(['zip_filename' => $zipFilename]);
-    
-    } catch (\Throwable $th) {
-        Log::error('Error sending email', ['error' => $th->getMessage()]);
-        throw $th;
     }
-}
     public function emailDetail(Request $request)
     {
         $db = new DatabaseService();
@@ -587,10 +580,10 @@ public function exportCsv($associateInput,$contactId)
         $accessToken = $user->getAccessToken();
 
         $emailId = $request->route('emailId');
-        $email = $db->getEmailDetail($emailId);    
+        $email = $db->getEmailDetail($emailId);
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
         // return response()->json($email);
-        return view('emails.email-read',compact('contacts','email'))->render();
+        return view('emails.email-read', compact('contacts', 'email'))->render();
     }
 
     public function emailDetailDraft(Request $request)
@@ -605,7 +598,7 @@ public function exportCsv($associateInput,$contactId)
         $emailId = $request->route('emailId');
         $email = $db->getEmailDetail($emailId);    
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
-        return view('emails.email-draft',compact('contacts','email'))->render();
+        return view('emails.email-draft', compact('contacts', 'email'))->render();
     }
 
     public function emailTemplate(Request $request)
@@ -634,7 +627,7 @@ public function exportCsv($associateInput,$contactId)
 
         $emailIds = $request->input('emailIds');
         $isDeleted = $request->input('isDeleted');
-        $email = $db->moveToTrash($emailIds,$isDeleted);    
+        $email = $db->moveToTrash($emailIds, $isDeleted);
         return response()->json(['success' => true]);
     }
 
@@ -678,7 +671,7 @@ public function exportCsv($associateInput,$contactId)
         $selectedContacts = $request->input('selectedContacts');
 
         // Return the rendered view as a response
-        return view('emails.email-create', compact('contacts', 'selectedContacts','emailType'))->render();
+        return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
     }
 
 }

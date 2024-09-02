@@ -27,12 +27,12 @@ class TemplateController extends Controller
     {
         $db = new DatabaseService();
         $user = $this->user();
-        if(!$user){
+        if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
         $inputData = $request->json()->all();
-        $response = $db->createTemplate($user,$accessToken,$inputData);    
+        $response = $db->createTemplate($user, $accessToken, $inputData);    
         return response()->json($response);
     }
 
@@ -41,7 +41,7 @@ class TemplateController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
-        if(!$user){
+        if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
@@ -57,7 +57,7 @@ class TemplateController extends Controller
     {
         $db = new DatabaseService();
         $user = $this->user();
-        if(!$user){
+        if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
@@ -72,7 +72,7 @@ class TemplateController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
-        if(!$user){
+        if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
@@ -90,23 +90,23 @@ class TemplateController extends Controller
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
-            if(!$user){
+            if (!$user) {
                 return redirect('/login');
             }
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $templateId = $request->route('templateId');
-            Log::info("TEMPLATEID",[$templateId]);
+            Log::info("TEMPLATEID", [$templateId]);
             $template = $db->getTemplateDetailFromDB($templateId);
-            if( $template && $template['content']!=null){
+            if ($template && $template['content'] != null) {
                 $templateDetail = $template;
-            }else{
+            } else {
                 $response = $zoho->getZohoTemplateDetail($template['zoho_template_id']);
-                Log::info("Template detail",[$response]);
-                if($response){
-                    $db->updateZohoTemplate($template['zoho_template_id'],$response['email_templates'][0]);
+                Log::info("Template detail", [$response]);
+                if ($response) {
+                    $db->updateZohoTemplate($template['zoho_template_id'], $response['email_templates'][0]);
                     $templateDetail = $db->getTemplateDetailFromDB($templateId);
-                }else{
+                } else {
                     throw new \Exception("Template Not Found");
                 }
             }
@@ -122,27 +122,27 @@ class TemplateController extends Controller
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
-            if(!$user){
+            if (!$user) {
                 return redirect('/login');
             }
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $templateId = $request->route('templateId');
-            Log::info("TEMPLATEID",[$templateId]);
+            Log::info("TEMPLATEID", [$templateId]);
             $template = $db->getTemplateDetailFromDB($templateId);
-            if( $template && $template['content']!=null){
+            if ($template && $template['content'] != null) {
                 $templateDetail = $template;
-            }else{
+            } else {
                 $response = $zoho->getZohoTemplateDetail($template['zoho_template_id']);
-                Log::info("Template detail",[$response]);
-                if($response){
-                    $db->updateZohoTemplate($template['zoho_template_id'],$response['email_templates'][0]);
+                Log::info("Template detail", [$response]);
+                if ($response) {
+                    $db->updateZohoTemplate($template['zoho_template_id'], $response['email_templates'][0]);
                     $templateDetail = $db->getTemplateDetailFromDB($templateId);
-                }else{
+                } else {
                     throw new \Exception("Template Not Found");
                 }
             }
-            return view('emails.email_templates.email-template-update',compact('templateDetail'))->render();
+            return view('emails.email_templates.email-template-update', compact('templateDetail'))->render();
         } catch (\Throwable $e) {
             throw $e;
         }
@@ -153,7 +153,7 @@ class TemplateController extends Controller
         $db = new DatabaseService();
         $zoho = new ZohoCRM();
         $user = $this->user();
-        if(!$user){
+        if (!$user) {
             return redirect('/login');
         }
         $accessToken = $user->getAccessToken();
@@ -161,7 +161,7 @@ class TemplateController extends Controller
         // $response = $zoho->getZohoTemplates();
         // $templates = $response['email_templates'];
         $templatesInDB = $db->deleteTemplatesFromDB($inputData);
-       return response()->json($templatesInDB);
+        return response()->json($templatesInDB);
     }
 
     public function updateTemplate(Request $request)
@@ -170,14 +170,14 @@ class TemplateController extends Controller
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
-            if(!$user){
+            if (!$user) {
                 return redirect('/login');
             }
             $accessToken = $user->getAccessToken();
             $zoho->access_token = $accessToken;
             $templateId = $request->route('templateId');
-            $inputData= $request->json()->all();
-            $db->updateTemplate($user,$accessToken,$templateId,$inputData);
+            $inputData = $request->json()->all();
+            $db->updateTemplate($user, $accessToken, $templateId, $inputData);
             return response()->json(true);
         } catch (\Throwable $e) {
             throw $e;

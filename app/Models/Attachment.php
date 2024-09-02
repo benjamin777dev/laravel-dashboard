@@ -14,8 +14,7 @@ class Attachment extends Model
         "size",
         "userId",
         "modified_time",
-        "dealId",
-        
+        "dealId"
     ];
 
     public static function getZohoContactInfo()

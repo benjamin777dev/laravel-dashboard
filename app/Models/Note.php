@@ -21,7 +21,7 @@ class Note extends Model
         'related_to_type'
     ];
 
-     public function userData()
+    public function userData()
     {
         return $this->belongsTo(User::class, 'owner');
     }

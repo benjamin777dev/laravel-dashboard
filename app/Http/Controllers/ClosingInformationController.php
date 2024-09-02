@@ -44,13 +44,21 @@ class ClosingInformationController extends Controller
         $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership) ?? 0;
 
         return view('closing_information.index', compact(
-            'transactionCountYTD', 'gciYTD', 'volumeYTD',
-            'capAmountPaidYTD', 'averageSalePrice', 'incomeGoal',
-            'averageCommissionPercent', 'initialCap', 'residualCap',
-            'irs1099Amount', 'agentReport', 'transactionsSoldYTD', 'soldByYear'
+            'transactionCountYTD',
+            'gciYTD',
+            'volumeYTD',
+            'capAmountPaidYTD',
+            'averageSalePrice',
+            'incomeGoal',
+            'averageCommissionPercent',
+            'initialCap',
+            'residualCap',
+            'irs1099Amount',
+            'agentReport',
+            'transactionsSoldYTD',
+            'soldByYear'
         ));
     }
-
 
     private function buildTransactionQuery($contact, $teamAndPartnership, $startDate = null, $endDate = null)
     {
@@ -70,7 +78,6 @@ class ClosingInformationController extends Controller
 
         return $query;
     }
-
 
     private function calculateTransactionCountYTD($contact, $teamAndPartnership)
     {
@@ -98,72 +105,58 @@ class ClosingInformationController extends Controller
         ];
     }
 
-    private function calculateGCIYTD($contact, $teamAndPartnership)
-    {
+    private function fiscalTransactionQuery($contact, $teamAndPartnership) {
         $fiscalYearStart = Carbon::now()->startOfYear();
         $fiscalYearEnd = Carbon::now()->endOfYear();
-
         $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        return $query;
+    }
+
+    private function calculateGCIYTD($contact, $teamAndPartnership)
+    {
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->sum('adjusted_gross_commission');
     }
 
     private function calculateVolumeYTD($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->sum('calculated_volume');
     }
 
     private function calculateCapAmountPaidYTD($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->sum('less_split_to_chr');
     }
 
     private function calculateAverageSalePrice($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->avg('sale_price');
     }
 
     private function calculateAverageCommissionPercent($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->avg('commission_percent');
     }
 
     private function calculate1099Amount($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->sum('irs_reported_1099_income_for_this_transaction');
     }
 
     private function getAgentReportData($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->groupBy('chr_agent_id')
             ->selectRaw('chr_agent_id, count(*) as record_count, sum(calculated_gci) as total_gci, sum(calculated_volume) as total_volume')
@@ -172,10 +165,7 @@ class ClosingInformationController extends Controller
 
     private function getTransactionsSoldYTD($contact, $teamAndPartnership)
     {
-        $fiscalYearStart = Carbon::now()->startOfYear();
-        $fiscalYearEnd = Carbon::now()->endOfYear();
-
-        $query = $this->buildTransactionQuery($contact, $teamAndPartnership, $fiscalYearStart, $fiscalYearEnd);
+        $query = $this->fiscalTransactionQuery($contact, $teamAndPartnership);
 
         return $query->groupByRaw('MONTH(closing_date)')
             ->selectRaw('MONTH(closing_date) as month, count(*) as record_count, sum(calculated_gci) as total_gci, sum(calculated_volume) as total_volume')

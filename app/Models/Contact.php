@@ -300,8 +300,8 @@ class Contact extends Model
             'isInZoho' => $source == "webhook" || $source == "csv",
             'Lead_Source' => isset($data['Lead_Source']) ? $data['Lead_Source'] : null,
             'referred_id' => $source === 'webhook'
-            ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
-            : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
+                ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
+                : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
             //'referred_id' => isset($data['Referred_By']) ? $data['Referred_By'] : (isset($data['Referred_By']["id"]) ? $data['Referred_By']["id"] : null),
             'lead_source_detail' => isset($data['Lead_Source_Detail']) ? $data['Lead_Source_Detail'] : null,
             'spouse_partner' => isset($data['Spouse_Partner']) ? (is_array($data['Spouse_Partner']) ? $data['Spouse_Partner']['id'] : $data['Spouse_Partner']) : null,
@@ -340,8 +340,8 @@ class Contact extends Model
             'agent_assistant' => isset($data['Agent_Assistant']) ? $data['Agent_Assistant'] : null,
             'social_media_ads' => isset($data['Social_Media_Ads']) ? (int) $data['Social_Media_Ads'] : null,
             'referred_by' => $source === 'webhook'
-            ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
-            : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
+                ? (isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null)
+                : (isset($data['Referred_By']) ? $data['Referred_By'] : null),
             //'referred_by' => isset($data['Referred_By']) ? json_encode($data['Referred_By']) : null,
             'peer_advisor' => isset($data['Peer_Advisor']) ? $data['Peer_Advisor'] : null,
             'agent_name_on_marketing' => isset($data['Agent_Name_on_Marketing']) ? $data['Agent_Name_on_Marketing'] : null,
