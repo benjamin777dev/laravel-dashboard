@@ -39,7 +39,10 @@ class GroupController extends Controller
         $ownerGroups = $db->getOwnerGroups($user, $accessToken);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
-            return view('groups.load', compact('contacts', 'groups', 'shownGroups'))->render();
+            return response()->json([
+                'html' => view('groups.group', compact('contacts', 'groups', 'shownGroups', 'ownerGroups', 'contactsList'))->render(),
+                'pagination' => view('common.pagination', ['module' => $contacts])->render()
+            ]);
         }
         return view('groups.index', compact('contacts', 'groups', 'shownGroups', 'ownerGroups', 'contactsList'));
     }
@@ -287,8 +290,9 @@ class GroupController extends Controller
 
             // Create CSV data
             $csvData = [];
-            $jsonInput = $request->input('laravelData');
-            $keyValueArray = json_decode($jsonInput, true);
+            $jsonInput = $request->json()->all();
+            $keyValueArray = $jsonInput['data'];
+            Log::info("Group Input",[$keyValueArray]);
             // Define CSV headers
             $csvHeaders = ["Contacts", "Groups"];
             foreach ($keyValueArray as $record) {

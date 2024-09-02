@@ -278,7 +278,7 @@ class EmailController extends Controller
             $accessToken = $user->getAccessToken();
             $inputData = $request->json()->all();
 
-            $userVerified = false;
+            $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
 
             // Initialize contact arrays
@@ -307,11 +307,7 @@ class EmailController extends Controller
                         // Call Zoho API to create contacts
                         $response = $zoho->createMultipleContact($user, $emails);
                         // Create contacts in the database if they don't exist, then filter them
-                        $newContacts = $db->createContactIfNotExists($user, $response)
-                            ->filter(function ($contact) use ($contactData, $type) {
-                                // Filter out existing contacts
-                                return !isset($contactData[$type]['existing'][$contact->id]);
-                            });
+                        $newContacts = $db->createContactIfNotExists($user, $response);
 
                         // Loop through the new contacts and add their IDs to the input data
                         foreach ($newContacts as $contact) {
@@ -373,8 +369,8 @@ class EmailController extends Controller
             foreach ($inputData['to'] as $toData) {
                 $DBInput[] = [
                     'to' => [$toData],
-                    'cc' => $inputData['cc'],
-                    'bcc' => $inputData['bcc'],
+                    'cc' => $inputData['ccData'],
+                    'bcc' => $inputData['bccData'],
                     'from' => [
                         "user_name" => $user['name'],
                         'email' => $user['email'],

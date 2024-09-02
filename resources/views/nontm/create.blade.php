@@ -531,13 +531,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4 d-flex gap-2">
-                                            <div>Re-Submitted</div>
-                                            <div><input type="checkbox" id="resubmit_text" <?php if ($dealData['resubmit_text']) {
-                                                echo 'checked';
-                                            } ?> disabled>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </form>
                             </div>
@@ -911,8 +905,6 @@
             let homeWarrentyDescription = document.getElementById("homeWarrentyDescription");
             let additionalFeeAmount = document.getElementById("additionalFeeAmount");
             let resubmitting_why_list_all_changes = document.getElementById("resubmitting_why_list_all_changes");
-            const resubmit_text = document.getElementById('resubmit_text');
-            const resubmit_text_isChecked = resubmit_text.checked;
             let additionalFeeDescription = document.getElementById("additionalFeeDescription");
             var selectedOption = related_transaction.options[related_transaction.selectedIndex];
             // Get the value and text of the selected option
@@ -953,9 +945,6 @@
                         .trim() : undefined,
                     "Agent_Comments_Remarks_Instructions": agent_comments.value ? agent_comments
                         .value.trim() : undefined,
-                        "Resubmitting_Why_LIST_ALL_CHANGES": resubmitting_why_list_all_changes.value ?
-                    resubmitting_why_list_all_changes.value.trim() : undefined,
-                "resubmit_text": true,
                     "Related_Transaction": selectedValue ? {
                         "id": selectedValue.trim(),
                         "name": selectedText.trim(),

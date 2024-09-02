@@ -106,8 +106,15 @@ class Aci extends Model
         $mappedData = [];
         $idKey = $source === "webhook" ? $data['id'] : $data['Id'];
         $transactionId = $source === "webhook" ? $data['Transaction']['id'] : $data['Transaction'];
+        $ownerId = $source === "webhook" ? $data['Owner']['id'] : $data['Owner'];
+        $chrAgentId = $source === "webhook" ? $data['CHR_Agent']['id'] : $data['CHR_Agent'];
         $aciRecord = self::where('zoho_aci_id', $idKey)->first();
         $dealRecord = Deal::where('zoho_deal_id', $transactionId)->first();
+        $ownerRecord = User::where('root_user_id', $ownerId)->first();
+        $chrAgentRecord = User::where('zoho_id', $chrAgentId)->first();
+
+        //Log::info("aci information received: ", ['data' => $data]);
+
 
         if (!$dealRecord) {
             Log::info("no deal record found for deal: $transactionId, skipping!");
@@ -143,18 +150,19 @@ class Aci extends Model
             }
         };
 
+
+        
+
         $fieldsToMap = [
             'adjusted_gross_commission' => 'Adjusted_Gross_Commission',
             'admin_fee_income' => 'Admin_Fee_Income',
             'after_splits' => 'After_Splits',
             'agent_check_amount' => 'Agent_Check_Amount',
             'record_image' => 'Record_Image',
-            'owner_id' => 'Owner.id',
             'agent_contribution_to_client_transaction_costs' => 'Agent_Contribution_to_Client_Transaction_Costs',
             'name' => 'Name',
             'agent_portion_of_commission_that_gets_split' => 'Agent_Portion_of_Commission_that_gets_split',
             'agent_team_for_capping' => 'Agent_Team_For_Capping',
-            'chr_agent_id' => 'CHR_Agent.id',
             'calculated_count' => 'Calculated_Count',
             'calculated_gci' => 'Calculated_GCI',
             'calculated_volume' => 'Calculated_Volume',
@@ -217,16 +225,15 @@ class Aci extends Model
 
         $mappedData['transaction_id'] = $dealRecord->id;
         $mappedData['zoho_aci_id'] = $idKey;
-
+        $mappedData['owner_id'] = $ownerRecord->id ?? $ownerId;
+        $mappedData['chr_agent_id'] = $chrAgentRecord->id ?? $ownerRecord->id ?? $chrAgentId;
+        
         if ($dealRecord->teamPartnership) {
             Log::info("Team Partnership:" . $dealRecord->teamPartnership);
             $mappedData['team_partnership_id'] = $dealRecord->teamPartnership ?? null;
         }
 
-
-
         //Log::info("Mapped Data: ", ['data' => $mappedData]);
-
         return $mappedData;
     }
 }
