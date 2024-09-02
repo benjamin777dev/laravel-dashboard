@@ -13,15 +13,17 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NonTmController;
 use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StrategyGroupController;
 use App\Http\Controllers\SubmittalController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamIndividualController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\ZohoController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 
 // Zoho Bulk Read Callback
@@ -216,6 +218,10 @@ Route::middleware('auth')->group(function () {
     Route::post('profile/update-agent-info/{id}', [ProfileController::class, 'updateAgentInfo'])->name('profile.updateAgentInfo');
     Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 });
+
+
+Route::get('/strategy-group', [StrategyGroupController::class, 'index'])->name('strategy.group.index');
+
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
