@@ -154,7 +154,6 @@
                     <input type="text" class="form-control npinputinfo" id="commissionflat" required
                         value="{{ $deal['commission_flat_free'] }}">
                 </div>
-
                 <div class="col-md-6">
                     <label for="validationDefault15" class="form-label nplabelText">Pipeline Probability (%)</label>
                     <input type="text" class="form-control npinputinfo" id="validationDefault15" required

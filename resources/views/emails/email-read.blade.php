@@ -49,7 +49,7 @@
         <div class="card-body">
             <div class="d-flex mb-4">
                 <div class="flex-shrink-0 me-3">
-                    <img class="rounded-circle avatar-sm" src="{{ URL::asset('/images/dummyProfile.png') }}" alt="Generic placeholder image">
+                    <img class="rounded-circle avatar-sm" src="/images/dummyProfile.png" alt="Generic placeholder image">
                 </div>
                 <div class="flex-grow-1">
                     @php

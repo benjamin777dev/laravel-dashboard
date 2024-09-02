@@ -220,6 +220,7 @@ public function sendEmail(Request $request)
                             'subject' => $inputData['subject'],
                             'content' => $inputData['content'],
                             "consent_email" => false,
+                            
                         ]
                     ]
                 ];
@@ -281,7 +282,7 @@ public function sendMultipleEmail(Request $request)
         $zoho->access_token = $accessToken;
         $inputData = $request->json()->all();
 
-        $userVerified = false;
+        $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
         Log::info('User Verification', ['userVerified' => $userVerified]);
 
         // Initialize contact arrays
@@ -311,11 +312,7 @@ public function sendMultipleEmail(Request $request)
                     $response = $zoho->createMultipleContact($user, $emails);
                     
                     // Create contacts in the database if they don't exist, then filter them
-                    $newContacts = $db->createContactIfNotExists($user, $response)
-                        ->filter(function ($contact) use ($contactData, $type) {
-                            // Filter out existing contacts
-                            return !isset($contactData[$type]['existing'][$contact->id]);
-                        });
+                    $newContacts = $db->createContactIfNotExists($user, $response);
 
                     // Loop through the new contacts and add their IDs to the input data
                     foreach ($newContacts as $contact) {
@@ -377,8 +374,8 @@ public function sendMultipleEmail(Request $request)
         foreach ($inputData['to'] as $toData) {
             $DBInput[]=[
                     'to' => [$toData],
-                    'cc' => $inputData['cc'],
-                    'bcc' => $inputData['bcc'],
+                    'cc' => $inputData['ccData'],
+                    'bcc' => $inputData['bccData'],
                     'from' => [
                         "user_name" => $user['name'],
                         'email' => $user['email'],

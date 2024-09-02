@@ -329,28 +329,35 @@
                     </section>
 
                     <h3>HOA Information</h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="titleToOrderHOA" id="titleToOrderHOA" >Title to Order HOA docs?  </label>
+                                            <label for="titleToOrderHOA" id="titleToOrderHOA">Title to Order HOA docs?
+                                            </label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes" {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <input type="radio" id="titleToOrderHOA_yes" value="Yes"
+                                                        {{ $submittal['titleToOrderHOA'] == 'Yes' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
-                                                <div class="mb-3"> 
-                                                    <input type="radio" id="titleToOrderHOA_no" value="No" {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                <div class="mb-3">
+                                                    <input type="radio" id="titleToOrderHOA_no" value="No"
+                                                        {{ $submittal['titleToOrderHOA'] == 'No' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No" {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }} name="titleToOrderHOA">
+                                                    <input type="radio" id="titleToOrderHOA_tbd" value="No"
+                                                        {{ $submittal['titleToOrderHOA'] == 'TBD' ? 'checked' : '' }}
+                                                        name="titleToOrderHOA">
                                                     <label class="" for="formCheck1">
                                                         TBD
                                                     </label>
@@ -361,27 +368,32 @@
                                     <div class="col-lg-6">
                                         <div class="mb-3">
                                             <label for="referralToPay">Has HOA? <svg
-                                                xmlns="http://www.w3.org/2000/svg" width="19" height="18"
-                                                viewBox="0 0 19 18" fill="none">
-                                                <mask id="mask0_2151_10662" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="19" height="18">
-                                                    <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
-                                                </mask>
-                                                <g mask="url(#mask0_2151_10662)">
-                                                    <path
-                                                        d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
-                                                        fill="#AC5353" />
-                                                </g>
-                                            </svg></label>
+                                                    xmlns="http://www.w3.org/2000/svg" width="19" height="18"
+                                                    viewBox="0 0 19 18" fill="none">
+                                                    <mask id="mask0_2151_10662" style="mask-type:alpha"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="19"
+                                                        height="18">
+                                                        <rect x="0.5" width="18" height="18" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2151_10662)">
+                                                        <path
+                                                            d="M8.1877 15.75V11.2875L4.3252 13.5188L3.0127 11.25L6.8752 9L3.0127 6.76875L4.3252 4.5L8.1877 6.73125V2.25H10.8127V6.73125L14.6752 4.5L15.9877 6.76875L12.1252 9L15.9877 11.25L14.6752 13.5188L10.8127 11.2875V15.75H8.1877Z"
+                                                            fill="#AC5353" />
+                                                    </g>
+                                                </svg></label>
                                             <div class="d-flex gap-2">
                                                 <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_yes" value="Yes" {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }} name="hasHOA">
+                                                    <input type="radio" id="hasHOA_yes" value="Yes"
+                                                        {{ $submittal['hasHOA'] == 'Yes' ? 'checked' : '' }}
+                                                        name="hasHOA">
                                                     <label class="" id="chkNo" for="formCheck1">
                                                         Yes
                                                     </label>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="radio" id="hasHOA_no" value="No" {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }} name="hasHOA">
+                                                    <input type="radio" id="hasHOA_no" value="No"
+                                                        {{ $submittal['hasHOA'] == 'No' ? 'checked' : '' }}
+                                                        name="hasHOA">
                                                     <label class="" for="formCheck1">
                                                         No
                                                     </label>
@@ -423,7 +435,7 @@
                     </section>
 
                     <h3>Service Providers</h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -471,8 +483,8 @@
                                         </div>
                                     </div>
 
-                                    
-                                </div>  
+
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
@@ -505,13 +517,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </form>
                         </div>
                     </section>
 
                     <h3>Service Providers</h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -543,9 +555,9 @@
                                                 id="closerNamePhone" class="form-control validate_err required-field">
                                             </input>
                                         </div>
-                                    </div>            
-                                    
-                                </div>  
+                                    </div>
+
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
@@ -584,13 +596,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </form>
                         </div>
                     </section>
 
                     <h3>Select MLS</h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -664,7 +676,7 @@
                     </section>
 
                     <h3>Commission Details</h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -746,7 +758,7 @@
                         </div>
 
                     </section>
-                    
+
                 </div>
 
             </div>
@@ -795,7 +807,7 @@
                 hoaName?.classList.remove('required-field', 'validate');
                 hoaPhone?.classList.remove('required-field', 'validate');
                 hoaWebsite?.classList.remove('required-field', 'validate');
-                titleToOrderHOA.innerHTML=`
+                titleToOrderHOA.innerHTML = `
                 <label for="referralToPay">
                     Title to Order HOA docs?
                 </label>`
@@ -827,7 +839,7 @@
                 //     return isValid;
                 // },
                 onFinished: function(event, currentIndex) {
-                  
+
                     window.validateSubmittal(true);
                     // Optionally, you might want to return true explicitly here
                     return true;
@@ -839,7 +851,7 @@
         initializeSteps();
         //chr tm start
         const CommissionDetails = ` <h3></h3>
-            <section>
+            <section class="chr_section">
                 <div>
                 <form>
                 <div class="row">
@@ -859,14 +871,13 @@
                                 </svg></label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE']=='Yes'
-                                        ? 'checked' : '' }} name="needO&E">
+                                    <input type="radio" id="needOE_yes" value="Yes" {{ $submittal['needOE'] == 'Yes' ? 'checked' : '' }} name="needO&E">
                                     <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input {{ $submittal['needOE']=='No' ? 'checked' : '' }} type="radio" id="needOE_no"
+                                    <input {{ $submittal['needOE'] == 'No' ? 'checked' : '' }} type="radio" id="needOE_no"
                                         value="No" name="needO&E">
                                     <label class="" for="formCheck1">
                                         No
@@ -892,15 +903,13 @@
                                     </svg></label>
                                 <div class="d-flex gap-2">
                                     <div class="mb-3">
-                                        <input type="radio" id="includeInsights_yes" value="Yes" {{
-                                            $submittal['includeInsights']=='Yes' ? 'checked' : '' }} name="includeInsights">
+                                        <input type="radio" id="includeInsights_yes" value="Yes" {{ $submittal['includeInsights'] == 'Yes' ? 'checked' : '' }} name="includeInsights">
                                         <label class="" id="chkNo" for="formCheck1">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <input id="includeInsights_no" value="No" {{ $submittal['includeInsights']=='No'
-                                            ? 'checked' : '' }} type="radio" name="includeInsights">
+                                        <input id="includeInsights_no" value="No" {{ $submittal['includeInsights'] == 'No' ? 'checked' : '' }} type="radio" name="includeInsights">
                                         <label class="" for="formCheck1">
                                             No
                                         </label>
@@ -929,16 +938,14 @@
                                 </svg></label>
                             <div class="d-flex gap-2">
                                 <div class="mb-3">
-                                    <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{
-                                        $submittal['powerOfAttnyNeeded']=='Yes' ? 'checked' : '' }}
+                                    <input type="radio" id="powerOfAttnyNeeded_yes" value="Yes" {{ $submittal['powerOfAttnyNeeded'] == 'Yes' ? 'checked' : '' }}
                                         name="powerOfAttnyNeeded">
                                     <label class="" id="chkNo" for="formCheck1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{
-                                        $submittal['powerOfAttnyNeeded']=='No' ? 'checked' : '' }}
+                                    <input type="radio" id="powerOfAttnyNeeded_no" value="No" {{ $submittal['powerOfAttnyNeeded'] == 'No' ? 'checked' : '' }}
                                         name="powerOfAttnyNeeded">
                                     <label class="" for="formCheck1">
                                         No
@@ -963,15 +970,13 @@
                                     </svg></label>
                                 <div class="d-flex gap-2">
                                     <div class="mb-3">
-                                        <input type="radio" id="mailoutNeeded_yes" value="Yes" {{
-                                            $submittal['mailoutNeeded']=='Yes' ? 'checked' : '' }} name="mailoutNeeded">
+                                        <input type="radio" id="mailoutNeeded_yes" value="Yes" {{ $submittal['mailoutNeeded'] == 'Yes' ? 'checked' : '' }} name="mailoutNeeded">
                                         <label class="" id="chkNo" for="formCheck1">
                                             Yes
                                         </label>
                                     </div>
                                     <div class="mb-3">
-                                        <input type="radio" id="mailoutNeeded_no" value="No" {{
-                                            $submittal['mailoutNeeded']=='No' ? 'checked' : '' }} name="mailoutNeeded">
+                                        <input type="radio" id="mailoutNeeded_no" value="No" {{ $submittal['mailoutNeeded'] == 'No' ? 'checked' : '' }} name="mailoutNeeded">
                                         <label class="" for="formCheck1">
                                             No
                                         </label>
@@ -1072,7 +1077,7 @@
                     </section>`;
 
         const defaultCHRSec2 = `<h3></h3>
-          <section>
+          <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -1160,7 +1165,7 @@
                     </section>`;
 
         const defaultCHRSec3 = `<h3></h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -1239,7 +1244,7 @@
                     </section>`;
 
         const defaultCHRSec4 = ` <h3></h3>
-            <section>
+            <section class="chr_section">
                 <div>
                     <form>
                                 <div class="row">
@@ -1311,7 +1316,7 @@
                         </div>
 
                 </section>`;
-    
+
         //properties start
         const innrtHtml = `<div class="row property">
             <div class="gap-2 col-lg-6">
@@ -1681,7 +1686,7 @@
                         `;
 
         const HoaInfo = ` <h3></h3>
-                    <section>
+                    <section class="chr_section">
                         <div>
                             <form>
                                 <div class="row">
@@ -1810,15 +1815,15 @@
                                 </form>
                             </div>
                         </section>`;
-                        //properties end
+        //properties end
         // Event listeners and other logic
         let initialCHrusingValue = document.querySelector('input[name="usingCHR"]:checked')?.value;
         setTimeout(() => {
             let initialshowPromotion = document.querySelector('input[name="showPromotion"]:checked')
                 ?.value;
-                console.log(initialshowPromotion,'initialshowPromotion');
-                
-            showAndDisableValues(initialshowPromotion, 'showProp',true);
+            console.log(initialshowPromotion, 'initialshowPromotion');
+
+            showAndDisableValues(initialshowPromotion, 'showProp', true);
         }, 500);
         showAndDisableValues(initialCHrusingValue);
 
@@ -1835,13 +1840,13 @@
             if (event.target.matches('input[name="showPromotion"]')) {
                 const radioButton = event.target;
                 const value = radioButton.value;
-                showAndDisableValues(value, 'showProp',false);
+                showAndDisableValues(value, 'showProp', false);
             }
         });
 
 
 
-        function showAndDisableValues(value, show,domloaded=true) {
+        function showAndDisableValues(value, show, domloaded = true) {
             if (value == 1 && show === "showProp") {
                 console.log("show prop yes")
                 addStepChr('Outside Services', innrtHtml);
@@ -1850,37 +1855,34 @@
                 addStepChr('Print Requests', innrtHtml4);
                 addStepChr('Print Request', innrtHtml5);
                 addStepChr('Notes', innrtHtml8);
-                if(resubmitData){
+                if (resubmitData) {
                     removeStep(9);
                     addStepChr('Resubmittal Information', resubmit);
                 }
             } else if (value == 0 && show === "showProp" && !domloaded) {
-                 console.log("show prop no")
+                console.log("show prop no")
                 removeStep(8);
                 removeStep(9);
                 removeStep(10);
                 removeStep(11);
                 removeStep(12);
-                 for (let i = 8; i <= 11; i++) {
+                for (let i = 8; i <= 11; i++) {
                     removeStep(i);
                 }
-                for (let i = 8; i <=9 ; i++) {
+                for (let i = 8; i <= 9; i++) {
                     removeStep(i);
                 }
-                if(resubmitData){
-                    addStepChr('Resubmittal Information', resubmit,9);
+                if (resubmitData) {
+                    addStepChr('Resubmittal Information', resubmit, 9);
                 }
             }
             if (value === "Yes" && value !== undefined) {
-                 console.log(" yes")
-                console.log("test it out")
                 if ($('.property').length === 6) {
-                    console.log('sdkfhkslhdfklshdflhadksfhjkasdhfjkh')
-                    if(resubmitData){
+                    if (resubmitData) {
                         for (let i = 3; i <= 12; i++) {
                             removeStep(i);
                         }
-                    }else{
+                    } else {
                         for (let i = 3; i <= 13; i++) {
                             removeStep(i);
                         }
@@ -1897,27 +1899,34 @@
                     addStepChr('Service Provider', defaultCHRSec3, 6);
                     addStepChr('Select MLS', defaultCHRSec4, 7);
                     addStepChr('Commission Detail', defaultCHRSec1, 8);
-                    if(resubmitData){
+                    if (resubmitData) {
                         removeStep(9);
-                        addStepChr('Resubmittal Information', resubmit,9);
+                        addStepChr('Resubmittal Information', resubmit, 9);
                     }
                     ValidateHoa();
-                    
+
                     return;
 
                 }
                 addStepChr('Transaction Details and Preferences', CommissionDetails, 3);
-                if(resubmitData){
-                    addStepChr('Commission Detail',defaultCHRSec1 , 8);
+                if (resubmitData) {
+                    addStepChr('Commission Detail', defaultCHRSec1, 8);
                     removeStep(9);
-                    addStepChr('Resubmittal Information', resubmit,9);
+                    addStepChr('Resubmittal Information', resubmit, 9);
                 }
-                
+
                 // addStepChr('Service Providers', serviceProvider,4);
                 ValidateHoa();
 
             } else if (value === "No") {
-                 console.log("no")
+                const noRadio = document.querySelector('input[name="showPromotion"][value="0"]');
+                if (noRadio) {
+                    // Check if the radio button is not checked and click it
+                    if (!noRadio.checked) {
+                        noRadio.click();
+                        noRadio.checked = true;
+                    }
+                }
                 for (let i = 7; i >= 3; i--) {
                     removeStep(i);
                 }
@@ -1930,7 +1939,7 @@
                 addStepChr('Print Requests', innrtHtml4);
                 addStepChr('Print Requests', innrtHtml5);
                 addStepChr('Notes', innrtHtml8);
-                if(resubmitData){
+                if (resubmitData) {
                     addStepChr('Resubmittal Information', resubmit);
                 }
             } else {

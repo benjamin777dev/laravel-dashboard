@@ -486,11 +486,12 @@ class DatabaseService
 
             // Update or create the contact
             Log::info("Contacts stored into database successfully.".$contact['id']);
-            Contact::updateOrCreate(['id' => $id], $mappedData);
+        $contactData= Contact::updateOrCreate(['id' => $id], $mappedData);
            
            
 
         Log::info("Contacts stored into database successfully.");
+        return $contactData;
     }
 
     public function storeTasksIntoDB($tasks)
@@ -1718,6 +1719,9 @@ class DatabaseService
             if($DBdeal->zoho_deal_id === null){
                 $updatedDealData['zoho_deal_id'] = $zohoDeal['id'];
             }
+            if (isset($zohoDeal)&&$zohoDeal['Stage'] === "Under Contract") {
+                $updatedDealData['locked_s'] = 1;
+            }
 
             $zohoDeal = Deal::updateOrCreate(['id' => $DBdeal->id], $updatedDealData);
 
@@ -1891,7 +1895,7 @@ class DatabaseService
 
             // Manual pagination
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = 50;
+            $perPage = 10;
             $currentItems = array_slice($transformedContacts, ($currentPage - 1) * $perPage, $perPage);
             $paginatedContacts = new LengthAwarePaginator($currentItems, count($transformedContacts), $perPage);
 
@@ -2536,83 +2540,83 @@ class DatabaseService
         if (!$submittal) {
             throw new \Exception("Submittal not found for zoho_submittal_id: {$submittalData['id']}");
         }
-        $submittal->dealId = isset($submittalData["Transaction_Name"]["id"]) ? $submittalData["Transaction_Name"]["id"] : null;
-        $submittal->bedsBathsTotal = isset($submittalData["Beds_Baths_Total_Sq_Ft"]) ? $submittalData["Beds_Baths_Total_Sq_Ft"] : null;
-        $submittal->referralDetails = isset($submittalData["Referral_Details"]) ? $submittalData["Referral_Details"] : null;
-        $submittal->mlsPublicRemarks = isset($submittalData["MLS_Public_Remarks"]) ? $submittalData["MLS_Public_Remarks"] : null;
-        $submittal->navica = isset($submittalData["Navica"]) ? $submittalData["Navica"] : null;
-        $submittal->hoaPhone = isset($submittalData["HOA_Phone"]) ? $submittalData["HOA_Phone"] : null;
-        $submittal->hasHOA = isset($submittalData["Has_HOA"]) ? $submittalData["Has_HOA"] : null;
-        $submittal->ppar = isset($submittalData["PPAR"]) ? $submittalData["PPAR"] : null;
-        $submittal->signInstallDate = isset($submittalData["Sign_Install_Date"]) ? $submittalData["Sign_Install_Date"] : null;
-        $submittal->brochurePickupDate = isset($submittalData["Pick_Up_Date"]) ? $submittalData["Pick_Up_Date"] : null;
-        $submittal->hoaName = isset($submittalData["HOA_Name"]) ? $submittalData["HOA_Name"] : null;
-        $submittal->usingCHR = isset($submittalData["Using_CHR_TM"]) ? $submittalData["Using_CHR_TM"] : null;
-        $submittal->emailBlastSphere = isset($submittalData["Email_Blast_to_Sphere"]) ? $submittalData["Email_Blast_to_Sphere"] : null;
-        $submittal->qrCodeSheet = isset($submittalData["Print_QR_Code_Sheet"]) ? $submittalData["Print_QR_Code_Sheet"] : null;
-        $submittal->mlsPrivateRemarks = isset($submittalData["MLS_Private_Remarks"]) ? $submittalData["MLS_Private_Remarks"] : null;
-        $submittal->featureCards = isset($submittalData["Feature_Cards_or_Sheets"]) ? $submittalData["Feature_Cards_or_Sheets"] : null;
-        $submittal->stickyDots = isset($submittalData["Sticky_Dots"]) ? $submittalData["Sticky_Dots"] : null;
-        $submittal->brochureLine = isset($submittalData["Brochure_Line"]) ? $submittalData["Brochure_Line"] : null;
-        $submittal->brochurePrint = isset($submittalData["Select_your_prints"]) ? $submittalData["Select_your_prints"] : null;
-        $submittal->miscNotes = isset($submittalData["TM_Notes"]) ? $submittalData["TM_Notes"] : null;
-        $submittal->conciergeListing = isset($submittalData["Concierge_Listing_Optional"]) ? $submittalData["Concierge_Listing_Optional"] : null;
-        $submittal->draftShowingInstructions = isset($submittalData["Draft_Showing_Instructions1"]) ? $submittalData["Draft_Showing_Instructions1"] : null;
-        $submittal->floorPlans = isset($submittalData["Floor_Plans"]) ? $submittalData["Floor_Plans"] : null;
-        $submittal->onsiteVideo = isset($submittalData["Onsite_Video"]) ? $submittalData["Onsite_Video"] : null;
-        $submittal->customDomainName = isset($submittalData["Custom_Domain_Name"]) ? $submittalData["Custom_Domain_Name"] : null;
-        $submittal->bullets = isset($submittalData["bullets_4_words_per_bullet"]) ? $submittalData["bullets_4_words_per_bullet"] : null;
-        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["paragraph_200_words_4_page_brochure_or_look_book"]) ? $submittalData["paragraph_200_words_4_page_brochure_or_look_book"] : null;
-        $submittal->buyer_agent_compensation_offering = isset($submittalData["buyer_agent_compensation_offering"]) ? $submittalData["buyer_agent_compensation_offering"] : null;
-        $submittal->printedItemsPickupDate = isset($submittalData["In_House_Printed_Brochure_Pick_Up_Date"]) ? $submittalData["In_House_Printed_Brochure_Pick_Up_Date"] : null;
-        $submittal->hoaWebsite = isset($submittalData["HOA_Website"]) ? $submittalData["HOA_Website"] : null;
-        $submittal->photoURL = isset($submittalData["Photo_URL"]) ? $submittalData["Photo_URL"] : null;
-        $submittal->tourURL = isset($submittalData["3D_Tour_URL"]) ? $submittalData["3D_Tour_URL"] : null;
-        $submittal->closerNamePhone = isset($submittalData["Closer_Name_Phone"]) ? $submittalData["Closer_Name_Phone"] : null;
-        $submittal->agreementExecuted = isset($submittalData["Listing_Agreement_Executed"]) ? $submittalData["Listing_Agreement_Executed"] : null;
-        $submittal->signInstallVendorOther = isset($submittalData["Sign_Install_Vendor_if_Other"]) ? $submittalData["Sign_Install_Vendor_if_Other"] : null;
-        $submittal->threeDZillowTour = isset($submittalData["D_Zillow_Tour"]) ? $submittalData["D_Zillow_Tour"] : null;
-        $submittal->emailBlastReverseProspect = isset($submittalData["Email_Blast_to_Reverse_Prospect_List"]) ? $submittalData["Email_Blast_to_Reverse_Prospect_List"] : null;
-        $submittal->socialMediaAds = isset($submittalData["Social_Media_Ads"]) ? $submittalData["Social_Media_Ads"] : null;
-        $submittal->qrCodeSignRider = isset($submittalData["QR_Code_Sign_Rider"]) ? $submittalData["QR_Code_Sign_Rider"] : null;
-        $submittal->qrCodeMainPanel = isset($submittalData["QR_Code_Main_Panel"]) ? $submittalData["QR_Code_Main_Panel"] : false;
-        $submittal->grandCounty = isset($submittalData["Grand_County"]) ? $submittalData["Grand_County"] : null;
-        $submittal->agentName = isset($submittalData["Agent_Name"]) ? $submittalData["Agent_Name"] : null;
-        $submittal->mailoutNeeded = isset($submittalData["Mailout_Needed1"]) ? $submittalData["Mailout_Needed1"] : null;
-        $submittal->photoDate = isset($submittalData["Photo_Date"]) ? $submittalData["Photo_Date"] : null;
-        $submittal->socialMediaImages = isset($submittalData["Social_Media_Images"]) ? $submittalData["Social_Media_Images"] : null;
-        $submittal->featureCardCopy = isset($submittalData["Add_Feature_Card_or_Sheet_Copy"]) ? $submittalData["Add_Feature_Card_or_Sheet_Copy"] : null;
-        $submittal->titleCompany = isset($submittalData["Title_Company"]) ? $submittalData["Title_Company"] : null;
-        $submittal->referralToPay = isset($submittalData["Referral_to_Pay"]) ? $submittalData["Referral_to_Pay"] : null;
-        $submittal->marketingNotes = isset($submittalData["Property_Promotion_Notes"]) ? $submittalData["Property_Promotion_Notes"] : null;
-        $submittal->ires = isset($submittalData["IRES"]) ? $submittalData["IRES"] : null;
-        $submittal->price = isset($submittalData["Price"]) ? $submittalData["Price"] : null;
-        $submittal->commingSoon = isset($submittalData["Coming_Soon"]) ? $submittalData["Coming_Soon"] : null;
-        $submittal->titleToOrderHOA = isset($submittalData["Title_to_Order_HOA_docs"]) ? $submittalData["Title_to_Order_HOA_docs"] : null;
-        $submittal->includeInsights = isset($submittalData["Include_Insights_in_Intro1"]) ? $submittalData["Include_Insights_in_Intro1"] : null;
-        $submittal->featuresNeededForVideo = isset($submittalData["Features_Needed_for_Video"]) ? $submittalData["Features_Needed_for_Video"] : null;
-        $submittal->matterport = isset($submittalData["Matterport"]) ? $submittalData["Matterport"] : null;
-        $submittal->scheduleSignInstall = isset($submittalData["Schedule_Sign_Install"]) ? $submittalData["Schedule_Sign_Install"] : null;
-        $submittal->brochureDeliveryDate = isset($submittalData["Pick_Up_Delivery_Date"]) ? $submittalData["Pick_Up_Delivery_Date"] : null;
-        $submittal->propertyWebsite = isset($submittalData["Property_Website_QR_Code"]) ? $submittalData["Property_Website_QR_Code"] : null;
-        $submittal->powerOfAttnyNeeded = isset($submittalData["Power_of_Attny_Needed1"]) ? $submittalData["Power_of_Attny_Needed1"] : null;
-        $submittal->additionalEmail = isset($submittalData["Additional_Email_for_Confirmation"]) ? $submittalData["Additional_Email_for_Confirmation"] : null;
-        $submittal->tmName = isset($submittalData["TM_Name"]) ? $submittalData["TM_Name"] : null;
-        $submittal->propertyHighlightVideo = isset($submittalData["Property_Highlight_Video"]) ? $submittalData["Property_Highlight_Video"] : null;
-        $submittal->comingSoonDate = isset($submittalData["Coming_Soon_MLS_Date"]) ? $submittalData["Coming_Soon_MLS_Date"] : null;
-        $submittal->amountToCHR = isset($submittalData["Amount_to_CHR_Gives"]) ? $submittalData["Amount_to_CHR_Gives"] : null;
-        $submittal->reColorado = isset($submittalData["REColorado"]) ? $submittalData["REColorado"] : null;
-        $submittal->activeDate = isset($submittalData["Active_Date"]) ? $submittalData["Active_Date"] : null;
-        $submittal->needOE = isset($submittalData["Need_O_E1"]) ? $submittalData["Need_O_E1"] : null;
-        $submittal->signInstallVendor = isset($submittalData["Sign_Install_Vendor_Info"]) ? $submittalData["Sign_Install_Vendor_Info"] : null;
-        $submittal->deliveryAddress = isset($submittalData["Delivery_Only_Shipping_Address_Name"]) ? $submittalData["Delivery_Only_Shipping_Address_Name"] : null;
-        $submittal->feesCharged = isset($submittalData["Fees_Charged_to_Seller_at_Closing"]) ? $submittalData["Fees_Charged_to_Seller_at_Closing"] : null;
+        $submittal->dealId = isset($zohoSubmittal["Transaction_Name"]["id"]) ? $zohoSubmittal["Transaction_Name"]["id"] : null;
+        $submittal->bedsBathsTotal = isset($zohoSubmittal["Beds_Baths_Total_Sq_Ft"]) ? $zohoSubmittal["Beds_Baths_Total_Sq_Ft"] : null;
+        $submittal->referralDetails = isset($zohoSubmittal["Referral_Details"]) ? $zohoSubmittal["Referral_Details"] : null;
+        $submittal->mlsPublicRemarks = isset($zohoSubmittal["MLS_Public_Remarks"]) ? $zohoSubmittal["MLS_Public_Remarks"] : null;
+        $submittal->navica = isset($zohoSubmittal["Navica"]) ? $zohoSubmittal["Navica"] : null;
+        $submittal->hoaPhone = isset($zohoSubmittal["HOA_Phone"]) ? $zohoSubmittal["HOA_Phone"] : null;
+        $submittal->hasHOA = isset($zohoSubmittal["Has_HOA"]) ? $zohoSubmittal["Has_HOA"] : null;
+        $submittal->ppar = isset($zohoSubmittal["PPAR"]) ? $zohoSubmittal["PPAR"] : null;
+        $submittal->signInstallDate = isset($zohoSubmittal["Sign_Install_Date"]) ? $zohoSubmittal["Sign_Install_Date"] : null;
+        $submittal->brochurePickupDate = isset($zohoSubmittal["Pick_Up_Date"]) ? $zohoSubmittal["Pick_Up_Date"] : null;
+        $submittal->hoaName = isset($zohoSubmittal["HOA_Name"]) ? $zohoSubmittal["HOA_Name"] : null;
+        $submittal->usingCHR = isset($zohoSubmittal["Using_CHR_TM"]) ? $zohoSubmittal["Using_CHR_TM"] : null;
+        $submittal->emailBlastSphere = isset($zohoSubmittal["Email_Blast_to_Sphere"]) ? $zohoSubmittal["Email_Blast_to_Sphere"] : null;
+        $submittal->qrCodeSheet = isset($zohoSubmittal["Print_QR_Code_Sheet"]) ? $zohoSubmittal["Print_QR_Code_Sheet"] : null;
+        $submittal->mlsPrivateRemarks = isset($zohoSubmittal["MLS_Private_Remarks"]) ? $zohoSubmittal["MLS_Private_Remarks"] : null;
+        $submittal->featureCards = isset($zohoSubmittal["Feature_Cards_or_Sheets"]) ? $zohoSubmittal["Feature_Cards_or_Sheets"] : null;
+        $submittal->stickyDots = isset($zohoSubmittal["Sticky_Dots"]) ? $zohoSubmittal["Sticky_Dots"] : null;
+        $submittal->brochureLine = isset($zohoSubmittal["Brochure_Line"]) ? $zohoSubmittal["Brochure_Line"] : null;
+        $submittal->brochurePrint = isset($zohoSubmittal["Select_your_prints"]) ? $zohoSubmittal["Select_your_prints"] : null;
+        $submittal->miscNotes = isset($zohoSubmittal["TM_Notes"]) ? $zohoSubmittal["TM_Notes"] : null;
+        $submittal->conciergeListing = isset($zohoSubmittal["Concierge_Listing_Optional"]) ? $zohoSubmittal["Concierge_Listing_Optional"] : null;
+        $submittal->draftShowingInstructions = isset($zohoSubmittal["Draft_Showing_Instructions1"]) ? $zohoSubmittal["Draft_Showing_Instructions1"] : null;
+        $submittal->floorPlans = isset($zohoSubmittal["Floor_Plans"]) ? $zohoSubmittal["Floor_Plans"] : null;
+        $submittal->onsiteVideo = isset($zohoSubmittal["Onsite_Video"]) ? $zohoSubmittal["Onsite_Video"] : null;
+        $submittal->customDomainName = isset($zohoSubmittal["Custom_Domain_Name"]) ? $zohoSubmittal["Custom_Domain_Name"] : null;
+        $submittal->bullets = isset($zohoSubmittal["bullets_4_words_per_bullet"]) ? $zohoSubmittal["bullets_4_words_per_bullet"] : null;
+        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($zohoSubmittal["paragraph_200_words_4_page_brochure_or_look_book"]) ? $zohoSubmittal["paragraph_200_words_4_page_brochure_or_look_book"] : null;
+        $submittal->buyer_agent_compensation_offering = isset($zohoSubmittal["buyer_agent_compensation_offering"]) ? $zohoSubmittal["buyer_agent_compensation_offering"] : null;
+        $submittal->printedItemsPickupDate = isset($zohoSubmittal["In_House_Printed_Brochure_Pick_Up_Date"]) ? $zohoSubmittal["In_House_Printed_Brochure_Pick_Up_Date"] : null;
+        $submittal->hoaWebsite = isset($zohoSubmittal["HOA_Website"]) ? $zohoSubmittal["HOA_Website"] : null;
+        $submittal->photoURL = isset($zohoSubmittal["Photo_URL"]) ? $zohoSubmittal["Photo_URL"] : null;
+        $submittal->tourURL = isset($zohoSubmittal["3D_Tour_URL"]) ? $zohoSubmittal["3D_Tour_URL"] : null;
+        $submittal->closerNamePhone = isset($zohoSubmittal["Closer_Name_Phone"]) ? $zohoSubmittal["Closer_Name_Phone"] : null;
+        $submittal->agreementExecuted = isset($zohoSubmittal["Listing_Agreement_Executed"]) ? $zohoSubmittal["Listing_Agreement_Executed"] : null;
+        $submittal->signInstallVendorOther = isset($zohoSubmittal["Sign_Install_Vendor_if_Other"]) ? $zohoSubmittal["Sign_Install_Vendor_if_Other"] : null;
+        $submittal->threeDZillowTour = isset($zohoSubmittal["D_Zillow_Tour"]) ? $zohoSubmittal["D_Zillow_Tour"] : null;
+        $submittal->emailBlastReverseProspect = isset($zohoSubmittal["Email_Blast_to_Reverse_Prospect_List"]) ? $zohoSubmittal["Email_Blast_to_Reverse_Prospect_List"] : null;
+        $submittal->socialMediaAds = isset($zohoSubmittal["Social_Media_Ads"]) ? $zohoSubmittal["Social_Media_Ads"] : null;
+        $submittal->qrCodeSignRider = isset($zohoSubmittal["QR_Code_Sign_Rider"]) ? $zohoSubmittal["QR_Code_Sign_Rider"] : null;
+        $submittal->qrCodeMainPanel = isset($zohoSubmittal["QR_Code_Main_Panel"]) ? $zohoSubmittal["QR_Code_Main_Panel"] : false;
+        $submittal->grandCounty = isset($zohoSubmittal["Grand_County"]) ? $zohoSubmittal["Grand_County"] : null;
+        $submittal->agentName = isset($zohoSubmittal["Agent_Name"]) ? $zohoSubmittal["Agent_Name"] : null;
+        $submittal->mailoutNeeded = isset($zohoSubmittal["Mailout_Needed1"]) ? $zohoSubmittal["Mailout_Needed1"] : null;
+        $submittal->photoDate = isset($zohoSubmittal["Photo_Date"]) ? $zohoSubmittal["Photo_Date"] : null;
+        $submittal->socialMediaImages = isset($zohoSubmittal["Social_Media_Images"]) ? $zohoSubmittal["Social_Media_Images"] : null;
+        $submittal->featureCardCopy = isset($zohoSubmittal["Add_Feature_Card_or_Sheet_Copy"]) ? $zohoSubmittal["Add_Feature_Card_or_Sheet_Copy"] : null;
+        $submittal->titleCompany = isset($zohoSubmittal["Title_Company"]) ? $zohoSubmittal["Title_Company"] : null;
+        $submittal->referralToPay = isset($zohoSubmittal["Referral_to_Pay"]) ? $zohoSubmittal["Referral_to_Pay"] : null;
+        $submittal->marketingNotes = isset($zohoSubmittal["Property_Promotion_Notes"]) ? $zohoSubmittal["Property_Promotion_Notes"] : null;
+        $submittal->ires = isset($zohoSubmittal["IRES"]) ? $zohoSubmittal["IRES"] : null;
+        $submittal->price = isset($zohoSubmittal["Price"]) ? $zohoSubmittal["Price"] : null;
+        $submittal->commingSoon = isset($zohoSubmittal["Coming_Soon"]) ? $zohoSubmittal["Coming_Soon"] : null;
+        $submittal->titleToOrderHOA = isset($zohoSubmittal["Title_to_Order_HOA_docs"]) ? $zohoSubmittal["Title_to_Order_HOA_docs"] : null;
+        $submittal->includeInsights = isset($zohoSubmittal["Include_Insights_in_Intro1"]) ? $zohoSubmittal["Include_Insights_in_Intro1"] : null;
+        $submittal->featuresNeededForVideo = isset($zohoSubmittal["Features_Needed_for_Video"]) ? $zohoSubmittal["Features_Needed_for_Video"] : null;
+        $submittal->matterport = isset($zohoSubmittal["Matterport"]) ? $zohoSubmittal["Matterport"] : null;
+        $submittal->scheduleSignInstall = isset($zohoSubmittal["Schedule_Sign_Install"]) ? $zohoSubmittal["Schedule_Sign_Install"] : null;
+        $submittal->brochureDeliveryDate = isset($zohoSubmittal["Pick_Up_Delivery_Date"]) ? $zohoSubmittal["Pick_Up_Delivery_Date"] : null;
+        $submittal->propertyWebsite = isset($zohoSubmittal["Property_Website_QR_Code"]) ? $zohoSubmittal["Property_Website_QR_Code"] : null;
+        $submittal->powerOfAttnyNeeded = isset($zohoSubmittal["Power_of_Attny_Needed1"]) ? $zohoSubmittal["Power_of_Attny_Needed1"] : null;
+        $submittal->additionalEmail = isset($zohoSubmittal["Additional_Email_for_Confirmation"]) ? $zohoSubmittal["Additional_Email_for_Confirmation"] : null;
+        $submittal->tmName = isset($zohoSubmittal["TM_Name"]) ? $zohoSubmittal["TM_Name"] : null;
+        $submittal->propertyHighlightVideo = isset($zohoSubmittal["Property_Highlight_Video"]) ? $zohoSubmittal["Property_Highlight_Video"] : null;
+        $submittal->comingSoonDate = isset($zohoSubmittal["Coming_Soon_MLS_Date"]) ? $zohoSubmittal["Coming_Soon_MLS_Date"] : null;
+        $submittal->amountToCHR = isset($zohoSubmittal["Amount_to_CHR_Gives"]) ? $zohoSubmittal["Amount_to_CHR_Gives"] : null;
+        $submittal->reColorado = isset($zohoSubmittal["REColorado"]) ? $zohoSubmittal["REColorado"] : null;
+        $submittal->activeDate = isset($zohoSubmittal["Active_Date"]) ? $zohoSubmittal["Active_Date"] : null;
+        $submittal->needOE = isset($zohoSubmittal["Need_O_E1"]) ? $zohoSubmittal["Need_O_E1"] : null;
+        $submittal->signInstallVendor = isset($zohoSubmittal["Sign_Install_Vendor_Info"]) ? $zohoSubmittal["Sign_Install_Vendor_Info"] : null;
+        $submittal->deliveryAddress = isset($zohoSubmittal["Delivery_Only_Shipping_Address_Name"]) ? $zohoSubmittal["Delivery_Only_Shipping_Address_Name"] : null;
+        $submittal->feesCharged = isset($zohoSubmittal["Fees_Charged_to_Seller_at_Closing"]) ? $zohoSubmittal["Fees_Charged_to_Seller_at_Closing"] : null;
         $submittal->showPromotion = isset($submittalData["showPromotion"]) ? $submittalData["showPromotion"] : false;
-        $submittal->resubmitting_to_which_team = isset($submittalData["Resubmitting_to_Which_Team"]) ? $submittalData["Resubmitting_to_Which_Team"] : null;
-        $submittal->resubmitting_why_list_all_changes = isset($submittalData["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $submittalData["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
+        $submittal->resubmitting_to_which_team = isset($zohoSubmittal["Resubmitting_to_Which_Team"]) ? $zohoSubmittal["Resubmitting_to_Which_Team"] : null;
+        $submittal->resubmitting_why_list_all_changes = isset($zohoSubmittal["Resubmitting_Why_LIST_ALL_CHANGES"]) ? $zohoSubmittal["Resubmitting_Why_LIST_ALL_CHANGES"] : null;
         $submittal->resubmit_text = isset($submittalData["resubmit_text"]) ? $submittalData["resubmit_text"] : null;
-        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"]) ? $submittalData["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"] : null;
-        $submittal->buyer_agent_compensation_offering = isset($submittalData["Buyer_Agent_Compensation_Offering"]) ? $submittalData["Buyer_Agent_Compensation_Offering"] : null;
+        $submittal->paragraph_200_words_4_page_brochure_or_look_book = isset($zohoSubmittal["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"]) ? $zohoSubmittal["Paragraph_200_Words_4_Page_Brochure_or_Look_Book"] : null;
+        $submittal->buyer_agent_compensation_offering = isset($zohoSubmittal["Buyer_Agent_Compensation_Offering"]) ? $zohoSubmittal["Buyer_Agent_Compensation_Offering"] : null;
         if ($isNew) {
            $submittal->isSubmittalComplete = $isNew;
         }

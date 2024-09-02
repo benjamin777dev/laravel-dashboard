@@ -737,14 +737,8 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Referred_By']['id'])) {
                 unset($responseData['data'][0]['Referred_By']);
             }
-            if (empty($responseData['data'][0]['First_Name'])) {
-                unset($responseData['data'][0]['First_Name']);
-            }
             if (empty($responseData['data'][0]['Lead_Source_Detail'])) {
                 unset($responseData['data'][0]['Lead_Source_Detail']);
-            }
-            if (empty($responseData['data'][0]['Email'])) {
-                unset($responseData['data'][0]['Email']);
             }
             if (empty($responseData['data'][0]['ABCD'])) {
                 unset($responseData['data'][0]['ABCD']);
@@ -755,30 +749,11 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Last_Called'])) {
                 unset($responseData['data'][0]['Last_Called']);
             }
-            if (empty($responseData['data'][0]['Mailing_Zip'])) {
-                unset($responseData['data'][0]['Mailing_Zip']);
-            }
-            if (empty($responseData['data'][0]['Mailing_State'])) {
-                unset($responseData['data'][0]['Mailing_State']);
-            }
-            if (empty($responseData['data'][0]['Mailing_City'])) {
-                unset($responseData['data'][0]['Mailing_City']);
-            }
+           
             if (empty($responseData['data'][0]['Mailing_Street'])) {
                 unset($responseData['data'][0]['Mailing_Street']);
             }
-            if (empty($responseData['data'][0]['Business_Info'])) {
-                unset($responseData['data'][0]['Business_Info']);
-            }
-            if (empty($responseData['data'][0]['Business_Name'])) {
-                unset($responseData['data'][0]['Business_Name']);
-            }
-            if (empty($responseData['data'][0]['Phone'])) {
-                unset($responseData['data'][0]['Phone']);
-            }
-            if (empty($responseData['data'][0]['Mobile'])) {
-                unset($responseData['data'][0]['Mobile']);
-            }
+        
             if (empty($responseData['data'][0]['Secondary_Email'])) {
                 unset($responseData['data'][0]['Secondary_Email']);
             }
@@ -789,6 +764,8 @@ class ContactController extends Controller
             if (empty($responseData['data'][0]['Spouse_Partner']['id'])) {
                 unset($responseData['data'][0]['Spouse_Partner']);
             }
+
+            Log::info('Getting Zoho contact data'.json_encode($responseData));
 
             $contactInstance = Contact::where('id', $id)->first();
             $getContactFromZoho = null;
@@ -811,7 +788,7 @@ class ContactController extends Controller
                 }
                 $zohoContact_Array = json_decode($getContactFromZoho, true);
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($id, $zohoContactValues);
+               $updatedContact = $db->storeContactIntoDB($id, $zohoContactValues);
                 $contactGroups = $this->getGroupsForDelete($id);
                 $groupNames = $contactGroups->map(function ($item) {
                     return [
@@ -873,7 +850,7 @@ class ContactController extends Controller
                 }
             }
             // Redirect back with a success message
-            return response()->json(['data' => $contactInstance], 200);
+            return response()->json(['data' => $updatedContact], 200);
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw new \Exception($e->getMessage());
