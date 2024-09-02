@@ -23,6 +23,7 @@ use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\ZohoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CallController;
 
 
 
@@ -228,6 +229,6 @@ Route::get('index/{locale}', [HomeController::class, 'lang']);
 
 // Call Record Route
 Route::middleware('auth')->group(function () {
-    Route::get('get-call-records', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('add-call-records/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.list');
+    Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.create');
 });

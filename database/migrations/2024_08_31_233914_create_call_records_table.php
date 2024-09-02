@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('call_records', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('contact_id');
-            $table->foreign('contact_id')->references('id')->on('contracts')->onDelete('set null');
+            $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
             $table->string('phone_number');
             $table->dateTime('start_time');
 

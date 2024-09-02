@@ -2443,7 +2443,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: "mobile",
             title: "Mobile",
             render: function (data, type, row) {
-                return `${data ? "<a href ='tel: " + data + "' onclick = 'addCallRecord(" + row.id + ")'> <i class='fas fa-mobile-alt table-call-btn'></i></a>" : ""}
+                return `${data ? "<a href ='tel: " + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'> <i class='fas fa-mobile-alt table-call-btn'></i></a>" : ""}
                     <span class="editable" data-name="mobile" data-id="${row.id}">${data || "N/A"}</span>`;
             },
         },
@@ -2451,7 +2451,7 @@ var tableContact = $("#datatable_contact").DataTable({
             data: "phone",
             title: "Phone",
             render: function (data, type, row) {
-                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + ")'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
+                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
                     row.id
                 }">${data || "N/A"}</span>`;
             },
@@ -3333,32 +3333,25 @@ var callRecordBoard = $("#call-record-table").DataTable({
     responsive: false,
     columns: [
         {
-            data: "contact",
-            title: "Contact",
-            render: function (data, type, row) {
-                return `<span >${data}</span>`;
-            },
-        },
-        {
             data: "phone_number",
             title: "Phone Number",
             render: function (data, type, row) {
-                return `${data ? "<a href = 'tel:" + data + "' onclick = 'console.log(" + row.id + ")'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
+                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
                     row.id
                 }">${data || "N/A"}</span>`;
             },
         },
         {
-            data: "start_time",
+            data: "created_at",
             title: "Start Time",
             render: function (data, type, row) {
-                return `<span>${data}</span>`;
+                return `<span>${formatDateTime(data)}</span>`;
             },
         }
     ],
     ajax: {
-        url: "/get-call-records/", // Ensure this URL is correct
-        type: "POST", // or 'POST' depending on your server setup
+        url: "/get-call-records/"+ contactId,
+        type: "GET",
         data: function (request) {
             request._token = "{{ csrf_token() }}";
             request.perPage = request.length;
@@ -3372,6 +3365,23 @@ var callRecordBoard = $("#call-record-table").DataTable({
     },
 });
 
-window.addCallRecord = function(id) {
-    console.log("Add Call Record function.");
+window.addCallRecord = function(id, phone_number) {
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+    $.ajax({
+        url: "/add-call-record/",
+        method: "POST",
+        data: {contact_id: id, phone_number: phone_number},
+        success: function (response) {
+        },
+        error: function (xhr, status, error) {
+            showToastError(
+                "An error occurred while adding call record."
+            );
+            console.error("Ajax Error:", error);
+        },
+    });
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Client\RequestException;
 use App\Services\DatabaseService;
+use DateTime;
 
 class ZohoCRM
 {
@@ -1638,17 +1639,37 @@ class ZohoCRM
         return $response;
     }
 
-    public function saveCallRecord($callRecord)
+    public function saveCallRecord($contact_id, $phone_number)
     {
         Log::info('Saving Zoho Call data');
 
+        $now = new DateTime();
+        // $callStartTime = $now->format('Y-m-d\TH:i:s\Z');
+        // $callEndTime = $now->add(new DateInterval('PT1M'))->format('Y-m-d\TH:i:s\Z');
+
+        $callRecord = [
+            "Subject" => "Call Record in CHR",
+            "Call_Type" => "Outbound",
+            "Call_Duration" => "1",
+            "Call_Start_Time" => "2024-01-01T00:00:00Z", // ISO 8601 format
+            "Call_End_Time" => "2024-01-01T00:01:00Z",   // ISO 8601 format
+            "Related_To" => $contact_id, // Module related to this call (e.g., Contacts, Leads)
+            "Related_To_Id" => $contact_id, // The ID of the record related to the call
+            "Description" => "Auto Call Records in CHR, Phone Number:" . $phone_number
+        ];
+        $data = [
+            'data' => [$callRecord]
+        ];
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
-        ])->post($this->apiUrl . 'Calls', $callRecord);
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . 'Calls', $data);
 
-        //Log::info('Zoho user data response: ' . print_r($response, true));
-
-        return $response;
+        if (!$response->successful()) {
+            Log::error('Zoho API error: ' . $response->body());
+            // Optionally, you can throw an exception here to stop the execution
+            throw new \Exception('Zoho API error: ' . $response->body());
+        }
     }
 }
 
