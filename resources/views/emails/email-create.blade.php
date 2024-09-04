@@ -77,6 +77,7 @@
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
 <script>
     var emailType = @json($emailType??"");
     $(document).ready(function() {
@@ -210,7 +211,7 @@
         tinymce.init({
             selector: 'textarea#elmEmail',
             plugins: 'lists link image media preview',
-            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help customSelect',
+            toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help | customSelect recordVideo',
             menubar: false,
             statusbar: false,
             setup: function(editor) {
@@ -274,6 +275,149 @@
                             }
                         });
                     }
+                });
+
+                editor.ui.registry.addButton('recordVideo', {
+                    text: 'Record Video',
+                    onAction: function() {
+                        editor.windowManager.open({
+                                    title: 'Record Video',
+                                    size: 'medium',
+                                    body: {
+                                        type: 'panel',
+                                        items: [
+                                            {
+                                                type: 'htmlpanel',
+                                                html: `
+                                                    <div id="recordVideoModalContent" style="justify-content: space-around; margin-bottom: 10px;">
+                                                        <figure style="display: inline-block;">
+                                                            <video id="videoRecording" style = "width: 480px; height: 360px; background-color: black" autoplay></video>
+                                                            <video id="recordedVideo" style = "width: 480px; height: 360px; display: none" controls></video>
+                                                            <figcaption style="text-align: center;">Preview Record</figcaption>
+
+                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
+                                                                <button class="btn" type="button" id="startRecordButton">Start Recording</button>
+                                                                <button type="button" id="stopRecordButton">Stop Recording</button>
+                                                            </div>
+                                                        </figure>
+                                                        
+                                                        <figure style="display: inline-block; width: 240px; justify-content: space-around;">
+                                                            <img id="snapshotImage" style="width: 240px; height: 180px; background-color: black">
+                                                            <canvas id="snapshotCanvas" width="240" height="180" style="display:none;"></canvas>
+                                                            <img id="gifImage" alt="Generated GIF" style="display:block; width: 240px; height: 180px; background-color: black">
+                                                            <figcaption style="text-align: center;">Preview Gif / Thumbnail</figcaption>
+                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
+                                                                <button type="button" id="cropButton">Crop</button>
+                                                            </div>
+                                                        </figure>
+                                                    </div>
+                                                `
+                                            }
+                                        ]
+                                    },
+                                    buttons: [
+                                        {
+                                            type: 'cancel',
+                                            text: 'Close'
+                                        },
+                                        {
+                                            type: 'submit',
+                                            text: 'Insert',
+                                            primary: true
+                                        }
+                                    ],
+                                    onSubmit: function(api) {
+                                        console.log("API:", api.getData());
+                                        // var data = api.getData();
+                                        // var selectedOption = data.options;
+                                        // console.log(selectedOption);
+                                        // $.ajax({
+                                        //     url: '/get/template/detail/' + selectedOption,
+                                        //     method: 'GET',
+                                        //     success: function(response) {
+                                        //         $("#emailSubject").val(response.subject);
+                                        //         editor.insertContent(response.content);
+                                        //         api.close();
+                                        //     },
+                                        //     error: function() {
+                                        //         showToastError('Failed to submit the selected option');
+                                        //     }
+                                        // });
+                                    }
+                                });
+                                let mediaRecorder;
+                                let recordedBlobs;
+                                const videoElement = document.getElementById('videoRecording');
+                                const recordedVideoElement = document.getElementById('recordedVideo');
+                                const snapshotCanvas = document.getElementById('snapshotCanvas');
+                                const snapshotImage = document.getElementById('snapshotImage');
+                                const gifImage = document.getElementById('gifImage');
+                                const cropButton = document.getElementById('cropButton');
+
+                                document.getElementById('startRecordButton').addEventListener('click', async () => {
+                                    videoElement.style.display = "block";
+                                    recordedVideoElement.style.display = "none";
+                                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                                    videoElement.srcObject = stream;
+                                    recordedBlobs = [];
+
+                                    mediaRecorder = new MediaRecorder(stream);
+                                    mediaRecorder.ondataavailable = (event) => {
+                                        if (event.data.size > 0) {
+                                            recordedBlobs.push(event.data);
+                                        }
+                                    };
+                                    mediaRecorder.onstop = function() {
+                                        const blob = new Blob(recordedBlobs, { type: 'video/mp4' });
+                                        const videoURL = URL.createObjectURL(blob);
+                                        recordedVideoElement.src = videoURL;
+                                    }
+                                    mediaRecorder.start();
+                                    document.getElementById('stopRecordButton').disabled = false;
+                                    document.getElementById('startRecordButton').disabled = true;
+                                });
+
+                                document.getElementById('stopRecordButton').addEventListener('click', () => {
+                                    mediaRecorder.stop();
+                                    videoElement.style.display = "none";
+                                    recordedVideoElement.style.display = "block";
+                                    document.getElementById('stopRecordButton').disabled = true;
+                                    document.getElementById('startRecordButton').disabled = false;
+                                    // document.getElementById('createGifButton').disabled = false;
+                                });
+                                
+                                document.getElementById("cropButton").addEventListener('click', () => {
+
+                                    captureThumbnail(recordedVideoElement, 1);
+                                    convertVideoToGif(recordedVideoElement.src)
+                                    .then(function(gifBlob) {
+                                        const gifUrl = URL.createObjectURL(gifBlob);
+                                        gifImage.src = gifUrl;
+                                        gifImage.style.display = 'block';
+                                    }).catch(function(error) {
+                                        console.error('Error creating GIF:', error);
+                                    });
+                                })
+
+                                async function captureThumbnail(videoElement, captureTime) {
+                                    videoElement.currentTime = captureTime;
+                                    
+                                    videoElement.onseeked = function () {
+                                        snapshotCanvas.width = videoElement.videoWidth;
+                                        snapshotCanvas.height = videoElement.videoHeight;
+                                        const ctx = snapshotCanvas.getContext('2d');
+                                        ctx.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+                                        const dataUrl = snapshotCanvas.toDataURL('image/png');
+
+                                        snapshotImage.src = dataUrl;
+                                    };
+
+                                    
+
+                                }
+
+                                
+                            }
                 });
             }
         });
@@ -355,6 +499,7 @@
 
         return isValidate;
     }
+
 
 
     window.sendEmails = function(button,email,isEmailSent){
@@ -486,6 +631,63 @@
        $("#templateModal").addClass("compose");
 
     }
+}
+
+function convertVideoToGif(videoUrl) {
+    return new Promise((resolve) => {
+        const tempVideo = document.createElement('video');
+        tempVideo.src = videoUrl;
+
+        tempVideo.addEventListener('loadeddata', () => {
+            const gif = new GIF({
+                workers: 2,
+                quality: 20,
+                width: tempVideo.videoWidth,
+                height: tempVideo.videoHeight,
+                workerScript: '/build/gif.worker.js',
+                useWebWorkers: false,
+            });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = tempVideo.videoWidth;
+            canvas.height = tempVideo.videoHeight;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+            let isRendering = false;
+            let frameCount = 0;
+            tempVideo.currentTime = 0;
+
+            tempVideo.addEventListener('timeupdate', () => {
+                if (tempVideo.currentTime <= 3 && !isRendering) { // Capture up to 5 seconds
+                    ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+                    gif.addFrame(canvas, { copy: true, delay: 200 }); // Adjust delay as needed
+                } else if(!isRendering) {
+                    tempVideo.pause();
+                    isRendering = true;
+                    try {
+                        gif.render();
+                    } catch (err) {
+                        console.log("Rendering Error:", err);
+                        reject(err);
+                    }
+                }
+            });
+
+            gif.on('finished', (blob) => {
+                resolve(blob);
+            });
+
+            gif.on('abort', () => {
+                reject(new Error('GIF rendering was aborted.'));
+            });
+
+            gif.on('error', (error) => {
+                reject(error);
+            });
+
+            tempVideo.play();
+        });
+    });
 }
 </script>
             
