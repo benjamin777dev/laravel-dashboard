@@ -327,7 +327,30 @@
                                         }
                                     ],
                                     onSubmit: function(api) {
-                                        console.log("API:", api.getData());
+                                        const formData = new FormData();
+                                        const recordedVideoElement = document.getElementById('recordedVideo');
+                                        const blobUrl = recordedVideoElement.src;
+                                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+                                        fetch(blobUrl)
+                                        .then(response => response.blob())
+                                        .then(blob => {
+                                            console.log("BlobUrl:", blob);
+                                            formData.append('file', blob, 'recorded-video.mp4');
+                                            fetch('/upload-video-s3', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'X-CSRF-TOKEN': csrfToken
+                                                },
+                                                body: formData,
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const s3Url = data.url; // Get S3 URL after upload
+                                                // insertVideoIntoEditor(s3Url, editor);
+                                            })
+                                            .catch(err => console.error('Error uploading to S3:', err));
+                                        });
                                         // var data = api.getData();
                                         // var selectedOption = data.options;
                                         // console.log(selectedOption);
