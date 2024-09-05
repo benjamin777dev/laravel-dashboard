@@ -15,7 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/bulkJob/update', 
         '/webhook/contact',
         '/webhook/deal',
-        '/webhook/cxg',
+        '/webhook/contact_group',
         '/webhook/task',
         '/webhook/aci',
         '/webhook/note',
