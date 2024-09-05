@@ -21,6 +21,7 @@ use App\Http\Controllers\TeamIndividualController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,10 +29,16 @@ use Illuminate\Support\Facades\Route;
 
 // Zoho Bulk Read Callback
 Route::post('/api/zoho-callback', [ZohoController::class, 'handleZohoCallback'])->name('zoho.callback');
+/*
 Route::post('/webhook/contact', [UpdateFromZohoCRMController::class, 'handleContactUpdate']);
 Route::post('/webhook/deal', [UpdateFromZohoCRMController::class, 'handleDealUpdate']);
 Route::post('/webhook/task', [UpdateFromZohoCRMController::class, 'handleTaskUpdate']);
 Route::post('/webhook/cxg', [UpdateFromZohoCRMController::class, 'handleContactXGroupUpdate']);
+Route::post('/webhook/aci', [UpdateFromZohoCRMController::class, 'handleAciUpdate']);
+-- depreciated in favor of a single method:
+*/
+Route::post('/webhook/{module}', [UpdateFromZohoCRMController::class, 'handleUpdateDeleteFromZoho']);
+
 Route::post('/api/webhook/csvcallback', [UpdateFromZohoCRMController::class, 'handleCSVCallback']);
 
 Route::get('/', [DashboardController::class, 'index'])->name('root')->middleware('auth');
@@ -219,9 +226,11 @@ Route::middleware('auth')->group(function () {
     Route::post('profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.changePassword');
 });
 
-
+// Streategy Groups
 Route::get('/strategy-group', [StrategyGroupController::class, 'index'])->name('strategy.group.index');
 
+// Reports
+Route::get('/reports/productionProjections', [ReportController::class, 'productionProjections'])->name('reports.productionProjections');
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
