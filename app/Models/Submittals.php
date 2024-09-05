@@ -9,7 +9,7 @@ class Submittals extends Model
 {
     use HasFactory;
 
-     protected $fillable = [
+    protected $fillable = [
         'name',
         "userId",
         "dealId",
@@ -108,6 +108,6 @@ class Submittals extends Model
 
     public function dealData()
     {
-        return $this->belongsTo(Deal::class, 'dealId','zoho_deal_id');
+        return $this->belongsTo(Deal::class, 'dealId', 'zoho_deal_id');
     }
 }

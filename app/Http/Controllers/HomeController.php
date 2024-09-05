@@ -112,7 +112,7 @@ class HomeController extends Controller
         });
 
         $needsNewDateData = [
-            'sum' =>$this->formatNumber($needsNewDate->sum('Pipeline1')), 
+            'sum' => $this->formatNumber($needsNewDate->sum('Pipeline1')), 
             'asum' => $needsNewDate->sum('Pipeline1'),
             'count' => $needsNewDate->count(),
         ];
@@ -158,7 +158,7 @@ class HomeController extends Controller
         $newContactsLast30Days = $contactData['contactsLast30Days'];
 
         $tasks = $this->retreiveAndCheckTasks($user, $accessToken);
-        Log::info("Task Details: ". print_r($tasks, true));
+        Log::info("Task Details: " . print_r($tasks, true));
 
         // get cap information
         // initial cap comes from agent profile
@@ -212,17 +212,31 @@ class HomeController extends Controller
             'totalIRS1099' => $this->formatNumber($totalIRS1099 ?? 0),
         ];
 
-        Log::Info("ACI Data: ". print_r($aciData, true));
+        Log::Info("ACI Data: " . print_r($aciData, true));
 
         // Pass data to the view
-        return view('home.index',
-            compact('deals', 'progress', 'goal',
-                'progressClass', 'progressTextColor',
-                'stageData', 'currentPipelineValue',
-                'projectedIncome', 'beyond12MonthsData',
-                'needsNewDateData', 'allMonths', 'contactData', 
-                'newContactsLast30Days', 'newDealsLast30Days', 
-                'averagePipelineProbability', 'tasks', 'aciData'));
+        return view(
+            'home.index',
+            compact(
+                'deals',
+                'progress',
+                'goal',
+                'progressClass',
+                'progressTextColor',
+                'stageData',
+                'currentPipelineValue',
+                'projectedIncome',
+                'beyond12MonthsData',
+                'needsNewDateData',
+                'allMonths',
+                'contactData',
+                'newContactsLast30Days',
+                'newDealsLast30Days',
+                'averagePipelineProbability',
+                'tasks',
+                'aciData'
+            )
+        );
     }
 
     public function root()
@@ -315,7 +329,8 @@ class HomeController extends Controller
         }
     }
 
-    private function formatNumber($number) {
+    private function formatNumber($number)
+    {
         if ($number < 1000) {
             return (string)$number; // Less than 1,000
         } elseif ($number < 1000000) {
@@ -327,7 +342,8 @@ class HomeController extends Controller
         }
     }
 
-    private function retreiveAndCheckTasks(User $user, $accessToken) {
+    private function retreiveAndCheckTasks(User $user, $accessToken)
+    {
         $allTasks = collect();
         $page = 1;
         $hasMorePages = true;
@@ -410,7 +426,7 @@ class HomeController extends Controller
 
         }
 
-        Log::info("Total aci records: ". $allACI->count());
+        Log::info("Total aci records: " . $allACI->count());
         Log::info("Aci Records: ", $allACI->toArray());
         return $allACI;
     }
@@ -444,7 +460,7 @@ class HomeController extends Controller
                 break;
             }
 
-            Log::info("Response: ". $response->body());
+            Log::info("Response: " . $response->body());
 
             Log::info("Successful deal fetch... Page: " . $page);
             $responseData = $response->json();
@@ -516,12 +532,12 @@ class HomeController extends Controller
         })->count();
 
         return [
-            'abcContacts'=>$abcContacts, 
-            'needsEmail'=>$needsEmail, 
-            'needsAddress'=>$needsAddress, 
-            'needsPhone'=>$needsPhone, 
-            'missingAbcd'=>$missingAbcd, 
-            'contactsLast30Days'=>$contactsLast30Days
+            'abcContacts' => $abcContacts, 
+            'needsEmail' => $needsEmail, 
+            'needsAddress' => $needsAddress, 
+            'needsPhone' => $needsPhone, 
+            'missingAbcd' => $missingAbcd, 
+            'contactsLast30Days' => $contactsLast30Days
         ];
     }
 
@@ -557,7 +573,7 @@ class HomeController extends Controller
             $hasMorePages = isset($responseData['info'], $responseData['info']['more_records']) && $responseData['info']['more_records'];
             $page++;
         }
-        Log::info("Retrieved contacts: ". $allContacts->count());
+        Log::info("Retrieved contacts: " . $allContacts->count());
 
         return $allContacts;
     }

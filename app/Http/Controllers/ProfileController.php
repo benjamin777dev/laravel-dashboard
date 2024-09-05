@@ -122,15 +122,31 @@ class ProfileController extends Controller
         }
     
 
-        Log::info("request: ", ['request'=>$request]);
+        Log::info("request: ", ['request' => $request]);
 
         // Boolean fields that might be in the request
         $booleanFields = [
-            'tm_preference', 'need_o_e', 'include_insights_in_intro', 'sign_install', 
-            'outsourced_mktg_3d_zillow_tour', 'outsourced_mktg_floorplans', 'outsourced_mktg_onsite_video',
-            'property_website_qr_code', 'social_media_images', 'social_media_ads', 'feature_cards_or_sheets',
-            'print_qr_code_sheet', 'qr_code_sign_rider', 'mls_recolorado', 'mls_ppar', 'mls_ires', 'mls_navica',
-            'email_blast_opt_in', 'notepad_mailer_opt_in', 'market_mailer_opt_in', 'review_generation'
+            'tm_preference',
+            'need_o_e',
+            'include_insights_in_intro',
+            'sign_install',
+            'outsourced_mktg_3d_zillow_tour',
+            'outsourced_mktg_floorplans',
+            'outsourced_mktg_onsite_video',
+            'property_website_qr_code',
+            'social_media_images',
+            'social_media_ads',
+            'feature_cards_or_sheets',
+            'print_qr_code_sheet',
+            'qr_code_sign_rider',
+            'mls_recolorado',
+            'mls_ppar',
+            'mls_ires',
+            'mls_navica',
+            'email_blast_opt_in',
+            'notepad_mailer_opt_in',
+            'market_mailer_opt_in',
+            'review_generation'
         ];
     
         // Merge boolean fields that are present in the request
@@ -241,9 +257,6 @@ class ProfileController extends Controller
     
         return response()->json(['isSuccess' => $updated, 'Message' => $updated ? 'Agent info updated successfully!' : 'Agent info update failed.']);
     }
-    
-
-
 
     public function changePassword(Request $request)
     {

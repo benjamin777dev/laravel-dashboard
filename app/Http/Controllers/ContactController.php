@@ -34,7 +34,7 @@ class ContactController extends Controller
         $accessToken = $user->getAccessToken(); // Placeholder method to get the access token.
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
         $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
         $apend = false;
         if ($request->ajax()) {
@@ -80,7 +80,7 @@ class ContactController extends Controller
         if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         return view('contacts.create', compact('contactId', 'retrieveModuleData', 'contact'));
 
     }
@@ -108,7 +108,7 @@ class ContactController extends Controller
         $contacts = $db->retreiveContactsJson($user, $accessToken);
         $contactsGroups = $db->retrieveContactGroupsData($user, $accessToken, $contactId, $filter = null, $sortType = null, $sortField = null);
         $groups = $db->retrieveGroups($user, $accessToken);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         if ($spouseContact) {
             // Ensure $spouseContact is an array or an object, not a string
             if (is_string($spouseContact)) {
@@ -140,15 +140,14 @@ class ContactController extends Controller
         if (!$contact) {
             return response()->json(["redirect" => "/contacts"]);
         }
-        $getContactFromZoho=null;
-        if(!empty($contact->zoho_contact_id)){
-            $zoho->access_token = $accessToken;
+        $getContactFromZoho = null;
+        if (!empty($contact->zoho_contact_id)) {
             $getContactFromZoho = $zoho->getZohoContact($contact->zoho_contact_id);
             Log::info('contcattesting hereeee' . $getContactFromZoho);
             $zohoContact_Array = json_decode($getContactFromZoho, true);
             if (isset($zohoContact_Array['data']) && is_array($zohoContact_Array['data'])) {
                 $zohoContactValues = $zohoContact_Array['data'][0];
-                $db->storeContactIntoDB($contact->id,$zohoContactValues);
+                $db->storeContactIntoDB($contact->id, $zohoContactValues);
             }
 
         }
@@ -159,13 +158,13 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $allstages = config('variables.dealStages');
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $contactsWithEmails = $db->retreiveContactsHavingEmail($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB($accessToken);
         $emails = $db->getContactEmailList($contact['id']);
         if (request()->ajax()) {
             // If it's an AJAX request, return the pagination HTML
@@ -199,7 +198,7 @@ class ContactController extends Controller
             return response()->json(["redirect" => "/contacts"]);
         }
 
-        //$deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        //$deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $deals = $contact->deals ?? [];
         return Datatables::of($deals)->make(true);
 
@@ -207,32 +206,31 @@ class ContactController extends Controller
 
     public function getContactJson()
     {
-        {
-            try {
-                $user = $this->user();
+        try {
+            $user = $this->user();
 
-                if (!$user) {
-                    return redirect('/login');
-                }
-                $db = new DatabaseService();
-                $search = request()->query('search');
-                $stage = request()->query('stage');
-                $filterobj = request()->query('filterobj');
-                // $contactInfo = Contact::getZohoContactInfo();
-                $accessToken = $user->getAccessToken(); // Method to get the access token.
-                if (!$accessToken) {
-                    return "invalid token.";
-                }
-                $contacts = $db->retreiveContactsJson($user, $accessToken, $search, $stage, $filterobj);
-                if (!$contacts) {
-                    return response()->json(["redirect" => "/contacts"]);
-                }
-                return Datatables::of($contacts)->make(true);
-            } catch (\Exception $e) {
-                Log::error("Error retrieving contacts: " . $e->getMessage());
-                throw $e;
+            if (!$user) {
+                return redirect('/login');
             }
+            $db = new DatabaseService();
+            $search = request()->query('search');
+            $stage = request()->query('stage');
+            $filterobj = request()->query('filterobj');
+            // $contactInfo = Contact::getZohoContactInfo();
+            $accessToken = $user->getAccessToken(); // Method to get the access token.
+            if (!$accessToken) {
+                return "invalid token.";
+            }
+            $contacts = $db->retreiveContactsJson($user, $accessToken, $search, $stage, $filterobj);
+            if (!$contacts) {
+                return response()->json(["redirect" => "/contacts"]);
+            }
+            return Datatables::of($contacts)->make(true);
+        } catch (\Exception $e) {
+            Log::error("Error retrieving contacts: " . $e->getMessage());
+            throw $e;
         }
+
     }
 
     public function updateContactField(Request $request)
@@ -281,8 +279,6 @@ class ContactController extends Controller
             }
 
             $zoho = new ZohoCRM();
-            $accessToken = $user->getAccessToken();
-            $zoho->access_token = $accessToken;
 
             $field = "";
             switch ($dbfield) {
@@ -357,12 +353,12 @@ class ContactController extends Controller
         $tasks = $db->retreiveTasksForContact($user, $accessToken, $tab, $contact->zoho_contact_id);
         $notes = $db->retrieveNotesForContact($user, $accessToken, $contactId);
         $dealContacts = $db->retrieveDealContactFordeal($user, $accessToken, $contact->zoho_contact_id);
-        $deals = $db->retrieveDeals($user, $accessToken, $contact->zoho_contact_id, null, null, null, null, false);
+        $deals = $db->retrieveDeals($user, $contact->zoho_contact_id, null, null, null, null, false);
         $allstages = config('variables.dealStages');
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
         $contacts = $db->retreiveContacts($user, $accessToken);
         $userContact = $db->retrieveContactDetailsByZohoId($user, $accessToken, $user->zoho_id);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         if ($spouseContact) {
             // Ensure $spouseContact is an array or an object, not a string
             if (is_string($spouseContact)) {
@@ -388,8 +384,8 @@ class ContactController extends Controller
         $filter = $request->input('filter');
         $missingFeild = $request->input('missingField');
         $contacts = $db->retreiveContacts($user, $accessToken, $search, $sortField, $sortType, null, $filter, $missingFeild);
-        $getdealsTransaction = $db->retrieveDeals($user, $accessToken, $search = null, $sortField = null, $sortType = null, "");
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $getdealsTransaction = $db->retrieveDeals($user, $search = null, $sortField = null, $sortType = null, "");
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $groups = $db->retrieveGroups($user, $accessToken);
         $apend = false;
         return view('contacts.contact', compact('contacts', 'getdealsTransaction', 'retrieveModuleData', 'groups', 'apend'))->render();
@@ -407,10 +403,8 @@ class ContactController extends Controller
             }
             $rules = [];
             $helper = new Helper();
-            $accessToken = $user->getAccessToken();
             $zoho = new ZohoCRM();
             $db = new DatabaseService();
-            $zoho->access_token = $accessToken;
             $frontData = $request->all();
             if (!empty($frontData['data'])) {
                 $first_name = "";
@@ -798,7 +792,7 @@ class ContactController extends Controller
                 })->toArray(); // Convert the result to an array
 
                 $match_abcd = ["A", "A+", "B", "C", "D"];
-                $targetGroup = $zohoContactValues['ABCD'];
+                $targetGroup = $zohoContactValues['ABCD'] ?? null;
 
                 // Remove all contact groups that match $match_abcd except the one specified in $targetGroup
                 foreach ($groupNames as $groupName) {
@@ -978,7 +972,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $notesInfo = $db->retrieveNotesForContact($user, $accessToken, $contactId);
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.notes.listPopup', compact('notesInfo', 'retrieveModuleData', 'contact'))->render();
     }
@@ -994,7 +988,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.notes.create', compact('retrieveModuleData', 'contact', "type"))->render();
     }
@@ -1010,7 +1004,7 @@ class ContactController extends Controller
         $contactId = request()->route('contactId');
         $accessToken = $user->getAccessToken();
         $type = "Contacts";
-        $retrieveModuleData = $db->retrieveModuleDataDB($user, $accessToken);
+        $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken);
         $contact = $db->retrieveContactById($user, $accessToken, $contactId);
         return view('common.tasks.create', compact('retrieveModuleData', 'contact', "type"))->render();
     }
@@ -1079,13 +1073,11 @@ class ContactController extends Controller
         }
         $accessToken = $user->getAccessToken();
 
-        $zoho->access_token = $accessToken;
-
         $jsonData = $request->all();
         $contactId = $id;
 
         $inputData =
-            [
+        [
             "data" => [
                 [
                     "Relationship_Type" => "Secondary",

@@ -33,7 +33,7 @@ class TeamIndividualController extends Controller
         }
 
         $accessToken = $user->getAccessToken();
-        $deals = $this->db->retrieveDeals($user, $accessToken, null, null, null, null, null, true);
+        $deals = $this->db->retrieveDeals($user, null, null, null, null, null, true);
 
         // Fetch KPIs
         $averagePipelineProbability = $this->calculateAveragePipelineProbability($deals);
@@ -55,10 +55,20 @@ class TeamIndividualController extends Controller
         $myGroups = $this->getMyGroups($user);
 
         return view('team_individual.index', compact(
-            'averagePipelineProbability', 'averageCommPercentage', 'averageSalePrice',
-            'pipelineValue', 'incomeGoal', 'abcdContacts', 'missingAbcd',
-            'needsAddress', 'needsPhone', 'needsEmail', 'openTasks',
-            'transactionsPastFourQuarters', 'volumePastFourQuarters', 'pipelineByMonth',
+            'averagePipelineProbability',
+            'averageCommPercentage',
+            'averageSalePrice',
+            'pipelineValue',
+            'incomeGoal',
+            'abcdContacts',
+            'missingAbcd',
+            'needsAddress',
+            'needsPhone',
+            'needsEmail',
+            'openTasks',
+            'transactionsPastFourQuarters',
+            'volumePastFourQuarters',
+            'pipelineByMonth',
             'myGroups'
         ));
     }
