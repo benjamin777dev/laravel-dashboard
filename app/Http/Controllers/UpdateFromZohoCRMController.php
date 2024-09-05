@@ -6,6 +6,7 @@ use App\Models\Aci;
 use App\Models\Contact;
 use App\Models\ContactGroups;
 use App\Models\Deal;
+use App\Models\Note;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\DatabaseService;
@@ -31,6 +32,7 @@ class UpdateFromZohoCRMController extends Controller
             'task' => Task::class,
             'cxg' => ContactGroups::class,
             'aci' => Aci::class,
+            'note' => Note::class,
         ];
 
         // Ensure the module exists in the mapping
