@@ -15,10 +15,10 @@
                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                         type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
-                        @if ($note['related_to_type'] === 'Deals')
+                        @if ($note['related_to_type'] === 'Deal')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->dealData->deal_name ?? '' }}<br />
-                        @elseif ($note['related_to_type'] === 'Contacts')
+                        @elseif ($note['related_to_type'] === 'Contact')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->contactData->first_name ?? '' }}
                             {{ $note->contactData->last_name ?? '' }}<br />
@@ -80,7 +80,7 @@
                                         <p class="dRelatedText">Related to...</p>
                                         <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -93,7 +93,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -154,7 +154,7 @@
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -167,7 +167,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -226,10 +226,10 @@
                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                         type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
-                        @if ($note['related_to_type'] === 'Deals')
+                        @if ($note['related_to_type'] === 'Deal')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->dealData->deal_name ?? '' }}<br />
-                        @elseif ($note['related_to_type'] === 'Contacts')
+                        @elseif ($note['related_to_type'] === 'Contact')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->contactData->first_name ?? '' }}
                             {{ $note->contactData->last_name ?? '' }}<br />
@@ -291,7 +291,7 @@
                                         <p class="dRelatedText">Related to...</p>
                                         <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -304,7 +304,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -365,7 +365,7 @@
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -378,7 +378,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -437,10 +437,10 @@
                         id="editButton{{ $note['id'] }}" class="btn btn-primary dnotesBottomIcon"
                         type="button" data-bs-toggle="modal"
                         data-bs-target="#staticBackdropnoteview{{ $note['id'] }}">
-                        @if ($note['related_to_type'] === 'Deals')
+                        @if ($note['related_to_type'] === 'Deal')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->dealData->deal_name ?? '' }}<br />
-                        @elseif ($note['related_to_type'] === 'Contacts')
+                        @elseif ($note['related_to_type'] === 'Contact')
                             <span class="dFont800 dFont13">Related to:</span>
                             {{ $note->contactData->first_name ?? '' }}
                             {{ $note->contactData->last_name ?? '' }}<br />
@@ -502,7 +502,7 @@
                                         <p class="dRelatedText">Related to...</p>
                                         <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -515,7 +515,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -576,7 +576,7 @@
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
                                             
-                                            @if($note['related_to_type'] === 'Deals') 
+                                            @if($note['related_to_type'] === 'Deal') 
                                                 <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
@@ -589,7 +589,7 @@
                                                         name="related_to_parent" aria-label="Select Transaction">
                                                     <option value="{{ $note->dealData['zoho_deal_id'] }}">{{ $note->dealData['deal_name'] }}</option>
                                                 </select>
-                                            @elseif($note['related_to_type'] === 'Contacts')
+                                            @elseif($note['related_to_type'] === 'Contact')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}"
                                                         name="related_to" aria-label="Select Transaction">
                                                     @foreach ($retrieveModuleData as $item)
