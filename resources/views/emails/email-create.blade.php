@@ -328,15 +328,64 @@
                                     ],
                                     onSubmit: function(api) {
                                         const formData = new FormData();
-                                        const recordedVideoElement = document.getElementById('recordedVideo');
+                                        const videoElement = document.getElementById('recordedVideo');
+                                        const imgElement = document.getElementById('snapshotImage');
+                                        const gifElement = document.getElementById('gifImage');
                                         const blobUrl = recordedVideoElement.src;
                                         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
-                                        fetch(blobUrl)
-                                        .then(response => response.blob())
-                                        .then(blob => {
-                                            console.log("BlobUrl:", blob);
-                                            formData.append('file', blob, 'recorded-video.mp4');
+
+                                        function fetchBlobFromUrl(url) {
+                                            return fetch(url).then(function(response) {
+                                                if(response.ok) {
+                                                    return response.blob();
+                                                } else {
+                                                    return null;
+                                                }
+                                            });
+                                        }
+
+                                        if (videoElement.src && videoElement.src.startsWith('blob:')) {
+                                            fetchBlobFromUrl(videoElement.src).then(function(videoBlob) {
+                                                if (videoBlob) {
+                                                    formData.append('video', videoBlob, 'recorded-video.webm');
+                                                }
+                                                processImages();
+                                            });
+                                        } else {
+                                            processImages();
+                                        }
+
+                                        // Function to handle gif and image (called after video is processed)
+                                        function processImages() {
+                                            // Check and add the first image blob if the image element has content
+                                            if (gifElement.src && gifElement.src.startsWith('blob:')) {
+                                                fetchBlobFromUrl(gifElement.src).then(function(imageBlob1) {
+                                                    if (imageBlob1) {
+                                                        formData.append('gif', imageBlob1, 'generated.gif');
+                                                    }
+                                                    processSecondImage();
+                                                });
+                                            } else {
+                                                processSecondImage();
+                                            }
+                                        }
+
+                                        // Function to handle the  image (called after the first image is processed)
+                                        function processSecondImage() {
+                                            if (imgElement.src && imgElement.src.startsWith('data:')) {
+                                                fetchBlobFromUrl(imgElement.src).then(function(imageBlob2) {
+                                                    if (imageBlob2) {
+                                                        formData.append('img', imageBlob2, 'snapshot.png');
+                                                    }
+                                                    sendData();
+                                                });
+                                            } else {
+                                                sendData();
+                                            }
+                                        }
+
+                                        // Function to send the data to the server
+                                        function sendData() {
                                             fetch('/upload-video-s3', {
                                                 method: 'POST',
                                                 headers: {
@@ -350,22 +399,7 @@
                                                 // insertVideoIntoEditor(s3Url, editor);
                                             })
                                             .catch(err => console.error('Error uploading to S3:', err));
-                                        });
-                                        // var data = api.getData();
-                                        // var selectedOption = data.options;
-                                        // console.log(selectedOption);
-                                        // $.ajax({
-                                        //     url: '/get/template/detail/' + selectedOption,
-                                        //     method: 'GET',
-                                        //     success: function(response) {
-                                        //         $("#emailSubject").val(response.subject);
-                                        //         editor.insertContent(response.content);
-                                        //         api.close();
-                                        //     },
-                                        //     error: function() {
-                                        //         showToastError('Failed to submit the selected option');
-                                        //     }
-                                        // });
+                                        }
                                     }
                                 });
                                 let mediaRecorder;

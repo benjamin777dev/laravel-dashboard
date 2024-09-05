@@ -3,36 +3,68 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class VideoController extends Controller
 {
     public function upload(Request $request)
     {
-        if ($request->hasFile('file')) {
-            $video = $request->file('file');
-            $path = 'videos/' . $video->getClientOriginalName();
-            $originalName = $video->getClientOriginalName();
-            $mimeType = $video->getClientMimeType(); // Mime type (e.g., video/mp4)
-            $size = $video->getSize(); // File size in bytes
-            $uploaded = Storage::disk('s3')->put($path, file_get_contents($video), 'public');
+        $urls =
+         [
+            'video' => "",
+            'gif' => "",
+            'img' => "",
+         ];
 
-            if ($uploaded) {
-                // Generate the URL after uploading
-                $url = Storage::disk('s3')->url($path);
-    
-                return response()->json([
-                    'url' => $url,
-                    'original_name' => $originalName,
-                    'mime_type' => $mimeType,
-                    'size' => $size
-                ], 200);
-                // return response()->json(['url' => $url], 200);
-            } else {
-                return response()->json(['message' => 'Failed to upload video'], 500);
+        try { 
+            if ($request->hasFile('video')) {
+                $video = $request->file('video');
+                $randomVideoName = Str::random(20) . '.' . $video->getClientOriginalExtension();
+                $path = 'videos/' . $randomVideoName;
+                $uploaded = Storage::disk('s3')->put($path, file_get_contents($video), 'public');
+
+                if ($uploaded) {
+                    // Generate the URL after uploading
+                    $url = Storage::disk('s3')->url($path);
+                    $urls['video'] = $url;
+                } else {
+                    return response()->json(['message' => 'Failed to upload video'], 500);
+                }
             }
-        }
+            if ($request->hasFile('gif')) {
+                $gif = $request->file('gif');
+                $randomGifName = Str::random(20) . '.' . $gif->getClientOriginalExtension();
+                $path = 'gifs/' . $randomGifName;
+                $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif), 'public');
 
-        return response()->json(['message' => 'No video uploaded'], 400);
+                if ($uploaded) {
+                    // Generate the URL after uploading
+                    $url = Storage::disk('s3')->url($path);
+                    $urls['gif'] = $url;
+                } else {
+                    return response()->json(['message' => 'Failed to upload video'], 500);
+                }
+            }
+            if ($request->hasFile('img')) {
+                $img = $request->file('img');
+                $randomImgName = Str::random(20) . '.' . $img->getClientOriginalExtension();
+                $path = 'imgs/' . $randomImgName;
+                $uploaded = Storage::disk('s3')->put($path, file_get_contents($img), 'public');
+
+                if ($uploaded) {
+                    // Generate the URL after uploading
+                    $url = Storage::disk('s3')->url($path);
+                    $urls['img'] = $url;
+                } else {
+                    return response()->json(['message' => 'Failed to upload video'], 500);
+                }
+            }
+            return response()->json(['urls'=> $urls], 200);
+        } catch (\Exception $e) {
+            Log::error('Video Upload Failed:' . $e->getMessage());
+            return response()->json(['message' => 'No video uploaded'], 400);
+        }
     }
 }
