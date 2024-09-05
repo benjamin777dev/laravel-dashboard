@@ -30,7 +30,7 @@ class UpdateFromZohoCRMController extends Controller
             'contact' => Contact::class,
             'deal' => Deal::class,
             'task' => Task::class,
-            'cxg' => ContactGroups::class,
+            'contact_group' => ContactGroups::class,
             'aci' => Aci::class,
             'note' => Note::class,
         ];
