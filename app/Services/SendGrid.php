@@ -18,7 +18,6 @@ class SendGrid
         Log::info('Initializing SendGrid');
 
         $this->sendgrid_api_key = config('services.sendgrid.api_key');
-       
 
         Log::info('SendGrid initialized');
     }
@@ -29,7 +28,7 @@ class SendGrid
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->sendgrid_api_key,
                 'Content-Type' => 'application/json',
-            ])->get($this->sendGridApi."senders");
+            ])->get($this->sendGridApi . "senders");
 
             $responseData = $response->json();
 
@@ -70,11 +69,11 @@ class SendGrid
     {
         try {
             $inputEmailJSON = json_encode($inputEmail);
-            Log::info("Input Sendgrid Email".$inputEmailJSON);
+            Log::info("Input Sendgrid Email" . $inputEmailJSON);
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->sendgrid_api_key,
                 'Content-Type' => 'application/json',
-            ])->post($this->sendGridApi."mail/send",$inputEmail);
+            ])->post($this->sendGridApi . "mail/send", $inputEmail);
             Log::info('Raw Response', ['response' => $response]);
 
             $responseData = $response->json();

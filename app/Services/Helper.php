@@ -58,7 +58,7 @@ class Helper
         }
     }
 
-    public function extractZipFile($zipUrl,$zoho)
+    public function extractZipFile($zipUrl, $zoho)
     {
         try {
             // Download the ZIP file
@@ -118,7 +118,7 @@ class Helper
                 \Log::info('CSV array: ', ['csvArray' => $csvArray]);
 
                 // Remove null rows
-                $csvArray = array_filter($csvArray, function($row) {
+                $csvArray = array_filter($csvArray, function ($row) {
                     Log::info('CSV row: ', ['row' => $row]);
                     return !is_null($row[0]);
                 });
@@ -157,7 +157,8 @@ class Helper
         }
     }
 
-    public function array_find(array $array, callable $callback) {
+    public function array_find(array $array, callable $callback)
+    {
         foreach ($array as $item) {
             if ($callback($item)) {
                 return $item;
@@ -166,7 +167,8 @@ class Helper
         return null;
     }
 
-    function filterEmailsAndNumbers($items) {                        
+    function filterEmailsAndNumbers($items)
+    {
         $emails = [];
         $ids = [];
 
@@ -179,7 +181,7 @@ class Helper
             }
         }
         Log::info("EMAILS: ", $emails);
-    Log::info("IDS: ", $ids);
+        Log::info("IDS: ", $ids);
         return [$emails, $ids];
     }
 

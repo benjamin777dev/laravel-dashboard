@@ -62,7 +62,7 @@ class ContactGroups extends Model
 
     public function groupData()
     {
-        return $this->belongsTo(Groups::class, 'groupId','id');
+        return $this->belongsTo(Groups::class, 'groupId', 'id');
     }
 
     public function modifiedBy()
@@ -167,11 +167,11 @@ class ContactGroups extends Model
         Log::info("Contact ID in data: " . ($mappedData['contacts_id'] ?? 'Not found'));
         Log::info("Group ID in data: " . ($mappedData['groups_id'] ?? 'Not found'));
 
-        $foundUser = isset($mappedData['contacts_id']) 
-            ? Contact::where('zoho_contact_id', $mappedData['contacts_id'])->first() 
+        $foundUser = isset($mappedData['contacts_id'])
+            ? Contact::where('zoho_contact_id', $mappedData['contacts_id'])->first()
             : null;
-        $foundGroup = isset($mappedData['groups_id']) 
-            ? Groups::where('zoho_group_id', $mappedData['groups_id'])->first() 
+        $foundGroup = isset($mappedData['groups_id'])
+            ? Groups::where('zoho_group_id', $mappedData['groups_id'])->first()
             : null;
 
         Log::info("Found User: " . ($foundUser ? $foundUser->id : 'Not found'));
@@ -190,6 +190,6 @@ class ContactGroups extends Model
     }
 
 
-    
+
 
 }

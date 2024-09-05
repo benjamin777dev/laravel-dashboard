@@ -183,7 +183,7 @@
         </tr>
         @else
         @php
-            $endDate30Days = \Carbon\Carbon::now()->addMonth(1);
+            $endDate30Days = \Carbon\Carbon::now()->addMonth();
             $now = \Carbon\Carbon::now();
             $closingDate = \Carbon\Carbon::parse($deal['closing_date']);
             $deal['isBadDate'] = ($closingDate->lt($now) || $closingDate->between($now, $endDate30Days))

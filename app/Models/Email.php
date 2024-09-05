@@ -29,7 +29,7 @@ class Email extends Model
         'ccEmail' => 'array',
         'bccEmail' => 'array'
     ];
-    
+
     public function fromUserData()
     {
         return $this->belongsTo(User::class, 'fromEmail');
