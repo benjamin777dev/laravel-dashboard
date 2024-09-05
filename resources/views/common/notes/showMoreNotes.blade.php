@@ -45,11 +45,11 @@
                                             <small class="text-muted">
                                                 Created: {{ \Carbon\Carbon::parse($note['created_time'])->format('M d, Y') ?? '' }},
                                                 related to
-                                                @if ($note['related_to_type'] == 'Contacts' && isset($note->contactData->zoho_contact_id))
+                                                @if ($note['related_to_type'] == 'Contact' && isset($note->contactData->zoho_contact_id))
                                                     <a href="{{ url('/contacts-view/' . $note->contactData->id ?? '') }}" class="text-primary">
                                                         {{ $note->contactData->first_name ?? '' }} {{ $note->contactData->last_name ?? '' }}
                                                     </a>
-                                                @elseif ($note['related_to_type'] == 'Deals' && isset($note->dealData->zoho_deal_id))
+                                                @elseif ($note['related_to_type'] == 'Deal' && isset($note->dealData->zoho_deal_id))
                                                     <a href="{{ url('/pipeline-view/' . $note->dealData->id ?? '') }}" class="text-primary">
                                                         {{ $note->dealData->deal_name ?? 'General Deal' }}
                                                     </a>

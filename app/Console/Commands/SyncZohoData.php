@@ -41,6 +41,7 @@ class SyncZohoData extends Command
         'Deals',
         'Agent_Commission_Incomes',
         'Teams_and_Partners',
+        'Notes'
     ];
 
     /**

@@ -1365,7 +1365,7 @@ class DatabaseService
     }
 
     public function storeNotesIntoDB($notes)
-    {
+    { 
         try {
             Log::info("Storing Notes Into Database");
             $helper = new Helper();
@@ -1445,7 +1445,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deals'], ['related_to', $dealId]])->orderBy('updated_at', 'desc')->get();
+            $notes = Note::where([['owner', $user->id], ['related_to_type', 'Deal'], ['related_to', $dealId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -1458,7 +1458,7 @@ class DatabaseService
 
         try {
             Log::info("Retrieve Notes From Database");
-            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contacts'], ['related_to', $contactId]])->orderBy('updated_at', 'desc')->get();
+            $notes = Note::with('userData')->with('ContactData')->where([['owner', $user->id], ['related_to_type', 'Contact'], ['related_to', $contactId]])->orderBy('updated_at', 'desc')->get();
             return $notes;
         } catch (\Exception $e) {
             Log::error("Error retrieving notes: " . $e->getMessage());
@@ -2416,6 +2416,8 @@ class DatabaseService
                 return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
             case 'agent_commission_incomes':
                 return \App\Models\Aci::mapZohoData($record, 'csv');
+            case 'notes': 
+                return \App\Models\Note::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -2448,8 +2450,9 @@ class DatabaseService
                 case 'teams_and_partners':
                     \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
+                case 'notes': 
+                    return \App\Models\Note::upsert($dataBatch, ['team_partnership_id']);
 
-                // Add other cases as needed
             }
         } catch (\Exception $e) {
             Log::error("Error upserting data batch for module {$module}: " . $e->getMessage());
