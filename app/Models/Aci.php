@@ -223,6 +223,8 @@ class Aci extends Model
             }
         }
 
+        $mappedData['tag'] = json_encode($data['tag'] ?? '{}');
+
         $mappedData['transaction_id'] = $dealRecord->id;
         $mappedData['zoho_aci_id'] = $idKey;
         $mappedData['owner_id'] = $ownerRecord->id ?? $ownerId;
