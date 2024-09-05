@@ -255,6 +255,12 @@ class Deal extends Model
         return $roles;
     }
     
+    public function acis()
+    {
+        return $this->hasMany(Aci::class, 'transaction_id', 'id');
+    }
+
+
 
     /**
      * Map Zoho data to deal model attributes.
