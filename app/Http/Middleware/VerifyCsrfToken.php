@@ -17,6 +17,7 @@ class VerifyCsrfToken extends Middleware
         '/webhook/deal',
         '/webhook/cxg',
         '/webhook/task',
+        '/webhook/aci',
         '/api/webhook/csvcallback'
     ];
 }
