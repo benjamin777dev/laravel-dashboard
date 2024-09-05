@@ -63,7 +63,7 @@ class Note extends Model
         $existingNote = self::where('zoho_note_id', $idKey)->first();
         
         $module_name = $source === "webhook" 
-            ? $data['Parent_Id']['module']['api_name'] 
+            ? $data['$se_module'] 
             : $data['Parent_Id.module.api_name'] ?? '';
 
         // Map the module to its id from modules
