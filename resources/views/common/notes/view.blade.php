@@ -13,13 +13,13 @@
                         class="form-check-input checkbox{{ $note['id'] }}"
                         id="editButton{{ $note['id'] }}" class="btn btn-primary position-fixed bottom-5 end-0 p-3 bg-dark rounded-circle"
                         type="button" >
-                        @if ($note['related_to_type'] === 'Deal'&& $note['dealData'])
+                        @if ($note['related_to_type'] === 'Deals'&& $note['dealData'])
                         <div onclick = "event.stopPropagation();">
                             <span class="dFont800 dFont13">Related to:</span>
                              <a href="{{ route('pipeline.view', ['dealId' => $note->dealData->id]) }}">{{ $note->dealData->deal_name ?? '' }}</a>
                         </div>
                             
-                        @elseif ($note['related_to_type'] === 'Contact' && $note['ContactData'])
+                        @elseif ($note['related_to_type'] === 'Contacts' && $note['ContactData'])
                         <div onclick = "event.stopPropagation();">
                             <span class="dFont800 dFont13">Related to:</span>
                             <a href="{{ route('contacts.show', ['contactId' => $note->ContactData->id]) }}">{{ $note->contactData->first_name ?? '' }}
@@ -68,7 +68,7 @@
                                 <p class="dRelatedText">Related to...</p>
                                 <div class="btn-group dmodalTaskDiv">
 
-                                    @if($note['related_to_type'] === 'Deal')                                         <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
+                                    @if($note['related_to_type'] === 'Deals')                                         <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
                                             aria-label="Select Transaction">
                                             @foreach ($retrieveModuleData as $item)
                                                 @if (in_array($item['api_name'], ['Deals']))
@@ -81,7 +81,7 @@
                                             <option value="{{ $note->dealData['zoho_deal_id']??'' }}">{{ $note->dealData['deal_name'] ??''}}
                                             </option>
                                         </select>
-                                    @elseif($note['related_to_type'] === 'Contact')
+                                    @elseif($note['related_to_type'] === 'Contacts')
                                         <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['zoho_note_id'] }}" name="related_to"
                                             aria-label="Select Transaction">
                                             @foreach ($retrieveModuleData as $item)
@@ -143,7 +143,7 @@
                                     <p class="dRelatedText">Related to...</p>
                                     <div class="btn-group dmodalTaskDiv">
 
-                                        @if($note['related_to_type'] === 'Deal')
+                                        @if($note['related_to_type'] === 'Deals')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to" 
                                                 aria-label="Select Transaction">
                                                 <!-- @foreach ($retrieveModuleData as $item)
@@ -152,7 +152,7 @@
                                                     <!-- @endif
                                                 @endforeach -->
                                             </select>
-                                        @elseif($note['related_to_type'] === 'Contact')
+                                        @elseif($note['related_to_type'] === 'Contacts')
                                             <select class="form-select dmodaltaskSelect" id="related_to_{{ $note['id'] }}" name="related_to"
                                                 aria-label="Select Transaction">
                                                 <!-- @foreach ($retrieveModuleData as $item)

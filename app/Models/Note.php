@@ -90,12 +90,12 @@ class Note extends Model
             switch ($module_name) {
                 case 'Deals':
                     $related_to = Deal::where('zoho_deal_id', $parentId)->first();
-                    $related_to_type = 'Deal';
+                    $related_to_type = 'Deals';
                     
                     break;
                 case 'Contacts':
                     $related_to = Contact::where('zoho_contact_id', $parentId)->first();
-                    $related_to_type = 'Contact';
+                    $related_to_type = 'Contacts';
                     break;
                 case 'Tasks':
                     $related_to = Task::where('zoho_task_id', $parentId)->first();
