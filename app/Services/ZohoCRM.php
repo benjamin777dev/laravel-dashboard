@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Client\RequestException;
 use App\Services\DatabaseService;
-use DateTime;
+use Carbon\Carbon;
 
 class ZohoCRM
 {
@@ -894,7 +894,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback" => [
-                    "url" => "https://agent-commander.local/bulkJob/update",
+                    "url" => "https://zportal.coloradohomerealty.com/bulkJob/update",
                     "method" => "post"
                 ],
                 "resource" => [
@@ -1643,16 +1643,14 @@ class ZohoCRM
     {
         Log::info('Saving Zoho Call data');
 
-        $now = new DateTime();
-        // $callStartTime = $now->format('Y-m-d\TH:i:s\Z');
-        // $callEndTime = $now->add(new DateInterval('PT1M'))->format('Y-m-d\TH:i:s\Z');
+        $now = Carbon::now();
 
         $callRecord = [
             "Subject" => "Call Record in CHR",
             "Call_Type" => "Outbound",
             "Call_Duration" => "1",
-            "Call_Start_Time" => "2024-01-01T00:00:00Z", // ISO 8601 format
-            "Call_End_Time" => "2024-01-01T00:01:00Z",   // ISO 8601 format
+            "Call_Start_Time" => $now->toIso8601String(), // ISO 8601 format
+            "Call_End_Time" => $now->addMinutes(1)->toIso8601String(),   // ISO 8601 format
             "Related_To" => $contact_id, // Module related to this call (e.g., Contacts, Leads)
             "Related_To_Id" => $contact_id, // The ID of the record related to the call
             "Description" => "Auto Call Records in CHR, Phone Number:" . $phone_number

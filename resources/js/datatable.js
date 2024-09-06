@@ -2443,17 +2443,18 @@ var tableContact = $("#datatable_contact").DataTable({
             data: "mobile",
             title: "Mobile",
             render: function (data, type, row) {
-                return `${data ? "<a href ='tel: " + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'> <i class='fas fa-mobile-alt table-call-btn'></i></a>" : ""}
-                    <span class="editable" data-name="mobile" data-id="${row.id}">${data || "N/A"}</span>`;
+                let cleanNumber = data && data.toString().replace(/-/g, '');
+                let link = data ? `<a href ='tel: ` + cleanNumber + `' onclick = 'addCallRecord(` + row.id + `,"` + data + `")' class='mx-2 text-black'> <i class='fas fa-mobile-alt table-call-btn'></i></a>` : "";
+                return `${link}<span class="editable" data-name="mobile" data-id="${row.id}">${data || "N/A"}</span>`;
             },
         },
         {
             data: "phone",
             title: "Phone",
             render: function (data, type, row) {
-                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
-                    row.id
-                }">${data || "N/A"}</span>`;
+                let cleanNumber = data && data.toString().replace(/-/g, '');
+                let link = data ? `<a href ='tel: ` + cleanNumber + `' onclick = 'addCallRecord(` + row.id + `,"` + data + `")' class='mx-2 text-black'> <i class='fas fa-phone-alt table-call-btn'></i></a>` : "";
+                return `${link}<span class="editable" data-name="phone" data-id="${row.id}">${data || "N/A"}</span>`;
             },
         },
         {
@@ -3336,9 +3337,9 @@ var callRecordBoard = $("#call-record-table").DataTable({
             data: "phone_number",
             title: "Phone Number",
             render: function (data, type, row) {
-                return `${data ? "<a href = 'tel:" + data + "' onclick = 'addCallRecord(" + row.id + "," + data + ")' class='mx-2 text-black'><i class='fas fa-phone-alt table-call-btn'>" : ""}</i></a><span class="editable" data-name="phone" data-id="${
-                    row.id
-                }">${data || "N/A"}</span>`;
+                let cleanNumber = data && data.toString().replace(/-/g, '');
+                let link = data ? `<a href ='tel: ` + cleanNumber + `' onclick = 'addCallRecord(` + row.contact_id + `,"` + data + `")' class='mx-2 text-black'> <i class='fas fa-phone-alt table-call-btn'></i></a>` : "";
+                return `${link}</i></a><span class="editable" data-name="phone" data-id="${row.contact_id}">${data || "N/A"}</span>`;
             },
         },
         {
@@ -3350,7 +3351,7 @@ var callRecordBoard = $("#call-record-table").DataTable({
         }
     ],
     ajax: {
-        url: "/get-call-records/"+ contactId,
+        url: route('call.records.list', { contactId: contactId }),
         type: "GET",
         data: function (request) {
             request._token = "{{ csrf_token() }}";
@@ -3372,7 +3373,7 @@ window.addCallRecord = function(id, phone_number) {
         },
     });
     $.ajax({
-        url: "/add-call-record/",
+        url: route('call.records.create'),
         method: "POST",
         data: {contact_id: id, phone_number: phone_number},
         success: function (response) {
