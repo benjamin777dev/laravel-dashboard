@@ -29,12 +29,52 @@
 @section('content')
 @if (!empty($reportData))
     <div style="margin-left: 2vw; margin-right: 2vw;">
-        <!-- Totals Summary -->
+        <!-- Year Selection Dropdown -->
+        <form method="GET" action="{{ route('reports.productionProjections') }}" id="yearSelectForm">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="yearSelect">Select Year:</label>
+                    <select name="year" id="yearSelect" class="form-control" onchange="document.getElementById('yearSelectForm').submit();">
+                        @foreach($availableYears as $year)
+                            <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <!-- Projected Volume Summary -->
+         @if ($projectionData['status']['completed'] == true )
+            <div class="row dashboard-cards-resp">
+                <div class="col-lg-6 col-md-6 col-sm-12 text-center dCardsCols">
+                    <div class="card dash-card">
+                        <div class="card-body dash-front-cards">
+                            <h5 class="card-title dTitle mb-0">Projected Volume</h5>
+                            <h4 class="dSumValue">Sold: {{ $projectionData['sold']['transactions'] }} - ${{ number_format($projectionData['sold']['volume'], 2) }}</h4>
+                            <p class="dcountText">To CHR: ${{ number_format($projectionData['sold']['chr_split'], 2) }}<br/>To Agent: ${{ number_format($projectionData['sold']['agent_earnings'], 2) }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 text-center dCardsCols">
+                    <div class="card dash-card">
+                        <div class="card-body dash-front-cards">
+                            <h5 class="card-title dTitle mb-0">Projected Volume</h5>
+                            <h4 class="dSumValue">UC: {{ $projectionData['uc']['transactions'] }} - ${{ number_format($projectionData['uc']['volume'], 2) }}</h4>
+                            <p class="dcountText">To CHR: ${{ number_format($projectionData['uc']['chr_split'], 2) }}<br/>To Agent: ${{ number_format($projectionData['uc']['agent_earnings'], 2) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        @endif
+        <!-- YTD Totals Summary -->
         <div class="row dashboard-cards-resp">
             <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
                 <div class="card dash-card">
                     <div class="card-body dash-front-cards">
-                        <h5 class="card-title dTitle mb-0"># of Tx YTD as of {{ \Carbon\Carbon::now()->format("m-d-Y") }}</h5>
+                        <h5 class="card-title dTitle mb-0"># of Tx YTD as of {{ $currentYear }}</h5>
                         <h4 class="dSumValue">{{ number_format($totalSoldTransactions + $totalUCTransactions) }}</h4>
                         <p class="dcountText">Sold: {{ number_format($totalSoldTransactions) }}<br/>UC: {{ number_format($totalUCTransactions) }}</p>
                     </div>
@@ -44,7 +84,7 @@
             <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
                 <div class="card dash-card">
                     <div class="card-body dash-front-cards">
-                        <h5 class="card-title dTitle mb-0">Total of Agent Check Amounts</h5>
+                        <h5 class="card-title dTitle mb-0">Total of Agent Check Amounts YTD</h5>
                         <h4 class="dSumValue">${{ number_format($totalSoldCheckAmount + $totalUnderContractCheckAmount) }}</h4>
                         <p class="dcountText">Sold: ${{ number_format($totalSoldCheckAmount) }}<br/>UC: ${{ number_format($totalUnderContractCheckAmount) }}</p>
                     </div>
@@ -54,7 +94,7 @@
             <div class="col-lg-3 col-md-3 col-sm-6 text-center dCardsCols">
                 <div class="card dash-card">
                     <div class="card-body dash-front-cards">
-                        <h5 class="card-title dTitle mb-0">Total of Split to CHR</h5>
+                        <h5 class="card-title dTitle mb-0">Total of Split to CHR YTD</h5>
                         <h4 class="dSumValue">${{ number_format($totalSoldCHRSplit + $totalUnderContractCHRSplit) }}</h4>
                         <p class="dcountText">
                             Sold: ${{ number_format($totalSoldCHRSplit) }}
@@ -66,7 +106,7 @@
             </div>
         </div>
 
-
+        <!-- Table Data -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -91,27 +131,37 @@
                             </thead>
                             <tbody>
                                 @foreach($reportData as $agentName => $stages)
-                                    <tr>
-                                        <td>
-                                            {{ $agentName }}
-                                            <br/>{{ $stages['settings']['initial_cap'] ?? 0 }}/{{ $stages['settings']['residual_cap'] ?? 0 }}
-                                            @if (!empty($stages['Under Contract']['info']))
-                                                <br/>
-                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal"
-                                                    data-agent="{{ $agentName }}">
-                                                    Info
-                                                </button>
-                                            @endif
-                                        </td>
-                                        <td>{{ $stages['Sold']['count'] ?? 0 }}</td>
-                                        <td>${{ number_format($stages['Sold']['agent_check_amount'] ?? 0, 2) }}</td>
-                                        <td>${{ number_format($stages['Sold']['chr_split'] ?? 0, 2) }}</td>
-                                        <td>${{ number_format($stages['Sold']['total_commission'] ?? 0, 2) }}</td>
-                                        <td style="border-left: 3px solid #000 !important">{{ $stages['Under Contract']['count'] ?? 0 }}</td>
-                                        <td>${{ number_format($stages['Under Contract']['projected_agent_earnings'] ?? 0, 2) }}</td>
-                                        <td>${{ number_format($stages['Under Contract']['projected_chr_split'] ?? 0, 2) }}</td>
-                                        <td>${{ number_format($stages['Under Contract']['total_commission'] ?? 0, 2) }}</td>
-                                    </tr>
+                                <tr>
+                                    <td>
+                                        {{ $agentName }}
+                                        <br/>{{ $stages['settings']['initial_cap'] ?? 0 }}/{{ $stages['settings']['residual_cap'] ?? 0 }}
+                                        @if (!empty($stages['Under Contract']['info']))
+                                            <br/>
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal"
+                                                data-agent="{{ $agentName }}">
+                                                Info
+                                            </button>
+                                        @endif
+                                    </td>
+                                    <td data-sort="{{ $stages['Sold']['count'] ?? 0 }}">
+                                        {{ $stages['Sold']['count'] ?? 0 }}
+                                        @if (isset($projectionData['status']['completed']) && $projectionData['status']['completed'] == true && isset($stages['settings']['projection_sold']))
+                                            <small class="text-primary">(+{{ $stages['settings']['projection_sold']['count'] }})</small>
+                                        @endif
+                                    </td>
+                                    <td>${{ number_format($stages['Sold']['agent_check_amount'] ?? 0, 2) }}</td>
+                                    <td>${{ number_format($stages['Sold']['chr_split'] ?? 0, 2) }}</td>
+                                    <td>${{ number_format($stages['Sold']['total_commission'] ?? 0, 2) }}</td>
+                                    <td data-sort="{{ $stages['Under Contract']['count'] ?? 0 }}">
+                                        {{ $stages['Under Contract']['count'] ?? 0 }}
+                                        @if (isset($projectionData['status']['completed']) && $projectionData['status']['completed'] == true && isset($stages['settings']['projection_uc']))
+                                            <small class="text-primary">(+{{ $stages['settings']['projection_uc']['count'] }})</small>
+                                        @endif
+                                    </td>
+                                    <td>${{ number_format($stages['Under Contract']['projected_agent_earnings'] ?? 0, 2) }}</td>
+                                    <td>${{ number_format($stages['Under Contract']['projected_chr_split'] ?? 0, 2) }}</td>
+                                    <td>${{ number_format($stages['Under Contract']['total_commission'] ?? 0, 2) }}</td>
+                                </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
@@ -241,31 +291,5 @@
                 }
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </script>
 @endsection

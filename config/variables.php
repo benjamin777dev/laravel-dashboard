@@ -11,12 +11,14 @@ return [
         'Dead-Lost To Competition',
         'Dead-Contract Terminated',
         'Dead-Lost',
+        'Dead'
     ],
     'dealPipelineStages' => [
         'Sold',
         'Dead-Lost To Competition',
         'Dead-Contract Terminated',
         'Dead-Lost',
+        'Dead'
     ],
     'dealCreateStages' => [
         'Potential',
