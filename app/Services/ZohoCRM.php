@@ -893,7 +893,7 @@ class ZohoCRM
                 "operation" => "insert",
                 "ignore_empty" => true,
                 "callback" => [
-                    "url" => "https://agent-commander.local/bulkJob/update",
+                    "url" => "https://zportal.coloradohomerealty.com/bulkJob/update",
                     "method" => "post"
                 ],
                 "resource" => [
