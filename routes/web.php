@@ -229,6 +229,6 @@ Route::get('index/{locale}', [HomeController::class, 'lang']);
 
 // Call Record Route
 Route::middleware('auth')->group(function () {
-    Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.list');
-    Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.create');
+    Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.records.list');
+    Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.records.create');
 });

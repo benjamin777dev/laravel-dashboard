@@ -38,6 +38,7 @@
     <script src="{{ URL::asset('build/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
     
     <!-- Datatable init js -->
+    @routes
     <script src="{{ URL::asset('build/js/pages/datatables.init.js') }}"></script>
     @vite(['resources/js/dropdown.js'])
     @vite(['resources/js/datatable.js'])
