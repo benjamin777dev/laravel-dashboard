@@ -231,6 +231,7 @@ Route::get('/strategy-group', [StrategyGroupController::class, 'index'])->name('
 
 // Reports
 Route::get('/reports/productionProjections', [ReportController::class, 'productionProjections'])->name('reports.productionProjections');
+Route::post('/reports/productionProjections/render-deal-cards', [ReportController::class, 'renderDealCards'])->name('agent.deal.cards');
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
