@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Client\RequestException;
 use App\Services\DatabaseService;
+use Carbon\Carbon;
 
 class ZohoCRM
 {
@@ -1622,6 +1623,50 @@ class ZohoCRM
         } catch (\Exception $e) {
             Log::error("Error executing Bulk Write Job in Zoho: " . $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function getCallRecord()
+    {
+        Log::info('Getting Zoho Call data');
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+        ])->get($this->apiUrl . 'Calls');
+
+        //Log::info('Zoho user data response: ' . print_r($response, true));
+
+        return $response;
+    }
+
+    public function saveCallRecord($contact_id, $phone_number)
+    {
+        Log::info('Saving Zoho Call data');
+
+        $now = Carbon::now();
+
+        $callRecord = [
+            "Subject" => "Call Record in CHR",
+            "Call_Type" => "Outbound",
+            "Call_Duration" => "1",
+            "Call_Start_Time" => $now->toIso8601String(), // ISO 8601 format
+            "Call_End_Time" => $now->addMinutes(1)->toIso8601String(),   // ISO 8601 format
+            "Related_To" => $contact_id, // Module related to this call (e.g., Contacts, Leads)
+            "Related_To_Id" => $contact_id, // The ID of the record related to the call
+            "Description" => "Auto Call Records in CHR, Phone Number:" . $phone_number
+        ];
+        $data = [
+            'data' => [$callRecord]
+        ];
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->access_token,
+            'Content-Type' => 'application/json',
+        ])->post($this->apiUrl . 'Calls', $data);
+
+        if (!$response->successful()) {
+            Log::error('Zoho API error: ' . $response->body());
+            // Optionally, you can throw an exception here to stop the execution
+            throw new \Exception('Zoho API error: ' . $response->body());
         }
     }
 }

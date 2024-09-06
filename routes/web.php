@@ -24,6 +24,7 @@ use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CallController;
 
 
 
@@ -235,3 +236,9 @@ Route::post('/reports/productionProjections/render-deal-cards', [ReportControlle
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
+
+// Call Record Route
+Route::middleware('auth')->group(function () {
+    Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.records.list');
+    Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.records.create');
+});

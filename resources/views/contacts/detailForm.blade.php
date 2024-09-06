@@ -347,10 +347,22 @@
 <div class="contactEmailList">
   @include('components.common-table',['id'=>"contact-email-table"])
 </div>
+<div class="p-4 d-flex justify-content-between ">
+    <div class="">
+        <h2 class="pText mt-3 text-center"> Transactions </h2>
+    </div>
+</div>
 <div class="contactEmailList">
   @include('components.common-table',['id'=>"contact-transaction-table"])
 </div>
-
+<div class="p-4 d-flex justify-content-between ">
+    <div class="">
+        <h2 class="pText mt-3 text-center"> Call Logs </h2>
+    </div>
+</div>
+<div class="callRecordList">
+    @include('components.common-table',['id'=>"call-record-table"])
+</div>
 
 
 
