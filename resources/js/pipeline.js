@@ -434,7 +434,7 @@ window.formatDateTime = function (date) {
     const minute = String(d.getMinutes()).padStart(2, "0");
     const second = String(d.getSeconds()).padStart(2, "0");
 
-    return `${year}-${month}-${day}-${hour}:${minute}:${second}`;
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
 window.updateDeal = function (dealID, field, Id, card, date) {
