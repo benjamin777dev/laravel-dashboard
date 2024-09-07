@@ -14,6 +14,21 @@
                                 <!-- Left Menu Start -->
                                 <ul class="metismenu list-unstyled" id="side-menu">
                                     <li class="menu-title" key="t-menu">@lang('Main Menu')</li>
+                                    @guest
+                                    <li>
+                                        <a href="{{ route('login') }}" class="waves-effect">
+                                            <i class="bx bx-log-in"></i>
+                                            <span key="t-login">@lang('Login')</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('register') }}" class="waves-effect">
+                                            <i class="bx bx-user-plus"></i>
+                                            <span key="t-register">@lang('Register')</span>
+                                        </a>
+                                    </li>
+                                    @endguest
+                                    @auth
                                     <li>
                                         <a href="{{ route('dashboard.index') }}" class="waves-effect">
                                             <i class="bx bx-bar-chart-square"></i>
@@ -55,6 +70,7 @@
                                             <span key="t-tasks">@lang('Emails')</span>
                                         </a>
                                     </li>
+                                    @endauth
                                     <li class="menu-title" key="t-backend">@lang('Resources')</li>
                                     <li>
                                         <a href="https://analytics.zoho.com/open-view/2487682000018362546" target="_blank" class="waves-effect">
