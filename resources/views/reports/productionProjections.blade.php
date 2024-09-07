@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Closing Information')
+@section('title', 'Production Projections & Report')
 
 @section('css')
     <!-- DataTables -->
@@ -36,7 +36,7 @@
                     <label for="yearSelect">Select Year:</label>
                     <select name="year" id="yearSelect" class="form-control" onchange="document.getElementById('yearSelectForm').submit();">
                         @foreach($availableYears as $year)
-                            <option value="{{ $year }}" {{ $currentYear == $year ? 'selected' : '' }}>
+                            <option value="{{ $year }}" {{ request('year', $currentYear) == $year ? 'selected' : '' }}>
                                 {{ $year }}
                             </option>
                         @endforeach
