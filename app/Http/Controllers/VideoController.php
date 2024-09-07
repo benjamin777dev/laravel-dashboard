@@ -21,7 +21,7 @@ class VideoController extends Controller
         try { 
             if ($request->hasFile('video')) {
                 $video = $request->file('video');
-                $randomVideoName = Str::random(20) . '.' . $video->getClientOriginalExtension();
+                $randomVideoName = Str::uuid()->toString() . '.' . $video->getClientOriginalExtension();
                 $path = 'videos/' . $randomVideoName;
                 $uploaded = Storage::disk('s3')->put($path, file_get_contents($video), 'public');
 
@@ -35,7 +35,7 @@ class VideoController extends Controller
             }
             if ($request->hasFile('gif')) {
                 $gif = $request->file('gif');
-                $randomGifName = Str::random(20) . '.' . $gif->getClientOriginalExtension();
+                $randomGifName = Str::uuid()->toString() . '.' . $gif->getClientOriginalExtension();
                 $path = 'gifs/' . $randomGifName;
                 $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif), 'public');
 
@@ -49,7 +49,7 @@ class VideoController extends Controller
             }
             if ($request->hasFile('img')) {
                 $img = $request->file('img');
-                $randomImgName = Str::random(20) . '.' . $img->getClientOriginalExtension();
+                $randomImgName = Str::uuid()->toString() . '.' . $img->getClientOriginalExtension();
                 $path = 'imgs/' . $randomImgName;
                 $uploaded = Storage::disk('s3')->put($path, file_get_contents($img), 'public');
 

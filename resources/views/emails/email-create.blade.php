@@ -386,7 +386,7 @@
 
                                         // Function to send the data to the server
                                         function sendData() {
-                                            fetch('/upload-video-s3', {
+                                            fetch(`{{ route('video.upload') }}`, {
                                                 method: 'POST',
                                                 headers: {
                                                     'X-CSRF-TOKEN': csrfToken
