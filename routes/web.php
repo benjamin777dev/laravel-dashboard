@@ -21,6 +21,8 @@ use App\Http\Controllers\TeamIndividualController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\CallController;
+use App\Http\Controllers\VideoController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -235,3 +237,12 @@ Route::post('/reports/productionProjections/render-deal-cards', [ReportControlle
 
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
+
+// Call Record Route
+Route::middleware('auth')->group(function () {
+    Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.records.list');
+    Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.records.create');
+    Route::post('upload-video-s3', [VideoController::class, 'upload'])->name('video.upload');
+});
+
+
