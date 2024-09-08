@@ -434,4 +434,8 @@ class Contact extends Model
 
         return $mappedData;
     }
+
+    public function callRecord() {
+        $this->hasMany(CallRecord::class, "contact_id");
+    }
 }
