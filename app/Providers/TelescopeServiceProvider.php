@@ -38,16 +38,21 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         // Only add passcode protection (email restriction is handled by the gate)
         Telescope::auth(function ($request) use ($isLocal) {
-            // Skip passcode in local environment
+            // Allow local environment without passcode
             if ($isLocal) {
                 return true;
             }
-
+        
             // Check if passcode is correct (stored in .env)
             $inputPasscode = $request->get('passcode');
             $validPasscode = env('TELESCOPE_ACCESS_PASSCODE');
-
-            return $inputPasscode === $validPasscode;
+        
+            if ($inputPasscode !== $validPasscode) {
+                // If passcode is incorrect or missing, show passcode form
+                return redirect()->view('passcode');
+            }
+        
+            return true;
         });
     }
 
