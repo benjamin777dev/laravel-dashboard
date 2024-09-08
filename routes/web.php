@@ -239,7 +239,7 @@ Route::post('/reports/productionProjections/render-deal-cards', [ReportControlle
 Route::get('index/{locale}', [HomeController::class, 'lang']);
 
 
-Route::middleware(['telescope_passcode'])->group(function () {
+Route::middleware(['telescope_passcode', 'auth'])->group(function () {
     Route::telescope();
 });
 
