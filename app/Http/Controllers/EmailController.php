@@ -14,6 +14,7 @@ use App\Services\SendGrid;
 use App\Services\Helper;
 use App\Models\Contact;
 use App\Models\User;
+use App\Jobs\ConvertWebmToMp4;
 use League\Csv\Writer;
 use ZipArchive;
 use Illuminate\Support\Facades\Storage;
@@ -55,21 +56,42 @@ class EmailController extends Controller
         return view('emails.email-list', compact('contacts', 'emails'))->render();
     }
 
-    public function sendEmail(Request $request)
+    public function interSendMail(Request $request) {
+
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
+        }
+        
+        $inputData = [
+            "to" => $request['to'],
+            "cc" => $request['cc'],
+            "bcc" => $request['bcc'],
+            "subject" => $request['subject'],
+            "content" => $request['content'],
+            "isEmailSent" => $request['isEmailSent'],
+        ];
+
+        $fileData = $request['recordedVideo'];
+
+        $filePath = Storage::put('recordedVideos', $fileData);
+
+        if($request['recordedVideo']) {
+            ConvertWebmToMp4::dispatch($inputData, $filePath);
+        }
+        // $inputData = $request->json()->all();
+        $this->sendEmail($inputData);
+    }
+
+    public function sendEmail($inputData)
     {
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
+            $accessToken = $user->getAccessToken();
             $sendgrid = new SendGrid();
             $helper = new Helper();
-
-            if (!$user) {
-                return redirect('/login');
-            }
-
-            $accessToken = $user->getAccessToken();
-            $inputData = $request->json()->all();
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
