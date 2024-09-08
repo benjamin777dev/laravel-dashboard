@@ -24,23 +24,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         $this->hideSensitiveRequestDetails();
         Log::info("-- after hiding sensitive");
 
-        $isLocal = $this->app->environment('local');
-        Log::info('-- is Local: ' . ($isLocal ? 'true' : 'false'));
-
         // Filter what gets logged in Telescope
-        Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
-            return $isLocal ||
-            $entry->isReportableException() ||
-            $entry->isFailedRequest() ||
-            $entry->isFailedJob() ||
-            $entry->isScheduledTask() ||
-            $entry->hasMonitoredTag() ||
-            $entry->isGate() ||
-            $entry->isQuery() ||
-            $entry->isException() ||
-            $entry->isLog() ||
-            $entry->isDump() ||
-            $entry->isSlowQuery();
+        Telescope::filter(function (IncomingEntry $entry) {
+            return true;
         });
     }
 
@@ -76,14 +62,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
                 return false;
             }
 
-            // Then, check for the passcode in the session
-            $validPasscode = config('app.TELESCOPE_ACCESS_PASSCODE');
-            $storedPasscode = request()->session()->get('telescope_passcode');
-
-            Log::info("Stored passcode: " . ($storedPasscode ? 'present' : 'none'));
-
-            // If passcode is correct, grant access
-            return $storedPasscode === $validPasscode;
+            return true;
         });
     }
 }
