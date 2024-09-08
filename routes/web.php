@@ -205,7 +205,7 @@ Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('em
 Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
 Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('email.delete')->middleware('auth');
 Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
-Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
+// Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
 
 
 //Template Route

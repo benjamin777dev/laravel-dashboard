@@ -317,7 +317,7 @@
 <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['selectedContacts'=>$selectedContacts,'contacts'=>$contactsWithEmails])
+            @include('emails.email-create')
         </div>
     </div>
 </div>
@@ -379,9 +379,19 @@
 
 
 <script>
+    var contactList = @json($contactsWithEmails);
+    var selectedContactList = @json($selectedContacts);
+
     contact=@json($contact);
     groups = @json($groups);
     $(document).ready(function() {
+        renderContactsDropdown(contactList, selectedContactList);
+
+        let ccElement = document.getElementById("ccSelect");
+        let bccElement = document.getElementById("bccSelect");
+        renderOptions(contactList, ccElement);
+        renderOptions(contactList, bccElement);
+
         var multipleCancelButton = new Choices('#choices-multiple-remove-button_test', {
             removeItemButton: true,
             maxItemCount: null,

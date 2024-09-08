@@ -658,20 +658,20 @@ class EmailController extends Controller
         return view('emails.email-read-modal', compact('email'))->render();
     }
 
-    public function getEmailCreateModal(Request $request)
-    {
-        $user = $this->user();
-        if (!$user) {
-            return redirect('/login');
-        }
+    // public function getEmailCreateModal(Request $request)
+    // {
+    //     $user = $this->user();
+    //     if (!$user) {
+    //         return redirect('/login');
+    //     }
 
-        // Retrieve input data from JSON request
-        $contacts = $request->input('contacts');
-        $emailType = $request->input('emailType');
-        $selectedContacts = $request->input('selectedContacts');
+    //     // Retrieve input data from JSON request
+    //     $contacts = $request->input('contacts');
+    //     $emailType = $request->input('emailType');
+    //     $selectedContacts = $request->input('selectedContacts');
 
-        // Return the rendered view as a response
-        return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
-    }
+    //     // Return the rendered view as a response
+    //     return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
+    // }
 
 }

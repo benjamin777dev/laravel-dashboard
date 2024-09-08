@@ -189,6 +189,7 @@
         aria-labelledby="composemodalTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content" id="modalValues">
+                @include('emails.email-create')
             </div>
         </div>
     </div>
@@ -359,41 +360,14 @@
             var intIds = Ids.map(id => parseInt(id));
             var selectedContacts = contactList.filter(contact => intIds.includes(contact.id));
             console.log("Open modal ids", selectedContacts);
-            var data = {
-                contacts: contactList,
-                selectedContacts: selectedContacts,
-                emailType: "multiple"
-            };
-            $.ajax({
-                url: '/get/email-create',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                method: 'POST',
-                dataType: 'html',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function(response) {
-                    // Update the modal content with the response
-                    $('#modalValues').html(response);
 
-                    // Re-initialize Select2
-                    $('#toSelect').select2({
-                        placeholder: "To",
+            renderContactsDropdown(contactList, selectedContacts);
 
-                    });
-
-                    // Open the modal
-                    $("#composemodal").modal("show");
-                    // selectedContacts.forEach(element => {
-                    //     $('#email-checkbox'+element.id).prop('checked', false);
-                    // });
-                },
-                error: function() {
-                    // Handle any errors
-                    alert('Failed to load modal content');
-                }
-            });
+            let ccElement = document.getElementById("ccSelect");
+            let bccElement = document.getElementById("bccSelect");
+            renderOptions(contactList, ccElement);
+            renderOptions(contactList, bccElement);
+            $("#composemodal").modal("show");
         }
     </script>
 

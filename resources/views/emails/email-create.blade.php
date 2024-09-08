@@ -7,27 +7,8 @@
     <div id="modal-data">
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
-            <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
-                    @foreach($contacts as $contactDetail)
-                        @php
-                            $selected = '';
-                            if (isset($selectedContacts)) {
-                                foreach ($selectedContacts as $selectedContact) {
-                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
-                                        $selected = 'selected';
-                                        break;
-                                    }
-                                }
-                            }
-                        @endphp
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>
-                            {{ $contactDetail['first_name'] }} {{ $contactDetail['last_name'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <span id="emailErrorTo" style="color: red; display: none;">Please enter a valid email address.</span>            
-
+            <div class="col-md-10" id="toSelectDropdown">
+                
             </div>
         </div>
         <div class="mb-3 row">
@@ -35,9 +16,7 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="CC" type="search">
-                    @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
-                    @endforeach
+                    
                 </select>
                 <span id="emailErrorCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
@@ -47,9 +26,7 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="BCC" type="search">
-                    @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
-                    @endforeach
+                    
                 </select>
                 <span id="emailErrorBCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
@@ -79,7 +56,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
 <script>
-    var emailType = @json($emailType??"");
+    let currentLocation = window.location.pathname.split("/").pop();
+    var emailType = "";
+    if(currentLocation == "contacts" || currentLocation == "group") {
+        emailType = "multiple";
+    }
+    // var emailType = @json($emailType??"");
     $(document).ready(function() {
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder, errorId) {
@@ -572,6 +554,97 @@
             return false;
         };
         button.disabled = true;
+
+        function fetchBlobFromUrl(url) {
+            return fetch(url).then(function(response) {
+                if(response.ok) {
+                    return response.blob();
+                } else {
+                    return null;
+                }
+            });
+        }
+
+        sendVideoRequest = function(formData) {
+            if(emailType=="multiple"){
+                 $.ajax({
+                    url: "{{ route('send.multiple.email') }}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    // dataType: 'json',
+                    // data: JSON.stringify(formData),
+                    data: formData,
+                    success: function(response) {
+                        console.info(response);
+                        if (response.status === 'process') {
+                            showToastError(response.message);
+                            setTimeout(function() {
+                                window.location.href = response.redirect_url;
+                            }, 5000); // Adjust the delay as needed
+                        } else {
+                            // Handle error
+                        }
+                        if(isEmailSent){
+                            showToast("Email sent successfully");
+                        }else{
+                            showToast("Draft saved successfully");
+                        }
+                        button.disabled = false;
+                        $("#emailModalClose").click();
+                        fetchEmails();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                        $("#emailModalClose").click();
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: "{{ route('send.email') }}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    processData: false,
+                    contentType: false,
+                    // dataType: 'json',
+                    // data: JSON.stringify(formData),
+                    data: formData,
+                    success: function(response) {
+                        console.info(response);
+                        if (response.status === 'process') {
+                            showToastError(response.message);
+                            setTimeout(function() {
+                                window.location.href = response.redirect_url;
+                            }, 5000); // Adjust the delay as needed
+                        } else {
+                            // Handle error
+                        }
+                        if(isEmailSent){
+                            showToast("Email sent successfully");
+                        }else{
+                            showToast("Draft saved successfully");
+                        }
+                        $("#contact-email-table").DataTable().ajax.reload();
+                        button.disabled = false;
+                        $("#emailModalClose").click();
+                        fetchEmails();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error(xhr.responseText);
+                        showToastError(xhr.responseText);
+                        $("#emailModalClose").click();
+    
+                    }
+                });
+            }
+        }
+
         var formData = 
         {
             "to": to,
@@ -582,78 +655,29 @@
             "content": content,
             "isEmailSent":isEmailSent
         }
-        if(emailType=="multiple"){
-             $.ajax({
-                url: "{{ route('send.multiple.email') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    console.info(response);
-                    if (response.status === 'process') {
-                        showToastError(response.message);
-                        setTimeout(function() {
-                            window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
-                    } else {
-                        // Handle error
-                    }
-                    if(isEmailSent){
-                        showToast("Email sent successfully");
-                    }else{
-                        showToast("Draft saved successfully");
-                    }
-                    button.disabled = false;
-                    $("#emailModalClose").click();
-                    fetchEmails();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                    $("#emailModalClose").click();
-                }
-            });
-        }else{
-            $.ajax({
-                url: "{{ route('send.email') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType: 'json',
-                data: JSON.stringify(formData),
-                success: function(response) {
-                    console.info(response);
-                    if (response.status === 'process') {
-                        showToastError(response.message);
-                        setTimeout(function() {
-                            window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
-                    } else {
-                        // Handle error
-                    }
-                    if(isEmailSent){
-                        showToast("Email sent successfully");
-                    }else{
-                        showToast("Draft saved successfully");
-                    }
-                    $("#contact-email-table").DataTable().ajax.reload();
-                    button.disabled = false;
-                    $("#emailModalClose").click();
-                    fetchEmails();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                    $("#emailModalClose").click();
+        const recordData = new FormData();
+        for(const key in formData) {
+            if(formData.hasOwnProperty(key)) {
+                recordData.append(key, formData[key]);
+            }
+        }
 
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        if(tempDiv.querySelector("#recordedVideo")) {
+            let recordedVideoUrl = tempDiv.querySelector("#recordedVideo").src;
+            fetchBlobFromUrl(recordedVideoUrl).then(function(videoBlob) {
+                if (videoBlob) {
+                    recordData.append("recordedVideo", videoBlob);
+                    sendVideoRequest(recordData);
+                } else {
+                    console.log("Error attach video.");
                 }
+                // processImages();
             });
+            
+        } else {
+            sendVideoRequest(recordData);
         }
     }
     window.validateOpenTemplate = function(){
@@ -677,74 +701,134 @@
         return isValidateTemplate
     }
     window.openTemplate = function(){
-    if (validateOpenTemplate()) {
-        var content = tinymce.get('elmEmail').getContent();
-        var subject = $("#emailSubject").val();
-        $("#templateSubject").val(subject);
-        $("#templateContent").val(content);
-        $('#composemodal').modal('hide');
-        $('#templateModal').modal('show'); // Open the modal if validation passes
-        $("#templateModal").removeClass("draft");
-       $("#templateModal").addClass("compose");
+        if (validateOpenTemplate()) {
+            var content = tinymce.get('elmEmail').getContent();
+            var subject = $("#emailSubject").val();
+            $("#templateSubject").val(subject);
+            $("#templateContent").val(content);
+            $('#composemodal').modal('hide');
+            $('#templateModal').modal('show'); // Open the modal if validation passes
+            $("#templateModal").removeClass("draft");
+        $("#templateModal").addClass("compose");
 
+        }
     }
-}
 
-function convertVideoToGif(videoUrl) {
-    return new Promise((resolve) => {
-        const tempVideo = document.createElement('video');
-        tempVideo.src = videoUrl;
+    function convertVideoToGif(videoUrl) {
+        return new Promise((resolve) => {
+            const tempVideo = document.createElement('video');
+            tempVideo.src = videoUrl;
 
-        tempVideo.addEventListener('loadeddata', () => {
-            const gif = new GIF({
-                workers: 2,
-                quality: 20,
-                width: tempVideo.videoWidth,
-                height: tempVideo.videoHeight,
-                workerScript: '/build/gif.worker.js',
-                useWebWorkers: false,
-            });
+            tempVideo.addEventListener('loadeddata', () => {
+                const gif = new GIF({
+                    workers: 2,
+                    quality: 20,
+                    width: tempVideo.videoWidth,
+                    height: tempVideo.videoHeight,
+                    workerScript: '/build/gif.worker.js',
+                    useWebWorkers: false,
+                });
 
-            const canvas = document.createElement('canvas');
-            canvas.width = tempVideo.videoWidth;
-            canvas.height = tempVideo.videoHeight;
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                const canvas = document.createElement('canvas');
+                canvas.width = tempVideo.videoWidth;
+                canvas.height = tempVideo.videoHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-            let isRendering = false;
-            let frameCount = 0;
-            tempVideo.currentTime = 0;
+                let isRendering = false;
+                let frameCount = 0;
+                tempVideo.currentTime = 0;
 
-            tempVideo.addEventListener('timeupdate', () => {
-                if (tempVideo.currentTime <= 3 && !isRendering) { // Capture up to 5 seconds
-                    ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-                    gif.addFrame(canvas, { copy: true, delay: 200 }); // Adjust delay as needed
-                } else if(!isRendering) {
-                    tempVideo.pause();
-                    isRendering = true;
-                    try {
-                        gif.render();
-                    } catch (err) {
-                        console.log("Rendering Error:", err);
-                        reject(err);
+                tempVideo.addEventListener('timeupdate', () => {
+                    if (tempVideo.currentTime <= 3 && !isRendering) { // Capture up to 5 seconds
+                        ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+                        gif.addFrame(canvas, { copy: true, delay: 200 }); // Adjust delay as needed
+                    } else if(!isRendering) {
+                        tempVideo.pause();
+                        isRendering = true;
+                        try {
+                            gif.render();
+                        } catch (err) {
+                            console.log("Rendering Error:", err);
+                            reject(err);
+                        }
                     }
-                }
-            });
+                });
 
-            gif.on('finished', (blob) => {
-                resolve(blob);
-            });
+                gif.on('finished', (blob) => {
+                    resolve(blob);
+                });
 
-            gif.on('abort', () => {
-                reject(new Error('GIF rendering was aborted.'));
-            });
+                gif.on('abort', () => {
+                    reject(new Error('GIF rendering was aborted.'));
+                });
 
-            gif.on('error', (error) => {
-                reject(error);
-            });
+                gif.on('error', (error) => {
+                    reject(error);
+                });
 
-            tempVideo.play();
+                tempVideo.play();
+            });
         });
-    });
-}
+    }
+
+    function renderContactsDropdown(contacts, selectedContacts) {
+        let dropdownContainer = document.getElementById('toSelectDropdown');
+        const selectElement = document.createElement('select');
+        
+        selectElement.className = "select2 form-control select2-multiple";
+        selectElement.id = "toSelect";
+        selectElement.multiple = true;
+        selectElement.setAttribute('data-placeholder', 'To');
+        selectElement.type = 'search';
+        if (selectedContacts.length > 0) {
+            selectElement.disabled = true;
+        }
+
+        contacts.forEach(contactDetail => {
+            const option = document.createElement('option');
+            option.value = contactDetail.id;
+            option.setAttribute('data-email', contactDetail.email);
+            option.text = contactDetail.first_name + contactDetail.last_name;
+
+            if (selectedContacts.some(selectedContact => selectedContact.id == contactDetail.id)) {
+                option.selected = true;
+            }
+            if (!contactDetail.email) {
+                option.disabled = true;
+            }
+            selectElement.appendChild(option);
+        });
+
+        dropdownContainer.innerHTML = '';
+        dropdownContainer.appendChild(selectElement);
+        dropdownContainer += `<span id="emailErrorTo" style="color: red; display: none;">Please enter a valid email address.</span>`;
+
+        $('#toSelect').select2({
+            placeholder: "To"
+        });
+    }
+
+    function renderOptions(contacts, elem) {
+        elem.innerHTML = '';
+
+        // Loop through the contacts array and create options
+        contacts.forEach(contactDetail => {
+            // Create a new option element
+            const option = document.createElement('option');
+            option.value = contactDetail.id;
+            option.text = contactDetail.first_name + contactDetail.last_name;
+            option.setAttribute('data-email', contactDetail.email);
+            // Check this condition (Is this necessary?)
+            if(!contactDetail.email) {
+                option.disabled = true;
+            }
+
+            // Disable the option if the contact has no email
+            if (!contactDetail.email) {
+                option.disabled = true;
+            }
+            elem.appendChild(option);
+        });
+    }
 </script>
             
