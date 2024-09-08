@@ -72,13 +72,12 @@ class EmailController extends Controller
             "isEmailSent" => $request['isEmailSent'],
         ];
 
-        $fileData = $request['recordedVideo'];
-
-        $filePath = Storage::put('recordedVideos', $fileData);
-
-        if($request['recordedVideo']) {
+        if($request->hasFile('recordedVideo')) {
+            $fileData = $request['recordedVideo'];
+            $filePath = Storage::put('recordedVideos', $fileData);
             ConvertWebmToMp4::dispatch($inputData, $filePath);
         }
+
         // $inputData = $request->json()->all();
         $this->sendEmail($inputData);
     }

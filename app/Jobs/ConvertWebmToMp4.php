@@ -10,7 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use App\Http\Controllers\EmailController;
 
 class ConvertWebmToMp4 implements ShouldQueue
 {
@@ -31,9 +33,19 @@ class ConvertWebmToMp4 implements ShouldQueue
     public function handle(): void
     {
         $outputVideoPath = 'convertedRecordedVideos/' . time() . '.mp4';
+        $originalPath = 'app/' . $this->filePath;
+        $storagePath = storage_path($originalPath);
+        \Log::info("Checking file at :" . $storagePath);
+        if (!file_exists($storagePath)) {
+            \Log::info("File does not exist at path: " . $storagePath);
+        }
+        $directory = storage_path('app/convertedRecordedVideos');
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true); // Create the directory with appropriate permissions
+        }
         // Perform conversion
         $ffmpeg = FFMpeg::create();
-        $video = $ffmpeg->open($this->filePath);
+        $video = $ffmpeg->open($storagePath);
         $format = new X264('libmp3lame', 'libx264');
         $video->save($format, storage_path('app/' . $outputVideoPath));
 
@@ -43,27 +55,32 @@ class ConvertWebmToMp4 implements ShouldQueue
         $s3path = 'videos/' . $randomVideoName;
         $uploaded = Storage::disk('s3')->put($s3path, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
 
+
         Storage::delete($this->filePath);
         Storage::delete($outputVideoPath);
 
         if ($uploaded) {
             // Generate the URL after uploading
             $url = Storage::disk('s3')->url($s3path);
-            $urls['video'] = $url;
             dd($url);
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($this->inputData['content']);
+            $videoElement = $dom->getElementById('recordedVideo');
+            $newSrc = $url;
+            $videoElement->setAttribute('src', $newSrc);
+            $body = $dom->getElementsByTagName('body')->item(0);
+            $innerHTML = '';
+            foreach ($body->childNodes as $child) {
+                $innerHTML .= $dom->saveHTML($child); // Append each child node's HTML
+            }
+            $this->inputData['content'] = $innerHTML;
+
+            $controller = new EmailController();
+            $controller->sendEmail($this->inputData);
         } else {
             dd("Error");
             // return response()->json(['message' => 'Failed to upload video'], 500);
         }
 
-        // Send the email with the MP4 file
-        // Mail::send('emails.video', [], function($message) use ($outputFilePath) {
-        //     $message->to($this->email)
-        //         ->subject('Your converted video')
-        //         ->attach($outputFilePath, [
-        //             'as' => 'video.mp4',
-        //             'mime' => 'video/mp4',
-        //         ]);
-        // });
     }
 }
