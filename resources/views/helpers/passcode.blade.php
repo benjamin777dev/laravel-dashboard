@@ -2,9 +2,8 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-danger">RESTRICTED | AUTHORIZED USE ONLY</h1>
-    <h2>Enter Passcode</h2>
-    <form action="{{ route('telescope') }}" method="GET">
+    <h1>Enter Passcode</h1>
+    <form action="{{ route('telescope.passcode') }}" method="POST">
         @csrf
         <div class="form-group">
             <label for="passcode">Enter Passcode:</label>

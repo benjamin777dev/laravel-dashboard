@@ -238,6 +238,20 @@ Route::post('/reports/productionProjections/render-deal-cards', [ReportControlle
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
 
+
+Route::middleware(['telescope_passcode'])->group(function () {
+    Route::telescope();
+});
+
+Route::get('/telescope/passcode', function () {
+    return view('helpers.passcode');
+})->name('telescope.passcode');
+
+Route::post('/telescope/passcode', function (Illuminate\Http\Request $request) {
+    $request->session()->put('telescope_passcode', $request->input('passcode'));
+    return redirect('/telescope');
+})->name('telescope.passcode.submit');
+
 // Call Record Route
 Route::middleware('auth')->group(function () {
     Route::get('get-call-records/{contactId}', [CallController::class, 'listCallRecord'])->name('call.records.list');

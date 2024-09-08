@@ -3,22 +3,29 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
+
+    protected $allowedEmails = ['tech@coloradohomerealty.com', 'phillip@coloradohomerealty.com'];
+
     /**
      * Register any application services.
      */
     public function register(): void
     {
+        Log::info("At register for Telescope");
         Telescope::night();
 
         $this->hideSensitiveRequestDetails();
+        Log::info("-- after hiding sensitive");
 
         $isLocal = $this->app->environment('local');
+        Log::info('-- is Local: ' . ($isLocal ? 'true' : 'false'));
 
         // Filter what gets logged in Telescope
         Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
@@ -34,25 +41,6 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             $entry->isLog() ||
             $entry->isDump() ||
             $entry->isSlowQuery();
-        });
-
-        // Only add passcode protection (email restriction is handled by the gate)
-        Telescope::auth(function ($request) use ($isLocal) {
-            // Allow local environment without passcode
-            if ($isLocal) {
-                return true;
-            }
-        
-            // Check if passcode is correct (stored in .env)
-            $inputPasscode = $request->get('passcode');
-            $validPasscode = env('TELESCOPE_ACCESS_PASSCODE');
-        
-            if ($inputPasscode !== $validPasscode) {
-                // If passcode is incorrect or missing, show passcode form
-                return redirect()->view('passcode');
-            }
-        
-            return true;
         });
     }
 
@@ -74,20 +62,28 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         ]);
     }
 
-    /**
-     * Register the Telescope gate.
-     *
-     * This gate determines who can access Telescope in non-local environments.
-     */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function ($user) {
-            $allowedEmails = [
-                'tech@coloradohomerealty.com',
-                'phillip@coloradohomerealty.com',
-            ];
+        Log::info("At gate for Telescope");
 
-            return in_array($user->email, $allowedEmails);
+        // Define who can access Telescope using the gate
+        Gate::define('viewTelescope', function ($user) {
+            Log::info("Checking email authorization");
+
+            // First, check if the user email is authorized
+            if (!in_array($user->email, $this->allowedEmails)) {
+                Log::info("User is not authorized by email.");
+                return false;
+            }
+
+            // Then, check for the passcode in the session
+            $validPasscode = config('app.TELESCOPE_ACCESS_PASSCODE');
+            $storedPasscode = request()->session()->get('telescope_passcode');
+
+            Log::info("Stored passcode: " . ($storedPasscode ? 'present' : 'none'));
+
+            // If passcode is correct, grant access
+            return $storedPasscode === $validPasscode;
         });
     }
 }
