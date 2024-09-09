@@ -300,10 +300,6 @@ class EmailController extends Controller
             $sendgrid = new SendGrid();
             $helper = new Helper();
 
-            if (!$user) {
-                return redirect('/login');
-            }
-
             $accessToken = $user->getAccessToken();
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
