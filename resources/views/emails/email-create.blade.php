@@ -500,85 +500,44 @@
         }
 
         sendVideoRequest = function(formData) {
-            if(emailType=="multiple"){
-                 $.ajax({
-                    url: "{{ route('send.multiple.email') }}",
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    // dataType: 'json',
-                    // data: JSON.stringify(formData),
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(response) {
-                        console.info(response);
-                        if (response.status === 'process') {
-                            showToastError(response.message);
-                            setTimeout(function() {
-                                window.location.href = response.redirect_url;
-                            }, 5000); // Adjust the delay as needed
-                        } else {
-                            // Handle error
-                        }
-                        if(isEmailSent){
-                            showToast("Email sent successfully");
-                        }else{
-                            showToast("Draft saved successfully");
-                        }
-                        button.disabled = false;
-                        $("#emailModalClose").click();
-                        fetchEmails();
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        showToastError(xhr.responseText);
-                        $("#emailModalClose").click();
+            $.ajax({
+                url: "{{ route('send.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
                     }
-                });
-            }else{
-                $.ajax({
-                    url: "{{ route('send.email') }}",
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    processData: false,
-                    contentType: false,
-                    // dataType: 'json',
-                    // data: JSON.stringify(formData),
-                    data: formData,
-                    success: function(response) {
-                        console.info(response);
-                        if (response.status === 'process') {
-                            showToastError(response.message);
-                            setTimeout(function() {
-                                window.location.href = response.redirect_url;
-                            }, 5000); // Adjust the delay as needed
-                        } else {
-                            // Handle error
-                        }
-                        if(isEmailSent){
-                            showToast("Email sent successfully");
-                        }else{
-                            showToast("Draft saved successfully");
-                        }
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+                        showToast("Draft saved successfully");
+                    }
+
+                    if ($("#contact-email-table").length) {
                         $("#contact-email-table").DataTable().ajax.reload();
-                        button.disabled = false;
-                        $("#emailModalClose").click();
-                        fetchEmails();
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        showToastError(xhr.responseText);
-                        $("#emailModalClose").click();
-    
                     }
-                });
-            }
+                    button.disabled = false;
+                    fetchEmails();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                }
+            });
+            $("#emailModalClose").click();
         }
 
         var formData = 
@@ -598,6 +557,8 @@
             }
         }
 
+        recordData.append("emailType", emailType);
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = content;
         if(tempDiv.querySelector("#recordedVideo")) {
@@ -609,12 +570,13 @@
                 } else {
                     console.log("Error attach video.");
                 }
-                // processImages();
             });
             
         } else {
             sendVideoRequest(recordData);
         }
+        $("#emailModalClose").click();
+
     }
     window.validateOpenTemplate = function(){
         var content = tinymce.get('elmEmail').getContent();

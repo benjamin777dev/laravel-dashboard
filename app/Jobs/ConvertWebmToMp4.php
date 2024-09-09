@@ -76,9 +76,13 @@ class ConvertWebmToMp4 implements ShouldQueue
             $this->inputData['content'] = $innerHTML;
 
             $controller = new EmailController();
-            $controller->sendEmail($this->inputData);
+            if($this->inputData['emailType'] == "multiple") {
+                $controller->sendMultipleEmail($this->inputData);
+            } else {
+                $controller->sendEmail($this->inputData);
+            }
         } else {
-            dd("Error");
+            \Log::info("Something is wrong.");
             // return response()->json(['message' => 'Failed to upload video'], 500);
         }
 

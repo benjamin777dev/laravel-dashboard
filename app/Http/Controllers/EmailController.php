@@ -62,24 +62,32 @@ class EmailController extends Controller
         if (!$user) {
             return redirect('/login');
         }
-        
+        $toArray = explode(',', $request['to']);
+        $ccArray = explode(',', $request['cc']);
+        $bccArray = explode(',', $request['bcc']);
+        $isEmailSent = $request['isEmailSent'] == "true" ? true : false;
+
         $inputData = [
-            "to" => $request['to'],
-            "cc" => $request['cc'],
-            "bcc" => $request['bcc'],
+            "to" => $toArray,
+            "cc" => $ccArray,
+            "bcc" => $bccArray,
             "subject" => $request['subject'],
             "content" => $request['content'],
-            "isEmailSent" => $request['isEmailSent'],
+            "isEmailSent" => $isEmailSent,
+            "emailType" => $request['emailType']
         ];
 
         if($request->hasFile('recordedVideo')) {
             $fileData = $request['recordedVideo'];
             $filePath = Storage::put('recordedVideos', $fileData);
             ConvertWebmToMp4::dispatch($inputData, $filePath);
+        } else {
+            if($request['emailType'] == "multiple") {
+                $this->sendMultipleEmail($inputData);
+            } else {
+                $this->sendEmail($inputData);
+            }
         }
-
-        // $inputData = $request->json()->all();
-        $this->sendEmail($inputData);
     }
 
     public function sendEmail($inputData)
@@ -283,7 +291,7 @@ class EmailController extends Controller
         }
     }
 
-    public function sendMultipleEmail(Request $request)
+    public function sendMultipleEmail($inputData)
     {
         try {
             $db = new DatabaseService();
@@ -297,7 +305,6 @@ class EmailController extends Controller
             }
 
             $accessToken = $user->getAccessToken();
-            $inputData = $request->json()->all();
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
