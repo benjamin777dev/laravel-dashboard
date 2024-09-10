@@ -47,7 +47,6 @@ class ConvertWebmToMp4 implements ShouldQueue
         $auth = $this->inputData["to"];
         $auth = array_merge($auth, $this->inputData["cc"]);
         $auth = array_merge($auth, $this->inputData["bcc"]);
-        dd($auth);
         $directory = storage_path('app/convertedRecordedVideos');
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true); // Create the directory with appropriate permissions
@@ -86,10 +85,15 @@ class ConvertWebmToMp4 implements ShouldQueue
             $dom = new DOMDocument();
             @$dom->loadHTML($this->inputData['content']);
             $xpath = new DOMXPath($dom);
-            $videoElement = $xpath->query('#recordedVideo video source');
-            $videoElement->setAttribute('src', $unID . '/video.mp4');
-            $imgElement = $xpath->query('#recordedVideo a img');
-            $imgElement->setAttribute('src', $unID . '/image.png');
+            $videoElement = $xpath->query('//*[@id="recordedVideo"]//video/source');
+            if ($videoElement->length > 0) {
+                $videoElement->item(0)->setAttribute('src', $unID . '/video.mp4');
+            }
+
+            $imgElement = $xpath->query('//*[@id="recordedVideo"]//a/img');
+            if ($imgElement->length > 0) {
+                $imgElement->item(0)->setAttribute('src', $unID . '/image.png');
+            }
 
             $body = $dom->getElementsByTagName('body')->item(0);
             $innerHTML = '';
@@ -97,6 +101,7 @@ class ConvertWebmToMp4 implements ShouldQueue
                 $innerHTML .= $dom->saveHTML($child); // Append each child node's HTML
             }
             $this->inputData['content'] = $innerHTML;
+            dd($innerHTML);
 
             $controller = new EmailController();
             if($this->inputData['emailType'] == "multiple") {
