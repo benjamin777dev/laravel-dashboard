@@ -57,10 +57,7 @@ class ConvertWebmToMp4 implements ShouldQueue
         $format = new X264('libmp3lame', 'libx264');
         $video->save($format, storage_path('app/' . $outputVideoPath));
 
-        // Upload to S3 Bucket and retrieve url Section
-        // $video = $this->recordedVideo;
         $unID = Str::uuid()->toString();
-
 
         $s3VideoPath = $unID . '/video.mp4';
         $s3ImagePath = $unID . '/image.png';
@@ -79,9 +76,7 @@ class ConvertWebmToMp4 implements ShouldQueue
             $record->uuid = $unID;
             $record->auth_users = $auth;
             $record->save();
-            // Generate the URL after uploading
-            // $url = Storage::disk('s3')->url($s3path);
-            // Log::info('Uploaded Video URL:'. $url);
+            
             $dom = new DOMDocument();
             @$dom->loadHTML($this->inputData['content']);
             $xpath = new DOMXPath($dom);
@@ -101,7 +96,6 @@ class ConvertWebmToMp4 implements ShouldQueue
                 $innerHTML .= $dom->saveHTML($child); // Append each child node's HTML
             }
             $this->inputData['content'] = $innerHTML;
-            dd($innerHTML);
 
             $controller = new EmailController();
             if($this->inputData['emailType'] == "multiple") {
@@ -111,7 +105,6 @@ class ConvertWebmToMp4 implements ShouldQueue
             }
         } else {
             Log::info("Something is wrong.");
-            // return response()->json(['message' => 'Failed to upload video'], 500);
         }
 
     }
