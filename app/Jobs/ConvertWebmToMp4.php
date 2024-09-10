@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use DOMDocument;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Http\Controllers\EmailController;
@@ -35,9 +37,9 @@ class ConvertWebmToMp4 implements ShouldQueue
         $outputVideoPath = 'convertedRecordedVideos/' . time() . '.mp4';
         $originalPath = 'app/' . $this->filePath;
         $storagePath = storage_path($originalPath);
-        \Log::info("Checking file at :" . $storagePath);
+        Log::info("Checking file at :" . $storagePath);
         if (!file_exists($storagePath)) {
-            \Log::info("File does not exist at path: " . $storagePath);
+            Log::info("File does not exist at path: " . $storagePath);
         }
         $directory = storage_path('app/convertedRecordedVideos');
         if (!File::exists($directory)) {
@@ -62,8 +64,8 @@ class ConvertWebmToMp4 implements ShouldQueue
         if ($uploaded) {
             // Generate the URL after uploading
             $url = Storage::disk('s3')->url($s3path);
-            dd($url);
-            $dom = new \DOMDocument();
+            Log::info('Uploaded Video URL:'. $url);
+            $dom = new DOMDocument();
             @$dom->loadHTML($this->inputData['content']);
             $videoElement = $dom->getElementById('recordedVideo');
             $newSrc = $url;
@@ -82,7 +84,7 @@ class ConvertWebmToMp4 implements ShouldQueue
                 $controller->sendEmail($this->inputData);
             }
         } else {
-            \Log::info("Something is wrong.");
+            Log::info("Something is wrong.");
             // return response()->json(['message' => 'Failed to upload video'], 500);
         }
 

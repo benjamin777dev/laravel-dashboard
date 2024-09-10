@@ -197,8 +197,14 @@
             menubar: false,
             statusbar: false,
             setup: function(editor) {
+                editor.ui.registry.addIcon('recordIcon', 
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record-circle" viewBox="0 0 16 16">' + 
+                    '<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>' +
+                    '<path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/></svg>'
+                );
                 editor.ui.registry.addButton('customSelect', {
-                    text: 'Select Template',
+                    icon: 'gallery',
+                    tooltip: 'Select Template',
                     onAction: function() {
                         $.ajax({
                             url: '/get/templates',
@@ -260,7 +266,8 @@
                 });
 
                 editor.ui.registry.addButton('recordVideo', {
-                    text: 'Record Video',
+                    icon: 'recordIcon',
+                    tooltip: `Record Video`,
                     onAction: function() {
                         editor.windowManager.open({
                                     title: 'Record Video',
@@ -271,28 +278,52 @@
                                             {
                                                 type: 'htmlpanel',
                                                 html: `
-                                                    <div id="recordVideoModalContent" style="justify-content: space-around; margin-bottom: 10px;">
-                                                        <figure style="display: inline-block;">
-                                                            <video id="videoRecording" style = "width: 480px; height: 360px; background-color: black" autoplay></video>
-                                                            <video id="recordedVideo" style = "width: 480px; height: 360px; display: none" controls></video>
-                                                            <figcaption style="text-align: center;">Preview Record</figcaption>
-
-                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
-                                                                <button class="btn" type="button" id="startRecordButton">Start Recording</button>
-                                                                <button type="button" id="stopRecordButton">Stop Recording</button>
+                                                <select class="mb-2" id="videoInputSource"></select>
+                                                <div class="mb-3" id="recordVideoInterface">
+                                                    <div class="position-relative d-flex justify-content-center">
+                                                        <div id="recordVideoModalContent" class="d-flex position-relative">
+                                                            <div class="d-inline-block">
+                                                                <video id="videoRecording" style = "width: 480px; height: 360px; background-color: black" autoplay></video>
+                                                                <video id="recordedVideo" style = "width: 480px; height: 360px; display: none" controls></video>
                                                             </div>
-                                                        </figure>
-                                                        
-                                                        <figure style="display: inline-block; width: 240px; justify-content: space-around;">
-                                                            <img id="snapshotImage" style="width: 240px; height: 180px; background-color: black">
-                                                            <canvas id="snapshotCanvas" width="240" height="180" style="display:none;"></canvas>
-                                                            <img id="gifImage" alt="Generated GIF" style="display:block; width: 240px; height: 180px; background-color: black">
-                                                            <figcaption style="text-align: center;">Preview Gif / Thumbnail</figcaption>
-                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
-                                                                <button type="button" id="cropButton">Crop</button>
+                                                            <div class="d-inline-block position-absolute">
+                                                                <button class="btn" type="button" id="startRecordButton"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                    data-bs-title="This top tooltip is themed via CSS variables.">
+                                                                    <i class="bi bi-play-circle"></i>
+                                                                </button>
+                                                                <button type="button" id="stopRecordButton"><i class="bi bi-stop-circle"></i></button>
                                                             </div>
-                                                        </figure>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <a class="mt-2" data-bs-toggle="collapse" href="#v-pills-profile" role="button" aria-expanded="false" aria-controls="v-pills-profile">
+                                                    Set Fallback Image / GIF. (Optional)
+                                                </a>
+                                                <div class="collapse mt-2" id="v-pills-profile">
+                                                    <div class = "d-block card card-body p-3">
+                                                        <div id="imgUploadContainer" class="d-flex justify-content-around">
+                                                            <div class="position-relative text-center">
+                                                                <label class="image-upload-wrapper">
+                                                                    <input type="file" id="formFile" accept="image/jpeg, img/png, img/webp">
+                                                                    <span class="upload-placeholder">Click to upload an image</span>
+                                                                    <img id="imagePreview" src="#" alt="Image Preview">
+                                                                </label>
+                                                            </div>
+                                                            <div class="position-relative text-center">
+                                                                <label class="image-upload-wrapper">
+                                                                    <input type="file" id="formFileGIF" accept="image/gif">
+                                                                    <span class="upload-placeholderGIF">Click to upload an GIF</span>
+                                                                    <img id="imagePreviewGIF" src="#" alt="Image Preview">
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <canvas id="snapshotCanvas" width="240" height="180" style="display:none;"></canvas>
+                                                        <div style="display: flex; margin-top: 20px; justify-content: space-around">
+                                                            <button type="button" id="cropButton" class="px-5 py-2">Create Img/GIF for me</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 `
                                             }
                                         ]
@@ -323,17 +354,36 @@
                                 const videoElement = document.getElementById('videoRecording');
                                 const recordedVideoElement = document.getElementById('recordedVideo');
                                 const snapshotCanvas = document.getElementById('snapshotCanvas');
-                                const snapshotImage = document.getElementById('snapshotImage');
-                                const gifImage = document.getElementById('gifImage');
+                                const snapshotImage = document.getElementById('imagePreview');
+                                const gifImage = document.getElementById('imagePreviewGIF');
                                 const cropButton = document.getElementById('cropButton');
+
+                                const videoInputSource = document.getElementById("videoInputSource");
+                                navigator.mediaDevices.enumerateDevices()
+                                .then((devices) => {
+                                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                                    videoDevices.forEach((device, index) => {
+                                        const option = document.createElement('option');
+                                        option.value = device.deviceId;
+                                        option.text = device.label || `Camera ${index + 1}`;
+                                        videoInputSource.appendChild(option);
+                                    });
+                                })
+
+                                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                                .then((stream) => {
+                                    videoElement.srcObject = stream;
+                                })
+                                .catch((error) => {
+                                    console.error("Error accessing media devices.", error);
+                                });
 
                                 document.getElementById('startRecordButton').addEventListener('click', async () => {
                                     videoElement.style.display = "block";
                                     recordedVideoElement.style.display = "none";
-                                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                                    videoElement.srcObject = stream;
                                     recordedBlobs = [];
 
+                                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                                     mediaRecorder = new MediaRecorder(stream);
                                     mediaRecorder.ondataavailable = (event) => {
                                         if (event.data.size > 0) {
@@ -346,16 +396,16 @@
                                         recordedVideoElement.src = videoURL;
                                     }
                                     mediaRecorder.start();
-                                    document.getElementById('stopRecordButton').disabled = false;
-                                    document.getElementById('startRecordButton').disabled = true;
+                                    document.getElementById('stopRecordButton').style.display = "block";
+                                    document.getElementById('startRecordButton').style.display = "none";
                                 });
 
                                 document.getElementById('stopRecordButton').addEventListener('click', () => {
                                     mediaRecorder.stop();
                                     videoElement.style.display = "none";
                                     recordedVideoElement.style.display = "block";
-                                    document.getElementById('stopRecordButton').disabled = true;
-                                    document.getElementById('startRecordButton').disabled = false;
+                                    document.getElementById('stopRecordButton').style.display = "none";
+                                    document.getElementById('startRecordButton').style.display = "block";
                                     // document.getElementById('createGifButton').disabled = false;
                                 });
                                 
@@ -367,10 +417,51 @@
                                         const gifUrl = URL.createObjectURL(gifBlob);
                                         gifImage.src = gifUrl;
                                         gifImage.style.display = 'block';
+                                        document.querySelector('.upload-placeholderGIF').style.display = "none";
                                     }).catch(function(error) {
                                         console.error('Error creating GIF:', error);
                                     });
-                                })
+                                });
+
+                                document.getElementById('formFile').addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    const preview = document.getElementById('imagePreview');
+                                    const placeholder = document.querySelector('.upload-placeholder');
+
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            preview.src = e.target.result;
+                                            preview.style.display = 'block';  // Show the image
+                                            placeholder.style.display = 'none';  // Hide the placeholder text
+                                        }
+                                        reader.readAsDataURL(file);  // Read the image file as a data URL
+                                    } else {
+                                        preview.src = '#';
+                                        preview.style.display = 'none';  // Hide the image if no file is selected
+                                        placeholder.style.display = 'block';  // Show the placeholder text again
+                                    }
+                                });
+
+                                document.getElementById('formFileGIF').addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    const preview = document.getElementById('imagePreviewGIF');
+                                    const placeholder = document.querySelector('.upload-placeholderGIF');
+
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            preview.src = e.target.result;
+                                            preview.style.display = 'block';  // Show the image
+                                            placeholder.style.display = 'none';  // Hide the placeholder text
+                                        }
+                                        reader.readAsDataURL(file);  // Read the image file as a data URL
+                                    } else {
+                                        preview.src = '#';
+                                        preview.style.display = 'none';  // Hide the image if no file is selected
+                                        placeholder.style.display = 'block';  // Show the placeholder text again
+                                    }
+                                });
 
                                 async function captureThumbnail(videoElement, captureTime) {
                                     videoElement.currentTime = captureTime;
@@ -383,6 +474,8 @@
                                         const dataUrl = snapshotCanvas.toDataURL('image/png');
 
                                         snapshotImage.src = dataUrl;
+                                        document.getElementById('imagePreview').style.display = "block";
+                                        document.querySelector('.upload-placeholder').style.display = "none";
                                     };
 
                                     
@@ -613,7 +706,7 @@
     }
 
     function convertVideoToGif(videoUrl) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const tempVideo = document.createElement('video');
             tempVideo.src = videoUrl;
 
