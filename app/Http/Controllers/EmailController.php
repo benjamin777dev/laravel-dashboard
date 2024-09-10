@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use ZipArchive;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
@@ -14,9 +15,9 @@ use App\Services\SendGrid;
 use App\Services\Helper;
 use App\Models\Contact;
 use App\Models\User;
+use App\Models\RecordedMedia;
 use App\Jobs\ConvertWebmToMp4;
 use League\Csv\Writer;
-use ZipArchive;
 use Illuminate\Support\Facades\Storage;
 
 // use App\Models\ContactGroups;
@@ -699,22 +700,25 @@ class EmailController extends Controller
     // }
     public function getSignedUrl($identifier, $filename)
     {
-        // Assuming the file path in the S3 bucket is constructed as "{identifier}/{filename}"
-        $s3FilePath = "{$identifier}/{$filename}";
-
-        // Check if the file exists in the database or just validate its existence
-        $file = File::where('generated_identifier', $identifier)->first();
-        
-        if (!$file) {
-            return response()->json(['error' => 'File not found'], 404);
+        $user = $this->user();
+        if (!$user) {
+            return redirect('/login');
         }
-
-        // Generate a temporary signed URL from S3 valid for 1 hour
-        $expiresAt = now()->addHour();
-        $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
-
-        // Redirect the user to the signed S3 URL
-        return redirect($signedUrl);
+        
+        $record = RecordedMedia::where('uuid', $identifier)
+                ->where('file_name', $filename)
+                ->whereJsonContains('auth_users' , $user->id)
+                ->first();
+        if($record === null) { 
+            return response()->json(['error' => 'File not found'], 404);
+        } else {
+            $s3FilePath = "{$identifier}/{$filename}";
+            $expiresAt = now()->addHour();
+            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+    
+            // Redirect the user to the signed S3 URL
+            return redirect($signedUrl);
+        }
     }
 
 }

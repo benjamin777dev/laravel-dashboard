@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use DOMDocument;
 use DOMXPath;
+use App\Models\RecordedMedia;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
@@ -43,7 +44,10 @@ class ConvertWebmToMp4 implements ShouldQueue
             Log::info("File does not exist at path: " . $storagePath);
         }
         //Add code to load image/GIF
-
+        $auth = $this->inputData["to"];
+        $auth = array_merge($auth, $this->inputData["cc"]);
+        $auth = array_merge($auth, $this->inputData["bcc"]);
+        dd($auth);
         $directory = storage_path('app/convertedRecordedVideos');
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true); // Create the directory with appropriate permissions
@@ -58,6 +62,7 @@ class ConvertWebmToMp4 implements ShouldQueue
         // $video = $this->recordedVideo;
         $unID = Str::uuid()->toString();
 
+
         $s3VideoPath = $unID . '/video.mp4';
         $s3ImagePath = $unID . '/image.png';
 
@@ -71,6 +76,10 @@ class ConvertWebmToMp4 implements ShouldQueue
         Storage::delete($outputVideoPath);
 
         if ($videoUploaded * $imgUploaded) {
+            $record = new RecordedMedia();
+            $record->uuid = $unID;
+            $record->auth_users = $auth;
+            $record->save();
             // Generate the URL after uploading
             // $url = Storage::disk('s3')->url($s3path);
             // Log::info('Uploaded Video URL:'. $url);

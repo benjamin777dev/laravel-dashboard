@@ -206,7 +206,7 @@ Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->
 Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('email.delete')->middleware('auth');
 Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
 // Route for Signed url
-Route::get('/shared/{identifier}/{filename}', [ReportController::class, 'renderDealCards'])->name('share.signedUrl');
+Route::get('/shared/{identifier}/{filename}', [EmailController::class, 'getSignedUrl'])->name('share.signedUrl');
 // Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
 
 
