@@ -351,12 +351,31 @@
                                 });
                                 let mediaRecorder;
                                 let recordedBlobs;
+                                let currentStream;
                                 const videoElement = document.getElementById('videoRecording');
                                 const recordedVideoElement = document.getElementById('recordedVideo');
                                 const snapshotCanvas = document.getElementById('snapshotCanvas');
                                 const snapshotImage = document.getElementById('imagePreview');
                                 const gifImage = document.getElementById('imagePreviewGIF');
                                 const cropButton = document.getElementById('cropButton');
+
+                                function startVideoStream(deviceId) {
+                                    if (currentStream) {
+                                        currentStream.getTracks().forEach(track => track.stop());
+                                    }
+
+                                    navigator.mediaDevices.getUserMedia({ 
+                                        video: { deviceId: deviceId ? { exact: deviceId } : undefined }, 
+                                        audio: true 
+                                    })
+                                    .then((stream) => {
+                                        currentStream = stream;
+                                        videoElement.srcObject = stream;
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error accessing media devices.", error);
+                                    });
+                                }
 
                                 const videoInputSource = document.getElementById("videoInputSource");
                                 navigator.mediaDevices.enumerateDevices()
@@ -368,14 +387,14 @@
                                         option.text = device.label || `Camera ${index + 1}`;
                                         videoInputSource.appendChild(option);
                                     });
-                                })
+                                    if (videoDevices.length > 0) {
+                                        startVideoStream(videoDevices[0].deviceId);
+                                    }
+                                });
 
-                                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                                .then((stream) => {
-                                    videoElement.srcObject = stream;
-                                })
-                                .catch((error) => {
-                                    console.error("Error accessing media devices.", error);
+                                videoInputSource.addEventListener('change', () => {
+                                    const selectedDeviceId = videoInputSource.value;
+                                    startVideoStream(selectedDeviceId);
                                 });
 
                                 document.getElementById('startRecordButton').addEventListener('click', async () => {
@@ -383,8 +402,7 @@
                                     recordedVideoElement.style.display = "none";
                                     recordedBlobs = [];
 
-                                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                                    mediaRecorder = new MediaRecorder(stream);
+                                    mediaRecorder = new MediaRecorder(currentStream);
                                     mediaRecorder.ondataavailable = (event) => {
                                         if (event.data.size > 0) {
                                             recordedBlobs.push(event.data);
