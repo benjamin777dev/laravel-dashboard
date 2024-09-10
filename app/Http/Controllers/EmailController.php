@@ -78,8 +78,8 @@ class EmailController extends Controller
         ];
 
         if($request->hasFile('recordedVideo')) {
-            $fileData = $request['recordedVideo'];
-            $filePath = Storage::put('recordedVideos', $fileData);
+            $filePath['videoPath'] = Storage::put('recordData', $request['recordedVideo']);
+            $filePath['imgPath'] = Storage::put('recordData', $request['fbImage']);
             ConvertWebmToMp4::dispatch($inputData, $filePath);
         } else {
             if($request['emailType'] == "multiple") {
@@ -697,5 +697,24 @@ class EmailController extends Controller
     //     // Return the rendered view as a response
     //     return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
     // }
+    public function getSignedUrl($identifier, $filename)
+    {
+        // Assuming the file path in the S3 bucket is constructed as "{identifier}/{filename}"
+        $s3FilePath = "{$identifier}/{$filename}";
+
+        // Check if the file exists in the database or just validate its existence
+        $file = File::where('generated_identifier', $identifier)->first();
+        
+        if (!$file) {
+            return response()->json(['error' => 'File not found'], 404);
+        }
+
+        // Generate a temporary signed URL from S3 valid for 1 hour
+        $expiresAt = now()->addHour();
+        $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+
+        // Redirect the user to the signed S3 URL
+        return redirect($signedUrl);
+    }
 
 }

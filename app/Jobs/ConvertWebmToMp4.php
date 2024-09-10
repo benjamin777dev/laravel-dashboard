@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use DOMDocument;
+use DOMXPath;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
@@ -35,12 +36,14 @@ class ConvertWebmToMp4 implements ShouldQueue
     public function handle(): void
     {
         $outputVideoPath = 'convertedRecordedVideos/' . time() . '.mp4';
-        $originalPath = 'app/' . $this->filePath;
+        $originalPath = 'app/' . $this->filePath['videoPath'];
         $storagePath = storage_path($originalPath);
         Log::info("Checking file at :" . $storagePath);
         if (!file_exists($storagePath)) {
             Log::info("File does not exist at path: " . $storagePath);
         }
+        //Add code to load image/GIF
+
         $directory = storage_path('app/convertedRecordedVideos');
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0755, true); // Create the directory with appropriate permissions
@@ -53,23 +56,32 @@ class ConvertWebmToMp4 implements ShouldQueue
 
         // Upload to S3 Bucket and retrieve url Section
         // $video = $this->recordedVideo;
-        $randomVideoName = Str::uuid()->toString() . '.mp4';
-        $s3path = 'videos/' . $randomVideoName;
-        $uploaded = Storage::disk('s3')->put($s3path, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
+        $unID = Str::uuid()->toString();
+
+        $s3VideoPath = $unID . '/video.mp4';
+        $s3ImagePath = $unID . '/image.png';
+
+        $videoUploaded = Storage::disk('s3')->put($s3VideoPath, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
+        $imgUploaded = Storage::disk('s3')->put($s3ImagePath, file_get_contents(storage_path('app/' . $this->filePath['imgPath'])), 'public');
+        // Add code to upload Image/GIF
 
 
-        Storage::delete($this->filePath);
+        Storage::delete($this->filePath['videoPath']);
+        Storage::delete($this->filePath['imgPath']);
         Storage::delete($outputVideoPath);
 
-        if ($uploaded) {
+        if ($videoUploaded * $imgUploaded) {
             // Generate the URL after uploading
-            $url = Storage::disk('s3')->url($s3path);
-            Log::info('Uploaded Video URL:'. $url);
+            // $url = Storage::disk('s3')->url($s3path);
+            // Log::info('Uploaded Video URL:'. $url);
             $dom = new DOMDocument();
             @$dom->loadHTML($this->inputData['content']);
-            $videoElement = $dom->getElementById('recordedVideo');
-            $newSrc = $url;
-            $videoElement->setAttribute('src', $newSrc);
+            $xpath = new DOMXPath($dom);
+            $videoElement = $xpath->query('#recordedVideo video source');
+            $videoElement->setAttribute('src', $unID . '/video.mp4');
+            $imgElement = $xpath->query('#recordedVideo a img');
+            $imgElement->setAttribute('src', $unID . '/image.png');
+
             $body = $dom->getElementsByTagName('body')->item(0);
             $innerHTML = '';
             foreach ($body->childNodes as $child) {

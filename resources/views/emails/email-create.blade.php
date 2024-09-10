@@ -340,13 +340,71 @@
                                         }
                                     ],
                                     onSubmit: function(api) {
-                                        const videoElementUrl = document.getElementById('recordedVideo').src;
-                                        const imgElementUrl = document.getElementById('snapshotImage').src;
-                                        const gifElementUrl = document.getElementById('gifImage').src;
+                                        const recordedVideoElement = document.getElementById('recordedVideo');
+                                        const videoElementUrl = recordedVideoElement.src;
+                                        let imgElementUrl = document.getElementById('imagePreview').src;
+                                        let gifElementUrl = document.getElementById('imagePreviewGIF').src;
 
-                                        content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
-                                        editor.insertContent(content);
-                                        api.close();
+                                        if(imgElementUrl.slice(-1) == "#") {
+                                            captureThumbnail(recordedVideoElement, 1)
+                                            .then((url) => {
+                                                imgElementUrl = url;
+                                                if(gifElementUrl.slice(-1) == "#") {
+                                                    convertVideoToGif(videoElementUrl)
+                                                    .then(gifURL => {
+                                                        gifElementUrl = gifURL;
+                                                        document.getElementById('imagePreviewGIF').src = gifURL;
+                                                        submitFunc();
+                                                    })
+                                                    .catch(error => {
+                                                        console.error("Error converting video to GIF:", error);
+                                                        api.close();
+                                                    })
+                                                } else {
+                                                    submitFunc();
+                                                }
+                                            })
+                                            .catch(err => {
+                                                console.error("Error capturing thumbnail:", err);
+                                                api.close();
+                                            })
+                                        } else {
+                                            if(gifElementUrl.slice(-1) == "#") {
+                                                convertVideoToGif(videoElementUrl)
+                                                .then(gifURL => {
+                                                    gifElementUrl = gifURL;
+                                                    document.getElementById('imagePreviewGIF').src = gifURL;
+                                                    submitFunc();
+                                                })
+                                                .catch(error => {
+                                                    console.error("Error converting video to GIF:", error);
+                                                    api.close();
+                                                })
+                                            } else {
+                                                submitFunc();
+                                            }
+                                        }
+
+                                        function submitFunc()
+                                        {
+                                            content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
+                                            contentWithFallback = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" id="recordedVideo" >
+                                                    <tr>
+                                                        <td>
+                                                            <video controls width="320" height="240" poster="${imgElementUrl}">
+                                                                <source src="${videoElementUrl}" type="video/mp4">
+                                                                <!-- Fallback content for clients that don't support the video tag -->
+                                                                <a href="https://link-to-video.com">
+                                                                    <img src="${imgElementUrl}" alt="Watch the video" width="320" height="240" style="border: 0; display: block;" />
+                                                                </a>
+                                                            </video>
+                                                        </td>
+                                                    </tr>
+                                                </table>`;
+
+                                            editor.insertContent(contentWithFallback);
+                                            api.close();
+                                        }
                                     }
                                 });
                                 let mediaRecorder;
@@ -416,6 +474,7 @@
                                     mediaRecorder.start();
                                     document.getElementById('stopRecordButton').style.display = "block";
                                     document.getElementById('startRecordButton').style.display = "none";
+                                    document.getElementById('cropButton').disabled = true;
                                 });
 
                                 document.getElementById('stopRecordButton').addEventListener('click', () => {
@@ -424,11 +483,10 @@
                                     recordedVideoElement.style.display = "block";
                                     document.getElementById('stopRecordButton').style.display = "none";
                                     document.getElementById('startRecordButton').style.display = "block";
-                                    // document.getElementById('createGifButton').disabled = false;
+                                    document.getElementById('cropButton').disabled = false;
                                 });
                                 
                                 document.getElementById("cropButton").addEventListener('click', () => {
-
                                     captureThumbnail(recordedVideoElement, 1);
                                     convertVideoToGif(recordedVideoElement.src)
                                     .then(function(gifBlob) {
@@ -450,14 +508,14 @@
                                         const reader = new FileReader();
                                         reader.onload = function(e) {
                                             preview.src = e.target.result;
-                                            preview.style.display = 'block';  // Show the image
-                                            placeholder.style.display = 'none';  // Hide the placeholder text
+                                            preview.style.display = 'block';
+                                            placeholder.style.display = 'none';
                                         }
-                                        reader.readAsDataURL(file);  // Read the image file as a data URL
+                                        reader.readAsDataURL(file);
                                     } else {
                                         preview.src = '#';
-                                        preview.style.display = 'none';  // Hide the image if no file is selected
-                                        placeholder.style.display = 'block';  // Show the placeholder text again
+                                        preview.style.display = 'none';
+                                        placeholder.style.display = 'block';
                                     }
                                 });
 
@@ -470,37 +528,43 @@
                                         const reader = new FileReader();
                                         reader.onload = function(e) {
                                             preview.src = e.target.result;
-                                            preview.style.display = 'block';  // Show the image
-                                            placeholder.style.display = 'none';  // Hide the placeholder text
+                                            preview.style.display = 'block';
+                                            placeholder.style.display = 'none';
                                         }
-                                        reader.readAsDataURL(file);  // Read the image file as a data URL
+                                        reader.readAsDataURL(file);
                                     } else {
                                         preview.src = '#';
-                                        preview.style.display = 'none';  // Hide the image if no file is selected
-                                        placeholder.style.display = 'block';  // Show the placeholder text again
+                                        preview.style.display = 'none';
+                                        placeholder.style.display = 'block';
                                     }
                                 });
 
-                                async function captureThumbnail(videoElement, captureTime) {
-                                    videoElement.currentTime = captureTime;
-                                    
-                                    videoElement.onseeked = function () {
-                                        snapshotCanvas.width = videoElement.videoWidth;
-                                        snapshotCanvas.height = videoElement.videoHeight;
-                                        const ctx = snapshotCanvas.getContext('2d');
-                                        ctx.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
-                                        const dataUrl = snapshotCanvas.toDataURL('image/png');
+                                function captureThumbnail(videoElement, captureTime) {
+                                    return new Promise((resolve, reject) => {
+                                        videoElement.currentTime = captureTime;
+                                        
+                                        videoElement.onseeked = function () {
+                                            try {
+                                                snapshotCanvas.width = videoElement.videoWidth;
+                                                snapshotCanvas.height = videoElement.videoHeight;
+                                                const ctx = snapshotCanvas.getContext('2d');
+                                                ctx.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+                                                const dataUrl = snapshotCanvas.toDataURL('image/png');
+        
+                                                snapshotImage.src = dataUrl;
+                                                document.getElementById('imagePreview').style.display = "block";
+                                                document.querySelector('.upload-placeholder').style.display = "none";
+                                                resolve(dataUrl);
+                                            } catch (error) {
+                                                reject(error);
+                                            }
+                                        };
 
-                                        snapshotImage.src = dataUrl;
-                                        document.getElementById('imagePreview').style.display = "block";
-                                        document.querySelector('.upload-placeholder').style.display = "none";
-                                    };
-
-                                    
-
+                                        videoElement.onerror = function(error) {
+                                            reject(error);
+                                        }
+                                    });
                                 }
-
-                                
                             }
                 });
             }
@@ -672,12 +736,24 @@
 
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = content;
+        // Check the Recorded Video Existence. 
         if(tempDiv.querySelector("#recordedVideo")) {
-            let recordedVideoUrl = tempDiv.querySelector("#recordedVideo").src;
-            fetchBlobFromUrl(recordedVideoUrl).then(function(videoBlob) {
+            let recordedVideo = tempDiv.querySelector("#recordedVideo");
+            let videoUrl = recordedVideo.querySelector("video source").getAttribute('src');
+            let imgUrl = recordedVideo.querySelector("a img").getAttribute('src');
+            //Gif image url
+            fetchBlobFromUrl(videoUrl).then(function(videoBlob) {
                 if (videoBlob) {
                     recordData.append("recordedVideo", videoBlob);
-                    sendVideoRequest(recordData);
+                    fetchBlobFromUrl(imgUrl).then(function(imgBlob) {
+                        if(imgBlob) {
+                            recordData.append("fbImage", imgBlob)
+                            sendVideoRequest(recordData);
+                        } else {
+                            console.log("Error attach fallback image.");
+                        }
+                    })
+                    // Add code to generate img/gif when it's not selected
                 } else {
                     console.log("Error attach video.");
                 }
@@ -718,8 +794,7 @@
             $('#composemodal').modal('hide');
             $('#templateModal').modal('show'); // Open the modal if validation passes
             $("#templateModal").removeClass("draft");
-        $("#templateModal").addClass("compose");
-
+            $("#templateModal").addClass("compose");
         }
     }
 
@@ -764,7 +839,8 @@
                 });
 
                 gif.on('finished', (blob) => {
-                    resolve(blob);
+                    const gifUrl = URL.createObjectURL(blob);
+                    resolve(gifUrl);
                 });
 
                 gif.on('abort', () => {

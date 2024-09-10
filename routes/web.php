@@ -205,6 +205,8 @@ Route::get('/email/template',[EmailController::class,'emailTemplate'])->name('em
 Route::patch('/email/moveToTrash',[EmailController::class,'emailMoveToTrash'])->name('email.moveToTrash')->middleware('auth');
 Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('email.delete')->middleware('auth');
 Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
+// Route for Signed url
+Route::get('/shared/{identifier}/{filename}', [ReportController::class, 'renderDealCards'])->name('share.signedUrl');
 // Route::post('/get/email-create',[EmailController::class,'getEmailCreateModal'])->name('get.email.create.modal')->middleware('auth');
 
 
@@ -244,5 +246,7 @@ Route::middleware('auth')->group(function () {
     Route::post('add-call-record', [CallController::class, 'saveCallRecord'])->name('call.records.create');
     Route::post('upload-video-s3', [VideoController::class, 'upload'])->name('video.upload');
 });
+
+
 
 
