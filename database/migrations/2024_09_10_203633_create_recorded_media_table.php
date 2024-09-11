@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('recorded_media', function (Blueprint $table) {
             $table->id();
-            $table->json('auth_users');
             $table->string('uuid');
+            $table->string('file_name');
+            $table->string('s3path');
             $table->timestamps();
         });
     }

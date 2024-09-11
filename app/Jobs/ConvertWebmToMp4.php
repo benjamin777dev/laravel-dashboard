@@ -15,8 +15,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-use App\Http\Controllers\EmailController;
 
 class ConvertWebmToMp4 implements ShouldQueue
 {
@@ -25,9 +23,9 @@ class ConvertWebmToMp4 implements ShouldQueue
     protected $inputData;
     protected $filePath;
 
-    public function __construct($inputData, $filePath)
+    public function __construct($uuid, $filePath)
     {
-        $this->inputData = $inputData;
+        $this->uuid = $uuid;
         $this->filePath = $filePath;
     }
 
@@ -36,75 +34,43 @@ class ConvertWebmToMp4 implements ShouldQueue
      */
     public function handle(): void
     {
-        $outputVideoPath = 'convertedRecordedVideos/' . time() . '.mp4';
-        $originalPath = 'app/' . $this->filePath['videoPath'];
+        $unID = $this->uuid;
+        $outputVideoPath = 'convertedRecordedVideos/' . $unID . '.mp4';
+        $originalPath = 'app/' . $this->filePath;
         $storagePath = storage_path($originalPath);
-        Log::info("Checking file at :" . $storagePath);
         if (!file_exists($storagePath)) {
             Log::info("File does not exist at path: " . $storagePath);
         }
-        //Add code to load image/GIF
-        $auth = $this->inputData["to"];
-        $auth = array_merge($auth, $this->inputData["cc"]);
-        $auth = array_merge($auth, $this->inputData["bcc"]);
+
         $directory = storage_path('app/convertedRecordedVideos');
         if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true); // Create the directory with appropriate permissions
+            File::makeDirectory($directory, 0755, true);
         }
-        // Perform conversion
+        
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open($storagePath);
         $format = new X264('libmp3lame', 'libx264');
         $video->save($format, storage_path('app/' . $outputVideoPath));
 
-        $unID = Str::uuid()->toString();
+        $s3MP4Path = $unID . '/video.mp4';
+        $s3WebmPath = $unID . '/video.webm';
 
-        $s3VideoPath = $unID . '/video.mp4';
-        $s3ImagePath = $unID . '/image.png';
-
-        $videoUploaded = Storage::disk('s3')->put($s3VideoPath, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
-        $imgUploaded = Storage::disk('s3')->put($s3ImagePath, file_get_contents(storage_path('app/' . $this->filePath['imgPath'])), 'public');
+        $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
+        $webUploaded = Storage::disk('s3')->put($s3WebmPath, file_get_contents(storage_path($originalPath)), 'public');
         // Add code to upload Image/GIF
 
 
-        Storage::delete($this->filePath['videoPath']);
-        Storage::delete($this->filePath['imgPath']);
+        Storage::delete($this->filePath);
         Storage::delete($outputVideoPath);
 
-        if ($videoUploaded * $imgUploaded) {
-            $record = new RecordedMedia();
-            $record->uuid = $unID;
-            $record->auth_users = $auth;
-            $record->save();
-            
-            $dom = new DOMDocument();
-            @$dom->loadHTML($this->inputData['content']);
-            $xpath = new DOMXPath($dom);
-            $videoElement = $xpath->query('//*[@id="recordedVideo"]//video/source');
-            if ($videoElement->length > 0) {
-                $videoElement->item(0)->setAttribute('src', $unID . '/video.mp4');
-            }
-
-            $imgElement = $xpath->query('//*[@id="recordedVideo"]//a/img');
-            if ($imgElement->length > 0) {
-                $imgElement->item(0)->setAttribute('src', $unID . '/image.png');
-            }
-
-            $body = $dom->getElementsByTagName('body')->item(0);
-            $innerHTML = '';
-            foreach ($body->childNodes as $child) {
-                $innerHTML .= $dom->saveHTML($child); // Append each child node's HTML
-            }
-            $this->inputData['content'] = $innerHTML;
-
-            $controller = new EmailController();
-            if($this->inputData['emailType'] == "multiple") {
-                $controller->sendMultipleEmail($this->inputData);
-            } else {
-                $controller->sendEmail($this->inputData);
-            }
+        if ($mp4Uploaded * $webUploaded) {
+            $dbrecords = [
+                ['file_name' => 'video.mp4', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3MP4Path)],
+                ['file_name' => 'video.webm', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3WebmPath)],
+            ];
+            RecordedMedia::insert($dbrecords);
         } else {
-            Log::info("Something is wrong.");
+            Log::info("Upload to S3 failed.");
         }
 
     }

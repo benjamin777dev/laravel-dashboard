@@ -11,11 +11,9 @@ class RecordedMedia extends Model
 
     protected $fillable = [
         'id',
-        'auth_users',
         'uuid',
+        'file_name',
+        's3path'
     ];
 
-    protected $casts = [
-        'auth_users' => 'array'
-    ];
 }

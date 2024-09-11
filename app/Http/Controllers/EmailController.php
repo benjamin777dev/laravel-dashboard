@@ -79,7 +79,7 @@ class EmailController extends Controller
         ];
 
         if($request->hasFile('recordedVideo')) {
-            $filePath['videoPath'] = Storage::put('recordData', $request['recordedVideo']);
+            $filePath['videoPath'] = Storage::put('recordData', contents: $request['recordedVideo']);
             $filePath['imgPath'] = Storage::put('recordData', $request['fbImage']);
             ConvertWebmToMp4::dispatch($inputData, $filePath);
         } else {
@@ -91,7 +91,7 @@ class EmailController extends Controller
         }
     }
 
-    public function sendEmail($inputData)
+    public function sendEmail(Request $request)
     {
         try {
             $db = new DatabaseService();
@@ -100,6 +100,14 @@ class EmailController extends Controller
             $accessToken = $user->getAccessToken();
             $sendgrid = new SendGrid();
             $helper = new Helper();
+
+            if (!$user) {
+                return redirect('/login');
+            }
+
+            $accessToken = $user->getAccessToken();
+            $inputData = $request->json()->all();
+
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -292,7 +300,7 @@ class EmailController extends Controller
         }
     }
 
-    public function sendMultipleEmail($inputData)
+    public function sendMultipleEmail(Request $request)
     {
         try {
             $db = new DatabaseService();
@@ -301,7 +309,12 @@ class EmailController extends Controller
             $sendgrid = new SendGrid();
             $helper = new Helper();
 
+            if(!$user) {
+                return redirect('.lingi');
+            }
+
             $accessToken = $user->getAccessToken();
+            $inputData = $request->json()->all();
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -683,21 +696,6 @@ class EmailController extends Controller
         return view('emails.email-read-modal', compact('email'))->render();
     }
 
-    // public function getEmailCreateModal(Request $request)
-    // {
-    //     $user = $this->user();
-    //     if (!$user) {
-    //         return redirect('/login');
-    //     }
-
-    //     // Retrieve input data from JSON request
-    //     $contacts = $request->input('contacts');
-    //     $emailType = $request->input('emailType');
-    //     $selectedContacts = $request->input('selectedContacts');
-
-    //     // Return the rendered view as a response
-    //     return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
-    // }
     public function getSignedUrl($identifier, $filename)
     {
         $user = $this->user();
@@ -709,6 +707,7 @@ class EmailController extends Controller
                 ->where('file_name', $filename)
                 ->whereJsonContains('auth_users' , $user->id)
                 ->first();
+        $record = "some";
         if($record === null) { 
             return response()->json(['error' => 'File not found'], 404);
         } else {

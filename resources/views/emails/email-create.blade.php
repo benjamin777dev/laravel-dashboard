@@ -61,7 +61,7 @@
     if(currentLocation == "contacts" || currentLocation == "group") {
         emailType = "multiple";
     }
-    // var emailType = @json($emailType??"");
+
     $(document).ready(function() {
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder, errorId) {
@@ -313,7 +313,7 @@
                                                             <div class="position-relative text-center">
                                                                 <label class="image-upload-wrapper">
                                                                     <input type="file" id="formFileGIF" accept="image/gif">
-                                                                    <span class="upload-placeholderGIF">Click to upload an GIF</span>
+                                                                    <span class="upload-placeholderGIF">Click to upload a GIF</span>
                                                                     <img id="imagePreviewGIF" src="#" alt="Image Preview">
                                                                 </label>
                                                             </div>
@@ -340,6 +340,8 @@
                                         }
                                     ],
                                     onSubmit: function(api) {
+                                        let recordData = new FormData();
+
                                         const recordedVideoElement = document.getElementById('recordedVideo');
                                         const videoElementUrl = recordedVideoElement.src;
                                         let imgElementUrl = document.getElementById('imagePreview').src;
@@ -384,26 +386,74 @@
                                                 submitFunc();
                                             }
                                         }
+                                        
 
                                         function submitFunc()
                                         {
-                                            content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
-                                            contentWithFallback = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" id="recordedVideo" >
-                                                    <tr>
-                                                        <td>
-                                                            <video controls width="320" height="240" poster="${imgElementUrl}">
-                                                                <source src="${videoElementUrl}" type="video/mp4">
-                                                                <!-- Fallback content for clients that don't support the video tag -->
-                                                                <a href="https://link-to-video.com">
-                                                                    <img src="${imgElementUrl}" alt="Watch the video" width="320" height="240" style="border: 0; display: block;" />
-                                                                </a>
-                                                            </video>
-                                                        </td>
-                                                    </tr>
-                                                </table>`;
+                                            fetchBlobFromUrl(videoElementUrl).then(function(videoBlob) {
+                                                if (videoBlob) {
+                                                    recordData.append('video', videoBlob, 'video.webm');
+                                                    processGIF();
+                                                } else {
+                                                    // Error Alert
+                                                }
+                                            });
 
-                                            editor.insertContent(contentWithFallback);
-                                            api.close();
+                                            function processGIF() {
+                                                fetchBlobFromUrl(gifElementUrl).then(function(gifBlob) {
+                                                    if (gifBlob) {
+                                                        recordData.append('gif', gifBlob, 'animation.gif');
+                                                        processImage();
+                                                    } else {
+                                                    // Error Alert
+                                                    }
+                                                });
+                                            }
+
+                                            function processImage() {
+                                                fetchBlobFromUrl(imgElementUrl).then(function(imageBlob) {
+                                                    if (imageBlob) {
+                                                        recordData.append('img', imageBlob, 'image.png');
+                                                        sendData();
+                                                    } else {
+                                                        // Error Alert
+                                                    }
+                                                });
+                                            }
+                                            function sendData() {
+                                                // Send files to server. (and wait response)
+                                                $.ajax({
+                                                    url: route('video.upload'),
+                                                    method: "POST",
+                                                    headers: {
+                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                    },
+                                                    body: recordData,
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    const uuid = data.uuid; // Get S3 URL after upload
+                                                    // insertVideoIntoEditor(s3Url, editor);
+                                                })
+                                                .catch(err => console.error('Error uploading to S3:', err));
+                                                content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
+                                                contentWithFallback = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" id="recordedVideo" >
+                                                        <tr>
+                                                            <td>
+                                                                <video controls width="320" height="240" poster="${imgElementUrl}">
+                                                                    <source src="${videoElementUrl}" type="video/mp4">
+                                                                    <!-- Fallback content for clients that don't support the video tag -->
+                                                                    <a href="https://link-to-video.com">
+                                                                        <img src="${imgElementUrl}" alt="Watch the video" width="320" height="240" style="border: 0; display: block;" />
+                                                                    </a>
+                                                                </video>
+                                                            </td>
+                                                        </tr>
+                                                    </table>`;
+    
+                                                editor.insertContent(contentWithFallback);
+                                                api.close();
+                                            }
                                         }
                                     }
                                 });
@@ -580,10 +630,6 @@
 
         const secondSegment = pathSegments[1];
 
-        console.log(secondSegment);
-       
-            
-       
         var button = document.getElementById('emailModalClose');
         button.addEventListener('click', function () {
             var modal = document.getElementById('composemodal');
@@ -646,156 +692,6 @@
         }
 
         return isValidate;
-    }
-
-
-
-    window.sendEmails = function(button,email,isEmailSent){
-        
-        var to = $("#toSelect").val();
-        var cc = $("#ccSelect").val();
-        var bcc = $("#bccSelect").val();
-        var content = tinymce.get('elmEmail').getContent();
-        var subject = $("#emailSubject").val();
-        let isValidate = validateForm();
-        console.log("checkvalues",to,cc,bcc, window.ccValuestesttest);
-        if(!isValidate){
-            return false;
-        };
-        button.disabled = true;
-
-        function fetchBlobFromUrl(url) {
-            return fetch(url).then(function(response) {
-                if(response.ok) {
-                    return response.blob();
-                } else {
-                    return null;
-                }
-            });
-        }
-
-        sendVideoRequest = function(formData) {
-            $.ajax({
-                url: "{{ route('send.email') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(response) {
-                    console.info(response);
-                    if (response.status === 'process') {
-                        showToastError(response.message);
-                        setTimeout(function() {
-                            window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
-                    } else {
-                        // Handle error
-                    }
-                    if(isEmailSent){
-                        showToast("Email sent successfully");
-                    }else{
-                        showToast("Draft saved successfully");
-                    }
-
-                    if ($("#contact-email-table").length) {
-                        $("#contact-email-table").DataTable().ajax.reload();
-                    }
-                    button.disabled = false;
-                    fetchEmails();
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    console.error(xhr.responseText);
-                    showToastError(xhr.responseText);
-                }
-            });
-            $("#emailModalClose").click();
-        }
-
-        var formData = 
-        {
-            "to": to,
-            "cc": cc,
-            "bcc": bcc,
-            "subject": subject,
-            
-            "content": content,
-            "isEmailSent":isEmailSent
-        }
-        const recordData = new FormData();
-        for(const key in formData) {
-            if(formData.hasOwnProperty(key)) {
-                recordData.append(key, formData[key]);
-            }
-        }
-
-        recordData.append("emailType", emailType);
-
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-        // Check the Recorded Video Existence. 
-        if(tempDiv.querySelector("#recordedVideo")) {
-            let recordedVideo = tempDiv.querySelector("#recordedVideo");
-            let videoUrl = recordedVideo.querySelector("video source").getAttribute('src');
-            let imgUrl = recordedVideo.querySelector("a img").getAttribute('src');
-            //Gif image url
-            fetchBlobFromUrl(videoUrl).then(function(videoBlob) {
-                if (videoBlob) {
-                    recordData.append("recordedVideo", videoBlob);
-                    fetchBlobFromUrl(imgUrl).then(function(imgBlob) {
-                        if(imgBlob) {
-                            recordData.append("fbImage", imgBlob)
-                            sendVideoRequest(recordData);
-                        } else {
-                            console.log("Error attach fallback image.");
-                        }
-                    })
-                    // Add code to generate img/gif when it's not selected
-                } else {
-                    console.log("Error attach video.");
-                }
-            });
-            
-        } else {
-            sendVideoRequest(recordData);
-        }
-        $("#emailModalClose").click();
-
-    }
-    window.validateOpenTemplate = function(){
-        var content = tinymce.get('elmEmail').getContent();
-        var subject = $("#emailSubject").val();
-        let isValidateTemplate = true
-        
-
-        if(content==""){
-            showToastError("Please enter content");
-            isValidateTemplate = false;
-            
-        }
-
-        if(subject==""){
-            showToastError("Please enter subject");
-            isValidateTemplate = false;
-            
-        }
-
-        return isValidateTemplate
-    }
-    window.openTemplate = function(){
-        if (validateOpenTemplate()) {
-            var content = tinymce.get('elmEmail').getContent();
-            var subject = $("#emailSubject").val();
-            $("#templateSubject").val(subject);
-            $("#templateContent").val(content);
-            $('#composemodal').modal('hide');
-            $('#templateModal').modal('show'); // Open the modal if validation passes
-            $("#templateModal").removeClass("draft");
-            $("#templateModal").addClass("compose");
-        }
     }
 
     function convertVideoToGif(videoUrl) {
@@ -914,6 +810,153 @@
             }
             elem.appendChild(option);
         });
+    }
+    
+    window.fetchBlobFromUrl = function(url) {
+        return fetch(url).then(function(response) {
+            if(response.ok) {
+                return response.blob();
+            } else {
+                return null;
+            }
+        });
+    }
+
+    window.generateUUID = function() {
+        return 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    window.sendEmails = function(button,email,isEmailSent){
+        var to = $("#toSelect").val();
+        var cc = $("#ccSelect").val();
+        var bcc = $("#bccSelect").val();
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
+        let isValidate = validateForm();
+        console.log("checkvalues",to,cc,bcc, window.ccValuestesttest);
+        if(!isValidate){
+            return false;
+        };
+        button.disabled = true;
+        var formData = 
+        {
+            "to": to,
+            "cc": cc,
+            "bcc": bcc,
+            "subject": subject,
+            
+            "content": content,
+            "isEmailSent":isEmailSent
+        }
+        if(emailType=="multiple"){
+             $.ajax({
+                url: "{{ route('send.multiple.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000); // Adjust the delay as needed
+                    } else {
+                        // Handle error
+                    }
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+                        showToast("Draft saved successfully");
+                    }
+                    button.disabled = false;
+                    $("#emailModalClose").click();
+                    fetchEmails();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                    $("#emailModalClose").click();
+                }
+            });
+        }else{
+            $.ajax({
+                url: "{{ route('send.email') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    console.info(response);
+                    if (response.status === 'process') {
+                        showToastError(response.message);
+                        setTimeout(function() {
+                            window.location.href = response.redirect_url;
+                        }, 5000);
+                    } else {
+                        // Handle error
+                    }
+                    if(isEmailSent){
+                        showToast("Email sent successfully");
+                    }else{
+                        showToast("Draft saved successfully");
+                    }
+                    $("#contact-email-table").DataTable().ajax.reload();
+                    button.disabled = false;
+                    $("#emailModalClose").click();
+                    fetchEmails();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    showToastError(xhr.responseText);
+                    $("#emailModalClose").click();
+
+                }
+            });
+        }
+
+    }
+    window.validateOpenTemplate = function(){
+        var content = tinymce.get('elmEmail').getContent();
+        var subject = $("#emailSubject").val();
+        let isValidateTemplate = true
+        
+
+        if(content==""){
+            showToastError("Please enter content");
+            isValidateTemplate = false;
+            
+        }
+
+        if(subject==""){
+            showToastError("Please enter subject");
+            isValidateTemplate = false;
+            
+        }
+
+        return isValidateTemplate
+    }
+    window.openTemplate = function(){
+        if (validateOpenTemplate()) {
+            var content = tinymce.get('elmEmail').getContent();
+            var subject = $("#emailSubject").val();
+            $("#templateSubject").val(subject);
+            $("#templateContent").val(content);
+            $('#composemodal').modal('hide');
+            $('#templateModal').modal('show'); // Open the modal if validation passes
+            $("#templateModal").removeClass("draft");
+            $("#templateModal").addClass("compose");
+        }
     }
 </script>
             
