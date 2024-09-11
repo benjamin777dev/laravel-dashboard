@@ -18,14 +18,6 @@ class VideoController extends Controller
         $uuid = Str::uuid()->toString();
         
         try { 
-            if ($request->hasFile('video')) {
-                $video = $request->file('video');
-                $filePath = Storage::put('recordData/' . $uuid, contents: $video);
-                ConvertWebmToMp4::dispatch($uuid, $filePath);
-                if (!$filePath) {
-                    return response()->json(['message' => 'Failed to upload video'], 500);
-                }
-            }
             if ($request->hasFile('gif')) {
                 $gif = $request->file('gif');
                 $path = $uuid . "/animation.gif";
@@ -53,6 +45,15 @@ class VideoController extends Controller
                 $dbrecord['s3path'] = Storage::disk('s3')->url($path);;
                 $dbrecord['file_name'] = "image.png";
                 $dbrecord->save();
+            }
+
+            if ($request->hasFile('video')) {
+                $video = $request->file('video');
+                $filePath = Storage::put('recordData/' . $uuid, contents: $video);
+                ConvertWebmToMp4::dispatch($uuid, $filePath);
+                if (!$filePath) {
+                    return response()->json(['message' => 'Failed to upload video'], 500);
+                }
             }
 
             return response()->json(['uuid'=> $uuid], 200);

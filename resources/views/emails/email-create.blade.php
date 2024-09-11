@@ -428,14 +428,23 @@
                                                     headers: {
                                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                                     },
-                                                    body: recordData,
+                                                    data: recordData,
+                                                    processData: false,
+                                                    contentType: false,
+                                                    success: function (data) {
+                                                        const uuid = data.uuid;
+                                                        // Insert the video into the editor or perform further actions
+                                                    },
+                                                    error: function (err) {
+                                                        console.error('Error uploading to S3:', err);
+                                                    }
                                                 })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    const uuid = data.uuid; // Get S3 URL after upload
-                                                    // insertVideoIntoEditor(s3Url, editor);
-                                                })
-                                                .catch(err => console.error('Error uploading to S3:', err));
+                                                // .then(response => response.json())
+                                                // .then(data => {
+                                                //     const uuid = data.uuid; // Get S3 URL after upload
+                                                //     // insertVideoIntoEditor(s3Url, editor);
+                                                // })
+                                                // .catch(err => console.error('Error uploading to S3:', err));
                                                 content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
                                                 contentWithFallback = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" id="recordedVideo" >
                                                         <tr>
