@@ -116,7 +116,7 @@ class ContactController extends Controller
             }
         }
 
-        return view('contacts.createForm', compact('contact', 'retrieveModuleData', 'contacts', 'users', 'spouseContact', 'contactId', 'groups', 'contactsGroups'))->render();
+        return view('contacts.create-form', compact('contact', 'retrieveModuleData', 'contacts', 'users', 'spouseContact', 'contactId', 'groups', 'contactsGroups'))->render();
 
     }
 
@@ -365,7 +365,7 @@ class ContactController extends Controller
                 $spouseContact = json_decode($spouseContact, true);
             }
         }
-        return view('contacts.detailForm', compact('contact', 'userContact', 'deals', 'allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups', 'spouseContact'));
+        return view('contacts.detail-form', compact('contact', 'userContact', 'deals', 'allstages', 'user_id', 'tab', 'name', 'contacts', 'tasks', 'notes', 'getdealsTransaction', 'retrieveModuleData', 'dealContacts', 'contactId', 'users', 'groups', 'contactsGroups', 'spouseContact'));
     }
 
     public function getContact(Request $request)

@@ -192,7 +192,7 @@ class SubmittalController extends Controller
         $submittal = $db->retrieveSubmittal($user, $accessToken, $submittalId);
         $broucherPrint = config('variables.broucherPrint');
         $featuresCard = config('variables.featuresCard');
-        return view('submittals.buyersubmittalcourusal', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'featuresCard'))->render();
+        return view('submittals.buyer-submittal-courusal', compact('deals', 'submittalType', 'listingSubmittaltype', 'submittal', 'broucherPrint', 'featuresCard'))->render();
     }
 
     public function createListingSubmittal(Request $request)

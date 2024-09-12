@@ -322,7 +322,7 @@
         </div>
     </div>
 </div>
-@include('common.contact.createModal', [
+@include('common.contact.create-modal', [
     'contact' => $contact,
     'retrieveModuleData' => $retrieveModuleData,
     'type' => 'Contacts',

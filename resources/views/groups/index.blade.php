@@ -122,8 +122,8 @@
             @include('common.pagination', ['module' => $contacts])
         </div>
     </div>
-    @include('common.group.createModal', ['groups' => $groups])
-    @include('common.group.editModal', ['groups' => $ownerGroups])
+    @include('common.group.create-modal', ['groups' => $groups])
+    @include('common.group.edit-modal', ['groups' => $ownerGroups])
     <div class="modal fade p-5" id="selectGroupModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -196,7 +196,7 @@
     <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                @include('emails.email_templates.email-template-create', ['contact' => null])
+                @include('emails.email-templates.email-template-create', ['contact' => null])
             </div>
         </div>
     </div>

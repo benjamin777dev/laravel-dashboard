@@ -41,7 +41,7 @@
                     </div>
 
                 </div>
-                @include("common.confirmdeletemodal")
+                @include("common.confirm-delete-modal")
                 <div class="row">
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -83,7 +83,7 @@
                 'module' => 'Contacts',
             ])
         </div>
-        @include('contacts.detailForm',[
+        @include('contacts.detail-form',[
             'contact'=>$contact,
             'userContact'=>$userContact,
             'deals'=>$deals,

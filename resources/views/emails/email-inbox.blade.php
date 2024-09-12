@@ -103,7 +103,7 @@
 <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            @include('emails.email_templates.email-template-create',['contact'=>null])
+            @include('emails.email-templates.email-template-create',['contact'=>null])
         </div>
     </div>
 </div>

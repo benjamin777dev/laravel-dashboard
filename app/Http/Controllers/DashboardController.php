@@ -1026,7 +1026,7 @@ class DashboardController extends Controller
             $notesInfo = $this->db->retrieveNotes($user, $accessToken, '');
             $notes = $this->fetchNotes();
             Log::info("notesInfo " . print_r($notesInfo, true));
-            return view('common.notes.showMoreNotes', compact('notesInfo', 'notes'));
+            return view('common.notes.show-more-notes', compact('notesInfo', 'notes'));
         } catch (\Exception $e) {
             Log::error("Error creating notes: " . $e->getMessage());
             throw $e;
