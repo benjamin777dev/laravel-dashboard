@@ -263,8 +263,8 @@ class EmailController extends Controller
             $sendgrid = new SendGrid();
             $helper = new Helper();
 
-            if(!$user) {
-                return redirect('.lingi');
+            if (!$user) {
+                return redirect('/login');
             }
 
             $accessToken = $user->getAccessToken();

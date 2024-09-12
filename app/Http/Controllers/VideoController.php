@@ -56,7 +56,7 @@ class VideoController extends Controller
                 ConvertWebmToMp4::dispatch($uuid, $filePath);
             }
 
-            return view('emails.email-record-Template', compact('uuid',))->render();
+            return view('emails.email-record-template', compact('uuid',))->render();
         } catch (\Exception $e) {
             Log::error('Video Upload Failed:' . $e->getMessage());
             return response()->json(['message' => 'No video uploaded'], 400);

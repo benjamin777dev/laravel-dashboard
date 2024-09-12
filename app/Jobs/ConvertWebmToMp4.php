@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\RecordedMedia;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
@@ -62,9 +63,10 @@ class ConvertWebmToMp4 implements ShouldQueue
             Storage::delete($outputVideoPath);
             
             if ($mp4Uploaded * $webUploaded) {
+                $now = Carbon::now();
                 $dbrecords = [
-                    ['file_name' => 'video.mp4', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3MP4Path)],
-                    ['file_name' => 'video.webm', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3WebmPath)],
+                    ['file_name' => 'video.mp4', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3MP4Path), 'created_at' => $now, 'updated_at' => $now],
+                    ['file_name' => 'video.webm', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3WebmPath), 'created_at' => $now, 'updated_at' => $now],
                 ];
                 RecordedMedia::insert($dbrecords);
             } else {
