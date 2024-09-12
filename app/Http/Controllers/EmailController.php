@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use ZipArchive;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -13,18 +11,8 @@ use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
 use App\Services\SendGrid;
 use App\Services\Helper;
-use App\Models\Contact;
-use App\Models\User;
-use App\Models\RecordedMedia;
-use App\Jobs\ConvertWebmToMp4;
 use League\Csv\Writer;
 use Illuminate\Support\Facades\Storage;
-
-// use App\Models\ContactGroups;
-// use App\Models\Groups;
-// use DataTables;
-// use Illuminate\Support\Facades\Validator;
-// use App\Rules\ValidMobile;
 
 class EmailController extends Controller
 {
@@ -55,40 +43,6 @@ class EmailController extends Controller
         $emails = $db->getEmails($user, $filter, $toEmail);
         $contacts = $db->retreiveContactsHavingEmail($user, $accessToken);
         return view('emails.email-list', compact('contacts', 'emails'))->render();
-    }
-
-    public function interSendMail(Request $request) {
-
-        $user = $this->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        $toArray = explode(',', $request['to']);
-        $ccArray = explode(',', $request['cc']);
-        $bccArray = explode(',', $request['bcc']);
-        $isEmailSent = $request['isEmailSent'] == "true" ? true : false;
-
-        $inputData = [
-            "to" => $toArray,
-            "cc" => $ccArray,
-            "bcc" => $bccArray,
-            "subject" => $request['subject'],
-            "content" => $request['content'],
-            "isEmailSent" => $isEmailSent,
-            "emailType" => $request['emailType']
-        ];
-
-        if($request->hasFile('recordedVideo')) {
-            $filePath['videoPath'] = Storage::put('recordData', contents: $request['recordedVideo']);
-            $filePath['imgPath'] = Storage::put('recordData', $request['fbImage']);
-            ConvertWebmToMp4::dispatch($inputData, $filePath);
-        } else {
-            if($request['emailType'] == "multiple") {
-                $this->sendMultipleEmail($inputData);
-            } else {
-                $this->sendEmail($inputData);
-            }
-        }
     }
 
     public function sendEmail(Request $request)
@@ -698,26 +652,11 @@ class EmailController extends Controller
 
     public function getSignedUrl($identifier, $filename)
     {
-        $user = $this->user();
-        if (!$user) {
-            return redirect('/login');
-        }
-        
-        $record = RecordedMedia::where('uuid', $identifier)
-                ->where('file_name', $filename)
-                ->whereJsonContains('auth_users' , $user->id)
-                ->first();
-        $record = "some";
-        if($record === null) { 
-            return response()->json(['error' => 'File not found'], 404);
-        } else {
-            $s3FilePath = "{$identifier}/{$filename}";
-            $expiresAt = now()->addHour();
-            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
-    
-            // Redirect the user to the signed S3 URL
-            return redirect($signedUrl);
-        }
+        $s3FilePath = "{$identifier}/{$filename}";
+        $expiresAt = now()->addHour();
+        $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+
+        return redirect($signedUrl);
     }
 
 }

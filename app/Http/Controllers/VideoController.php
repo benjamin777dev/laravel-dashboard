@@ -50,13 +50,13 @@ class VideoController extends Controller
             if ($request->hasFile('video')) {
                 $video = $request->file('video');
                 $filePath = Storage::put('recordData/' . $uuid, contents: $video);
-                ConvertWebmToMp4::dispatch($uuid, $filePath);
                 if (!$filePath) {
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
+                ConvertWebmToMp4::dispatch($uuid, $filePath);
             }
 
-            return response()->json(['uuid'=> $uuid], 200);
+            return view('emails.recordVideoTemplate', compact('uuid',))->render();
         } catch (\Exception $e) {
             Log::error('Video Upload Failed:' . $e->getMessage());
             return response()->json(['message' => 'No video uploaded'], 400);

@@ -44,6 +44,8 @@ export default defineConfig(({ mode }) => {
                     'resources/js/toast.js',
                     'resources/js/dropdown.js',
                     'resources/js/datatable.js',
+                    'resources/js/WebRTC.js',
+                    'resources/js/gif.worker.js'
                 ],
                 refresh: true,
             }),

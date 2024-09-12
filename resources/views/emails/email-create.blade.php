@@ -1,3 +1,4 @@
+@vite(['resources/js/gif.worker.js'])
 <script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
 <div class="modal-header">
     <h5 class="modal-title" id="composemodalTitle">New Email</h5>
@@ -432,36 +433,15 @@
                                                     processData: false,
                                                     contentType: false,
                                                     success: function (data) {
-                                                        const uuid = data.uuid;
-                                                        // Insert the video into the editor or perform further actions
-                                                    },
-                                                    error: function (err) {
-                                                        console.error('Error uploading to S3:', err);
-                                                    }
-                                                })
-                                                // .then(response => response.json())
-                                                // .then(data => {
-                                                //     const uuid = data.uuid; // Get S3 URL after upload
-                                                //     // insertVideoIntoEditor(s3Url, editor);
-                                                // })
-                                                // .catch(err => console.error('Error uploading to S3:', err));
-                                                content = `<video id="recordedVideo" width="480" height="360" src="${videoElementUrl}" controls></video>`;
-                                                contentWithFallback = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" id="recordedVideo" >
-                                                        <tr>
-                                                            <td>
-                                                                <video controls width="320" height="240" poster="${imgElementUrl}">
-                                                                    <source src="${videoElementUrl}" type="video/mp4">
-                                                                    <!-- Fallback content for clients that don't support the video tag -->
-                                                                    <a href="https://link-to-video.com">
-                                                                        <img src="${imgElementUrl}" alt="Watch the video" width="320" height="240" style="border: 0; display: block;" />
-                                                                    </a>
-                                                                </video>
-                                                            </td>
-                                                        </tr>
-                                                    </table>`;
-    
-                                                editor.insertContent(contentWithFallback);
-                                                api.close();
+                                                        contentWithFallback = data;
+            
+                                                        editor.insertContent(contentWithFallback);
+                                                        api.close();
+                                                            },
+                                                            error: function (err) {
+                                                                console.error('Error uploading to S3:', err);
+                                                            }
+                                                        })                                                
                                             }
                                         }
                                     }
