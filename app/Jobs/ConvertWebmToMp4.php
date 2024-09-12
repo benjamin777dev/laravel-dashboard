@@ -20,7 +20,7 @@ class ConvertWebmToMp4 implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $inputData;
+    protected $uuid;
     protected $filePath;
 
     public function __construct($uuid, $filePath)
