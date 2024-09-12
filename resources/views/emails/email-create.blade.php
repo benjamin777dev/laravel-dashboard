@@ -1,4 +1,3 @@
-@vite(['resources/js/gif.worker.js'])
 <script src="{{ URL::asset('build/libs/tinymce/tinymce.min.js') }}"></script>
 <div class="modal-header">
     <h5 class="modal-title" id="composemodalTitle">New Email</h5>
