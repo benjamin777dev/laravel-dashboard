@@ -131,6 +131,9 @@
                 toggleCustomDateRange();
             });
 
+            //set preset to the -- preset -- value
+            $("#preset option[value='-- Preset --']").prop('selected', true);
+
             $("#preset").on('change', function(){
                 if ($("#preset").val() == '6+ in Last 12 Months') {
                     $("#min_transactions").attr("min", "6");
@@ -202,18 +205,22 @@
                 }
             });
 
-            // Handle form submission
-            $('#search-form').on('submit', function(e) {
-                e.preventDefault();
-
-                // Reload DataTable with new parameters
+            function showTable() {
                 table.ajax.reload();
-
                 // Show the table
                 $('#agents-table').show();
 
                 // Show the export button
                 $('#export-csv').show();
+            }
+
+            showTable();
+
+            // Handle form submission
+            $('#search-form').on('submit', function(e) {
+                e.preventDefault();
+
+                showTable();
             });
 
             // Handle Export to CSV
