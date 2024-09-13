@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController; // Make sure to import the ResetPasswordController if you're using it
+use App\Http\Controllers\AgentTransactionReportController;
+use App\Http\Controllers\CallController;
 use App\Http\Controllers\ClosingInformationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerController; // Ensure you import the CustomerController
@@ -14,18 +16,19 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NonTmController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportStageHistoryController;
 use App\Http\Controllers\StrategyGroupController;
 use App\Http\Controllers\SubmittalController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamIndividualController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UpdateFromZohoCRMController;
-use App\Http\Controllers\ZohoController;
-use App\Http\Controllers\CallController;
 use App\Http\Controllers\VideoController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ZohoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -238,6 +241,14 @@ Route::post('/reports/productionProjections/render-deal-cards', [ReportControlle
 // Language Translation
 Route::get('index/{locale}', [HomeController::class, 'lang']);
 
+Route::get('/deal-stage-journey', [ReportStageHistoryController::class, 'showJourneyMap'])->name('deal.journey.map');
+Route::get('/dealstages/journeymap', [ReportStageHistoryController::class, 'showJourneyMap'])->name('dealstages.journeymap');
+
+// Agent Reports
+Route::get('/reports/leads/agent-transactions', [AgentTransactionReportController::class, 'index'])->name('agent.transactions.index');
+Route::post('/reports/leads/agent-transactions', [AgentTransactionReportController::class, 'search'])->name('agent.transactions.search');
+Route::get('/reports/leads/agent-transactions/export', [AgentTransactionReportController::class, 'export'])->name('agent.transactions.export');
+Route::get('/reports/leads/agent-transactions/data', [AgentTransactionReportController::class, 'data'])->name('agent.transactions.data');
 
 // Call Record Route
 Route::middleware('auth')->group(function () {
