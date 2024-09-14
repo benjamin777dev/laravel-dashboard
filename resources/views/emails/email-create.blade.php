@@ -340,6 +340,7 @@
                                     onSubmit: function(api) {
                                         let recordData = new FormData();
 
+                                        $('.tox-button[title="Insert"]')[0].disabled = true;
                                         const recordedVideoElement = document.getElementById('recordedVideo');
                                         const videoElementUrl = recordedVideoElement.src;
                                         let imgElementUrl = document.getElementById('imagePreview').src;
@@ -357,7 +358,8 @@
                                                         submitFunc();
                                                     })
                                                     .catch(error => {
-                                                        console.error("Error converting video to GIF:", error);
+                                                        showToastError("Image/GIF generate failed");
+                                                        $('.tox-button[title="Insert"]')[0].disabled = false;
                                                         api.close();
                                                     })
                                                 } else {
@@ -365,7 +367,8 @@
                                                 }
                                             })
                                             .catch(err => {
-                                                console.error("Error capturing thumbnail:", err);
+                                                showToastError("Image/GIF generate failed");
+                                                $('.tox-button[title="Insert"]')[0].disabled = false;
                                                 api.close();
                                             })
                                         } else {
@@ -433,6 +436,7 @@
                                                         contentWithFallback = data;
             
                                                         editor.insertContent(contentWithFallback);
+                                                        $('.tox-button[title="Insert"]')[0].disabled = false;
                                                         api.close();
                                                             },
                                                             error: function (err) {
@@ -805,14 +809,6 @@
             } else {
                 return null;
             }
-        });
-    }
-
-    window.generateUUID = function() {
-        return 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
         });
     }
 
