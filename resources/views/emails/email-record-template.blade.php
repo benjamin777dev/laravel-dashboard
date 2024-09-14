@@ -345,7 +345,7 @@
                                                                 style="text-rendering: optimizeLegibility;font-size:13px;letter-spacing:normal;font-family:Arial, Helvetica, sans-serif;min-width:100%;max-width:100%;table-layout:fixed;border:0px;border-collapse:collapse;background-color:rgba(0, 0, 0, 0);"
                                                                 width="100%">
                                                                 <tbody>
-                                                                    <tr>
+                                                                    <tr class="record-video-existence-check">
                                                                         <td
                                                                             style="word-wrap:break-word;word-break:break-word;border:0px;padding:6px 16px;border-top:0px none rgb(17, 17, 17);border-bottom:0px none rgb(17, 17, 17) ;font-family:Arial, Helvetica, sans-serif">
                                                                             <p style="padding: 0px; margin: 0px">

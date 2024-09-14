@@ -840,6 +840,14 @@
             "content": content,
             "isEmailSent":isEmailSent
         }
+
+        let contentElement = document.createElement('div');
+        contentElement.innerHTML = content;
+        if(contentElement.querySelector('.record-video-existence-check')) {
+            formData.emailType = "video";
+        } else {
+            formData.emailType = "regular";
+        }
         if(emailType=="multiple"){
              $.ajax({
                 url: "{{ route('send.multiple.email') }}",

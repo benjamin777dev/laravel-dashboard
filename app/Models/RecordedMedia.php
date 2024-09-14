@@ -10,7 +10,6 @@ class RecordedMedia extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'uuid',
         'file_name',
         's3path'
