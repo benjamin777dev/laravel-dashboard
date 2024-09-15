@@ -56,8 +56,8 @@ class ConvertWebmToMp4 implements ShouldQueue
             $s3MP4Path = $unID . '/video.mp4';
             $s3WebmPath = $unID . '/video.webm';
 
-            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
-            $webUploaded = Storage::disk('s3')->put($s3WebmPath, file_get_contents(storage_path($originalPath)), 'public');
+            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, file_get_contents(storage_path('app/' . $outputVideoPath)));
+            $webUploaded = Storage::disk('s3')->put($s3WebmPath, file_get_contents(storage_path($originalPath)));
 
             Storage::delete($this->filePath);
             Storage::delete($outputVideoPath);

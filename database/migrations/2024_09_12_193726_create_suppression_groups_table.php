@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('video_emails')->default(false);
             $table->timestamps();
 
-            $table->foreign("user_id")->references("id")->on("users")->onDelete('cascade');
+            $table->foreign("user_id")->references("id")->on("contacts")->onDelete('cascade');
         });
     }
 

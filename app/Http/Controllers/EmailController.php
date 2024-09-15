@@ -373,6 +373,7 @@ class EmailController extends Controller
                         throw new \Exception("Email is not available for {$contact->name}");
                     }
                     return [
+                        'id' => $contact->id,
                         'user_name' => $contact->name,
                         'email' => $contact->email,
                     ];
@@ -702,8 +703,8 @@ class EmailController extends Controller
             $suppression->user_id = $user->id;
         }
 
-        // Set User to subscribe the db
         $result = $this->sendgrid->addUserToSuppressionGroup($groupId, $user->email);
+        $this->videoEmailSupGroupId = $this->sendgrid->getIdSuppGroup("Video Email Suppression");
         if($result) {
             if ($groupId == $this->videoEmailSupGroupId) {
                 $suppression['video_emails'] = true;

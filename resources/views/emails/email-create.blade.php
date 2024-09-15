@@ -354,6 +354,7 @@
                                                 if(gifElementUrl.slice(-1) == "#") {
                                                     convertVideoToGif(videoElementUrl)
                                                     .then(gifURL => {
+                                                        gifElementUrl = gifURL;
                                                         gifElement.src = gifURL;
                                                         gifImage.style.display = 'block';
                                                         document.querySelector('.upload-placeholderGIF').style.display = "none";
@@ -377,6 +378,7 @@
                                             if(gifElementUrl.slice(-1) == "#") {
                                                 convertVideoToGif(videoElementUrl)
                                                 .then(gifURL => {
+                                                    gifElementUrl = gifURL;
                                                     gifElement.src = gifURL;
                                                     submitFunc();
                                                 })

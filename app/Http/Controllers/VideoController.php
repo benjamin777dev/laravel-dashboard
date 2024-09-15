@@ -21,7 +21,7 @@ class VideoController extends Controller
             if ($request->hasFile('gif') && $request->hasFile('img') && $request->hasFile('video')) {
                 $gif = $request->file('gif');
                 $path = $uuid . "/animation.gif";
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif), 'public');
+                $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif));
                 if (!$uploaded)  {
                     return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
                 }
@@ -33,7 +33,7 @@ class VideoController extends Controller
 
                 $img = $request->file('img');
                 $path = $uuid . "/image.png";
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($img), 'public');
+                $uploaded = Storage::disk('s3')->put($path, file_get_contents($img));
                 if (!$uploaded) {
                     return response()->json(['message' => 'Failed to upload the image file.'], 500);
                 }

@@ -142,12 +142,12 @@ class SendGridService
                 $personalizations[] = $personalization;
             }
 
-            $inputEmail['personalizations'] = $personalizations[0];
-            $inputEmail['content'][0]['value'] .= '<p>Click <a href=\"-unsubscribe_url-\">here</a> to unsubscribe.</p>';
+            $inputEmail['personalizations'] = array_merge(...$personalizations);
+            $inputEmail['content'][0]['value'] .= '<p>Click <a href="-unsubscribe_url-">here</a> to unsubscribe.</p>';
             
             $inputEmailJSON = json_encode($inputEmail);
-
             Log::info("Input Sendgrid Email" . $inputEmailJSON);
+
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->sendgrid_api_key,
                 'Content-Type' => 'application/json',
@@ -172,7 +172,6 @@ class SendGridService
             try {
                 $response = $this->sendgrid->client->asm()->suppressions()->get();
 
-                // Add suppression Group
                 $suppressions = json_decode($response->body(), true);
     
                 foreach ($suppressions as $suppressedEmail) {
