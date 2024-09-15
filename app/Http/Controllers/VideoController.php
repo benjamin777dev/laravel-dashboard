@@ -23,7 +23,7 @@ class VideoController extends Controller
                 $path = $uuid . "/animation.gif";
                 $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif), 'public');
                 if (!$uploaded)  {
-                    return response()->json(['message' => 'Failed to upload video'], 500);
+                    return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
                 }
                 $dbrecord = new RecordedMedia();
                 $dbrecord['uuid'] = $uuid;
@@ -35,7 +35,7 @@ class VideoController extends Controller
                 $path = $uuid . "/image.png";
                 $uploaded = Storage::disk('s3')->put($path, file_get_contents($img), 'public');
                 if (!$uploaded) {
-                    return response()->json(['message' => 'Failed to upload video'], 500);
+                    return response()->json(['message' => 'Failed to upload the image file.'], 500);
                 }
                 $dbrecord = new RecordedMedia();
                 $dbrecord['uuid'] = $uuid;
@@ -43,8 +43,12 @@ class VideoController extends Controller
                 $dbrecord['file_name'] = "image.png";
                 $dbrecord->save();
 
-                $videoData = $request->file('video');
-                ConvertWebmToMp4::dispatch($uuid, $videoData);
+                $video = $request->file('video');
+                $filePath = Storage::put('recordData/' . $uuid, contents: $video);
+                if (!$filePath) {
+                    return response()->json(['message' => 'Failed to upload video'], 500);
+                }
+                ConvertWebmToMp4::dispatch($uuid, $filePath);
                 return view('emails.email-record-template', compact('uuid',))->render();
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
