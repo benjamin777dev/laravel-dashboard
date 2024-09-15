@@ -3659,13 +3659,6 @@ form#selectGroupForm {
     max-height: 75vh;
     overflow-y: auto;
 }
-#recordVideoInterface {
-    border: 1px solid #bbb;
-    border-radius:5px
-}
-#recordVideoModalContent {
-    height: 360px;
-}
 #recordVideoModalContent button {
     font-size: 60px;
 }

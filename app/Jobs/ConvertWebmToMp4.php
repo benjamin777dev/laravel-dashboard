@@ -21,12 +21,12 @@ class ConvertWebmToMp4 implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $uuid;
-    protected $filePath;
+    protected $videoData;
 
-    public function __construct($uuid, $filePath)
+    public function __construct($uuid, $videoData)
     {
         $this->uuid = $uuid;
-        $this->filePath = $filePath;
+        $this->videoData = $videoData;
     }
 
     /**
@@ -36,8 +36,9 @@ class ConvertWebmToMp4 implements ShouldQueue
     {
         try {
             $unID = $this->uuid;
+            $filePath = Storage::put('recordData/' . $unID, contents: $this->videoData);
             $outputVideoPath = 'convertedRecordedVideos/' . $unID . '.mp4';
-            $originalPath = 'app/' . $this->filePath;
+            $originalPath = 'app/' . $filePath;
             $storagePath = storage_path($originalPath);
             if (!file_exists($storagePath)) {
                 Log::info("File does not exist at path: " . $storagePath);
@@ -50,7 +51,7 @@ class ConvertWebmToMp4 implements ShouldQueue
             
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($storagePath);
-            $format = new X264('libmp3lame', 'libx264');
+            $format = new X264('aac', 'libx264');
             $video->save($format, storage_path('app/' . $outputVideoPath));
 
             $s3MP4Path = $unID . '/video.mp4';
@@ -59,7 +60,7 @@ class ConvertWebmToMp4 implements ShouldQueue
             $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, file_get_contents(storage_path('app/' . $outputVideoPath)), 'public');
             $webUploaded = Storage::disk('s3')->put($s3WebmPath, file_get_contents(storage_path($originalPath)), 'public');
 
-            Storage::delete($this->filePath);
+            Storage::delete($filePath);
             Storage::delete($outputVideoPath);
             
             if ($mp4Uploaded * $webUploaded) {

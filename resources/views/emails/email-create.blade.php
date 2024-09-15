@@ -344,7 +344,8 @@
                                         const recordedVideoElement = document.getElementById('recordedVideo');
                                         const videoElementUrl = recordedVideoElement.src;
                                         let imgElementUrl = document.getElementById('imagePreview').src;
-                                        let gifElementUrl = document.getElementById('imagePreviewGIF').src;
+                                        let gifElement = document.getElementById('imagePreviewGIF');
+                                        let gifElementUrl = gifElement.src;
 
                                         if(imgElementUrl.slice(-1) == "#") {
                                             captureThumbnail(recordedVideoElement, 1)
@@ -353,12 +354,13 @@
                                                 if(gifElementUrl.slice(-1) == "#") {
                                                     convertVideoToGif(videoElementUrl)
                                                     .then(gifURL => {
-                                                        gifElementUrl = gifURL;
-                                                        document.getElementById('imagePreviewGIF').src = gifURL;
+                                                        gifElement.src = gifURL;
+                                                        gifImage.style.display = 'block';
+                                                        document.querySelector('.upload-placeholderGIF').style.display = "none";
                                                         submitFunc();
                                                     })
                                                     .catch(error => {
-                                                        showToastError("Image/GIF generate failed");
+                                                        showToastError("Failed to generate Img/GIF");
                                                         $('.tox-button[title="Insert"]')[0].disabled = false;
                                                         api.close();
                                                     })
@@ -367,7 +369,7 @@
                                                 }
                                             })
                                             .catch(err => {
-                                                showToastError("Image/GIF generate failed");
+                                                showToastError("Failed to generate Img/GIF");
                                                 $('.tox-button[title="Insert"]')[0].disabled = false;
                                                 api.close();
                                             })
@@ -375,12 +377,11 @@
                                             if(gifElementUrl.slice(-1) == "#") {
                                                 convertVideoToGif(videoElementUrl)
                                                 .then(gifURL => {
-                                                    gifElementUrl = gifURL;
-                                                    document.getElementById('imagePreviewGIF').src = gifURL;
+                                                    gifElement.src = gifURL;
                                                     submitFunc();
                                                 })
                                                 .catch(error => {
-                                                    console.error("Error converting video to GIF:", error);
+                                                    showToastError("Failed to generate preview GIF.");
                                                     api.close();
                                                 })
                                             } else {
@@ -396,7 +397,8 @@
                                                     recordData.append('video', videoBlob, 'video.webm');
                                                     processGIF();
                                                 } else {
-                                                    // Error Alert
+                                                    showToastError("Failed to fetch video.");
+                                                    
                                                 }
                                             });
 
@@ -406,7 +408,7 @@
                                                         recordData.append('gif', gifBlob, 'animation.gif');
                                                         processImage();
                                                     } else {
-                                                    // Error Alert
+                                                        showToastError("Failed to generate preview GIF.");
                                                     }
                                                 });
                                             }
@@ -417,12 +419,11 @@
                                                         recordData.append('img', imageBlob, 'image.png');
                                                         sendData();
                                                     } else {
-                                                        // Error Alert
+                                                        showToastError("Failed to generate preview image.");
                                                     }
                                                 });
                                             }
                                             function sendData() {
-                                                // Send files to server. (and wait response)
                                                 $.ajax({
                                                     url: route('video.upload'),
                                                     method: "POST",
@@ -434,14 +435,17 @@
                                                     contentType: false,
                                                     success: function (data) {
                                                         contentWithFallback = data;
-            
-                                                        editor.insertContent(contentWithFallback);
-                                                        $('.tox-button[title="Insert"]')[0].disabled = false;
-                                                        api.close();
-                                                            },
-                                                            error: function (err) {
-                                                                console.error('Error uploading to S3:', err);
-                                                            }
+                                                        if(data.message) {
+                                                            showToastError(data.message);
+                                                        } else {
+                                                            editor.insertContent(contentWithFallback);
+                                                            $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                            api.close();
+                                                        }
+                                                        },
+                                                        error: function (err) {
+                                                            showToastError("Failed to upload files to S3.");
+                                                        }
                                                         })                                                
                                             }
                                         }
@@ -456,6 +460,8 @@
                                 const snapshotImage = document.getElementById('imagePreview');
                                 const gifImage = document.getElementById('imagePreviewGIF');
                                 const cropButton = document.getElementById('cropButton');
+                                const startButton = document.getElementById('startRecordButton');
+                                const stopButton = document.getElementById('stopRecordButton');
 
                                 function startVideoStream(deviceId) {
                                     if (currentStream) {
@@ -471,7 +477,7 @@
                                         videoElement.srcObject = stream;
                                     })
                                     .catch((error) => {
-                                        console.error("Error accessing media devices.", error);
+                                        showToast("Failed to access media devices. Please allow the permission.");
                                     });
                                 }
 
@@ -495,7 +501,7 @@
                                     startVideoStream(selectedDeviceId);
                                 });
 
-                                document.getElementById('startRecordButton').addEventListener('click', async () => {
+                                startButton.addEventListener('click', async () => {
                                     videoElement.style.display = "block";
                                     recordedVideoElement.style.display = "none";
                                     recordedBlobs = [];
@@ -512,25 +518,24 @@
                                         recordedVideoElement.src = videoURL;
                                     }
                                     mediaRecorder.start();
-                                    document.getElementById('stopRecordButton').style.display = "block";
-                                    document.getElementById('startRecordButton').style.display = "none";
-                                    document.getElementById('cropButton').disabled = true;
+                                    stopButton.style.display = "block";
+                                    startButton.style.display = "none";
+                                    cropButton.disabled = true;
                                 });
 
-                                document.getElementById('stopRecordButton').addEventListener('click', () => {
+                                stopButton.addEventListener('click', () => {
                                     mediaRecorder.stop();
                                     videoElement.style.display = "none";
                                     recordedVideoElement.style.display = "block";
-                                    document.getElementById('stopRecordButton').style.display = "none";
-                                    document.getElementById('startRecordButton').style.display = "block";
-                                    document.getElementById('cropButton').disabled = false;
+                                    stopButton.style.display = "none";
+                                    startButton.style.display = "block";
+                                    cropButton.disabled = false;
                                 });
                                 
-                                document.getElementById("cropButton").addEventListener('click', () => {
+                                cropButton.addEventListener('click', () => {
                                     captureThumbnail(recordedVideoElement, 1);
                                     convertVideoToGif(recordedVideoElement.src)
-                                    .then(function(gifBlob) {
-                                        const gifUrl = URL.createObjectURL(gifBlob);
+                                    .then(function(gifUrl) {
                                         gifImage.src = gifUrl;
                                         gifImage.style.display = 'block';
                                         document.querySelector('.upload-placeholderGIF').style.display = "none";
@@ -541,7 +546,7 @@
 
                                 document.getElementById('formFile').addEventListener('change', function(event) {
                                     const file = event.target.files[0];
-                                    const preview = document.getElementById('imagePreview');
+                                    const preview = snapshotImage;
                                     const placeholder = document.querySelector('.upload-placeholder');
 
                                     if (file) {
@@ -695,7 +700,7 @@
                     quality: 20,
                     width: tempVideo.videoWidth,
                     height: tempVideo.videoHeight,
-                    workerScript: '/build/gif.worker.js',
+                    workerScript: '/build/js/gif.worker.js',
                     useWebWorkers: false,
                 });
 
