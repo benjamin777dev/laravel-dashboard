@@ -313,8 +313,7 @@
                                                                             style="word-wrap:break-word;word-break:break-word;border:0px;padding:6px 16px;border-top:0px none rgb(17, 17, 17);border-bottom:0px none rgb(17, 17, 17) ;font-family:Arial, Helvetica, sans-serif">
                                                                             <div style="padding: 0px; margin: 0px">
                                                                                 <font color="#434343" size="4"><span
-                                                                                        style="">Hi
-                                                                                        Contacts.First_Name</span>
+                                                                                        style="">Hi</span>
                                                                                     <font></font>
                                                                                 </font>
                                                                             </div>
@@ -352,18 +351,18 @@
                                                                                 <br />
                                                                             </p>
                                                                             <p style="padding: 0px; margin: 0px"><a
-                                                                                    href="/shared/{{ $uuid }}/video.mp4"
+                                                                                    href="{{ config('app.url') . '/shared/' . $uuid . '/video.mp4' }}"
                                                                                     style="padding: 0px; margin: 0px; text-decoration: none"></a><span
                                                                                     style="padding: 0px; margin: 0px"></span><a
-                                                                                    href="/shared/{{ $uuid }}/video.mp4"
+                                                                                    href="{{ config('app.url') . '/shared/' . $uuid . '/video.mp4' }}"
                                                                                     style="padding: 0px; margin: 0px; text-decoration: none"></a>
-                                                                            </p><a href="/shared/{{ $uuid }}/video.mp4"
+                                                                            </p><a href="{{ config('app.url') . '/shared/' . $uuid . '/video.mp4' }}"
                                                                                 style="max-width: 100%; vertical-align: top; text-decoration: none"><img
-                                                                                    src="/shared/{{ $uuid }}/animation.gif"
+                                                                                    src="{{ config('app.url') . '/shared/' . $uuid . '/animation.gif' }}"
                                                                                     style="max-width: 100%; padding: 0px; margin: 0px; resize: none; position: static; height: 303.75px; width: 540px; border: 0px solid black; vertical-align: middle"
                                                                                     class="resizeborderInsert" /></a>
                                                                             <p style="padding: 0px; margin: 0px">
-                                                                            </p><a href="/shared/{{ $uuid }}/video.mp4"
+                                                                            </p><a href="{{ config('app.url') . '/shared/' . $uuid . '/video.mp4' }}"
                                                                                 style="max-width: 100%; vertical-align: top; text-decoration: none">
                                                                                 <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se"
                                                                                     style="display: none"></div>
@@ -443,10 +442,6 @@
                                                                             </div>
                                                                             <div style="padding: 0px; margin: 0px">
                                                                                 <font size="4"><br /></font>
-                                                                            </div>
-                                                                            <div style="padding: 0px; margin: 0px">
-                                                                                <span
-                                                                                    style="font-size: large">!userSignature</span><br />
                                                                             </div>
                                                                             <p style="padding: 0px; margin: 0px">
                                                                                 <font size="4"
