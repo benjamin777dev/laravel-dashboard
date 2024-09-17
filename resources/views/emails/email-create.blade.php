@@ -484,18 +484,25 @@
                                 }
 
                                 const videoInputSource = document.getElementById("videoInputSource");
-                                navigator.mediaDevices.enumerateDevices()
-                                .then((devices) => {
-                                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                                    videoDevices.forEach((device, index) => {
-                                        const option = document.createElement('option');
-                                        option.value = device.deviceId;
-                                        option.text = device.label || `Camera ${index + 1}`;
-                                        videoInputSource.appendChild(option);
+
+                                navigator.mediaDevices.getUserMedia({video: true})
+                                .then(() => {
+                                    navigator.mediaDevices.enumerateDevices()
+                                    .then((devices) => {
+                                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                                        videoDevices.forEach((device, index) => {
+                                            const option = document.createElement('option');
+                                            option.value = device.deviceId;
+                                            option.text = device.label || `Camera ${index + 1}`;
+                                            videoInputSource.appendChild(option);
+                                        });
+                                        if (videoDevices.length > 0) {
+                                            startVideoStream(videoDevices[0].deviceId);
+                                        }
                                     });
-                                    if (videoDevices.length > 0) {
-                                        startVideoStream(videoDevices[0].deviceId);
-                                    }
+                                })
+                                .catch((error) => {
+                                    showToast("Permission denied or error accessing media devices.");
                                 });
 
                                 videoInputSource.addEventListener('change', () => {
