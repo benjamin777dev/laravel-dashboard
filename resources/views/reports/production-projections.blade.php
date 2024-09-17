@@ -23,6 +23,20 @@
             overflow-y: auto;
             padding: 20px;
         }
+
+        .soldbg {
+            background-color: #222 !important;
+        }
+        .ucbg {
+            background-color: #444 !important;
+        }
+        .capbg {
+            background-color: #222 !important
+        }
+
+        .border-left {
+            border-left: 1px solid #444 !important;
+        }
     </style>
 @endsection
 
@@ -67,7 +81,7 @@
                     </div>
                 </div>
             </div>
-            
+
         @endif
         <!-- YTD Totals Summary -->
         <div class="row dashboard-cards-resp">
@@ -115,18 +129,21 @@
                             <thead>
                                 <tr>
                                     <th rowspan="2">Agent Name</th>
-                                    <th rowspan="2">Stage</th>
-                                    <th colspan="3" style="background-color: rgb(2, 2, 2);">Sold</th>
-                                    <th colspan="4" style="background-color: rgb(33, 33, 33);">Under Contract</th>
+                                    <th colspan="4" class="soldbg">Sold</th>
+                                    <th colspan="4" class="ucbg">Under Contract</th>
+                                    <th colspan="2" class="capbg">Caps Remaining</th>
                                 </tr>
                                 <tr>
-                                    <th>Agent Check Amount</th>
-                                    <th>CHR Split</th>
-                                    <th>Total Commission</th>
-                                    <th style="border-left: 3px solid #000 !important;">Stage</th>
-                                    <th>Agent Earnings</th>
-                                    <th>CHR Split</th>
-                                    <th>Total Commission</th>
+                                    <th class="soldbg">Stage</th>
+                                    <th class="soldbg">Agent Check Amount</th>
+                                    <th class="soldbg">CHR Split</th>
+                                    <th class="soldbg">Total Commission</th>
+                                    <th class="ucbg">Stage</th>
+                                    <th class="ucbg">Agent Earnings</th>
+                                    <th class="ucbg">CHR Split</th>
+                                    <th class="ucbg">Total Commission</th>
+                                    <th class="capbg">Initial</th>
+                                    <th class="capbg">Residual</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -152,7 +169,7 @@
                                     <td>${{ number_format($stages['Sold']['agent_check_amount'] ?? 0, 2) }}</td>
                                     <td>${{ number_format($stages['Sold']['chr_split'] ?? 0, 2) }}</td>
                                     <td>${{ number_format($stages['Sold']['total_commission'] ?? 0, 2) }}</td>
-                                    <td data-sort="{{ $stages['Under Contract']['count'] ?? 0 }}">
+                                    <td class="border-left" data-sort="{{ $stages['Under Contract']['count'] ?? 0 }}">
                                         {{ $stages['Under Contract']['count'] ?? 0 }}
                                         @if (isset($projectionData['status']['completed']) && $projectionData['status']['completed'] == true && isset($stages['settings']['projection_uc']))
                                             <small class="text-primary">(+{{ $stages['settings']['projection_uc']['count'] }})</small>
@@ -161,18 +178,24 @@
                                     <td>${{ number_format($stages['Under Contract']['projected_agent_earnings'] ?? 0, 2) }}</td>
                                     <td>${{ number_format($stages['Under Contract']['projected_chr_split'] ?? 0, 2) }}</td>
                                     <td>${{ number_format($stages['Under Contract']['total_commission'] ?? 0, 2) }}</td>
+                                    <td class="border-left">${{ number_format($stages['running']['initial_cap_remaining'] ?? 0, 2) }}</td>
+                                    <td>${{ number_format($stages['running']['residual_cap_remaining'] ?? 0, 2) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="2">Total</th>
-                                    <th id="totalSoldCheckAmountFooter"></th>
-                                    <th id="totalSoldCHRSplitFooter"></th>
-                                    <th id="totalSoldCommissionFooter"></th>
-                                    <th id="totalUnderContractEarningsFooter"></th>
-                                    <th id="totalUnderContractCHRSplitFooter"></th>
-                                    <th id="totalUnderContractCommissionFooter"></th>
+                                <th>Total</th>
+                                <th></th> <!-- For Agent Check Amount (Sold) Total -->
+                                <th></th> <!-- For CHR Split (Sold) Total -->
+                                <th></th> <!-- For Total Commission (Sold) Total -->
+                                <th></th> <!-- For Stage (Under Contract) -->
+                                <th></th> <!-- For Agent Earnings (Under Contract) Total -->
+                                <th></th> <!-- For CHR Split (Under Contract) Total -->
+                                <th></th> <!-- For Total Commission (Under Contract) Total -->
+                                <th></th> <!-- For Initial Cap Remaining Total -->
+                                <th></th> <!-- For Residual Cap Remaining Total -->
+                                <th></th> <!-- For Residual Cap Remaining Total -->
                                 </tr>
                             </tfoot>
                         </table>
@@ -215,6 +238,10 @@
     <script>
         var reportData = @json($reportData);
 
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
         $(document).ready(function() {
             var table = $('#productionTable').DataTable({
                 "responsive": true,
@@ -222,7 +249,132 @@
                 "ordering": true,
                 "info": true,
                 "searching": true,
-                "dom": '<"top"f>rt<"bottom"lip><"clear">'
+                "dom": '<"top"f>rt<"bottom"lip><"clear">',
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api();
+
+                    // Function to remove formatting and convert to float
+                    var intVal = function ( i ) {
+                        if (typeof i === 'string') {
+                            // Remove any HTML tags
+                            var textContent = i.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                            // Remove $ and commas
+                            var numericString = textContent.replace(/[\$,]/g, '');
+                            return parseFloat(numericString) || 0;
+                        } else if (typeof i === 'number') {
+                            return i;
+                        } else {
+                            return 0;
+                        }
+                    };
+
+                    // Function to extract counts from cell content
+                    function extractCountsFromCell(cellContent) {
+                        // Remove any HTML tags
+                        var textContent = cellContent.replace(/<\/?[^>]+(>|$)/g, "").trim();
+                        // Extract the main number (first number in the string)
+                        var mainNumberMatch = textContent.match(/^(\d+)/);
+                        var mainNumber = mainNumberMatch ? parseInt(mainNumberMatch[1]) : 0;
+
+                        // Extract the projection number from the small tag
+                        var projectionMatch = cellContent.match(/\(\+(\d+)\)/);
+                        var projectionNumber = projectionMatch ? parseInt(projectionMatch[1]) : 0;
+
+                        return {
+                            main: mainNumber,
+                            projection: projectionNumber
+                        };
+                    }
+
+                    // Total Sold Transactions (Column 1)
+                    var totalSoldTransactions = 0;
+                    var totalSoldProjections = 0;
+
+                    api.column(1).nodes().each(function(cell, i) {
+                        var cellContent = $(cell).html();
+                        var counts = extractCountsFromCell(cellContent);
+                        totalSoldTransactions += counts.main;
+                        totalSoldProjections += counts.projection;
+                    });
+
+                    // Update the footer cell for Sold Transactions
+                    var soldTotalText = totalSoldTransactions;
+                    if (totalSoldProjections > 0) {
+                        soldTotalText += ' <small class="text-warning">(+' + totalSoldProjections + ')</small>';
+                    }
+                    $(api.column(1).footer()).html(soldTotalText);
+
+                    // Total Under Contract Transactions (Column 5)
+                    var totalUnderContractTransactions = 0;
+                    var totalUnderContractProjections = 0;
+
+                    api.column(5).nodes().each(function(cell, i) {
+                        var cellContent = $(cell).html();
+                        var counts = extractCountsFromCell(cellContent);
+                        totalUnderContractTransactions += counts.main;
+                        totalUnderContractProjections += counts.projection;
+                    });
+
+                    // Update the footer cell for Under Contract Transactions
+                    var ucTotalText = totalUnderContractTransactions;
+                    if (totalUnderContractProjections > 0) {
+                        ucTotalText += ' <small class="text-warning">(+' + totalUnderContractProjections + ')</small>';
+                    }
+                    $(api.column(5).footer()).html(ucTotalText);
+
+                    // Total Agent Check Amount (Sold) Column 2
+                    var totalSoldCheckAmount = api.column(2).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total CHR Split (Sold) Column 3
+                    var totalSoldCHRSplit = api.column(3).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total Total Commission (Sold) Column 4
+                    var totalSoldCommission = api.column(4).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total Agent Earnings (Under Contract) Column 6
+                    var totalUnderContractEarnings = api.column(6).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total CHR Split (Under Contract) Column 7
+                    var totalUnderContractCHRSplit = api.column(7).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total Total Commission (Under Contract) Column 8
+                    var totalUnderContractCommission = api.column(8).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total Initial Cap Remaining (Column 9)
+                    var totalInitialCapRemaining = api.column(9).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Total Residual Cap Remaining (Column 10)
+                    var totalResidualCapRemaining = api.column(10).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                    // Update footer cells for monetary values
+                    $(api.column(2).footer()).html('$' + numberWithCommas(totalSoldCheckAmount.toFixed(2)));
+                    $(api.column(3).footer()).html('$' + numberWithCommas(totalSoldCHRSplit.toFixed(2)));
+                    $(api.column(4).footer()).html('$' + numberWithCommas(totalSoldCommission.toFixed(2)));
+
+                    $(api.column(6).footer()).html('$' + numberWithCommas(totalUnderContractEarnings.toFixed(2)));
+                    $(api.column(7).footer()).html('$' + numberWithCommas(totalUnderContractCHRSplit.toFixed(2)));
+                    $(api.column(8).footer()).html('$' + numberWithCommas(totalUnderContractCommission.toFixed(2)));
+
+                    $(api.column(9).footer()).html('$' + numberWithCommas(totalInitialCapRemaining.toFixed(2)));
+                    $(api.column(10).footer()).html('$' + numberWithCommas(totalResidualCapRemaining.toFixed(2)));
+                }
+
             });
 
             // Prepare data for Chart.js

@@ -49,7 +49,7 @@ class ZohoCRM
             'client_id' => $this->client_id,
             'redirect_uri' => $this->redirect_uri,
             'response_type' => 'code',
-            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL,ZohoCRM.mass_delete.custom.DELETE,ZohoCRM.send_mail.all.CREATE,ZohoCRM.modules.emails.ALL',
+            'scope' => 'ZohoProjects.projects.ALL,ZohoCRM.composite_requests.CUSTOM,ZohoCRM.modules.ALL,ZohoCRM.bulk.backup.ALL,ZohoCRM.users.ALL,ZohoCRM.settings.ALL,ZohoCRM.org.ALL,ZohoCRM.bulk.READ,ZohoCRM.notifications.READ,ZohoCRM.notifications.CREATE,ZohoCRM.notifications.UPDATE,ZohoCRM.notifications.DELETE,ZohoCRM.modules.notes.ALL,ZohoCRM.modules.Leads.ALL,ZohoCRM.coql.READ,ZohoFiles.files.ALL,ZohoCRM.bulk.ALL,ZohoCRM.mass_delete.custom.DELETE,ZohoCRM.send_mail.all.CREATE,ZohoCRM.modules.emails.ALL,ZohoAnalytics.data.READ',
             'prompt' => 'consent',
             'access_type' => 'offline',
         ]);
