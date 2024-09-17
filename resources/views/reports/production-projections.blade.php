@@ -130,7 +130,7 @@
                                 <tr>
                                     <th rowspan="2">Agent Name</th>
                                     <th colspan="4" class="soldbg">Sold</th>
-                                    <th colspan="4" class="ucbg">Under Contract</th>
+                                    <th colspan="3" class="ucbg">Under Contract</th>
                                     <th colspan="2" class="capbg">Caps Remaining</th>
                                 </tr>
                                 <tr>
@@ -141,7 +141,6 @@
                                     <th class="ucbg">Stage</th>
                                     <th class="ucbg">Agent Earnings</th>
                                     <th class="ucbg">CHR Split</th>
-                                    <th class="ucbg">Total Commission</th>
                                     <th class="capbg">Initial</th>
                                     <th class="capbg">Residual</th>
                                 </tr>
@@ -150,15 +149,29 @@
                                 @foreach($reportData as $agentName => $stages)
                                 <tr>
                                     <td>
-                                        {{ $agentName }}
-                                        <br/>{{ $stages['settings']['initial_cap'] ?? 0 }}/{{ $stages['settings']['residual_cap'] ?? 0 }}
-                                        @if (!empty($stages['Under Contract']['info']))
-                                            <br/>
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#infoModal"
-                                                data-agent="{{ $agentName }}">
-                                                Info
-                                            </button>
-                                        @endif
+                                        <div class="d-flex align-items-center">
+                                            @if (!empty($stages['Under Contract']['info']))
+                                                <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#infoModal"
+                                                    data-agent="{{ $agentName }}">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+                                            @endif
+                                            <div>
+                                                <strong>{{ $agentName }}</strong>
+                                                <br/>
+                                                @if (isset($stages['settings']['initial_cap']))
+                                                    <span>Initial Cap: ${{ number_format($stages['settings']['initial_cap'], 2) }}</span>
+                                                @else
+                                                    <span>Initial Cap: $0</span>
+                                                @endif
+                                                <br/>
+                                                @if (isset($stages['settings']['residual_cap']))
+                                                    <span>Residual Cap: ${{ number_format($stages['settings']['residual_cap'], 2) }}</span>
+                                                @else
+                                                    <span>Residual Cap: $0</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                     <td data-sort="{{ $stages['Sold']['count'] ?? 0 }}">
                                         {{ $stages['Sold']['count'] ?? 0 }}
@@ -177,9 +190,53 @@
                                     </td>
                                     <td>${{ number_format($stages['Under Contract']['projected_agent_earnings'] ?? 0, 2) }}</td>
                                     <td>${{ number_format($stages['Under Contract']['projected_chr_split'] ?? 0, 2) }}</td>
-                                    <td>${{ number_format($stages['Under Contract']['total_commission'] ?? 0, 2) }}</td>
-                                    <td class="border-left">${{ number_format($stages['running']['initial_cap_remaining'] ?? 0, 2) }}</td>
-                                    <td>${{ number_format($stages['running']['residual_cap_remaining'] ?? 0, 2) }}</td>
+                                    
+                                    <td class="border-left" data-sort="{{ $stages['running']['initial_cap_remaining'] ?? 0 }}">
+                                        @php
+                                            // Calculate Initial Cap Remaining percentage
+                                            $initialCapRemaining = $stages['running']['initial_cap_remaining'] ?? 0;
+                                            $initialCap = $stages['settings']['initial_cap'] ?? 0;
+                                            $initialCapUsedPercentage = $initialCap > 0 ? (($initialCap - $initialCapRemaining) / $initialCap) * 100 : 100;
+                                        @endphp
+
+                                        <!-- Display cap amount and remaining percentage above the progress bar -->
+                                        <span>${{ number_format($initialCapRemaining, 2) }} ({{ number_format(100 - $initialCapUsedPercentage, 2) }}%)</span>
+                                        <div class="progress mt-2" style="height: 20px;"> <!-- Custom base background color -->
+                                            <div class="progress-bar {{ $initialCapRemaining == 0 ? 'bg-danger' : 'bg-success' }}" 
+                                                role="progressbar" 
+                                                style="width: {{ 100 - $initialCapUsedPercentage }}%;" 
+                                                aria-valuenow="{{ 100 - $initialCapUsedPercentage }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td data-sort="{{ $stages['running']['residual_cap_remaining'] ?? 0 }}">
+                                        @php
+                                            // Calculate Residual Cap Remaining percentage
+                                            $residualCapRemaining = $stages['running']['residual_cap_remaining'] ?? 0;
+                                            $residualCap = $stages['settings']['residual_cap'] ?? 0;
+                                            $residualCapDiff = ($stages['settings']['residual_cap'] ?? 0) - ($stages['settings']['initial_cap'] ?? 0);
+                                            $residualCapUsedPercentage = $residualCap > 0 ? (($residualCapDiff - $residualCapRemaining) / $residualCapDiff) * 100 : 100;
+                                        @endphp
+
+                                        <!-- Display cap amount and remaining percentage above the progress bar -->
+                                        <span>${{ number_format($residualCapRemaining, 2) }} ({{ number_format(100 - $residualCapUsedPercentage, 2) }}%)</span>
+                                        <div class="progress mt-2" style="height: 20px;"> <!-- Custom base background color -->
+                                            <div class="progress-bar {{ $residualCapRemaining == 0 ? 'bg-danger' : 'bg-success' }}" 
+                                                role="progressbar" 
+                                                style="width: {{ 100 - $residualCapUsedPercentage }}%;" 
+                                                aria-valuenow="{{ 100 - $residualCapUsedPercentage }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+
+
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -192,7 +249,6 @@
                                 <th></th> <!-- For Stage (Under Contract) -->
                                 <th></th> <!-- For Agent Earnings (Under Contract) Total -->
                                 <th></th> <!-- For CHR Split (Under Contract) Total -->
-                                <th></th> <!-- For Total Commission (Under Contract) Total -->
                                 <th></th> <!-- For Initial Cap Remaining Total -->
                                 <th></th> <!-- For Residual Cap Remaining Total -->
                                 <th></th> <!-- For Residual Cap Remaining Total -->
@@ -347,18 +403,13 @@
                         return intVal(a) + intVal(b);
                     }, 0);
 
-                    // Total Total Commission (Under Contract) Column 8
-                    var totalUnderContractCommission = api.column(8).data().reduce(function(a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
                     // Total Initial Cap Remaining (Column 9)
-                    var totalInitialCapRemaining = api.column(9).data().reduce(function(a, b) {
+                    var totalInitialCapRemaining = api.column(8).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
                     // Total Residual Cap Remaining (Column 10)
-                    var totalResidualCapRemaining = api.column(10).data().reduce(function(a, b) {
+                    var totalResidualCapRemaining = api.column(9).data().reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
@@ -369,10 +420,9 @@
 
                     $(api.column(6).footer()).html('$' + numberWithCommas(totalUnderContractEarnings.toFixed(2)));
                     $(api.column(7).footer()).html('$' + numberWithCommas(totalUnderContractCHRSplit.toFixed(2)));
-                    $(api.column(8).footer()).html('$' + numberWithCommas(totalUnderContractCommission.toFixed(2)));
 
-                    $(api.column(9).footer()).html('$' + numberWithCommas(totalInitialCapRemaining.toFixed(2)));
-                    $(api.column(10).footer()).html('$' + numberWithCommas(totalResidualCapRemaining.toFixed(2)));
+                    $(api.column(8).footer()).html('$' + numberWithCommas(totalInitialCapRemaining.toFixed(2)));
+                    $(api.column(9).footer()).html('$' + numberWithCommas(totalResidualCapRemaining.toFixed(2)));
                 }
 
             });

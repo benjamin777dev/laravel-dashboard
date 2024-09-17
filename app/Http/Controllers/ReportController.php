@@ -337,7 +337,8 @@ class ReportController extends Controller
             $remainingInitialCap,
             $remainingResidualCap) = $this->calculateSplits($fullAgentEarnings, $initialSplitPercent, $residualSplitPercent, $remainingInitialCap, $remainingResidualCap);
 
-        // Update caps
+
+          // Update caps
         $reportData[$agentName]['running']['initial_cap_remaining'] = max(0, $remainingInitialCap);
         $reportData[$agentName]['running']['residual_cap_remaining'] = max(0, $remainingResidualCap);
 
@@ -535,8 +536,7 @@ class ReportController extends Controller
         return $retObj;
     }
 
-// Helper to calculate historical cadence (sold and UC transactions) from the previous year
-// Helper to calculate historical cadence (sold and UC transactions) from the previous year
+    // Helper to calculate historical cadence (sold and UC transactions) from the previous year
     private function calculateHistoricalCadence($agentData)
     {
         $previousYear = Carbon::now()->year - 1;
