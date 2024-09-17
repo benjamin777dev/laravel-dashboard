@@ -96,14 +96,14 @@
 <div class="modal fade p-5" id="composemodal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="composemodalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modalValues">
-            @include('emails.email-create',['contacts'=>$contacts])
+            @include('emails.email-create')
         </div>
     </div>
 </div>
 <div class="modal fade p-5" id="templateModal" tabindex="-1" aria-labelledby="templateModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            @include('emails.email_templates.email-template-create',['contact'=>null])
+            @include('emails.email-templates.email-template-create',['contact'=>null])
         </div>
     </div>
 </div>
@@ -114,8 +114,16 @@
 
 <script>
     var contactId = @json($contactId);
+    let contactList = @json($contacts);
+    let selectedContactList = [];
     window.clickedValue;
     $(document).ready(function(){
+        renderContactsDropdown(contactList, selectedContactList);
+
+        let ccElement = document.getElementById("ccSelect");
+        let bccElement = document.getElementById("bccSelect");
+        renderOptions(contactList, ccElement);
+        renderOptions(contactList, bccElement);
 
         fetchEmails(null);
     })

@@ -142,7 +142,7 @@ class TemplateController extends Controller
                     throw new \Exception("Template Not Found");
                 }
             }
-            return view('emails.email_templates.email-template-update', compact('templateDetail'))->render();
+            return view('emails.email-templates.email-template-update', compact('templateDetail'))->render();
         } catch (\Throwable $e) {
             throw $e;
         }

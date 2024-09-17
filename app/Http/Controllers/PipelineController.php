@@ -323,7 +323,7 @@ class PipelineController extends Controller
         // $retrieveModuleData = $db->retrieveModuleDataDB( $accessToken, "Deals");
         $allStages = config('variables.dealCreateStages');
         // $contactRoles = $db->retrieveRoles($user);
-        return view('pipeline.createForm', compact('deal', 'contacts', 'allStages', 'users'))->render();
+        return view('pipeline.create-form', compact('deal', 'contacts', 'allStages', 'users'))->render();
     }
 
     public function createPipeline(Request $request)

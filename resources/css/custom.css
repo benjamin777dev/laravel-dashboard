@@ -3654,3 +3654,86 @@ switch input {
     color: #222;
     
 }
+
+form#selectGroupForm {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+#recordVideoModalContent button {
+    font-size: 4rem;
+}
+#recordVideoModalContent div:last-child {
+    top: 10px;
+    right: 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+#recordVideoModalContent #stopRecordButton {
+    display: none;
+    animation: recordColorChange 2s infinite;
+}
+
+#v-pills-profile {
+    border: 1px solid #bbb;
+    border-radius: 5px;
+}
+
+#videoInputSource {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#imgUploadContainer .image-upload-wrapper {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border: 2px dashed #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* Hidden file input */
+#imgUploadContainer .image-upload-wrapper input[type="file"] {
+    display: none;
+}
+
+/* Style for the placeholder button that overlays the image preview */
+#imgUploadContainer .image-upload-wrapper .upload-placeholder,.upload-placeholderGIF {
+    text-align: center;
+    color: #007bff;
+    font-size: 16px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Image preview */
+#imgUploadContainer .image-upload-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Hide image preview initially */
+    border-radius: 10px;
+    transition: opacity 0.3s ease;
+}
+
+#cropButton {
+    border: 1px solid #bbb;
+    border-radius: 5px;
+}
+
+@keyframes recordColorChange {
+    0% {
+        color: red;
+    }
+    50% {
+        color: lightgray;
+    }
+    100% {
+        color: red;
+    }
+}

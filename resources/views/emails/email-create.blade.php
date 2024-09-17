@@ -7,27 +7,8 @@
     <div id="modal-data">
         <div class="mb-3 row">
             <label for="example-text-input" class="col-md-2 col-form-label">To</label>
-            <div class="col-md-10">
-                <select class="select2 form-control select2-multiple" id="toSelect" multiple="multiple" data-placeholder="To" type="search" {{ !empty($selectedContacts) ? 'disabled' : '' }}>
-                    @foreach($contacts as $contactDetail)
-                        @php
-                            $selected = '';
-                            if (isset($selectedContacts)) {
-                                foreach ($selectedContacts as $selectedContact) {
-                                    if ((string)$contactDetail['id'] == $selectedContact['id']) {
-                                        $selected = 'selected';
-                                        break;
-                                    }
-                                }
-                            }
-                        @endphp
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{ $selected }} {{!$contactDetail['email']?'disabled':''}}>
-                            {{ $contactDetail['first_name'] }} {{ $contactDetail['last_name'] }}
-                        </option>
-                    @endforeach
-                </select>
-                <span id="emailErrorTo" style="color: red; display: none;">Please enter a valid email address.</span>            
-
+            <div class="col-md-10" id="toSelectDropdown">
+                
             </div>
         </div>
         <div class="mb-3 row">
@@ -35,9 +16,7 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="ccSelect" multiple="multiple"
                     data-placeholder="CC" type="search">
-                    @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
-                    @endforeach
+                    
                 </select>
                 <span id="emailErrorCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
@@ -47,9 +26,7 @@
             <div class="col-md-10">
                 <select class="select2 form-control select2-multiple" id="bccSelect" multiple="multiple"
                     data-placeholder="BCC" type="search">
-                    @foreach($contacts as $contactDetail)
-                        <option value="{{ $contactDetail['id'] }}" data-email="{{ $contactDetail['email'] }}" {{!$contactDetail['email']?'disabled':''}}>{{$contactDetail['first_name']}} {{$contactDetail['last_name']}}</option>
-                    @endforeach
+                    
                 </select>
                 <span id="emailErrorBCC" style="color: red; display: none;">Please enter a valid email address.</span>
             </div>
@@ -79,7 +56,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
 <script>
-    var emailType = @json($emailType??"");
+    let currentLocation = window.location.pathname.split("/").pop();
+    var emailType = "";
+    if(currentLocation == "contacts" || currentLocation == "group") {
+        emailType = "multiple";
+    }
+
     $(document).ready(function() {
         // Initialize Select2 for all select elements
         function initializeSelect2(selector, placeholder, errorId) {
@@ -215,8 +197,12 @@
             menubar: false,
             statusbar: false,
             setup: function(editor) {
+                editor.ui.registry.addIcon('recordIcon', 
+                    '<i class="mdi mdi-record-circle-outline fs-3"></i>'
+                );
                 editor.ui.registry.addButton('customSelect', {
-                    text: 'Select Template',
+                    icon: 'gallery',
+                    tooltip: 'Select Template',
                     onAction: function() {
                         $.ajax({
                             url: '/get/templates',
@@ -278,7 +264,8 @@
                 });
 
                 editor.ui.registry.addButton('recordVideo', {
-                    text: 'Record Video',
+                    icon: 'recordIcon',
+                    tooltip: `Record Video`,
                     onAction: function() {
                         editor.windowManager.open({
                                     title: 'Record Video',
@@ -289,28 +276,52 @@
                                             {
                                                 type: 'htmlpanel',
                                                 html: `
-                                                    <div id="recordVideoModalContent" style="justify-content: space-around; margin-bottom: 10px;">
-                                                        <figure style="display: inline-block;">
-                                                            <video id="videoRecording" style = "width: 480px; height: 360px; background-color: black" autoplay></video>
-                                                            <video id="recordedVideo" style = "width: 480px; height: 360px; display: none" controls></video>
-                                                            <figcaption style="text-align: center;">Preview Record</figcaption>
-
-                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
-                                                                <button class="btn" type="button" id="startRecordButton">Start Recording</button>
-                                                                <button type="button" id="stopRecordButton">Stop Recording</button>
+                                                <select class="mb-2" id="videoInputSource"></select>
+                                                <div class="mb-3" id="recordVideoInterface">
+                                                    <div class="position-relative d-flex justify-content-center">
+                                                        <div id="recordVideoModalContent" class="d-flex position-relative">
+                                                            <div class="d-inline-block">
+                                                                <video id="videoRecording" style = "width: 480px; height: 360px; background-color: black" autoplay></video>
+                                                                <video id="recordedVideo" style = "width: 480px; height: 360px; display: none" controls></video>
                                                             </div>
-                                                        </figure>
-                                                        
-                                                        <figure style="display: inline-block; width: 240px; justify-content: space-around;">
-                                                            <img id="snapshotImage" style="width: 240px; height: 180px; background-color: black">
-                                                            <canvas id="snapshotCanvas" width="240" height="180" style="display:none;"></canvas>
-                                                            <img id="gifImage" alt="Generated GIF" style="display:block; width: 240px; height: 180px; background-color: black">
-                                                            <figcaption style="text-align: center;">Preview Gif / Thumbnail</figcaption>
-                                                            <div style="display: flex; margin-top: 20px; justify-content: space-around">
-                                                                <button type="button" id="cropButton">Crop</button>
+                                                            <div class="d-inline-block position-absolute">
+                                                                <button class="btn" type="button" id="startRecordButton"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                    data-bs-title="This top tooltip is themed via CSS variables.">
+                                                                    <i class="mdi mdi-play-circle-outline"></i>
+                                                                </button>
+                                                                <button type="button" id="stopRecordButton"><i class="mdi mdi-stop-circle-outline"></i></button>
                                                             </div>
-                                                        </figure>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <a class="mt-2" data-bs-toggle="collapse" href="#v-pills-profile" role="button" aria-expanded="false" aria-controls="v-pills-profile">
+                                                    Set Fallback Image / GIF. (Optional)
+                                                </a>
+                                                <div class="collapse mt-2" id="v-pills-profile">
+                                                    <div class = "d-block card card-body p-3">
+                                                        <div id="imgUploadContainer" class="d-flex justify-content-around">
+                                                            <div class="position-relative text-center">
+                                                                <label class="image-upload-wrapper">
+                                                                    <input type="file" id="formFile" accept="image/jpeg, img/png, img/webp">
+                                                                    <span class="upload-placeholder">Click to upload an image</span>
+                                                                    <img id="imagePreview" src="#" alt="Image Preview">
+                                                                </label>
+                                                            </div>
+                                                            <div class="position-relative text-center">
+                                                                <label class="image-upload-wrapper">
+                                                                    <input type="file" id="formFileGIF" accept="image/gif">
+                                                                    <span class="upload-placeholderGIF">Click to upload a GIF</span>
+                                                                    <img id="imagePreviewGIF" src="#" alt="Image Preview">
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <canvas id="snapshotCanvas" width="240" height="180" style="display:none;"></canvas>
+                                                        <div style="display: flex; margin-top: 20px; justify-content: space-around">
+                                                            <button type="button" id="cropButton" class="px-5 py-2">Create Img/GIF for me</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 `
                                             }
                                         ]
@@ -327,98 +338,177 @@
                                         }
                                     ],
                                     onSubmit: function(api) {
-                                        const formData = new FormData();
-                                        const videoElement = document.getElementById('recordedVideo');
-                                        const imgElement = document.getElementById('snapshotImage');
-                                        const gifElement = document.getElementById('gifImage');
-                                        const blobUrl = recordedVideoElement.src;
-                                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                                        let recordData = new FormData();
 
-                                        function fetchBlobFromUrl(url) {
-                                            return fetch(url).then(function(response) {
-                                                if(response.ok) {
-                                                    return response.blob();
+                                        $('.tox-button[title="Insert"]')[0].disabled = true;
+                                        const recordedVideoElement = document.getElementById('recordedVideo');
+                                        const videoElementUrl = recordedVideoElement.src;
+                                        let imgElementUrl = document.getElementById('imagePreview').src;
+                                        let gifElement = document.getElementById('imagePreviewGIF');
+                                        let gifElementUrl = gifElement.src;
+
+                                        if(imgElementUrl.slice(-1) == "#") {
+                                            captureThumbnail(recordedVideoElement, 1)
+                                            .then((url) => {
+                                                imgElementUrl = url;
+                                                if(gifElementUrl.slice(-1) == "#") {
+                                                    convertVideoToGif(videoElementUrl)
+                                                    .then(gifURL => {
+                                                        gifElementUrl = gifURL;
+                                                        gifElement.src = gifURL;
+                                                        gifImage.style.display = 'block';
+                                                        document.querySelector('.upload-placeholderGIF').style.display = "none";
+                                                        submitFunc();
+                                                    })
+                                                    .catch(error => {
+                                                        showToastError("Failed to generate Img/GIF");
+                                                        $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                        api.close();
+                                                    })
                                                 } else {
-                                                    return null;
+                                                    submitFunc();
                                                 }
-                                            });
-                                        }
-
-                                        if (videoElement.src && videoElement.src.startsWith('blob:')) {
-                                            fetchBlobFromUrl(videoElement.src).then(function(videoBlob) {
-                                                if (videoBlob) {
-                                                    formData.append('video', videoBlob, 'recorded-video.webm');
-                                                }
-                                                processImages();
-                                            });
+                                            })
+                                            .catch(err => {
+                                                showToastError("Failed to generate Img/GIF");
+                                                $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                api.close();
+                                            })
                                         } else {
-                                            processImages();
-                                        }
-
-                                        // Function to handle gif and image (called after video is processed)
-                                        function processImages() {
-                                            // Check and add the first image blob if the image element has content
-                                            if (gifElement.src && gifElement.src.startsWith('blob:')) {
-                                                fetchBlobFromUrl(gifElement.src).then(function(imageBlob1) {
-                                                    if (imageBlob1) {
-                                                        formData.append('gif', imageBlob1, 'generated.gif');
-                                                    }
-                                                    processSecondImage();
-                                                });
+                                            if(gifElementUrl.slice(-1) == "#") {
+                                                convertVideoToGif(videoElementUrl)
+                                                .then(gifURL => {
+                                                    gifElementUrl = gifURL;
+                                                    gifElement.src = gifURL;
+                                                    submitFunc();
+                                                })
+                                                .catch(error => {
+                                                    showToastError("Failed to generate preview GIF.");
+                                                    api.close();
+                                                })
                                             } else {
-                                                processSecondImage();
+                                                submitFunc();
                                             }
                                         }
+                                        
 
-                                        // Function to handle the  image (called after the first image is processed)
-                                        function processSecondImage() {
-                                            if (imgElement.src && imgElement.src.startsWith('data:')) {
-                                                fetchBlobFromUrl(imgElement.src).then(function(imageBlob2) {
-                                                    if (imageBlob2) {
-                                                        formData.append('img', imageBlob2, 'snapshot.png');
+                                        function submitFunc()
+                                        {
+                                            fetchBlobFromUrl(videoElementUrl).then(function(videoBlob) {
+                                                if (videoBlob) {
+                                                    recordData.append('video', videoBlob, 'video.webm');
+                                                    processGIF();
+                                                } else {
+                                                    showToastError("Failed to fetch video.");
+                                                    
+                                                }
+                                            });
+
+                                            function processGIF() {
+                                                fetchBlobFromUrl(gifElementUrl).then(function(gifBlob) {
+                                                    if (gifBlob) {
+                                                        recordData.append('gif', gifBlob, 'animation.gif');
+                                                        processImage();
+                                                    } else {
+                                                        showToastError("Failed to generate preview GIF.");
                                                     }
-                                                    sendData();
                                                 });
-                                            } else {
-                                                sendData();
                                             }
-                                        }
 
-                                        // Function to send the data to the server
-                                        function sendData() {
-                                            fetch(`{{ route('video.upload') }}`, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'X-CSRF-TOKEN': csrfToken
-                                                },
-                                                body: formData,
-                                            })
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                const s3Url = data.url; // Get S3 URL after upload
-                                                // insertVideoIntoEditor(s3Url, editor);
-                                            })
-                                            .catch(err => console.error('Error uploading to S3:', err));
+                                            function processImage() {
+                                                fetchBlobFromUrl(imgElementUrl).then(function(imageBlob) {
+                                                    if (imageBlob) {
+                                                        recordData.append('img', imageBlob, 'image.png');
+                                                        sendData();
+                                                    } else {
+                                                        showToastError("Failed to generate preview image.");
+                                                    }
+                                                });
+                                            }
+                                            function sendData() {
+                                                $.ajax({
+                                                    url: route('video.upload'),
+                                                    method: "POST",
+                                                    headers: {
+                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                    },
+                                                    data: recordData,
+                                                    processData: false,
+                                                    contentType: false,
+                                                    success: function (data) {
+                                                        contentWithFallback = data;
+                                                        if(data.message) {
+                                                            showToastError(data.message);
+                                                        } else {
+                                                            editor.insertContent(contentWithFallback);
+                                                            $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                            api.close();
+                                                        }
+                                                        },
+                                                        error: function (err) {
+                                                            showToastError("Failed to upload files to S3.");
+                                                        }
+                                                        })                                                
+                                            }
                                         }
                                     }
                                 });
                                 let mediaRecorder;
                                 let recordedBlobs;
+                                let currentStream;
                                 const videoElement = document.getElementById('videoRecording');
                                 const recordedVideoElement = document.getElementById('recordedVideo');
                                 const snapshotCanvas = document.getElementById('snapshotCanvas');
-                                const snapshotImage = document.getElementById('snapshotImage');
-                                const gifImage = document.getElementById('gifImage');
+                                const snapshotImage = document.getElementById('imagePreview');
+                                const gifImage = document.getElementById('imagePreviewGIF');
                                 const cropButton = document.getElementById('cropButton');
+                                const startButton = document.getElementById('startRecordButton');
+                                const stopButton = document.getElementById('stopRecordButton');
 
-                                document.getElementById('startRecordButton').addEventListener('click', async () => {
+                                function startVideoStream(deviceId) {
+                                    if (currentStream) {
+                                        currentStream.getTracks().forEach(track => track.stop());
+                                    }
+
+                                    navigator.mediaDevices.getUserMedia({ 
+                                        video: { deviceId: deviceId ? { exact: deviceId } : undefined }, 
+                                        audio: true 
+                                    })
+                                    .then((stream) => {
+                                        currentStream = stream;
+                                        videoElement.srcObject = stream;
+                                    })
+                                    .catch((error) => {
+                                        showToast("Failed to access media devices. Please allow the permission.");
+                                    });
+                                }
+
+                                const videoInputSource = document.getElementById("videoInputSource");
+                                navigator.mediaDevices.enumerateDevices()
+                                .then((devices) => {
+                                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                                    videoDevices.forEach((device, index) => {
+                                        const option = document.createElement('option');
+                                        option.value = device.deviceId;
+                                        option.text = device.label || `Camera ${index + 1}`;
+                                        videoInputSource.appendChild(option);
+                                    });
+                                    if (videoDevices.length > 0) {
+                                        startVideoStream(videoDevices[0].deviceId);
+                                    }
+                                });
+
+                                videoInputSource.addEventListener('change', () => {
+                                    const selectedDeviceId = videoInputSource.value;
+                                    startVideoStream(selectedDeviceId);
+                                });
+
+                                startButton.addEventListener('click', async () => {
                                     videoElement.style.display = "block";
                                     recordedVideoElement.style.display = "none";
-                                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                                    videoElement.srcObject = stream;
                                     recordedBlobs = [];
 
-                                    mediaRecorder = new MediaRecorder(stream);
+                                    mediaRecorder = new MediaRecorder(currentStream);
                                     mediaRecorder.ondataavailable = (event) => {
                                         if (event.data.size > 0) {
                                             recordedBlobs.push(event.data);
@@ -430,50 +520,98 @@
                                         recordedVideoElement.src = videoURL;
                                     }
                                     mediaRecorder.start();
-                                    document.getElementById('stopRecordButton').disabled = false;
-                                    document.getElementById('startRecordButton').disabled = true;
+                                    stopButton.style.display = "block";
+                                    startButton.style.display = "none";
+                                    cropButton.disabled = true;
                                 });
 
-                                document.getElementById('stopRecordButton').addEventListener('click', () => {
+                                stopButton.addEventListener('click', () => {
                                     mediaRecorder.stop();
                                     videoElement.style.display = "none";
                                     recordedVideoElement.style.display = "block";
-                                    document.getElementById('stopRecordButton').disabled = true;
-                                    document.getElementById('startRecordButton').disabled = false;
-                                    // document.getElementById('createGifButton').disabled = false;
+                                    stopButton.style.display = "none";
+                                    startButton.style.display = "block";
+                                    cropButton.disabled = false;
                                 });
                                 
-                                document.getElementById("cropButton").addEventListener('click', () => {
-
+                                cropButton.addEventListener('click', () => {
                                     captureThumbnail(recordedVideoElement, 1);
                                     convertVideoToGif(recordedVideoElement.src)
-                                    .then(function(gifBlob) {
-                                        const gifUrl = URL.createObjectURL(gifBlob);
+                                    .then(function(gifUrl) {
                                         gifImage.src = gifUrl;
                                         gifImage.style.display = 'block';
+                                        document.querySelector('.upload-placeholderGIF').style.display = "none";
                                     }).catch(function(error) {
                                         console.error('Error creating GIF:', error);
                                     });
-                                })
+                                });
 
-                                async function captureThumbnail(videoElement, captureTime) {
-                                    videoElement.currentTime = captureTime;
-                                    
-                                    videoElement.onseeked = function () {
-                                        snapshotCanvas.width = videoElement.videoWidth;
-                                        snapshotCanvas.height = videoElement.videoHeight;
-                                        const ctx = snapshotCanvas.getContext('2d');
-                                        ctx.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
-                                        const dataUrl = snapshotCanvas.toDataURL('image/png');
+                                document.getElementById('formFile').addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    const preview = snapshotImage;
+                                    const placeholder = document.querySelector('.upload-placeholder');
 
-                                        snapshotImage.src = dataUrl;
-                                    };
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            preview.src = e.target.result;
+                                            preview.style.display = 'block';
+                                            placeholder.style.display = 'none';
+                                        }
+                                        reader.readAsDataURL(file);
+                                    } else {
+                                        preview.src = '#';
+                                        preview.style.display = 'none';
+                                        placeholder.style.display = 'block';
+                                    }
+                                });
 
-                                    
+                                document.getElementById('formFileGIF').addEventListener('change', function(event) {
+                                    const file = event.target.files[0];
+                                    const preview = document.getElementById('imagePreviewGIF');
+                                    const placeholder = document.querySelector('.upload-placeholderGIF');
 
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = function(e) {
+                                            preview.src = e.target.result;
+                                            preview.style.display = 'block';
+                                            placeholder.style.display = 'none';
+                                        }
+                                        reader.readAsDataURL(file);
+                                    } else {
+                                        preview.src = '#';
+                                        preview.style.display = 'none';
+                                        placeholder.style.display = 'block';
+                                    }
+                                });
+
+                                function captureThumbnail(videoElement, captureTime) {
+                                    return new Promise((resolve, reject) => {
+                                        videoElement.currentTime = captureTime;
+                                        
+                                        videoElement.onseeked = function () {
+                                            try {
+                                                snapshotCanvas.width = videoElement.videoWidth;
+                                                snapshotCanvas.height = videoElement.videoHeight;
+                                                const ctx = snapshotCanvas.getContext('2d');
+                                                ctx.drawImage(videoElement, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+                                                const dataUrl = snapshotCanvas.toDataURL('image/png');
+        
+                                                snapshotImage.src = dataUrl;
+                                                document.getElementById('imagePreview').style.display = "block";
+                                                document.querySelector('.upload-placeholder').style.display = "none";
+                                                resolve(dataUrl);
+                                            } catch (error) {
+                                                reject(error);
+                                            }
+                                        };
+
+                                        videoElement.onerror = function(error) {
+                                            reject(error);
+                                        }
+                                    });
                                 }
-
-                                
                             }
                 });
             }
@@ -489,10 +627,6 @@
 
         const secondSegment = pathSegments[1];
 
-        console.log(secondSegment);
-       
-            
-       
         var button = document.getElementById('emailModalClose');
         button.addEventListener('click', function () {
             var modal = document.getElementById('composemodal');
@@ -557,10 +691,135 @@
         return isValidate;
     }
 
+    function convertVideoToGif(videoUrl) {
+        return new Promise((resolve, reject) => {
+            const tempVideo = document.createElement('video');
+            tempVideo.src = videoUrl;
 
+            tempVideo.addEventListener('loadeddata', () => {
+                const gif = new GIF({
+                    workers: 2,
+                    quality: 20,
+                    width: tempVideo.videoWidth,
+                    height: tempVideo.videoHeight,
+                    workerScript: '/build/js/gif.worker.js',
+                    useWebWorkers: false,
+                });
+
+                const canvas = document.createElement('canvas');
+                canvas.width = tempVideo.videoWidth;
+                canvas.height = tempVideo.videoHeight;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+                let isRendering = false;
+                let frameCount = 0;
+                tempVideo.currentTime = 0;
+
+                tempVideo.addEventListener('timeupdate', () => {
+                    if (tempVideo.currentTime <= 3 && !isRendering) { // Capture up to 5 seconds
+                        ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+                        gif.addFrame(canvas, { copy: true, delay: 200 }); // Adjust delay as needed
+                    } else if(!isRendering) {
+                        tempVideo.pause();
+                        isRendering = true;
+                        try {
+                            gif.render();
+                        } catch (err) {
+                            console.log("Rendering Error:", err);
+                            reject(err);
+                        }
+                    }
+                });
+
+                gif.on('finished', (blob) => {
+                    const gifUrl = URL.createObjectURL(blob);
+                    resolve(gifUrl);
+                });
+
+                gif.on('abort', () => {
+                    reject(new Error('GIF rendering was aborted.'));
+                });
+
+                gif.on('error', (error) => {
+                    reject(error);
+                });
+
+                tempVideo.play();
+            });
+        });
+    }
+
+    function renderContactsDropdown(contacts, selectedContacts) {
+        let dropdownContainer = document.getElementById('toSelectDropdown');
+        const selectElement = document.createElement('select');
+        
+        selectElement.className = "select2 form-control select2-multiple";
+        selectElement.id = "toSelect";
+        selectElement.multiple = true;
+        selectElement.setAttribute('data-placeholder', 'To');
+        selectElement.type = 'search';
+        if (selectedContacts.length > 0) {
+            selectElement.disabled = true;
+        }
+
+        contacts.forEach(contactDetail => {
+            const option = document.createElement('option');
+            option.value = contactDetail.id;
+            option.setAttribute('data-email', contactDetail.email);
+            option.text = contactDetail.first_name + contactDetail.last_name;
+
+            if (selectedContacts.some(selectedContact => selectedContact.id == contactDetail.id)) {
+                option.selected = true;
+            }
+            if (!contactDetail.email) {
+                option.disabled = true;
+            }
+            selectElement.appendChild(option);
+        });
+
+        dropdownContainer.innerHTML = '';
+        dropdownContainer.appendChild(selectElement);
+        dropdownContainer += `<span id="emailErrorTo" style="color: red; display: none;">Please enter a valid email address.</span>`;
+
+        $('#toSelect').select2({
+            placeholder: "To"
+        });
+    }
+
+    function renderOptions(contacts, elem) {
+        elem.innerHTML = '';
+
+        // Loop through the contacts array and create options
+        contacts.forEach(contactDetail => {
+            // Create a new option element
+            const option = document.createElement('option');
+            option.value = contactDetail.id;
+            option.text = contactDetail.first_name + contactDetail.last_name;
+            option.setAttribute('data-email', contactDetail.email);
+            // Check this condition (Is this necessary?)
+            if(!contactDetail.email) {
+                option.disabled = true;
+            }
+
+            // Disable the option if the contact has no email
+            if (!contactDetail.email) {
+                option.disabled = true;
+            }
+            elem.appendChild(option);
+        });
+    }
+    
+    window.fetchBlobFromUrl = function(url) {
+        return fetch(url).then(function(response) {
+            if(response.ok) {
+                return response.blob();
+            } else {
+                return null;
+            }
+        });
+    }
 
     window.sendEmails = function(button,email,isEmailSent){
-        
         var to = $("#toSelect").val();
         var cc = $("#ccSelect").val();
         var bcc = $("#bccSelect").val();
@@ -581,6 +840,14 @@
             
             "content": content,
             "isEmailSent":isEmailSent
+        }
+
+        let contentElement = document.createElement('div');
+        contentElement.innerHTML = content;
+        if(contentElement.querySelector('.record-video-existence-check')) {
+            formData.emailType = "video";
+        } else {
+            formData.emailType = "regular";
         }
         if(emailType=="multiple"){
              $.ajax({
@@ -632,7 +899,7 @@
                         showToastError(response.message);
                         setTimeout(function() {
                             window.location.href = response.redirect_url;
-                        }, 5000); // Adjust the delay as needed
+                        }, 5000);
                     } else {
                         // Handle error
                     }
@@ -647,7 +914,6 @@
                     fetchEmails();
                 },
                 error: function(xhr, status, error) {
-                    // Handle error response
                     console.error(xhr.responseText);
                     showToastError(xhr.responseText);
                     $("#emailModalClose").click();
@@ -655,6 +921,7 @@
                 }
             });
         }
+
     }
     window.validateOpenTemplate = function(){
         var content = tinymce.get('elmEmail').getContent();
@@ -677,74 +944,16 @@
         return isValidateTemplate
     }
     window.openTemplate = function(){
-    if (validateOpenTemplate()) {
-        var content = tinymce.get('elmEmail').getContent();
-        var subject = $("#emailSubject").val();
-        $("#templateSubject").val(subject);
-        $("#templateContent").val(content);
-        $('#composemodal').modal('hide');
-        $('#templateModal').modal('show'); // Open the modal if validation passes
-        $("#templateModal").removeClass("draft");
-       $("#templateModal").addClass("compose");
-
+        if (validateOpenTemplate()) {
+            var content = tinymce.get('elmEmail').getContent();
+            var subject = $("#emailSubject").val();
+            $("#templateSubject").val(subject);
+            $("#templateContent").val(content);
+            $('#composemodal').modal('hide');
+            $('#templateModal').modal('show'); // Open the modal if validation passes
+            $("#templateModal").removeClass("draft");
+            $("#templateModal").addClass("compose");
+        }
     }
-}
-
-function convertVideoToGif(videoUrl) {
-    return new Promise((resolve) => {
-        const tempVideo = document.createElement('video');
-        tempVideo.src = videoUrl;
-
-        tempVideo.addEventListener('loadeddata', () => {
-            const gif = new GIF({
-                workers: 2,
-                quality: 20,
-                width: tempVideo.videoWidth,
-                height: tempVideo.videoHeight,
-                workerScript: '/build/gif.worker.js',
-                useWebWorkers: false,
-            });
-
-            const canvas = document.createElement('canvas');
-            canvas.width = tempVideo.videoWidth;
-            canvas.height = tempVideo.videoHeight;
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-            let isRendering = false;
-            let frameCount = 0;
-            tempVideo.currentTime = 0;
-
-            tempVideo.addEventListener('timeupdate', () => {
-                if (tempVideo.currentTime <= 3 && !isRendering) { // Capture up to 5 seconds
-                    ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-                    gif.addFrame(canvas, { copy: true, delay: 200 }); // Adjust delay as needed
-                } else if(!isRendering) {
-                    tempVideo.pause();
-                    isRendering = true;
-                    try {
-                        gif.render();
-                    } catch (err) {
-                        console.log("Rendering Error:", err);
-                        reject(err);
-                    }
-                }
-            });
-
-            gif.on('finished', (blob) => {
-                resolve(blob);
-            });
-
-            gif.on('abort', () => {
-                reject(new Error('GIF rendering was aborted.'));
-            });
-
-            gif.on('error', (error) => {
-                reject(error);
-            });
-
-            tempVideo.play();
-        });
-    });
-}
 </script>
             

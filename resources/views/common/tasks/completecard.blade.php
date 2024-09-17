@@ -2,7 +2,7 @@
     <tbody>
         @if (count($completedTasks) > 0)
             @foreach ($completedTasks as $task)
-                @include('task.partials.task_row', ['task' => $task])
+                @include('task.partials.task-row', ['task' => $task])
             @endforeach
         @else
             <tr>

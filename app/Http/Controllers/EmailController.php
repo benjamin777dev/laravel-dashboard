@@ -2,30 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use ZipArchive;
+use Exception;
+use App\Models\Contact;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Services\DatabaseService;
 use App\Services\ZohoCRM;
-use App\Services\SendGrid;
+use App\Services\SendGridService;
 use App\Services\Helper;
-use App\Models\Contact;
+use App\Models\SuppressionGroup;
 use App\Models\User;
 use League\Csv\Writer;
-use ZipArchive;
 use Illuminate\Support\Facades\Storage;
-
-// use App\Models\ContactGroups;
-// use App\Models\Groups;
-// use DataTables;
-// use Illuminate\Support\Facades\Validator;
-// use App\Rules\ValidMobile;
 
 class EmailController extends Controller
 {
+    private $videoEmailSupGroupId;
+    private $regularEmailSupGroupId;
+    private $sendgrid;
+
+    public function __construct()
+    {
+        $sendgrid = new SendGridService();
+        $this->sendgrid = $sendgrid;
+    }
     protected function guard()
     {
         return Auth::guard();
@@ -55,13 +58,31 @@ class EmailController extends Controller
         return view('emails.email-list', compact('contacts', 'emails'))->render();
     }
 
+    private function preProcessEmail($inputData)
+    {
+        $this->videoEmailSupGroupId = $this->sendgrid->getIdSuppGroup("Video Email Suppression");
+        $this->regularEmailSupGroupId = $this->sendgrid->getIdSuppGroup("Regular Email Suppression");
+        $groupId = $inputData['emailType'] == "video" ? $this->videoEmailSupGroupId : $this->regularEmailSupGroupId;
+        $condition = function($value) use ($inputData) {
+            return !SuppressionGroup::isSuppressed($value, $inputData['emailType']);
+        };
+
+        $inputData['to'] = array_filter($inputData['to'], $condition);
+        $inputData['cc'] = array_filter($inputData['cc'], $condition);
+        $inputData['bcc'] = array_filter($inputData['bcc'], $condition);
+        $inputData['groupId'] = $groupId;
+
+        return $inputData;
+    }
+
     public function sendEmail(Request $request)
     {
         try {
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
-            $sendgrid = new SendGrid();
+            $accessToken = $user->getAccessToken();
+            $sendgrid = $this->sendgrid;
             $helper = new Helper();
 
             if (!$user) {
@@ -70,6 +91,7 @@ class EmailController extends Controller
 
             $accessToken = $user->getAccessToken();
             $inputData = $request->json()->all();
+            $inputData = $this->preProcessEmail($inputData);
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -142,9 +164,10 @@ class EmailController extends Controller
                         $contact = (object) $contact; // Convert array to object if necessary
                     }
                     if (empty($contact->email)) {
-                        throw new \Exception("Email is not available for {$contact->name}");
+                        throw new Exception("Email is not available for {$contact->name}");
                     }
                     return [
+                        'id' => $contact->id,
                         'user_name' => $contact->name,
                         'email' => $contact->email,
                     ];
@@ -203,7 +226,7 @@ class EmailController extends Controller
                         $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
                     }
 
-                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
+                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput, $inputData['groupId']);
 
                     $associateZohoInput = [
                         "Emails" => [
@@ -268,7 +291,7 @@ class EmailController extends Controller
             $db = new DatabaseService();
             $zoho = new ZohoCRM();
             $user = $this->user();
-            $sendgrid = new SendGrid();
+            $sendgrid = $this->sendgrid;
             $helper = new Helper();
 
             if (!$user) {
@@ -277,6 +300,7 @@ class EmailController extends Controller
 
             $accessToken = $user->getAccessToken();
             $inputData = $request->json()->all();
+            $inputData = $this->preProcessEmail($inputData);
 
             $userVerified = $sendgrid->verifySender($user['verified_sender_email'] ?? $user['email']);
             Log::info('User Verification', ['userVerified' => $userVerified]);
@@ -347,9 +371,10 @@ class EmailController extends Controller
                         $contact = (object) $contact; // Convert array to object if necessary
                     }
                     if (empty($contact->email)) {
-                        throw new \Exception("Email is not available for {$contact->name}");
+                        throw new Exception("Email is not available for {$contact->name}");
                     }
                     return [
+                        'id' => $contact->id,
                         'user_name' => $contact->name,
                         'email' => $contact->email,
                     ];
@@ -426,7 +451,7 @@ class EmailController extends Controller
                         $sendGridInput['personalizations'][0]['bcc'] = $inputData['bccData'];
                     }
 
-                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput);
+                    $sendEmail = $sendgrid->sendSendGridEmail($sendGridInput, $inputData['groupId']);
 
                     $associateZohoInput = [
                         "Emails" => []
@@ -544,7 +569,6 @@ class EmailController extends Controller
             $csvContent = $csv->getContent();
             $csvFilename = 'emails_' . date('Y_m_d_H_i_s') . '.csv';
 
-            // Create a temporary file for the CSV
             $tempCsvPath = storage_path('app/' . $csvFilename);
             file_put_contents($tempCsvPath, $csvContent);
 
@@ -658,20 +682,47 @@ class EmailController extends Controller
         return view('emails.email-read-modal', compact('email'))->render();
     }
 
-    public function getEmailCreateModal(Request $request)
+    public function getSignedUrl($identifier, $filename)
     {
-        $user = $this->user();
-        if (!$user) {
-            return redirect('/login');
+        try {
+            $s3FilePath = "{$identifier}/{$filename}";
+            $expiresAt = now()->addHour();
+            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+    
+            return redirect($signedUrl);
+        } catch (Exception $e) {
+            Log::error("Error generating signed URL: " . $e->getMessage());
+    
+            return redirect()->back()->with('error', 'There was an issue generating the signed URL. Please try again later.');
+        }
+    }
+
+    public function unsubscribe(Request $request, $userId, $groupId, $hash) 
+    {
+        $user = Contact::find($userId);
+        if (!$user || !hash_equals($hash, hash('sha256', $user->email))) {
+            return redirect('/')->with('error', 'Invalid unsubscribe link.');
         }
 
-        // Retrieve input data from JSON request
-        $contacts = $request->input('contacts');
-        $emailType = $request->input('emailType');
-        $selectedContacts = $request->input('selectedContacts');
+        $suppression = SuppressionGroup::where("user_id", $userId)->first(); 
+        if($suppression == null) {
+            $suppression = new SuppressionGroup();
+            $suppression->user_id = $user->id;
+        }
 
-        // Return the rendered view as a response
-        return view('emails.email-create', compact('contacts', 'selectedContacts', 'emailType'))->render();
+        $result = $this->sendgrid->addUserToSuppressionGroup($groupId, $user->email);
+        $this->videoEmailSupGroupId = $this->sendgrid->getIdSuppGroup("Video Email Suppression");
+        if($result) {
+            if ($groupId == $this->videoEmailSupGroupId) {
+                $suppression['video_emails'] = true;
+            } else {
+                $suppression['regular_emails'] = true;
+            }
+            $suppression->save();
+            return redirect('/')->with('success', 'You have been unsubscribed successfully.');
+        } else {
+            return redirect('/')->with('error', 'Suppression group add failed.');
+        }
     }
 
 }

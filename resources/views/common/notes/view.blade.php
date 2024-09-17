@@ -129,7 +129,7 @@
                                         onclick="document.getElementById('editButton{{ $note['id'] }}').checked=false;"></button>
                                 </div>
                                 <!-- Your modal markup (assuming it has an id 'confirmModal') -->
-                                @include('common.confirmmodal', ['targetId' => $note['zoho_note_id']])
+                                @include('common.confirm-modal', ['targetId' => $note['zoho_note_id']])
                             </div>
                             <form action="{{ route('update.note', ['id' => $note['zoho_note_id']]) }}" method="post">
                                 @csrf

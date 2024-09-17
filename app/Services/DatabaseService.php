@@ -2342,8 +2342,8 @@ class DatabaseService
         $roles = ContactRole::where([
             'userId' => $user['id'],
         ])->get();
-        return $roles;
         Log::info("Contact Role retrived from database successfully.");
+        return $roles;
     }
 
     public function importDataFromCSV($csvFilePath, $module)
@@ -2403,21 +2403,21 @@ class DatabaseService
         $module = strtolower($module);
         switch ($module) {
             case 'contacts':
-                return \App\Models\Contact::mapZohoData($record, 'csv');
+                return Contact::mapZohoData($record, 'csv');
             case 'deals':
-                return \App\Models\Deal::mapZohoData($record, 'csv');
+                return Deal::mapZohoData($record, 'csv');
             case 'groups':
-                return \App\Models\Groups::mapZohoData($record, 'csv');
+                return Groups::mapZohoData($record, 'csv');
             case 'contacts_x_groups':
-                return \App\Models\ContactGroups::mapZohoData($record, 'csv');
+                return ContactGroups::mapZohoData($record, 'csv');
             case 'tasks':
-                return \App\Models\Task::mapZohoData($record, 'csv');
+                return Task::mapZohoData($record, 'csv');
             case 'teams_and_partners':
-                return \App\Models\TeamAndPartnership::mapZohoData($record, 'csv');
+                return TeamAndPartnership::mapZohoData($record, 'csv');
             case 'agent_commission_incomes':
-                return \App\Models\Aci::mapZohoData($record, 'csv');
+                return Aci::mapZohoData($record, 'csv');
             case 'notes': 
-                return \App\Models\Note::mapZohoData($record, 'csv');
+                return Note::mapZohoData($record, 'csv');
             // Add other cases as needed
             default:
                 throw new \Exception("Mapping not defined for module {$module}");
@@ -2430,28 +2430,28 @@ class DatabaseService
             $module = strtolower($module);
             switch ($module) {
                 case 'contacts':
-                    \App\Models\Contact::upsert($dataBatch, ['zoho_contact_id']);
+                    Contact::upsert($dataBatch, ['zoho_contact_id']);
                     break;
                 case 'deals':
-                    \App\Models\Deal::upsert($dataBatch, ['zoho_deal_id']);
+                    Deal::upsert($dataBatch, ['zoho_deal_id']);
                     break;
                 case 'contacts_x_groups':
-                    \App\Models\ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
+                    ContactGroups::upsert($dataBatch, ['zoho_contact_group_id']);
                     break;
                 case 'agent_commission_incomes':
-                    \App\Models\Aci::upsert($dataBatch, ['zoho_aci_id']);
+                    Aci::upsert($dataBatch, ['zoho_aci_id']);
                     break;
                 case 'groups':
-                    \App\Models\Groups::upsert($dataBatch, ['zoho_group_id']);
+                    Groups::upsert($dataBatch, ['zoho_group_id']);
                     break;
                 case 'tasks':
-                    \App\Models\Task::upsert($dataBatch, ['zoho_task_id']);
+                    Task::upsert($dataBatch, ['zoho_task_id']);
                     break;
                 case 'teams_and_partners':
-                    \App\Models\TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
+                    TeamAndPartnership::upsert($dataBatch, ['team_partnership_id']);
                     break;
                 case 'notes': 
-                    return \App\Models\Note::upsert($dataBatch, ['team_partnership_id']);
+                    return Note::upsert($dataBatch, ['team_partnership_id']);
 
             }
         } catch (\Exception $e) {

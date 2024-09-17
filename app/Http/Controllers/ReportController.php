@@ -106,7 +106,7 @@ class ReportController extends Controller
         }
 
         // Return the view with all the data
-        return view('reports.productionProjections', compact(
+        return view('reports.production-projections', compact(
             'reportData',
             'projectionData',
             'currentYear',
@@ -636,7 +636,7 @@ class ReportController extends Controller
         // Generate HTML by rendering the partial for each deal
         $html = '';
         foreach ($deals as $index => $deal) {
-            $html .= view('reports.partials.productionProjection.deal_card', [
+            $html .= view('reports.partials.production-projection.deal-card', [
                 'deal' => $deal,
                 'settings' => $settings,
                 'index' => $index,

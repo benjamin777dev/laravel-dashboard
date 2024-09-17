@@ -43,7 +43,7 @@ class ClosingInformationController extends Controller
         $transactionsSoldYTD = $this->getTransactionsSoldYTD($contact, $teamAndPartnership) ?? 0;
         $soldByYear = $this->getSoldByYearData($contact, $teamAndPartnership) ?? 0;
 
-        return view('closing_information.index', compact(
+        return view('closing-information.index', compact(
             'transactionCountYTD',
             'gciYTD',
             'volumeYTD',

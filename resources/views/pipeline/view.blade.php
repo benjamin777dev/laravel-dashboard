@@ -49,7 +49,7 @@
                 </div>
                
             </div>
-            @include("common.confirmdeletemodal")
+            @include("common.confirm-delete-modal")
             <div class="row">
                 <nav >
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">

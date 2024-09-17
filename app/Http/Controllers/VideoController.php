@@ -6,65 +6,65 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\RecordedMedia;
+use App\Jobs\ConvertWebmToMp4;
+
 
 class VideoController extends Controller
 {
     public function upload(Request $request)
     {
-        $urls =
-         [
-            'video' => "",
-            'gif' => "",
-            'img' => "",
-         ];
-
         try { 
-            if ($request->hasFile('video')) {
-                $video = $request->file('video');
-                $randomVideoName = Str::uuid()->toString() . '.' . $video->getClientOriginalExtension();
-                $path = 'videos/' . $randomVideoName;
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($video), 'public');
-
-                if ($uploaded) {
-                    // Generate the URL after uploading
-                    $url = Storage::disk('s3')->url($path);
-                    $urls['video'] = $url;
-                } else {
-                    return response()->json(['message' => 'Failed to upload video'], 500);
-                }
-            }
-            if ($request->hasFile('gif')) {
+            $uuid = Str::uuid()->toString();
+            if ($request->hasFile('gif') && $request->hasFile('img') && $request->hasFile('video')) {
+                $gifPath = $uuid . "/animation.gif";
                 $gif = $request->file('gif');
-                $randomGifName = Str::uuid()->toString() . '.' . $gif->getClientOriginalExtension();
-                $path = 'gifs/' . $randomGifName;
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif), 'public');
-
-                if ($uploaded) {
-                    // Generate the URL after uploading
-                    $url = Storage::disk('s3')->url($path);
-                    $urls['gif'] = $url;
+                if ($this->uploadFileToS3($gif, $gifPath)) {
+                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($gifPath), 'animation.gif');
                 } else {
-                    return response()->json(['message' => 'Failed to upload video'], 500);
+                    return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
                 }
-            }
-            if ($request->hasFile('img')) {
+
                 $img = $request->file('img');
-                $randomImgName = Str::uuid()->toString() . '.' . $img->getClientOriginalExtension();
-                $path = 'imgs/' . $randomImgName;
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($img), 'public');
+                $imgPath = $uuid . "/image.png";
+                if ($this->uploadFileToS3($img, $imgPath)) {
+                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($imgPath), 'image.png');
+                } else {
+                    return response()->json(['message' => 'Failed to upload the image file.'], 500);
+                }
 
-                if ($uploaded) {
-                    // Generate the URL after uploading
-                    $url = Storage::disk('s3')->url($path);
-                    $urls['img'] = $url;
+                $video = $request->file('video');
+                $videoPath = 'recordData/' . $uuid;
+                if (Storage::disk('s3')->put($videoPath, fopen($video->getPathname(), 'r'))) {
+                    ConvertWebmToMp4::dispatch($uuid, $videoPath);
                 } else {
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
+                return view('emails.email-record-template', compact('uuid',))->render();
+            } else {
+              return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
             }
-            return response()->json(['urls'=> $urls], 200);
         } catch (\Exception $e) {
             Log::error('Video Upload Failed:' . $e->getMessage());
-            return response()->json(['message' => 'No video uploaded'], 400);
+            return response()->json(['message' => 'Failed to upload Image/GIF.'], 400);
         }
+    }
+
+    private function uploadFileToS3($file, $path)
+    {
+        if (!$file || !$file->isValid()) {
+            return false;
+        }
+
+        return Storage::disk('s3')->put($path, fopen($file->getPathname(), 'r'));
+    }
+
+    private function storeRecordedMedia($uuid, $s3path, $fileName)
+    {
+        $dbrecord = new RecordedMedia();
+        $dbrecord->uuid = $uuid;
+        $dbrecord->s3path = $s3path;
+        $dbrecord->file_name = $fileName;
+        $dbrecord->save();
     }
 }
