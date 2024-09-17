@@ -37,7 +37,8 @@ class ConvertWebmToMp4 implements ShouldQueue
         try {
             $unID = $this->uuid;
             $outputVideoPath = 'convertedRecordedVideos/' . $unID . '.mp4';
-            $storagePath = storage_path($this->filePath);
+            $originalPath = 'app/' . $this->filePath;
+            $storagePath = storage_path($originalPath);
             if (!file_exists($storagePath)) {
                 Log::info("File does not exist at path: " . $storagePath);
                 return;
@@ -56,8 +57,8 @@ class ConvertWebmToMp4 implements ShouldQueue
             $s3MP4Path = $unID . '/video.mp4';
             $s3WebmPath = $unID . '/video.webm';
 
-            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, fopen(storage_path($outputVideoPath), 'r'));
-            $webUploaded = Storage::disk('s3')->put($s3WebmPath, fopen(storage_path($storagePath), 'r'));
+            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, fopen(storage_path('app/' . $outputVideoPath), 'r'));
+            $webUploaded = Storage::disk('s3')->put($s3WebmPath, fopen(storage_path($originalPath), 'r'));
 
             Storage::delete($this->filePath);
             Storage::delete($outputVideoPath);

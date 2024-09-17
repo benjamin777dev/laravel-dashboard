@@ -34,12 +34,11 @@ class VideoController extends Controller
                 }
 
                 $video = $request->file('video');
-                $videoPath = 'recordData/' . $uuid;
-                if (Storage::disk('s3')->put($videoPath, fopen($video->getPathname(), 'r'))) {
-                    ConvertWebmToMp4::dispatch($uuid, $videoPath);
-                } else {
+                $filePath = Storage::put('recordData/' . $uuid, contents: $video);
+                if (!$filePath) {
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
+                ConvertWebmToMp4::dispatch($uuid, $filePath);
                 return view('emails.email-record-template', compact('uuid',))->render();
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
