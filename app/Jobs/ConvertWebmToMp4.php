@@ -37,10 +37,10 @@ class ConvertWebmToMp4 implements ShouldQueue
         try {
             $unID = $this->uuid;
             $outputVideoPath = 'convertedRecordedVideos/' . $unID . '.mp4';
-            $originalPath = 'app/' . $this->filePath;
-            $storagePath = storage_path($originalPath);
+            $storagePath = storage_path($this->filePath);
             if (!file_exists($storagePath)) {
                 Log::info("File does not exist at path: " . $storagePath);
+                return;
             }
 
             $directory = storage_path('app/convertedRecordedVideos');
@@ -56,13 +56,13 @@ class ConvertWebmToMp4 implements ShouldQueue
             $s3MP4Path = $unID . '/video.mp4';
             $s3WebmPath = $unID . '/video.webm';
 
-            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, file_get_contents(storage_path('app/' . $outputVideoPath)));
-            $webUploaded = Storage::disk('s3')->put($s3WebmPath, file_get_contents(storage_path($originalPath)));
+            $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, fopen(storage_path($outputVideoPath), 'r'));
+            $webUploaded = Storage::disk('s3')->put($s3WebmPath, fopen(storage_path($storagePath), 'r'));
 
             Storage::delete($this->filePath);
             Storage::delete($outputVideoPath);
             
-            if ($mp4Uploaded * $webUploaded) {
+            if ($mp4Uploaded && $webUploaded) {
                 $now = Carbon::now();
                 $dbrecords = [
                     ['file_name' => 'video.mp4', 'uuid' => $unID, "s3path" => Storage::disk('s3')->url($s3MP4Path), 'created_at' => $now, 'updated_at' => $now],
@@ -70,10 +70,10 @@ class ConvertWebmToMp4 implements ShouldQueue
                 ];
                 RecordedMedia::insert($dbrecords);
             } else {
-                Log::info("Upload to S3 failed.");
+                Log::error("Upload to S3 failed for MP4: " . $mp4Uploaded . " or WebM: " . $webUploaded);
             }
         } catch (Exception $e) {
-            Log::info("File convert operation failed.");
+            Log::info("File convert operation failed:" . $e->getMessage());
         }
 
     }

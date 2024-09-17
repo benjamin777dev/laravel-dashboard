@@ -14,41 +14,32 @@ class VideoController extends Controller
 {
     public function upload(Request $request)
     {
-        
-        $uuid = Str::uuid()->toString();
-        
         try { 
+            $uuid = Str::uuid()->toString();
             if ($request->hasFile('gif') && $request->hasFile('img') && $request->hasFile('video')) {
+                $gifPath = $uuid . "/animation.gif";
                 $gif = $request->file('gif');
-                $path = $uuid . "/animation.gif";
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($gif));
-                if (!$uploaded)  {
+                if ($this->uploadFileToS3($gif, $gifPath)) {
+                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($gifPath), 'animation.gif');
+                } else {
                     return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
                 }
-                $dbrecord = new RecordedMedia();
-                $dbrecord['uuid'] = $uuid;
-                $dbrecord['s3path'] = Storage::disk('s3')->url($path);
-                $dbrecord['file_name'] = "animation.gif";
-                $dbrecord->save();
 
                 $img = $request->file('img');
-                $path = $uuid . "/image.png";
-                $uploaded = Storage::disk('s3')->put($path, file_get_contents($img));
-                if (!$uploaded) {
+                $imgPath = $uuid . "/image.png";
+                if ($this->uploadFileToS3($img, $imgPath)) {
+                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($imgPath), 'image.png');
+                } else {
                     return response()->json(['message' => 'Failed to upload the image file.'], 500);
                 }
-                $dbrecord = new RecordedMedia();
-                $dbrecord['uuid'] = $uuid;
-                $dbrecord['s3path'] = Storage::disk('s3')->url($path);;
-                $dbrecord['file_name'] = "image.png";
-                $dbrecord->save();
 
                 $video = $request->file('video');
-                $filePath = Storage::put('recordData/' . $uuid, contents: $video);
-                if (!$filePath) {
+                $videoPath = 'recordData/' . $uuid;
+                if (Storage::disk('s3')->put($videoPath, fopen($video->getPathname(), 'r'))) {
+                    ConvertWebmToMp4::dispatch($uuid, $videoPath);
+                } else {
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
-                ConvertWebmToMp4::dispatch($uuid, $filePath);
                 return view('emails.email-record-template', compact('uuid',))->render();
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
@@ -57,5 +48,23 @@ class VideoController extends Controller
             Log::error('Video Upload Failed:' . $e->getMessage());
             return response()->json(['message' => 'Failed to upload Image/GIF.'], 400);
         }
+    }
+
+    private function uploadFileToS3($file, $path)
+    {
+        if (!$file || !$file->isValid()) {
+            return false;
+        }
+
+        return Storage::disk('s3')->put($path, fopen($file->getPathname(), 'r'));
+    }
+
+    private function storeRecordedMedia($uuid, $s3path, $fileName)
+    {
+        $dbrecord = new RecordedMedia();
+        $dbrecord->uuid = $uuid;
+        $dbrecord->s3path = $s3path;
+        $dbrecord->file_name = $fileName;
+        $dbrecord->save();
     }
 }

@@ -270,7 +270,7 @@
                                                                                 <img class="zpImage imgsize_F" alt=""
                                                                                     style="width: 100%; max-width: 100%; vertical-align: top"
                                                                                     imgsize="F"
-                                                                                    src="https://crm.zoho.com/crm/viewInLineImage?fileContent=235c2b69296901b0cd6325b398b0b60c6ad91139d856015893d8dd3e8465e33870f830fcfd39255da85d0c9f07401786e6d5f8a65e4610bb78d26e63abffee00c24b5f5e9375c6c93bf40e4f5cd3461f0f31aa019deaaf0c8e359780ab35a5e8"
+                                                                                    src="/images/CHR_TM.png"
                                                                                     orgwidth="6912" width="540"
                                                                                     height="120" />
                                                                             </p>

@@ -3660,7 +3660,7 @@ form#selectGroupForm {
     overflow-y: auto;
 }
 #recordVideoModalContent button {
-    font-size: 60px;
+    font-size: 4rem;
 }
 #recordVideoModalContent div:last-child {
     top: 10px;
@@ -3701,16 +3701,7 @@ form#selectGroupForm {
 }
 
 /* Style for the placeholder button that overlays the image preview */
-#imgUploadContainer .image-upload-wrapper .upload-placeholder {
-    text-align: center;
-    color: #007bff;
-    font-size: 16px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-#imgUploadContainer .upload-placeholderGIF {
+#imgUploadContainer .image-upload-wrapper .upload-placeholder,.upload-placeholderGIF {
     text-align: center;
     color: #007bff;
     font-size: 16px;
@@ -3727,6 +3718,7 @@ form#selectGroupForm {
     object-fit: cover;
     display: none; /* Hide image preview initially */
     border-radius: 10px;
+    transition: opacity 0.3s ease;
 }
 
 #cropButton {

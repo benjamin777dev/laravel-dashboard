@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
 use ZipArchive;
+use Exception;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -163,7 +164,7 @@ class EmailController extends Controller
                         $contact = (object) $contact; // Convert array to object if necessary
                     }
                     if (empty($contact->email)) {
-                        throw new \Exception("Email is not available for {$contact->name}");
+                        throw new Exception("Email is not available for {$contact->name}");
                     }
                     return [
                         'id' => $contact->id,
@@ -370,7 +371,7 @@ class EmailController extends Controller
                         $contact = (object) $contact; // Convert array to object if necessary
                     }
                     if (empty($contact->email)) {
-                        throw new \Exception("Email is not available for {$contact->name}");
+                        throw new Exception("Email is not available for {$contact->name}");
                     }
                     return [
                         'id' => $contact->id,
@@ -683,17 +684,23 @@ class EmailController extends Controller
 
     public function getSignedUrl($identifier, $filename)
     {
-        $s3FilePath = "{$identifier}/{$filename}";
-        $expiresAt = now()->addHour();
-        $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
-
-        return redirect($signedUrl);
+        try {
+            $s3FilePath = "{$identifier}/{$filename}";
+            $expiresAt = now()->addHour();
+            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+    
+            return redirect($signedUrl);
+        } catch (Exception $e) {
+            Log::error("Error generating signed URL: " . $e->getMessage());
+    
+            return redirect()->back()->with('error', 'There was an issue generating the signed URL. Please try again later.');
+        }
     }
 
     public function unsubscribe(Request $request, $userId, $groupId, $hash) 
     {
         $user = Contact::find($userId);
-        if (!$user || !hash_equals($hash, sha1($user->email))) {
+        if (!$user || !hash_equals($hash, hash('sha256', $user->email))) {
             return redirect('/')->with('error', 'Invalid unsubscribe link.');
         }
 
