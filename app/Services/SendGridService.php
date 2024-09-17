@@ -108,9 +108,70 @@ class SendGridService
         try {
 
             $recipientsData = $inputEmail['personalizations'];
+            $personalizations = [];
             $inputEmail['subject'] = $inputEmail['personalizations'][0]['subject'];
 
-            $inputEmail['personalizations'] = $this->buildPersonalizations(...$recipientsData, $groupId);
+            foreach ($recipientsData as $data) {
+                $personalization = [];
+            
+                foreach ($data['to'] as $toRecipient) {
+                    $unsubscribeUrl = route('email.unsubscribe', [
+                        'userId' => $toRecipient['id'],
+                        'groupId' => $groupId,
+                        'hash' => sha1($toRecipient['email'])
+                    ]);
+                    
+                    $personalization[] = [
+                        'to' => [
+                            ["email" => $toRecipient['email']]
+                            ],
+                        'substitutions' => [
+                            "-unsubscribe_url-" => $unsubscribeUrl
+                            ]
+                    ];
+                }
+            
+                if(isset($data['cc'])) {
+                    foreach ($data['cc'] as $ccRecipient) {
+                        $unsubscribeUrl = route('email.unsubscribe', [
+                            'userId' => $ccRecipient['id'],
+                            'groupId' => $groupId,
+                            'hash' => sha1($ccRecipient['email'])
+                        ]);
+                
+                        $personalization[] = [
+                            'to' => [
+                                ["email" => $ccRecipient['email']]
+                                ],
+                            'substitutions' => [
+                                "-unsubscribe_url-" => $unsubscribeUrl
+                                ]
+                        ];
+                    }
+                }
+                if(isset($data['bcc'])) {
+                    foreach ($data['bcc'] as $bccRecipient) {
+                        $unsubscribeUrl = route('email.unsubscribe', [
+                            'userId' => $bccRecipient['id'],
+                            'groupId' => $groupId,
+                            'hash' => sha1($bccRecipient['email'])
+                        ]);
+                
+                        $personalization[] = [
+                            'to' => [
+                                ["email" => $bccRecipient['email']]
+                                ],
+                            'substitutions' => [
+                                "-unsubscribe_url-" => $unsubscribeUrl
+                                ]
+                        ];
+                    }
+                }
+            
+                $personalizations[] = $personalization;
+            }
+
+            $inputEmail['personalizations'] = array_merge(...$personalizations);
             $inputEmail['content'][0]['value'] .= '<p>Click <a href="-unsubscribe_url-">here</a> to unsubscribe.</p>';
             
             $inputEmailJSON = json_encode($inputEmail);
