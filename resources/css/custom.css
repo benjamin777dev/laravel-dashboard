@@ -3730,7 +3730,7 @@ form#selectGroupForm {
     top: 0px;
     right: 0px;
     display: none;
-    background: rgba(0, 0, 0, 0.5) url("/images/loading.gif") no-repeat center !important;
+    background: rgba(0, 0, 0, 0.5) url('/resources/images/loading.gif') no-repeat center !important;
     background-size: 100px !important;
     z-index: 1;
 }
