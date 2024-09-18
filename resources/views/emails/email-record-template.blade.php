@@ -270,7 +270,7 @@
                                                                                 <img class="zpImage imgsize_F" alt=""
                                                                                     style="width: 100%; max-width: 100%; vertical-align: top"
                                                                                     imgsize="F"
-                                                                                    src="{{ Vite::asset('resources/images/CHR_TM.png') }}"
+                                                                                    src="{{ config('app.url') . '/build/images/CHR_TM.png' }}"
                                                                                     orgwidth="6912" width="540"
                                                                                     height="120" />
                                                                             </p>
