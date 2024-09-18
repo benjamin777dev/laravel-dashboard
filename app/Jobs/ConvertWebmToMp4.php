@@ -48,6 +48,8 @@ class ConvertWebmToMp4 implements ShouldQueue
             if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true);
             }
+
+            Log::info('Video file loaded successfully');
             
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($storagePath);
@@ -57,11 +59,15 @@ class ConvertWebmToMp4 implements ShouldQueue
             $s3MP4Path = $unID . '/video.mp4';
             $s3WebmPath = $unID . '/video.webm';
 
+            Log::info('File converted successfully.');
+
             $mp4Uploaded = Storage::disk('s3')->put($s3MP4Path, fopen(storage_path('app/' . $outputVideoPath), 'r'));
             $webUploaded = Storage::disk('s3')->put($s3WebmPath, fopen(storage_path($originalPath), 'r'));
 
             Storage::delete($this->filePath);
             Storage::delete($outputVideoPath);
+
+            Log::info('File uploaded successfully.');
             
             if ($mp4Uploaded && $webUploaded) {
                 $now = Carbon::now();
