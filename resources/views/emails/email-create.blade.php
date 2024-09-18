@@ -313,6 +313,7 @@
                                                                     <input type="file" id="formFileGIF" accept="image/gif">
                                                                     <span class="upload-placeholderGIF">Click to upload a GIF</span>
                                                                     <img id="imagePreviewGIF" src="#" alt="Image Preview">
+                                                                    <div class="record-video-loading-screen"></div>
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -322,6 +323,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="record-video-loading-screen entire-modal-loading"></div>
                                                 `
                                             }
                                         ]
@@ -341,6 +343,8 @@
                                         let recordData = new FormData();
 
                                         $('.tox-button[title="Insert"]')[0].disabled = true;
+                                        $('.record-video-loading-screen.entire-modal-loading')[0].style.display = "block";
+
                                         const recordedVideoElement = document.getElementById('recordedVideo');
                                         const videoElementUrl = recordedVideoElement.src;
                                         let imgElementUrl = document.getElementById('imagePreview').src;
@@ -363,6 +367,7 @@
                                                     .catch(error => {
                                                         showToastError("Failed to generate Img/GIF");
                                                         $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                        $('.record-video-loading-screen.entire-modal-loading')[0].style.display = "none";
                                                         api.close();
                                                     })
                                                 } else {
@@ -372,6 +377,7 @@
                                             .catch(err => {
                                                 showToastError("Failed to generate Img/GIF");
                                                 $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                $('.record-video-loading-screen.entire-modal-loading')[0].style.display = "none";
                                                 api.close();
                                             })
                                         } else {
@@ -442,13 +448,14 @@
                                                         } else {
                                                             editor.insertContent(contentWithFallback);
                                                             $('.tox-button[title="Insert"]')[0].disabled = false;
+                                                            $('.record-video-loading-screen.entire-modal-loading')[0].style.display = "none";
                                                             api.close();
                                                         }
-                                                        },
-                                                        error: function (err) {
-                                                            showToastError("Failed to upload files to S3.");
-                                                        }
-                                                        })                                                
+                                                    },
+                                                    error: function (err) {
+                                                        showToastError("Failed to upload files to S3.");
+                                                    }
+                                                });                                                
                                             }
                                         }
                                     }
@@ -701,6 +708,7 @@
     function convertVideoToGif(videoUrl) {
         return new Promise((resolve, reject) => {
             const tempVideo = document.createElement('video');
+            $('.image-upload-wrapper .record-video-loading-screen')[0].style.display = "block";
             tempVideo.src = videoUrl;
 
             tempVideo.addEventListener('loadeddata', () => {
@@ -740,6 +748,7 @@
 
                 gif.on('finished', (blob) => {
                     const gifUrl = URL.createObjectURL(blob);
+                    $('.image-upload-wrapper .record-video-loading-screen')[0].style.display = "none";
                     resolve(gifUrl);
                 });
 
