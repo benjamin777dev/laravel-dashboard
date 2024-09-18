@@ -196,6 +196,9 @@
             toolbar: 'h1 h2 bold italic strikethrough blockquote bullist numlist backcolor | link image media | removeformat help | customSelect recordVideo',
             menubar: false,
             statusbar: false,
+            convert_urls: false,
+            relative_urls: false,
+            remove_script_host: false,
             setup: function(editor) {
                 editor.ui.registry.addIcon('recordIcon', 
                     '<i class="mdi mdi-record-circle-outline fs-3"></i>'
@@ -442,6 +445,7 @@
                                                     processData: false,
                                                     contentType: false,
                                                     success: function (data) {
+                                                        console.log("Video Upload Response", data);
                                                         contentWithFallback = data;
                                                         if(data.message) {
                                                             showToastError(data.message);
