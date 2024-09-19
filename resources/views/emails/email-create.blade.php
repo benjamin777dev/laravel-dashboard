@@ -52,6 +52,7 @@
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,false)">Save as draft</button>
     <button type="button" class="btn btn-dark" id="modalTemplate" onclick="return openTemplate()">Save as template</button>
     <button type="button" class="btn btn-dark" onclick="return sendEmails(this,null,true)">Send <i class="fab fa-telegram-plane ms-1"></i></button>
+    {{ session()->token() }}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/gif.js/dist/gif.js"></script>
@@ -435,13 +436,14 @@
                                                 });
                                             }
                                             function sendData() {
-                                                recordData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+                                                $.ajaxSetup({
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                    }
+                                                });
                                                 $.ajax({
                                                     url: route('video.upload'),
                                                     method: "POST",
-                                                    headers: {
-                                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                                    },
                                                     data: recordData,
                                                     processData: false,
                                                     contentType: false,
@@ -993,5 +995,6 @@
             $("#templateModal").addClass("compose");
         }
     }
+    window.csrfToken = "{{ csrf_token() }}";
 </script>
             
