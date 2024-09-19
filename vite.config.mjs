@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
                     'resources/sass/app.scss',
                     'resources/js/app.js',
                     'resources/css/custom.css',
+                    'resources/css/video-player.css',
                     'resources/js/custom.js',
                     'resources/js/helper.js',
                     'resources/js/dashboard.js',
