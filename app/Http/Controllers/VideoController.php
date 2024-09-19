@@ -16,6 +16,9 @@ class VideoController extends Controller
     public function upload(Request $request)
     {
         try { 
+            
+            Log::info('Session Token: ' . session()->token());
+            Log::info('Request Token: ' . $request->header('X-CSRF-TOKEN'));
             $uuid = Str::uuid()->toString();
             if ($request->hasFile('gif') && $request->hasFile('img') && $request->hasFile('video')) {
                 $gifPath = $uuid . "/animation.gif";
@@ -41,7 +44,7 @@ class VideoController extends Controller
                 }
                 ConvertWebmToMp4::dispatch($uuid, $filePath);
                 $videoTemplate = Template::where('name', 'Video Email')->first();
-                return response()->json(['content' => $videoTemplate->content, 'uuid' => $uuid]);
+                return response()->json(['content' => $videoTemplate->content, 'uuid' => $uuid], 200);
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
             }
