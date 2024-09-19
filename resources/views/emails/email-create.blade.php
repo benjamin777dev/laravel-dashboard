@@ -435,6 +435,7 @@
                                                 });
                                             }
                                             function sendData() {
+                                                recordData.append('_token', $('meta[name="csrf-token"]').attr('content'));
                                                 $.ajax({
                                                     url: route('video.upload'),
                                                     method: "POST",
