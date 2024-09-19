@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -39,7 +40,9 @@ class VideoController extends Controller
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
                 ConvertWebmToMp4::dispatch($uuid, $filePath);
-                return view('emails.email-record-template', compact('uuid',))->render();
+                $videoTemplate = Template::find(44);
+                return response()->json(['content' => $videoTemplate->content, 'uuid' => $uuid]);
+                // return view('emails.email-record-template', compact('uuid',))->render();
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
             }
