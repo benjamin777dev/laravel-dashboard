@@ -42,7 +42,6 @@ class VideoController extends Controller
                 ConvertWebmToMp4::dispatch($uuid, $filePath);
                 $videoTemplate = Template::where('name', 'Video Email')->first();
                 return response()->json(['content' => $videoTemplate->content, 'uuid' => $uuid]);
-                // return view('emails.email-record-template', compact('uuid',))->render();
             } else {
               return response()->json(['message' => 'Unable to upload data due to insufficient data.'], 400);
             }
