@@ -437,9 +437,7 @@
                                             }
                                             function sendData() {
                                                 $.ajaxSetup({
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                                    }
+                                                    
                                                 });
                                                 $.ajax({
                                                     url: route('video.upload'),
@@ -447,7 +445,14 @@
                                                     data: recordData,
                                                     processData: false,
                                                     contentType: false,
+                                                    cache: false,
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                                    },
                                                     success: function (data) {
+                                                        Log::info('Session Token: ' . session()->token());
+                                                        Log::info('Request Token: ' . $request->header('X-CSRF-TOKEN'));
+
                                                         const baseUrl = "{{ config('app.url') }}";
                                                         let parser = new DOMParser();
                                                         let tempElem = parser.parseFromString(data.content, "text/html");
