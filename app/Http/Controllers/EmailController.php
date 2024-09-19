@@ -715,16 +715,17 @@ class EmailController extends Controller
         try {
             $s3FilePath = "{$identifier}/{$filename}";
             $expiresAt = now()->addHour();
-            if(Storage::disk('s3')->exists($s3FilePath)) {
-                $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
-                return view('emails.email-video-display', compact('signedUrl'));
-            } else {
-                return redirect('/')->with('error', 'File not found.');
-            }
+            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+            return redirect($signedUrl);
+            // if(Storage::disk('s3')->exists($s3FilePath)) {
+            //     return view('emails.email-video-display', compact('signedUrl'));
+            // } else {
+            //     return redirect('/')->with('error', 'File not found.');
+            // }
         } catch (Exception $e) {
             Log::error("Error generating signed URL: " . $e->getMessage());
     
-            return redirect('/')->with('error', 'There was an issue generating the signed URL. Please try again later.');
+            return redirect()->back()->with('error', 'There was an issue generating the signed URL. Please try again later.');
         }
     }
 
