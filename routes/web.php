@@ -210,8 +210,8 @@ Route::patch('/email/delete',[EmailController::class,'emailDelete'])->name('emai
 Route::get('/get/email/modal/{emailId}',[EmailController::class,'getEmailModal'])->name('get.email.modal')->middleware('auth');
 // Route for Signed url
 Route::get('/email/unsubscribe/{userId}/{groupId}/{hash}', [EmailController::class, 'unsubscribe'])->name('email.unsubscribe');
-Route::get('/shared/{identifier}/{filename}', [EmailController::class, 'processAndRedirect'])->name('share.signedUrl');
-Route::get('/watch/record', [EmailController::class, 'getSignedUrl'])->name('shared.video');
+Route::get('/shared/{identifier}/{filename}', [EmailController::class, 'getSignedUrl'])->name('share.signedUrl');
+// Route::get('/watch/record', [EmailController::class, 'getSignedUrl'])->name('shared.video');
 
 
 //Template Route
