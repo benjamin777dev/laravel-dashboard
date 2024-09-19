@@ -1,0 +1,19 @@
+html, body {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+.video-container {
+    width: 80%;
+}
+video {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}

@@ -682,18 +682,31 @@ class EmailController extends Controller
         return view('emails.email-read-modal', compact('email'))->render();
     }
 
-    public function getSignedUrl($identifier, $filename)
+    public function processAndRedirect($identifier, $filename)
+    {
+        session(['shared_video_id' => $identifier]);
+        session(['shared_video_file_name' => $filename]);
+
+        return redirect()->route('shared.video');
+    }
+
+    public function getSignedUrl()
     {
         try {
+            $identifier = session('shared_video_id');
+            $filename = session('shared_video_file_name');
             $s3FilePath = "{$identifier}/{$filename}";
             $expiresAt = now()->addHour();
-            $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
-    
-            return redirect($signedUrl);
+            if(Storage::disk('s3')->exists($s3FilePath)) {
+                $signedUrl = Storage::disk('s3')->temporaryUrl($s3FilePath, $expiresAt);
+                return view('emails.email-video-display', compact('signedUrl'));
+            } else {
+                return redirect('/')->with('error', 'File not found.');
+            }
         } catch (Exception $e) {
             Log::error("Error generating signed URL: " . $e->getMessage());
     
-            return redirect()->back()->with('error', 'There was an issue generating the signed URL. Please try again later.');
+            return redirect('/')->with('error', 'There was an issue generating the signed URL. Please try again later.');
         }
     }
 
