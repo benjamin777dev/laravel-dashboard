@@ -448,8 +448,17 @@
                                                     success: function (data) {
 
                                                         const baseUrl = "{{ config('app.url') }}";
+                                                        const csrf_token = $('meta[name="csrf-token"]').attr('content');
                                                         let parser = new DOMParser();
                                                         let tempElem = parser.parseFromString(data.content, "text/html");
+
+                                                        let headElem = tempElem.querySelector('head');
+
+                                                        let metaTag = tempElem.createElement('meta');
+
+                                                        metaTag.setAttribute('name', 'csrf-token');
+                                                        metaTag.setAttribute('content', {{csrf_token()}});
+                                                        headElem.appendChild(metaTag);
 
                                                         const aElements = tempElem.querySelectorAll('[href*="loom.com"]');
                                                         aElements.forEach(element => {
