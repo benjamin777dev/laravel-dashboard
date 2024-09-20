@@ -79,6 +79,8 @@ class ConvertWebmToMp4 implements ShouldQueue
             } else {
                 Log::error("Upload to S3 failed for MP4: " . $mp4Uploaded . " or WebM: " . $webUploaded);
             }
+            Log::info('Session Token(After upload file in job: ' . session()->token());
+
         } catch (Exception $e) {
             Log::info("File convert operation failed:" . $e->getMessage());
         }
