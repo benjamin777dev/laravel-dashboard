@@ -457,8 +457,9 @@
                                                         let metaTag = tempElem.createElement('meta');
 
                                                         metaTag.setAttribute('name', 'csrf-token');
-                                                        metaTag.setAttribute('content', "{{csrf_token()}}");
+                                                        metaTag.setAttribute('content', csrf_token);
                                                         headElem.appendChild(metaTag);
+                                                        console.log("headElement", headElem, metaTag)
 
                                                         const aElements = tempElem.querySelectorAll('[href*="loom.com"]');
                                                         aElements.forEach(element => {
