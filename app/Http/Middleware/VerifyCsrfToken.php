@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
         '/webhook/aci',
         '/webhook/note',
         '/api/webhook/csvcallback',
-        '/itlm/*'
+        '/itlm/*',
+        'shared/*'
     ];
 }
