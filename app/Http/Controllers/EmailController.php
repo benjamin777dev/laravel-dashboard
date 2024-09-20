@@ -712,6 +712,12 @@ class EmailController extends Controller
 
     public function getSignedUrl($identifier, $filename)
     {
+        Log::info('Token mismatch error details', [
+            'session' => session()->all(),
+            'request' => request()->all(),
+            'csrf_token' => csrf_token()
+        ]);
+        
         try {
             $s3FilePath = "{$identifier}/{$filename}";
             $expiresAt = now()->addHour();
