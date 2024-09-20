@@ -447,29 +447,29 @@
                                                     },
                                                     success: function (data) {
 
-                                                        // const baseUrl = "{{ config('app.url') }}";
-                                                        // let parser = new DOMParser();
-                                                        // let tempElem = parser.parseFromString(data.content, "text/html");
+                                                        const baseUrl = "{{ config('app.url') }}";
+                                                        let parser = new DOMParser();
+                                                        let tempElem = parser.parseFromString(data.content, "text/html");
 
-                                                        // const aElements = tempElem.querySelectorAll('[href*="loom.com"]');
-                                                        // aElements.forEach(element => {
-                                                        //     const currentHref = element.getAttribute('href');
-                                                        //     const newHref = `${baseUrl}/shared/${data.uuid}/video.mp4`;
-                                                        //     element.setAttribute('href', newHref);
-                                                        // });
+                                                        const aElements = tempElem.querySelectorAll('[href*="loom.com"]');
+                                                        aElements.forEach(element => {
+                                                            const currentHref = element.getAttribute('href');
+                                                            const newHref = `${baseUrl}/shared/${data.uuid}/video.mp4`;
+                                                            element.setAttribute('href', newHref);
+                                                        });
 
-                                                        // const gifElements = tempElem.querySelectorAll('[src*="loom.com"]');
-                                                        // gifElements.forEach(element => {
-                                                        //     const currentSrc = element.getAttribute('src');
-                                                        //     const newSrc = `${baseUrl}/shared/${data.uuid}/animation.gif`;
-                                                        //     element.setAttribute('src', newSrc);
-                                                        // });
+                                                        const gifElements = tempElem.querySelectorAll('[src*="loom.com"]');
+                                                        gifElements.forEach(element => {
+                                                            const currentSrc = element.getAttribute('src');
+                                                            const newSrc = `${baseUrl}/shared/${data.uuid}/animation.gif`;
+                                                            element.setAttribute('src', newSrc);
+                                                        });
 
-                                                        // const updatedHtml = tempElem.documentElement.outerHTML;
+                                                        const updatedHtml = tempElem.documentElement.outerHTML;
                                                         if(data.message) {
                                                             showToastError(data.message);
                                                         } else {
-                                                            editor.insertContent(data);
+                                                            editor.insertContent(updatedHtml);
                                                             $('.tox-button[title="Insert"]')[0].disabled = false;
                                                             $('.record-video-loading-screen.entire-modal-loading')[0].style.display = "none";
                                                             api.close();
