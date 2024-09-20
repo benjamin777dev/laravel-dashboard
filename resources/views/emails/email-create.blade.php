@@ -436,16 +436,12 @@
                                                 });
                                             }
                                             function sendData() {
-                                                $.ajaxSetup({
-                                                    
-                                                });
                                                 $.ajax({
                                                     url: route('video.upload'),
                                                     method: "POST",
                                                     data: recordData,
                                                     processData: false,
                                                     contentType: false,
-                                                    cache: false,
                                                     headers: {
                                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                                     },
