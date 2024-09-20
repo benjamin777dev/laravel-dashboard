@@ -5,6 +5,10 @@ import removeConsole from 'vite-plugin-remove-console';
 
 export default defineConfig(({ mode }) => {
     return {
+        server: {
+            host: '127.0.0.1',
+            port: 5173
+        },
         build: {
             manifest: true,
             outDir: 'public/build/',

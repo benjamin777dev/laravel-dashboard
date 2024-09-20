@@ -22,27 +22,27 @@ class VideoController extends Controller
             $uuid = Str::uuid()->toString();
             if ($request->hasFile('gif') && $request->hasFile('img') && $request->hasFile('video')) {
                 $gifPath = $uuid . "/animation.gif";
-                $gif = $request->file('gif');
-                if ($this->uploadFileToS3($gif, $gifPath)) {
-                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($gifPath), 'animation.gif');
-                } else {
-                    return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
-                }
+                // $gif = $request->file('gif');
+                // if ($this->uploadFileToS3($gif, $gifPath)) {
+                //     $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($gifPath), 'animation.gif');
+                // } else {
+                //     return response()->json(['message' => 'Failed to upload the GIF file.'], 500);
+                // }
 
-                $img = $request->file('img');
-                $imgPath = $uuid . "/image.png";
-                if ($this->uploadFileToS3($img, $imgPath)) {
-                    $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($imgPath), 'image.png');
-                } else {
-                    return response()->json(['message' => 'Failed to upload the image file.'], 500);
-                }
+                // $img = $request->file('img');
+                // $imgPath = $uuid . "/image.png";
+                // if ($this->uploadFileToS3($img, $imgPath)) {
+                //     $this->storeRecordedMedia($uuid, Storage::disk('s3')->url($imgPath), 'image.png');
+                // } else {
+                //     return response()->json(['message' => 'Failed to upload the image file.'], 500);
+                // }
 
                 $video = $request->file('video');
                 $filePath = Storage::put('recordData/' . $uuid, contents: $video);
                 if (!$filePath) {
                     return response()->json(['message' => 'Failed to upload video'], 500);
                 }
-                ConvertWebmToMp4::dispatch($uuid, $filePath);
+                // ConvertWebmToMp4::dispatch($uuid, $filePath);
                 // return view('emails.email-record-template', compact('uuid',))->render();
                 $videoTemplate = Template::where('name', 'Video Email')->first();
                 return response()->json(['content' => $videoTemplate->content, 'uuid' => $uuid], 200);
