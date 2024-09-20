@@ -715,7 +715,8 @@ class EmailController extends Controller
         Log::info('Token mismatch error details', [
             'session' => session()->all(),
             'request' => request()->all(),
-            'csrf_token' => csrf_token()
+            'csrf_token' => csrf_token(),
+            'request_csrf_token' => request()->header('X-CSRF-TOKEN')
         ]);
         
         try {
